@@ -24,6 +24,73 @@ Coding agents (Claude Code, GitHub Copilot, OpenAI Codex) lack comprehensive, op
 - **Smart hooks** with configurable defaults, file-type-specific firing
 - **Open but curated** community model
 - **Start fresh**, selectively reference dotnet-skills quality content
+- **All skills must align with official Microsoft .NET design guidelines** (see spec for full reference table)
+- **Key design guideline references**: Framework Design Guidelines, C# Coding Conventions, ASP.NET Core Best Practices, Microsoft REST API Guidelines, System.CommandLine Design Guidance, Library Design Guidance, Native AOT Deployment, Secure Coding Guidelines, David Fowler's Async Guidance
+- **Enforcement**: Skills should recommend EditorConfig + .NET Code Analyzers (CAxxxx rules) + third-party analyzers (StyleCop, Roslynator) where applicable
+
+## Planning-Stage Instructions
+
+**CRITICAL:** When `/flow-next:plan` runs to break this into sub-epics and tasks, it MUST use the following plugin-dev skills to inform and validate the plan:
+
+### Required Skills During Planning
+
+1. **`/plugin-dev:plugin-structure`** - Use FIRST to validate the overall plugin architecture (plugin.json manifest, directory layout, skill/agent/hook/MCP organization). The plan must conform to Claude Code plugin conventions.
+
+2. **`/plugin-dev:skill-development`** - Use when planning each skill to ensure:
+   - SKILL.md frontmatter follows correct format (name, description, allowed-tools, context, agent, etc.)
+   - Skill descriptions are optimized for auto-discovery triggering
+   - Skills are organized for progressive disclosure (descriptions loaded first, full content on invoke)
+   - Cross-references between skills are properly structured
+
+3. **`/plugin-dev:agent-development`** - Use when planning each subagent to ensure:
+   - Agent frontmatter is correct (name, description, tools, disallowedTools, model, permissionMode, maxTurns)
+   - Agent descriptions accurately describe when delegation should happen
+   - Skills can be preloaded into subagents where appropriate
+
+4. **`/plugin-dev:hook-development`** - Use when planning the hooks system to ensure:
+   - Hook matchers are correctly scoped (PreToolUse, PostToolUse, etc.)
+   - Hook types (command, prompt, agent) are chosen appropriately
+   - Hooks.json structure is valid
+
+5. **`/plugin-dev:mcp-integration`** - Use when planning MCP server integration to ensure:
+   - .mcp.json configuration follows correct format
+   - ${CLAUDE_PLUGIN_ROOT} paths are used for bundled servers
+   - MCP servers integrate cleanly with the plugin lifecycle
+
+6. **`/plugin-dev:command-development`** - Use if any slash commands beyond skills are needed
+
+7. **`/plugin-dev:plugin-settings`** - Use when planning configurable options (hook aggressiveness, MCP toggles, etc.)
+
+### Planning Validation
+
+After planning each sub-epic, use:
+- **`/plugin-dev:skill-reviewer`** - Review skill descriptions for triggering effectiveness and quality
+- **`/plugin-dev:plugin-validator`** - Validate the overall plugin structure as it's planned
+
+### Implementation-Stage Skills
+
+During implementation, use these additional skills:
+
+**Plugin Development:** `/plugin-dev:create-plugin`, `/plugin-dev:agent-creator`
+**Code Quality:** `/pr-review-toolkit:code-reviewer`, `/pr-review-toolkit:silent-failure-hunter`, `/pr-review-toolkit:code-simplifier`, `/pr-review-toolkit:comment-analyzer`, `/pr-review-toolkit:type-design-analyzer`, `/pr-review-toolkit:pr-test-analyzer`
+**Documentation:** `/doc-coauthoring`, `/claude-md-management:claude-md-improver`, `/claude-md-management:revise-claude-md`
+**Commit & PR:** `/commit-commands:commit`, `/commit-commands:commit-push-pr`
+**QA Reference:** `/dotnet-skills:slopwatch` (LLM reward hacking detection), `/dotnet-skills:marketplace-publishing` (reference), `/dotnet-skills:skills-index-snippets` (index generation reference)
+
+### Existing dotnet-skills Reference
+
+Use [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) as reference material (not to copy directly). Key skills to reference: `csharp-coding-standards`, `csharp-type-design-performance`, `csharp-api-design`, `project-structure`, `serialization`, `snapshot-testing`, `playwright-blazor`, `testcontainers`, `crap-analysis`, `package-management`, `microsoft-extensions-dependency-injection`, `microsoft-extensions-configuration`.
+
+### Planning Workflow
+
+For each sub-epic being planned:
+1. Reference `docs/dotnet-artisan-spec.md` for the authoritative requirements
+2. Use the relevant plugin-dev skills above to validate the planned structure
+3. Ensure cross-agent compatibility is addressed (build pipeline generates Copilot/Codex formats)
+4. Skills should cross-reference related skills in their descriptions
+5. Plan the router/advisor skill early (it needs to know the full catalog)
+6. Reference the Microsoft .NET Design Guidelines reference table in the spec for authoritative standards
+7. Use existing dotnet-skills reference material as starting points where applicable
 
 ## Edge Cases
 - Projects targeting multiple TFMs need consistent guidance across all targets

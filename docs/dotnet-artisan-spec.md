@@ -88,6 +88,168 @@
 
 ---
 
+## Planning-Stage Requirements
+
+When breaking this into sub-epics and tasks, the planning phase MUST use these plugin-dev skills to validate and inform the plan:
+
+### Required Skills During Planning
+
+1. **`/plugin-dev:plugin-structure`** - Use FIRST to validate overall plugin architecture (plugin.json, directory layout, skill/agent/hook/MCP organization)
+2. **`/plugin-dev:skill-development`** - Use when planning each skill (SKILL.md frontmatter, description optimization for auto-discovery, progressive disclosure, cross-references)
+3. **`/plugin-dev:agent-development`** - Use when planning each subagent (frontmatter, delegation triggers, preloaded skills)
+4. **`/plugin-dev:hook-development`** - Use when planning hooks system (matchers, types, hooks.json structure)
+5. **`/plugin-dev:mcp-integration`** - Use when planning MCP server integration (.mcp.json, ${CLAUDE_PLUGIN_ROOT} paths)
+6. **`/plugin-dev:command-development`** - Use if any slash commands beyond skills are needed
+7. **`/plugin-dev:plugin-settings`** - Use when planning configurable options (hook aggressiveness, MCP toggles)
+
+### Planning Validation
+
+After planning each sub-epic, use:
+- **`/plugin-dev:skill-reviewer`** - Review skill descriptions for triggering effectiveness and quality
+- **`/plugin-dev:plugin-validator`** - Validate the overall plugin structure as planned
+
+### Implementation-Stage Skills
+
+During implementation of each sub-epic/task, use these additional skills:
+
+**Plugin Development:**
+- **`/plugin-dev:create-plugin`** - End-to-end plugin creation workflow with validation
+- **`/plugin-dev:agent-creator`** - Generate agent configurations
+
+**Code Quality (use proactively after writing code):**
+- **`/pr-review-toolkit:code-reviewer`** - Review code for adherence to project guidelines
+- **`/pr-review-toolkit:silent-failure-hunter`** - Detect silent failures and inadequate error handling
+- **`/pr-review-toolkit:code-simplifier`** - Simplify code for clarity and maintainability
+- **`/pr-review-toolkit:comment-analyzer`** - Verify comment accuracy and completeness
+- **`/pr-review-toolkit:type-design-analyzer`** - Analyze type design for encapsulation and invariants
+- **`/pr-review-toolkit:pr-test-analyzer`** - Review test coverage quality
+
+**Documentation & Project:**
+- **`/doc-coauthoring`** - Structured documentation co-authoring workflow (for README, CONTRIBUTING, etc.)
+- **`/claude-md-management:claude-md-improver`** - Audit and improve CLAUDE.md files
+- **`/claude-md-management:revise-claude-md`** - Update CLAUDE.md with session learnings
+
+**Commit & PR:**
+- **`/commit-commands:commit`** - Create git commits
+- **`/commit-commands:commit-push-pr`** - Commit, push, and open PRs
+
+**Quality Assurance (from dotnet-skills, use as reference):**
+- **`/dotnet-skills:slopwatch`** - Detect LLM reward hacking (disabled tests, suppressed warnings, empty catch blocks)
+- **`/dotnet-skills:marketplace-publishing`** - Reference for marketplace publishing workflow
+- **`/dotnet-skills:skills-index-snippets`** - Reference for AGENTS.md/CLAUDE.md index generation
+
+### Existing dotnet-skills Reference Material
+
+The existing [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) plugin provides useful reference material. Key skills to reference (not copy directly):
+
+| dotnet-skills Skill | Use As Reference For |
+|---------------------|---------------------|
+| `csharp-coding-standards` | Foundation for our modernized coding standards skill |
+| `csharp-type-design-performance` | Performance-oriented type design patterns |
+| `csharp-api-design` | Extend-only API design principles |
+| `project-structure` | .slnx, Directory.Build.props patterns |
+| `serialization` | Schema-based serialization approach (we'll expand for AOT) |
+| `snapshot-testing` | Verify-based snapshot patterns |
+| `playwright-blazor` | Blazor-specific Playwright patterns |
+| `testcontainers` | Integration test infrastructure patterns |
+| `crap-analysis` | Code coverage and risk analysis |
+| `package-management` | Central Package Management patterns |
+| `microsoft-extensions-dependency-injection` | DI registration patterns |
+| `microsoft-extensions-configuration` | Options pattern foundations |
+
+### Planning Workflow Per Sub-Epic
+
+1. Reference this spec (`docs/dotnet-artisan-spec.md`) for authoritative requirements
+2. Use relevant plugin-dev skills above to validate planned structure
+3. Ensure cross-agent compatibility is addressed (build pipeline generates Copilot/Codex formats)
+4. Skills should cross-reference related skills in their descriptions
+5. Plan the router/advisor skill early (it needs to know the full catalog)
+6. Reference the Microsoft .NET Design Guidelines table (above) for authoritative standards each skill must follow
+7. Use existing dotnet-skills reference material (above) as starting points where applicable
+
+---
+
+## Microsoft .NET Design Guidelines Reference
+
+All skills MUST align with official Microsoft .NET design guidelines. These are the authoritative references that skills should follow and cite:
+
+### Core Guidelines
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **Framework Design Guidelines** | https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/ | Based on 2nd Ed; 3rd Ed book exists but Learn not fully updated. Foundational principles still current. |
+| **C# Coding Conventions** | https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions | Actively maintained, current for 2026. PascalCase, camelCase, `_field`, `s_static`. |
+| **Naming Guidelines** | https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines | Core naming rules: PascalCase types, I-prefix interfaces, verb phrases for methods. |
+| **Identifier Names (C#)** | https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names | C#-specific naming rules and analyzer-enforceable conventions. |
+
+### API & Architecture
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **ASP.NET Core Best Practices** | https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0 | Updated for .NET 10. Async-first, HybridCache, no blocking. |
+| **Microsoft REST API Guidelines** | https://github.com/microsoft/api-guidelines | General guidelines deprecated in favor of Azure-specific. Active vNext branch. |
+| **Azure REST API Guidelines** | https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md | Azure service teams' current reference. |
+| **Minimal APIs Route Handlers** | https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/route-handlers?view=aspnetcore-10.0 | Route groups, filters, organization patterns for scale. |
+| **OpenAPI in ASP.NET Core** | https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/overview?view=aspnetcore-10.0 | Built-in .NET 9+. `WithOpenApi()` deprecated in .NET 10; use transformers. |
+| **System.CommandLine Design** | https://learn.microsoft.com/en-us/dotnet/standard/commandline/design-guidance | CLI design like REST design. Naming, verbs/nouns, verbosity, POSIX. |
+| **Library Design Guidance** | https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/ | NuGet authoring, SemVer, Source Link, cross-platform, stability. |
+
+### Quality & Analysis
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **Code Analysis Overview** | https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview | Built on Roslyn; enabled by default .NET 5+. |
+| **Code Quality Rules (CAxxxx)** | https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ | Categories: Design, Globalization, Performance, Security, Usage. |
+| **Code-Style Naming Rules** | https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules | EditorConfig-enforceable naming conventions. |
+| **NuGet Package Authoring** | https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices | Package ID, SemVer, metadata, Source Link, README. |
+
+### Security
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **Security in .NET** | https://learn.microsoft.com/en-us/dotnet/standard/security/ | Core security guidance. |
+| **Secure Coding Guidelines** | https://learn.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines | Avoid CAS, APTCA, .NET Remoting, DCOM, binary formatters. |
+| **ASP.NET Core Security** | https://learn.microsoft.com/en-us/aspnet/core/security/?view=aspnetcore-10.0 | Updated for .NET 10. Secret Manager, managed identities. |
+
+### Performance & AOT
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **Native AOT Deployment** | https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/ | net8.0+. No dynamic assembly loading, restricted reflection. |
+| **Prepare Libraries for Trimming** | https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming | IsTrimmable, annotations, linker config. |
+| **ASP.NET Core Native AOT** | https://learn.microsoft.com/en-us/aspnet/core/fundamentals/native-aot?view=aspnetcore-10.0 | Updated for .NET 10 with major AOT improvements. |
+| **AOT Warnings** | https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/fixing-warnings | Static analysis via build-time warnings. |
+| **Optimizing AOT** | https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/optimizing | Size optimization, trimming strategies. |
+
+### Async & Threading
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **David Fowler's Async Guidance** | https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md | Community standard. Prefer async Task, avoid .Wait()/.Result. |
+| **Async/Await Best Practices (MSDN)** | https://learn.microsoft.com/en-us/archive/msdn-magazine/2013/march/async-await-best-practices-in-asynchronous-programming | Foundation article (Stephen Cleary). Still highly relevant. |
+
+### Documentation & Source Gen
+
+| Guideline | URL | Status |
+|-----------|-----|--------|
+| **XML Documentation Tags** | https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags | `///` comments, `<summary>`, `<param>`, `cref`. |
+| **Source Generators Overview** | https://learn.microsoft.com/en-sg/dotnet/csharp/roslyn-sdk/source-generators-overview | IIncrementalGenerator recommended over ISourceGenerator. |
+| **Incremental Generators Cookbook** | https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md | Performance patterns, value type data models, equatability. |
+| **Logging Source Gen** | https://learn.microsoft.com/en-us/dotnet/core/extensions/logger-message-generator | Compile-time logging for high-performance structured logging. |
+| **Regex Source Generators** | https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-source-generators | AOT-friendly regex compilation. |
+
+### Enforcement
+
+Most guidelines can be enforced via:
+- **EditorConfig** files (`.editorconfig`)
+- **.NET Code Analyzers** (`Microsoft.CodeAnalysis.NetAnalyzers 10.0.100`)
+- **StyleCop.Analyzers**, **Roslynator**, **SonarAnalyzer** (third-party)
+- **Visual Studio / VS Code** integration
+
+Skills should reference these guidelines where applicable and recommend the appropriate analyzers/enforcement mechanisms.
+
+---
+
 ## Current .NET Landscape (Feb 2026)
 
 ### Version Matrix
