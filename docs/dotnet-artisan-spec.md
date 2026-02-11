@@ -19,6 +19,72 @@
 4. **Polyfill-forward**: Use PolySharp and SimonCropp/Polyfill to bring latest language features to older target frameworks
 5. **AOT-friendly**: Prefer source-generator-based approaches over reflection throughout
 6. **Cross-agent**: Use Agent Skills open standard (SKILL.md) as canonical format; generate per-agent outputs via build pipeline for Claude Code plugin, Copilot instructions, and Codex AGENTS.md
+7. **No deprecated patterns**: Skills must never suggest deprecated approaches (e.g., Microsoft.Extensions.Http.Polly, Swashbuckle for new projects)
+8. **Context-aware loading**: Minimize context bloat by loading skills progressively based on actual task needs
+
+---
+
+## Agent Usage Flow
+
+### Planning Mode (when in planning, flow-next plan/interview, or explicit plan mode)
+1. Agent detects .NET project (reads .csproj, TFM, global.json, Directory.Build.props)
+2. Advisor/router skill loads, understands full skill catalog
+3. Advisor identifies relevant skills for the task at hand
+4. Agent loads those skills + follows cross-references to related skills
+5. Agent presents plan to user incorporating skill guidance
+6. On approval, execution proceeds with skills already loaded
+
+### Implementation Mode (when coding, fixing, implementing)
+1. Agent is working on a task
+2. As it encounters .NET patterns, skill descriptions auto-match via progressive disclosure
+3. Relevant skills load progressively (no upfront context bloat)
+4. Skills cross-reference each other: "if you're doing X, also load Y"
+5. Hooks fire post-edit: format, validate, suggest tests
+6. Agent follows skill guidance automatically without user intervention
+
+### Key Behaviors
+- Version detection runs first in both modes
+- Skills adapt output based on detected TFM (net8.0 vs net10.0 vs net11.0)
+- Preview features are used when project allows them (detected from LangVersion, TFM)
+- Agents never suggest deprecated patterns
+- Cross-agent routing: equivalent routing instructions generated for Copilot and Codex
+
+---
+
+## Migration from Existing dotnet-skills
+
+**Approach:** Start fresh with our own structure and style. Selectively use high-quality content from [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) as a starting reference where applicable. No Akka content (too domain-specific). Acknowledge in README acknowledgements section.
+
+**What to reference (selectively):**
+- Performance patterns and benchmark design
+- Testing patterns (Testcontainers, Playwright, snapshot testing)
+- C# coding standards foundations
+- Project structure conventions
+
+**What to skip entirely:**
+- Akka.NET content (5 skills, 1 agent) - too domain-specific
+- Aspire-specific content - we'll maintain awareness but not deep coverage
+- DocFX specialist agent - we'll cover modern doc tooling instead
+
+**What to rewrite completely:**
+- Serialization (needs AOT/source-gen focus)
+- Package management (needs modern CPM focus)
+- All architecture patterns (needs to be practical, not academic)
+
+---
+
+## Build Pipeline
+
+### Inner Loop (dotnet tool)
+- `dotnet tool` for local development that generates per-agent outputs
+- Validates skill format, frontmatter, cross-references
+- Generates dist/ outputs for testing locally
+
+### Publishing (GitHub Action)
+- Runs on push/release
+- Generates dist/claude/, dist/copilot/, dist/codex/
+- Publishes to Claude Code marketplace
+- Creates GitHub Release with all artifacts
 
 ---
 
