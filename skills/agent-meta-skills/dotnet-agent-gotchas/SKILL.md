@@ -5,11 +5,15 @@ description: "WHEN generating or modifying .NET code. Common mistakes AI agents 
 
 # dotnet-agent-gotchas
 
+## Overview / Scope Boundary
+
 Common mistakes AI agents make when generating or modifying .NET code, organized by category. Each category provides a brief warning, anti-pattern code, corrected code, and a cross-reference to the canonical skill that owns the deep guidance. This skill does NOT provide full implementation walkthroughs -- it surfaces the mistake and points to the right skill.
 
 **Out of scope:** Deep async/await patterns (owned by [skill:dotnet-csharp-async-patterns]), full dependency injection guidance (owned by [skill:dotnet-csharp-dependency-injection]), NRT usage patterns (owned by [skill:dotnet-csharp-nullable-reference-types]), source generator authoring (owned by [skill:dotnet-csharp-source-generators]), test framework features (owned by [skill:dotnet-testing-strategy]), security vulnerability mitigation (owned by [skill:dotnet-security-owasp]).
 
-**Prerequisites:** .NET 8.0+ SDK. Familiarity with SDK-style projects and C# language features.
+## Prerequisites
+
+.NET 8.0+ SDK. Familiarity with SDK-style projects and C# language features.
 
 Cross-references: [skill:dotnet-csharp-async-patterns], [skill:dotnet-csharp-dependency-injection], [skill:dotnet-csharp-nullable-reference-types], [skill:dotnet-csharp-source-generators], [skill:dotnet-testing-strategy], [skill:dotnet-security-owasp].
 

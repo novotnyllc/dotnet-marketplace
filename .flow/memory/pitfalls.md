@@ -117,3 +117,6 @@ Use BinaryPrimitives (fixed endianness) instead of BitConverter (host-endian) wh
 
 ## 2026-02-12 manual [pitfall]
 Acceptance criteria must explicitly test EVERY scope item — reviewers flag any scope bullet not mirrored in AC as a gap
+
+## 2026-02-12 manual [pitfall]
+When documenting package replacements (e.g. Swashbuckle->OpenAPI), say 'preferred/default' not 'deprecated' unless the package is formally deprecated -- overstating removal misleads agents into breaking valid setups

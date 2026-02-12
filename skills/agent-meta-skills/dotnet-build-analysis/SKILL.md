@@ -5,11 +5,15 @@ description: "WHEN interpreting MSBuild output, NuGet errors, or analyzer warnin
 
 # dotnet-build-analysis
 
+## Overview / Scope Boundary
+
 Help agents interpret and act on MSBuild build output. Covers error code prefixes, NuGet restore failures, analyzer warning interpretation, multi-targeting build differences, and "works locally, fails in CI" diagnosis patterns. Each subsection includes example output, diagnosis steps, and a fix pattern.
 
 **Out of scope:** Writing or modifying .csproj files (owned by [skill:dotnet-csproj-reading]). Project structure decisions (owned by [skill:dotnet-project-structure]). Common agent code mistakes (owned by [skill:dotnet-agent-gotchas]).
 
-**Prerequisites:** .NET 8.0+ SDK. MSBuild (included with .NET SDK). Understanding of SDK-style project format.
+## Prerequisites
+
+.NET 8.0+ SDK. MSBuild (included with .NET SDK). Understanding of SDK-style project format.
 
 Cross-references: [skill:dotnet-agent-gotchas] for common code mistakes that cause build errors, [skill:dotnet-csproj-reading] for project file structure and modification, [skill:dotnet-project-structure] for project organization and SDK selection.
 

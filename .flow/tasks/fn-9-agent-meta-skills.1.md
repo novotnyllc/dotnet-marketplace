@@ -43,9 +43,8 @@ Both skills follow the required section structure: frontmatter, overview/scope, 
 - [ ] All 3 required outbound cross-refs present per matrix
 
 ## Done summary
-TBD
-
+Created dotnet-agent-gotchas skill (9 mistake categories with anti-pattern/corrected code and cross-references) and dotnet-build-analysis skill (5 subsections covering error code prefixes, NuGet restore failures, analyzer warnings, multi-targeting output, and CI drift patterns). Both include Slopwatch anti-patterns sections and full cross-reference matrices per spec.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 40c34e6, 2a9bcad
+- Tests: grep -c '^##' gotchas SKILL.md, grep cross-ref matrix validation, epic quick commands validation
 - PRs:
