@@ -55,10 +55,10 @@ Scan `Directory.Packages.props` (or individual `.csproj` files) for packages tha
 | `Microsoft.Extensions.Http.Polly` | `Microsoft.Extensions.Http.Resilience` | .NET 8 |
 | `Newtonsoft.Json` (new projects) | `System.Text.Json` | .NET Core 3.0+ |
 | `Microsoft.AspNetCore.Mvc.NewtonsoftJson` | Built-in STJ | .NET Core 3.0+ |
-| `Swashbuckle.AspNetCore` | Built-in OpenAPI (`Microsoft.AspNetCore.OpenApi`) | .NET 9 |
-| `NSwag.AspNetCore` | Built-in OpenAPI | .NET 9 |
+| `Swashbuckle.AspNetCore` | Built-in OpenAPI (`Microsoft.AspNetCore.OpenApi`) for document generation; keep Swashbuckle if using Swagger UI, filters, or codegen | .NET 9 |
+| `NSwag.AspNetCore` | Built-in OpenAPI for document generation; keep NSwag if using client generation or Swagger UI features | .NET 9 |
 | `Microsoft.Extensions.Logging.Log4Net.AspNetCore` | Built-in logging + `Serilog` or `OpenTelemetry` | .NET Core 2.0+ |
-| `Microsoft.AspNetCore.Authentication.JwtBearer` (old package) | `Microsoft.AspNetCore.Authentication.JwtBearer` (framework ref) | .NET Core 3.0+ |
+| `Microsoft.AspNetCore.Authentication.JwtBearer` (explicit NuGet package) | Remove explicit PackageReference — included in `Microsoft.AspNetCore.App` shared framework | .NET Core 3.0+ |
 | `System.Data.SqlClient` | `Microsoft.Data.SqlClient` | .NET Core 3.0+ |
 | `Microsoft.Azure.Storage.*` | `Azure.Storage.*` | 2020+ |
 | `WindowsAzure.Storage` | `Azure.Storage.Blobs` / `Azure.Storage.Queues` | 2020+ |
@@ -73,7 +73,7 @@ To scan for deprecated packages:
 ```bash
 # List all package references
 grep -rh "PackageVersion\|PackageReference" \
-  Directory.Packages.props **//*.csproj 2>/dev/null | \
+  Directory.Packages.props $(find . -name "*.csproj") 2>/dev/null | \
   grep -i "Include=" | sort -u
 ```
 
@@ -187,8 +187,7 @@ Check for the absence of recommended build infrastructure:
 | `new ClassName()` with obvious type | Target-typed `new()` | C# 9 |
 | Block-scoped namespaces | File-scoped namespaces | C# 10 |
 | `record class` explicit constructor | `record` with positional parameters | C# 10 |
-| `string.IsNullOrEmpty(s)` | `string.IsNullOrEmpty(s)` (still valid) or pattern matching | C# 11+ |
-| `nameof` + manual string | Raw string literals for multi-line | C# 11 |
+| Manual string concatenation for multi-line | Raw string literals (`"""..."""`) | C# 11 |
 | Explicit interface dispatch for `INumber<T>` | Generic math interfaces | C# 11 |
 | `[Flags]` enum manual checks | Improved enum pattern matching | C# 11+ |
 | Lambda without natural type | Natural function types | C# 10+ |

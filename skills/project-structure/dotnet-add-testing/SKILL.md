@@ -272,9 +272,10 @@ dotnet add tests/MyApp.Api.IntegrationTests/MyApp.Api.IntegrationTests.csproj \
   reference src/MyApp.Api/MyApp.Api.csproj
 ```
 
-Add integration test packages to CPM:
+Add integration test packages to CPM (match the `Microsoft.AspNetCore.Mvc.Testing` major version to the target framework -- e.g., `8.x` for `net8.0`, `9.x` for `net9.0`, `10.x` for `net10.0`):
 
 ```xml
+<!-- Version must match the project's target framework major version -->
 <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
 <PackageVersion Include="Testcontainers" Version="4.3.0" />
 ```
