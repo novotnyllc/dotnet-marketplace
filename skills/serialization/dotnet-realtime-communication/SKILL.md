@@ -122,10 +122,10 @@ Inject `IHubContext` to send messages from background services or controllers:
 public sealed class OrderService(
     IHubContext<NotificationHub, INotificationClient> hubContext)
 {
-    public async Task UpdateOrderStatus(int orderId, string status)
+    public async Task UpdateOrderStatus(int orderId, string userId, string status)
     {
         // Send to specific user group
-        await hubContext.Clients.Group($"user:{order.UserId}")
+        await hubContext.Clients.Group($"user:{userId}")
             .OrderStatusChanged(orderId, status);
     }
 }
@@ -283,7 +283,8 @@ public sealed class CalculatorService
                : Task.FromResult(a / b);
 }
 
-// Wire up over a WebSocket
+// Wire up over a WebSocket -- UseWebSockets() is required for upgrade handling
+app.UseWebSockets();
 app.Map("/jsonrpc", async (HttpContext context) =>
 {
     if (!context.WebSockets.IsWebSocketRequest)
