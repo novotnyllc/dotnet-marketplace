@@ -29,7 +29,11 @@
     "skills/architecture/dotnet-efcore-architecture",
     "skills/architecture/dotnet-data-access-strategy",
     "skills/architecture/dotnet-containers",
-    "skills/architecture/dotnet-container-deployment"
+    "skills/architecture/dotnet-container-deployment",
+    "skills/serialization/dotnet-grpc",
+    "skills/serialization/dotnet-realtime-communication",
+    "skills/serialization/dotnet-serialization",
+    "skills/serialization/dotnet-service-communication"
   ],
   "agents": [
     "agents/dotnet-architect.md",

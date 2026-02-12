@@ -21,9 +21,14 @@ Create two skills: `dotnet-realtime-communication` (SignalR, JSON-RPC 2.0, Serve
 - [ ] Grep validation: `[skill:dotnet-integration-testing]` plus `TODO(fn-7)` present in all 4 skill files: `skills/serialization/dotnet-serialization/SKILL.md`, `skills/serialization/dotnet-grpc/SKILL.md`, `skills/serialization/dotnet-realtime-communication/SKILL.md`, `skills/serialization/dotnet-service-communication/SKILL.md`
 
 ## Done summary
-TBD
+Created `dotnet-realtime-communication` and `dotnet-service-communication` skills, registered all 4 serialization skills in plugin.json.
 
+- `dotnet-realtime-communication`: Compares SignalR, SSE (.NET 10 built-in), JSON-RPC 2.0, gRPC streaming with decision guidance, code examples, and transport patterns
+- `dotnet-service-communication`: Decision matrix mapping requirements to gRPC, SignalR, SSE, JSON-RPC, REST with routing to deeper skills. Decision flowchart and architecture patterns.
+- All 4 skills registered in plugin.json grouped under `skills/serialization/*`, alphabetical
+- All grep validations pass: `[skill:dotnet-native-aot]` + `TODO(fn-16)` in all 4, `[skill:dotnet-integration-testing]` + `TODO(fn-7)` in all 4, out-of-scope boundaries present, fn-12 boundary in realtime skill, cross-refs validated, name uniqueness confirmed
+- `validate-skills.sh` passes (0 errors)
 ## Evidence
 - Commits:
-- Tests:
+- Tests: ./scripts/validate-skills.sh: PASSED (0 errors), grep [skill:dotnet-native-aot]: 4/4 skills, grep TODO(fn-16): 4/4 skills, grep TODO(fn-7): 4/4 skills, grep [skill:dotnet-integration-testing]: 4/4 skills, name uniqueness: no duplicates, fn-12 boundary in realtime skill: present, out-of-scope in all 4 skills: confirmed, plugin.json: 4 serialization skills registered alphabetically
 - PRs:
