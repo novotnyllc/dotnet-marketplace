@@ -41,5 +41,8 @@ Create the `dotnet-project-analysis` skill that helps agents understand .NET sol
 - [ ] Cross-references use `[skill:dotnet-version-detection]` syntax for TFM info
 
 ## Done summary
-
+Created dotnet-project-analysis skill with 7-step analysis workflow covering solution discovery (.sln/.slnx), project type identification (web, console, lib, test, Blazor, MAUI, Uno), dependency graph mapping, Directory.Build.props/targets hierarchy, Central Package Management detection with hierarchical search, additional config files (editorconfig, nuget.config, dotnet-tools), and entry point guidance per project type.
 ## Evidence
+- Commits: 4457ba7e5de1544411df0c0d043f4a956d1e430d
+- Tests: jq empty .claude-plugin/plugin.json
+- PRs:
