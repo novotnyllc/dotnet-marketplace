@@ -479,7 +479,7 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
         var userId = httpContext.User.FindFirst("sub")?.Value ?? "anonymous";
         var scopedKey = $"{route}:{userId}:{clientKey}";
 
-        // Check for completed response (replay)
+        // Check for existing record (completed = replay, in-progress = reject)
         var existing = await db.IdempotencyRecords
             .FirstOrDefaultAsync(r => r.Key == scopedKey);
 
@@ -491,9 +491,16 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
                 statusCode: existing.StatusCode);
         }
 
+        if (existing is { IsCompleted: false })
+        {
+            // Another request claimed this key but hasn't completed yet.
+            // Reject to prevent duplicate execution.
+            return Results.Problem(
+                "Duplicate request in progress", statusCode: 409);
+        }
+
         // Atomic claim: insert with unique constraint -- concurrent duplicate
         // requests will throw DbUpdateException and get a 409 Conflict
-        if (existing is null)
         {
             var record = new IdempotencyRecord
             {
@@ -537,10 +544,12 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
 ```
 
 **Key design choices:**
+- **Three states**: no record (claim it), in-progress (reject 409), completed (replay cached response)
 - Unique constraint on `Key` column provides atomic claim without distributed locks
 - Scoped key (`route:userId:clientKey`) prevents cross-endpoint and cross-tenant collisions
 - Response envelope stores serialized body + status code + content type (not `IResult` references)
-- Incomplete records (claimed but not completed) return 409 to concurrent duplicates
+- In-progress records (claimed but not completed) return 409 to concurrent duplicates
+- Consider adding a stale-record cleanup job to handle abandoned in-progress records (e.g., process crashed mid-execution)
 
 ### Transactional Outbox Pattern
 

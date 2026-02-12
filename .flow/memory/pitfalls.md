@@ -60,3 +60,6 @@ ASP.NET shared-framework NuGet packages (e.g. Microsoft.AspNetCore.Mvc.Testing) 
 
 ## 2026-02-12 manual [pitfall]
 Cross-reference skill IDs must use canonical names from target epic (e.g., dotnet-csharp-async-patterns not dotnet-async-patterns) — verify with grep against actual SKILL.md name: fields
+
+## 2026-02-12 manual [pitfall]
+Idempotency implementations must handle three states (no-record, in-progress, completed) -- check-then-act without guarding the in-progress state allows concurrent duplicate execution
