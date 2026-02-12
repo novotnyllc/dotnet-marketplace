@@ -4,19 +4,20 @@
 #
 # Checks:
 #   1. Required frontmatter fields: name, description
-#   2. YAML frontmatter is well-formed (parsed via yaml.safe_load or regex fallback)
+#   2. YAML frontmatter is well-formed (parsed via a strict Python parser)
 #   3. [skill:name] cross-references point to existing skill directories
 #   4. Context budget tracking with stable output keys
 #
 # Design constraints:
-#   - Single-pass scan per file, one batched python3 call for YAML validation
+#   - One batched python3 call does all parsing (YAML validation + field extraction + cross-refs)
+#   - Bash handles only budget math, reporting, and exit codes
 #   - Runs in <5 seconds
 #   - Same commands locally and in CI
 #   - Exits non-zero on: missing required frontmatter, broken cross-references, BUDGET_STATUS=FAIL
 #
 # Requirements:
 #   - Bash 4+ (uses associative arrays)
-#   - python3 (for YAML frontmatter validation)
+#   - python3 (for frontmatter parsing -- no external packages needed)
 #
 # Environment variables:
 #   ALLOW_PLANNED_REFS=1  -- Downgrade unresolved cross-references from errors to warnings.
@@ -75,100 +76,182 @@ for skill_file in "${skill_files[@]}"; do
     valid_skill_dirs["$skill_dirname"]=1
 done
 
-# --- Batched YAML validation (single python3 invocation for all files) ---
-# Uses yaml.safe_load if PyYAML is available; falls back to regex-based validation.
-# Outputs one line per file: "OK:<path>" or "FAIL:<path>:<reason>"
-declare -A yaml_valid_map
-yaml_output=$(python3 -c '
-import sys, re
+# --- Batched Python3 parsing (single invocation for all files) ---
+# Parses frontmatter, extracts fields, and collects cross-references.
+# All YAML validation and field extraction happens here for deterministic behavior.
+#
+# Output format (one JSON object per line, newline-delimited):
+#   {"path":"...","valid":true,"name":"...","description":"...","desc_len":N,"refs":["..."]}
+#   {"path":"...","valid":false,"error":"..."}
+PARSE_SCRIPT=$(mktemp)
+trap 'rm -f "$PARSE_SCRIPT"' EXIT
+cat > "$PARSE_SCRIPT" << 'PYEOF'
+import sys, os, re, json
 
-# Try to use PyYAML for real YAML parsing; fall back to regex if unavailable
-try:
-    import yaml
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
+def parse_yaml_frontmatter(text):
+    """Parse simple YAML frontmatter (flat key: value mappings).
 
-def validate_regex(fm_text, path):
-    """Fallback: validate frontmatter as flat key: value YAML via regex."""
-    for ln_num, fm_line in enumerate(fm_text.split("\n"), 2):
-        stripped = fm_line.strip()
+    Handles the YAML subset used in SKILL.md files:
+    - Simple key: value pairs
+    - Quoted string values (single and double)
+    - Unquoted scalar values (strings, booleans, numbers)
+    - Block scalar indicators (| and >)
+    - Comments and blank lines
+
+    Returns a dict of parsed key-value pairs.
+    Raises ValueError on malformed input.
+    """
+    result = {}
+    lines = text.split("\n")
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+
+        # Skip blank lines and comments
         if not stripped or stripped.startswith("#"):
+            i += 1
             continue
-        if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_-]*\s*:", stripped):
-            return f"line {ln_num}: invalid YAML syntax: {stripped[:60]}"
-        colon_pos = stripped.index(":")
-        value = stripped[colon_pos+1:].strip()
-        if value.startswith("\"") and not value.endswith("\""):
-            return f"line {ln_num}: unclosed double quote"
-        if value.startswith("'"'"'") and not value.endswith("'"'"'"):
-            return f"line {ln_num}: unclosed single quote"
-    return None
 
-results = []
-for path in sys.argv[1:]:
+        # Must be key: value (or key:)
+        m = re.match(r'^([a-zA-Z_][a-zA-Z0-9_-]*)\s*:\s*(.*)', stripped)
+        if not m:
+            raise ValueError(f"invalid YAML syntax at line {i+2}: {stripped[:60]}")
+
+        key = m.group(1)
+        raw_value = m.group(2)
+
+        # Handle block scalars (| and >)
+        if raw_value in ("|", ">", "|+", "|-", ">+", ">-"):
+            # Collect indented continuation lines
+            block_lines = []
+            i += 1
+            while i < len(lines):
+                if lines[i].strip() == "" or (len(lines[i]) > 0 and lines[i][0] in (" ", "\t")):
+                    block_lines.append(lines[i])
+                    i += 1
+                else:
+                    break
+            # Dedent
+            if block_lines:
+                indent = len(block_lines[0]) - len(block_lines[0].lstrip())
+                value = "\n".join(l[indent:] if len(l) > indent else "" for l in block_lines)
+            else:
+                value = ""
+            if raw_value.startswith(">"):
+                value = re.sub(r'(?<!\n)\n(?!\n)', ' ', value)
+            result[key] = value.strip()
+            continue
+
+        # Handle quoted strings
+        if raw_value.startswith('"'):
+            if raw_value.endswith('"') and len(raw_value) > 1:
+                result[key] = raw_value[1:-1]
+            else:
+                raise ValueError(f"unclosed double quote at line {i+2}")
+            i += 1
+            continue
+
+        if raw_value.startswith("'"):
+            if raw_value.endswith("'") and len(raw_value) > 1:
+                result[key] = raw_value[1:-1]
+            else:
+                raise ValueError(f"unclosed single quote at line {i+2}")
+            i += 1
+            continue
+
+        # Handle booleans and other scalars
+        if raw_value.lower() in ("true", "yes"):
+            result[key] = True
+        elif raw_value.lower() in ("false", "no"):
+            result[key] = False
+        elif raw_value.lower() in ("null", "~", ""):
+            result[key] = None
+        else:
+            result[key] = raw_value
+
+        i += 1
+
+    return result
+
+
+def extract_refs(body_text):
+    """Extract unique [skill:name] cross-references from body text."""
+    return list(dict.fromkeys(re.findall(r'\[skill:([a-zA-Z0-9_-]+)\]', body_text)))
+
+
+def process_file(path):
+    """Process a single SKILL.md file. Returns a dict with results."""
     try:
         with open(path, "r", encoding="utf-8") as f:
             content = f.read()
-        # Normalize CRLF
-        content = content.replace("\r\n", "\n").replace("\r", "\n")
-        lines = content.split("\n")
-        if not lines or lines[0].strip() != "---":
-            results.append(f"FAIL:{path}:missing opening ---")
-            continue
-        # Find closing ---
-        fm_lines = []
-        found_close = False
-        for i, line in enumerate(lines[1:], 1):
-            if line.strip() == "---":
-                found_close = True
-                break
-            fm_lines.append(line)
-        if not found_close:
-            results.append(f"FAIL:{path}:missing closing ---")
-            continue
-        fm_text = "\n".join(fm_lines)
-        # Validate YAML
-        if HAS_YAML:
-            try:
-                parsed = yaml.safe_load(fm_text)
-                if parsed is None:
-                    results.append(f"FAIL:{path}:frontmatter is empty")
-                    continue
-                if not isinstance(parsed, dict):
-                    results.append(f"FAIL:{path}:frontmatter is not a YAML mapping")
-                    continue
-                results.append(f"OK:{path}")
-            except yaml.YAMLError as e:
-                results.append(f"FAIL:{path}:{e}")
-        else:
-            err = validate_regex(fm_text, path)
-            if err:
-                results.append(f"FAIL:{path}:{err}")
-            else:
-                results.append(f"OK:{path}")
     except Exception as e:
-        results.append(f"FAIL:{path}:{e}")
+        return {"path": path, "valid": False, "error": str(e)}
 
-for r in results:
-    print(r)
-' "${skill_files[@]}" 2>&1)
+    # Normalize CRLF to LF
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
+    lines = content.split("\n")
 
-while IFS= read -r yaml_line; do
-    if [[ "$yaml_line" == OK:* ]]; then
-        fpath="${yaml_line#OK:}"
-        yaml_valid_map["$fpath"]="ok"
-    elif [[ "$yaml_line" == FAIL:* ]]; then
-        rest="${yaml_line#FAIL:}"
-        # Extract path (everything before second colon-delimited field)
-        fpath="${rest%%:*}"
-        reason="${rest#*:}"
-        yaml_valid_map["$fpath"]="fail"
-        rel="${fpath#"$REPO_ROOT/"}"
-        echo "ERROR: $rel -- invalid YAML frontmatter: $reason"
-        errors=$((errors + 1))
-    fi
-done <<< "$yaml_output"
+    # Check for opening delimiter
+    if not lines or lines[0].strip() != "---":
+        return {"path": path, "valid": False, "error": "missing opening ---"}
+
+    # Find closing delimiter and extract frontmatter
+    fm_lines = []
+    body_start = None
+    for i, line in enumerate(lines[1:], 1):
+        if line.strip() == "---":
+            body_start = i + 1
+            break
+        fm_lines.append(line)
+
+    if body_start is None:
+        return {"path": path, "valid": False, "error": "missing closing ---"}
+
+    fm_text = "\n".join(fm_lines)
+
+    # Parse YAML frontmatter
+    try:
+        parsed = parse_yaml_frontmatter(fm_text)
+    except ValueError as e:
+        return {"path": path, "valid": False, "error": str(e)}
+
+    if not isinstance(parsed, dict):
+        return {"path": path, "valid": False, "error": "frontmatter is not a mapping"}
+
+    # Extract fields from parsed YAML (not regex)
+    name = parsed.get("name", "")
+    description = parsed.get("description", "")
+
+    if isinstance(name, bool):
+        name = str(name).lower()
+    if isinstance(description, bool):
+        description = str(description).lower()
+
+    name = str(name) if name else ""
+    description = str(description) if description else ""
+
+    # Extract cross-references from body
+    body_text = "\n".join(lines[body_start:])
+    refs = extract_refs(body_text)
+
+    return {
+        "path": path,
+        "valid": True,
+        "name": name,
+        "description": description,
+        "desc_len": len(description),
+        "refs": refs,
+    }
+
+
+# Process all files passed as arguments
+skill_paths = sys.argv[1:]
+for path in skill_paths:
+    result = process_file(path)
+    print(json.dumps(result))
+PYEOF
+python_output=$(python3 "$PARSE_SCRIPT" "${skill_files[@]}")
 
 echo "=== SKILL.md Validation ==="
 echo ""
@@ -178,128 +261,40 @@ if [ "${ALLOW_PLANNED_REFS:-0}" = "1" ]; then
     echo ""
 fi
 
-# Validate each SKILL.md file (single-pass: frontmatter + cross-refs in one read)
-for skill_file in "${skill_files[@]}"; do
-    skill_dir="$(dirname "$skill_file")"
-    skill_dirname="$(basename "$skill_dir")"
-    rel_path="${skill_file#"$REPO_ROOT/"}"
-
-    # Skip files that failed YAML validation (already reported above)
-    if [ "${yaml_valid_map[$skill_file]:-}" = "fail" ]; then
+# Process Python output (one JSON object per line)
+while IFS= read -r json_line; do
+    if [ -z "$json_line" ]; then
         continue
     fi
 
-    # Read the file content, normalize CRLF to LF
-    content="$(<"$skill_file")"
-    content="${content//$'\r'/}"
+    # Parse JSON fields using jq (already a dependency from validate-marketplace.sh)
+    valid=$(echo "$json_line" | jq -r '.valid')
+    fpath=$(echo "$json_line" | jq -r '.path')
+    rel_path="${fpath#"$REPO_ROOT/"}"
 
-    # Check for frontmatter delimiters (must start with --- and have closing ---)
-    if [[ "$content" != ---* ]]; then
-        echo "ERROR: $rel_path -- missing YAML frontmatter (file does not start with ---)"
+    if [ "$valid" = "false" ]; then
+        err_msg=$(echo "$json_line" | jq -r '.error')
+        echo "ERROR: $rel_path -- invalid YAML frontmatter: $err_msg"
         errors=$((errors + 1))
         continue
     fi
 
-    # Single-pass: extract frontmatter AND collect cross-references from the body
-    in_frontmatter=0
-    frontmatter=""
-    found_close=0
-    line_num=0
-    declare -A seen_refs=()
-    ref_list=()
+    # Extract parsed fields
+    name=$(echo "$json_line" | jq -r '.name')
+    description=$(echo "$json_line" | jq -r '.description')
+    desc_len=$(echo "$json_line" | jq -r '.desc_len')
 
-    while IFS= read -r line; do
-        line_num=$((line_num + 1))
-        if [ "$line_num" -eq 1 ]; then
-            if [[ "$line" == "---" ]]; then
-                in_frontmatter=1
-                continue
-            fi
-        elif [ "$in_frontmatter" -eq 1 ]; then
-            if [[ "$line" == "---" ]]; then
-                found_close=1
-                in_frontmatter=0
-                continue
-            fi
-            frontmatter+="$line"$'\n'
-            continue
-        fi
-
-        # Body line: extract [skill:name] cross-references via regex
-        rest="$line"
-        while [[ "$rest" =~ \[skill:([a-zA-Z0-9_-]+)\] ]]; do
-            ref_name="${BASH_REMATCH[1]}"
-            if [ -z "${seen_refs[$ref_name]+_}" ]; then
-                seen_refs["$ref_name"]=1
-                ref_list+=("$ref_name")
-            fi
-            # Advance past the match to find additional refs on the same line
-            rest="${rest#*"[skill:${ref_name}]"}"
-        done
-    done <<< "$content"
-
-    if [ "$found_close" -eq 0 ]; then
-        echo "ERROR: $rel_path -- malformed YAML frontmatter (no closing ---)"
-        errors=$((errors + 1))
-        unset seen_refs
-        continue
-    fi
-
-    # Check required field: name
-    has_name=0
-    name_value=""
-    while IFS= read -r fm_line; do
-        if [[ "$fm_line" =~ ^name:\ *(.*) ]]; then
-            has_name=1
-            name_value="${BASH_REMATCH[1]}"
-            # Strip quotes if present
-            name_value="${name_value#\"}"
-            name_value="${name_value%\"}"
-            name_value="${name_value#\'}"
-            name_value="${name_value%\'}"
-        fi
-    done <<< "$frontmatter"
-
-    if [ "$has_name" -eq 0 ] || [ -z "$name_value" ]; then
+    # Validate required field: name
+    if [ -z "$name" ]; then
         echo "ERROR: $rel_path -- missing required frontmatter field: name"
         errors=$((errors + 1))
     fi
 
-    # Check required field: description
-    has_description=0
-    description_value=""
-    # Description may be on one line or span multiple lines with quotes
-    in_desc=0
-    while IFS= read -r fm_line; do
-        if [ "$in_desc" -eq 1 ]; then
-            # Continuation of multi-line description
-            if [[ "$fm_line" == *'"' ]] || [[ "$fm_line" == *"'" ]]; then
-                description_value+=" $fm_line"
-                in_desc=0
-            else
-                description_value+=" $fm_line"
-            fi
-        elif [[ "$fm_line" =~ ^description:\ *(.*) ]]; then
-            has_description=1
-            description_value="${BASH_REMATCH[1]}"
-            # Check if it's a multi-line value starting with a quote but not closing
-            if [[ "$description_value" == '"'* ]] && [[ "$description_value" != *'"' ]]; then
-                in_desc=1
-            fi
-        fi
-    done <<< "$frontmatter"
-
-    if [ "$has_description" -eq 0 ] || [ -z "$description_value" ]; then
+    # Validate required field: description
+    if [ -z "$description" ]; then
         echo "ERROR: $rel_path -- missing required frontmatter field: description"
         errors=$((errors + 1))
     else
-        # Strip surrounding quotes for character counting
-        desc_stripped="$description_value"
-        desc_stripped="${desc_stripped#\"}"
-        desc_stripped="${desc_stripped%\"}"
-        desc_stripped="${desc_stripped#\'}"
-        desc_stripped="${desc_stripped%\'}"
-        desc_len=${#desc_stripped}
         total_desc_chars=$((total_desc_chars + desc_len))
         skill_count=$((skill_count + 1))
 
@@ -309,8 +304,11 @@ for skill_file in "${skill_files[@]}"; do
         fi
     fi
 
-    # Validate collected [skill:name] cross-references
-    for ref_name in "${ref_list[@]}"; do
+    # Validate cross-references
+    while IFS= read -r ref_name; do
+        if [ -z "$ref_name" ]; then
+            continue
+        fi
         if [ -z "${valid_skill_dirs[$ref_name]+_}" ]; then
             if [ "${ALLOW_PLANNED_REFS:-0}" = "1" ]; then
                 echo "WARN:  $rel_path -- unresolved cross-reference [skill:$ref_name] (planned skill, no directory yet)"
@@ -320,11 +318,9 @@ for skill_file in "${skill_files[@]}"; do
                 errors=$((errors + 1))
             fi
         fi
-    done
+    done < <(echo "$json_line" | jq -r '.refs[]' 2>/dev/null)
 
-    unset seen_refs
-
-done
+done <<< "$python_output"
 
 echo ""
 echo "=== Budget Report ==="
