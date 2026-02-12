@@ -311,11 +311,16 @@ steps:
       path: $(HOME)/.cache/ms-playwright
       restoreKeys: |
         playwright | "$(Agent.OS)"
+      cacheHitVar: PLAYWRIGHT_CACHE_RESTORED
     displayName: Cache Playwright browsers
 
   - script: pwsh tests/MyApp.E2E/bin/Debug/net8.0/playwright.ps1 install --with-deps
-    condition: ne(variables.CACHE_RESTORED, 'true')
+    condition: ne(variables.PLAYWRIGHT_CACHE_RESTORED, 'true')
     displayName: Install Playwright browsers
+
+  - script: pwsh tests/MyApp.E2E/bin/Debug/net8.0/playwright.ps1 install-deps
+    condition: eq(variables.PLAYWRIGHT_CACHE_RESTORED, 'true')
+    displayName: Install Playwright system deps (cached browsers)
 
   - script: dotnet test tests/MyApp.E2E/
     displayName: Run E2E tests

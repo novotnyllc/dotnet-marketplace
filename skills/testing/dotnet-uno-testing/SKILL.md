@@ -52,7 +52,7 @@ public class UnoWasmFixture : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         // Start the WASM app (dotnet run or serve the published output)
-        _serverProcess = StartWasmServer();
+        _serverProcess = await StartWasmServerAsync();
 
         Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
         Browser = await Playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
@@ -90,7 +90,7 @@ public class UnoWasmFixture : IAsyncLifetime
             new() { Timeout = 15_000 });
     }
 
-    private static Process StartWasmServer()
+    private static async Task<Process> StartWasmServerAsync()
     {
         var process = new Process
         {
@@ -105,9 +105,22 @@ public class UnoWasmFixture : IAsyncLifetime
         };
         process.Start();
 
-        // Wait for server to be ready (watch stdout for listening URL)
-        // In production, use a health check endpoint or retry loop
-        Thread.Sleep(5000); // simplified -- use a proper readiness check
+        // Wait for server to be ready by probing the health endpoint
+        using var httpClient = new HttpClient();
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < deadline)
+        {
+            try
+            {
+                var resp = await httpClient.GetAsync("http://localhost:5000");
+                if (resp.IsSuccessStatusCode) break;
+            }
+            catch (HttpRequestException)
+            {
+                // Server not ready yet
+            }
+            await Task.Delay(500);
+        }
         return process;
     }
 }
@@ -337,4 +350,4 @@ public class LoginTestsWasm : LoginTestsBase, IClassFixture<UnoWasmFixture>
 - [Playwright for .NET](https://playwright.dev/dotnet/)
 - [Uno Platform WASM Head](https://platform.uno/docs/articles/getting-started/wizard/wasm.html)
 - [AutomationProperties in UWP/WinUI](https://learn.microsoft.com/en-us/windows/apps/design/accessibility/basic-accessibility-information)
-- [Uno Platform GitHub](https://github.com/nicknisi/uno)
+- [Uno Platform GitHub](https://github.com/unoplatform/uno)

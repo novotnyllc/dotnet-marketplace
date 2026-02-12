@@ -25,6 +25,8 @@ Cross-references: [skill:dotnet-ui-testing-core] for page object model, test sel
 <PackageReference Include="Appium.WebDriver" Version="5.*" />
 <PackageReference Include="xunit" Version="2.*" />
 <!-- Use xUnit v2 for Appium -- v3 compatibility with Appium client varies -->
+<PackageReference Include="Xunit.SkippableFact" Version="1.*" />
+<!-- Required for Skip.IfNot() in platform-conditional tests -->
 ```
 
 ### Driver Initialization
@@ -64,8 +66,9 @@ public class AppiumFixture : IAsyncLifetime
         Driver = new AppiumDriver(
             new Uri("http://localhost:4723"), options);
 
-        // Wait for app to load
-        Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        // Explicit waits only -- do not set ImplicitWait (it causes
+        // additive timeout behavior when combined with WebDriverWait)
+        Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
 
         await Task.CompletedTask;
     }
@@ -272,10 +275,11 @@ public class PlatformTests : IClassFixture<AppiumFixture>
         _driver = fixture.Driver;
     }
 
-    [Fact]
+    [SkippableFact]
     [Trait("Platform", "Android")]
     public void BackButton_Android_NavigatesBack()
     {
+        // Requires Xunit.SkippableFact package
         Skip.IfNot(TestConfig.TargetPlatform == "Android",
             "Android-only: hardware back button");
 
@@ -290,10 +294,11 @@ public class PlatformTests : IClassFixture<AppiumFixture>
         wait.Until(d => d.FindElement(MobileBy.AccessibilityId("item-list")));
     }
 
-    [Fact]
+    [SkippableFact]
     [Trait("Platform", "iOS")]
     public void SwipeToDelete_iOS_RemovesItem()
     {
+        // Requires Xunit.SkippableFact package
         Skip.IfNot(TestConfig.TargetPlatform == "iOS",
             "iOS-only: swipe gesture");
 

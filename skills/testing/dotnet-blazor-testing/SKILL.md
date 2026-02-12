@@ -201,7 +201,7 @@ public void SearchBox_TypeText_UpdatesResults()
 }
 
 [Fact]
-public void LoginForm_SubmitValid_CallsAuthService()
+public async Task LoginForm_SubmitValid_CallsAuthService()
 {
     var authService = Substitute.For<IAuthService>();
     authService.LoginAsync(Arg.Any<string>(), Arg.Any<string>())
