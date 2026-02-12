@@ -9,3 +9,9 @@ When spec requires [skill:name] cross-reference syntax, use it for ALL skill ref
 
 ## 2026-02-12 manual [pitfall]
 .NET STS lifecycle is 18 months from GA (not 12). If GA Nov 2026, STS end is ~May 2028. Always calculate from actual GA date, not release year.
+
+## 2026-02-12 manual [pitfall]
+NuGet/MSBuild config files (Directory.Packages.props, nuget.config) resolve hierarchically upward, not just at solution root. Always instruct upward search for monorepo compatibility.
+
+## 2026-02-12 manual [pitfall]
+When documenting TFM patterns for platform detection (MAUI, Uno), use version-agnostic globs (net*-android) not hardcoded versions (net10.0-android) to avoid false negatives on older/newer TFMs.
