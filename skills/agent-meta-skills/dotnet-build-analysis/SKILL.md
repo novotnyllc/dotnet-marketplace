@@ -213,10 +213,12 @@ error NU1301: Unable to load the service index for source https://pkgs.dev.azure
 **Fix pattern:**
 
 ```bash
-# Install Azure Artifacts Credential Provider (one-time)
-dotnet tool install --global artifacts-credprovider
+# Install Azure Artifacts Credential Provider (see official docs for platform-specific steps):
+# https://github.com/microsoft/artifacts-credprovider#setup
+# Windows:  iex "& { $(irm https://aka.ms/install-artifacts-credprovider.ps1) }"
+# macOS/Linux: sh -c "$(curl -fsSL https://aka.ms/install-artifacts-credprovider.sh)"
 
-# Or add credentials explicitly
+# Or add credentials explicitly to a specific source
 dotnet nuget update source MyCompany --username az --password $PAT --store-password-in-clear-text
 ```
 

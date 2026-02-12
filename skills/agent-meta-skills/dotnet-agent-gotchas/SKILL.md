@@ -71,8 +71,9 @@ See [skill:dotnet-csharp-async-patterns] for full async/await guidance including
 <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
 <!-- This breaks on net8.0 projects -->
 
-<!-- WRONG: Swashbuckle is deprecated in .NET 9+ but agents still suggest it -->
+<!-- WRONG: agents add Swashbuckle by default; .NET 9+ templates use built-in OpenAPI -->
 <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+<!-- Swashbuckle is still valid when Swagger UI is needed, but not the default choice -->
 ```
 
 ### Corrected
@@ -85,9 +86,9 @@ See [skill:dotnet-csharp-async-patterns] for full async/await guidance including
 <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 <!-- Version managed via Directory.Packages.props matching project TFM -->
 
-<!-- CORRECT: .NET 9+ uses built-in OpenAPI; only use Swashbuckle when
-     required for Swagger UI in projects that need it -->
+<!-- CORRECT: .NET 9+ templates prefer built-in OpenAPI support -->
 <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+<!-- Swashbuckle remains a valid choice when Swagger UI features are needed -->
 ```
 
 See [skill:dotnet-csproj-reading] for project file conventions and central package management guidance.
@@ -337,15 +338,14 @@ public class OrderServiceTests
 ```
 
 ```xml
-<!-- WRONG: test project missing IsTestProject property -->
+<!-- WRONG: test project missing Microsoft.NET.Test.Sdk and runner -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <!-- Missing: <IsTestProject>true</IsTestProject> implied by Sdk.Web is NOT set here -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.9.0" />
-    <!-- Missing test runner package -->
+    <!-- Missing Microsoft.NET.Test.Sdk and runner -- dotnet test will find zero tests -->
   </ItemGroup>
 </Project>
 ```
