@@ -254,6 +254,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    # Note: CMD-SHELL + curl requires a base image with shell and curl installed.
+    # Chiseled/distroless images lack both. For chiseled images, either use a
+    # non-chiseled dev target in the Dockerfile or omit the healthcheck and rely
+    # on depends_on ordering (acceptable for local dev).
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/health/live || exit 1"]
       interval: 10s

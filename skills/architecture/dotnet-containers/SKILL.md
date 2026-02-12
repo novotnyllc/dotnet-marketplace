@@ -115,8 +115,11 @@ Configure container properties in the `.csproj`:
   <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0</ContainerBaseImage>
   <ContainerImageName>myapi</ContainerImageName>
   <ContainerImageTag>$(Version)</ContainerImageTag>
-  <ContainerPort Include="8080" Type="tcp" />
 </PropertyGroup>
+
+<ItemGroup>
+  <ContainerPort Include="8080" Type="tcp" />
+</ItemGroup>
 ```
 
 ### Advanced Configuration
@@ -128,14 +131,16 @@ Configure container properties in the `.csproj`:
 
   <!-- Run as non-root user (default for chiseled images) -->
   <ContainerUser>app</ContainerUser>
+</PropertyGroup>
 
-  <!-- Set environment variables -->
+<ItemGroup>
+  <!-- Environment variables -->
   <ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://+:8080" />
   <ContainerEnvironmentVariable Include="DOTNET_RUNNING_IN_CONTAINER" Value="true" />
 
   <!-- Labels -->
   <ContainerLabel Include="org.opencontainers.image.source" Value="https://github.com/myorg/myapi" />
-</PropertyGroup>
+</ItemGroup>
 ```
 
 ### When to Use dotnet publish vs Dockerfile
