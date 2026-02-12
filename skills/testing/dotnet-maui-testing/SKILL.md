@@ -23,10 +23,8 @@ Cross-references: [skill:dotnet-ui-testing-core] for page object model, test sel
 
 ```xml
 <PackageReference Include="Appium.WebDriver" Version="5.*" />
-<PackageReference Include="xunit" Version="2.*" />
-<!-- Use xUnit v2 for Appium -- v3 compatibility with Appium client varies -->
-<PackageReference Include="Xunit.SkippableFact" Version="1.*" />
-<!-- Required for Skip.IfNot() in platform-conditional tests -->
+<PackageReference Include="xunit.v3" Version="1.*" />
+<PackageReference Include="xunit.runner.visualstudio" Version="3.*" />
 ```
 
 ### Driver Initialization
@@ -275,12 +273,12 @@ public class PlatformTests : IClassFixture<AppiumFixture>
         _driver = fixture.Driver;
     }
 
-    [SkippableFact]
+    [Fact]
     [Trait("Platform", "Android")]
     public void BackButton_Android_NavigatesBack()
     {
-        // Requires Xunit.SkippableFact package
-        Skip.IfNot(TestConfig.TargetPlatform == "Android",
+        // xUnit v3 native skip support (no SkippableFact package needed)
+        Assert.SkipWhen(TestConfig.TargetPlatform != "Android",
             "Android-only: hardware back button");
 
         // Navigate to details page
@@ -294,12 +292,12 @@ public class PlatformTests : IClassFixture<AppiumFixture>
         wait.Until(d => d.FindElement(MobileBy.AccessibilityId("item-list")));
     }
 
-    [SkippableFact]
+    [Fact]
     [Trait("Platform", "iOS")]
     public void SwipeToDelete_iOS_RemovesItem()
     {
-        // Requires Xunit.SkippableFact package
-        Skip.IfNot(TestConfig.TargetPlatform == "iOS",
+        // xUnit v3 native skip support
+        Assert.SkipWhen(TestConfig.TargetPlatform != "iOS",
             "iOS-only: swipe gesture");
 
         var item = _driver.FindElement(MobileBy.AccessibilityId("item-1"));
@@ -419,7 +417,7 @@ public static MauiApp CreateMauiApp()
 - **Use `AutomationId` for all testable elements.** It is the cross-platform equivalent of `data-testid` and maps to the native accessibility identifier on every platform.
 - **Run tests against real emulators/simulators, not just unit tests.** MAUI rendering, navigation, and platform services behave differently than in-memory tests.
 - **Use explicit waits, never implicit waits or delays.** `WebDriverWait` with a condition is reliable; `Thread.Sleep` and implicit waits hide timing issues.
-- **Tag platform-specific tests with `[Trait]` and `Skip.IfNot`.** This allows running the correct tests per platform in CI without failures from unsupported features.
+- **Tag platform-specific tests with `[Trait]` and `Assert.SkipWhen`.** xUnit v3's native skip support allows running the correct tests per platform in CI without failures from unsupported features.
 - **Apply the page object model for maintainability.** MAUI apps have complex navigation flows; page objects keep tests readable as the app grows.
 
 ---
