@@ -14,9 +14,8 @@ Create two skills: `dotnet-resilience` (Polly v8 + Microsoft.Extensions.Resilien
 - [ ] Does NOT modify `plugin.json` (handled by fn-5.6)
 
 ## Done summary
-TBD
-
+Added dotnet-resilience (Polly v8 + MS.Extensions.Http.Resilience, standard pipeline, migration from superseded Http.Polly) and dotnet-http-client (IHttpClientFactory, typed/named clients, DelegatingHandlers, resilience integration, testing) architecture skills with full cross-references and boundary statements.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b5cdfe1, 7985c5b, 5562e06
+- Tests: ./scripts/validate-skills.sh
 - PRs:

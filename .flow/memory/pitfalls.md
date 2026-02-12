@@ -66,3 +66,6 @@ Idempotency implementations must handle three states (no-record, in-progress, co
 
 ## 2026-02-12 manual [pitfall]
 Idempotency record finalization must be unconditional -- gating completion on specific IResult subtypes (e.g. IValueHttpResult) leaves non-value results (NoContent, Accepted) permanently stuck in in-progress state
+
+## 2026-02-12 manual [pitfall]
+IHttpClientFactory handler order: AddHttpMessageHandler first = outermost, AddStandardResilienceHandler last = innermost (wraps HTTP call). Retries do NOT re-execute outer DelegatingHandlers. Ensure all guidance in a skill is internally consistent on this point.
