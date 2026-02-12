@@ -15,3 +15,12 @@ NuGet/MSBuild config files (Directory.Packages.props, nuget.config) resolve hier
 
 ## 2026-02-12 manual [pitfall]
 When documenting TFM patterns for platform detection (MAUI, Uno), use version-agnostic globs (net*-android) not hardcoded versions (net10.0-android) to avoid false negatives on older/newer TFMs.
+
+## 2026-02-12 manual [pitfall]
+Bash validation scripts that compare lines to exact strings (like '---') must normalize CRLF to LF first, or Windows-edited files will fail with false negatives.
+
+## 2026-02-12 manual [pitfall]
+macOS default /bin/bash is 3.2 (no associative arrays). Scripts using declare -A must guard with BASH_VERSINFO check or use #!/usr/bin/env bash + require Homebrew bash 4+.
+
+## 2026-02-12 manual [pitfall]
+BSD sort on macOS lacks GNU sort -z flag. Use find -print0 without sort, or sort in a portable way, when targeting cross-platform scripts.

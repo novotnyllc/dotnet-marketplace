@@ -4,7 +4,7 @@
 #
 # Checks:
 #   1. Required frontmatter fields: name, description
-#   2. YAML frontmatter is well-formed (delimited by --- with valid key: value syntax)
+#   2. YAML frontmatter is well-formed (parsed via yaml.safe_load or regex fallback)
 #   3. [skill:name] cross-references point to existing skill directories
 #   4. Context budget tracking with stable output keys
 #
@@ -13,6 +13,10 @@
 #   - Runs in <5 seconds
 #   - Same commands locally and in CI
 #   - Exits non-zero on: missing required frontmatter, broken cross-references, BUDGET_STATUS=FAIL
+#
+# Requirements:
+#   - Bash 4+ (uses associative arrays)
+#   - python3 (for YAML frontmatter validation)
 #
 # Environment variables:
 #   ALLOW_PLANNED_REFS=1  -- Downgrade unresolved cross-references from errors to warnings.
@@ -24,6 +28,18 @@
 #   BUDGET_STATUS=OK|WARN|FAIL
 
 set -euo pipefail
+
+# --- Prerequisites ---
+
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "ERROR: Bash 4+ required (found ${BASH_VERSION}). Install via Homebrew: brew install bash"
+    exit 1
+fi
+
+if ! command -v python3 &>/dev/null; then
+    echo "ERROR: python3 required but not found in PATH"
+    exit 1
+fi
 
 # Budget constants
 PROJECTED_SKILLS_COUNT=95
@@ -40,10 +56,11 @@ total_desc_chars=0
 skill_count=0
 
 # Collect all skill directories (any directory containing SKILL.md)
+# Note: no sort -z (not portable to BSD sort on macOS); order does not matter
 skill_files=()
 while IFS= read -r -d '' skill_file; do
     skill_files+=("$skill_file")
-done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 2>/dev/null | sort -z)
+done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 2>/dev/null)
 
 if [ ${#skill_files[@]} -eq 0 ]; then
     echo "ERROR: No SKILL.md files found under $REPO_ROOT/skills/"
@@ -59,11 +76,34 @@ for skill_file in "${skill_files[@]}"; do
 done
 
 # --- Batched YAML validation (single python3 invocation for all files) ---
-# Extracts frontmatter from each SKILL.md, validates it as well-formed YAML.
+# Uses yaml.safe_load if PyYAML is available; falls back to regex-based validation.
 # Outputs one line per file: "OK:<path>" or "FAIL:<path>:<reason>"
 declare -A yaml_valid_map
 yaml_output=$(python3 -c '
-import sys, os, json, re
+import sys, re
+
+# Try to use PyYAML for real YAML parsing; fall back to regex if unavailable
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
+
+def validate_regex(fm_text, path):
+    """Fallback: validate frontmatter as flat key: value YAML via regex."""
+    for ln_num, fm_line in enumerate(fm_text.split("\n"), 2):
+        stripped = fm_line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_-]*\s*:", stripped):
+            return f"line {ln_num}: invalid YAML syntax: {stripped[:60]}"
+        colon_pos = stripped.index(":")
+        value = stripped[colon_pos+1:].strip()
+        if value.startswith("\"") and not value.endswith("\""):
+            return f"line {ln_num}: unclosed double quote"
+        if value.startswith("'"'"'") and not value.endswith("'"'"'"):
+            return f"line {ln_num}: unclosed single quote"
+    return None
 
 results = []
 for path in sys.argv[1:]:
@@ -87,26 +127,26 @@ for path in sys.argv[1:]:
         if not found_close:
             results.append(f"FAIL:{path}:missing closing ---")
             continue
-        # Validate each frontmatter line as valid YAML key: value
-        for ln_num, fm_line in enumerate(fm_lines, 2):
-            stripped = fm_line.strip()
-            if not stripped or stripped.startswith("#"):
-                continue  # blank lines and comments are valid YAML
-            # Must be key: value pattern (key is unquoted identifier, value follows colon+space)
-            if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_-]*\s*:", stripped):
-                results.append(f"FAIL:{path}:line {ln_num}: invalid YAML syntax: {stripped[:60]}")
-                break
-            # Check for unclosed quotes in the value portion
-            colon_pos = stripped.index(":")
-            value = stripped[colon_pos+1:].strip()
-            if value.startswith("\"") and not value.endswith("\""):
-                results.append(f"FAIL:{path}:line {ln_num}: unclosed double quote")
-                break
-            if value.startswith("'\''") and not value.endswith("'\''"):
-                results.append(f"FAIL:{path}:line {ln_num}: unclosed single quote")
-                break
+        fm_text = "\n".join(fm_lines)
+        # Validate YAML
+        if HAS_YAML:
+            try:
+                parsed = yaml.safe_load(fm_text)
+                if parsed is None:
+                    results.append(f"FAIL:{path}:frontmatter is empty")
+                    continue
+                if not isinstance(parsed, dict):
+                    results.append(f"FAIL:{path}:frontmatter is not a YAML mapping")
+                    continue
+                results.append(f"OK:{path}")
+            except yaml.YAMLError as e:
+                results.append(f"FAIL:{path}:{e}")
         else:
-            results.append(f"OK:{path}")
+            err = validate_regex(fm_text, path)
+            if err:
+                results.append(f"FAIL:{path}:{err}")
+            else:
+                results.append(f"OK:{path}")
     except Exception as e:
         results.append(f"FAIL:{path}:{e}")
 
