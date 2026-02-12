@@ -24,3 +24,9 @@ When epic acceptance criteria reference validation (e.g. cross-ref matrix, depre
 
 ## 2026-02-12 manual [convention]
 When multiple skills share a concern (e.g. deprecated patterns), designate a canonical owner in the epic spec and have other skills cross-reference it — avoids scope ambiguity and duplication
+
+## 2026-02-12 manual [convention]
+Agent workflow steps must be executable with the agent declared toolset -- do not reference CLI commands if Bash is not in tools list
+
+## 2026-02-12 manual [convention]
+Per-subsection acceptance: when skill definition says 'each section MUST include X', the AC and task checkboxes must enforce X per subsection, not just globally

@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-8-security-skills",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-12T21:37:01.932748Z",
   "created_at": "2026-02-11T22:23:17.848507Z",
   "default_impl": null,
   "default_review": null,
@@ -14,7 +14,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-12T20:54:51.121730Z",
   "spec_path": ".flow/specs/fn-8-security-skills.md",
-  "status": "open",
+  "status": "done",
   "title": "Security Skills",
-  "updated_at": "2026-02-12T20:54:51.121864Z"
+  "updated_at": "2026-02-12T21:37:14.590960Z"
 }

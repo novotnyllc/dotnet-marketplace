@@ -108,3 +108,12 @@ Code examples using IOptionsMonitor must read CurrentValue at call site (not con
 
 ## 2026-02-12 manual [pitfall]
 DI singleton factory registrations only run when explicitly resolved -- for always-active subscriptions (IOptionsMonitor.OnChange), use IHostedService which the host guarantees to activate
+
+## 2026-02-12 manual [pitfall]
+Security code examples must use defensive parsing (TryFromBase64String, length validation) on attacker-controlled input -- avoid exception-driven rejection in auth paths
+
+## 2026-02-12 manual [pitfall]
+Use BinaryPrimitives (fixed endianness) instead of BitConverter (host-endian) when encoding data persisted or transmitted across platforms
+
+## 2026-02-12 manual [pitfall]
+Acceptance criteria must explicitly test EVERY scope item — reviewers flag any scope bullet not mirrored in AC as a gap
