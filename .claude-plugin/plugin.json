@@ -19,7 +19,17 @@
     "skills/project-structure/dotnet-add-analyzers",
     "skills/project-structure/dotnet-add-ci",
     "skills/project-structure/dotnet-add-testing",
-    "skills/project-structure/dotnet-modernize"
+    "skills/project-structure/dotnet-modernize",
+    "skills/architecture/dotnet-architecture-patterns",
+    "skills/architecture/dotnet-background-services",
+    "skills/architecture/dotnet-resilience",
+    "skills/architecture/dotnet-http-client",
+    "skills/architecture/dotnet-observability",
+    "skills/architecture/dotnet-efcore-patterns",
+    "skills/architecture/dotnet-efcore-architecture",
+    "skills/architecture/dotnet-data-access-strategy",
+    "skills/architecture/dotnet-containers",
+    "skills/architecture/dotnet-container-deployment"
   ],
   "agents": [
     "agents/dotnet-architect.md",
