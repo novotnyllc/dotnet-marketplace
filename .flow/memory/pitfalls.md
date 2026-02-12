@@ -69,3 +69,6 @@ Idempotency record finalization must be unconditional -- gating completion on sp
 
 ## 2026-02-12 manual [pitfall]
 IHttpClientFactory handler order: AddHttpMessageHandler first = outermost, AddStandardResilienceHandler last = innermost (wraps HTTP call). Retries do NOT re-execute outer DelegatingHandlers. Ensure all guidance in a skill is internally consistent on this point.
+
+## 2026-02-12 manual [pitfall]
+Skill code examples that use third-party NuGet APIs (extension methods, types) must list those packages explicitly -- AI agents cannot resolve unlisted packages and will produce non-compiling code
