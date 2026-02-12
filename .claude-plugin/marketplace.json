@@ -4,9 +4,9 @@
   "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
   "author": {
     "name": "Claire Novotny LLC",
-    "url": "https://github.com/clairernovotny"
+    "url": "https://github.com/novotnyllc"
   },
-  "repository": "https://github.com/clairernovotny/dotnet-marketplace",
+  "repository": "https://github.com/novotnyllc/dotnet-marketplace",
   "license": "MIT",
   "keywords": [
     "dotnet",
