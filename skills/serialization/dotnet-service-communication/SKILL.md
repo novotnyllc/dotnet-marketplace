@@ -9,7 +9,7 @@ Higher-level routing skill for choosing the right service communication protocol
 
 **Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth.
 
-Cross-references: [skill:dotnet-grpc] for gRPC implementation, [skill:dotnet-realtime-communication] for SignalR/SSE/JSON-RPC details, [skill:dotnet-http-client] for REST/HTTP client patterns. <!-- TODO(fn-7): Replace with canonical cross-ref when fn-7 lands --> See [skill:dotnet-integration-testing] for testing service communication patterns.
+Cross-references: [skill:dotnet-grpc] for gRPC implementation, [skill:dotnet-realtime-communication] for SignalR/SSE/JSON-RPC details, [skill:dotnet-http-client] for REST/HTTP client patterns. See [skill:dotnet-integration-testing] for testing service communication patterns.
 
 ---
 

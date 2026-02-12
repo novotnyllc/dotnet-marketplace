@@ -9,7 +9,7 @@ Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, c
 
 **Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth.
 
-Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. <!-- TODO(fn-7): Replace with canonical cross-ref when fn-7 lands --> See [skill:dotnet-integration-testing] for testing gRPC services.
+Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. See [skill:dotnet-integration-testing] for testing gRPC services.
 
 ---
 

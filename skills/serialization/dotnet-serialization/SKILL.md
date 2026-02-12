@@ -9,7 +9,7 @@ AOT-friendly serialization patterns for .NET applications. Covers System.Text.Js
 
 **Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth.
 
-Cross-references: [skill:dotnet-csharp-source-generators] for understanding how STJ source generators work under the hood. <!-- TODO(fn-7): Replace with canonical cross-ref when fn-7 lands --> See [skill:dotnet-integration-testing] for testing serialization round-trip correctness.
+Cross-references: [skill:dotnet-csharp-source-generators] for understanding how STJ source generators work under the hood. See [skill:dotnet-integration-testing] for testing serialization round-trip correctness.
 
 ---
 

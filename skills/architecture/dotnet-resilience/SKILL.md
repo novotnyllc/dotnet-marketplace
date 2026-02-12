@@ -9,7 +9,7 @@ Modern resilience patterns for .NET applications using Polly v8 and `Microsoft.E
 
 **Superseded package:** `Microsoft.Extensions.Http.Polly` is superseded by `Microsoft.Extensions.Http.Resilience`. Do not use `Microsoft.Extensions.Http.Polly` for new projects. See the [migration guide](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/resilience/migration-guide) for upgrading existing code.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. HTTP client factory patterns (typed clients, named clients, DelegatingHandlers) are covered in [skill:dotnet-http-client]. Testing resilience policies is owned by fn-7 -- <!-- TODO: fn-7 reconciliation -- replace with canonical [skill:...] IDs when fn-7 lands -->.
+**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. HTTP client factory patterns (typed clients, named clients, DelegatingHandlers) are covered in [skill:dotnet-http-client]. Testing resilience policies -- see [skill:dotnet-integration-testing] for testing with WebApplicationFactory and [skill:dotnet-xunit] for unit testing resilience handlers.
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for cancellation token propagation, [skill:dotnet-http-client] for applying resilience to HTTP clients.
 

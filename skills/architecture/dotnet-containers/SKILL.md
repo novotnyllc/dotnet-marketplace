@@ -7,7 +7,7 @@ description: "WHEN containerizing .NET apps. Multi-stage Dockerfiles, dotnet pub
 
 Best practices for containerizing .NET applications. Covers multi-stage Dockerfile patterns, the `dotnet publish` container image feature (.NET 8+), rootless container configuration, optimized layer caching, and container health checks.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Kubernetes deployment manifests and Docker Compose orchestration are covered in [skill:dotnet-container-deployment]. CI/CD pipeline integration for building and pushing images is owned by fn-19. Testing containerized applications is owned by fn-7 -- <!-- TODO: fn-7 reconciliation -- replace with canonical [skill:...] IDs when fn-7 lands -->.
+**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Kubernetes deployment manifests and Docker Compose orchestration are covered in [skill:dotnet-container-deployment]. CI/CD pipeline integration for building and pushing images is owned by fn-19. Testing containerized applications -- see [skill:dotnet-integration-testing] for Testcontainers patterns.
 
 Cross-references: [skill:dotnet-observability] for health check patterns, [skill:dotnet-container-deployment] for deploying containers to Kubernetes and local dev with Compose.
 

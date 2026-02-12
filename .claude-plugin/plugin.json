@@ -33,7 +33,17 @@
     "skills/serialization/dotnet-grpc",
     "skills/serialization/dotnet-realtime-communication",
     "skills/serialization/dotnet-serialization",
-    "skills/serialization/dotnet-service-communication"
+    "skills/serialization/dotnet-service-communication",
+    "skills/testing/dotnet-testing-strategy",
+    "skills/testing/dotnet-xunit",
+    "skills/testing/dotnet-integration-testing",
+    "skills/testing/dotnet-ui-testing-core",
+    "skills/testing/dotnet-blazor-testing",
+    "skills/testing/dotnet-maui-testing",
+    "skills/testing/dotnet-uno-testing",
+    "skills/testing/dotnet-playwright",
+    "skills/testing/dotnet-snapshot-testing",
+    "skills/testing/dotnet-test-quality"
   ],
   "agents": [
     "agents/dotnet-architect.md",

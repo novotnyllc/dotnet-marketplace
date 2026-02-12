@@ -7,7 +7,7 @@ description: "WHEN adding test infrastructure to an existing .NET project. Scaff
 
 Add test infrastructure scaffolding to an existing .NET project. Creates test projects with xUnit, configures code coverage with coverlet, and sets up the conventional directory structure.
 
-**Scope boundary:** This skill provides **test project scaffolding** only. For in-depth testing patterns -- xUnit v3 features, integration testing with WebApplicationFactory, UI testing, snapshot testing, test quality metrics, and testing strategy guidance -- see fn-7 (Testing depth epic).
+**Scope boundary:** This skill provides **test project scaffolding** only. For in-depth testing patterns -- xUnit v3 features, integration testing with WebApplicationFactory, UI testing, snapshot testing, test quality metrics, and testing strategy guidance -- see [skill:dotnet-testing-strategy] and the related testing skills.
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine SDK version and TFM. Run [skill:dotnet-project-analysis] to understand existing solution structure.
 
@@ -280,18 +280,18 @@ Add integration test packages to CPM (match the `Microsoft.AspNetCore.Mvc.Testin
 <PackageVersion Include="Testcontainers" Version="4.3.0" />
 ```
 
-Integration test depth (WebApplicationFactory patterns, test containers, database fixtures) lives in fn-7.
+Integration test depth (WebApplicationFactory patterns, test containers, database fixtures) -- see [skill:dotnet-integration-testing].
 
 ---
 
 ## What's Next
 
 This skill covers test project scaffolding. For deeper testing guidance:
-- **xUnit v3 features and patterns** -- fn-7 testing depth epic
-- **Integration testing with WebApplicationFactory** -- fn-7
-- **UI testing (Blazor, MAUI, Uno)** -- fn-7
-- **Snapshot testing** -- fn-7
-- **Test quality and coverage enforcement** -- fn-7
+- **xUnit v3 features and patterns** -- [skill:dotnet-xunit]
+- **Integration testing with WebApplicationFactory** -- [skill:dotnet-integration-testing]
+- **UI testing (Blazor, MAUI, Uno)** -- [skill:dotnet-blazor-testing], [skill:dotnet-maui-testing], [skill:dotnet-uno-testing]
+- **Snapshot testing** -- [skill:dotnet-snapshot-testing]
+- **Test quality and coverage enforcement** -- [skill:dotnet-test-quality]
 - **CI test reporting** -- [skill:dotnet-add-ci] for starter, fn-19 for advanced
 
 ---

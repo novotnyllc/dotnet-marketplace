@@ -9,7 +9,7 @@ Real-time communication patterns for .NET applications. Compares SignalR (full-d
 
 **Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) is owned by fn-12 and not covered here.
 
-Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. <!-- TODO(fn-7): Replace with canonical cross-ref when fn-7 lands --> See [skill:dotnet-integration-testing] for testing real-time communication endpoints.
+Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. See [skill:dotnet-integration-testing] for testing real-time communication endpoints.
 
 ---
 
