@@ -17,7 +17,9 @@
     "skills/project-structure/dotnet-project-structure",
     "skills/project-structure/dotnet-scaffold-project",
     "skills/project-structure/dotnet-add-analyzers",
-    "skills/project-structure/dotnet-add-ci"
+    "skills/project-structure/dotnet-add-ci",
+    "skills/project-structure/dotnet-add-testing",
+    "skills/project-structure/dotnet-modernize"
   ],
   "agents": [
     "agents/dotnet-architect.md",

@@ -48,3 +48,6 @@ When adding new skills, always register them in plugin.json skills array -- file
 
 ## 2026-02-12 manual [pitfall]
 NuGet packageSourceMapping uses most-specific-pattern-wins: MyCompany.* beats * wildcard. Always explain precedence when documenting private feed configs to avoid dependency confusion FUD.
+
+## 2026-02-12 manual [pitfall]
+Trimming/AOT MSBuild properties differ by project type: apps use PublishTrimmed/PublishAot + EnableTrimAnalyzer/EnableAotAnalyzer; libraries use IsTrimmable/IsAotCompatible (which auto-enable analyzers). Mixing them up sets incorrect package metadata.
