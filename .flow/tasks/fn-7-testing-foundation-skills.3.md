@@ -20,9 +20,8 @@ Create two testing skills focused on test validation and quality measurement.
 - [ ] Skill content complete and ready for registration by Task 4
 
 ## Done summary
-TBD
-
+Created two testing skills: dotnet-snapshot-testing covering Verify library with scrubbing/filtering for dates and GUIDs, custom converters, HTTP response verification, and rendered email testing; and dotnet-test-quality covering coverlet + ReportGenerator code coverage, CRAP analysis, Stryker.NET mutation testing, and flaky test detection.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 11ea4125c4b66b0e21b7b06eba77e3b97e40f1dd, 1e0cd07c602f6d92449984bbb9c599023566757e
+- Tests: grep -i Verify skills/testing/dotnet-snapshot-testing/SKILL.md, grep -i Stryker skills/testing/dotnet-test-quality/SKILL.md, grep skill: skills/testing/dotnet-snapshot-testing/SKILL.md, grep skill: skills/testing/dotnet-test-quality/SKILL.md
 - PRs:
