@@ -247,10 +247,10 @@ MSBuild conditions enable TFM-specific properties, platform-specific package ref
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <!-- TFM-conditional package reference -->
+  <!-- TFM-conditional package reference: only include on specific TFMs -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-    <!-- Polyfill: net8.0 lacks FrozenDictionary.GetAlternateLookup added in net9.0 -->
+    <PackageReference Include="Backport.System.Threading.Lock" Version="2.0.5" />
+    <!-- System.Threading.Lock is built-in on net9.0+; this polyfill enables it on net8.0 -->
   </ItemGroup>
 
   <!-- Configuration-conditional items -->
