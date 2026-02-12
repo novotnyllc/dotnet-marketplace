@@ -9,9 +9,9 @@ Test quality analysis for .NET projects. Covers code coverage collection with co
 
 **Version assumptions:** Coverlet 6.x+, ReportGenerator 5.x+, Stryker.NET 4.x+ (.NET 8.0+ baseline). Coverlet supports both the MSBuild integration (`coverlet.msbuild`) and the `coverlet.collector` data collector; examples use `coverlet.collector` as the recommended approach.
 
-**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration are owned by fn-19.
+**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by `dotnet-add-testing`. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration are owned by fn-19.
 
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with coverlet packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline.
+**Prerequisites:** Test project already scaffolded via `dotnet-add-testing` with coverlet packages referenced. .NET 8.0+ baseline required.
 
 Cross-references: [skill:dotnet-testing-strategy] for deciding what to test and coverage target guidance, [skill:dotnet-xunit] for xUnit test framework features and configuration.
 
@@ -405,17 +405,25 @@ for i in $(seq 1 10); do
 done
 ```
 
-#### xUnit Retry with Conditional Skip
+#### xUnit Conditional Skip
 
-Use the `Xunit.SkippableFact` package for environment-dependent tests:
+**xUnit v3** has built-in conditional skip via `Skip` on `[Fact]`:
 
 ```csharp
-// NuGet: Xunit.SkippableFact
-[SkippableFact]
+// xUnit v3 — built-in conditional skip
+[Fact(Skip = "Requires external service")]
 public async Task ExternalApi_ReturnsData()
 {
-    Skip.IfNot(await IsServiceAvailable(),
-        "External service unavailable");
+    var result = await _client.GetDataAsync();
+    Assert.NotEmpty(result);
+}
+
+// xUnit v3 — runtime skip via Assert.Skip
+[Fact]
+public async Task ExternalApi_ReturnsData()
+{
+    if (!await IsServiceAvailable())
+        Assert.Skip("External service unavailable");
 
     var result = await _client.GetDataAsync();
     Assert.NotEmpty(result);

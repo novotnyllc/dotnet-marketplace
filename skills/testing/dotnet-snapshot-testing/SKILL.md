@@ -9,9 +9,9 @@ Snapshot (approval) testing with the Verify library for .NET. Covers verifying A
 
 **Version assumptions:** Verify 20.x+ (.NET 8.0+ baseline). Examples use the `Verify.Xunit` integration package; equivalent packages exist for NUnit (`Verify.NUnit`) and MSTest (`Verify.MSTest`). Verify auto-discovers the test framework from the referenced package.
 
-**Out of scope:** Test project scaffolding (creating projects, package references) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration test infrastructure (WebApplicationFactory, Testcontainers) is covered by [skill:dotnet-integration-testing].
+**Out of scope:** Test project scaffolding (creating projects, package references) is owned by `dotnet-add-testing`. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration test infrastructure (WebApplicationFactory, Testcontainers) is covered by [skill:dotnet-integration-testing].
 
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with Verify packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline.
+**Prerequisites:** Test project already scaffolded via `dotnet-add-testing` with Verify packages referenced. .NET 8.0+ baseline required.
 
 Cross-references: [skill:dotnet-testing-strategy] for deciding when snapshot tests are appropriate, [skill:dotnet-integration-testing] for combining Verify with WebApplicationFactory and Testcontainers.
 
@@ -526,10 +526,10 @@ Install the Verify CLI tool (one-time setup), then accept pending changes after 
 dotnet tool install -g verify.tool
 
 # Accept all received files in the solution
-dotnet verify accept
+verify accept
 
 # Accept for a specific test project
-dotnet verify accept --project tests/MyApp.Tests
+verify accept --project tests/MyApp.Tests
 ```
 
 ### CI Behavior
