@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-coding-standards
-description: "WHEN writing or reviewing C# for naming, style, or file organization. Framework Design Guidelines and coding conventions"
+description: "WHEN writing or reviewing C# for naming, style, or file organization. Framework Design Guidelines and conventions."
 ---
 
 # dotnet-csharp-coding-standards
@@ -340,7 +340,7 @@ Add XML docs to public API surfaces. Keep them concise:
 /// <param name="id">The order identifier.</param>
 /// <param name="ct">Cancellation token.</param>
 /// <returns>The order, or <see langword="null"/> if not found.</returns>
-public async Task<Order?> GetByIdAsync(int id, CancellationToken ct = default);
+public Task<Order?> GetByIdAsync(int id, CancellationToken ct = default);
 ```
 
 Do not add XML docs to:

@@ -42,7 +42,7 @@ public record Customer(string Name, string Email)
 ### Record Structs (value type, C# 10+)
 
 ```csharp
-// Positional record struct: stack-allocated, value semantics
+// Positional record struct: value type with value semantics
 public readonly record struct Point(double X, double Y);
 
 // Mutable record struct (rare -- prefer readonly)
