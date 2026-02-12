@@ -39,3 +39,7 @@ Create the `dotnet-project-analysis` skill that helps agents understand .NET sol
 - [ ] Skill identifies common project types (web, console, lib, test, MAUI, Blazor)
 - [ ] Skill guides agent to entry points and config files
 - [ ] Cross-references use `[skill:dotnet-version-detection]` syntax for TFM info
+
+## Done summary
+
+## Evidence
