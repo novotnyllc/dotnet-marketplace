@@ -1,0 +1,20 @@
+{
+  "branch_name": "fn-27-roslyn-analyzer-authoring-skills",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-12T22:25:45.970076Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-27-roslyn-analyzer-authoring-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-27-roslyn-analyzer-authoring-skills.md",
+  "status": "open",
+  "title": "Roslyn Analyzer Authoring Skills",
+  "updated_at": "2026-02-12T22:26:42.639711Z"
+}

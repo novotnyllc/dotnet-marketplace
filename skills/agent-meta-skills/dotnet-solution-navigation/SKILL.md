@@ -51,7 +51,7 @@ Modern .NET projects (templates since .NET 6) use top-level statements -- the fi
 # Find Program.cs files that do NOT contain class/namespace declarations
 # (top-level statements have no enclosing class)
 for f in $(find . -name "Program.cs" -not -path "*/obj/*" -not -path "*/bin/*"); do
-  if ! grep -q "^\s*\(class \|namespace \)" "$f" 2>/dev/null; then
+  if ! grep -Eq '^[[:space:]]*(class|namespace)[[:space:]]' "$f" 2>/dev/null; then
     echo "Top-level: $f"
   fi
 done
@@ -578,13 +578,13 @@ public class OrderIntegrationTests
 
 ```bash
 # Find skipped tests
-grep -rn 'Skip\s*=' --include="*.cs" . | grep -v "obj/" | grep -v "bin/"
+grep -rEn 'Skip[[:space:]]*=' --include="*.cs" . | grep -v "obj/" | grep -v "bin/"
 
 # Find tests hidden behind #if false
 grep -rn "#if false" --include="*.cs" . | grep -v "obj/" | grep -v "bin/"
 
 # Find commented-out test attributes
-grep -rn "//\s*\[Fact\]\|//\s*\[Theory\]\|//\s*\[Test\]" --include="*.cs" . | grep -v "obj/" | grep -v "bin/"
+grep -rEn '//[[:space:]]*\[(Fact|Theory|Test)\]' --include="*.cs" . | grep -v "obj/" | grep -v "bin/"
 ```
 
 **Fix:** Investigate why tests are disabled. If they are flaky due to timing, fix the non-determinism or use `[Retry]` (xUnit v3). If they test removed functionality, delete them. Never leave disabled tests as invisible technical debt.

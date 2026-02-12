@@ -91,7 +91,7 @@ PropertyGroup elements contain scalar MSBuild properties. The most important pro
 ```xml
 <PropertyGroup>
   <!-- Target Framework Moniker (TFM) -- determines runtime and API surface -->
-  <!-- Use net8.0 (LTS) or net9.0 (STS). net10.0 releases Nov 2025. -->
+  <!-- Use the latest LTS or STS release; prefer the repo's existing TFM. -->
   <TargetFramework>net9.0</TargetFramework>
 
   <!-- For multi-targeting, use plural form (see Subsection 4) -->
