@@ -250,7 +250,7 @@ virtual/abstract/override/sealed -> readonly -> volatile -> async -> partial
 
 ```csharp
 public static readonly int MaxSize = 100;
-protected virtual async Task<Order> LoadAsync() { }
+protected virtual async Task<Order> LoadAsync() => await repo.GetDefaultAsync();
 public sealed override string ToString() => Name;
 ```
 
