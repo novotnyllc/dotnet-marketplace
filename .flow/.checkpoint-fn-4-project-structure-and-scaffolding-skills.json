@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-02-12T04:12:24.873523Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-4-project-structure-and-scaffolding-skills",
+      "created_at": "2026-02-11T22:23:11.813197Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-4-project-structure-and-scaffolding-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-4-project-structure-and-scaffolding-skills.md",
+      "status": "open",
+      "title": "Project Structure and Scaffolding Skills",
+      "updated_at": "2026-02-11T22:29:59.385735Z"
+    },
+    "spec": "# fn-4: Project Structure & Scaffolding Skills\n\n## Overview\nDelivers skills for modern .NET project structure, scaffolding, and modernization including solution layout, analyzers, CI/CD setup, and testing infrastructure.\n\n## Scope\n**Skills:**\n- `dotnet-project-structure` - Modern solution layout: .slnx, Directory.Build.props, central package management, editorconfig, analyzers\n- `dotnet-scaffolding-base` - Base project scaffolding with all best practices applied\n- `dotnet-add-analyzers` - Add/configure .NET analyzers, Roslyn analyzers, nullable, trimming warnings, AOT compat analyzers\n- `dotnet-add-ci` - Add CI/CD to existing project (composable, detects platform)\n- `dotnet-add-testing` - Add test infrastructure to existing project\n- `dotnet-modernize` - Analyze existing code for modernization opportunities, suggest upgrades\n\n## Key Context\n- .slnx is the modern solution format (XML-based, human-readable)\n- Directory.Build.props and Directory.Packages.props for centralized configuration\n- Central Package Management (CPM) is the recommended approach\n- Code analyzers enforceable via EditorConfig: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Library design guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n\n## Quick Commands\n```bash\n# Smoke test: validate project structure skill\nfd -e md dotnet-project-structure skills/\n\n# Test scaffolding output\ndotnet new console -o /tmp/test-scaffold && ls -la /tmp/test-scaffold\n\n# Verify analyzer recommendations\ngrep -r \"Microsoft.CodeAnalysis.NetAnalyzers\" skills/project-structure/\n```\n\n## Acceptance Criteria\n1. All 6 skills written with standard depth and frontmatter\n2. Project structure skill documents .slnx, Directory.Build.props, CPM patterns\n3. Scaffolding skill provides complete new-project template with all best practices\n4. Add-analyzers skill covers CA rules, nullable context, trimming, AOT analyzers\n5. Add-CI skill detects GitHub Actions vs Azure DevOps and provides platform-specific guidance\n6. Modernize skill analyzes projects for upgrade opportunities (old TFMs, deprecated packages, outdated patterns)\n7. Skills cross-reference dotnet-version-detection for TFM-aware guidance\n\n## Test Notes\n- Test scaffolding skill by generating a new project and validating structure\n- Verify analyzer skill recommends appropriate analyzers for detected TFM\n- Check modernize skill detects superseded patterns (e.g., Microsoft.Extensions.Http.Polly \u2192 Microsoft.Extensions.Http.Resilience)\n\n## References\n- .NET Library Design Guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n- Code Analysis Overview: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Central Package Management: https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management\n- dotnet-skills project-structure reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+  },
+  "epic_id": "fn-4-project-structure-and-scaffolding-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:49.629269Z",
+        "depends_on": [],
+        "epic": "fn-4-project-structure-and-scaffolding-skills",
+        "id": "fn-4-project-structure-and-scaffolding-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-4-project-structure-and-scaffolding-skills.1.md",
+        "status": "todo",
+        "title": "Project structure and scaffolding base skills",
+        "updated_at": "2026-02-11T22:31:49.629435Z"
+      },
+      "id": "fn-4-project-structure-and-scaffolding-skills.1",
+      "runtime": null,
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.1 Project structure and scaffolding base skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:49.752702Z",
+        "depends_on": [],
+        "epic": "fn-4-project-structure-and-scaffolding-skills",
+        "id": "fn-4-project-structure-and-scaffolding-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-4-project-structure-and-scaffolding-skills.2.md",
+        "status": "todo",
+        "title": "Analyzer and CI/CD integration skills",
+        "updated_at": "2026-02-11T22:31:49.752919Z"
+      },
+      "id": "fn-4-project-structure-and-scaffolding-skills.2",
+      "runtime": null,
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.2 Analyzer and CI/CD integration skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:49.907944Z",
+        "depends_on": [],
+        "epic": "fn-4-project-structure-and-scaffolding-skills",
+        "id": "fn-4-project-structure-and-scaffolding-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-4-project-structure-and-scaffolding-skills.3.md",
+        "status": "todo",
+        "title": "Testing infrastructure and modernization skills",
+        "updated_at": "2026-02-11T22:31:49.908105Z"
+      },
+      "id": "fn-4-project-structure-and-scaffolding-skills.3",
+      "runtime": null,
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.3 Testing infrastructure and modernization skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

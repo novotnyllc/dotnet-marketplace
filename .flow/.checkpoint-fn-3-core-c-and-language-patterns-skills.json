@@ -1,22 +1,27 @@
 {
-  "created_at": "2026-02-12T03:04:24.153912Z",
+  "created_at": "2026-02-12T04:04:00.663322Z",
   "epic": {
     "data": {
       "branch_name": "fn-3-core-c-and-language-patterns-skills",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
       "created_at": "2026-02-11T22:23:11.574435Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
       "depends_on_epics": [
         "fn-2-plugin-skeleton-and-infrastructure"
       ],
       "id": "fn-3-core-c-and-language-patterns-skills",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-12T03:10:42.198420Z",
       "spec_path": ".flow/specs/fn-3-core-c-and-language-patterns-skills.md",
       "status": "open",
       "title": "Core C# and Language Patterns Skills",
-      "updated_at": "2026-02-11T22:29:36.261663Z"
+      "updated_at": "2026-02-12T03:10:42.198762Z"
     },
-    "spec": "# fn-3: Core C# & Language Patterns Skills\n\n## Overview\nDelivers essential C# language skills covering modern patterns, async/await, nullable reference types, dependency injection, configuration, and source generators. Includes a specialized concurrency agent.\n\n## Scope\n**Skills:**\n- `csharp-modern-patterns` - C# 14/15 features, pattern matching, records, primary constructors, collection expressions\n- `csharp-coding-standards` - Modern .NET coding standards, naming conventions, file organization (Framework Design Guidelines)\n- `csharp-async-patterns` - Async/await best practices, common agent mistakes (blocking on tasks, async void, missing ConfigureAwait)\n- `csharp-nullable-reference-types` - NRT patterns, annotation strategies, migration guidance\n- `csharp-dependency-injection` - MS DI advanced patterns: keyed services, decoration, factory patterns, scopes, hosted service registration\n- `csharp-configuration` - Options pattern, user secrets, environment-based config, Microsoft.FeatureManagement for feature flags\n- `csharp-source-generators` - Creating AND using source generators: IIncrementalGenerator, syntax/semantic analysis, emit patterns, testing\n\n**Agents:**\n- `csharp-concurrency-specialist` - Deep expertise in Task/async patterns, thread safety, synchronization, race condition analysis\n\n## Key Context\n- All skills must reference Microsoft .NET Framework Design Guidelines (https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- Async guidance from David Fowler: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- Skills must adapt to detected TFM (net8.0, net9.0, net10.0, net11.0) and use polyfills where applicable\n- .NET 11 preview awareness: Runtime async, collection expression `with()` arguments\n\n## Quick Commands\n```bash\n# Smoke test: verify skill descriptions are agent-discoverable\nfd -e md . skills/core-csharp/ | xargs grep -l \"description:\"\n\n# Validate skill frontmatter\n.flow/bin/flowctl validate-skills skills/core-csharp/\n\n# Test cross-references between skills\ngrep -r \"See also:\" skills/core-csharp/\n```\n\n## Acceptance Criteria\n1. All 7 skills written with SKILL.md frontmatter and progressive disclosure descriptions\n2. Concurrency specialist agent configured with preloaded async/threading skills\n3. Skills cross-reference each other (e.g., async-patterns references DI for IHostedService)\n4. Modern C# features documented with TFM-specific guidance (C# 14 for net10.0, C# 15 preview for net11.0)\n5. Source generator skill covers both creating and consuming generators\n6. All skills reference authoritative Microsoft documentation links\n7. Agent gotcha patterns documented (blocking async, wrong DI lifetimes, NRT annotation mistakes)\n\n## Test Notes\n- Test skill auto-discovery by searching for C# patterns in agent context\n- Validate that concurrency specialist agent triggers on threading-related keywords\n- Check that .NET 11 preview features only suggested when `net11.0` TFM detected\n\n## References\n- Microsoft Framework Design Guidelines: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- David Fowler Async Guidance: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- dotnet-skills reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+    "spec": "# fn-3: Core C# & Language Patterns Skills\n\n## Overview\nDelivers essential C# language skills covering modern patterns, async/await, nullable reference types, dependency injection, configuration, and source generators. Includes a specialized concurrency agent.\n\n## Scope\n\n**Skills** (7 total, directory: `skills/core-csharp/<name>/SKILL.md`):\n\n| Skill ID | Directory | Summary |\n|----------|-----------|---------|\n| `dotnet-csharp-modern-patterns` | `skills/core-csharp/dotnet-csharp-modern-patterns/` | C# 14/15 features, pattern matching, records, primary constructors, collection expressions |\n| `dotnet-csharp-coding-standards` | `skills/core-csharp/dotnet-csharp-coding-standards/` | Modern .NET coding standards, naming conventions, file organization (Framework Design Guidelines) |\n| `dotnet-csharp-async-patterns` | `skills/core-csharp/dotnet-csharp-async-patterns/` | Async/await best practices, common agent mistakes (blocking on tasks, async void, missing ConfigureAwait) |\n| `dotnet-csharp-nullable-reference-types` | `skills/core-csharp/dotnet-csharp-nullable-reference-types/` | NRT patterns, annotation strategies, migration guidance |\n| `dotnet-csharp-dependency-injection` | `skills/core-csharp/dotnet-csharp-dependency-injection/` | MS DI advanced patterns: keyed services, decoration, factory patterns, scopes, hosted service registration |\n| `dotnet-csharp-configuration` | `skills/core-csharp/dotnet-csharp-configuration/` | Options pattern, user secrets, environment-based config, Microsoft.FeatureManagement for feature flags |\n| `dotnet-csharp-source-generators` | `skills/core-csharp/dotnet-csharp-source-generators/` | Creating AND using source generators: IIncrementalGenerator, syntax/semantic analysis, emit patterns, testing |\n\nSkill IDs match the `[skill:dotnet-csharp-*]` cross-references already used in `dotnet-advisor` catalog (category 2). Each SKILL.md uses canonical frontmatter (`name`, `description`) per fn-2 conventions. Cross-references use `[skill:name]` syntax.\n\n**Agents** (1 total, file: `agents/dotnet-csharp-concurrency-specialist.md`):\n\n| Agent ID | File | Summary |\n|----------|------|---------|\n| `dotnet-csharp-concurrency-specialist` | `agents/dotnet-csharp-concurrency-specialist.md` | Deep expertise in Task/async patterns, thread safety, synchronization, race condition analysis |\n\nAgent registration: added to `plugin.json` `agents` array as `\"agents/dotnet-csharp-concurrency-specialist.md\"`.\n\nTrigger phrases: \"race condition\", \"deadlock\", \"thread safety\", \"concurrent access\", \"lock contention\", \"async race\", \"parallel execution\", \"synchronization issue\".\n\nPreloaded skills: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-modern-patterns]`.\n\n## Key Context\n- All skills must reference Microsoft .NET Framework Design Guidelines (https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- Async guidance from David Fowler: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- Skills must adapt to detected TFM (net8.0, net9.0, net10.0, net11.0) and use polyfills where applicable\n- .NET 11 preview awareness: Runtime async, collection expression `with()` arguments\n\n## Quick Commands\n```bash\n# Smoke test: verify skill descriptions are agent-discoverable\nls skills/core-csharp/*/SKILL.md | xargs grep -l \"description:\"\n\n# Validate skill frontmatter\n./scripts/validate-skills.sh\n\n# Test cross-references between skills\ngrep -r \"\\[skill:\" skills/core-csharp/\n```\n\n## Acceptance Criteria\n1. All 7 skills created at `skills/core-csharp/<name>/SKILL.md` with canonical frontmatter (`name`, `description`) and progressive disclosure body\n2. Skill IDs match `dotnet-csharp-*` names used in `dotnet-advisor` catalog category 2\n3. Concurrency specialist agent at `agents/dotnet-csharp-concurrency-specialist.md` with frontmatter (name, description, model, tools), trigger phrases, and preloaded skills\n4. Agent registered in `plugin.json` `agents` array\n5. Skills cross-reference each other using `[skill:name]` syntax (e.g., async-patterns references DI for IHostedService)\n6. Modern C# features documented with TFM-specific guidance (C# 14 for net10.0, C# 15 preview for net11.0)\n7. Source generator skill covers both creating and consuming generators\n8. All skills reference authoritative Microsoft documentation links\n9. Agent gotcha patterns documented (blocking async, wrong DI lifetimes, NRT annotation mistakes)\n10. `./scripts/validate-skills.sh` passes with all new skills\n11. Combined skill description budget remains under 12,000 chars (7 new skills \u00d7 ~120 chars \u2248 840 chars added)\n\n## Test Notes\n- Test skill auto-discovery by searching for C# patterns in agent context\n- Validate that concurrency specialist agent triggers on threading-related keywords\n- Validate `[skill:dotnet-csharp-*]` cross-references resolve correctly\n- Check that .NET 11 preview features only suggested when `net11.0` TFM detected\n- Run `./scripts/validate-skills.sh` to confirm all frontmatter and cross-refs pass\n\n## References\n- Microsoft Framework Design Guidelines: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- David Fowler Async Guidance: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- dotnet-skills reference: https://github.com/Aaronontheweb/dotnet-skills\n"
   },
   "epic_id": "fn-3-core-c-and-language-patterns-skills",
   "schema_version": 2,
@@ -37,8 +42,27 @@
         "updated_at": "2026-02-11T22:31:47.726517Z"
       },
       "id": "fn-3-core-c-and-language-patterns-skills.1",
-      "runtime": null,
-      "spec": "# fn-3-core-c-and-language-patterns-skills.1 Language patterns and coding standards skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T03:12:35.285182Z",
+        "evidence": {
+          "files_created": [
+            "skills/core-csharp/dotnet-csharp-modern-patterns/SKILL.md",
+            "skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md"
+          ],
+          "files_deleted": [
+            "skills/core-csharp/.gitkeep"
+          ],
+          "files_modified": [
+            ".claude-plugin/plugin.json"
+          ],
+          "validation": "./scripts/validate-skills.sh passes with 0 errors"
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T03:15:46.289311Z"
+      },
+      "spec": "# fn-3-core-c-and-language-patterns-skills.1 Language patterns and coding standards skills\n\n## Description\nCreate the `dotnet-csharp-modern-patterns` and `dotnet-csharp-coding-standards` skills under `skills/core-csharp/`.\n\n**`dotnet-csharp-modern-patterns`**: Covers C# 14/15 features (primary constructors, collection expressions, pattern matching enhancements, records, `required` members), with TFM-specific sections for net8.0 through net11.0. Progressive disclosure: trigger description -> quick patterns -> deep reference.\n\n**`dotnet-csharp-coding-standards`**: Microsoft Framework Design Guidelines and C# Coding Conventions. Naming conventions, file organization, code style rules. Cross-references `[skill:dotnet-csharp-modern-patterns]` for feature-specific conventions.\n\nBoth skills must:\n- Use canonical frontmatter (`name`, `description`) per fn-2\n- Include `[skill:name]` cross-references to other fn-3 skills\n- Reference authoritative Microsoft docs\n- Keep `description` field under 120 chars\n\n## Acceptance\n- [ ] `skills/core-csharp/dotnet-csharp-modern-patterns/SKILL.md` exists with valid frontmatter\n- [ ] `skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md` exists with valid frontmatter\n- [ ] Both descriptions under 120 chars\n- [ ] TFM-specific sections for net8.0, net9.0, net10.0, net11.0 in modern-patterns\n- [ ] Cross-references use `[skill:name]` syntax\n- [ ] Microsoft docs links included\n- [ ] `./scripts/validate-skills.sh` passes\n\n## Done summary\nCreated two core C# skills under `skills/core-csharp/`:\n\n1. **dotnet-csharp-modern-patterns** -- TFM-aware C# 12-15 language feature guidance covering records, primary constructors, collection expressions, pattern matching, `required` members, `field` keyword (C# 14), extension blocks (C# 14), `params` collections (C# 13), `Lock` type (C# 13), partial properties (C# 13), collection expression `with()` arguments (C# 15 preview), and polyfill guidance for multi-targeting.\n\n2. **dotnet-csharp-coding-standards** -- Microsoft Framework Design Guidelines and C# Coding Conventions covering naming conventions, file organization, code style rules, access modifiers, type design (seal by default, composition over inheritance), CancellationToken conventions, XML documentation, and analyzer enforcement.\n\nBoth skills use canonical frontmatter, descriptions under 120 chars, `[skill:name]` cross-references, TFM-specific sections (net8.0-net11.0), and authoritative Microsoft docs links. Registered in plugin.json. Validation passes with 0 errors.\n## Evidence\n- Commits:\n- Tests:\n- PRs:"
     },
     {
       "data": {
@@ -56,8 +80,21 @@
         "updated_at": "2026-02-11T22:31:47.857098Z"
       },
       "id": "fn-3-core-c-and-language-patterns-skills.2",
-      "runtime": null,
-      "spec": "# fn-3-core-c-and-language-patterns-skills.2 Async, nullable, and DI skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T03:30:23.788319Z",
+        "evidence": {
+          "commits": [],
+          "prs": [],
+          "tests": [
+            "validate-skills.sh: PASSED (0 errors)"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T03:33:25.784112Z"
+      },
+      "spec": "# fn-3-core-c-and-language-patterns-skills.2 Async, nullable, and DI skills\n\n## Description\nCreate three skills under `skills/core-csharp/`:\n\n**`dotnet-csharp-async-patterns`**: Async/await best practices, agent-specific gotchas (blocking on `.Result`/`.Wait()`, `async void`, missing `ConfigureAwait`, fire-and-forget). References David Fowler async guidance. Cross-references `[skill:dotnet-csharp-dependency-injection]` for `IHostedService` patterns.\n\n**`dotnet-csharp-nullable-reference-types`**: NRT annotation strategies (`#nullable enable`, `[NotNullWhen]`, `[MemberNotNull]`), migration guidance for legacy codebases, common annotation mistakes agents make. TFM notes: NRT defaults differ by project template version.\n\n**`dotnet-csharp-dependency-injection`**: MS.Extensions.DependencyInjection advanced patterns: keyed services (.NET 8+), decoration patterns, factory delegates, scope validation, `IHostedService`/`BackgroundService` registration. Cross-references `[skill:dotnet-csharp-async-patterns]` and `[skill:dotnet-csharp-configuration]`.\n\nAll skills must use canonical frontmatter, `[skill:name]` cross-references, description under 120 chars, and reference authoritative docs.\n\n## Acceptance\n- [ ] `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md` exists with valid frontmatter\n- [ ] `skills/core-csharp/dotnet-csharp-nullable-reference-types/SKILL.md` exists with valid frontmatter\n- [ ] `skills/core-csharp/dotnet-csharp-dependency-injection/SKILL.md` exists with valid frontmatter\n- [ ] All descriptions under 120 chars\n- [ ] Agent gotcha patterns documented in async and NRT skills\n- [ ] Cross-references use `[skill:name]` syntax\n- [ ] DI skill covers keyed services (net8.0+)\n- [ ] `./scripts/validate-skills.sh` passes\n\n## Done summary\nCreated three core C# skills under skills/core-csharp/:\n\n1. **dotnet-csharp-async-patterns** - Async/await best practices covering task patterns, ConfigureAwait, cancellation, ValueTask, IAsyncEnumerable, and BackgroundService. Includes 5 agent gotcha sections: blocking on .Result/.Wait(), async void, missing ConfigureAwait, fire-and-forget without error handling, and forgetting CancellationToken.\n\n2. **dotnet-csharp-nullable-reference-types** - NRT annotation strategies with #nullable enable, all System.Diagnostics.CodeAnalysis attributes ([NotNullWhen], [MemberNotNull], [NotNullIfNotNull], etc.), migration guidance, generic constraints, EF Core integration. Includes 5 agent gotcha sections: null-forgiving operator abuse, ignoring warnings, wrong interface nullability, missing [NotNullWhen], and value/reference type confusion.\n\n3. **dotnet-csharp-dependency-injection** - MS.Extensions.DI advanced patterns: service lifetimes with captive dependency warnings, keyed services (net8.0+), decoration (manual + Scrutor), factory delegates, TryAdd for libraries, BackgroundService/IHostedService registration, scope validation, and registration organization.\n\nAll skills registered in plugin.json. Cross-references use [skill:name] syntax. All descriptions under 120 chars. validate-skills.sh passes with 0 errors.\n## Evidence\n- Commits:\n- Tests: validate-skills.sh: PASSED (0 errors)\n- PRs:"
     },
     {
       "data": {
@@ -75,8 +112,23 @@
         "updated_at": "2026-02-11T22:31:47.985303Z"
       },
       "id": "fn-3-core-c-and-language-patterns-skills.3",
-      "runtime": null,
-      "spec": "# fn-3-core-c-and-language-patterns-skills.3 Configuration and source generator skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T03:39:28.136453Z",
+        "evidence": {
+          "commits": [
+            "00b442862e5a7c8cf8a4948a39634e9c004fa5ec"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T03:52:58.197759Z"
+      },
+      "spec": "# fn-3-core-c-and-language-patterns-skills.3 Configuration and source generator skills\n\n## Description\nCreate two skills under `skills/core-csharp/`:\n\n**`dotnet-csharp-configuration`**: Options pattern (`IOptions<T>`, `IOptionsMonitor<T>`, `IOptionsSnapshot<T>`), `IValidateOptions<T>`, user secrets, environment-based configuration, `Microsoft.FeatureManagement` for feature flags. Cross-references `[skill:dotnet-csharp-dependency-injection]` for registration patterns.\n\n**`dotnet-csharp-source-generators`**: Covers BOTH creating and consuming source generators. Creating: `IIncrementalGenerator`, syntax providers, semantic analysis, emit patterns, diagnostic reporting, testing with `CSharpGeneratorDriver`. Consuming: `[GeneratedRegex]`, `[LoggerMessage]`, STJ source-gen, `[JsonSerializable]`. Cross-references `[skill:dotnet-csharp-modern-patterns]` for related C# features.\n\nBoth skills must use canonical frontmatter, `[skill:name]` cross-references, description under 120 chars, and reference authoritative docs (Source Generator Cookbook for source-generators).\n\n## Acceptance\n- [ ] `skills/core-csharp/dotnet-csharp-configuration/SKILL.md` exists with valid frontmatter\n- [ ] `skills/core-csharp/dotnet-csharp-source-generators/SKILL.md` exists with valid frontmatter\n- [ ] All descriptions under 120 chars\n- [ ] Configuration skill covers Options pattern variants and FeatureManagement\n- [ ] Source generator skill covers both creating AND consuming generators\n- [ ] Source Generator Cookbook referenced\n- [ ] Cross-references use `[skill:name]` syntax\n- [ ] `./scripts/validate-skills.sh` passes\n\n## Done summary\nAdded dotnet-csharp-configuration skill (Options pattern with IOptions<T>/IOptionsMonitor<T>/IOptionsSnapshot<T>, IValidateOptions<T>, user secrets, environment-based config, Microsoft.FeatureManagement) and dotnet-csharp-source-generators skill (creating generators with IIncrementalGenerator and consuming GeneratedRegex, LoggerMessage, STJ source-gen). Both use canonical frontmatter, [skill:name] cross-references, and descriptions under 120 chars.\n## Evidence\n- Commits: 00b442862e5a7c8cf8a4948a39634e9c004fa5ec\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     },
     {
       "data": {
@@ -94,8 +146,23 @@
         "updated_at": "2026-02-11T22:31:48.177047Z"
       },
       "id": "fn-3-core-c-and-language-patterns-skills.4",
-      "runtime": null,
-      "spec": "# fn-3-core-c-and-language-patterns-skills.4 Concurrency specialist agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T03:56:39.770166Z",
+        "evidence": {
+          "files_created": [
+            "agents/dotnet-csharp-concurrency-specialist.md"
+          ],
+          "files_modified": [
+            ".claude-plugin/plugin.json"
+          ],
+          "validation": "validate-skills.sh passes with 0 errors"
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T03:57:51.831821Z"
+      },
+      "spec": "# fn-3-core-c-and-language-patterns-skills.4 Concurrency specialist agent\n\n## Description\nCreate the `dotnet-csharp-concurrency-specialist` agent at `agents/dotnet-csharp-concurrency-specialist.md`.\n\n**Agent frontmatter:**\n- `name`: `dotnet-csharp-concurrency-specialist`\n- `description`: Trigger phrase covering race conditions, deadlocks, thread safety, concurrent access, lock contention, async races, parallel execution, synchronization issues\n- `model`: `sonnet` (matches `dotnet-architect` precedent)\n- `tools`: `Read`, `Grep`, `Glob` (read-only analysis, matches `dotnet-architect`)\n\n**Agent body:**\n- Deep expertise in `Task`/`async` patterns, thread safety analysis, synchronization primitives (`SemaphoreSlim`, `lock`, `Interlocked`, `Channel<T>`)\n- Race condition identification and fix patterns\n- Common concurrency mistakes agents make: shared mutable state, incorrect `ConcurrentDictionary` usage, `async void` event handlers, deadlocking on `.Result`\n- Preloaded skill references: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-modern-patterns]`\n- Decision tree: \"Is this a race condition? -> Check shared state. Is this a deadlock? -> Check blocking calls.\"\n\n**Registration:** Add `\"agents/dotnet-csharp-concurrency-specialist.md\"` to `plugin.json` `agents` array.\n\n## Acceptance\n- [ ] `agents/dotnet-csharp-concurrency-specialist.md` exists with valid agent frontmatter (name, description, model, tools)\n- [ ] Trigger phrases cover: race condition, deadlock, thread safety, concurrent access, lock contention\n- [ ] Preloaded skill references: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-modern-patterns]`\n- [ ] Agent registered in `plugin.json` `agents` array\n- [ ] Description follows WHEN/WHEN NOT pattern\n- [ ] `./scripts/validate-skills.sh` passes (validates plugin.json agent refs)\n\n## Done summary\nCreated `dotnet-csharp-concurrency-specialist` agent at `agents/dotnet-csharp-concurrency-specialist.md` with:\n- Valid frontmatter: name, description (WHEN/WHEN NOT pattern), model (sonnet), tools (Read, Grep, Glob)\n- Trigger phrases covering: race condition, deadlock, thread safety, concurrent access, lock contention, async races, parallel execution, synchronization issues\n- Preloaded skills: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-modern-patterns]`\n- Decision tree for diagnosing concurrency issues\n- 6 common concurrency anti-patterns with code examples\n- Synchronization primitives quick reference table\n- Registered in `plugin.json` agents array\n- `validate-skills.sh` passes (0 errors)\n## Evidence\n- Commits:\n- Tests:\n- PRs:"
     }
   ]
 }

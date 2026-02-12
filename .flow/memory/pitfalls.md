@@ -42,3 +42,6 @@ Options pattern classes must use { get; set; } not { get; init; } because config
 
 ## 2026-02-12 manual [pitfall]
 Source generator AddSource hint names must include namespace to avoid collisions when same class name exists in different namespaces
+
+## 2026-02-12 manual [pitfall]
+When adding new skills, always register them in plugin.json skills array -- files on disk without registration are invisible to the plugin system

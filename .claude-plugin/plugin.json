@@ -13,7 +13,9 @@
     "skills/core-csharp/dotnet-csharp-nullable-reference-types",
     "skills/core-csharp/dotnet-csharp-dependency-injection",
     "skills/core-csharp/dotnet-csharp-configuration",
-    "skills/core-csharp/dotnet-csharp-source-generators"
+    "skills/core-csharp/dotnet-csharp-source-generators",
+    "skills/project-structure/dotnet-project-structure",
+    "skills/project-structure/dotnet-scaffold-project"
   ],
   "agents": [
     "agents/dotnet-architect.md",
