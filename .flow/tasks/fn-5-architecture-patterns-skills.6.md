@@ -18,9 +18,8 @@ Register all 10 architecture skills in `.claude-plugin/plugin.json`, run validat
 - [ ] Reconciliation note documented: when fn-7 lands, replace placeholders with canonical `[skill:...]` cross-references
 
 ## Done summary
-TBD
-
+Registered all 10 architecture skills in plugin.json, verified repo-wide name uniqueness, audited all boundary cross-references (fn-3 DI/async, fn-4 scaffolding, fn-7 testing, fn-19 CI/CD), confirmed deferred fn-7 placeholders in all 10 skills, and added FN7-RECONCILIATION.md tracking document for future cross-reference updates.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 8b362d4589c576dde33a6c7c06f03cc458effdd8
+- Tests: ./scripts/validate-skills.sh, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d, python3 -c 'import json; json.load(open(".claude-plugin/plugin.json"))'
 - PRs:
