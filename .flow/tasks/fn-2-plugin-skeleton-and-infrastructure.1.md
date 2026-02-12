@@ -64,3 +64,10 @@ Create the foundational plugin directory structure and manifests for dotnet-arti
 - [ ] All placeholder SKILL.md files have valid frontmatter (name, description)
 - [ ] `/plugin-dev:plugin-validator` passes on the complete structure (placeholders make this possible)
 - [ ] Plugin can be symlinked to `~/.claude/plugins/dotnet-artisan` for local testing
+
+## Done summary
+Created dotnet-artisan plugin skeleton: plugin.json manifest with canonical schema, marketplace.json metadata, 4 placeholder SKILL.md files with valid frontmatter, dotnet-architect agent placeholder, empty hooks/MCP structures, and 21 skill category directories matching spec categories.
+## Evidence
+- Commits: 4f7648fba0e9a3ad3b3c4e8d8df0f94f8b1f5a5c, 0bb6afe8371e368a6f9d9aa0a86b8546380f49c6
+- Tests: jq empty .claude-plugin/plugin.json, jq empty .claude-plugin/marketplace.json, jq empty hooks/hooks.json, jq empty .mcp.json
+- PRs:
