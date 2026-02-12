@@ -16,7 +16,7 @@ Delivers a skill for writing custom Roslyn analyzers, code fix providers, and di
 | NuGet packaging | Analyzer-specific NuGet layout (`analyzers/dotnet/cs/`, `IncludeBuildOutput=false`) | fn-20: general NuGet publishing | Cross-ref to fn-20 when it lands |
 | Testing | Analyzer-specific testing (CSharpAnalyzerVerifier, CSharpCodeFixVerifier) | fn-7: general testing strategy and frameworks | Cross-ref to `[skill:dotnet-testing-strategy]` |
 | Code smells | N/A | fn-26: which patterns to detect during review | Cross-ref to `[skill:dotnet-csharp-code-smells]` when it lands |
-| DiagnosticDescriptor conventions | **Canonical owner** — ID naming (prefix conventions), categories, severity selection, helpLinkUri patterns | fn-3 source generators: cross-references fn-27 for diagnostic conventions | Grep validates fn-3 cross-ref |
+| DiagnosticDescriptor conventions | **Canonical owner** — ID naming (prefix conventions), categories, severity selection, helpLinkUri patterns | fn-3 source generators may emit diagnostics; should cross-ref fn-27 for conventions (aspirational — fn-3 is closed, add if reopened) | N/A |
 
 ## Key Context
 - Analyzers MUST target `netstandard2.0` — the compiler loads analyzers on various runtimes (Mono, .NET Framework, .NET Core); targeting net8.0+ breaks VS/MSBuild compatibility
@@ -25,7 +25,7 @@ Delivers a skill for writing custom Roslyn analyzers, code fix providers, and di
 - Performance is critical: analyzers run in real-time during editing. Avoid allocations in `RegisterSyntaxNodeAction`, prefer `SymbolKind`-based filtering, use `ImmutableArray` for supported diagnostics
 - DiagnosticSuppressor is an advanced feature for conditionally suppressing diagnostics from other analyzers (e.g., suppressing CA1062 when a custom null-check pattern is used)
 - Multi-analyzer NuGet packages should separate analyzer and code fix assemblies for faster IDE load when fixes aren't needed
-- Common Roslyn analyzer diagnostics (RS1001, RS1004, RS1025) flag issues in analyzer code itself — the skill should document these meta-diagnostics
+- Common Roslyn SDK meta-diagnostics (e.g., RS-series rules) flag issues in analyzer code itself — the skill should document these with verified ID-to-meaning mappings from official Roslyn SDK documentation
 
 ## Cross-Reference Matrix
 | Skill | Required Outbound Refs |
@@ -58,6 +58,7 @@ grep -i "CSharpAnalyzerVerifier\|CSharpCodeFixVerifier" skills/core-csharp/dotne
 grep "skill:dotnet-csharp-source-generators" skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md
 grep "skill:dotnet-add-analyzers" skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md
 grep "skill:dotnet-testing-strategy" skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md
+grep "skill:dotnet-csharp-coding-standards" skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md
 
 # Verify skill registered in plugin.json
 grep "skills/core-csharp/dotnet-roslyn-analyzers" .claude-plugin/plugin.json
@@ -77,9 +78,9 @@ grep "skill:dotnet-roslyn-analyzers" skills/foundation/dotnet-advisor/SKILL.md
 5. Covers testing with Microsoft.CodeAnalysis.Testing: CSharpAnalyzerVerifier, CSharpCodeFixVerifier, diagnostic location markup syntax (`[|...|]`, `{|ID:...|}`), multi-file test scenarios
 6. Covers NuGet packaging: `analyzers/dotnet/cs/` layout, `IncludeBuildOutput=false`, separating analyzer and code fix assemblies, pack verification
 7. Covers performance best practices: avoid allocations in hot paths, prefer symbol-based over syntax-based analysis where possible, incremental analysis patterns
-8. Documents common Roslyn SDK meta-diagnostics (RS1001, RS1004, RS1025) that flag issues in analyzer code
+8. Documents common Roslyn SDK meta-diagnostics with verified ID-to-meaning mappings from official documentation
 9. Explicit scope boundary with `[skill:dotnet-csharp-source-generators]` (generators) and `[skill:dotnet-add-analyzers]` (consuming)
-10. Cross-references validated per matrix using grep
+10. Cross-references validated per matrix using grep (including `[skill:dotnet-csharp-coding-standards]`)
 11. Skill registered in `.claude-plugin/plugin.json` skills array
 12. Skill added to `dotnet-advisor` catalog (category 2) and routing logic
 13. `./scripts/validate-skills.sh` passes
@@ -91,6 +92,7 @@ grep "skill:dotnet-roslyn-analyzers" skills/foundation/dotnet-advisor/SKILL.md
 - Confirm NuGet packaging section shows correct directory layout
 - Verify performance section warns about RegisterSyntaxNodeAction allocation patterns
 - Verify DiagnosticDescriptor conventions include ID prefix guidance, category naming, severity selection rationale
+- Verify RS-series meta-diagnostic IDs are accurate against official Roslyn SDK documentation
 
 ## References
 - Tutorial: Write your first analyzer and code fix: https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/tutorials/how-to-write-csharp-analyzer-code-fix

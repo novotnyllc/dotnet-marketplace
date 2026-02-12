@@ -1,0 +1,63 @@
+{
+  "created_at": "2026-02-12T22:45:44.414057Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-10-version-detection-and-multi-targeting",
+      "created_at": "2026-02-11T22:23:18.213449Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-10-version-detection-and-multi-targeting",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-10-version-detection-and-multi-targeting.md",
+      "status": "open",
+      "title": "Version Detection and Multi-Targeting Skills",
+      "updated_at": "2026-02-11T22:31:26.807212Z"
+    },
+    "spec": "# fn-10: Version Detection & Multi-Targeting\n\n## Overview\nDelivers skills for .NET version detection, multi-targeting strategies with polyfills, and modern .NET version upgrades.\n\n## Scope\n**Skills:**\n- `dotnet-multi-targeting` - Multi-targeting strategies with polyfill emphasis: PolySharp, SimonCropp/Polyfill, conditional compilation, API compat analyzers\n- `dotnet-version-upgrade` - Modern .NET version upgrades (.NET 8 -> 10 -> 11). Forward-looking polyfill usage for latest features on all targets.\n\n## Key Context\n- Version detection is foundational for all other skills (reads TFMs from .csproj, Directory.Build.props, global.json)\n- Skills must adapt output based on detected TFM (net8.0, net9.0, net10.0, net11.0)\n- PolySharp and SimonCropp/Polyfill enable latest language features on older TFMs\n- .NET 11 preview detection requires checking LangVersion=preview and EnablePreviewFeatures\n- Multi-targeting strategy: prefer polyfills over conditional compilation\n\n## Quick Commands\n```bash\n# Smoke test: verify version detection logic\ngrep -i \"TFM\\|TargetFramework\" skills/version/dotnet-multi-targeting.md\n\n# Validate polyfill coverage\ngrep -i \"PolySharp\\|Polyfill\" skills/version/dotnet-multi-targeting.md\n\n# Test upgrade guidance\ngrep -i \"upgrade\\|migration\" skills/version/dotnet-version-upgrade.md\n```\n\n## Acceptance Criteria\n1. Both skills written with standard depth and frontmatter\n2. Multi-targeting skill emphasizes PolySharp and SimonCropp/Polyfill for modern features on older TFMs\n3. Version upgrade skill provides .NET 8 -> 10 -> 11 migration paths\n4. Skills document TFM detection from .csproj, Directory.Build.props, global.json\n5. .NET 11 preview feature detection covered (LangVersion=preview, EnablePreviewFeatures)\n6. Cross-references to other skills that depend on version detection\n7. API compatibility analyzers documented for multi-targeting validation\n\n## Test Notes\n- Test multi-targeting skill with polyfill examples (e.g., using C# 12 features on net8.0)\n- Verify version upgrade skill detects deprecated packages and patterns\n- Validate TFM detection logic with sample .csproj files\n\n## References\n- PolySharp: https://github.com/Sergio0694/PolySharp\n- SimonCropp Polyfill: https://github.com/SimonCropp/Polyfill\n- .NET Multi-Targeting: https://learn.microsoft.com/en-us/dotnet/standard/frameworks\n- .NET Upgrade Assistant: https://dotnet.microsoft.com/en-us/platform/upgrade-assistant\n"
+  },
+  "epic_id": "fn-10-version-detection-and-multi-targeting",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:01.538888Z",
+        "depends_on": [],
+        "epic": "fn-10-version-detection-and-multi-targeting",
+        "id": "fn-10-version-detection-and-multi-targeting.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-10-version-detection-and-multi-targeting.1.md",
+        "status": "todo",
+        "title": "Multi-targeting with polyfills skill",
+        "updated_at": "2026-02-11T22:32:01.539094Z"
+      },
+      "id": "fn-10-version-detection-and-multi-targeting.1",
+      "runtime": null,
+      "spec": "# fn-10-version-detection-and-multi-targeting.1 Multi-targeting with polyfills skill\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:01.657855Z",
+        "depends_on": [],
+        "epic": "fn-10-version-detection-and-multi-targeting",
+        "id": "fn-10-version-detection-and-multi-targeting.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-10-version-detection-and-multi-targeting.2.md",
+        "status": "todo",
+        "title": "Version upgrade guidance skill",
+        "updated_at": "2026-02-11T22:32:01.658014Z"
+      },
+      "id": "fn-10-version-detection-and-multi-targeting.2",
+      "runtime": null,
+      "spec": "# fn-10-version-detection-and-multi-targeting.2 Version upgrade guidance skill\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

@@ -19,10 +19,11 @@ Create the `dotnet-roslyn-analyzers` skill covering custom Roslyn analyzer autho
 - Testing: use Microsoft.CodeAnalysis.Testing high-level API (`CSharpAnalyzerVerifier<T>`, `CSharpCodeFixVerifier<T,TFix>`) as primary, not raw CSharpCompilation
 - Performance: critical section — analyzers run in real-time. Document allocation-free patterns for RegisterSyntaxNodeAction callbacks
 - NuGet packaging: `analyzers/dotnet/cs/` layout, `IncludeBuildOutput=false`, separate analyzer and code fix assemblies
-- Meta-diagnostics: RS1001 (missing DiagnosticAnalyzer attribute), RS1004 (recommended API), RS1025 (concurrent dictionary)
+- Meta-diagnostics: document common Roslyn SDK RS-series meta-diagnostics with verified ID-to-meaning mappings from official Roslyn SDK docs (e.g., missing DiagnosticAnalyzer attribute, recommended API usage, concurrent collection misuse). Verify IDs against https://github.com/dotnet/roslyn-analyzers before documenting.
 - Always target netstandard2.0 — explain WHY (compiler runtime compatibility across VS, MSBuild, CLI)
 - Pitfall from memory: source generator hint names must include namespace to avoid collisions (analogous for analyzer diagnostic IDs)
 - Pitfall from memory: skill code examples must list third-party NuGet packages explicitly
+
 ## Acceptance
 - [ ] Skill file exists at `skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md`
 - [ ] Frontmatter has `name: dotnet-roslyn-analyzers` and `description` (under 120 chars)
@@ -33,10 +34,11 @@ Create the `dotnet-roslyn-analyzers` skill covering custom Roslyn analyzer autho
 - [ ] Covers testing: CSharpAnalyzerVerifier, CSharpCodeFixVerifier, diagnostic markup syntax, multi-file scenarios
 - [ ] Covers NuGet packaging: analyzers/dotnet/cs/ layout, IncludeBuildOutput=false, separate assemblies
 - [ ] Covers performance: allocation-free callbacks, symbol-based filtering, ImmutableArray for SupportedDiagnostics
-- [ ] Documents RS1001, RS1004, RS1025 meta-diagnostics
+- [ ] Documents common Roslyn SDK meta-diagnostics with verified IDs from official documentation
 - [ ] Cross-references `[skill:dotnet-csharp-source-generators]`, `[skill:dotnet-add-analyzers]`, `[skill:dotnet-testing-strategy]`, `[skill:dotnet-csharp-coding-standards]`
 - [ ] Explicit scope boundary statement: authoring vs. consuming vs. source generators
 - [ ] Does NOT touch plugin.json (handled by fn-27.2)
+
 ## Done summary
 TBD
 

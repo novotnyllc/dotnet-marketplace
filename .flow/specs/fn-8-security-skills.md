@@ -7,7 +7,7 @@ Delivers security skills covering OWASP top 10 for .NET, secrets management, mod
 **In scope:** Security guidance for .NET applications: OWASP vulnerability mitigation, secrets management patterns, cryptographic best practices, and automated security review.
 
 **Out of scope / Owned by other skills:**
-- Authentication/authorization implementation (ASP.NET Core Identity, OAuth) -- owned by fn-12
+- Authentication/authorization implementation -- API-level auth patterns (ASP.NET Core Identity, OAuth/OIDC, JWT, passkeys) owned by fn-11 (`[skill:dotnet-api-security]`); Blazor auth UI (AuthorizeView, CascadingAuthenticationState) owned by fn-12
 - Cloud-specific security services (Azure Key Vault, AWS Secrets Manager details) -- cloud epics
 - Network security and firewall configuration -- infrastructure concerns
 
