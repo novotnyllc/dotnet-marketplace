@@ -52,3 +52,10 @@ Create the `dotnet-version-detection` skill that reads project files to determin
 - [ ] Reference data tagged with `Last updated: YYYY-MM-DD`
 - [ ] Version matrix covers net8.0 through net11.0 with C# versions
 - [ ] Edge cases handled: missing files, MSBuild indirection, inconsistent versions, no SDK
+
+## Done summary
+Created dotnet-version-detection skill with strict TFM precedence algorithm (csproj > Directory.Build.props > global.json > dotnet --version), multi-targeting support, preview feature detection (LangVersion, EnablePreviewFeatures, runtime-async), MSBuild property expression warnings, edge case handling, and a separate version-to-feature reference data section covering net8.0 through net11.0.
+## Evidence
+- Commits: d31130345d, 7b737165e1, 46208d07af
+- Tests: jq empty .claude-plugin/plugin.json
+- PRs:

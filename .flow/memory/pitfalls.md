@@ -6,3 +6,6 @@ Lessons learned from NEEDS_WORK feedback. Things models tend to miss.
 
 ## 2026-02-12 manual [pitfall]
 When spec requires [skill:name] cross-reference syntax, use it for ALL skill references (catalog entries, routing targets, etc.) -- not just the first few. Bare text skill names are not machine-parseable.
+
+## 2026-02-12 manual [pitfall]
+.NET STS lifecycle is 18 months from GA (not 12). If GA Nov 2026, STS end is ~May 2028. Always calculate from actual GA date, not release year.
