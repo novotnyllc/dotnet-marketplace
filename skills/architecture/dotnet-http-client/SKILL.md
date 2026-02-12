@@ -562,7 +562,7 @@ Test the full HTTP client pipeline including DI registration:
 1. **Do not create HttpClient with `new`** -- always inject `IHttpClientFactory` or a typed client. Direct instantiation causes socket exhaustion.
 2. **Do not dispose typed clients** -- the factory manages handler lifetimes. Disposing the `HttpClient` instance is harmless (it does not close pooled connections), but wrapping it in `using` is misleading.
 3. **Do not set `BaseAddress` with a trailing path** -- `new Uri("https://api.example.com/v2")` will drop `/v2` when combining with relative URIs. Use `new Uri("https://api.example.com/v2/")` (trailing slash) or use absolute URIs in calls.
-4. **Do not add resilience handlers before DelegatingHandlers** -- resilience should be the outermost handler so retries re-execute the full chain (fresh tokens, correlation IDs).
+4. **Understand that resilience added last is innermost** -- `AddStandardResilienceHandler()` registered after `AddHttpMessageHandler` calls wraps the HTTP call directly. Retries do not re-execute outer DelegatingHandlers. This is correct for most cases (tokens/correlation IDs set once). If you need per-retry token refresh, place the token handler after the resilience handler or use a custom pipeline callback.
 5. **Do not register DelegatingHandlers as Singleton** -- they are pooled with the `HttpMessageHandler` pipeline and must be Transient.
 
 ---
