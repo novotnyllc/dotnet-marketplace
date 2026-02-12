@@ -351,7 +351,7 @@ The `Microsoft.Extensions.Resilience` package automatically reports:
 | `polly.strategy.pipeline.duration` | Duration of the entire pipeline execution |
 | `polly.strategy.attempt.count` | Count of attempts (including retries) |
 
-These integrate with OpenTelemetry automatically when the OpenTelemetry SDK is configured in your application <!-- TODO: fn-5.3 delivers dotnet-observability -- link [skill:dotnet-observability] for collector setup when available -->.
+These integrate with OpenTelemetry automatically when the OpenTelemetry SDK is configured in your application -- see [skill:dotnet-observability] for collector setup.
 
 ### Enabling Telemetry
 
