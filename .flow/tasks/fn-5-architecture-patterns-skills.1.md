@@ -14,9 +14,8 @@ Create two architecture skills: `dotnet-architecture-patterns` (modern patterns 
 - [ ] Does NOT modify `plugin.json` (handled by fn-5.6)
 
 ## Done summary
-TBD
-
+Created dotnet-architecture-patterns (vertical slices, minimal API organization, caching, idempotency/outbox with three-state DB-backed implementation) and dotnet-background-services (BackgroundService, Channels producer/consumer with TryDequeue/CompleteWriter, graceful shutdown drain) skills with fn-3 cross-references and fn-4/fn-7 boundary statements.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 27d2091, f97a4e4, c484aaf, 12242d7
+- Tests: ./scripts/validate-skills.sh
 - PRs:
