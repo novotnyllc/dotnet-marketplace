@@ -7,7 +7,7 @@ description: "WHEN writing secure .NET code or reviewing for vulnerabilities. OW
 
 OWASP Top 10 (2021) security guidance for .NET applications. Each category includes the vulnerability description, .NET-specific risk, mitigation code examples, and common pitfalls. This skill is the canonical owner of deprecated security pattern warnings (CAS, APTCA, .NET Remoting, DCOM, BinaryFormatter).
 
-**Out of scope:** Authentication/authorization implementation (ASP.NET Core Identity, OAuth) -- owned by fn-12. Cloud-specific security services (Azure Key Vault, AWS Secrets Manager) -- cloud epics. Cryptographic algorithm selection and key management -- see [skill:dotnet-cryptography]. Configuration binding and Options pattern -- see [skill:dotnet-csharp-configuration].
+**Out of scope:** Authentication/authorization implementation -- API-level auth patterns (Identity, OAuth/OIDC, JWT, passkeys, CORS) owned by fn-11 ([skill:dotnet-api-security]), Blazor auth UI (AuthorizeView, CascadingAuthenticationState) owned by fn-12. Cloud-specific security services (Azure Key Vault, AWS Secrets Manager) -- cloud epics. Cryptographic algorithm selection and key management -- see [skill:dotnet-cryptography]. Configuration binding and Options pattern -- see [skill:dotnet-csharp-configuration].
 
 Cross-references: [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices, [skill:dotnet-csharp-coding-standards] for secure coding conventions.
 

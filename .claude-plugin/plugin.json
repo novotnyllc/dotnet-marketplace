@@ -46,6 +46,8 @@
     "skills/testing/dotnet-test-quality",
     "skills/api-development/dotnet-minimal-apis",
     "skills/api-development/dotnet-api-versioning",
+    "skills/api-development/dotnet-openapi",
+    "skills/api-development/dotnet-api-security",
     "skills/security/dotnet-security-owasp",
     "skills/security/dotnet-secrets-management",
     "skills/security/dotnet-cryptography",
