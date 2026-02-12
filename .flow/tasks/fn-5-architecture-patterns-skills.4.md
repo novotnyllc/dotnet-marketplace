@@ -16,9 +16,8 @@ Create three data access skills: `dotnet-efcore-patterns` (tactical: DbContext l
 - [ ] Does NOT modify `plugin.json` (handled by fn-5.6)
 
 ## Done summary
-TBD
-
+Created three data access skills: dotnet-efcore-patterns (tactical EF Core patterns covering DbContext lifecycle, AsNoTracking, query splitting, migrations, interceptors, compiled queries, connection resiliency), dotnet-efcore-architecture (strategic patterns covering read/write split, aggregate boundaries, repository policy, N+1 governance, row limits, projections), and dotnet-data-access-strategy (decision framework for EF Core vs Dapper vs ADO.NET with performance tradeoffs, AOT compatibility, and hybrid approaches).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 8404cf2, cbc4a35, fc47dc5
+- Tests: frontmatter validation (name+description), repo-wide skill name uniqueness check, fn-7 placeholder grep, out-of-scope boundary grep, canonical fn-3 cross-ref grep
 - PRs:
