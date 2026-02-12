@@ -22,9 +22,8 @@ Create three foundational testing skills that form the base of the testing categ
 - [ ] Skill content complete and ready for registration by Task 4
 
 ## Done summary
-TBD
-
+Created three foundational testing skills: dotnet-testing-strategy (unit/integration/E2E decision tree, naming conventions, mock/fake/stub guidance), dotnet-xunit (xUnit v3 features with v2 compatibility notes), and dotnet-integration-testing (WebApplicationFactory, Testcontainers, Aspire testing, database fixtures, test isolation).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: cb5e14a, 5b9f000, 53ba45f
+- Tests: grep cross-reference validation, frontmatter validation
 - PRs:

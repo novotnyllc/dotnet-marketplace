@@ -93,3 +93,6 @@ WebSocket endpoint examples must include app.UseWebSockets() middleware call -- 
 
 ## 2026-02-12 manual [pitfall]
 When multiple tasks in an epic each register entries in a shared file (e.g., plugin.json), assign sole ownership of that file to one integration task to avoid merge conflicts and weak parallelizability
+
+## 2026-02-12 manual [pitfall]
+xUnit [Collection("Name")] on a test class requires a matching [CollectionDefinition("Name")] marker class with ICollectionFixture<T> -- without it, fixture injection silently fails
