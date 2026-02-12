@@ -25,7 +25,9 @@ Read the nearest `.csproj` file to the current working file/directory.
 </PropertyGroup>
 ```
 
-If found, this is the authoritative TFM. Report it and proceed to additional detection (Step 5).
+If found **and the value is a literal TFM** (e.g., `net10.0`, not `$(SomeProperty)`), this is the authoritative TFM. Report it and proceed to additional detection (Step 5).
+
+If the value is an MSBuild property expression (starts with `$(`), skip to **Step 4** for unresolved property handling.
 
 ### 2. `<TargetFrameworks>` in .csproj (multi-targeting)
 
@@ -114,7 +116,7 @@ Check for explicit `<LangVersion>` in .csproj or `Directory.Build.props`:
 <LangVersion>preview</LangVersion>
 ```
 
-- If `preview` -- report "C# preview features enabled (C# 15 if on net11.0, C# 14 preview if on net10.0)"
+- If `preview` -- report "C# preview features enabled. Unlocks the next C# version available in the installed SDK (e.g., C# 15 preview with .NET 11 SDK, or upcoming C# 14 features with .NET 10 SDK)."
 - If `latest` -- report the default C# version for the detected TFM
 - If explicit version (e.g., `12.0`) -- report that version, warn if it's below the TFM default
 - If absent -- use the default C# version for the TFM (see reference data below)
@@ -190,7 +192,10 @@ See [skill:dotnet-multi-targeting] for detailed polyfill guidance.
 ### No .csproj Found
 If no `.csproj` exists in the workspace:
 - Check for `.sln` or `.slnx` files and look for referenced projects
-- If truly no project files: "No .NET project detected. Use `dotnet new` to create a project, or specify a target framework. Defaulting guidance to net10.0 (current LTS)."
+- If no project files found, continue the fallback chain:
+  1. Read `global.json` for SDK version (Step 4a) and infer TFM from it
+  2. If no `global.json`, use `dotnet --version` (Step 4b) to infer TFM
+  3. Only if both inference methods fail: "No .NET project or SDK detected. Defaulting guidance to net10.0 (current LTS). Use `dotnet new` to create a project."
 
 ### MSBuild Property Indirection
 If `<TargetFramework>` contains `$(PropertyName)`:
@@ -237,7 +242,7 @@ This reference data maps .NET versions to their C# language versions, key featur
 | .NET 8 | LTS (active) | C# 12 | net8.0 | Nov 2026 | Approaching end of support |
 | .NET 9 | STS | C# 13 | net9.0 | May 2026 | Approaching end of support |
 | .NET 10 | LTS (current) | C# 14 | net10.0 | Nov 2028 | Recommended for new projects |
-| .NET 11 | Preview 1 | C# 15 (preview) | net11.0 | ~Nov 2026 (STS) | Preview only -- not for production |
+| .NET 11 | Preview 1 | C# 15 (preview) | net11.0 | TBD (expected STS: ~May 2027) | Preview only -- not for production |
 
 ### C# Version Feature Highlights
 
