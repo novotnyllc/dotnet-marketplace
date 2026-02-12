@@ -34,9 +34,8 @@ The skill consumes output from `dotnet-version-detection` (TFM, C# version, prev
 - [ ] "Last verified" date included in skill references/metadata
 
 ## Done summary
-TBD
-
+Created dotnet-multi-targeting SKILL.md with polyfill-first multi-targeting strategy covering PolySharp, SimonCropp/Polyfill, conditional compilation patterns, multi-targeting csproj setup, and API compatibility validation with EnablePackageValidation and ApiCompat.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 3a1ba604e6debd6e2f1f07e0fe38e9b9e9ecf7e0, 006ef455101800e7e3490578ca27a36f68560254
+- Tests: grep -i PolySharp skills/multi-targeting/dotnet-multi-targeting/SKILL.md, grep -i conditional skills/multi-targeting/dotnet-multi-targeting/SKILL.md, grep -i skill: skills/multi-targeting/dotnet-multi-targeting/SKILL.md
 - PRs:

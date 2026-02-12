@@ -123,3 +123,9 @@ When documenting package replacements (e.g. Swashbuckle->OpenAPI), say 'preferre
 
 ## 2026-02-12 manual [pitfall]
 grep example commands in skill docs must use POSIX character classes ([[:space:]] not \s) and -E flag for ERE -- BRE grep does not support \s and silently mismatches
+
+## 2026-02-12 manual [pitfall]
+SDK-style projects auto-include all *.cs files; TFM-conditional Compile Include without a preceding Compile Remove causes NETSDK1022 duplicate items
+
+## 2026-02-12 manual [pitfall]
+Package validation suppression uses ApiCompatSuppressionFile with generated CompatibilitySuppressions.xml, not a PackageValidationSuppression MSBuild item

@@ -404,11 +404,11 @@ dotnet pack --configuration Release
 
 ### Suppressing Known Differences
 
-For intentional API differences between TFMs, use a suppression file. Package validation generates one automatically on first failure:
+For intentional API differences between TFMs, use a suppression file. Package validation can generate one when suppression generation is enabled:
 
 ```bash
 # Build with suppression-file generation enabled
-dotnet pack /p:GenerateCompatibilitySuppressionFile=true
+dotnet pack /p:ApiCompatGenerateSuppressionFile=true
 # Creates CompatibilitySuppressions.xml in the project directory
 ```
 
