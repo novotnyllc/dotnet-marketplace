@@ -51,3 +51,9 @@ NuGet packageSourceMapping uses most-specific-pattern-wins: MyCompany.* beats * 
 
 ## 2026-02-12 manual [pitfall]
 Trimming/AOT MSBuild properties differ by project type: apps use PublishTrimmed/PublishAot + EnableTrimAnalyzer/EnableAotAnalyzer; libraries use IsTrimmable/IsAotCompatible (which auto-enable analyzers). Mixing them up sets incorrect package metadata.
+
+## 2026-02-12 manual [pitfall]
+When documenting package replacements (e.g. Swashbuckle->OpenAPI), always note conditions where the old package is still needed -- unconditional 'replace X with Y' causes feature regressions in complex setups
+
+## 2026-02-12 manual [pitfall]
+ASP.NET shared-framework NuGet packages (e.g. Microsoft.AspNetCore.Mvc.Testing) must match the project TFM major version -- hardcoding a specific version in guidance will break users on different TFMs
