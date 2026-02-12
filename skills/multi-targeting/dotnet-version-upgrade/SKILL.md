@@ -123,9 +123,14 @@ Common replacements when moving from net8.0 to net10.0:
 | Deprecated | Replacement | Notes |
 |-----------|-------------|-------|
 | `BinaryFormatter` | `System.Text.Json` or `MessagePack` | `BinaryFormatter` throws `PlatformNotSupportedException` starting in net9.0 |
-| `Regex` without source gen | `[GeneratedRegex]` attribute | Source-generated regex is faster and AOT-compatible |
 | `Thread.Abort()` | Cooperative cancellation via `CancellationToken` | `Thread.Abort()` throws `PlatformNotSupportedException` |
 | `WebRequest` / `HttpWebRequest` | `HttpClient` via `IHttpClientFactory` | Obsolete (`SYSLIB0014`), migrate to `HttpClient` |
+
+**Recommended modernizations** (not deprecated, but improve performance and AOT readiness):
+
+| Pattern | Improvement | Notes |
+|---------|-------------|-------|
+| `Regex` without source gen | `[GeneratedRegex]` attribute | Source-generated regex is faster and AOT-compatible |
 
 **Step 6: Run tests and validate**
 
@@ -398,17 +403,19 @@ For solutions using Central Package Management (`Directory.Packages.props`), upd
 
 ### ASP.NET Core Shared Framework Packages
 
-ASP.NET Core shared framework packages must match the target TFM major version. Do not hardcode a specific version -- use a version wildcard or float that tracks the TFM:
+ASP.NET Core shared framework packages must align their major version with the target TFM. Two valid approaches:
 
 ```xml
 <ItemGroup>
-  <!-- Correct: version floats with TFM -->
+  <!-- Option A: floating version — auto-resolves latest patch, convenient for upgrades -->
   <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.*" />
 
-  <!-- Wrong: hardcoded version breaks when TFM changes -->
-  <!-- <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" /> -->
+  <!-- Option B: pinned version — deterministic CI builds, update explicitly -->
+  <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
 </ItemGroup>
 ```
+
+Pinned versions are recommended for deterministic CI; floating versions are useful during exploratory upgrades. Either way, the **major version must match the TFM** (e.g., `10.x` for `net10.0`).
 
 ---
 
@@ -420,7 +427,7 @@ ASP.NET Core shared framework packages must match the target TFM major version. 
 
 3. **Do not assume .NET 9 STS has 12-month support.** STS lifecycle is 18 months from GA. .NET 9 GA was November 2024, so end-of-support is May 2026. Always calculate from actual GA date, not release year.
 
-4. **Do not hardcode ASP.NET shared framework package versions.** Packages like `Microsoft.AspNetCore.Mvc.Testing` must match the project TFM major version. Use version wildcards (e.g., `10.*`) so the reference stays correct when the TFM changes.
+4. **Ensure ASP.NET shared framework package major versions match the TFM.** Packages like `Microsoft.AspNetCore.Mvc.Testing` must have their major version aligned with the project TFM (e.g., `10.x` for `net10.0`). Pin exact versions for deterministic CI or float with wildcards (e.g., `10.*`) during exploratory upgrades.
 
 5. **Do not re-implement TFM detection.** This skill consumes the structured output from [skill:dotnet-version-detection]. Never parse `.csproj` files to determine the current version -- use the detection skill's output (TFM, C# version, SDK version, warnings).
 

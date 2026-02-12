@@ -129,3 +129,6 @@ SDK-style projects auto-include all *.cs files; TFM-conditional Compile Include 
 
 ## 2026-02-12 manual [pitfall]
 Package validation suppression uses ApiCompatSuppressionFile with generated CompatibilitySuppressions.xml, not a PackageValidationSuppression MSBuild item
+
+## 2026-02-12 manual [pitfall]
+dotnet publish --no-actual-publish is not a valid CLI switch; use 'dotnet build /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true' to run trim/AOT analysis without publishing

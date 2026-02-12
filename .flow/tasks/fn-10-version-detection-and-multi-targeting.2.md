@@ -37,9 +37,8 @@ The skill consumes output from `dotnet-version-detection` (current TFM, SDK vers
 - [ ] "Last verified" date included in skill references/metadata
 
 ## Done summary
-TBD
-
+Created dotnet-version-upgrade skill with three defined upgrade lanes (LTS-to-LTS, staged through STS, experimental preview), breaking change detection patterns, package update strategies with dotnet-outdated and Upgrade Assistant, preview feature opt-in guidance, and 9 agent gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 82ba908, a022c3e
+- Tests: grep verification of acceptance criteria
 - PRs:
