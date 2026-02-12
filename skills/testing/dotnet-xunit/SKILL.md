@@ -26,7 +26,7 @@ Cross-references: [skill:dotnet-testing-strategy] for deciding what to test and 
 | **Async lifecycle** | `IAsyncLifetime` | `IAsyncLifetime` (now returns `ValueTask`) |
 | **Assert package** | Bundled | Separate `xunit.v3.assert` (or `xunit.v3.assert.source` for extensibility) |
 | **Parallelism default** | Per-collection | Per-collection (same, but configurable per-assembly) |
-| **`[Theory]` timeout** | Via `[Fact(Timeout=...)]` | `[Fact(Timeout=...)]` (unchanged) |
+| **Timeout** | `Timeout` property on `[Fact]` and `[Theory]` | `Timeout` property on `[Fact]` and `[Theory]` (unchanged) |
 | **Test output** | `ITestOutputHelper` | `ITestOutputHelper` (unchanged) |
 | **`[ClassData]`** | Returns `IEnumerable<object[]>` | Returns `IEnumerable<TheoryDataRow<T>>` (strongly typed) |
 | **`[MemberData]`** | Returns `IEnumerable<object[]>` | Supports `TheoryData<T>` and `TheoryDataRow<T>` |
