@@ -47,3 +47,5 @@ Create the `dotnet-advisor` router/index skill that serves as the always-loaded 
 - [ ] `/plugin-dev:skill-reviewer` rates description as effective for triggering
 
 ## Done summary
+
+## Evidence
