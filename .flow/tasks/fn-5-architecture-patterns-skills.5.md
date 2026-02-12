@@ -15,9 +15,8 @@ Create two container skills: `dotnet-containers` (multi-stage Dockerfiles, `dotn
 - [ ] Does NOT modify `plugin.json` (handled by fn-5.6)
 
 ## Done summary
-TBD
-
+Created two container skills: dotnet-containers (multi-stage Dockerfiles, dotnet publish container images for .NET 8+, rootless containers, base image selection, health checks) and dotnet-container-deployment (Kubernetes Deployment + Service + probe YAML, Docker Compose for local dev, CI/CD integration with GitHub Actions).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 0867558, 2f124f2
+- Tests: ./scripts/validate-skills.sh
 - PRs:

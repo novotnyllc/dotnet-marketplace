@@ -72,3 +72,6 @@ IHttpClientFactory handler order: AddHttpMessageHandler first = outermost, AddSt
 
 ## 2026-02-12 manual [pitfall]
 Skill code examples that use third-party NuGet APIs (extension methods, types) must list those packages explicitly -- AI agents cannot resolve unlisted packages and will produce non-compiling code
+
+## 2026-02-12 manual [pitfall]
+MSBuild container publish items (ContainerPort, ContainerEnvironmentVariable, ContainerLabel) must go in ItemGroup, not PropertyGroup -- they use Include= attribute syntax which is item metadata, not property syntax
