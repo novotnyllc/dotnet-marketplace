@@ -64,10 +64,8 @@ Create the `plugin-self-publish` skill documenting how this plugin itself is ver
 - [x] Both scripts exit non-zero on FAIL conditions
 
 ## Done summary
-
 Created plugin-self-publish SKILL.md documenting SemVer versioning, changelog, GitHub Releases, and marketplace publishing workflow. Implemented validate-skills.sh (thin bash wrapper) and _validate_skills.py (Python validation engine) for SKILL.md frontmatter, cross-references, and context budget tracking with stable CI keys. Implemented validate-marketplace.sh for plugin.json/marketplace.json schema and path validation.
-
 ## Evidence
-
 - Commits: beb4058, 8e62327, 9c0e711, 7d64e98, 84f0793, 8e4bc00
-- Tests: `ALLOW_PLANNED_REFS=1 ./scripts/validate-skills.sh`, `./scripts/validate-marketplace.sh`
+- Tests: ALLOW_PLANNED_REFS=1 ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:

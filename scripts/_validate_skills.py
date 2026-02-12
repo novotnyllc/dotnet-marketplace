@@ -13,8 +13,6 @@ per-file subprocess spawning and ensure deterministic YAML parsing.
 """
 
 import argparse
-import json
-import os
 import re
 import sys
 from pathlib import Path
@@ -23,14 +21,16 @@ from pathlib import Path
 
 # Try PyYAML first for full YAML spec compliance
 try:
-    import yaml
+    import yaml  # type: ignore[import-not-found]
     HAS_PYYAML = True
 except ImportError:
+    yaml = None  # type: ignore[assignment]
     HAS_PYYAML = False
 
 
 def parse_frontmatter_pyyaml(text: str, path: str) -> dict:
     """Parse frontmatter using PyYAML (full YAML spec)."""
+    assert yaml is not None  # guarded by HAS_PYYAML check in caller
     try:
         parsed = yaml.safe_load(text)
     except yaml.YAMLError as e:
