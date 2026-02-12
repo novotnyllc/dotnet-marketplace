@@ -11,7 +11,9 @@
     "skills/core-csharp/dotnet-csharp-coding-standards",
     "skills/core-csharp/dotnet-csharp-async-patterns",
     "skills/core-csharp/dotnet-csharp-nullable-reference-types",
-    "skills/core-csharp/dotnet-csharp-dependency-injection"
+    "skills/core-csharp/dotnet-csharp-dependency-injection",
+    "skills/core-csharp/dotnet-csharp-configuration",
+    "skills/core-csharp/dotnet-csharp-source-generators"
   ],
   "agents": [
     "agents/dotnet-architect.md",
