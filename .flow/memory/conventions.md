@@ -18,3 +18,9 @@ When multiple tasks touch a shared file (e.g., plugin.json), assign registration
 
 ## 2026-02-12 manual [convention]
 When adding skills, validate name uniqueness both repo-wide AND against marketplace catalog metadata to prevent cross-plugin skill ID collisions
+
+## 2026-02-12 manual [convention]
+When epic acceptance criteria reference validation (e.g. cross-ref matrix, deprecated patterns), task specs must include executable grep commands that verify each requirement — not just intent statements
+
+## 2026-02-12 manual [convention]
+When multiple skills share a concern (e.g. deprecated patterns), designate a canonical owner in the epic spec and have other skills cross-reference it — avoids scope ambiguity and duplication

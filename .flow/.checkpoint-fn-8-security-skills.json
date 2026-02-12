@@ -1,0 +1,63 @@
+{
+  "created_at": "2026-02-12T20:43:45.973949Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-8-security-skills",
+      "created_at": "2026-02-11T22:23:17.848507Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-8-security-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-8-security-skills.md",
+      "status": "open",
+      "title": "Security Skills",
+      "updated_at": "2026-02-11T22:30:58.256869Z"
+    },
+    "spec": "# fn-8: Security Skills\n\n## Overview\nDelivers security skills covering OWASP top 10 for .NET, secrets management, modern cryptography (including post-quantum), and a security reviewer agent.\n\n## Scope\n**Skills:**\n- `dotnet-security-owasp` - OWASP top 10 for .NET: injection prevention, XSS, CSRF, security headers, input validation\n- `dotnet-secrets-management` - User secrets, environment variables, secure configuration patterns (cloud-agnostic)\n- `dotnet-cryptography` - Modern .NET cryptography including post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA in .NET 10)\n\n**Agents:**\n- `dotnet-security-reviewer` - Analyzes code for security vulnerabilities, OWASP compliance\n\n## Key Context\n- .NET 10 introduces post-quantum cryptography (ML-KEM, ML-DSA, SLH-DSA)\n- ASP.NET Core Security: https://learn.microsoft.com/en-us/aspnet/core/security/?view=aspnetcore-10.0\n- Secure Coding Guidelines: https://learn.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines\n- User secrets for local development, environment variables for production\n- Avoid deprecated patterns: CAS, APTCA, .NET Remoting, DCOM, binary formatters\n\n## Quick Commands\n```bash\n# Smoke test: verify OWASP skill covers top 10\ngrep -i \"OWASP\" skills/security/dotnet-security-owasp.md\n\n# Validate post-quantum crypto coverage\ngrep -i \"ML-KEM\\|ML-DSA\\|SLH-DSA\" skills/security/dotnet-cryptography.md\n\n# Test security reviewer agent configuration\nfd -e json dotnet-security-reviewer agents/\n```\n\n## Acceptance Criteria\n1. All 3 skills written with standard depth and frontmatter\n2. OWASP skill covers top 10 vulnerabilities with .NET-specific mitigation patterns\n3. Secrets management skill documents user secrets, environment variables, managed identities\n4. Cryptography skill covers post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) for .NET 10+\n5. Security reviewer agent configured with preloaded security skills\n6. Skills warn against deprecated security patterns (CAS, binary formatters)\n7. Cross-references to ASP.NET Core security documentation\n\n## Test Notes\n- Verify OWASP skill detects common vulnerabilities (SQL injection, XSS, CSRF)\n- Test cryptography skill adapts guidance for .NET 10 vs earlier TFMs\n- Validate security reviewer agent triggers on security-related keywords\n\n## References\n- ASP.NET Core Security: https://learn.microsoft.com/en-us/aspnet/core/security/?view=aspnetcore-10.0\n- Secure Coding Guidelines: https://learn.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines\n- Security in .NET: https://learn.microsoft.com/en-us/dotnet/standard/security/\n- OWASP Top 10: https://owasp.org/www-project-top-ten/\n"
+  },
+  "epic_id": "fn-8-security-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:58.015936Z",
+        "depends_on": [],
+        "epic": "fn-8-security-skills",
+        "id": "fn-8-security-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-8-security-skills.1.md",
+        "status": "todo",
+        "title": "OWASP and secrets management skills",
+        "updated_at": "2026-02-11T22:31:58.016219Z"
+      },
+      "id": "fn-8-security-skills.1",
+      "runtime": null,
+      "spec": "# fn-8-security-skills.1 OWASP and secrets management skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:58.135935Z",
+        "depends_on": [],
+        "epic": "fn-8-security-skills",
+        "id": "fn-8-security-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-8-security-skills.2.md",
+        "status": "todo",
+        "title": "Cryptography skill and security reviewer agent",
+        "updated_at": "2026-02-11T22:31:58.136180Z"
+      },
+      "id": "fn-8-security-skills.2",
+      "runtime": null,
+      "spec": "# fn-8-security-skills.2 Cryptography skill and security reviewer agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
