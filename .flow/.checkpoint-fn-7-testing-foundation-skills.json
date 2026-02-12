@@ -1,0 +1,101 @@
+{
+  "created_at": "2026-02-12T19:01:17.030086Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-7-testing-foundation-skills",
+      "created_at": "2026-02-11T22:23:12.464494Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-7-testing-foundation-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-7-testing-foundation-skills.md",
+      "status": "open",
+      "title": "Testing Foundation Skills",
+      "updated_at": "2026-02-11T22:30:45.582057Z"
+    },
+    "spec": "# fn-7: Testing Foundation Skills\n\n## Overview\nDelivers comprehensive testing foundation covering strategy, xUnit v3, integration testing, UI testing across frameworks (Blazor, MAUI, Uno), Playwright, snapshot testing, and test quality analysis.\n\n## Scope\n**Skills:**\n- `dotnet-testing-strategy` - Core testing patterns: unit vs integration vs E2E, when to use what, test organization\n- `dotnet-xunit` - Comprehensive xUnit: v3 features, theories, fixtures, parallelism, custom assertions, analyzers\n- `dotnet-integration-testing` - WebApplicationFactory, Testcontainers, Aspire testing patterns\n- `dotnet-ui-testing-core` - Core UI testing patterns applicable across frameworks\n- `dotnet-blazor-testing` - bUnit for Blazor component testing\n- `dotnet-maui-testing` - Appium, XHarness for MAUI testing\n- `dotnet-uno-testing` - Playwright for Uno WASM, platform-specific testing\n- `dotnet-playwright` - Playwright for .NET: browser automation, E2E testing, CI caching\n- `dotnet-snapshot-testing` - Verify for snapshot testing: API surfaces, HTTP responses, rendered emails\n- `dotnet-test-quality` - Code coverage (coverlet), CRAP analysis, mutation testing (Stryker.NET)\n\n## Key Context\n- xUnit v3 is the modern testing standard for .NET\n- WebApplicationFactory for in-memory ASP.NET Core testing\n- Testcontainers for integration testing with real dependencies\n- Playwright is the recommended E2E testing tool\n- Verify (VerifyTests) is the standard snapshot testing library\n- Skills must reference dotnet-skills testing patterns: https://github.com/Aaronontheweb/dotnet-skills\n\n## Quick Commands\n```bash\n# Smoke test: verify testing strategy skill exists\nfd -e md dotnet-testing-strategy skills/\n\n# Validate xUnit v3 coverage\ngrep -i \"xunit.*v3\" skills/testing/dotnet-xunit.md\n\n# Test snapshot testing patterns\ngrep -i \"Verify\" skills/testing/dotnet-snapshot-testing.md\n```\n\n## Acceptance Criteria\n1. All 10 skills written with standard depth and frontmatter\n2. Testing strategy skill provides decision tree for unit/integration/E2E\n3. xUnit skill covers v3 features, theories, fixtures, parallel execution\n4. Integration testing skill documents WebApplicationFactory + Testcontainers patterns\n5. UI testing skills cover framework-specific patterns (bUnit, Appium, Playwright)\n6. Snapshot testing skill uses Verify library with practical examples\n7. Test quality skill covers coverage (coverlet), CRAP analysis, mutation testing\n8. Skills cross-reference each other (e.g., integration-testing references testcontainers)\n\n## Test Notes\n- Test xUnit skill by validating theory and fixture examples\n- Verify Playwright skill includes CI caching patterns\n- Check that snapshot testing skill covers scrubbing/filtering patterns\n\n## References\n- xUnit Documentation: https://xunit.net/\n- WebApplicationFactory: https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0\n- Testcontainers: https://dotnet.testcontainers.org/\n- Playwright for .NET: https://playwright.dev/dotnet/\n- Verify: https://github.com/VerifyTests/Verify\n- dotnet-skills testing reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+  },
+  "epic_id": "fn-7-testing-foundation-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:56.219648Z",
+        "depends_on": [],
+        "epic": "fn-7-testing-foundation-skills",
+        "id": "fn-7-testing-foundation-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-7-testing-foundation-skills.1.md",
+        "status": "todo",
+        "title": "Core testing skills: strategy, xUnit, integration",
+        "updated_at": "2026-02-11T22:31:56.219812Z"
+      },
+      "id": "fn-7-testing-foundation-skills.1",
+      "runtime": null,
+      "spec": "# fn-7-testing-foundation-skills.1 Core testing skills: strategy, xUnit, integration\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:56.339017Z",
+        "depends_on": [],
+        "epic": "fn-7-testing-foundation-skills",
+        "id": "fn-7-testing-foundation-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-7-testing-foundation-skills.2.md",
+        "status": "todo",
+        "title": "UI testing skills: Blazor, MAUI, Uno, Playwright",
+        "updated_at": "2026-02-11T22:31:56.339335Z"
+      },
+      "id": "fn-7-testing-foundation-skills.2",
+      "runtime": null,
+      "spec": "# fn-7-testing-foundation-skills.2 UI testing skills: Blazor, MAUI, Uno, Playwright\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:56.479024Z",
+        "depends_on": [],
+        "epic": "fn-7-testing-foundation-skills",
+        "id": "fn-7-testing-foundation-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-7-testing-foundation-skills.3.md",
+        "status": "todo",
+        "title": "Snapshot testing and test quality skills",
+        "updated_at": "2026-02-11T22:31:56.479187Z"
+      },
+      "id": "fn-7-testing-foundation-skills.3",
+      "runtime": null,
+      "spec": "# fn-7-testing-foundation-skills.3 Snapshot testing and test quality skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:56.597671Z",
+        "depends_on": [],
+        "epic": "fn-7-testing-foundation-skills",
+        "id": "fn-7-testing-foundation-skills.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-7-testing-foundation-skills.4.md",
+        "status": "todo",
+        "title": "Cross-framework testing patterns and core UI skill",
+        "updated_at": "2026-02-11T22:31:56.597854Z"
+      },
+      "id": "fn-7-testing-foundation-skills.4",
+      "runtime": null,
+      "spec": "# fn-7-testing-foundation-skills.4 Cross-framework testing patterns and core UI skill\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

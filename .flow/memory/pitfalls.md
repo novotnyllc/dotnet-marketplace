@@ -84,3 +84,12 @@ When a boundary enforcement has multiple mechanisms (prose vs placeholder), pick
 
 ## 2026-02-12 manual [pitfall]
 ConfigureHttpJsonOptions applies to Minimal APIs only, not MVC controllers -- controllers need .AddControllers().AddJsonOptions() as a separate registration
+
+## 2026-02-12 manual [pitfall]
+Code examples using IHubContext must pass user/entity IDs as method parameters -- do not reference variables from an outer scope that does not exist in the snippet
+
+## 2026-02-12 manual [pitfall]
+WebSocket endpoint examples must include app.UseWebSockets() middleware call -- ASP.NET Core requires it for upgrade handling before any WebSocket endpoint mapping
+
+## 2026-02-12 manual [pitfall]
+When multiple tasks in an epic each register entries in a shared file (e.g., plugin.json), assign sole ownership of that file to one integration task to avoid merge conflicts and weak parallelizability
