@@ -47,5 +47,8 @@ Create the `dotnet-advisor` router/index skill that serves as the always-loaded 
 - [ ] `/plugin-dev:skill-reviewer` rates description as effective for triggering
 
 ## Done summary
-
+Created the dotnet-advisor router SKILL.md with a compressed catalog of all 19 planned skill categories (100 skills total), complete routing logic decision tree, and consistent [skill:name] cross-reference syntax throughout. Description uses WHEN/WHEN NOT pattern with intent phrases for reliable auto-triggering at 257 chars (under 500 limit). Budget math validated: 95 projected x 120 chars = 11,400 (under 12,000 WARN threshold).
 ## Evidence
+- Commits: e4b7ac13f3b0a79e9f1d67bb24c738dab3bc349f
+- Tests: python3 validation of frontmatter, description length, cross-ref syntax, category count, budget math
+- PRs:
