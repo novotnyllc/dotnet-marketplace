@@ -485,10 +485,16 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
 
         if (existing is { IsCompleted: true })
         {
-            return Results.Text(
-                existing.ResponseBody ?? "",
-                existing.ContentType ?? "application/json",
-                statusCode: existing.StatusCode);
+            // Replay: value responses get body, non-value responses get status only
+            if (existing.ResponseBody is not null)
+            {
+                return Results.Text(
+                    existing.ResponseBody,
+                    existing.ContentType ?? "application/json",
+                    statusCode: existing.StatusCode);
+            }
+
+            return Results.StatusCode(existing.StatusCode);
         }
 
         if (existing is { IsCompleted: false })
@@ -527,16 +533,19 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
         // Execute the actual handler
         var result = await next(context);
 
-        // Capture concrete response envelope for replay
-        if (result is IStatusCodeHttpResult statusResult
-            && result is IValueHttpResult valueResult)
-        {
-            existing.StatusCode = statusResult.StatusCode ?? 200;
-            existing.ResponseBody = JsonSerializer.Serialize(valueResult.Value);
-            existing.ContentType = "application/json";
-            existing.IsCompleted = true;
-            await db.SaveChangesAsync();
-        }
+        // Always finalize the record -- handles both value and non-value results
+        // (Results.Ok(obj), Results.NoContent(), Results.Accepted(), etc.)
+        existing.StatusCode = result is IStatusCodeHttpResult statusResult
+            ? statusResult.StatusCode ?? 200
+            : 200;
+        existing.ResponseBody = result is IValueHttpResult valueResult
+            ? JsonSerializer.Serialize(valueResult.Value)
+            : null;  // No body for non-value results (204, 202, etc.)
+        existing.ContentType = existing.ResponseBody is not null
+            ? "application/json"
+            : null;
+        existing.IsCompleted = true;
+        await db.SaveChangesAsync();
 
         return result;
     }

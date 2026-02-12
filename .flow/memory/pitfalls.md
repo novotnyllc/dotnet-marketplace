@@ -63,3 +63,6 @@ Cross-reference skill IDs must use canonical names from target epic (e.g., dotne
 
 ## 2026-02-12 manual [pitfall]
 Idempotency implementations must handle three states (no-record, in-progress, completed) -- check-then-act without guarding the in-progress state allows concurrent duplicate execution
+
+## 2026-02-12 manual [pitfall]
+Idempotency record finalization must be unconditional -- gating completion on specific IResult subtypes (e.g. IValueHttpResult) leaves non-value results (NoContent, Accepted) permanently stuck in in-progress state
