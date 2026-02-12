@@ -116,7 +116,7 @@ Check for explicit `<LangVersion>` in .csproj or `Directory.Build.props`:
 <LangVersion>preview</LangVersion>
 ```
 
-- If `preview` -- report "C# preview features enabled. Unlocks the next C# version available in the installed SDK (e.g., C# 15 preview with .NET 11 SDK, or upcoming C# 14 features with .NET 10 SDK)."
+- If `preview` -- report "C# preview features enabled. Unlocks the next C# version available in the installed SDK (e.g., C# 15 preview features with a .NET 11 preview SDK)."
 - If `latest` -- report the default C# version for the detected TFM
 - If explicit version (e.g., `12.0`) -- report that version, warn if it's below the TFM default
 - If absent -- use the default C# version for the TFM (see reference data below)
@@ -242,7 +242,7 @@ This reference data maps .NET versions to their C# language versions, key featur
 | .NET 8 | LTS (active) | C# 12 | net8.0 | Nov 2026 | Approaching end of support |
 | .NET 9 | STS | C# 13 | net9.0 | May 2026 | Approaching end of support |
 | .NET 10 | LTS (current) | C# 14 | net10.0 | Nov 2028 | Recommended for new projects |
-| .NET 11 | Preview 1 | C# 15 (preview) | net11.0 | TBD (expected STS: ~May 2027) | Preview only -- not for production |
+| .NET 11 | Preview 1 | C# 15 (preview) | net11.0 | TBD (expected STS end: ~May 2028 if Nov 2026 GA) | Preview only -- not for production |
 
 ### C# Version Feature Highlights
 
@@ -269,7 +269,7 @@ This reference data maps .NET versions to their C# language versions, key featur
 - `nameof` for unbound generic types
 - Extension improvements (extension blocks)
 - First-class `Span<T>` in more contexts
-- Unbound generic types in `nameof`
+- `allows ref struct` anti-constraint for generics
 
 **C# 15 preview (net11.0)**
 - Collection expression arguments (`with()` syntax for capacity/comparers):
