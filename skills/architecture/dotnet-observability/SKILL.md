@@ -7,7 +7,7 @@ description: "WHEN adding observability. OpenTelemetry traces/metrics/logs, stru
 
 Modern observability for .NET applications using OpenTelemetry, structured logging, health checks, and custom metrics. Covers the three pillars of observability (traces, metrics, logs), integration with `Microsoft.Extensions.Diagnostics` and `System.Diagnostics`, and production-ready health check patterns.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Testing observability output is owned by fn-7 -- <!-- TODO: fn-7 reconciliation -- replace with canonical [skill:...] IDs when fn-7 lands -->. CI/CD pipeline integration for telemetry collection is owned by fn-19.
+**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Testing observability output is owned by fn-7 -- <!-- TODO: fn-7 reconciliation -- replace with [skill:dotnet-integration-testing] when fn-7 lands -->. CI/CD pipeline integration for telemetry collection is owned by fn-19.
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async patterns in background exporters, [skill:dotnet-resilience] for Polly telemetry integration.
 
@@ -166,10 +166,14 @@ For message-based communication (queues, event buses), propagate context explici
 // Producer: inject context into message headers
 var propagator = Propagators.DefaultTextMapPropagator;
 var carrier = new Dictionary<string, string>();
-propagator.Inject(
-    new PropagationContext(Activity.Current!.Context, Baggage.Current),
-    carrier,
-    (dict, key, value) => dict[key] = value);
+var currentActivity = Activity.Current;
+if (currentActivity is not null)
+{
+    propagator.Inject(
+        new PropagationContext(currentActivity.Context, Baggage.Current),
+        carrier,
+        (dict, key, value) => dict[key] = value);
+}
 // Attach carrier as message headers
 
 // Consumer: extract context from message headers
@@ -332,7 +336,15 @@ public async Task<Order> ProcessOrderAsync(
 
 ### Serilog Integration
 
-For advanced sinks (Elasticsearch, Seq, Datadog), Serilog is the standard structured logging library:
+For advanced sinks (Elasticsearch, Seq, Datadog), Serilog is the standard structured logging library.
+
+| Package | Purpose |
+|---------|---------|
+| `Serilog.AspNetCore` | `UseSerilog()` host integration + `UseSerilogRequestLogging()` |
+| `Serilog.Settings.Configuration` | `ReadFrom.Configuration()` for appsettings.json binding |
+| `Serilog.Sinks.OpenTelemetry` | `WriteTo.OpenTelemetry()` OTLP sink |
+| `Serilog.Formatting.Compact` | `RenderedCompactJsonFormatter` for structured console output |
+| `Serilog.Enrichers.Environment` | `Enrich.WithMachineName()` and `Enrich.WithEnvironmentName()` |
 
 ```csharp
 // Program.cs
@@ -394,6 +406,17 @@ Configure via `appsettings.json`:
 ## Health Checks
 
 Health checks enable orchestrators (Kubernetes, Docker, load balancers) to determine whether your application is ready to serve traffic.
+
+### Health Check Packages
+
+The built-in `Microsoft.Extensions.Diagnostics.HealthChecks` package provides the core framework. Community packages from `Xabaril/AspNetCore.Diagnostics.HealthChecks` add provider-specific checks:
+
+| Package | Extension Method |
+|---------|-----------------|
+| `AspNetCore.HealthChecks.NpgSql` | `.AddNpgSql()` |
+| `AspNetCore.HealthChecks.Redis` | `.AddRedis()` |
+| `AspNetCore.HealthChecks.Uris` | `.AddUrlGroup()` |
+| `AspNetCore.HealthChecks.UI.Client` | `UIResponseWriter.WriteHealthCheckUIResponse` |
 
 ### Basic Health Checks
 
@@ -475,18 +498,39 @@ builder.Services.AddHealthChecks()
 
 ### Health Check Publishing
 
-Report health status to monitoring systems:
+`HealthCheckPublisherOptions` controls the periodic evaluation schedule. To push results to monitoring systems, register an `IHealthCheckPublisher` implementation:
 
 ```csharp
 builder.Services.AddHealthChecks()
     .AddCheck("self", () => HealthCheckResult.Healthy());
 
-// Publish health check results as OpenTelemetry metrics
+// Configure periodic evaluation schedule
 builder.Services.Configure<HealthCheckPublisherOptions>(options =>
 {
-    options.Delay = TimeSpan.FromSeconds(5);
-    options.Period = TimeSpan.FromSeconds(30);
+    options.Delay = TimeSpan.FromSeconds(5);   // Initial delay before first run
+    options.Period = TimeSpan.FromSeconds(30);  // Interval between evaluations
 });
+
+// Register a publisher to push results (e.g., to logs, metrics, or external systems)
+builder.Services.AddSingleton<IHealthCheckPublisher, LoggingHealthCheckPublisher>();
+```
+
+A minimal publisher that logs health status:
+
+```csharp
+public sealed class LoggingHealthCheckPublisher(
+    ILogger<LoggingHealthCheckPublisher> logger) : IHealthCheckPublisher
+{
+    public Task PublishAsync(
+        HealthReport report, CancellationToken ct)
+    {
+        logger.LogInformation(
+            "Health check: {Status} ({TotalDuration}ms)",
+            report.Status,
+            report.TotalDuration.TotalMilliseconds);
+        return Task.CompletedTask;
+    }
+}
 ```
 
 ---
