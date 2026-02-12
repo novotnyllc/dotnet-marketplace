@@ -100,14 +100,14 @@ A project is Blazor if:
 A project is MAUI if:
 - `<UseMaui>true</UseMaui>` is set
 - SDK is `Microsoft.Maui.Sdk`
-- TFM includes platform-specific targets: `net10.0-android`, `net10.0-ios`, `net10.0-maccatalyst`, `net10.0-windows`
+- TFM includes platform-specific targets: `net*-android`, `net*-ios`, `net*-maccatalyst`, `net*-windows` (e.g., `net8.0-android`, `net10.0-ios`)
 
 ### Uno Platform Detection
 
 A project is Uno Platform if:
 - SDK is `Uno.Sdk` or `Uno.Sdk.Private`
 - Has PackageReference to `Uno.WinUI` or `Uno.UI`
-- TFM includes Uno-specific targets (e.g., `net10.0-browserwasm`, `net10.0-desktop`)
+- TFM includes Uno-specific targets (e.g., `net*-browserwasm`, `net*-desktop`)
 
 ---
 
@@ -190,7 +190,7 @@ Note: Inner files do NOT automatically import outer files. Check for `<Import Pr
 
 ### Directory.Packages.props
 
-Look for `Directory.Packages.props` at the solution root. If present, the solution uses Central Package Management.
+Search for `Directory.Packages.props` starting from the solution root and walking **upward** toward the repository root (or filesystem root). NuGet resolves CPM hierarchically -- a monorepo may have `Directory.Packages.props` in a parent directory that governs multiple solutions. Also check for `<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>` in any `Directory.Build.props` in the hierarchy, as CPM can be enabled there instead.
 
 ```xml
 <Project>
@@ -205,13 +205,14 @@ Look for `Directory.Packages.props` at the solution root. If present, the soluti
 ```
 
 Report:
-- **CPM enabled**: "Central Package Management is active. Package versions are defined in `Directory.Packages.props`. Individual `.csproj` files use `<PackageReference Include="..." />` without `Version` attributes."
+- **CPM enabled**: "Central Package Management is active. Package versions are defined in `Directory.Packages.props` at `<path>`. Individual `.csproj` files use `<PackageReference Include="..." />` without `Version` attributes."
 - **Package count**: "N packages managed centrally."
 - **Version overrides**: Check for `<PackageReference ... VersionOverride="...">` in individual projects -- flag these as exceptions.
+- **Inherited CPM**: If `Directory.Packages.props` is above the solution root, note: "CPM is inherited from `<path>` (above solution root). This is common in monorepos."
 
 ### CPM Not Used
 
-If no `Directory.Packages.props` exists:
+If no `Directory.Packages.props` is found in the upward search and `ManagePackageVersionsCentrally` is not set in any `Directory.Build.props`:
 - Report: "Central Package Management is not configured. Each project defines its own package versions."
 - Suggest: "Consider enabling CPM for version consistency. See [skill:dotnet-project-structure] for setup guidance."
 
@@ -228,10 +229,11 @@ Check for `.editorconfig` at the solution root and nested levels. Report:
 
 ### nuget.config
 
-Check for `nuget.config` (case-insensitive) at the solution root. Report:
+Search for `nuget.config` (case-insensitive) starting from the solution root and walking **upward** through parent directories. NuGet merges configuration hierarchically (project > user > machine), so multiple files may contribute to the effective config. Report all discovered files and their contents:
 - Package sources configured (e.g., nuget.org, private feeds, local folders)
 - Any `<packageSourceMapping>` entries (security best practice for supply chain)
 - Any `<disabledPackageSources>` entries
+- Note: "User-level (`~/.nuget/NuGet/NuGet.Config`) and machine-level configs may also affect package resolution. Run `dotnet nuget list source` to see the effective merged sources."
 
 ### global.json
 
