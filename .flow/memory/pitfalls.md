@@ -120,3 +120,6 @@ Acceptance criteria must explicitly test EVERY scope item — reviewers flag any
 
 ## 2026-02-12 manual [pitfall]
 When documenting package replacements (e.g. Swashbuckle->OpenAPI), say 'preferred/default' not 'deprecated' unless the package is formally deprecated -- overstating removal misleads agents into breaking valid setups
+
+## 2026-02-12 manual [pitfall]
+grep example commands in skill docs must use POSIX character classes ([[:space:]] not \s) and -E flag for ERE -- BRE grep does not support \s and silently mismatches

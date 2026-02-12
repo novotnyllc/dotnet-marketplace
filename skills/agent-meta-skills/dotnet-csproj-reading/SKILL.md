@@ -249,8 +249,8 @@ MSBuild conditions enable TFM-specific properties, platform-specific package ref
 
   <!-- TFM-conditional package reference -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
-    <!-- net8.0 needs explicit package; net9.0 includes it in the shared framework -->
+    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    <!-- Polyfill: net8.0 lacks FrozenDictionary.GetAlternateLookup added in net9.0 -->
   </ItemGroup>
 
   <!-- Configuration-conditional items -->
