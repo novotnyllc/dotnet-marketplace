@@ -233,13 +233,13 @@ Group extension members for a type in a single block.
 ```csharp
 public static class EnumerableExtensions
 {
-    extension(IEnumerable<T>)
+    extension<T>(IEnumerable<T> source) where T : class
     {
-        public IEnumerable<T> WhereNotNull<T>() where T : class
-            => this.Where(x => x is not null);
+        public IEnumerable<T> WhereNotNull()
+            => source.Where(x => x is not null);
 
-        public bool IsEmpty<T>()
-            => !this.Any();
+        public bool IsEmpty()
+            => !source.Any();
     }
 }
 ```
@@ -264,7 +264,7 @@ Useful for tuple aliases and domain type aliases without creating a full type.
 
 ## `params` Collections (C# 13, net9.0+)
 
-`params` now works with any collection type, not just arrays.
+`params` now supports additional collection types beyond arrays, including `Span<T>`, `ReadOnlySpan<T>`, and types implementing certain collection interfaces.
 
 ```csharp
 public void Log(params ReadOnlySpan<string> messages)
@@ -273,7 +273,7 @@ public void Log(params ReadOnlySpan<string> messages)
         Console.WriteLine(msg);
 }
 
-// Callers: no array allocation
+// Callers: compiler may avoid heap allocation with span-based params
 Log("hello", "world");
 ```
 
@@ -299,7 +299,7 @@ public void DoWork()
 
 `Lock` provides a `Scope`-based API for advanced scenarios and is more expressive than `lock (object)`.
 
-> **net9.0+ only.** On net8.0, use `lock (new object())`.
+> **net9.0+ only.** On net8.0, use `private readonly object _gate = new();` and `lock (_gate)`.
 
 ---
 
