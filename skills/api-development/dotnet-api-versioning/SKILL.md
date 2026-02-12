@@ -100,7 +100,7 @@ builder.Services.AddApiVersioning(options =>
 
 // V1 controller
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/products")]
 [ApiVersion("1.0")]
 public sealed class ProductsController(AppDbContext db) : ControllerBase
 {
@@ -111,9 +111,9 @@ public sealed class ProductsController(AppDbContext db) : ControllerBase
             .ToListAsync());
 }
 
-// V2 controller
+// V2 controller -- use explicit route, not [controller] token
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/products")]
 [ApiVersion("2.0")]
 public sealed class ProductsV2Controller(AppDbContext db) : ControllerBase
 {

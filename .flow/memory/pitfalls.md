@@ -132,3 +132,6 @@ Package validation suppression uses ApiCompatSuppressionFile with generated Comp
 
 ## 2026-02-12 manual [pitfall]
 dotnet publish --no-actual-publish is not a valid CLI switch; use 'dotnet build /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true' to run trim/AOT analysis without publishing
+
+## 2026-02-12 manual [pitfall]
+MVC controller [controller] route token resolves to class name -- versioned controllers like ProductsV2Controller produce /ProductsV2 not /products. Use explicit route segments for versioned controllers.
