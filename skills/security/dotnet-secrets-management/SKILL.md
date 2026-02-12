@@ -172,6 +172,13 @@ public sealed class JwtOptions
     [Required, MinLength(32)]
     public string SigningKey { get; set; } = "";
 
+    /// <summary>
+    /// Previous signing key retained during rotation window.
+    /// Set this when rotating keys so tokens signed with the old key
+    /// remain valid until they expire. Remove after rotation completes.
+    /// </summary>
+    public string? PreviousSigningKey { get; set; }
+
     [Required]
     public string Issuer { get; set; } = "";
 
@@ -240,47 +247,53 @@ public sealed class EmailService(IOptionsMonitor<SmtpOptions> smtpOptions, ILogg
     }
 }
 
-// Register change notification for audit logging
-builder.Services.AddSingleton<IHostedService>(sp =>
+// Register change notification for audit logging.
+// OnChange returns an IDisposable subscription -- store it to keep it alive.
+builder.Services.AddSingleton(sp =>
 {
     var monitor = sp.GetRequiredService<IOptionsMonitor<SmtpOptions>>();
     var logger = sp.GetRequiredService<ILogger<Program>>();
-    monitor.OnChange(options =>
+    return monitor.OnChange(options =>
     {
-        logger.LogInformation("SMTP configuration reloaded");
+        logger.LogInformation("SMTP configuration reloaded at {Time}", DateTime.UtcNow);
     });
-    return new NullHostedService(); // Keeps the subscription alive
+    // The returned IDisposable is held by the DI container (singleton lifetime),
+    // so the subscription stays alive for the app's lifetime.
 });
 ```
 
 ```csharp
 // Dual-key validation for zero-downtime rotation
 // Accept both old and new signing keys during rotation window
-public sealed class DualKeyTokenValidator
+public sealed class DualKeyTokenValidator(IOptionsMonitor<JwtOptions> optionsMonitor)
 {
-    private readonly JwtOptions _options;
-
-    public DualKeyTokenValidator(IOptionsMonitor<JwtOptions> options)
+    public TokenValidationParameters GetParameters()
     {
-        _options = options.CurrentValue;
+        // Read CurrentValue on every call so rotated keys are picked up
+        // without restarting the application
+        var options = optionsMonitor.CurrentValue;
+
+        var keys = new List<SecurityKey>
+        {
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey))
+        };
+
+        if (!string.IsNullOrEmpty(options.PreviousSigningKey))
+        {
+            keys.Add(new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(options.PreviousSigningKey)));
+        }
+
+        return new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = options.Issuer,
+            ValidateAudience = true,
+            ValidAudience = options.Audience,
+            ValidateLifetime = true,
+            IssuerSigningKeys = keys
+        };
     }
-
-    public TokenValidationParameters GetParameters() => new()
-    {
-        ValidateIssuer = true,
-        ValidIssuer = _options.Issuer,
-        ValidateAudience = true,
-        ValidAudience = _options.Audience,
-        ValidateLifetime = true,
-        // Accept both current and previous key during rotation
-        IssuerSigningKeys =
-        [
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey)),
-            .. string.IsNullOrEmpty(_options.PreviousSigningKey)
-                ? []
-                : [new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.PreviousSigningKey))]
-        ]
-    };
 }
 ```
 

@@ -202,14 +202,23 @@ builder.Services.AddAntiforgery();
 var app = builder.Build();
 app.UseAntiforgery();
 
-app.MapPost("/orders", async (CreateOrderDto dto, AppDbContext db) =>
+// Form-bound endpoint: antiforgery validated automatically
+app.MapPost("/orders", async ([FromForm] string productId, AppDbContext db) =>
 {
-    // Anti-forgery token is validated automatically for form submissions
-    var order = new Order { ProductId = dto.ProductId };
+    var order = new Order { ProductId = productId };
     db.Orders.Add(order);
     await db.SaveChangesAsync();
     return Results.Created($"/orders/{order.Id}", order);
 });
+
+// JSON endpoint: opt in explicitly with RequireAntiforgery()
+app.MapPost("/api/orders", async (CreateOrderDto dto, AppDbContext db) =>
+{
+    var order = new Order { ProductId = dto.ProductId };
+    db.Orders.Add(order);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/orders/{order.Id}", order);
+}).RequireAntiforgery();
 ```
 
 **Gotcha:** `UseRateLimiter()` must be called after `UseRouting()` and before `MapControllers()`/`MapGet()` to apply correctly.
@@ -225,6 +234,12 @@ app.MapPost("/orders", async (CreateOrderDto dto, AppDbContext db) =>
 ### Mitigation
 
 ```csharp
+// Remove server identity headers (configure BEFORE Build)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.AddServerHeader = false;
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -237,12 +252,6 @@ else
     app.UseExceptionHandler("/error");
     app.UseHsts();
 }
-
-// Remove server identity headers
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.AddServerHeader = false;
-});
 
 // Add security headers via middleware
 app.Use(async (context, next) =>
@@ -258,13 +267,15 @@ app.Use(async (context, next) =>
 ```
 
 ```csharp
-// Constrain request body size to prevent resource exhaustion
+// Constrain request body size to prevent resource exhaustion (configure BEFORE Build)
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
     options.Limits.MaxRequestHeadersTotalSize = 32 * 1024; // 32 KB
     options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(30);
 });
+
+// Then: var app = builder.Build();
 ```
 
 **Gotcha:** `UseDeveloperExceptionPage()` leaks source code paths and stack traces. Ensure it is gated behind `IsDevelopment()` and never enabled in production or staging.

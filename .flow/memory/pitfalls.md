@@ -99,3 +99,9 @@ xUnit [Collection("Name")] on a test class requires a matching [CollectionDefini
 
 ## 2026-02-12 manual [pitfall]
 Code examples using xUnit Skip.IfNot() require the Xunit.SkippableFact package and [SkippableFact] attribute -- plain [Fact] with Skip.IfNot() does not compile without this dependency
+
+## 2026-02-12 manual [pitfall]
+builder.WebHost.ConfigureKestrel() must be called BEFORE builder.Build() -- Kestrel/host config after Build() is invalid and silently ignored
+
+## 2026-02-12 manual [pitfall]
+Code examples using IOptionsMonitor must read CurrentValue at call site (not constructor) to actually observe runtime changes -- snapshotting in constructor defeats the purpose
