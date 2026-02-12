@@ -519,9 +519,12 @@ public static void Init()
 
 ### CLI Acceptance
 
-Accept all pending changes after review:
+Install the Verify CLI tool (one-time setup), then accept pending changes after review:
 
 ```bash
+# Install the Verify CLI tool (one-time)
+dotnet tool install -g verify.tool
+
 # Accept all received files in the solution
 dotnet verify accept
 

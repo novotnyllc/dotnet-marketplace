@@ -152,7 +152,7 @@ dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
 
 # generate merged HTML report
 reportgenerator \
-  -reports:"TestResults/*/coverage.cobertura.xml" \
+  -reports:"**/TestResults/*/coverage.cobertura.xml" \
   -targetdir:"coverage-report" \
   -reporttypes:"Html;TextSummary;Badges"
 
