@@ -125,7 +125,7 @@ Common replacements when moving from net8.0 to net10.0:
 | `BinaryFormatter` | `System.Text.Json` or `MessagePack` | `BinaryFormatter` throws `PlatformNotSupportedException` starting in net9.0 |
 | `Regex` without source gen | `[GeneratedRegex]` attribute | Source-generated regex is faster and AOT-compatible |
 | `Thread.Abort()` | Cooperative cancellation via `CancellationToken` | `Thread.Abort()` throws `PlatformNotSupportedException` |
-| `WebRequest` / `HttpWebRequest` | `HttpClient` via `IHttpClientFactory` | Legacy networking stack removed |
+| `WebRequest` / `HttpWebRequest` | `HttpClient` via `IHttpClientFactory` | Obsolete (`SYSLIB0014`), migrate to `HttpClient` |
 
 **Step 6: Run tests and validate**
 
@@ -133,8 +133,8 @@ Common replacements when moving from net8.0 to net10.0:
 # Run full test suite
 dotnet test --configuration Release
 
-# Validate with trimming/AOT analyzers if applicable
-dotnet publish --configuration Release /p:PublishTrimmed=true --no-actual-publish
+# Enable trim/AOT analyzers to surface compatibility warnings without publishing
+dotnet build --configuration Release /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true
 ```
 
 ### .NET Upgrade Assistant
@@ -188,21 +188,23 @@ Because .NET 9 is approaching end of support, do not stop at net9.0. Plan the se
 
 **Hop 1: net8.0 -> net9.0**
 
-1. Update TFM to `net9.0`
+1. Update TFM to `net9.0` in .csproj / `Directory.Build.props`
 2. Update `global.json` to SDK `9.0.xxx`
 3. Run `dotnet outdated --upgrade` for package updates
 4. Review [.NET 9 breaking changes](https://learn.microsoft.com/en-us/dotnet/core/compatibility/9.0)
-5. Build, test, deploy to staging environment
-6. Validate in production with monitoring
+5. Replace deprecated APIs flagged by `SYSLIB` diagnostics and `CS0618` warnings (e.g., `BinaryFormatter` -> `System.Text.Json`)
+6. Run `dotnet test --configuration Release` to validate
+7. Deploy to staging environment, validate in production with monitoring
 
 **Hop 2: net9.0 -> net10.0**
 
-1. Update TFM to `net10.0`
+1. Update TFM to `net10.0` in .csproj / `Directory.Build.props`
 2. Update `global.json` to SDK `10.0.xxx`
 3. Run `dotnet outdated --upgrade` again
 4. Review [.NET 10 breaking changes](https://learn.microsoft.com/en-us/dotnet/core/compatibility/10.0)
-5. Build, test, deploy to staging
-6. Remove any net9.0-specific workarounds
+5. Replace any additional deprecated APIs introduced between net9.0 and net10.0
+6. Run `dotnet test --configuration Release` to validate
+7. Deploy to staging, remove any net9.0-specific workarounds
 
 **Timeline guidance:** Complete both hops within the .NET 9 support window (before May 2026). Running production workloads on an unsupported STS release exposes you to unpatched security vulnerabilities.
 
@@ -267,6 +269,16 @@ Runtime-async moves async/await from compiler-generated state machines to runtim
 ```
 
 Runtime-async requires both `EnablePreviewFeatures` and the `Features` flag. It is experimental and may change significantly before GA.
+
+### Experimental Upgrade Checklist
+
+1. Install the .NET 11 preview SDK and pin it in `global.json` with `"rollForward": "disable"`
+2. Update TFM to `net11.0` and set `<LangVersion>preview</LangVersion>` + `<EnablePreviewFeatures>true</EnablePreviewFeatures>`
+3. Run `dotnet outdated` to check package compatibility with the preview TFM
+4. Build and review warnings -- preview SDKs may flag new `SYSLIB` diagnostics or `CA2252` (preview feature usage)
+5. Replace any deprecated APIs surfaced by the new analyzer version
+6. Run `dotnet test` to validate -- expect some third-party packages to lack preview TFM support
+7. Document findings for future production upgrade planning
 
 ### What to Explore in .NET 11 Preview
 
@@ -350,8 +362,8 @@ dotnet tool install -g dotnet-outdated-tool
 # Show all outdated packages with current vs latest versions
 dotnet outdated
 
-# Filter to only packages with major version updates (higher risk)
-dotnet outdated --version-lock minor
+# Lock major version, show only minor/patch updates (safer incremental upgrades)
+dotnet outdated --version-lock major
 
 # Auto-upgrade with version locking to avoid unexpected major bumps
 dotnet outdated --upgrade --version-lock major
