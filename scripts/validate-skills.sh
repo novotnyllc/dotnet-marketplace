@@ -4,9 +4,9 @@
 #
 # Thin wrapper that invokes the Python validation script.
 # All parsing, validation, and reporting happens in Python for:
-#   - Deterministic YAML parsing (PyYAML if available, strict subset parser otherwise)
+#   - Deterministic YAML parsing (strict subset parser, no PyYAML dependency)
 #   - No per-file subprocess spawning
-#   - Consistent behavior across environments
+#   - Identical behavior across all environments
 #
 # Requirements:
 #   - python3

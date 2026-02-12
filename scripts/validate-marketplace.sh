@@ -18,8 +18,8 @@
 
 set -euo pipefail
 
-# Navigate to repository root (parent of scripts/)
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Navigate to repository root (parent of scripts/), canonicalized for symlink safety
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
 
 PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
 MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
@@ -44,11 +44,12 @@ validate_path_safe() {
         return 1
     fi
 
-    # Resolve canonical path and verify it stays under REPO_ROOT
+    # Resolve canonical path (following symlinks) and verify it stays under REPO_ROOT
     local full_path="$REPO_ROOT/$path"
     if [ -e "$full_path" ]; then
         local resolved
-        resolved="$(cd "$(dirname "$full_path")" && pwd)/$(basename "$full_path")"
+        # Use python3 for portable symlink-resolving realpath (macOS lacks GNU realpath)
+        resolved="$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$full_path")"
         case "$resolved" in
             "$REPO_ROOT"/*) ;;  # OK - under repo root
             *)
@@ -79,13 +80,13 @@ else
     else
         echo "OK: plugin.json is valid JSON"
 
-        # Check required top-level fields
+        # Check required top-level fields (must be non-empty strings)
         for field in name version description; do
-            value=$(jq -r ".$field // empty" "$PLUGIN_JSON")
-            if [ -z "$value" ]; then
-                echo "ERROR: plugin.json missing required field: $field"
+            if ! jq -e ".$field | type == \"string\" and length > 0" "$PLUGIN_JSON" >/dev/null 2>&1; then
+                echo "ERROR: plugin.json.$field must be a non-empty string"
                 errors=$((errors + 1))
             else
+                value=$(jq -r ".$field" "$PLUGIN_JSON")
                 echo "OK: plugin.json.$field = \"$value\""
             fi
         done
@@ -202,27 +203,25 @@ else
     else
         echo "OK: marketplace.json is valid JSON"
 
-        # Check required fields
-        for field in name version description author license; do
-            if [ "$field" = "author" ]; then
-                # author is an object with name
-                author_name=$(jq -r '.author.name // empty' "$MARKETPLACE_JSON")
-                if [ -z "$author_name" ]; then
-                    echo "ERROR: marketplace.json missing required field: author.name"
-                    errors=$((errors + 1))
-                else
-                    echo "OK: marketplace.json.author.name = \"$author_name\""
-                fi
+        # Check required string fields (must be non-empty strings)
+        for field in name version description license; do
+            if ! jq -e ".$field | type == \"string\" and length > 0" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+                echo "ERROR: marketplace.json.$field must be a non-empty string"
+                errors=$((errors + 1))
             else
-                value=$(jq -r ".$field // empty" "$MARKETPLACE_JSON")
-                if [ -z "$value" ]; then
-                    echo "ERROR: marketplace.json missing required field: $field"
-                    errors=$((errors + 1))
-                else
-                    echo "OK: marketplace.json.$field = \"$value\""
-                fi
+                value=$(jq -r ".$field" "$MARKETPLACE_JSON")
+                echo "OK: marketplace.json.$field = \"$value\""
             fi
         done
+
+        # Check author.name (object with string name field)
+        if ! jq -e '.author.name | type == "string" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "ERROR: marketplace.json.author.name must be a non-empty string"
+            errors=$((errors + 1))
+        else
+            author_name=$(jq -r '.author.name' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.author.name = \"$author_name\""
+        fi
 
         # Check optional but recommended fields
         for field in repository keywords categories; do
