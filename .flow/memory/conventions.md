@@ -12,3 +12,9 @@ Always validate JSON field types with jq predicates (type=="string" and length>0
 
 ## 2026-02-12 manual [convention]
 When an epic's skills overlap with other epics, add an explicit scope boundary table mapping which epic owns scaffolding vs depth for each concern
+
+## 2026-02-12 manual [convention]
+When multiple tasks touch a shared file (e.g., plugin.json), assign registration to one dedicated task or final consolidation step — keeps skill-authoring tasks file-disjoint and parallelizable
+
+## 2026-02-12 manual [convention]
+When adding skills, validate name uniqueness both repo-wide AND against marketplace catalog metadata to prevent cross-plugin skill ID collisions

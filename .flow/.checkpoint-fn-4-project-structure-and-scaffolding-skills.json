@@ -1,22 +1,27 @@
 {
-  "created_at": "2026-02-12T04:12:24.873523Z",
+  "created_at": "2026-02-12T04:59:07.020303Z",
   "epic": {
     "data": {
       "branch_name": "fn-4-project-structure-and-scaffolding-skills",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
       "created_at": "2026-02-11T22:23:11.813197Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
       "depends_on_epics": [
         "fn-2-plugin-skeleton-and-infrastructure"
       ],
       "id": "fn-4-project-structure-and-scaffolding-skills",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-12T04:17:43.609274Z",
       "spec_path": ".flow/specs/fn-4-project-structure-and-scaffolding-skills.md",
       "status": "open",
       "title": "Project Structure and Scaffolding Skills",
-      "updated_at": "2026-02-11T22:29:59.385735Z"
+      "updated_at": "2026-02-12T04:17:43.609476Z"
     },
-    "spec": "# fn-4: Project Structure & Scaffolding Skills\n\n## Overview\nDelivers skills for modern .NET project structure, scaffolding, and modernization including solution layout, analyzers, CI/CD setup, and testing infrastructure.\n\n## Scope\n**Skills:**\n- `dotnet-project-structure` - Modern solution layout: .slnx, Directory.Build.props, central package management, editorconfig, analyzers\n- `dotnet-scaffolding-base` - Base project scaffolding with all best practices applied\n- `dotnet-add-analyzers` - Add/configure .NET analyzers, Roslyn analyzers, nullable, trimming warnings, AOT compat analyzers\n- `dotnet-add-ci` - Add CI/CD to existing project (composable, detects platform)\n- `dotnet-add-testing` - Add test infrastructure to existing project\n- `dotnet-modernize` - Analyze existing code for modernization opportunities, suggest upgrades\n\n## Key Context\n- .slnx is the modern solution format (XML-based, human-readable)\n- Directory.Build.props and Directory.Packages.props for centralized configuration\n- Central Package Management (CPM) is the recommended approach\n- Code analyzers enforceable via EditorConfig: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Library design guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n\n## Quick Commands\n```bash\n# Smoke test: validate project structure skill\nfd -e md dotnet-project-structure skills/\n\n# Test scaffolding output\ndotnet new console -o /tmp/test-scaffold && ls -la /tmp/test-scaffold\n\n# Verify analyzer recommendations\ngrep -r \"Microsoft.CodeAnalysis.NetAnalyzers\" skills/project-structure/\n```\n\n## Acceptance Criteria\n1. All 6 skills written with standard depth and frontmatter\n2. Project structure skill documents .slnx, Directory.Build.props, CPM patterns\n3. Scaffolding skill provides complete new-project template with all best practices\n4. Add-analyzers skill covers CA rules, nullable context, trimming, AOT analyzers\n5. Add-CI skill detects GitHub Actions vs Azure DevOps and provides platform-specific guidance\n6. Modernize skill analyzes projects for upgrade opportunities (old TFMs, deprecated packages, outdated patterns)\n7. Skills cross-reference dotnet-version-detection for TFM-aware guidance\n\n## Test Notes\n- Test scaffolding skill by generating a new project and validating structure\n- Verify analyzer skill recommends appropriate analyzers for detected TFM\n- Check modernize skill detects superseded patterns (e.g., Microsoft.Extensions.Http.Polly \u2192 Microsoft.Extensions.Http.Resilience)\n\n## References\n- .NET Library Design Guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n- Code Analysis Overview: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Central Package Management: https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management\n- dotnet-skills project-structure reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+    "spec": "# fn-4: Project Structure & Scaffolding Skills\n\n## Overview\nDelivers skills for modern .NET project structure, scaffolding, and modernization. These are **setup-oriented** skills that help users bootstrap or improve a repo's foundational layout. Deep platform-specific CI/CD, testing, and version-migration guidance live in fn-19, fn-7, and fn-10 respectively.\n\n## Scope\n**Skills (6 total):**\n- `dotnet-project-structure` \u2014 Modern solution layout: .slnx (with .sln fallback for older tooling/CI), Directory.Build.props, Directory.Build.targets, Directory.Packages.props (CPM), .editorconfig, analyzers\n- `dotnet-scaffold-project` \u2014 Scaffold a new project with all best practices applied (structure, CPM, analyzers, editorconfig, SourceLink, deterministic builds)\n- `dotnet-add-analyzers` \u2014 Add/configure .NET analyzers: Roslyn CA rules, nullable context, trimming warnings, AOT compat analyzers\n- `dotnet-add-ci` \u2014 Add starter CI/CD to an existing project (detects GHA vs ADO, composable template); advanced patterns live in fn-19\n- `dotnet-add-testing` \u2014 Add test infrastructure scaffolding to an existing project (xunit ref, test project, coverlet); deep testing patterns live in fn-7\n- `dotnet-modernize` \u2014 Analyze existing code for modernization opportunities (outdated TFMs, deprecated packages, superseded patterns); version upgrade migration paths live in fn-10\n\n**Naming convention:** All skills use `dotnet-` prefix. Verb-noun style for additive skills (`add-*`, `scaffold-*`, `modernize`); noun style for reference skills (`project-structure`).\n\n## Scope Boundaries\n\n| Concern | fn-4 owns (scaffolding) | Other epic owns (depth) |\n|---|---|---|\n| CI/CD | Starter workflow template, platform detection | fn-19: composable workflows, matrix builds, deploy pipelines |\n| Testing | Test project scaffolding, package refs, coverlet config | fn-7: xUnit v3, strategies, integration, UI, snapshot, quality |\n| Version upgrades | Detecting outdated TFMs/packages, flagging opportunities | fn-10: migration paths, polyfill strategies, multi-targeting |\n| Version detection | Cross-references `[skill:dotnet-version-detection]` (foundation, fn-2) | fn-2: owns the skill; fn-10: version upgrade + multi-targeting |\n\n## Key Context\n- .slnx is the modern solution format (.NET 9+, XML-based, human-readable); .sln remains the fallback for older tooling and CI agents\n- Directory.Build.props and Directory.Packages.props for centralized configuration\n- Directory.Build.targets for build customization (imported after project)\n- Central Package Management (CPM) is the recommended approach for multi-project repos\n- NuGet audit is enabled by default in .NET 9+ (`NuGetAudit` property)\n- Lock files (`RestorePackagesWithLockFile`) for deterministic restores\n- SourceLink and deterministic builds should be default for libraries\n- Code analyzers enforceable via EditorConfig: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Library design guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n\n## Task Decomposition\n\n### fn-4.1: Project structure and scaffolding base skills\n**Delivers:** `dotnet-project-structure`, `dotnet-scaffold-project`\n- `skills/project-structure/dotnet-project-structure/SKILL.md`\n- `skills/project-structure/dotnet-scaffold-project/SKILL.md`\n- Both require `name` and `description` frontmatter\n- `dotnet-project-structure` must cross-reference `[skill:dotnet-version-detection]`\n\n### fn-4.2: Analyzer and CI/CD integration skills\n**Delivers:** `dotnet-add-analyzers`, `dotnet-add-ci`\n- `skills/project-structure/dotnet-add-analyzers/SKILL.md`\n- `skills/project-structure/dotnet-add-ci/SKILL.md`\n- `dotnet-add-ci` must document boundary with fn-19 (starter only)\n- `dotnet-add-analyzers` must cover CA rules, nullable, trimming, AOT analyzers\n\n### fn-4.3: Testing infrastructure and modernization skills\n**Delivers:** `dotnet-add-testing`, `dotnet-modernize`\n- `skills/project-structure/dotnet-add-testing/SKILL.md`\n- `skills/project-structure/dotnet-modernize/SKILL.md`\n- `dotnet-add-testing` must document boundary with fn-7 (scaffolding only)\n- `dotnet-modernize` must document boundary with fn-10 (flagging only, not migration paths)\n\n## Quick Commands\n```bash\n# Validate all 6 skills exist with frontmatter\nfor s in dotnet-project-structure dotnet-scaffold-project dotnet-add-analyzers dotnet-add-ci dotnet-add-testing dotnet-modernize; do\n  test -f \"skills/project-structure/$s/SKILL.md\" && echo \"OK: $s\" || echo \"MISSING: $s\"\ndone\n\n# Validate frontmatter has required fields\ngrep -l \"^name:\" skills/project-structure/*/SKILL.md | wc -l  # expect 6\n\n# Verify cross-references\ngrep -r \"\\[skill:dotnet-version-detection\\]\" skills/project-structure/\n```\n\n## Acceptance Criteria\n1. All 6 skills exist at `skills/project-structure/<skill-name>/SKILL.md` with `name` and `description` frontmatter\n2. `dotnet-project-structure` documents .slnx (with .sln fallback), Directory.Build.props, Directory.Build.targets, CPM, .editorconfig\n3. `dotnet-scaffold-project` provides complete new-project template with CPM, analyzers, editorconfig, SourceLink, deterministic builds, NuGet audit\n4. `dotnet-add-analyzers` covers CA rules, nullable context, trimming warnings, AOT compatibility analyzers\n5. `dotnet-add-ci` detects GitHub Actions vs Azure DevOps and provides starter workflow; documents that advanced patterns live in fn-19\n6. `dotnet-add-testing` scaffolds test project with xUnit ref, coverlet, directory structure; documents that deep patterns live in fn-7\n7. `dotnet-modernize` flags outdated TFMs, deprecated packages, superseded patterns; documents that migration paths live in fn-10\n8. Skills cross-reference `[skill:dotnet-version-detection]` for TFM-aware guidance\n9. All skills registered in `plugin.json`\n10. `./scripts/validate-skills.sh` passes for all 6 skills\n\n## Test Notes\n- Test scaffolding skill by generating a new project and validating structure matches documented layout\n- Verify analyzer skill recommends appropriate analyzers for detected TFM\n- Check modernize skill detects superseded patterns (e.g., `Microsoft.Extensions.Http.Polly` \u2192 `Microsoft.Extensions.Http.Resilience`)\n- Verify `dotnet-add-ci` produces valid GHA YAML and ADO YAML starter templates\n- Confirm boundary cross-references are present in `dotnet-add-ci`, `dotnet-add-testing`, `dotnet-modernize`\n\n## References\n- .NET Library Design Guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/\n- Code Analysis Overview: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview\n- Central Package Management: https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management\n- .slnx Format: https://learn.microsoft.com/en-us/visualstudio/ide/reference/solution-file?view=vs-2022\n- dotnet-skills project-structure reference: https://github.com/Aaronontheweb/dotnet-skills\n"
   },
   "epic_id": "fn-4-project-structure-and-scaffolding-skills",
   "schema_version": 2,
@@ -37,8 +42,30 @@
         "updated_at": "2026-02-11T22:31:49.629435Z"
       },
       "id": "fn-4-project-structure-and-scaffolding-skills.1",
-      "runtime": null,
-      "spec": "# fn-4-project-structure-and-scaffolding-skills.1 Project structure and scaffolding base skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T04:19:55.368072Z",
+        "evidence": {
+          "cross_references": [
+            "Both skills reference [skill:dotnet-version-detection]",
+            "dotnet-project-structure references [skill:dotnet-project-analysis], [skill:dotnet-scaffold-project], [skill:dotnet-add-analyzers]",
+            "dotnet-scaffold-project references [skill:dotnet-project-structure], [skill:dotnet-add-analyzers], [skill:dotnet-add-ci]"
+          ],
+          "files_created": [
+            "skills/project-structure/dotnet-project-structure/SKILL.md",
+            "skills/project-structure/dotnet-scaffold-project/SKILL.md"
+          ],
+          "files_modified": [
+            ".claude-plugin/plugin.json"
+          ],
+          "plugin_json_registration": "Both skills added to .claude-plugin/plugin.json skills array",
+          "validation": "scripts/validate-skills.sh passes with 0 errors"
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T04:22:48.438736Z"
+      },
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.1 Project structure and scaffolding base skills\n\n## Description\nCreate the two base skills for fn-4: `dotnet-project-structure` (reference guide for modern .NET solution layout) and `dotnet-scaffold-project` (step-by-step scaffolding of new projects with all best practices).\n\n## Acceptance\n- [x] `skills/project-structure/dotnet-project-structure/SKILL.md` exists with `name` and `description` frontmatter\n- [x] `skills/project-structure/dotnet-scaffold-project/SKILL.md` exists with `name` and `description` frontmatter\n- [x] `dotnet-project-structure` covers .slnx (with .sln fallback), Directory.Build.props, Directory.Build.targets, CPM, .editorconfig\n- [x] `dotnet-scaffold-project` provides complete new-project template with CPM, analyzers, editorconfig, SourceLink, deterministic builds, NuGet audit\n- [x] Both skills cross-reference `[skill:dotnet-version-detection]`\n- [x] Both skills registered in plugin.json\n- [x] `./scripts/validate-skills.sh` passes\n\n## Done summary\nCreated two project-structure base skills:\n\n1. **dotnet-project-structure** \u2014 Reference guide for modern .NET solution layout covering .slnx (with .sln fallback), Directory.Build.props, Directory.Build.targets, Central Package Management, .editorconfig, global.json, nuget.config (with packageSourceMapping), NuGet audit, lock files, and SourceLink/deterministic builds.\n\n2. **dotnet-scaffold-project** \u2014 Step-by-step guide for scaffolding a new .NET project from scratch with all best practices applied: CPM, analyzers, editorconfig, SourceLink, deterministic builds, NuGet audit, and lock files. Includes project template selection, cleanup of generated code, and verification steps.\n\nBoth skills cross-reference `[skill:dotnet-version-detection]` and are registered in plugin.json. Validation passes with 0 errors.\n## Evidence\n- Commits:\n- Tests:\n- PRs:"
     },
     {
       "data": {
@@ -56,8 +83,22 @@
         "updated_at": "2026-02-11T22:31:49.752919Z"
       },
       "id": "fn-4-project-structure-and-scaffolding-skills.2",
-      "runtime": null,
-      "spec": "# fn-4-project-structure-and-scaffolding-skills.2 Analyzer and CI/CD integration skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T04:32:55.013712Z",
+        "evidence": {
+          "plugin_json": "both registered",
+          "skills_created": [
+            "dotnet-add-analyzers",
+            "dotnet-add-ci"
+          ],
+          "validation": "0 errors, 93 warnings (all pre-existing planned-ref warnings)"
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T04:35:20.512171Z"
+      },
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.2 Analyzer and CI/CD integration skills\n\n## Description\nCreate `dotnet-add-analyzers` and `dotnet-add-ci` skills in the project-structure skill category. The analyzer skill covers built-in Roslyn CA rules, nullable enforcement, trimming/AOT analyzers, third-party analyzer packages, and EditorConfig severity overrides. The CI skill detects GitHub Actions vs Azure DevOps and provides starter workflow templates for build/test/pack.\n\n## Acceptance\n- [x] `skills/project-structure/dotnet-add-analyzers/SKILL.md` exists with `name` and `description` frontmatter\n- [x] `skills/project-structure/dotnet-add-ci/SKILL.md` exists with `name` and `description` frontmatter\n- [x] `dotnet-add-analyzers` covers CA rules, nullable context, trimming warnings, AOT compatibility analyzers\n- [x] `dotnet-add-ci` detects GitHub Actions vs Azure DevOps and provides starter workflows\n- [x] `dotnet-add-ci` documents boundary with fn-19 (starter only, advanced patterns in fn-19)\n- [x] Both skills cross-reference `[skill:dotnet-version-detection]`\n- [x] Both skills registered in `plugin.json`\n- [x] `./scripts/validate-skills.sh` passes with 0 errors\n\n## Done summary\nCreated two skills: `dotnet-add-analyzers` (Roslyn CA rules, AnalysisLevel, EditorConfig severity, nullable, trimming/AOT analyzers, third-party packages like Meziantou and BannedApiAnalyzers) and `dotnet-add-ci` (platform detection, GitHub Actions and Azure DevOps starter workflows, NuGet pack steps, adaptation guidance). Both registered in plugin.json. Validation passes with 0 errors.\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:"
     },
     {
       "data": {
@@ -75,8 +116,24 @@
         "updated_at": "2026-02-11T22:31:49.908105Z"
       },
       "id": "fn-4-project-structure-and-scaffolding-skills.3",
-      "runtime": null,
-      "spec": "# fn-4-project-structure-and-scaffolding-skills.3 Testing infrastructure and modernization skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-12T04:43:55.116638Z",
+        "evidence": {
+          "commits": [
+            "e64cd0a",
+            "67f9f6d"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-12T04:55:06.304023Z"
+      },
+      "spec": "# fn-4-project-structure-and-scaffolding-skills.3 Testing infrastructure and modernization skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nAdded dotnet-add-testing (test infrastructure scaffolding with xUnit, coverlet, directory layout) and dotnet-modernize (flags outdated TFMs, deprecated packages, superseded patterns) skills. Both document scope boundaries (fn-7 for testing depth, fn-10 for migration paths), cross-reference [skill:dotnet-version-detection], and are registered in plugin.json.\n## Evidence\n- Commits: e64cd0a, 67f9f6d\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     }
   ]
 }

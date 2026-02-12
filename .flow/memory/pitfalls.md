@@ -57,3 +57,6 @@ When documenting package replacements (e.g. Swashbuckle->OpenAPI), always note c
 
 ## 2026-02-12 manual [pitfall]
 ASP.NET shared-framework NuGet packages (e.g. Microsoft.AspNetCore.Mvc.Testing) must match the project TFM major version -- hardcoding a specific version in guidance will break users on different TFMs
+
+## 2026-02-12 manual [pitfall]
+Cross-reference skill IDs must use canonical names from target epic (e.g., dotnet-csharp-async-patterns not dotnet-async-patterns) — verify with grep against actual SKILL.md name: fields

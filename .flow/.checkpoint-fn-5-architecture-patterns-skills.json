@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-02-12T05:10:07.372716Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-5-architecture-patterns-skills",
+      "created_at": "2026-02-11T22:23:12.096543Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-5-architecture-patterns-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-5-architecture-patterns-skills.md",
+      "status": "open",
+      "title": "Architecture Patterns Skills",
+      "updated_at": "2026-02-11T22:30:14.860926Z"
+    },
+    "spec": "# fn-5: Architecture Patterns Skills\n\n## Overview\nDelivers practical modern architecture patterns including minimal API organization, background services, resilience (Polly v8), HTTP client best practices, observability, data access, and container deployment.\n\n## Scope\n**Skills:**\n- `dotnet-architecture-patterns` - Practical, modern patterns: minimal API organization, vertical slices, request pipeline, error handling, validation\n- `dotnet-background-services` - BackgroundService, IHostedService, System.Threading.Channels for producer/consumer\n- `dotnet-resilience` - Polly v8 + Microsoft.Extensions.Resilience + Microsoft.Extensions.Http.Resilience (the modern stack; supersedes Microsoft.Extensions.Http.Polly)\n- `dotnet-http-client` - IHttpClientFactory + resilience pipelines: typed clients, named clients, DelegatingHandlers, testing\n- `dotnet-observability` - OpenTelemetry (traces, metrics, logs), Serilog/MS.Extensions.Logging structured logging, health checks, custom metrics\n- `dotnet-efcore-patterns` - EF Core best practices: DbContext lifecycle, AsNoTracking by default, query splitting, migrations, interceptors\n- `dotnet-efcore-architecture` - EF Core architecture: separate read/write models, avoiding N+1, row limits, repository patterns\n- `dotnet-data-access-strategy` - Choosing data access approach: EF Core vs Dapper vs raw ADO.NET, performance tradeoffs, AOT compat\n- `dotnet-containers` - Container best practices: multi-stage Dockerfiles, `dotnet publish` container images (.NET 8+), rootless, health checks\n- `dotnet-container-deployment` - Deploying .NET containers: Kubernetes basics, Docker Compose for local dev, CI/CD integration\n\n## Key Context\n- ASP.NET Core Best Practices: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0\n- Microsoft.Extensions.Http.Polly is superseded by Microsoft.Extensions.Http.Resilience ([migration guide](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/resilience/migration-guide)) \u2014 do not use for new projects\n- Polly v8.6.5 is the definitive standard (standard pipeline: rate limiter -> total timeout -> retry -> circuit breaker -> attempt timeout)\n- Vertical slice architecture is increasingly mainstream\n- OpenTelemetry is the standard observability approach in .NET 10\n\n## Quick Commands\n```bash\n# Smoke test: verify resilience skill mentions superseded packages\ngrep -i \"supersed\\|migration\" skills/architecture/dotnet-resilience.md\n\n# Validate observability patterns\ngrep -i \"OpenTelemetry\" skills/architecture/dotnet-observability.md\n\n# Test cross-references between HTTP client and resilience\ngrep -r \"dotnet-resilience\" skills/architecture/dotnet-http-client.md\n```\n\n## Acceptance Criteria\n1. All 10 skills written with standard depth and frontmatter\n2. Architecture patterns skill covers vertical slices, minimal API organization at scale\n3. Background services skill documents channels-based patterns and hosted service lifecycle\n4. Resilience skill recommends Polly v8 + MS.Extensions.Http.Resilience, notes Microsoft.Extensions.Http.Polly is superseded\n5. HTTP client skill integrates resilience pipelines with typed/named clients\n6. Observability skill covers OpenTelemetry setup for traces/metrics/logs plus structured logging\n7. Skills reference ASP.NET Core best practices and async guidance\n8. EF Core skills cover DbContext lifecycle, AsNoTracking, migrations, query splitting, N+1 prevention\n9. Data access strategy skill provides clear decision framework for EF Core vs Dapper vs ADO.NET\n10. Container skills cover multi-stage Dockerfiles, dotnet publish images, health checks, and basic K8s manifests\n\n## Test Notes\n- Verify resilience skill detects and warns about superseded Polly packages\n- Test that HTTP client skill cross-references resilience for pipeline configuration\n- Validate observability skill recommends OpenTelemetry over legacy approaches\n- Verify EF Core skills cross-reference testing skills for integration testing with Testcontainers\n- Verify container skills reference health check patterns from observability skill\n\n## References\n- ASP.NET Core Best Practices: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0\n- Polly v8 documentation: https://www.pollydocs.org/\n- OpenTelemetry .NET: https://opentelemetry.io/docs/languages/net/\n- David Fowler Async Guidance: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- EF Core Best Practices: https://learn.microsoft.com/en-us/ef/core/performance/\n- .NET Container Images: https://learn.microsoft.com/en-us/dotnet/core/docker/build-container\n"
+  },
+  "epic_id": "fn-5-architecture-patterns-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:51.577123Z",
+        "depends_on": [],
+        "epic": "fn-5-architecture-patterns-skills",
+        "id": "fn-5-architecture-patterns-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-5-architecture-patterns-skills.1.md",
+        "status": "todo",
+        "title": "Architecture patterns and background services skills",
+        "updated_at": "2026-02-11T22:31:51.577648Z"
+      },
+      "id": "fn-5-architecture-patterns-skills.1",
+      "runtime": null,
+      "spec": "# fn-5-architecture-patterns-skills.1 Architecture patterns and background services skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:51.691875Z",
+        "depends_on": [],
+        "epic": "fn-5-architecture-patterns-skills",
+        "id": "fn-5-architecture-patterns-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-5-architecture-patterns-skills.2.md",
+        "status": "todo",
+        "title": "Resilience and HTTP client skills",
+        "updated_at": "2026-02-11T22:31:51.692029Z"
+      },
+      "id": "fn-5-architecture-patterns-skills.2",
+      "runtime": null,
+      "spec": "# fn-5-architecture-patterns-skills.2 Resilience and HTTP client skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:51.808407Z",
+        "depends_on": [],
+        "epic": "fn-5-architecture-patterns-skills",
+        "id": "fn-5-architecture-patterns-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-5-architecture-patterns-skills.3.md",
+        "status": "todo",
+        "title": "Observability and telemetry skills",
+        "updated_at": "2026-02-11T22:31:51.808549Z"
+      },
+      "id": "fn-5-architecture-patterns-skills.3",
+      "runtime": null,
+      "spec": "# fn-5-architecture-patterns-skills.3 Observability and telemetry skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
