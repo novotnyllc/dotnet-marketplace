@@ -1,0 +1,60 @@
+name: Validate Plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate plugin structure and skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          echo "=== JSON Validation ==="
+          jq empty .claude-plugin/plugin.json
+          echo "OK: plugin.json"
+          jq empty .claude-plugin/marketplace.json
+          echo "OK: marketplace.json"
+          jq empty hooks/hooks.json
+          echo "OK: hooks.json"
+          jq empty .mcp.json
+          echo "OK: .mcp.json"
+
+      - name: Validate skills
+        id: validate-skills
+        run: |
+          ALLOW_PLANNED_REFS=1 ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+
+          # Parse stable output keys for summary
+          CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
+          PROJECTED=$(grep '^PROJECTED_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
+          STATUS=$(grep '^BUDGET_STATUS=' /tmp/skills-output.txt | cut -d= -f2)
+
+          echo "current_desc_chars=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "projected_desc_chars=$PROJECTED" >> "$GITHUB_OUTPUT"
+          echo "budget_status=$STATUS" >> "$GITHUB_OUTPUT"
+
+      - name: Validate marketplace
+        run: ./scripts/validate-marketplace.sh
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Plugin Validation Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Current description chars | ${{ steps.validate-skills.outputs.current_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Projected description chars | ${{ steps.validate-skills.outputs.projected_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Budget status | ${{ steps.validate-skills.outputs.budget_status }} |" >> "$GITHUB_STEP_SUMMARY"

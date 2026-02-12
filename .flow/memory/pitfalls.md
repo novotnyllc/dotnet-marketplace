@@ -24,3 +24,9 @@ macOS default /bin/bash is 3.2 (no associative arrays). Scripts using declare -A
 
 ## 2026-02-12 manual [pitfall]
 BSD sort on macOS lacks GNU sort -z flag. Use find -print0 without sort, or sort in a portable way, when targeting cross-platform scripts.
+
+## 2026-02-12 manual [pitfall]
+Validation scripts that accept optional dependencies (e.g. PyYAML) produce environment-dependent behavior; use a single deterministic parser for CI parity
+
+## 2026-02-12 manual [pitfall]
+Path validation must use realpath (symlink-resolving) canonicalization, not just cd+pwd, to prevent symlink escape
