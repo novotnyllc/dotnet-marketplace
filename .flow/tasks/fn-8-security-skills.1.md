@@ -37,9 +37,8 @@ Both skills must follow the folder-per-skill convention with standard frontmatte
   - `grep "skill:dotnet-csharp-configuration" skills/security/dotnet-secrets-management/SKILL.md` -- match
 
 ## Done summary
-TBD
-
+Created dotnet-security-owasp and dotnet-secrets-management skills covering all 10 OWASP Top 10 (2021) categories with .NET-specific mitigations, deprecated pattern warnings (CAS, APTCA, .NET Remoting, DCOM, BinaryFormatter), and comprehensive secrets lifecycle guidance (user secrets, environment variables, IConfiguration binding, rotation with IHostedService, managed identity, anti-patterns).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5a84e06, d3b72da, 98e979f
+- Tests: grep -c OWASP categories (10/10), grep cross-references (all verified), grep deprecated patterns (CAS/APTCA/.NET Remoting/DCOM/BinaryFormatter)
 - PRs:
