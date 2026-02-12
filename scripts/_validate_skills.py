@@ -211,7 +211,7 @@ def main():
     parser = argparse.ArgumentParser(description="Validate SKILL.md files")
     parser.add_argument("--repo-root", required=True, help="Repository root")
     parser.add_argument(
-        "--projected-skills", type=int, default=95, help="Projected skill count"
+        "--projected-skills", type=int, default=100, help="Projected skill count"
     )
     parser.add_argument(
         "--max-desc-chars", type=int, default=120, help="Max description chars"

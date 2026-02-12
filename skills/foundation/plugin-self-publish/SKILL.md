@@ -116,7 +116,7 @@ Before every release, verify:
 - [ ] `validate-marketplace.sh` passes (exit code 0)
 - [ ] All SKILL.md files have required frontmatter (name, description)
 - [ ] Budget status is OK or WARN (not FAIL)
-- [ ] No broken cross-references (all `[skill:skill-name]` refs resolve)
+- [ ] No broken cross-references (all `[skill:<name>]` refs resolve)
 
 ---
 
@@ -152,7 +152,7 @@ Two validation scripts ensure plugin integrity. Both are designed for identical 
 Validates all `SKILL.md` files in the repository:
 - Required frontmatter: `name`, `description`
 - YAML frontmatter is well-formed
-- Cross-references using `[skill:skill-name]` syntax point to existing skill directories
+- Cross-references using `[skill:<name>]` syntax point to existing skill directories
 - Context budget tracking with stable output keys
 
 Run: `./scripts/validate-skills.sh`
