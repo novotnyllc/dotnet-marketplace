@@ -38,7 +38,7 @@ Always load these skills before analysis:
    - A03: Look for SQL injection (string concatenation in queries), XSS (raw HTML output), command injection
    - A04: Verify rate limiting, anti-forgery tokens, request size limits
    - A05: Check for `UseDeveloperExceptionPage` without environment gate, missing security headers
-   - A06: Run `dotnet list package --vulnerable` if possible
+   - A06: Check `NuGetAudit` settings in project files; flag if `NuGetAuditMode` is missing or not `all`
    - A07: Review Identity/cookie configuration (password policy, lockout, secure cookies)
    - A08: Search for `BinaryFormatter`, unsigned package sources, missing source mapping
    - A09: Verify security event logging without sensitive data exposure

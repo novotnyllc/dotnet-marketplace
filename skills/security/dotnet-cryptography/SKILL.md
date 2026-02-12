@@ -185,6 +185,7 @@ bool valid = ecdsaPublic.VerifyData(data, signature, HashAlgorithmName.SHA256);
 PBKDF2 is built into .NET and acceptable for password hashing. Use at least 600,000 iterations with SHA-256 (OWASP recommendation).
 
 ```csharp
+using System.Buffers.Binary;
 using System.Security.Cryptography;
 
 public static class PasswordHasher
@@ -192,6 +193,7 @@ public static class PasswordHasher
     private const int SaltSize = 16;       // 128-bit salt
     private const int HashSize = 32;       // 256-bit derived key
     private const int Iterations = 600_000; // OWASP 2023 recommendation for SHA-256
+    private const int PayloadSize = 4 + SaltSize + HashSize; // iteration count + salt + hash
 
     public static string HashPassword(string password)
     {
@@ -203,9 +205,9 @@ public static class PasswordHasher
             HashAlgorithmName.SHA256,
             HashSize);
 
-        // Store iteration count, salt, and hash together
-        byte[] result = new byte[4 + SaltSize + HashSize];
-        BitConverter.TryWriteBytes(result, Iterations);
+        // Store iteration count (fixed little-endian), salt, and hash together
+        byte[] result = new byte[PayloadSize];
+        BinaryPrimitives.WriteInt32LittleEndian(result, Iterations);
         salt.CopyTo(result.AsSpan(4));
         hash.CopyTo(result.AsSpan(4 + SaltSize));
         return Convert.ToBase64String(result);
@@ -213,10 +215,20 @@ public static class PasswordHasher
 
     public static bool VerifyPassword(string password, string stored)
     {
-        byte[] decoded = Convert.FromBase64String(stored);
-        int iterations = BitConverter.ToInt32(decoded);
-        byte[] salt = decoded[4..(4 + SaltSize)];
-        byte[] expectedHash = decoded[(4 + SaltSize)..];
+        // Defensive parsing: reject malformed input without exceptions
+        Span<byte> decoded = stackalloc byte[PayloadSize];
+        if (!Convert.TryFromBase64String(stored, decoded, out int bytesWritten)
+            || bytesWritten != PayloadSize)
+        {
+            return false;
+        }
+
+        int iterations = BinaryPrimitives.ReadInt32LittleEndian(decoded);
+        if (iterations <= 0)
+            return false;
+
+        var salt = decoded.Slice(4, SaltSize);
+        var expectedHash = decoded.Slice(4 + SaltSize, HashSize);
 
         byte[] actualHash = Rfc2898DeriveBytes.Pbkdf2(
             password,
