@@ -1,0 +1,16 @@
+{
+  "name": "dotnet-artisan",
+  "version": "0.1.0",
+  "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
+  "skills": [
+    "skills/foundation/dotnet-advisor",
+    "skills/foundation/dotnet-version-detection",
+    "skills/foundation/dotnet-project-analysis",
+    "skills/foundation/plugin-self-publish"
+  ],
+  "agents": [
+    "agents/dotnet-architect.md"
+  ],
+  "hooks": "hooks/hooks.json",
+  "mcpServers": ".mcp.json"
+}
