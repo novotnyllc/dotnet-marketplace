@@ -13,6 +13,20 @@ Cross-references: [skill:dotnet-efcore-patterns] for tactical DbContext usage an
 
 ---
 
+## Package Prerequisites
+
+Examples in this skill use PostgreSQL (`UseNpgsql`). Substitute the provider package for your database:
+
+| Database | Provider Package |
+|----------|-----------------|
+| PostgreSQL | `Npgsql.EntityFrameworkCore.PostgreSQL` |
+| SQL Server | `Microsoft.EntityFrameworkCore.SqlServer` |
+| SQLite | `Microsoft.EntityFrameworkCore.Sqlite` |
+
+All examples also require the core `Microsoft.EntityFrameworkCore` package (pulled in transitively by provider packages).
+
+---
+
 ## Read/Write Model Separation
 
 Separate read models (queries) from write models (commands) to optimize each path independently. This is not full CQRS -- it is a practical separation using EF Core features.

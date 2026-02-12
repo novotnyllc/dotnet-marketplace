@@ -376,7 +376,7 @@ For queries executed very frequently with the same shape, compiled queries elimi
 ```csharp
 public static class CompiledQueries
 {
-    // Single-result compiled query (CancellationToken is added automatically by the framework)
+    // Single-result compiled query -- delegate does NOT accept CancellationToken
     public static readonly Func<AppDbContext, int, Task<Order?>>
         GetOrderById = EF.CompileAsyncQuery(
             (AppDbContext db, int orderId) =>
@@ -395,11 +395,10 @@ public static class CompiledQueries
                     .OrderByDescending(o => o.CreatedAt));
 }
 
-// Usage -- CancellationToken is NOT part of the compiled query delegate signature.
-// For single-result queries, pass CancellationToken via the overload:
+// Usage
 var order = await CompiledQueries.GetOrderById(db, orderId);
 
-// For IAsyncEnumerable, use WithCancellation on the async enumerable:
+// IAsyncEnumerable results support cancellation via WithCancellation:
 await foreach (var o in CompiledQueries.GetOrdersByCustomer(db, customerId)
     .WithCancellation(ct))
 {
@@ -408,6 +407,8 @@ await foreach (var o in CompiledQueries.GetOrdersByCustomer(db, customerId)
 ```
 
 **When to use:** Compiled queries provide measurable benefit for queries that execute thousands of times per second. For typical CRUD endpoints, standard LINQ is sufficient -- do not prematurely optimize.
+
+**Cancellation limitation:** Single-result compiled query delegates (`Task<T?>`) do not accept `CancellationToken`. If per-call cancellation is required, use standard async LINQ (`FirstOrDefaultAsync(ct)`) instead of a compiled query. Multi-result compiled queries (`IAsyncEnumerable<T>`) support cancellation via `.WithCancellation(ct)` on the async enumerable.
 
 ---
 
