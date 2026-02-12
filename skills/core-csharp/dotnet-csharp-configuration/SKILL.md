@@ -40,12 +40,14 @@ public sealed class SmtpOptions
 {
     public const string SectionName = "Smtp";
 
-    public required string Host { get; init; }
-    public int Port { get; init; } = 587;
-    public required string FromAddress { get; init; }
-    public bool UseSsl { get; init; } = true;
+    public string Host { get; set; } = "";
+    public int Port { get; set; } = 587;
+    public string FromAddress { get; set; } = "";
+    public bool UseSsl { get; set; } = true;
 }
 ```
+
+> Options classes use `{ get; set; }` (not `init`) because the configuration binder and `PostConfigure` need to mutate properties. Use `[Required]` via data annotations for mandatory fields instead.
 
 ### Registration
 
@@ -146,13 +148,13 @@ public sealed class SmtpOptions
     public const string SectionName = "Smtp";
 
     [Required, MinLength(1)]
-    public required string Host { get; init; }
+    public string Host { get; set; } = "";
 
     [Range(1, 65535)]
-    public int Port { get; init; } = 587;
+    public int Port { get; set; } = 587;
 
     [Required, EmailAddress]
-    public required string FromAddress { get; init; }
+    public string FromAddress { get; set; } = "";
 }
 
 builder.Services
