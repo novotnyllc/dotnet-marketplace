@@ -7,7 +7,7 @@ description: "WHEN setting up or reviewing .NET solution layout. Covers .slnx, D
 
 Reference guide for modern .NET project structure and solution layout. Use when creating new solutions, reviewing existing structure, or recommending improvements.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 10+ SDK).
+**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 9+ SDK).
 
 Cross-references: [skill:dotnet-project-analysis] for analyzing existing projects, [skill:dotnet-scaffold-project] for generating a new project from scratch.
 
@@ -24,7 +24,7 @@ MyApp/
 ├── Directory.Build.props
 ├── Directory.Build.targets
 ├── Directory.Packages.props
-├── MyApp.slnx                       # .NET 10+ SDK / VS 17.13+
+├── MyApp.slnx                       # .NET 9+ SDK / VS 17.13+
 ├── src/
 │   ├── MyApp.Core/
 │   │   └── MyApp.Core.csproj
@@ -51,9 +51,9 @@ Key principles:
 
 ## Solution File Formats
 
-### .slnx (Modern — .NET 10+)
+### .slnx (Modern — .NET 9+)
 
-The XML-based solution format is human-readable and diff-friendly. Requires .NET 10+ SDK or Visual Studio 17.13+.
+The XML-based solution format is human-readable and diff-friendly. Requires .NET 9+ SDK or Visual Studio 17.13+.
 
 ```xml
 <Solution>
@@ -306,7 +306,7 @@ Configure package sources and security:
 
 The `<clear />` + explicit sources + `<packageSourceMapping>` pattern prevents supply-chain attacks by ensuring packages only come from expected sources.
 
-For private feeds, add additional sources and map specific package prefixes:
+For private feeds, map internal package prefixes exclusively to the private source:
 
 ```xml
 <packageSources>
@@ -323,6 +323,10 @@ For private feeds, add additional sources and map specific package prefixes:
   </packageSource>
 </packageSourceMapping>
 ```
+
+NuGet uses **most-specific-pattern-wins** precedence: `MyCompany.Foo` matches `MyCompany.*` (internal) over `*` (nuget.org), so internal packages restore exclusively from the private feed. This prevents dependency confusion attacks — an attacker cannot squat `MyCompany.Foo` on nuget.org because NuGet will never look there for packages matching `MyCompany.*`.
+
+**Do not** map the same prefix to multiple sources unless you trust both — that defeats the protection.
 
 ---
 

@@ -25,7 +25,7 @@ mkdir -p MyApp/src MyApp/tests
 cd MyApp
 dotnet new sln -n MyApp
 
-# For .NET 10+ SDK, convert to .slnx
+# For .NET 9+ SDK, convert to .slnx
 dotnet sln MyApp.sln migrate
 ```
 
@@ -134,15 +134,18 @@ After creating this, **remove** `<TargetFramework>`, `<Nullable>`, and `<Implici
 
 ## Step 4: Add Directory.Build.targets
 
-Apply shared analyzers to all projects.
+Apply shared package references (SourceLink, analyzers) to all projects. Items go in `.targets` so they are imported after project evaluation.
 
 ```xml
 <Project>
   <ItemGroup>
+    <!-- SourceLink for debugger source navigation -->
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
   </ItemGroup>
 </Project>
 ```
+
+The built-in Roslyn analyzers are already enabled by the `AnalysisLevel` and `EnforceCodeStyleInBuild` properties in Directory.Build.props (Step 3). For additional third-party analyzers, see [skill:dotnet-add-analyzers].
 
 ---
 
@@ -274,7 +277,7 @@ Run these commands to verify the scaffolded project:
 ```bash
 # Restore and verify lock files generated
 dotnet restore
-ls **/packages.lock.json
+find . -name "packages.lock.json" -type f
 
 # Build with all analyzers
 dotnet build --no-restore
@@ -282,8 +285,9 @@ dotnet build --no-restore
 # Run tests
 dotnet test --no-build
 
-# Verify CPM is active (no Version attributes in csproj)
-grep -r "Version=" src/**/*.csproj  # should find nothing
+# Verify CPM is active (no Version attributes in project PackageReferences)
+# Should only find versions in Directory.Packages.props, not in csproj files
+find . -name "*.csproj" -exec grep -l 'Version=' {} \;  # expect no output
 ```
 
 ---
