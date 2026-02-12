@@ -8,7 +8,10 @@
     "skills/foundation/dotnet-project-analysis",
     "skills/foundation/plugin-self-publish",
     "skills/core-csharp/dotnet-csharp-modern-patterns",
-    "skills/core-csharp/dotnet-csharp-coding-standards"
+    "skills/core-csharp/dotnet-csharp-coding-standards",
+    "skills/core-csharp/dotnet-csharp-async-patterns",
+    "skills/core-csharp/dotnet-csharp-nullable-reference-types",
+    "skills/core-csharp/dotnet-csharp-dependency-injection"
   ],
   "agents": [
     "agents/dotnet-architect.md"

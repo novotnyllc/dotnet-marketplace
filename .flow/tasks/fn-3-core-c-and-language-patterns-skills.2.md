@@ -22,9 +22,16 @@ All skills must use canonical frontmatter, `[skill:name]` cross-references, desc
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
+Created three core C# skills under skills/core-csharp/:
 
+1. **dotnet-csharp-async-patterns** - Async/await best practices covering task patterns, ConfigureAwait, cancellation, ValueTask, IAsyncEnumerable, and BackgroundService. Includes 5 agent gotcha sections: blocking on .Result/.Wait(), async void, missing ConfigureAwait, fire-and-forget without error handling, and forgetting CancellationToken.
+
+2. **dotnet-csharp-nullable-reference-types** - NRT annotation strategies with #nullable enable, all System.Diagnostics.CodeAnalysis attributes ([NotNullWhen], [MemberNotNull], [NotNullIfNotNull], etc.), migration guidance, generic constraints, EF Core integration. Includes 5 agent gotcha sections: null-forgiving operator abuse, ignoring warnings, wrong interface nullability, missing [NotNullWhen], and value/reference type confusion.
+
+3. **dotnet-csharp-dependency-injection** - MS.Extensions.DI advanced patterns: service lifetimes with captive dependency warnings, keyed services (net8.0+), decoration (manual + Scrutor), factory delegates, TryAdd for libraries, BackgroundService/IHostedService registration, scope validation, and registration organization.
+
+All skills registered in plugin.json. Cross-references use [skill:name] syntax. All descriptions under 120 chars. validate-skills.sh passes with 0 errors.
 ## Evidence
 - Commits:
-- Tests:
+- Tests: validate-skills.sh: PASSED (0 errors)
 - PRs:
