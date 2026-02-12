@@ -431,10 +431,31 @@ public sealed class ProductService(HybridCache cache, AppDbContext db)
 
 ### Idempotency Keys
 
-Prevent duplicate processing of retried requests:
+Prevent duplicate processing of retried requests. A robust idempotency implementation must:
+
+1. **Scope keys** by route + user/tenant to prevent cross-endpoint collisions
+2. **Atomically claim** the key before executing, so concurrent duplicates are rejected
+3. **Store a concrete response envelope** (not an `IResult` reference) for safe replay
+
+#### Database-Backed Idempotency (Recommended)
+
+Use a database row with a unique constraint for atomic claim-then-execute:
 
 ```csharp
-public sealed class IdempotencyFilter : IEndpointFilter
+// Idempotency record stored alongside domain data
+public sealed class IdempotencyRecord
+{
+    public required string Key { get; init; }         // Scoped key
+    public required string RequestRoute { get; init; }
+    public required string? UserId { get; init; }
+    public int StatusCode { get; set; }
+    public string? ResponseBody { get; set; }         // Serialized JSON
+    public string? ContentType { get; set; }
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public bool IsCompleted { get; set; }
+}
+
+public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(
         EndpointFilterInvocationContext context,
@@ -447,38 +468,79 @@ public sealed class IdempotencyFilter : IEndpointFilter
             return await next(context);
         }
 
-        var key = keyValues.ToString();
-        var cache = httpContext.RequestServices
-            .GetRequiredService<IDistributedCache>();
-        var cacheKey = $"idempotency:{key}";
-
-        var existing = await cache.GetStringAsync(cacheKey);
-        if (existing is not null)
+        var clientKey = keyValues.ToString();
+        if (string.IsNullOrWhiteSpace(clientKey) || clientKey.Length > 256)
         {
-            var cached = JsonSerializer.Deserialize<IdempotentResponse>(existing);
-            return Results.Json(cached!.Body, statusCode: cached.StatusCode);
+            return Results.Problem("Invalid Idempotency-Key", statusCode: 400);
         }
 
+        // Scope key by route + user to prevent cross-endpoint/cross-tenant collisions
+        var route = $"{httpContext.Request.Method}:{httpContext.Request.Path}";
+        var userId = httpContext.User.FindFirst("sub")?.Value ?? "anonymous";
+        var scopedKey = $"{route}:{userId}:{clientKey}";
+
+        // Check for completed response (replay)
+        var existing = await db.IdempotencyRecords
+            .FirstOrDefaultAsync(r => r.Key == scopedKey);
+
+        if (existing is { IsCompleted: true })
+        {
+            return Results.Text(
+                existing.ResponseBody ?? "",
+                existing.ContentType ?? "application/json",
+                statusCode: existing.StatusCode);
+        }
+
+        // Atomic claim: insert with unique constraint -- concurrent duplicate
+        // requests will throw DbUpdateException and get a 409 Conflict
+        if (existing is null)
+        {
+            var record = new IdempotencyRecord
+            {
+                Key = scopedKey,
+                RequestRoute = route,
+                UserId = userId,
+                IsCompleted = false
+            };
+            db.IdempotencyRecords.Add(record);
+
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return Results.Problem(
+                    "Duplicate request in progress", statusCode: 409);
+            }
+
+            existing = record;
+        }
+
+        // Execute the actual handler
         var result = await next(context);
 
-        // Cache the response for idempotency window
-        if (result is IStatusCodeHttpResult statusResult)
+        // Capture concrete response envelope for replay
+        if (result is IStatusCodeHttpResult statusResult
+            && result is IValueHttpResult valueResult)
         {
-            var response = new IdempotentResponse(
-                statusResult.StatusCode ?? 200, result);
-            await cache.SetStringAsync(
-                cacheKey,
-                JsonSerializer.Serialize(response),
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24)
-                });
+            existing.StatusCode = statusResult.StatusCode ?? 200;
+            existing.ResponseBody = JsonSerializer.Serialize(valueResult.Value);
+            existing.ContentType = "application/json";
+            existing.IsCompleted = true;
+            await db.SaveChangesAsync();
         }
 
         return result;
     }
 }
 ```
+
+**Key design choices:**
+- Unique constraint on `Key` column provides atomic claim without distributed locks
+- Scoped key (`route:userId:clientKey`) prevents cross-endpoint and cross-tenant collisions
+- Response envelope stores serialized body + status code + content type (not `IResult` references)
+- Incomplete records (claimed but not completed) return 409 to concurrent duplicates
 
 ### Transactional Outbox Pattern
 

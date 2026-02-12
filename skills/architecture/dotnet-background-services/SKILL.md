@@ -77,7 +77,7 @@ builder.Services.AddHostedService<OrderProcessorWorker>();
 ### Critical Rules for BackgroundService
 
 1. **Always create scopes** -- `BackgroundService` is registered as a singleton. Inject `IServiceScopeFactory`, not scoped services directly.
-2. **Always handle exceptions** -- unhandled exceptions in `ExecuteAsync` stop the host (net8.0+). Wrap the loop body in try/catch.
+2. **Always handle exceptions** -- by default, unhandled exceptions in `ExecuteAsync` stop the host (configurable via `HostOptions.BackgroundServiceExceptionBehavior`). Wrap the loop body in try/catch.
 3. **Always respect the stopping token** -- check `stoppingToken.IsCancellationRequested` and pass the token to all async calls.
 4. **Back off on empty/error** -- avoid tight polling loops that waste CPU. Use `Task.Delay` with the stopping token.
 
@@ -205,6 +205,17 @@ public interface IBackgroundTaskQueue
 
     ValueTask<Func<IServiceProvider, CancellationToken, Task>> DequeueAsync(
         CancellationToken ct);
+
+    /// <summary>
+    /// Try to dequeue a work item without blocking. Used during graceful drain.
+    /// </summary>
+    bool TryDequeue(
+        [MaybeNullWhen(false)] out Func<IServiceProvider, CancellationToken, Task> workItem);
+
+    /// <summary>
+    /// Signal that no more items will be enqueued. Allows drain loop to complete.
+    /// </summary>
+    void CompleteWriter();
 }
 
 // Channel-backed implementation
@@ -236,6 +247,17 @@ public sealed class BackgroundTaskQueue : IBackgroundTaskQueue
         CancellationToken ct)
     {
         return _queue.Reader.ReadAsync(ct);
+    }
+
+    public bool TryDequeue(
+        [MaybeNullWhen(false)] out Func<IServiceProvider, CancellationToken, Task> workItem)
+    {
+        return _queue.Reader.TryRead(out workItem);
+    }
+
+    public void CompleteWriter()
+    {
+        _queue.Writer.TryComplete();
     }
 }
 ```
@@ -401,7 +423,7 @@ builder.Services.Configure<HostOptions>(options =>
 
 ### Drain Pattern for Channels
 
-Complete the writer to signal no more items, then drain remaining items before stopping:
+Complete the writer to signal no more items will arrive, then drain remaining items before stopping:
 
 ```csharp
 public sealed class GracefulQueueProcessor(
@@ -426,6 +448,9 @@ public sealed class GracefulQueueProcessor(
         {
             // Shutdown requested -- fall through to drain
         }
+
+        // Signal producers that no more items will be accepted
+        taskQueue.CompleteWriter();
 
         // Drain: process remaining items with a deadline
         logger.LogInformation("Draining remaining work items");
