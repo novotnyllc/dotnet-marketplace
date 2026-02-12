@@ -30,3 +30,9 @@ Validation scripts that accept optional dependencies (e.g. PyYAML) produce envir
 
 ## 2026-02-12 manual [pitfall]
 Path validation must use realpath (symlink-resolving) canonicalization, not just cd+pwd, to prevent symlink escape
+
+## 2026-02-12 manual [pitfall]
+GHA bash steps with set -e do NOT propagate non-zero exit from non-final pipeline commands; add 'set -o pipefail' before any pipe (e.g. script | tee) to avoid false-green CI
+
+## 2026-02-12 manual [pitfall]
+CI workflows must run the EXACT same validation commands as local -- do not inject CI-only env vars or flags; encode policy differences in the shared script with an opt-in override

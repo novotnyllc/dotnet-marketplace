@@ -34,7 +34,8 @@ jobs:
       - name: Validate skills
         id: validate-skills
         run: |
-          ALLOW_PLANNED_REFS=1 ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+          set -o pipefail
+          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
           # Parse stable output keys for summary
           CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)

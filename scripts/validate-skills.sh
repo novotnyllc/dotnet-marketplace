@@ -12,7 +12,10 @@
 #   - python3
 #
 # Environment variables:
-#   ALLOW_PLANNED_REFS=1  -- Downgrade unresolved cross-references from errors to warnings.
+#   STRICT_REFS=1  -- Treat unresolved cross-references as errors (default: downgrade to warnings).
+#
+# During early development most skills are planned stubs, so --allow-planned-refs
+# is the default. Set STRICT_REFS=1 to enforce strict cross-reference validation.
 #
 # Output keys (stable, CI-parseable):
 #   CURRENT_DESC_CHARS=<N>
@@ -28,10 +31,17 @@ fi
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Default to allowing planned refs (most skills are stubs during early development).
+# Set STRICT_REFS=1 to treat unresolved cross-references as errors.
+ALLOW_PLANNED_FLAG="--allow-planned-refs"
+if [ -n "${STRICT_REFS:-}" ]; then
+    ALLOW_PLANNED_FLAG=""
+fi
+
 exec python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$REPO_ROOT" \
     --projected-skills 95 \
     --max-desc-chars 120 \
     --warn-threshold 12000 \
     --fail-threshold 15000 \
-    ${ALLOW_PLANNED_REFS:+--allow-planned-refs}
+    $ALLOW_PLANNED_FLAG
