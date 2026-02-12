@@ -43,11 +43,15 @@
     "skills/testing/dotnet-uno-testing",
     "skills/testing/dotnet-playwright",
     "skills/testing/dotnet-snapshot-testing",
-    "skills/testing/dotnet-test-quality"
+    "skills/testing/dotnet-test-quality",
+    "skills/security/dotnet-security-owasp",
+    "skills/security/dotnet-secrets-management",
+    "skills/security/dotnet-cryptography"
   ],
   "agents": [
     "agents/dotnet-architect.md",
-    "agents/dotnet-csharp-concurrency-specialist.md"
+    "agents/dotnet-csharp-concurrency-specialist.md",
+    "agents/dotnet-security-reviewer.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"

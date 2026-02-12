@@ -43,9 +43,8 @@ Create the `dotnet-cryptography` skill and `dotnet-security-reviewer` agent, the
 - [ ] Agent registered: `grep -c "dotnet-security-reviewer" .claude-plugin/plugin.json` returns 1
 
 ## Done summary
-TBD
-
+Created `dotnet-cryptography` skill covering hashing (SHA-2), symmetric encryption (AES-GCM), asymmetric crypto (RSA, ECDSA), key derivation (PBKDF2, Argon2), and post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) with TFM-aware guidance for .NET 10+ vs net8.0/net9.0 fallback. Created `dotnet-security-reviewer` agent following the architect agent pattern with read-only constraints, deterministic workflow, and preloaded skills. Registered all 3 security skills and the agent in plugin.json.
 ## Evidence
 - Commits:
-- Tests:
+- Tests: grep -c 'skills/security/' .claude-plugin/plugin.json returns 3, grep -c 'dotnet-security-reviewer' .claude-plugin/plugin.json returns 1, grep 'skill:dotnet-security-owasp' skills/security/dotnet-cryptography/SKILL.md -- match, grep 'skill:dotnet-secrets-management' skills/security/dotnet-cryptography/SKILL.md -- match, grep 'skill:dotnet-security-owasp' agents/dotnet-security-reviewer.md -- match, grep 'skill:dotnet-secrets-management' agents/dotnet-security-reviewer.md -- match, grep 'skill:dotnet-cryptography' agents/dotnet-security-reviewer.md -- match, grep 'skill:dotnet-advisor' agents/dotnet-security-reviewer.md -- match
 - PRs:
