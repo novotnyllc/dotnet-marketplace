@@ -4,12 +4,15 @@ Validate all SKILL.md files in the dotnet-artisan plugin.
 
 Checks:
   1. Required frontmatter fields: name, description
-  2. YAML frontmatter is well-formed (PyYAML if available, strict parser otherwise)
+  2. YAML frontmatter is well-formed (strict subset parser for flat key:value)
   3. [skill:name] cross-references point to existing skill directories
   4. Context budget tracking with stable output keys
 
 Invoked by validate-skills.sh. All validation logic lives here to avoid
 per-file subprocess spawning and ensure deterministic YAML parsing.
+
+Uses a strict subset parser (not PyYAML) so validation behavior is identical
+across all environments regardless of installed packages.
 """
 
 import argparse
@@ -19,35 +22,15 @@ from pathlib import Path
 
 # --- YAML Parsing ---
 
-# Try PyYAML first for full YAML spec compliance
-try:
-    import yaml  # type: ignore[import-not-found]
-    HAS_PYYAML = True
-except ImportError:
-    yaml = None  # type: ignore[assignment]
-    HAS_PYYAML = False
 
-
-def parse_frontmatter_pyyaml(text: str, path: str) -> dict:
-    """Parse frontmatter using PyYAML (full YAML spec)."""
-    assert yaml is not None  # guarded by HAS_PYYAML check in caller
-    try:
-        parsed = yaml.safe_load(text)
-    except yaml.YAMLError as e:
-        raise ValueError(str(e))
-    if parsed is None:
-        raise ValueError("frontmatter is empty")
-    if not isinstance(parsed, dict):
-        raise ValueError("frontmatter is not a YAML mapping")
-    return parsed
-
-
-def parse_frontmatter_strict(text: str, path: str) -> dict:
+def parse_frontmatter(text: str) -> dict:
     """Parse frontmatter using a strict subset parser.
 
-    Accepts only flat key: value mappings (the YAML subset used in SKILL.md files).
-    Rejects YAML flow constructs ([, {) and sequences (- ) that should not appear
-    in SKILL.md frontmatter.
+    Accepts only flat key: value mappings (the YAML subset used in SKILL.md
+    frontmatter). Rejects flow constructs ([, {) and sequences (- ).
+
+    Uses a deterministic strict parser so validation is environment-independent
+    (no PyYAML dependency, identical behavior locally and in CI).
     """
     result = {}
     lines = text.split("\n")
@@ -140,14 +123,6 @@ def parse_frontmatter_strict(text: str, path: str) -> dict:
     return result
 
 
-def parse_frontmatter(text: str, path: str) -> dict:
-    """Parse frontmatter using the best available parser."""
-    if HAS_PYYAML:
-        return parse_frontmatter_pyyaml(text, path)
-    else:
-        return parse_frontmatter_strict(text, path)
-
-
 # --- File Processing ---
 
 
@@ -188,21 +163,31 @@ def process_file(path: str) -> dict:
 
     # Parse YAML frontmatter
     try:
-        parsed = parse_frontmatter(fm_text, path)
+        parsed = parse_frontmatter(fm_text)
     except ValueError as e:
         return {"path": path, "valid": False, "error": str(e)}
 
-    # Extract fields from parsed YAML
-    name = parsed.get("name", "")
-    description = parsed.get("description", "")
+    # Extract and type-validate required fields
+    name_raw = parsed.get("name")
+    desc_raw = parsed.get("description")
+    field_errors = []
 
-    # Coerce to string
-    if isinstance(name, bool):
-        name = str(name).lower()
-    if isinstance(description, bool):
-        description = str(description).lower()
-    name = str(name) if name else ""
-    description = str(description) if description else ""
+    if name_raw is None or (isinstance(name_raw, str) and not name_raw.strip()):
+        field_errors.append("missing required frontmatter field: name")
+    elif not isinstance(name_raw, str):
+        field_errors.append(
+            f"frontmatter field 'name' must be a string (got {type(name_raw).__name__})"
+        )
+
+    if desc_raw is None or (isinstance(desc_raw, str) and not desc_raw.strip()):
+        field_errors.append("missing required frontmatter field: description")
+    elif not isinstance(desc_raw, str):
+        field_errors.append(
+            f"frontmatter field 'description' must be a string (got {type(desc_raw).__name__})"
+        )
+
+    name = name_raw.strip() if isinstance(name_raw, str) else ""
+    description = desc_raw.strip() if isinstance(desc_raw, str) else ""
 
     # Extract cross-references from body
     body_text = "\n".join(lines[body_start:])
@@ -215,6 +200,7 @@ def process_file(path: str) -> dict:
         "description": description,
         "desc_len": len(description),
         "refs": refs,
+        "field_errors": field_errors,
     }
 
 
@@ -265,8 +251,7 @@ def main():
     total_desc_chars = 0
     skill_count = 0
 
-    yaml_mode = "PyYAML" if HAS_PYYAML else "strict-subset"
-    print(f"=== SKILL.md Validation (parser: {yaml_mode}) ===")
+    print("=== SKILL.md Validation (parser: strict-subset) ===")
     print()
 
     if args.allow_planned_refs:
@@ -285,23 +270,17 @@ def main():
             errors += 1
             continue
 
-        name = result["name"]
         description = result["description"]
         desc_len = result["desc_len"]
         refs = result["refs"]
 
-        # Validate required field: name
-        if not name:
-            print(f"ERROR: {rel_path} -- missing required frontmatter field: name")
+        # Report field-level errors (type or missing)
+        for fe in result.get("field_errors", []):
+            print(f"ERROR: {rel_path} -- {fe}")
             errors += 1
 
-        # Validate required field: description
-        if not description:
-            print(
-                f"ERROR: {rel_path} -- missing required frontmatter field: description"
-            )
-            errors += 1
-        else:
+        # Track budget only for valid descriptions
+        if description:
             total_desc_chars += desc_len
             skill_count += 1
 

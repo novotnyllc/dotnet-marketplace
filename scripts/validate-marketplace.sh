@@ -27,6 +27,40 @@ MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
 errors=0
 warnings=0
 
+# Reject paths that escape the repository root (traversal, absolute, symlink escape)
+validate_path_safe() {
+    local path="$1"
+    local label="$2"
+
+    # Reject absolute paths
+    if [[ "$path" = /* ]]; then
+        echo "ERROR: $label contains absolute path: $path"
+        return 1
+    fi
+
+    # Reject parent traversal
+    if [[ "$path" == *".."* ]]; then
+        echo "ERROR: $label contains path traversal (..): $path"
+        return 1
+    fi
+
+    # Resolve canonical path and verify it stays under REPO_ROOT
+    local full_path="$REPO_ROOT/$path"
+    if [ -e "$full_path" ]; then
+        local resolved
+        resolved="$(cd "$(dirname "$full_path")" && pwd)/$(basename "$full_path")"
+        case "$resolved" in
+            "$REPO_ROOT"/*) ;;  # OK - under repo root
+            *)
+                echo "ERROR: $label resolves outside repository: $path -> $resolved"
+                return 1
+                ;;
+        esac
+    fi
+
+    return 0
+}
+
 echo "=== Marketplace Validation ==="
 echo ""
 
@@ -67,6 +101,10 @@ else
 
             # Check each skill directory exists and contains SKILL.md
             while IFS= read -r skill_path; do
+                if ! validate_path_safe "$skill_path" "skills[]"; then
+                    errors=$((errors + 1))
+                    continue
+                fi
                 full_path="$REPO_ROOT/$skill_path"
                 if [ ! -d "$full_path" ]; then
                     echo "ERROR: skill directory not found: $skill_path"
@@ -91,6 +129,10 @@ else
 
             # Check each agent file exists
             while IFS= read -r agent_path; do
+                if ! validate_path_safe "$agent_path" "agents[]"; then
+                    errors=$((errors + 1))
+                    continue
+                fi
                 full_path="$REPO_ROOT/$agent_path"
                 if [ ! -f "$full_path" ]; then
                     echo "ERROR: agent file not found: $agent_path"
@@ -108,12 +150,16 @@ else
             errors=$((errors + 1))
         else
             hooks_path=$(jq -r '.hooks' "$PLUGIN_JSON")
-            full_path="$REPO_ROOT/$hooks_path"
-            if [ ! -f "$full_path" ]; then
-                echo "ERROR: hooks file not found: $hooks_path"
+            if ! validate_path_safe "$hooks_path" "hooks"; then
                 errors=$((errors + 1))
             else
-                echo "OK: $hooks_path exists"
+                full_path="$REPO_ROOT/$hooks_path"
+                if [ ! -f "$full_path" ]; then
+                    echo "ERROR: hooks file not found: $hooks_path"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: $hooks_path exists"
+                fi
             fi
         fi
 
@@ -124,12 +170,16 @@ else
             errors=$((errors + 1))
         else
             mcp_path=$(jq -r '.mcpServers' "$PLUGIN_JSON")
-            full_path="$REPO_ROOT/$mcp_path"
-            if [ ! -f "$full_path" ]; then
-                echo "ERROR: mcpServers file not found: $mcp_path"
+            if ! validate_path_safe "$mcp_path" "mcpServers"; then
                 errors=$((errors + 1))
             else
-                echo "OK: $mcp_path exists"
+                full_path="$REPO_ROOT/$mcp_path"
+                if [ ! -f "$full_path" ]; then
+                    echo "ERROR: mcpServers file not found: $mcp_path"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: $mcp_path exists"
+                fi
             fi
         fi
     fi
