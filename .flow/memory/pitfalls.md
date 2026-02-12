@@ -81,3 +81,6 @@ Cross-task file edits (even single-line cross-refs) violate file-disjoint constr
 
 ## 2026-02-12 manual [pitfall]
 When a boundary enforcement has multiple mechanisms (prose vs placeholder), pick ONE and normalize across ALL epic sections (matrix, decomposition, acceptance, task specs, quick commands) — mixed models cause reviewer churn
+
+## 2026-02-12 manual [pitfall]
+ConfigureHttpJsonOptions applies to Minimal APIs only, not MVC controllers -- controllers need .AddControllers().AddJsonOptions() as a separate registration

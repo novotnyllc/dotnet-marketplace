@@ -24,9 +24,8 @@ Create two skills: `dotnet-serialization` (AOT-friendly serialization covering S
 - [ ] Does NOT modify `plugin.json` (handled by fn-6.2)
 
 ## Done summary
-TBD
-
+Created dotnet-serialization (STJ source generators, Protobuf, MessagePack with AOT compatibility and performance tradeoffs) and dotnet-grpc (full lifecycle: .proto definition, code-gen, ASP.NET Core server with MapGrpcService, Grpc.Net.Client, all 4 streaming patterns, auth, load balancing, health checks) skills with required cross-references, boundary statements, and deferred placeholders.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b872741, 31b83f5
+- Tests: ./scripts/validate-skills.sh, grep repo-wide name uniqueness, grep cross-ref validation
 - PRs:
