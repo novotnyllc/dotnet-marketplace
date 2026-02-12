@@ -23,9 +23,8 @@ Register all 10 testing skills in plugin.json and reconcile all fn-7 TODO placeh
 - [ ] Cross-reference validation: `grep -rl "\[skill:dotnet-integration-testing\]" skills/` returns >=4 files
 
 ## Done summary
-TBD
-
+Registered all 10 testing skills in plugin.json and reconciled all fn-7 TODO placeholders across 14 architecture/serialization skills and dotnet-add-testing with canonical [skill:...] cross-references. Updated FN7-RECONCILIATION.md to include serialization scope and broader verification commands.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 876dafec123a2a08d23da486910056660867a732
+- Tests: grep -c skills/testing/ .claude-plugin/plugin.json = 10, grep -rl TODO.*fn-7 skills/ = empty, grep -rl [skill:dotnet-integration-testing] skills/ = 20 files
 - PRs:
