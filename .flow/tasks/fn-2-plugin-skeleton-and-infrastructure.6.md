@@ -38,6 +38,12 @@ Create the CI validation workflow (GitHub Actions) and the `dotnet-architect` ag
 - CI parses stable output keys (CURRENT_DESC_CHARS, PROJECTED_DESC_CHARS, BUDGET_STATUS) for workflow summary
 - Depends on fn-2.2 (router skill exists) and fn-2.5 (validation scripts exist)
 
+## Done summary
+Created .github/workflows/validate.yml CI workflow that runs the same validation scripts as local (validate-skills.sh, validate-marketplace.sh, jq empty on JSON files), parses budget keys into job summary, and fails on any validation error. Updated dotnet-architect agent with full frontmatter (model: sonnet), preloaded foundation skills via [skill:name] references, and analysis guidelines.
+## Evidence
+- Commits: f1b68804d8a99cd9e712f64d2e2c96c7fdc2cbad
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, jq empty .claude-plugin/plugin.json .claude-plugin/marketplace.json hooks/hooks.json .mcp.json
+- PRs:
 ## Acceptance
 - [ ] GitHub Actions workflow triggers on push and PR to main
 - [ ] Workflow runs `./scripts/validate-skills.sh` and `./scripts/validate-marketplace.sh` (same as local)

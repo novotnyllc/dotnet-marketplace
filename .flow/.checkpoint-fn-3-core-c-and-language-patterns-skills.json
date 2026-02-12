@@ -1,0 +1,101 @@
+{
+  "created_at": "2026-02-12T03:04:24.153912Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-3-core-c-and-language-patterns-skills",
+      "created_at": "2026-02-11T22:23:11.574435Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-3-core-c-and-language-patterns-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-3-core-c-and-language-patterns-skills.md",
+      "status": "open",
+      "title": "Core C# and Language Patterns Skills",
+      "updated_at": "2026-02-11T22:29:36.261663Z"
+    },
+    "spec": "# fn-3: Core C# & Language Patterns Skills\n\n## Overview\nDelivers essential C# language skills covering modern patterns, async/await, nullable reference types, dependency injection, configuration, and source generators. Includes a specialized concurrency agent.\n\n## Scope\n**Skills:**\n- `csharp-modern-patterns` - C# 14/15 features, pattern matching, records, primary constructors, collection expressions\n- `csharp-coding-standards` - Modern .NET coding standards, naming conventions, file organization (Framework Design Guidelines)\n- `csharp-async-patterns` - Async/await best practices, common agent mistakes (blocking on tasks, async void, missing ConfigureAwait)\n- `csharp-nullable-reference-types` - NRT patterns, annotation strategies, migration guidance\n- `csharp-dependency-injection` - MS DI advanced patterns: keyed services, decoration, factory patterns, scopes, hosted service registration\n- `csharp-configuration` - Options pattern, user secrets, environment-based config, Microsoft.FeatureManagement for feature flags\n- `csharp-source-generators` - Creating AND using source generators: IIncrementalGenerator, syntax/semantic analysis, emit patterns, testing\n\n**Agents:**\n- `csharp-concurrency-specialist` - Deep expertise in Task/async patterns, thread safety, synchronization, race condition analysis\n\n## Key Context\n- All skills must reference Microsoft .NET Framework Design Guidelines (https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- Async guidance from David Fowler: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- Skills must adapt to detected TFM (net8.0, net9.0, net10.0, net11.0) and use polyfills where applicable\n- .NET 11 preview awareness: Runtime async, collection expression `with()` arguments\n\n## Quick Commands\n```bash\n# Smoke test: verify skill descriptions are agent-discoverable\nfd -e md . skills/core-csharp/ | xargs grep -l \"description:\"\n\n# Validate skill frontmatter\n.flow/bin/flowctl validate-skills skills/core-csharp/\n\n# Test cross-references between skills\ngrep -r \"See also:\" skills/core-csharp/\n```\n\n## Acceptance Criteria\n1. All 7 skills written with SKILL.md frontmatter and progressive disclosure descriptions\n2. Concurrency specialist agent configured with preloaded async/threading skills\n3. Skills cross-reference each other (e.g., async-patterns references DI for IHostedService)\n4. Modern C# features documented with TFM-specific guidance (C# 14 for net10.0, C# 15 preview for net11.0)\n5. Source generator skill covers both creating and consuming generators\n6. All skills reference authoritative Microsoft documentation links\n7. Agent gotcha patterns documented (blocking async, wrong DI lifetimes, NRT annotation mistakes)\n\n## Test Notes\n- Test skill auto-discovery by searching for C# patterns in agent context\n- Validate that concurrency specialist agent triggers on threading-related keywords\n- Check that .NET 11 preview features only suggested when `net11.0` TFM detected\n\n## References\n- Microsoft Framework Design Guidelines: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/\n- C# Coding Conventions: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions\n- David Fowler Async Guidance: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md\n- Source Generator Cookbook: https://github.com/dotnet/roslyn/blob/main/docs/features/incremental-generators.cookbook.md\n- dotnet-skills reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+  },
+  "epic_id": "fn-3-core-c-and-language-patterns-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:47.726350Z",
+        "depends_on": [],
+        "epic": "fn-3-core-c-and-language-patterns-skills",
+        "id": "fn-3-core-c-and-language-patterns-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-3-core-c-and-language-patterns-skills.1.md",
+        "status": "todo",
+        "title": "Language patterns and coding standards skills",
+        "updated_at": "2026-02-11T22:31:47.726517Z"
+      },
+      "id": "fn-3-core-c-and-language-patterns-skills.1",
+      "runtime": null,
+      "spec": "# fn-3-core-c-and-language-patterns-skills.1 Language patterns and coding standards skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:47.856953Z",
+        "depends_on": [],
+        "epic": "fn-3-core-c-and-language-patterns-skills",
+        "id": "fn-3-core-c-and-language-patterns-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-3-core-c-and-language-patterns-skills.2.md",
+        "status": "todo",
+        "title": "Async, nullable, and DI skills",
+        "updated_at": "2026-02-11T22:31:47.857098Z"
+      },
+      "id": "fn-3-core-c-and-language-patterns-skills.2",
+      "runtime": null,
+      "spec": "# fn-3-core-c-and-language-patterns-skills.2 Async, nullable, and DI skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:47.985149Z",
+        "depends_on": [],
+        "epic": "fn-3-core-c-and-language-patterns-skills",
+        "id": "fn-3-core-c-and-language-patterns-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-3-core-c-and-language-patterns-skills.3.md",
+        "status": "todo",
+        "title": "Configuration and source generator skills",
+        "updated_at": "2026-02-11T22:31:47.985303Z"
+      },
+      "id": "fn-3-core-c-and-language-patterns-skills.3",
+      "runtime": null,
+      "spec": "# fn-3-core-c-and-language-patterns-skills.3 Configuration and source generator skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:48.176886Z",
+        "depends_on": [],
+        "epic": "fn-3-core-c-and-language-patterns-skills",
+        "id": "fn-3-core-c-and-language-patterns-skills.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-3-core-c-and-language-patterns-skills.4.md",
+        "status": "todo",
+        "title": "Concurrency specialist agent",
+        "updated_at": "2026-02-11T22:31:48.177047Z"
+      },
+      "id": "fn-3-core-c-and-language-patterns-skills.4",
+      "runtime": null,
+      "spec": "# fn-3-core-c-and-language-patterns-skills.4 Concurrency specialist agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

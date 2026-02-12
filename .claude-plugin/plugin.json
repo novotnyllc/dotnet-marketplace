@@ -6,7 +6,9 @@
     "skills/foundation/dotnet-advisor",
     "skills/foundation/dotnet-version-detection",
     "skills/foundation/dotnet-project-analysis",
-    "skills/foundation/plugin-self-publish"
+    "skills/foundation/plugin-self-publish",
+    "skills/core-csharp/dotnet-csharp-modern-patterns",
+    "skills/core-csharp/dotnet-csharp-coding-standards"
   ],
   "agents": [
     "agents/dotnet-architect.md"
