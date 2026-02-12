@@ -27,8 +27,15 @@ Create the `dotnet-csharp-concurrency-specialist` agent at `agents/dotnet-csharp
 - [ ] `./scripts/validate-skills.sh` passes (validates plugin.json agent refs)
 
 ## Done summary
-TBD
-
+Created `dotnet-csharp-concurrency-specialist` agent at `agents/dotnet-csharp-concurrency-specialist.md` with:
+- Valid frontmatter: name, description (WHEN/WHEN NOT pattern), model (sonnet), tools (Read, Grep, Glob)
+- Trigger phrases covering: race condition, deadlock, thread safety, concurrent access, lock contention, async races, parallel execution, synchronization issues
+- Preloaded skills: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-modern-patterns]`
+- Decision tree for diagnosing concurrency issues
+- 6 common concurrency anti-patterns with code examples
+- Synchronization primitives quick reference table
+- Registered in `plugin.json` agents array
+- `validate-skills.sh` passes (0 errors)
 ## Evidence
 - Commits:
 - Tests:

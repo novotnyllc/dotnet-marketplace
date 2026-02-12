@@ -14,7 +14,8 @@
     "skills/core-csharp/dotnet-csharp-dependency-injection"
   ],
   "agents": [
-    "agents/dotnet-architect.md"
+    "agents/dotnet-architect.md",
+    "agents/dotnet-csharp-concurrency-specialist.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"
