@@ -158,7 +158,7 @@ options.UseNpgsql(connectionString)
        .UseModel(AppDbContextModel.Instance);  // Pre-compiled model
 ```
 
-**Bottom line:** EF Core is not recommended for fully AOT-published applications today. Use compiled models to improve startup time and trim compatibility, but expect limitations.
+**Bottom line:** EF Core Native AOT support is partial and version-dependent. As of .NET 9, compiled models improve startup and trim-friendliness, but query translation and change tracking still rely on runtime code generation. Check the [current limitations](https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics#compiled-models) for your target version before committing to EF Core in an AOT deployment. Use compiled models to improve startup time where possible, but plan for Dapper.AOT or ADO.NET fallbacks on AOT-critical paths.
 
 ### Dapper
 

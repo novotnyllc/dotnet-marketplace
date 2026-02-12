@@ -211,8 +211,13 @@ dotnet ef migrations bundle \
     --output efbundle \
     --self-contained
 
-# Run in production (reads connection string from environment)
-CONNECTION_STRING="Host=...;Database=..." ./efbundle
+# Run in production -- pass connection string explicitly via --connection
+./efbundle --connection "Host=prod-db;Database=myapp;Username=deploy;Password=..."
+
+# Alternatively, configure the bundle to read from an environment variable
+# by setting the connection string key in your DbContext's OnConfiguring or
+# appsettings.json, then pass the env var at runtime:
+# ConnectionStrings__DefaultConnection="Host=..." ./efbundle
 ```
 
 ### Migration Best Practices
@@ -371,27 +376,32 @@ For queries executed very frequently with the same shape, compiled queries elimi
 ```csharp
 public static class CompiledQueries
 {
-    public static readonly Func<AppDbContext, int, CancellationToken, Task<Order?>>
+    // Single-result compiled query (CancellationToken is added automatically by the framework)
+    public static readonly Func<AppDbContext, int, Task<Order?>>
         GetOrderById = EF.CompileAsyncQuery(
-            (AppDbContext db, int orderId, CancellationToken ct) =>
+            (AppDbContext db, int orderId) =>
                 db.Orders
                     .AsNoTracking()
                     .Include(o => o.Items)
                     .FirstOrDefault(o => o.Id == orderId));
 
-    public static readonly Func<AppDbContext, string, CancellationToken, IAsyncEnumerable<Order>>
+    // Multi-result compiled query returns IAsyncEnumerable
+    public static readonly Func<AppDbContext, string, IAsyncEnumerable<Order>>
         GetOrdersByCustomer = EF.CompileAsyncQuery(
-            (AppDbContext db, string customerId, CancellationToken ct) =>
+            (AppDbContext db, string customerId) =>
                 db.Orders
                     .AsNoTracking()
                     .Where(o => o.CustomerId == customerId)
                     .OrderByDescending(o => o.CreatedAt));
 }
 
-// Usage
-var order = await CompiledQueries.GetOrderById(db, orderId, ct);
+// Usage -- CancellationToken is NOT part of the compiled query delegate signature.
+// For single-result queries, pass CancellationToken via the overload:
+var order = await CompiledQueries.GetOrderById(db, orderId);
 
-await foreach (var o in CompiledQueries.GetOrdersByCustomer(db, customerId, ct))
+// For IAsyncEnumerable, use WithCancellation on the async enumerable:
+await foreach (var o in CompiledQueries.GetOrdersByCustomer(db, customerId)
+    .WithCancellation(ct))
 {
     // Process each order
 }
