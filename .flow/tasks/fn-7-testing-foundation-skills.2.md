@@ -25,9 +25,8 @@ Create five UI testing skills: the shared core patterns skill plus four framewor
 - [ ] Skill content complete and ready for registration by Task 4
 
 ## Done summary
-TBD
-
+Created five UI testing skills: dotnet-ui-testing-core (page object model, selectors, wait strategies, accessibility), dotnet-blazor-testing (bUnit rendering, events, cascading params, JS interop), dotnet-maui-testing (Appium/XHarness device/emulator), dotnet-uno-testing (Playwright for WASM, runtime heads), and dotnet-playwright (browser automation, CI caching, trace viewer, codegen).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: baf7627, 60a27c1
+- Tests: grep cross-reference matrix compliance, frontmatter validation, code example count verification
 - PRs:

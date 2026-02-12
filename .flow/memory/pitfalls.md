@@ -96,3 +96,6 @@ When multiple tasks in an epic each register entries in a shared file (e.g., plu
 
 ## 2026-02-12 manual [pitfall]
 xUnit [Collection("Name")] on a test class requires a matching [CollectionDefinition("Name")] marker class with ICollectionFixture<T> -- without it, fixture injection silently fails
+
+## 2026-02-12 manual [pitfall]
+Code examples using xUnit Skip.IfNot() require the Xunit.SkippableFact package and [SkippableFact] attribute -- plain [Fact] with Skip.IfNot() does not compile without this dependency
