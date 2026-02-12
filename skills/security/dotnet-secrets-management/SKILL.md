@@ -247,19 +247,30 @@ public sealed class EmailService(IOptionsMonitor<SmtpOptions> smtpOptions, ILogg
     }
 }
 
-// Register change notification for audit logging.
-// OnChange returns an IDisposable subscription -- store it to keep it alive.
-builder.Services.AddSingleton(sp =>
+// Audit-log configuration changes via a hosted service.
+// IHostedService is always activated by the host, so the subscription is guaranteed.
+public sealed class SmtpOptionsChangeLogger(
+    IOptionsMonitor<SmtpOptions> monitor,
+    ILogger<SmtpOptionsChangeLogger> logger) : IHostedService, IDisposable
 {
-    var monitor = sp.GetRequiredService<IOptionsMonitor<SmtpOptions>>();
-    var logger = sp.GetRequiredService<ILogger<Program>>();
-    return monitor.OnChange(options =>
+    private IDisposable? _subscription;
+
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("SMTP configuration reloaded at {Time}", DateTime.UtcNow);
-    });
-    // The returned IDisposable is held by the DI container (singleton lifetime),
-    // so the subscription stays alive for the app's lifetime.
-});
+        _subscription = monitor.OnChange(options =>
+        {
+            logger.LogInformation("SMTP configuration reloaded at {Time}", DateTime.UtcNow);
+        });
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public void Dispose() => _subscription?.Dispose();
+}
+
+// Registration:
+builder.Services.AddHostedService<SmtpOptionsChangeLogger>();
 ```
 
 ```csharp

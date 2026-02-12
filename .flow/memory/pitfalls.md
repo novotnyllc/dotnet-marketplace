@@ -105,3 +105,6 @@ builder.WebHost.ConfigureKestrel() must be called BEFORE builder.Build() -- Kest
 
 ## 2026-02-12 manual [pitfall]
 Code examples using IOptionsMonitor must read CurrentValue at call site (not constructor) to actually observe runtime changes -- snapshotting in constructor defeats the purpose
+
+## 2026-02-12 manual [pitfall]
+DI singleton factory registrations only run when explicitly resolved -- for always-active subscriptions (IOptionsMonitor.OnChange), use IHostedService which the host guarantees to activate
