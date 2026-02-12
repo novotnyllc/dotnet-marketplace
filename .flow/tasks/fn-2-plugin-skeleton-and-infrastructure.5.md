@@ -52,13 +52,22 @@ Create the `plugin-self-publish` skill documenting how this plugin itself is ver
 - Stable output keys (CURRENT_DESC_CHARS, PROJECTED_DESC_CHARS, BUDGET_STATUS) enable CI parsing
 
 ## Acceptance
-- [ ] plugin-self-publish skill documents versioning and publishing workflow
-- [ ] validate-skills.sh checks all SKILL.md files for required frontmatter (name, description only)
-- [ ] validate-skills.sh reports CURRENT_DESC_CHARS and PROJECTED_DESC_CHARS via stable output keys
-- [ ] validate-skills.sh reports BUDGET_STATUS=OK|WARN|FAIL
-- [ ] validate-skills.sh WARNs at 12,000 chars, FAILs at 15,000 chars
-- [ ] validate-skills.sh validates `[skill:name]` cross-references against existing skill dirs
-- [ ] validate-marketplace.sh validates plugin.json against canonical schema
-- [ ] validate-marketplace.sh checks all referenced paths exist
-- [ ] Both scripts run in <5 seconds (single-pass, no subprocesses, no network)
-- [ ] Both scripts exit non-zero on FAIL conditions
+- [x] plugin-self-publish skill documents versioning and publishing workflow
+- [x] validate-skills.sh checks all SKILL.md files for required frontmatter (name, description only)
+- [x] validate-skills.sh reports CURRENT_DESC_CHARS and PROJECTED_DESC_CHARS via stable output keys
+- [x] validate-skills.sh reports BUDGET_STATUS=OK|WARN|FAIL
+- [x] validate-skills.sh WARNs at 12,000 chars, FAILs at 15,000 chars
+- [x] validate-skills.sh validates `[skill:name]` cross-references against existing skill dirs
+- [x] validate-marketplace.sh validates plugin.json against canonical schema
+- [x] validate-marketplace.sh checks all referenced paths exist
+- [x] Both scripts run in <5 seconds (single-pass, no subprocesses, no network)
+- [x] Both scripts exit non-zero on FAIL conditions
+
+## Done summary
+
+Created plugin-self-publish SKILL.md documenting SemVer versioning, changelog, GitHub Releases, and marketplace publishing workflow. Implemented validate-skills.sh (thin bash wrapper) and _validate_skills.py (Python validation engine) for SKILL.md frontmatter, cross-references, and context budget tracking with stable CI keys. Implemented validate-marketplace.sh for plugin.json/marketplace.json schema and path validation.
+
+## Evidence
+
+- Commits: beb4058, 8e62327, 9c0e711, 7d64e98, 84f0793, 8e4bc00
+- Tests: `ALLOW_PLANNED_REFS=1 ./scripts/validate-skills.sh`, `./scripts/validate-marketplace.sh`
