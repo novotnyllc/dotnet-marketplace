@@ -354,13 +354,13 @@ builder.Services
     {
         client.BaseAddress = new Uri("https://catalog.internal");
     })
-    .AddHttpMessageHandler<CorrelationIdHandler>()   // 1st: add correlation ID
+    .AddHttpMessageHandler<CorrelationIdHandler>()   // 1st (outermost): add correlation ID
     .AddHttpMessageHandler<BearerTokenHandler>()     // 2nd: add auth token
     .AddHttpMessageHandler<RequestLoggingHandler>()  // 3rd: log request/response
-    .AddStandardResilienceHandler();                 // 4th: resilience pipeline
+    .AddStandardResilienceHandler();                 // 4th (innermost): resilience pipeline
 ```
 
-**Note:** Resilience handlers (`.AddStandardResilienceHandler()`) should be added last so they wrap the innermost handler. This ensures retries re-execute the full handler chain with fresh tokens and correlation IDs.
+**Note:** In `IHttpClientFactory`, handlers registered first are outermost. `.AddStandardResilienceHandler()` added last is innermost -- it wraps the actual HTTP call directly. This means retries happen inside the resilience handler without re-executing the outer DelegatingHandlers. This is typically correct: correlation IDs and auth tokens are set once by the outer handlers, and the resilience layer retries the raw HTTP call. If you need per-retry token refresh (e.g., expired bearer tokens), move the token handler inside the resilience boundary or use a custom `ResiliencePipelineBuilder` callback.
 
 ---
 

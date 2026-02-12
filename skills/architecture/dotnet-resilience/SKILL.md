@@ -351,19 +351,28 @@ The `Microsoft.Extensions.Resilience` package automatically reports:
 | `polly.strategy.pipeline.duration` | Duration of the entire pipeline execution |
 | `polly.strategy.attempt.count` | Count of attempts (including retries) |
 
-These integrate with OpenTelemetry -- see [skill:dotnet-observability] for collector setup.
+These integrate with OpenTelemetry automatically when the OpenTelemetry SDK is configured in your application <!-- TODO: fn-5.3 delivers dotnet-observability -- link [skill:dotnet-observability] for collector setup when available -->.
 
-### Enriching Telemetry Context
+### Enabling Telemetry
+
+Resilience telemetry is enabled automatically when using the DI-based registration (`AddResiliencePipeline`, `AddStandardResilienceHandler`). The `Microsoft.Extensions.Resilience` package registers a `MeteringEnricher` and `LoggingEnricher` that emit structured logs and metrics through the standard `ILoggerFactory` and `IMeterFactory` from DI:
 
 ```csharp
+// Telemetry is automatic -- no extra configuration needed.
+// Structured logs appear via ILogger; metrics via IMeter.
 builder.Services
     .AddHttpClient("catalog-api")
-    .AddStandardResilienceHandler()
-    .Configure(options =>
-    {
-        options.TelemetryOptions.LoggerFactory =
-            LoggerFactory.Create(b => b.AddConsole());
-    });
+    .AddStandardResilienceHandler();
+
+// To see resilience logs, set the Polly category to Information:
+// appsettings.json
+// {
+//   "Logging": {
+//     "LogLevel": {
+//       "Polly": "Information"
+//     }
+//   }
+// }
 ```
 
 ---
