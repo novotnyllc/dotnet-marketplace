@@ -56,14 +56,14 @@ else
             fi
         done
 
-        # Validate skills is an array of strings (directory paths)
-        skills_type=$(jq -r '.skills | type' "$PLUGIN_JSON" 2>/dev/null)
-        if [ "$skills_type" != "array" ]; then
-            echo "ERROR: plugin.json.skills must be an array (got: $skills_type)"
+        # Validate skills is an array of string paths
+        skills_valid=$(jq -e '.skills | type == "array" and all(.[]; type == "string")' "$PLUGIN_JSON" 2>/dev/null) || skills_valid="false"
+        if [ "$skills_valid" != "true" ]; then
+            echo "ERROR: plugin.json.skills must be an array of string paths"
             errors=$((errors + 1))
         else
             skill_count=$(jq -r '.skills | length' "$PLUGIN_JSON")
-            echo "OK: plugin.json.skills is an array ($skill_count entries)"
+            echo "OK: plugin.json.skills is an array of strings ($skill_count entries)"
 
             # Check each skill directory exists and contains SKILL.md
             while IFS= read -r skill_path; do
@@ -80,14 +80,14 @@ else
             done < <(jq -r '.skills[]' "$PLUGIN_JSON" 2>/dev/null)
         fi
 
-        # Validate agents is an array of strings (file paths)
-        agents_type=$(jq -r '.agents | type' "$PLUGIN_JSON" 2>/dev/null)
-        if [ "$agents_type" != "array" ]; then
-            echo "ERROR: plugin.json.agents must be an array (got: $agents_type)"
+        # Validate agents is an array of string paths
+        agents_valid=$(jq -e '.agents | type == "array" and all(.[]; type == "string")' "$PLUGIN_JSON" 2>/dev/null) || agents_valid="false"
+        if [ "$agents_valid" != "true" ]; then
+            echo "ERROR: plugin.json.agents must be an array of string paths"
             errors=$((errors + 1))
         else
             agent_count=$(jq -r '.agents | length' "$PLUGIN_JSON")
-            echo "OK: plugin.json.agents is an array ($agent_count entries)"
+            echo "OK: plugin.json.agents is an array of strings ($agent_count entries)"
 
             # Check each agent file exists
             while IFS= read -r agent_path; do

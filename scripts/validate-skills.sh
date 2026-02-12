@@ -14,6 +14,10 @@
 #   - Same commands locally and in CI
 #   - Exits non-zero on: missing required frontmatter, broken cross-references, BUDGET_STATUS=FAIL
 #
+# Environment variables:
+#   ALLOW_PLANNED_REFS=1  -- Downgrade unresolved cross-references from errors to warnings.
+#                            Use during early development when planned skills have no directories yet.
+#
 # Output keys (stable, CI-parseable):
 #   CURRENT_DESC_CHARS=<N>
 #   PROJECTED_DESC_CHARS=<N>
@@ -57,7 +61,12 @@ done
 echo "=== SKILL.md Validation ==="
 echo ""
 
-# Validate each SKILL.md file
+if [ "${ALLOW_PLANNED_REFS:-0}" = "1" ]; then
+    echo "NOTE: ALLOW_PLANNED_REFS=1 -- unresolved cross-references downgraded to warnings"
+    echo ""
+fi
+
+# Validate each SKILL.md file (single-pass: frontmatter + cross-refs in one read)
 for skill_file in "${skill_files[@]}"; do
     skill_dir="$(dirname "$skill_file")"
     skill_dirname="$(basename "$skill_dir")"
@@ -73,12 +82,14 @@ for skill_file in "${skill_files[@]}"; do
         continue
     fi
 
-    # Extract frontmatter block (between first and second ---)
-    # Use awk-like logic with bash to avoid subprocesses per file
+    # Single-pass: extract frontmatter AND collect cross-references from the body
     in_frontmatter=0
     frontmatter=""
     found_close=0
     line_num=0
+    declare -A seen_refs=()
+    ref_list=()
+
     while IFS= read -r line; do
         line_num=$((line_num + 1))
         if [ "$line_num" -eq 1 ]; then
@@ -89,15 +100,30 @@ for skill_file in "${skill_files[@]}"; do
         elif [ "$in_frontmatter" -eq 1 ]; then
             if [[ "$line" == "---" ]]; then
                 found_close=1
-                break
+                in_frontmatter=0
+                continue
             fi
             frontmatter+="$line"$'\n'
+            continue
         fi
+
+        # Body line: extract [skill:name] cross-references via regex
+        rest="$line"
+        while [[ "$rest" =~ \[skill:([a-zA-Z0-9_-]+)\] ]]; do
+            ref_name="${BASH_REMATCH[1]}"
+            if [ -z "${seen_refs[$ref_name]+_}" ]; then
+                seen_refs["$ref_name"]=1
+                ref_list+=("$ref_name")
+            fi
+            # Advance past the match to find additional refs on the same line
+            rest="${rest#*"[skill:${ref_name}]"}"
+        done
     done <<< "$content"
 
     if [ "$found_close" -eq 0 ]; then
         echo "ERROR: $rel_path -- malformed YAML frontmatter (no closing ---)"
         errors=$((errors + 1))
+        unset seen_refs
         continue
     fi
 
@@ -165,20 +191,20 @@ for skill_file in "${skill_files[@]}"; do
         fi
     fi
 
-    # Validate [skill:name] cross-references in the file body
-    # Extract all [skill:...] references
-    # References to existing skill directories are valid.
-    # References to non-existent directories are warnings (planned skills), not errors.
-    while IFS= read -r ref_match; do
-        if [ -z "$ref_match" ]; then
-            continue
+    # Validate collected [skill:name] cross-references
+    for ref_name in "${ref_list[@]}"; do
+        if [ -z "${valid_skill_dirs[$ref_name]+_}" ]; then
+            if [ "${ALLOW_PLANNED_REFS:-0}" = "1" ]; then
+                echo "WARN:  $rel_path -- unresolved cross-reference [skill:$ref_name] (planned skill, no directory yet)"
+                warnings=$((warnings + 1))
+            else
+                echo "ERROR: $rel_path -- broken cross-reference [skill:$ref_name] (no skill directory found)"
+                errors=$((errors + 1))
+            fi
         fi
-        # ref_match is the skill name from [skill:name]
-        if [ -z "${valid_skill_dirs[$ref_match]+_}" ]; then
-            echo "WARN:  $rel_path -- unresolved cross-reference [skill:$ref_match] (planned skill, no directory yet)"
-            warnings=$((warnings + 1))
-        fi
-    done < <(grep -oE '\[skill:[a-zA-Z0-9_-]+\]' "$skill_file" 2>/dev/null | sed 's/\[skill://;s/\]//' | sort -u)
+    done
+
+    unset seen_refs
 
 done
 
