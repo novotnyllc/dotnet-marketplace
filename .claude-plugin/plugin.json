@@ -46,7 +46,11 @@
     "skills/testing/dotnet-test-quality",
     "skills/security/dotnet-security-owasp",
     "skills/security/dotnet-secrets-management",
-    "skills/security/dotnet-cryptography"
+    "skills/security/dotnet-cryptography",
+    "skills/agent-meta-skills/dotnet-agent-gotchas",
+    "skills/agent-meta-skills/dotnet-build-analysis",
+    "skills/agent-meta-skills/dotnet-csproj-reading",
+    "skills/agent-meta-skills/dotnet-solution-navigation"
   ],
   "agents": [
     "agents/dotnet-architect.md",
