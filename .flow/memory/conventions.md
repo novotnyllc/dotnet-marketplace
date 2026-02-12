@@ -30,3 +30,6 @@ Agent workflow steps must be executable with the agent declared toolset -- do no
 
 ## 2026-02-12 manual [convention]
 Per-subsection acceptance: when skill definition says 'each section MUST include X', the AC and task checkboxes must enforce X per subsection, not just globally
+
+## 2026-02-12 manual [convention]
+Every skill section (overview, prerequisites, slopwatch, etc.) MUST use explicit ## headers, not inline bold labels — spec validation checks for headers
