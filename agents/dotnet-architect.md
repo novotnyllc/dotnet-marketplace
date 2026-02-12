@@ -1,4 +1,5 @@
 ---
+name: dotnet-architect
 description: "Analyzes .NET project context, requirements, and constraints. Recommends architecture approaches including UI framework selection, API style, and architecture patterns."
 capabilities:
   - Analyze project structure and dependencies
