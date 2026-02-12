@@ -275,10 +275,14 @@ For large blocks of TFM-specific code, use dedicated source files instead of `#i
 
 ```xml
 <ItemGroup>
-  <!-- Include TFM-specific implementations -->
-  <Compile Include="Compatibility\Net8\*.cs"
+  <!-- SDK-style projects auto-include all *.cs files. Remove TFM-specific
+       directories first to avoid NETSDK1022 duplicate compile items. -->
+  <Compile Remove="Compatibility\**\*.cs" />
+
+  <!-- Then conditionally include only the files for the current TFM -->
+  <Compile Include="Compatibility\Net8\**\*.cs"
            Condition="'$(TargetFramework)' == 'net8.0'" />
-  <Compile Include="Compatibility\Net10\*.cs"
+  <Compile Include="Compatibility\Net10\**\*.cs"
            Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))" />
 </ItemGroup>
 ```
@@ -400,39 +404,59 @@ dotnet pack --configuration Release
 
 ### Suppressing Known Differences
 
-For intentional API differences between TFMs:
+For intentional API differences between TFMs, use a suppression file. Package validation generates one automatically on first failure:
 
-```xml
-<ItemGroup>
-  <!-- Suppress specific compatibility warnings -->
-  <PackageValidationSuppression Include="CP0002"
-    Condition="'$(TargetFramework)' == 'net8.0'"
-    DiagnosticId="CP0002"
-    Target="M:MyLib.PerformanceHelper.CountVowels(System.ReadOnlySpan{System.Char})" />
-</ItemGroup>
+```bash
+# Build with suppression-file generation enabled
+dotnet pack /p:GenerateCompatibilitySuppressionFile=true
+# Creates CompatibilitySuppressions.xml in the project directory
 ```
 
-Or use a suppression file:
+The generated `CompatibilitySuppressions.xml` contains targeted suppressions:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:MyLib.PerformanceHelper.CountVowels(System.ReadOnlySpan{System.Char})</Target>
+    <Left>lib/net8.0/MyLib.dll</Left>
+    <Right>lib/net10.0/MyLib.dll</Right>
+  </Suppression>
+</Suppressions>
+```
+
+Reference the suppression file in .csproj (automatic when file is at project root):
 
 ```xml
 <PropertyGroup>
-  <NoWarn>$(NoWarn);CP0002</NoWarn>
+  <!-- Explicit path if suppression file is not at project root -->
+  <ApiCompatSuppressionFile>CompatibilitySuppressions.xml</ApiCompatSuppressionFile>
 </PropertyGroup>
 ```
 
-**Prefer targeted suppressions over blanket `NoWarn`** -- blanket suppression hides real issues.
+**Prefer targeted suppression files over blanket `<NoWarn>$(NoWarn);CP0002</NoWarn>`** -- blanket suppression hides real issues. Commit the suppression file to source control so reviewers can see intentional API differences.
 
 ### ApiCompat Standalone Tool
 
 For CI pipelines that validate without packing:
 
 ```bash
-# Install the ApiCompat tool
+# Install as a global tool
 dotnet tool install -g Microsoft.DotNet.ApiCompat.Tool
 
-# Compare two assemblies
-dotnet apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
-                 --right-assembly bin/Release/net10.0/MyLib.dll
+# Global tool invocation (after install -g)
+apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
+          --right-assembly bin/Release/net10.0/MyLib.dll
+
+# Or install as a local tool (preferred for CI reproducibility)
+dotnet new tool-manifest   # if .config/dotnet-tools.json doesn't exist
+dotnet tool install Microsoft.DotNet.ApiCompat.Tool
+
+# Local tool invocation
+dotnet tool run apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
+                          --right-assembly bin/Release/net10.0/MyLib.dll
 ```
 
 ---
