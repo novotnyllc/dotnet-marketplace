@@ -1,0 +1,14 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-02-11T22:32:33.191550Z",
+  "depends_on": [],
+  "epic": "fn-24-cross-agent-build-pipeline",
+  "id": "fn-24-cross-agent-build-pipeline.2",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.2.md",
+  "status": "todo",
+  "title": "Create GitHub Action for cross-agent format generation",
+  "updated_at": "2026-02-11T22:32:33.191695Z"
+}

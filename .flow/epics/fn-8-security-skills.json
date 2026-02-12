@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-8-security-skills",
+  "created_at": "2026-02-11T22:23:17.848507Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-8-security-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-8-security-skills.md",
+  "status": "open",
+  "title": "Security Skills",
+  "updated_at": "2026-02-11T22:30:58.256869Z"
+}

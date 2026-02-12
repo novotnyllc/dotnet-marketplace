@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-21-documentation-skills",
+  "created_at": "2026-02-11T22:23:32.678585Z",
+  "depends_on_epics": [
+    "fn-19-ci-cd-skills"
+  ],
+  "id": "fn-21-documentation-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-21-documentation-skills.md",
+  "status": "open",
+  "title": "Documentation Skills",
+  "updated_at": "2026-02-11T22:31:03.037015Z"
+}

@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-11-api-development-skills",
+  "created_at": "2026-02-11T22:23:18.504166Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-11-api-development-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-11-api-development-skills.md",
+  "status": "open",
+  "title": "API Development Skills",
+  "updated_at": "2026-02-11T22:31:40.371521Z"
+}

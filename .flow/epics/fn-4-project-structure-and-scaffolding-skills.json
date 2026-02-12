@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-4-project-structure-and-scaffolding-skills",
+  "created_at": "2026-02-11T22:23:11.813197Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-4-project-structure-and-scaffolding-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-4-project-structure-and-scaffolding-skills.md",
+  "status": "open",
+  "title": "Project Structure and Scaffolding Skills",
+  "updated_at": "2026-02-11T22:29:59.385735Z"
+}

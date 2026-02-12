@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-6-serialization-and-communication-skills",
+  "created_at": "2026-02-11T22:23:12.241362Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-6-serialization-and-communication-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-6-serialization-and-communication-skills.md",
+  "status": "open",
+  "title": "Serialization and Communication Skills",
+  "updated_at": "2026-02-11T22:30:29.713489Z"
+}

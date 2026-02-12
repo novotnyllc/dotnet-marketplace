@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-20-packaging-and-publishing-skills",
+  "created_at": "2026-02-11T22:23:32.518216Z",
+  "depends_on_epics": [
+    "fn-19-ci-cd-skills"
+  ],
+  "id": "fn-20-packaging-and-publishing-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-20-packaging-and-publishing-skills.md",
+  "status": "open",
+  "title": "Packaging and Publishing Skills",
+  "updated_at": "2026-02-11T22:30:52.358209Z"
+}

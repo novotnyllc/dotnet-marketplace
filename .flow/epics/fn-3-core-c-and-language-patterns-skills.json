@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-3-core-c-and-language-patterns-skills",
+  "created_at": "2026-02-11T22:23:11.574435Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-3-core-c-and-language-patterns-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-3-core-c-and-language-patterns-skills.md",
+  "status": "open",
+  "title": "Core C# and Language Patterns Skills",
+  "updated_at": "2026-02-11T22:29:36.261663Z"
+}

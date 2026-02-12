@@ -1,0 +1,14 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-02-11T22:32:33.052878Z",
+  "depends_on": [],
+  "epic": "fn-24-cross-agent-build-pipeline",
+  "id": "fn-24-cross-agent-build-pipeline.1",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.1.md",
+  "status": "todo",
+  "title": "Create dotnet tool for inner loop validation",
+  "updated_at": "2026-02-11T22:32:33.053081Z"
+}

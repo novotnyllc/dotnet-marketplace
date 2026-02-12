@@ -1,0 +1,16 @@
+{
+  "branch_name": "fn-13-uno-platform-skills",
+  "created_at": "2026-02-11T22:23:18.983787Z",
+  "depends_on_epics": [
+    "fn-3-core-c-and-language-patterns-skills",
+    "fn-7-testing-foundation-skills"
+  ],
+  "id": "fn-13-uno-platform-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-13-uno-platform-skills.md",
+  "status": "open",
+  "title": "Uno Platform Skills",
+  "updated_at": "2026-02-11T22:29:13.332976Z"
+}

@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-15-desktop-frameworks-skills",
+  "created_at": "2026-02-11T22:23:25.159293Z",
+  "depends_on_epics": [
+    "fn-3-core-c-and-language-patterns-skills"
+  ],
+  "id": "fn-15-desktop-frameworks-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-15-desktop-frameworks-skills.md",
+  "status": "open",
+  "title": "Desktop Frameworks Skills",
+  "updated_at": "2026-02-11T22:29:38.223901Z"
+}

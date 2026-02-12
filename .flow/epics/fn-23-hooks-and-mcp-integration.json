@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-23-hooks-and-mcp-integration",
+  "created_at": "2026-02-11T22:23:33.169658Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-23-hooks-and-mcp-integration",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-23-hooks-and-mcp-integration.md",
+  "status": "open",
+  "title": "Hooks and MCP Integration",
+  "updated_at": "2026-02-11T22:31:21.840497Z"
+}

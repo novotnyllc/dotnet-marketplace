@@ -270,13 +270,80 @@ Skills should reference these guidelines where applicable and recommend the appr
 - Blazor: WebAssembly preloading, form validation, diagnostics
 
 ### Key .NET 11 Preview 1 Features (Feb 10, 2026)
-- Zstandard compression, BFloat16 type, Runes
-- Async runtime improvements (Task.WhenAll overhead reduced)
-- CoreCLR on WebAssembly (no mono shim)
-- RISC-V and s390x architecture support
-- MAUI: XAML source generation by default, CoreCLR for Android
-- EF Core: Complex types with inheritance, simplified migrations
-- Themes: Agentic UI, Distributed Reliability, Green Computing, Performance
+
+#### Runtime
+- **Runtime Async** - Async/await moves from compiler state machines to runtime-level execution. Enabled by default in CoreCLR. Produces simpler IL, fully compatible with existing compiler-async code. 23% regression under high load when mixing with non-runtime-async framework libraries (expected to resolve as framework recompiles). Requires `<EnablePreviewFeatures>true</EnablePreviewFeatures>` + `<Features>$(Features);runtime-async=on</Features>` at project level. Native AOT compatible.
+- **CoreCLR on WebAssembly** - Foundational work (not ready for general use). WASM-targeting RyuJIT for AOT compilation, browser-host threading/timers/interop. AOT performance within 20% of desktop CoreCLR+JIT. Blazor WASM can now choose between Mono (still default) and CoreCLR. Console apps loading in under a second.
+- **CoreCLR for Android** - Now the **default runtime** for Android Release builds in MAUI, replacing Mono. Shorter startup times, better ecosystem compatibility, slightly larger app size. Opt out with `<UseMonoRuntime>true</UseMonoRuntime>`.
+- **GC heap hard limit for 32-bit** - `GCHeapHardLimit` now works on 32-bit (previously 64-bit only). Max 1GB heap on 32-bit. Not enabled in 32-bit containers.
+- RISC-V and s390x architecture enablement
+- CoreCLR interpreter expansion
+
+#### C# 15 Preview
+- **Collection expression arguments** - `with()` syntax as first element in collection expressions for constructor parameters:
+  ```csharp
+  List<int> nums = [with(capacity: 32), 0, ..evens, ..odds];
+  HashSet<string> names = [with(comparer: StringComparer.OrdinalIgnoreCase), "Alice", "Bob"];
+  Dictionary<string, int> lookup = [with(StringComparer.Ordinal), "one":1, "two":2];
+  ```
+  Enables capacity pre-allocation, custom comparers, and any constructor parameter. Syntax is "strawman" and may change.
+
+#### Libraries
+- **Zstandard compression** - New `System.IO.Compression.Zstandard` assembly with `ZstandardStream`, `ZstandardEncoder`, `ZstandardDecoder`. 2-7x faster compression and 2-14x faster decompression than Brotli/Deflate with comparable ratios. Supports streaming, one-shot, dictionary-based compression, quality levels, checksum. HTTP `AutomaticDecompression` supports `DecompressionMethods.Zstandard`.
+- **BFloat16 type** - `System.Numerics.BFloat16` for AI/ML workloads. 8 exponent bits (same range as float) + 7 significand bits (reduced precision). ~2x throughput on supported hardware. Full numeric interfaces (`INumber<BFloat16>`, `IFloatingPoint<BFloat16>`). Vector support (Vector64/128/256/512). BinaryPrimitives read/write support.
+- **Happy Eyeballs** (RFC 8305) in `Socket.ConnectAsync` - Parallel IPv4/IPv6 DNS resolution and alternating connection attempts. `Socket.ConnectAsync(SocketType.Stream, ProtocolType.Tcp, e, ConnectAlgorithm.Parallel)`. Faster dual-stack connections with automatic fallback.
+- FrozenDictionary supports collection expressions
+- Rune support expanded across String, StringBuilder, TextWriter
+- MediaTypeMap for MIME type lookups
+- HMAC and KMAC verification APIs
+- Hard link creation APIs
+- DivisionRounding enum
+
+#### ASP.NET Core & Blazor
+- `EnvironmentBoundary` component for conditional rendering
+- `Label` and `DisplayName` components for forms/accessibility
+- QuickGrid `OnRowClick` event
+- `RelativeToCurrentUri` for relative navigation
+- SignalR `ConfigureConnection` for interactive server components
+- `IHostedService` support in Blazor WebAssembly
+- OpenAPI schema support for binary file responses
+- `IOutputCachePolicyProvider` for output caching customization
+- Auto-trust development certificates in WSL
+
+#### MAUI
+- **XAML source generation enabled by default** - Replaces XAMLC. Compile-time XAML-to-C# generation, AOT-friendly, eliminates runtime reflection for XAML parsing. Consistent debug/release behavior. Revert with `<MauiXamlInflator>XamlC</MauiXamlInflator>`.
+- `dotnet run` interactive target framework and device selection
+
+#### EF Core
+- **Complex types and JSON columns on TPT/TPC inheritance** - Previously limited to TPH only. Now works with Table-Per-Type and Table-Per-Concrete-Type strategies.
+- Create and apply migrations in single step
+- Azure Cosmos DB: transactional batches, bulk execution, session token management
+
+#### SDK & Tooling
+- `dotnet run` interactive target framework/device selection
+- `dotnet test` positional arguments
+- `dotnet watch` hot reload for reference changes with configurable ports
+- New code analyzers, terminal logger improvements
+
+#### .NET 11 Themes
+- Agentic UI, Distributed Reliability, Green Computing, Performance
+
+### Skill Implications from .NET 11 Preview 1
+
+Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` TFM is detected:
+
+| Skill Area | .NET 11 Impact |
+|-----------|---------------|
+| **Version Detection** | Detect `net11.0` TFM, `<LangVersion>preview</LangVersion>`, runtime-async feature flags |
+| **WASM/AOT** | CoreCLR vs Mono runtime selection for WebAssembly; WASM AOT via RyuJIT |
+| **MAUI** | XAML source gen default, CoreCLR for Android default, `dotnet run` device selection |
+| **Modern C#** | Collection expression `with()` arguments for capacity/comparers |
+| **Serialization** | BFloat16 serialization for AI/ML data pipelines |
+| **Performance** | Zstandard compression (prefer over Brotli/Deflate for speed), runtime-async implications |
+| **Networking** | Happy Eyeballs `ConnectAlgorithm.Parallel` for dual-stack apps |
+| **EF Core** | Complex types + JSON columns with TPT/TPC (no longer TPH-only) |
+| **Architecture** | Runtime-async changes profiling/debugging strategies; CoreCLR unification across platforms |
+| **Security** | HMAC/KMAC verification APIs for cryptographic operations |
 
 ---
 

@@ -1,120 +1,141 @@
-# dotnet-artisan: Comprehensive .NET Coding Agent Skills Plugin
+# dotnet-artisan: Umbrella Epic
 
-## Problem
-Coding agents (Claude Code, GitHub Copilot, OpenAI Codex) lack comprehensive, opinionated, modern .NET development guidance. Existing skills (e.g., dotnet-skills) have significant gaps in UI frameworks, security, CI/CD, CLI tools, documentation, and cross-agent compatibility. Agents frequently make .NET-specific mistakes (async/await misuse, wrong packages, deprecated APIs, bad project structure).
+## Overview
 
-## Key Decisions
-- **Plugin name:** dotnet-artisan
-- **Single plugin** with grouped skill directories and auto-generated router/index
-- **Agent-first** audience, opinionated style
-- **Active .NET version detection** from project files (TFM, global.json, Directory.Build.props)
-- **Preview features** detected and used when project allows them
-- **.NET 10 (C# 14)** as current stable, **.NET 11 Preview 1 (C# 15)** awareness
-- **Polyfill-forward** using PolySharp and SimonCropp/Polyfill
-- **AOT-friendly** source-gen over reflection throughout
-- **No data layer** (separate plugin later) except serialization (STJ, Protobuf source gen)
-- **No Akka** (too domain-specific)
-- **Aspire awareness** but not deep coverage (point out when relevant)
-- **Minimal APIs** as recommended API style for new projects
-- **Polly v8 + Microsoft.Extensions.Resilience** as resilience stack (Http.Polly deprecated)
-- **MS DI only** with advanced patterns (no third-party containers)
-- **Built-in .NET patterns** for background work (BackgroundService + Channels, no Hangfire/Quartz)
-- **Cross-agent build pipeline**: dotnet tool (inner loop) + GitHub Action (publishing)
-- **Progressive MCP**: start with existing servers (Uno, MS Learn), add custom as needed
-- **Smart hooks** with configurable defaults, file-type-specific firing
-- **Open but curated** community model
-- **Start fresh**, selectively reference dotnet-skills quality content
-- **All skills must align with official Microsoft .NET design guidelines** (see spec for full reference table)
-- **Key design guideline references**: Framework Design Guidelines, C# Coding Conventions, ASP.NET Core Best Practices, Microsoft REST API Guidelines, System.CommandLine Design Guidance, Library Design Guidance, Native AOT Deployment, Secure Coding Guidelines, David Fowler's Async Guidance
-- **Enforcement**: Skills should recommend EditorConfig + .NET Code Analyzers (CAxxxx rules) + third-party analyzers (StyleCop, Roslynator) where applicable
+This is the umbrella epic tracking the complete dotnet-artisan plugin - a comprehensive .NET coding agent skills plugin for Claude Code with cross-agent Copilot/Codex support.
 
-## Planning-Stage Instructions
+**Authoritative spec:** `docs/dotnet-artisan-spec.md`
 
-**CRITICAL:** When `/flow-next:plan` runs to break this into sub-epics and tasks, it MUST use the following plugin-dev skills to inform and validate the plan:
+## Architecture
 
-### Required Skills During Planning
+```mermaid
+graph TD
+    FN2[fn-2: Plugin Skeleton] --> FN3[fn-3: Core C#]
+    FN2 --> FN4[fn-4: Project Structure]
+    FN2 --> FN5[fn-5: Architecture]
+    FN2 --> FN6[fn-6: Serialization]
+    FN2 --> FN7[fn-7: Testing]
+    FN2 --> FN8[fn-8: Security]
+    FN2 --> FN9[fn-9: Meta-Skills]
+    FN2 --> FN10[fn-10: Version Detection]
+    FN2 --> FN11[fn-11: API Development]
+    FN3 --> FN12[fn-12: Blazor]
+    FN3 --> FN13[fn-13: Uno]
+    FN3 --> FN14[fn-14: MAUI]
+    FN3 --> FN15[fn-15: Desktop]
+    FN5 --> FN16[fn-16: AOT/Trimming]
+    FN5 --> FN17[fn-17: CLI Tools]
+    FN5 --> FN18[fn-18: Performance]
+    FN7 --> FN12
+    FN7 --> FN13
+    FN7 --> FN14
+    FN11 --> FN19[fn-19: CI/CD]
+    FN16 --> FN19
+    FN17 --> FN19
+    FN18 --> FN19
+    FN19 --> FN20[fn-20: Packaging]
+    FN19 --> FN21[fn-21: Documentation]
+    FN3 --> FN22[fn-22: Localization]
+    FN2 --> FN23[fn-23: Hooks & MCP]
+    FN19 --> FN24[fn-24: Cross-Agent Pipeline]
+    FN20 --> FN25[fn-25: Community & README]
+```
 
-1. **`/plugin-dev:plugin-structure`** - Use FIRST to validate the overall plugin architecture (plugin.json manifest, directory layout, skill/agent/hook/MCP organization). The plan must conform to Claude Code plugin conventions.
+## Epic Decomposition
 
-2. **`/plugin-dev:skill-development`** - Use when planning each skill to ensure:
-   - SKILL.md frontmatter follows correct format (name, description, allowed-tools, context, agent, etc.)
-   - Skill descriptions are optimized for auto-discovery triggering
-   - Skills are organized for progressive disclosure (descriptions loaded first, full content on invoke)
-   - Cross-references between skills are properly structured
+### Wave 0: Foundation (blocks all)
+| Epic | Title                            | Tasks |
+|------|----------------------------------|-------|
+| fn-2 | Plugin Skeleton & Infrastructure | 6     |
 
-3. **`/plugin-dev:agent-development`** - Use when planning each subagent to ensure:
-   - Agent frontmatter is correct (name, description, tools, disallowedTools, model, permissionMode, maxTurns)
-   - Agent descriptions accurately describe when delegation should happen
-   - Skills can be preloaded into subagents where appropriate
+### Wave 1: Core Skills (parallel after fn-2)
+| Epic  | Title                               | Skills             |
+|-------|-------------------------------------|--------------------|
+| fn-3  | Core C# & Language Patterns         | 7 skills + 1 agent |
+| fn-4  | Project Structure & Scaffolding     | 6 skills           |
+| fn-5  | Architecture Patterns               | 5 skills           |
+| fn-6  | Serialization & Communication       | 4 skills           |
+| fn-7  | Testing Foundation                  | 10 skills          |
+| fn-8  | Security Skills                     | 3 skills + 1 agent |
+| fn-9  | Agent Meta-Skills                   | 4 skills           |
+| fn-10 | Version Detection & Multi-Targeting | 2 skills           |
+| fn-11 | API Development                     | 4 skills           |
 
-4. **`/plugin-dev:hook-development`** - Use when planning the hooks system to ensure:
-   - Hook matchers are correctly scoped (PreToolUse, PostToolUse, etc.)
-   - Hook types (command, prompt, agent) are chosen appropriately
-   - Hooks.json structure is valid
+### Wave 2: Frameworks & Specialized (parallel after Wave 1)
+| Epic  | Title                      | Skills              |
+|-------|----------------------------|---------------------|
+| fn-12 | Blazor Skills              | 3 skills + 1 agent  |
+| fn-13 | Uno Platform Skills        | 3 skills + 1 agent  |
+| fn-14 | MAUI Skills                | 2 skills + 1 agent  |
+| fn-15 | Desktop Frameworks         | 4 skills            |
+| fn-16 | Native AOT & Trimming      | 4 skills            |
+| fn-17 | CLI Tool Development       | 7 skills            |
+| fn-18 | Performance & Benchmarking | 4 skills + 2 agents |
 
-5. **`/plugin-dev:mcp-integration`** - Use when planning MCP server integration to ensure:
-   - .mcp.json configuration follows correct format
-   - ${CLAUDE_PLUGIN_ROOT} paths are used for bundled servers
-   - MCP servers integrate cleanly with the plugin lifecycle
+### Wave 3: Integration & Polish (parallel after Wave 2)
+| Epic  | Title                                  |
+|-------|----------------------------------------|
+| fn-19 | CI/CD (GitHub Actions + Azure DevOps)  |
+| fn-20 | Packaging & Publishing                 |
+| fn-21 | Documentation Skills                   |
+| fn-22 | Localization                           |
+| fn-23 | Hooks & MCP Integration                |
+| fn-24 | Cross-Agent Build Pipeline             |
+| fn-25 | Community Setup (README, CONTRIBUTING) |
 
-6. **`/plugin-dev:command-development`** - Use if any slash commands beyond skills are needed
+## Critical Architectural Decisions
 
-7. **`/plugin-dev:plugin-settings`** - Use when planning configurable options (hook aggressiveness, MCP toggles, etc.)
+### Context Budget Strategy (resolves gap: 80+ skills vs 15,000 char limit)
+- **Router/advisor skill** contains a compressed catalog (~50 chars per skill = ~4,000 chars for 80 skills)
+- **Progressive disclosure**: Only name+description loaded initially; full SKILL.md on invoke
+- **MCP Tool Search**: Auto-activates when >10% context consumed (96% reduction)
+- **Validate in fn-2**: First task must prototype router skill and verify budget math
 
-### Planning Validation
+### Hook Performance Strategy (resolves gap: <5s vs dotnet format)
+- `dotnet format` runs in **background** with results reported on next interaction
+- `dotnet restore` runs **async** after .csproj edits
+- Only **fast validation** (<1s) runs synchronously (XAML syntax, frontmatter check)
+- Configurable aggressiveness: low (nothing sync), moderate (fast checks), aggressive (all sync)
 
-After planning each sub-epic, use:
-- **`/plugin-dev:skill-reviewer`** - Review skill descriptions for triggering effectiveness and quality
-- **`/plugin-dev:plugin-validator`** - Validate the overall plugin structure as it's planned
+### Version Detection Strategy (resolves gap: multi-targeting, caching)
+- Detection runs **on first .NET file encounter** per session
+- Caches per-project (keyed by solution/project path)
+- Multi-targeting: **highest TFM** drives guidance, with polyfill callouts for lower TFMs
+- Inconsistent files: **warn agent**, use most specific (.csproj TFM over global.json)
 
-### Implementation-Stage Skills
+### Cross-Agent Feature Matrix (resolves gap: feature parity)
+| Feature                | Claude Code     | Copilot             | Codex                   |
+|------------------------|-----------------|---------------------|-------------------------|
+| Skills                 | Full SKILL.md   | .github/skills/     | AGENTS.md sections      |
+| Agents                 | Full subagents  | N/A (no equivalent) | Multi-agent worktrees   |
+| Hooks                  | Full hooks.json | N/A                 | N/A                     |
+| MCP                    | .mcp.json       | VS Code MCP         | N/A                     |
+| Progressive disclosure | Native          | Via applyTo         | Via directory hierarchy |
 
-During implementation, use these additional skills:
+Skills degrade gracefully: Claude-specific features (hooks, MCP, agents) are omitted from Copilot/Codex formats. Core skill guidance is identical across all agents.
 
-**Plugin Development:** `/plugin-dev:create-plugin`, `/plugin-dev:agent-creator`
-**Code Quality:** `/pr-review-toolkit:code-reviewer`, `/pr-review-toolkit:silent-failure-hunter`, `/pr-review-toolkit:code-simplifier`, `/pr-review-toolkit:comment-analyzer`, `/pr-review-toolkit:type-design-analyzer`, `/pr-review-toolkit:pr-test-analyzer`
-**Documentation:** `/doc-coauthoring`, `/claude-md-management:claude-md-improver`, `/claude-md-management:revise-claude-md`
-**Commit & PR:** `/commit-commands:commit`, `/commit-commands:commit-push-pr`
-**QA Reference:** `/dotnet-skills:slopwatch` (LLM reward hacking detection), `/dotnet-skills:marketplace-publishing` (reference), `/dotnet-skills:skills-index-snippets` (index generation reference)
+## Execution Strategy
+- **Ralph loop swarm** executes Wave 0 first
+- On fn-2 completion, all Wave 1 epics unblock and execute in parallel
+- Wave 2-3 epics are detailed via **plan-sync** after Wave 1 implementation
+- RP review focuses on fn-2 and Wave 1 correctness
 
-### Existing dotnet-skills Reference
+## Quick commands
+```bash
+# List all dotnet-artisan epics
+.flow/bin/flowctl epics
 
-Use [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) as reference material (not to copy directly). Key skills to reference: `csharp-coding-standards`, `csharp-type-design-performance`, `csharp-api-design`, `project-structure`, `serialization`, `snapshot-testing`, `playwright-blazor`, `testcontainers`, `crap-analysis`, `package-management`, `microsoft-extensions-dependency-injection`, `microsoft-extensions-configuration`.
+# Check what's ready to work on
+.flow/bin/flowctl ready --epic fn-2
 
-### Planning Workflow
-
-For each sub-epic being planned:
-1. Reference `docs/dotnet-artisan-spec.md` for the authoritative requirements
-2. Use the relevant plugin-dev skills above to validate the planned structure
-3. Ensure cross-agent compatibility is addressed (build pipeline generates Copilot/Codex formats)
-4. Skills should cross-reference related skills in their descriptions
-5. Plan the router/advisor skill early (it needs to know the full catalog)
-6. Reference the Microsoft .NET Design Guidelines reference table in the spec for authoritative standards
-7. Use existing dotnet-skills reference material as starting points where applicable
-
-## Edge Cases
-- Projects targeting multiple TFMs need consistent guidance across all targets
-- Preview SDK installed alongside stable: skills must not break when both present
-- WinForms/WPF projects on .NET Core may have hybrid old/new patterns
-- MAUI has VS 2026 integration bugs that skills should warn about
-- Some NuGet libraries don't support AOT yet - skills need fallback guidance
-- Copilot and Codex have different capability levels for hooks/agents
-- Projects without global.json need SDK detection from dotnet --version
-
-## Open Questions
-- Exact Mermaid diagram standards for architecture documentation
-- Whether custom MCP servers are needed beyond existing ones
-- Optimal skill description length for cross-agent auto-discovery
-- How to handle Copilot Workspace vs Codex worktree parallelism differences
+# Start foundation work
+.flow/bin/flowctl start fn-2.1
+```
 
 ## Acceptance
-- [ ] Plugin installs and works in Claude Code with all skills discoverable
-- [ ] Agent can detect .NET version from project files and adapt guidance
-- [ ] Cross-agent build generates valid Copilot instructions and Codex AGENTS.md
-- [ ] All skills follow Agent Skills open standard (SKILL.md format)
-- [ ] Hooks fire correctly for .cs, .csproj, .xaml file edits
-- [ ] Router/advisor skill correctly identifies and loads relevant skills
-- [ ] No deprecated .NET patterns suggested in any skill
-- [ ] README includes comprehensive skill catalog with Mermaid architecture diagrams
-- [ ] CI validates skill format, frontmatter, cross-references on every push
-- [ ] Full spec document at docs/dotnet-artisan-spec.md is authoritative reference
+- [ ] All 24 sub-epics created with proper dependency links
+- [ ] Wave 0 (fn-2) fully detailed with task specs
+- [ ] Wave 1 epics have task breakdowns
+- [ ] Wave 2-3 epics have titles and lightweight specs
+- [ ] RP review passes for Wave 0-1
+- [ ] Epic dependency graph matches Wave structure

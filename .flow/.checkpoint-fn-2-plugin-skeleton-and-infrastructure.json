@@ -1,0 +1,153 @@
+{
+  "created_at": "2026-02-11T22:36:50.223566Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-2-plugin-skeleton-and-infrastructure",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-11T22:23:11.430274Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-2-plugin-skeleton-and-infrastructure",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-2-plugin-skeleton-and-infrastructure.md",
+      "status": "open",
+      "title": "Plugin Skeleton and Infrastructure",
+      "updated_at": "2026-02-11T22:24:36.689688Z"
+    },
+    "spec": "# Plugin Skeleton and Infrastructure\n\n## Overview\n\nCreate the foundational plugin structure for dotnet-artisan. This is the Wave 0 epic that blocks ALL other work. It establishes the plugin.json manifest, directory layout, router/advisor skill, version detection skill, project analysis skill, and validation infrastructure.\n\n**Spec reference:** `docs/dotnet-artisan-spec.md` sections: Core Design Principles, Plugin Architecture, Foundation & Plugin Infrastructure\n\n## Scope\n\n**In scope:**\n- `.claude-plugin/plugin.json` and `marketplace.json` manifests\n- Directory structure: `skills/`, `agents/`, `hooks/`, `scripts/`\n- `dotnet-advisor` router/index skill (compressed catalog, progressive disclosure)\n- `dotnet-version-detection` skill (read TFMs, SDK versions, detect preview features)\n- `dotnet-project-analysis` skill (solution structure, project refs, CPM)\n- `plugin-self-publish` skill (plugin versioning, changelog, CI/CD)\n- Validation script for SKILL.md frontmatter and cross-references\n- Basic CI workflow skeleton (validate on push)\n\n**Out of scope:**\n- Actual .NET domain skills (Wave 1+)\n- Hooks system (fn-23)\n- MCP integration (fn-23)\n- Cross-agent build pipeline (fn-24)\n- README/CONTRIBUTING (fn-25)\n\n## Approach\n\n### Plugin Structure (validated via `/plugin-dev:plugin-structure`)\n\n```\ndotnet-artisan/\n  .claude-plugin/\n    plugin.json          # name, version, skills[], agents[], hooks\n    marketplace.json     # marketplace metadata\n  skills/\n    foundation/\n      dotnet-advisor/SKILL.md\n      dotnet-version-detection/SKILL.md\n      dotnet-project-analysis/SKILL.md\n      plugin-self-publish/SKILL.md\n    # Wave 1+ skills go in category dirs: core-csharp/, architecture/, etc.\n  agents/\n    dotnet-architect.md\n  hooks/\n    hooks.json           # Empty initially, populated by fn-23\n  scripts/\n    validate-skills.sh   # Frontmatter + cross-ref validation\n  .mcp.json              # Empty initially, populated by fn-23\n```\n\n### Context Budget Architecture\n\n**Critical constraint:** Combined skill descriptions must stay under ~15,000 characters.\n\nStrategy:\n- Router skill (`dotnet-advisor`) gets a compressed catalog: ~50 chars per skill, organized by category\n- Each skill description is a precise trigger phrase (WHEN + WHEN NOT pattern, ~120 chars)\n- MCP Tool Search auto-activates when >10% context consumed (handles 80+ skills gracefully)\n- Prototype and validate budget math in task fn-2.2\n\n### Router/Advisor Skill Design\n\nThe `dotnet-advisor` skill is always loaded. Its description triggers on ANY .NET-related query. Its body contains:\n- Compressed catalog of ALL skills organized by category\n- Decision logic: \"if user is doing X, load skills Y and Z\"\n- Version detection trigger: \"first, check what .NET version the project uses\"\n- Cross-references to specialist skills\n\n### Version Detection Design\n\nThe `dotnet-version-detection` skill:\n- Reads `.csproj` TargetFramework/TargetFrameworks\n- Reads `global.json` for SDK version\n- Reads `Directory.Build.props` for shared TFM settings\n- Detects `<LangVersion>preview</LangVersion>` for preview features\n- Detects `<EnablePreviewFeatures>true</EnablePreviewFeatures>` for .NET 11 features\n- Outputs structured guidance: \"This project targets net10.0 with C# 14. Use modern patterns.\"\n- Multi-targeting: reports all TFMs, recommends highest for guidance, notes polyfill needs\n\n## Risks\n\n| Risk | Impact | Mitigation |\n|------|--------|------------|\n| Context budget math fails | Router can't function, whole architecture breaks | Prototype in fn-2.2, validate before proceeding |\n| Plugin structure doesn't match Claude Code conventions | Skills don't auto-discover | Use `/plugin-dev:plugin-structure` to validate |\n| Description triggers too generic | Wrong skills load | Use `/plugin-dev:skill-reviewer` on each skill |\n| Version detection edge cases | Wrong .NET guidance | Test with: no csproj, multi-target, preview, inconsistent |\n\n## Non-functional targets\n\n- Plugin loads in <2s\n- Router skill description <500 chars\n- Combined all-skill descriptions <12,000 chars (leaving 3,000 char headroom)\n- Validation script runs in <5s\n- CI validation workflow runs in <2 min\n\n## Quick commands\n\n```bash\n# Validate plugin structure\njq empty .claude-plugin/plugin.json\n\n# Run skill validation\n./scripts/validate-skills.sh\n\n# Test locally by symlinking plugin\nln -sf $(pwd) ~/.claude/plugins/dotnet-artisan\n```\n\n## Acceptance\n\n- [ ] `.claude-plugin/plugin.json` validates against Claude Code plugin schema\n- [ ] `marketplace.json` has correct metadata (name, author, version, description)\n- [ ] `dotnet-advisor` skill triggers on .NET-related queries and routes to categories\n- [ ] `dotnet-version-detection` skill correctly reads TFMs from .csproj files\n- [ ] `dotnet-project-analysis` skill understands solution structure\n- [ ] Combined skill descriptions are under 12,000 characters\n- [ ] Validation script catches malformed SKILL.md frontmatter\n- [ ] CI workflow runs validation on push\n- [ ] Directory structure matches Claude Code plugin conventions\n- [ ] All SKILL.md files have required frontmatter (name, description)\n"
+  },
+  "epic_id": "fn-2-plugin-skeleton-and-infrastructure",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:44.663478Z",
+        "depends_on": [],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.1.md",
+        "status": "todo",
+        "title": "Create plugin.json manifest and directory structure",
+        "updated_at": "2026-02-11T22:26:04.863145Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.1",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.1 Create plugin.json manifest and directory structure\n\n## Description\nCreate the foundational plugin directory structure and manifests for dotnet-artisan following Claude Code plugin conventions.\n\n**Size:** M\n**Files:**\n- `.claude-plugin/plugin.json`\n- `.claude-plugin/marketplace.json`\n- `skills/foundation/` (empty dirs for advisor, version-detection, project-analysis, self-publish)\n- `agents/` (empty dir)\n- `hooks/hooks.json` (empty hooks structure)\n- `.mcp.json` (empty MCP structure)\n- `scripts/` (empty dir)\n\n## Approach\n\n1. Use `/plugin-dev:plugin-structure` skill FIRST to understand correct plugin conventions\n2. Create `.claude-plugin/plugin.json` with:\n   - `name`: \"dotnet-artisan\"\n   - `version`: \"0.1.0\"\n   - `description`: precise trigger description for .NET development\n   - `skills`: array of skill directory paths (initially foundation skills)\n   - `agents`: path to agents directory\n   - `hooks`: path to hooks.json\n   - `mcpServers`: path to .mcp.json\n3. Create `marketplace.json` with marketplace metadata\n4. Create category directories under `skills/` per spec (foundation/, core-csharp/, architecture/, etc.)\n5. Create empty placeholder structures for hooks and MCP (populated in fn-23)\n\n## Key context\n\n- Follow Aaronontheweb/dotnet-skills plugin.json format as reference (skills as array of paths, agents as array)\n- Plugin components must be at plugin root, NOT inside `.claude-plugin/`\n- Use `${CLAUDE_PLUGIN_ROOT}` for all plugin-relative paths in hooks/MCP configs\n- License: MIT\n- Author: Claire Novotny LLC\n## Acceptance\n- [ ] `.claude-plugin/plugin.json` validates against Claude Code plugin schema\n- [ ] `.claude-plugin/marketplace.json` has correct metadata\n- [ ] `skills/` directory has category subdirectories matching spec categories\n- [ ] `agents/` directory exists\n- [ ] `hooks/hooks.json` is valid empty hooks structure\n- [ ] `.mcp.json` is valid empty MCP configuration\n- [ ] `/plugin-dev:plugin-validator` passes on the structure\n- [ ] Plugin can be symlinked to `~/.claude/plugins/dotnet-artisan` for local testing\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:44.781500Z",
+        "depends_on": [
+          "fn-2-plugin-skeleton-and-infrastructure.1"
+        ],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.2.md",
+        "status": "todo",
+        "title": "Create dotnet-advisor router skill with compressed catalog",
+        "updated_at": "2026-02-11T22:26:05.057827Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.2",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.2 Create dotnet-advisor router skill with compressed catalog\n\n## Description\nCreate the `dotnet-advisor` router/index skill that serves as the always-loaded entry point for the plugin. This skill must contain a compressed catalog of ALL planned skills and route agents to the right specialist skills based on context.\n\n**Size:** M\n**Files:**\n- `skills/foundation/dotnet-advisor/SKILL.md`\n\n## Approach\n\n1. Use `/plugin-dev:skill-development` to understand SKILL.md frontmatter requirements\n2. Write frontmatter with precise trigger description: triggers on ANY .NET development query\n3. Body contains compressed skill catalog organized by category (~50 chars per skill)\n4. Routing logic: \"if doing X, load skills Y and Z\" for each major scenario\n5. Include version detection trigger: \"first, check what .NET version via dotnet-version-detection\"\n6. Use WHEN + WHEN NOT pattern in description for reliable auto-triggering\n7. **CRITICAL**: Validate total description character count - must leave budget for other skills\n\n## Key context\n\n- Combined all-skill descriptions must stay under ~12,000 chars (with 3,000 headroom from 15,000 limit)\n- Router description should be <500 chars but highly specific to .NET triggers\n- Router body is only loaded on invocation (progressive disclosure) so can be larger\n- Reference pattern: \"context-aware loading where agents load what they need based on task\"\n- Catalog will start with foundation skills only; Wave 1+ skills added as epics complete\n- Use `/plugin-dev:skill-reviewer` to validate description triggering effectiveness\n## Acceptance\n- [ ] SKILL.md has valid frontmatter (name, description, license)\n- [ ] Description triggers on .NET-related queries (test with: \"create API\", \"add tests\", \"fix async\")\n- [ ] Description does NOT trigger on non-.NET queries\n- [ ] Body contains compressed catalog of all planned skill categories\n- [ ] Routing logic covers all 19 spec categories\n- [ ] Cross-references version detection as first step\n- [ ] Total description character count documented and under budget\n- [ ] `/plugin-dev:skill-reviewer` rates description as effective for triggering\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:44.894683Z",
+        "depends_on": [
+          "fn-2-plugin-skeleton-and-infrastructure.1"
+        ],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.3.md",
+        "status": "todo",
+        "title": "Create dotnet-version-detection skill",
+        "updated_at": "2026-02-11T22:26:05.305025Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.3",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.3 Create dotnet-version-detection skill\n\n## Description\nCreate the `dotnet-version-detection` skill that reads project files to determine the .NET version, C# language version, and preview feature state. This is a cross-cutting skill referenced by virtually all other skills.\n\n**Size:** M\n**Files:**\n- `skills/foundation/dotnet-version-detection/SKILL.md`\n\n## Approach\n\n1. Use `/plugin-dev:skill-development` for frontmatter\n2. Skill instructs agent to read and parse:\n   - `.csproj` \u2192 `<TargetFramework>`, `<TargetFrameworks>`, `<LangVersion>`\n   - `global.json` \u2192 `sdk.version`\n   - `Directory.Build.props` \u2192 shared TFM, `<EnablePreviewFeatures>`\n3. Output structured version info: TFM(s), C# version, preview state, SDK version\n4. Multi-targeting handling: report all TFMs, guide on highest, note polyfill needs for lower\n5. Include .NET version matrix from spec (net8.0 through net11.0) with support dates\n6. Include .NET 11 Preview 1 feature awareness (runtime-async, CoreCLR WASM, BFloat16, etc.)\n7. Edge cases: no csproj (suggest creating), inconsistent files (warn, use csproj TFM), `dotnet --version` fallback\n\n## Key context\n\n- Reference: `docs/dotnet-artisan-spec.md` \u2192 \"Current .NET Landscape\" and \".NET 11 Preview 1 Features\"\n- Detection runs on first .NET file encounter, caches per-project\n- Must never suggest deprecated patterns for detected version\n- `<LangVersion>preview</LangVersion>` enables C# 15 features on .NET 11\n- `<Features>$(Features);runtime-async=on</Features>` enables runtime-async\n## Acceptance\n- [ ] Skill reads TargetFramework from .csproj correctly\n- [ ] Skill handles multi-targeting (TargetFrameworks with semicolons)\n- [ ] Skill reads global.json SDK version\n- [ ] Skill reads Directory.Build.props for shared settings\n- [ ] Skill detects preview features (LangVersion, EnablePreviewFeatures)\n- [ ] Version matrix covers net8.0 through net11.0 with C# versions\n- [ ] .NET 11 Preview 1 features documented\n- [ ] Edge cases handled: missing files, inconsistent versions, no SDK\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:45.012030Z",
+        "depends_on": [
+          "fn-2-plugin-skeleton-and-infrastructure.1"
+        ],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.4.md",
+        "status": "todo",
+        "title": "Create dotnet-project-analysis skill",
+        "updated_at": "2026-02-11T22:26:05.514426Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.4",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.4 Create dotnet-project-analysis skill\n\n## Description\nCreate the `dotnet-project-analysis` skill that helps agents understand .NET solution structure, project references, and build configuration.\n\n**Size:** M\n**Files:**\n- `skills/foundation/dotnet-project-analysis/SKILL.md`\n\n## Approach\n\n1. Skill instructs agent to analyze:\n   - `.sln`/`.slnx` for solution structure and project list\n   - Project references (`<ProjectReference>`) for dependency graph\n   - `Directory.Build.props` / `Directory.Build.targets` for centralized config\n   - `Directory.Packages.props` for Central Package Management\n   - `.editorconfig` for coding style settings\n   - `nuget.config` for package sources\n2. Output: project dependency graph, shared config locations, CPM status\n3. Guide agent on navigation: \"entry point is Program.cs\", \"startup config in appsettings.json\"\n4. Detect common project types: web API, console, class lib, test, MAUI, Blazor, etc.\n\n## Key context\n\n- Reference dotnet-skills `project-structure` skill for conventions (.slnx, Directory.Build.props)\n- Modern .NET uses .slnx (new format) alongside .sln (legacy)\n- Central Package Management via Directory.Packages.props is the recommended approach\n- This skill is foundational - agents need to understand project layout before doing anything\n## Acceptance\n- [ ] Skill reads .sln and .slnx solution files\n- [ ] Skill maps project references into dependency understanding\n- [ ] Skill detects Directory.Build.props/targets centralized config\n- [ ] Skill detects Central Package Management (Directory.Packages.props)\n- [ ] Skill identifies common project types (web, console, lib, test, MAUI, Blazor)\n- [ ] Skill guides agent to entry points and config files\n- [ ] Cross-references dotnet-version-detection for TFM info\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:45.182312Z",
+        "depends_on": [
+          "fn-2-plugin-skeleton-and-infrastructure.1"
+        ],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.5.md",
+        "status": "todo",
+        "title": "Create plugin-self-publish skill and validation scripts",
+        "updated_at": "2026-02-11T22:26:05.739951Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.5",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.5 Create plugin-self-publish skill and validation scripts\n\n## Description\nCreate the `plugin-self-publish` skill documenting how this plugin itself is versioned and published, plus validation scripts for SKILL.md frontmatter and cross-references.\n\n**Size:** M\n**Files:**\n- `skills/foundation/plugin-self-publish/SKILL.md`\n- `scripts/validate-skills.sh`\n- `scripts/validate-marketplace.sh`\n\n## Approach\n\n1. `plugin-self-publish` skill covers:\n   - SemVer versioning strategy for the plugin\n   - CHANGELOG.md format (keep-a-changelog)\n   - GitHub Releases workflow\n   - Marketplace publishing steps\n2. `validate-skills.sh` script:\n   - Checks all `SKILL.md` files have required frontmatter (name, description)\n   - Validates YAML frontmatter is well-formed\n   - Checks cross-references point to existing skills\n   - Reports combined description character count vs budget\n3. `validate-marketplace.sh` script:\n   - Validates plugin.json against expected schema\n   - Validates marketplace.json completeness\n   - Checks all referenced skill/agent paths exist\n\n## Key context\n\n- Reference dotnet-skills `marketplace-publishing` and `validate-marketplace.sh` patterns\n- Character count validation is CRITICAL for context budget management\n- Scripts should be fast (<5s) for CI usage\n- Use `disable-model-invocation: true` in self-publish frontmatter (side-effect command)\n## Acceptance\n- [ ] plugin-self-publish skill documents versioning and publishing workflow\n- [ ] validate-skills.sh checks all SKILL.md files for required frontmatter\n- [ ] validate-skills.sh reports combined description character count\n- [ ] validate-skills.sh validates cross-references between skills\n- [ ] validate-marketplace.sh validates plugin.json and marketplace.json\n- [ ] validate-marketplace.sh checks all referenced paths exist\n- [ ] Both scripts run in <5 seconds\n- [ ] Both scripts exit non-zero on validation failures\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:24:45.323630Z",
+        "depends_on": [
+          "fn-2-plugin-skeleton-and-infrastructure.2",
+          "fn-2-plugin-skeleton-and-infrastructure.5"
+        ],
+        "epic": "fn-2-plugin-skeleton-and-infrastructure",
+        "id": "fn-2-plugin-skeleton-and-infrastructure.6",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-2-plugin-skeleton-and-infrastructure.6.md",
+        "status": "todo",
+        "title": "Create CI validation workflow and dotnet-architect agent",
+        "updated_at": "2026-02-11T22:26:06.002436Z"
+      },
+      "id": "fn-2-plugin-skeleton-and-infrastructure.6",
+      "runtime": null,
+      "spec": "# fn-2-plugin-skeleton-and-infrastructure.6 Create CI validation workflow and dotnet-architect agent\n\n## Description\nCreate the CI validation workflow (GitHub Actions) and the `dotnet-architect` agent that serves as the primary architecture advisor subagent.\n\n**Size:** M\n**Files:**\n- `.github/workflows/validate.yml`\n- `agents/dotnet-architect.md`\n\n## Approach\n\n1. `.github/workflows/validate.yml`:\n   - Triggers on push and PR\n   - Runs `scripts/validate-skills.sh`\n   - Runs `scripts/validate-marketplace.sh`\n   - Validates JSON files (plugin.json, marketplace.json, hooks.json, .mcp.json)\n   - Reports character budget usage\n   - Target: <2 min total runtime\n2. `dotnet-architect` agent:\n   - Description: \"Analyzes project context, requirements, constraints; recommends approaches\"\n   - Use `/plugin-dev:agent-development` for frontmatter format\n   - Preloads: dotnet-advisor, dotnet-version-detection, dotnet-project-analysis\n   - Model: sonnet (focused analysis, not orchestration)\n   - Tools: Read, Glob, Grep, Bash (read-only analysis)\n\n## Key context\n\n- CI workflow is lightweight validation only (not building .NET code)\n- dotnet-architect agent is the primary advisor for planning mode\n- Agent description must trigger on architecture questions: \"what framework\", \"how to structure\", \"recommend approach\"\n- Follow Aaronontheweb/dotnet-skills agent format as reference\n## Acceptance\n- [ ] GitHub Actions workflow validates on push and PR\n- [ ] Workflow runs both validation scripts\n- [ ] Workflow validates all JSON files\n- [ ] Workflow completes in <2 minutes\n- [ ] dotnet-architect agent has correct frontmatter (name, description, tools)\n- [ ] Agent description triggers on architecture/recommendation queries\n- [ ] Agent preloads foundation skills\n- [ ] `/plugin-dev:plugin-validator` passes on complete plugin structure\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

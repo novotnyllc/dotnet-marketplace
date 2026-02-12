@@ -1,0 +1,15 @@
+{
+  "branch_name": "fn-10-version-detection-and-multi-targeting",
+  "created_at": "2026-02-11T22:23:18.213449Z",
+  "depends_on_epics": [
+    "fn-2-plugin-skeleton-and-infrastructure"
+  ],
+  "id": "fn-10-version-detection-and-multi-targeting",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-10-version-detection-and-multi-targeting.md",
+  "status": "open",
+  "title": "Version Detection and Multi-Targeting Skills",
+  "updated_at": "2026-02-11T22:31:26.807212Z"
+}
