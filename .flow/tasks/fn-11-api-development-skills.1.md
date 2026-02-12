@@ -45,9 +45,8 @@ Create the `dotnet-minimal-apis` and `dotnet-api-versioning` skills covering mod
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created dotnet-minimal-apis skill (route groups, endpoint filters, TypedResults, OpenAPI 3.1, organization patterns) and dotnet-api-versioning skill (URL/header/query string versioning with Asp.Versioning.Http/Mvc, sunset policies). Updated advisor catalog entry and registered both in plugin.json.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 574894e04e36e3a0dcd8bea94e38fb85dfb93bfc, 13ddff9eda28d17c48184d2defacc8809165967d
+- Tests: ./scripts/validate-skills.sh
 - PRs:
