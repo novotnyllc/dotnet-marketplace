@@ -44,6 +44,8 @@
     "skills/testing/dotnet-playwright",
     "skills/testing/dotnet-snapshot-testing",
     "skills/testing/dotnet-test-quality",
+    "skills/api-development/dotnet-minimal-apis",
+    "skills/api-development/dotnet-api-versioning",
     "skills/security/dotnet-security-owasp",
     "skills/security/dotnet-secrets-management",
     "skills/security/dotnet-cryptography",

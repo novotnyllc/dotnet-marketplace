@@ -63,7 +63,7 @@ Before any .NET guidance, determine the project's target framework:
 
 ### 6. API Development `planned`
 - [skill:dotnet-minimal-apis] -- route groups, filters, validation, OpenAPI 3.1
-- [skill:dotnet-api-versioning] -- URL versioning, MS.AspNetCore.Mvc.Versioning
+- [skill:dotnet-api-versioning] -- URL versioning, Asp.Versioning.Http/Mvc
 - [skill:dotnet-openapi] -- OpenAPI: MS.AspNetCore.OpenApi (built-in .NET 10+)
 - [skill:dotnet-api-security] -- Identity, OAuth/OIDC, JWT, passkeys, CORS
 
