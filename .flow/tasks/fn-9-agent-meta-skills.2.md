@@ -51,9 +51,8 @@ This task **depends on fn-9.1 completion** (not stubs) — fn-9.2 owns plugin.js
 - [ ] No deep implementation overlap — brief warning + cross-ref only per overlap rubric
 
 ## Done summary
-TBD
-
+Created dotnet-csproj-reading and dotnet-solution-navigation SKILL.md files with all required subsections, slopwatch anti-patterns, and cross-references. Registered all 4 fn-9 agent-meta-skills in plugin.json. Cross-reference matrix and all epic quick commands validated.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c91eaf1, 1fca49a, 46da462, 8f83f62
+- Tests: grep -based quick command validation from epic spec
 - PRs:
