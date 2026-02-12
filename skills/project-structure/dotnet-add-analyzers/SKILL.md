@@ -124,16 +124,18 @@ See [skill:dotnet-csharp-nullable-reference-types] for annotation strategies and
 
 ## Trimming and AOT Compatibility Analyzers
 
-For apps published with trimming or Native AOT, enable the compatibility analyzers:
+### Applications
+
+For apps published with trimming or Native AOT, enable the analyzers alongside the publish properties:
 
 ```xml
 <PropertyGroup>
-  <!-- Enable trimming analysis (even if not publishing trimmed yet) -->
-  <IsTrimmable>true</IsTrimmable>
+  <!-- Enable trimmed publishing + analysis -->
+  <PublishTrimmed>true</PublishTrimmed>
   <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 
-  <!-- Enable AOT analysis -->
-  <IsAotCompatible>true</IsAotCompatible>
+  <!-- Enable AOT publishing + analysis -->
+  <PublishAot>true</PublishAot>
   <EnableAotAnalyzer>true</EnableAotAnalyzer>
 
   <!-- Single-file analysis (subset of trim analysis) -->
@@ -141,15 +143,11 @@ For apps published with trimming or Native AOT, enable the compatibility analyze
 </PropertyGroup>
 ```
 
-These analyzers flag:
-- Reflection usage that breaks trimming (IL2xxx warnings)
-- P/Invoke patterns incompatible with AOT
-- Dynamic code generation (`Reflection.Emit`, `System.Linq.Expressions` compilation)
-- Types not annotated with `[DynamicallyAccessedMembers]`
+Enable the analyzers early (even before publishing trimmed) to catch issues during development. `EnableTrimAnalyzer` and `EnableAotAnalyzer` can be set independently of `PublishTrimmed`/`PublishAot`.
 
-### Library Authors
+### Libraries
 
-Libraries should enable trimming and AOT analyzers even if consumers don't trim yet:
+Libraries use `IsTrimmable` and `IsAotCompatible` to declare compatibility to consumers. Enable these even if consumers don't trim yet:
 
 ```xml
 <PropertyGroup>
@@ -158,7 +156,15 @@ Libraries should enable trimming and AOT analyzers even if consumers don't trim 
 </PropertyGroup>
 ```
 
-This ensures the library works correctly when consumers eventually enable trimming/AOT.
+Setting `IsTrimmable`/`IsAotCompatible` automatically enables the corresponding analyzers. This ensures the library works correctly when consumers eventually enable trimming/AOT.
+
+### What the Analyzers Flag
+
+These analyzers flag:
+- Reflection usage that breaks trimming (IL2xxx warnings)
+- P/Invoke patterns incompatible with AOT
+- Dynamic code generation (`Reflection.Emit`, `System.Linq.Expressions` compilation)
+- Types not annotated with `[DynamicallyAccessedMembers]`
 
 ---
 

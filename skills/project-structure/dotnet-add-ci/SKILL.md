@@ -75,13 +75,13 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: TestResults/*.trx
+          path: TestResults/**/*.trx
 ```
 
 ### Key Decisions Explained
 
-- **`global-json-file`** — uses the repo's `global.json` to install the exact SDK version
-- **`--locked-mode`** — ensures `packages.lock.json` files are respected; fails if they're out of date
+- **`global-json-file`** — uses the repo's `global.json` to install the exact SDK version. If the project has no `global.json`, replace with `dotnet-version: '10.0.x'` (or the appropriate version)
+- **`--locked-mode`** — ensures `packages.lock.json` files are respected; fails if they're out of date. If the project doesn't use lock files, replace with plain `dotnet restore`
 - **`-c Release`** — builds in Release mode so `ContinuousIntegrationBuild` takes effect
 - **`permissions: contents: read`** — principle of least privilege
 - **Environment variables** — suppress .NET CLI noise in logs
