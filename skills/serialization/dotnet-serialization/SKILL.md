@@ -70,15 +70,23 @@ string json = JsonSerializer.Serialize(order, options);
 
 ### ASP.NET Core Integration
 
-Register the source-generated context in the DI container so Minimal APIs and controllers use it automatically:
+Register the source-generated context so Minimal APIs use it automatically. Note that `ConfigureHttpJsonOptions` applies to Minimal APIs only -- MVC controllers require separate configuration via `AddJsonOptions`:
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
+// Minimal APIs: ConfigureHttpJsonOptions
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
 });
+
+// MVC Controllers: AddJsonOptions (if using controllers)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonContext.Default);
+    });
 
 var app = builder.Build();
 
@@ -166,6 +174,8 @@ Protocol Buffers provide schema-first binary serialization. Protobuf is the defa
 
 ```protobuf
 syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
 
 option csharp_namespace = "MyApp.Contracts";
 
@@ -343,7 +353,7 @@ var json = JsonSerializer.Serialize(order, AppJsonContext.Default.Order);
 - **Use Protobuf for service-to-service binary serialization** -- especially as the wire format for gRPC
 - **Use MessagePack for high-throughput caching and real-time** -- when binary compactness matters but `.proto` schema management is unwanted
 - **Never use Newtonsoft.Json for new AOT-targeted projects** -- it is reflection-based and incompatible with trimming
-- **Always register `JsonSerializerContext` in ASP.NET Core** -- ensures Minimal APIs and controllers use source-generated serialization
+- **Always register `JsonSerializerContext` in ASP.NET Core** -- use `ConfigureHttpJsonOptions` for Minimal APIs and `AddJsonOptions` for MVC controllers (they are separate registrations)
 - **Annotate all serialized types** -- STJ source generators only generate code for types listed in `[JsonSerializable]`; MessagePack requires `[MessagePackObject]`
 
 <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> See [skill:dotnet-native-aot] for comprehensive AOT architecture, trimming strategies, and RD.xml configuration.
