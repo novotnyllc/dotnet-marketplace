@@ -45,3 +45,5 @@ Create the `dotnet-advisor` router/index skill that serves as the always-loaded 
 - [ ] Router description under 500 chars
 - [ ] Projected budget math validated: 95 x 120 = 11,400 (under 12,000 warn)
 - [ ] `/plugin-dev:skill-reviewer` rates description as effective for triggering
+
+## Done summary
