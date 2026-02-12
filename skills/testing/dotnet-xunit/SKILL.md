@@ -11,6 +11,8 @@ xUnit v3 testing framework features for .NET. Covers `[Fact]` and `[Theory]` att
 
 **Out of scope:** Test project scaffolding (creating xUnit projects, package references, Directory.Build.props) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration testing patterns (WebApplicationFactory, Testcontainers) are covered by [skill:dotnet-integration-testing].
 
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with xUnit packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline for xUnit v3 support.
+
 Cross-references: [skill:dotnet-testing-strategy] for deciding what to test and how, [skill:dotnet-integration-testing] for combining xUnit with WebApplicationFactory and Testcontainers.
 
 ---

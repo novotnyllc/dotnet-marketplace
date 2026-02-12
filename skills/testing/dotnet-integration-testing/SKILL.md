@@ -7,9 +7,11 @@ description: "WHEN testing with real infrastructure. WebApplicationFactory, Test
 
 Integration testing patterns for .NET applications using WebApplicationFactory, Testcontainers, and .NET Aspire testing. Covers in-process API testing, disposable infrastructure via containers, database fixture management, and test isolation strategies.
 
-**Version assumptions:** .NET 8.0+ baseline, Testcontainers 3.x+, .NET Aspire 9.0+. Package versions for `Microsoft.AspNetCore.Mvc.Testing` must match the project's target framework major version (e.g., 8.x for net8.0, 9.x for net9.0, 10.x for net10.0).
+**Version assumptions:** .NET 8.0+ baseline, Testcontainers 4.x+ (3.x compatible with minor API differences), .NET Aspire 9.0+. Package versions for `Microsoft.AspNetCore.Mvc.Testing` must match the project's target framework major version (e.g., 8.x for net8.0, 9.x for net9.0, 10.x for net10.0).
 
 **Out of scope:** Test project scaffolding (creating projects, package references) is owned by [skill:dotnet-add-testing]. Testing strategy and test type selection are covered by [skill:dotnet-testing-strategy]. Snapshot testing for verifying API response structures is covered by [skill:dotnet-snapshot-testing].
+
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with integration test packages referenced. Docker daemon running (required by Testcontainers). Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline.
 
 Cross-references: [skill:dotnet-testing-strategy] for deciding when integration tests are appropriate, [skill:dotnet-xunit] for xUnit fixtures and parallel execution configuration, [skill:dotnet-snapshot-testing] for verifying API response structures with Verify.
 
@@ -88,6 +90,9 @@ Override services, configuration, or middleware using `WebApplicationFactory<T>.
 ```csharp
 public class CustomWebAppFactory : WebApplicationFactory<Program>
 {
+    // Provide connection string from test fixture (e.g., Testcontainers)
+    public string ConnectionString { get; set; } = "";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -96,7 +101,7 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:Default"] = _connectionString,
+                ["ConnectionStrings:Default"] = ConnectionString,
                 ["Features:EnableNewCheckout"] = "true"
             });
         });
@@ -110,7 +115,7 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>
             // Replace database context with test database
             services.RemoveAll<DbContextOptions<AppDbContext>>();
             services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(_connectionString));
+                options.UseNpgsql(ConnectionString));
         });
     }
 }
@@ -476,19 +481,27 @@ Use Respawn to reset database state between tests by deleting data instead of ro
 
 ```csharp
 // NuGet: Respawn
-public class RespawnFixture : IClassFixture<PostgresFixture>, IAsyncLifetime
+// Combined fixture: owns the container AND the respawner
+public class RespawnablePostgresFixture : IAsyncLifetime
 {
-    private readonly PostgresFixture _postgres;
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
+        .WithImage("postgres:16-alpine")
+        .Build();
+
     private Respawner _respawner = null!;
     private NpgsqlConnection _connection = null!;
 
-    public RespawnFixture(PostgresFixture postgres) => _postgres = postgres;
+    public string ConnectionString => _container.GetConnectionString();
 
     public async ValueTask InitializeAsync()
     {
-        _connection = new NpgsqlConnection(_postgres.ConnectionString);
+        await _container.StartAsync();
+
+        _connection = new NpgsqlConnection(ConnectionString);
         await _connection.OpenAsync();
 
+        // Run migrations or EnsureCreated before creating respawner
+        // so it knows which tables to clean
         _respawner = await Respawner.CreateAsync(_connection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
@@ -504,6 +517,7 @@ public class RespawnFixture : IClassFixture<PostgresFixture>, IAsyncLifetime
     public async ValueTask DisposeAsync()
     {
         await _connection.DisposeAsync();
+        await _container.DisposeAsync();
     }
 }
 ```
