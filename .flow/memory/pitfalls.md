@@ -45,3 +45,6 @@ Source generator AddSource hint names must include namespace to avoid collisions
 
 ## 2026-02-12 manual [pitfall]
 When adding new skills, always register them in plugin.json skills array -- files on disk without registration are invisible to the plugin system
+
+## 2026-02-12 manual [pitfall]
+NuGet packageSourceMapping uses most-specific-pattern-wins: MyCompany.* beats * wildcard. Always explain precedence when documenting private feed configs to avoid dependency confusion FUD.
