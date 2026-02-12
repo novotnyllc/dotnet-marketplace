@@ -75,3 +75,9 @@ Skill code examples that use third-party NuGet APIs (extension methods, types) m
 
 ## 2026-02-12 manual [pitfall]
 MSBuild container publish items (ContainerPort, ContainerEnvironmentVariable, ContainerLabel) must go in ItemGroup, not PropertyGroup -- they use Include= attribute syntax which is item metadata, not property syntax
+
+## 2026-02-12 manual [pitfall]
+Cross-task file edits (even single-line cross-refs) violate file-disjoint constraints — attribute such edits to the integration task, not the content-authoring task
+
+## 2026-02-12 manual [pitfall]
+When a boundary enforcement has multiple mechanisms (prose vs placeholder), pick ONE and normalize across ALL epic sections (matrix, decomposition, acceptance, task specs, quick commands) — mixed models cause reviewer churn

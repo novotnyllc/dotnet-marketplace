@@ -1,0 +1,63 @@
+{
+  "created_at": "2026-02-12T18:00:33.954446Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-6-serialization-and-communication-skills",
+      "created_at": "2026-02-11T22:23:12.241362Z",
+      "depends_on_epics": [
+        "fn-2-plugin-skeleton-and-infrastructure"
+      ],
+      "id": "fn-6-serialization-and-communication-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-6-serialization-and-communication-skills.md",
+      "status": "open",
+      "title": "Serialization and Communication Skills",
+      "updated_at": "2026-02-11T22:30:29.713489Z"
+    },
+    "spec": "# fn-6: Serialization & Communication Skills\n\n## Overview\nDelivers AOT-friendly serialization and service communication skills including System.Text.Json source generators, gRPC, real-time communication patterns, and service communication routing.\n\n## Scope\n**Skills:**\n- `dotnet-serialization` - AOT-friendly source-gen serialization: System.Text.Json source gen, Protobuf, MessagePack. Performance tradeoffs.\n- `dotnet-grpc` - Full gRPC skill: service definition, code-gen, streaming, auth, load balancing, health checks\n- `dotnet-realtime-communication` - Service communication patterns: SignalR, JSON-RPC 2.0, Server-Sent Events, gRPC streaming. When to use what.\n- `dotnet-service-communication` - Higher-level skill that routes to gRPC, real-time, or REST based on requirements\n\n## Key Context\n- System.Text.Json source generators are AOT-friendly and required for Native AOT\n- Reflection-based serialization is incompatible with trimming/AOT\n- .NET 10 brings built-in Server-Sent Events support to ASP.NET Core\n- gRPC is the recommended approach for service-to-service communication\n- Skills must reference performance tradeoffs (STJ vs Protobuf vs MessagePack)\n\n## Quick Commands\n```bash\n# Smoke test: verify serialization skill covers source generators\ngrep -i \"source generator\" skills/serialization/dotnet-serialization.md\n\n# Validate gRPC streaming patterns\ngrep -i \"streaming\" skills/serialization/dotnet-grpc.md\n\n# Test service communication routing logic\ngrep -r \"when to use\" skills/serialization/dotnet-service-communication.md\n```\n\n## Acceptance Criteria\n1. All 4 skills written with standard depth and frontmatter\n2. Serialization skill emphasizes STJ source generators for AOT compatibility\n3. gRPC skill covers full lifecycle: .proto definition, code-gen, client/server patterns, streaming (unary, server, client, bidirectional)\n4. Real-time communication skill compares SignalR, SSE, JSON-RPC, gRPC streaming with decision guidance\n5. Service communication skill acts as router, loading other skills based on requirements\n6. Skills cross-reference dotnet-native-aot for AOT-specific considerations\n7. Performance tradeoffs documented with benchmark references\n\n## Test Notes\n- Verify serialization skill detects non-AOT-friendly patterns (reflection-based serialization)\n- Test that service-communication skill routes to appropriate specialized skills\n- Validate gRPC skill covers both ASP.NET Core gRPC and Grpc.Net.Client\n\n## References\n- System.Text.Json Source Generators: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/source-generation\n- gRPC for .NET: https://learn.microsoft.com/en-us/aspnet/core/grpc/?view=aspnetcore-10.0\n- Native AOT Deployment: https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/\n- dotnet-skills serialization reference: https://github.com/Aaronontheweb/dotnet-skills\n"
+  },
+  "epic_id": "fn-6-serialization-and-communication-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:53.349788Z",
+        "depends_on": [],
+        "epic": "fn-6-serialization-and-communication-skills",
+        "id": "fn-6-serialization-and-communication-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-6-serialization-and-communication-skills.1.md",
+        "status": "todo",
+        "title": "Serialization and gRPC skills",
+        "updated_at": "2026-02-11T22:31:53.349995Z"
+      },
+      "id": "fn-6-serialization-and-communication-skills.1",
+      "runtime": null,
+      "spec": "# fn-6-serialization-and-communication-skills.1 Serialization and gRPC skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:53.512694Z",
+        "depends_on": [],
+        "epic": "fn-6-serialization-and-communication-skills",
+        "id": "fn-6-serialization-and-communication-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-6-serialization-and-communication-skills.2.md",
+        "status": "todo",
+        "title": "Real-time and service communication routing skills",
+        "updated_at": "2026-02-11T22:31:53.512863Z"
+      },
+      "id": "fn-6-serialization-and-communication-skills.2",
+      "runtime": null,
+      "spec": "# fn-6-serialization-and-communication-skills.2 Real-time and service communication routing skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
