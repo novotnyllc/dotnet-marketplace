@@ -20,9 +20,8 @@ Both skills must use canonical frontmatter, `[skill:name]` cross-references, des
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Added dotnet-csharp-configuration skill (Options pattern with IOptions<T>/IOptionsMonitor<T>/IOptionsSnapshot<T>, IValidateOptions<T>, user secrets, environment-based config, Microsoft.FeatureManagement) and dotnet-csharp-source-generators skill (creating generators with IIncrementalGenerator and consuming GeneratedRegex, LoggerMessage, STJ source-gen). Both use canonical frontmatter, [skill:name] cross-references, and descriptions under 120 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 00b442862e5a7c8cf8a4948a39634e9c004fa5ec
+- Tests: ./scripts/validate-skills.sh
 - PRs:

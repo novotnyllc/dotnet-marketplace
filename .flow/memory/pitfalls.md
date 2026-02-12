@@ -36,3 +36,9 @@ GHA bash steps with set -e do NOT propagate non-zero exit from non-final pipelin
 
 ## 2026-02-12 manual [pitfall]
 CI workflows must run the EXACT same validation commands as local -- do not inject CI-only env vars or flags; encode policy differences in the shared script with an opt-in override
+
+## 2026-02-12 manual [pitfall]
+Options pattern classes must use { get; set; } not { get; init; } because config binder and PostConfigure need to mutate properties after construction
+
+## 2026-02-12 manual [pitfall]
+Source generator AddSource hint names must include namespace to avoid collisions when same class name exists in different namespaces
