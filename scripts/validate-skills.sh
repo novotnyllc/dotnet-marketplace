@@ -4,12 +4,12 @@
 #
 # Checks:
 #   1. Required frontmatter fields: name, description
-#   2. YAML frontmatter is well-formed (delimited by ---)
+#   2. YAML frontmatter is well-formed (delimited by --- with valid key: value syntax)
 #   3. [skill:name] cross-references point to existing skill directories
 #   4. Context budget tracking with stable output keys
 #
 # Design constraints:
-#   - Single-pass scan (no subprocess spawning per file, no network)
+#   - Single-pass scan per file, one batched python3 call for YAML validation
 #   - Runs in <5 seconds
 #   - Same commands locally and in CI
 #   - Exits non-zero on: missing required frontmatter, broken cross-references, BUDGET_STATUS=FAIL
@@ -58,6 +58,78 @@ for skill_file in "${skill_files[@]}"; do
     valid_skill_dirs["$skill_dirname"]=1
 done
 
+# --- Batched YAML validation (single python3 invocation for all files) ---
+# Extracts frontmatter from each SKILL.md, validates it as well-formed YAML.
+# Outputs one line per file: "OK:<path>" or "FAIL:<path>:<reason>"
+declare -A yaml_valid_map
+yaml_output=$(python3 -c '
+import sys, os, json, re
+
+results = []
+for path in sys.argv[1:]:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        # Normalize CRLF
+        content = content.replace("\r\n", "\n").replace("\r", "\n")
+        lines = content.split("\n")
+        if not lines or lines[0].strip() != "---":
+            results.append(f"FAIL:{path}:missing opening ---")
+            continue
+        # Find closing ---
+        fm_lines = []
+        found_close = False
+        for i, line in enumerate(lines[1:], 1):
+            if line.strip() == "---":
+                found_close = True
+                break
+            fm_lines.append(line)
+        if not found_close:
+            results.append(f"FAIL:{path}:missing closing ---")
+            continue
+        # Validate each frontmatter line as valid YAML key: value
+        for ln_num, fm_line in enumerate(fm_lines, 2):
+            stripped = fm_line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue  # blank lines and comments are valid YAML
+            # Must be key: value pattern (key is unquoted identifier, value follows colon+space)
+            if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_-]*\s*:", stripped):
+                results.append(f"FAIL:{path}:line {ln_num}: invalid YAML syntax: {stripped[:60]}")
+                break
+            # Check for unclosed quotes in the value portion
+            colon_pos = stripped.index(":")
+            value = stripped[colon_pos+1:].strip()
+            if value.startswith("\"") and not value.endswith("\""):
+                results.append(f"FAIL:{path}:line {ln_num}: unclosed double quote")
+                break
+            if value.startswith("'\''") and not value.endswith("'\''"):
+                results.append(f"FAIL:{path}:line {ln_num}: unclosed single quote")
+                break
+        else:
+            results.append(f"OK:{path}")
+    except Exception as e:
+        results.append(f"FAIL:{path}:{e}")
+
+for r in results:
+    print(r)
+' "${skill_files[@]}" 2>&1)
+
+while IFS= read -r yaml_line; do
+    if [[ "$yaml_line" == OK:* ]]; then
+        fpath="${yaml_line#OK:}"
+        yaml_valid_map["$fpath"]="ok"
+    elif [[ "$yaml_line" == FAIL:* ]]; then
+        rest="${yaml_line#FAIL:}"
+        # Extract path (everything before second colon-delimited field)
+        fpath="${rest%%:*}"
+        reason="${rest#*:}"
+        yaml_valid_map["$fpath"]="fail"
+        rel="${fpath#"$REPO_ROOT/"}"
+        echo "ERROR: $rel -- invalid YAML frontmatter: $reason"
+        errors=$((errors + 1))
+    fi
+done <<< "$yaml_output"
+
 echo "=== SKILL.md Validation ==="
 echo ""
 
@@ -72,8 +144,14 @@ for skill_file in "${skill_files[@]}"; do
     skill_dirname="$(basename "$skill_dir")"
     rel_path="${skill_file#"$REPO_ROOT/"}"
 
-    # Read the file content
+    # Skip files that failed YAML validation (already reported above)
+    if [ "${yaml_valid_map[$skill_file]:-}" = "fail" ]; then
+        continue
+    fi
+
+    # Read the file content, normalize CRLF to LF
     content="$(<"$skill_file")"
+    content="${content//$'\r'/}"
 
     # Check for frontmatter delimiters (must start with --- and have closing ---)
     if [[ "$content" != ---* ]]; then
