@@ -232,6 +232,25 @@ dotnet nuget update source MyCompany --username az --password $PAT --store-passw
 
 Analyzer warnings are produced by Roslyn analyzers bundled with the SDK or added via NuGet. Understanding when to fix vs. when to configure severity is critical.
 
+### Example Output
+
+```
+src/MyApp.Api/Controllers/OrdersController.cs(27,5): warning CA2007: Consider calling ConfigureAwait on the awaited task [/src/MyApp.Api/MyApp.Api.csproj]
+src/MyApp.Api/Services/OrderService.cs(15,16): warning CA1062: In externally visible method 'OrderService.Process(string)', validate parameter 'input' is non-null before using it [/src/MyApp.Api/MyApp.Api.csproj]
+src/MyApp.Api/Models/UserDto.cs(8,12): warning IDE0032: Use auto-implemented property [/src/MyApp.Api/MyApp.Api.csproj]
+```
+
+**Diagnosis:**
+1. Identify the prefix: `CA` = Code Analysis (.NET analyzers), `IDE` = IDE code style analyzers.
+2. Check severity: warnings don't break builds unless `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` is set.
+3. Determine if the rule applies to your project type (e.g., CA2007 is irrelevant in ASP.NET Core — no SynchronizationContext).
+4. Decide: fix the code, configure severity in `.editorconfig`, or suppress with documented justification.
+
+**Fix pattern:**
+- **Fix the code** when the analyzer identifies a real issue (CA1062 — add null validation or use `ArgumentNullException.ThrowIfNull`).
+- **Configure severity** in `.editorconfig` when the rule doesn't apply project-wide (see below).
+- **Suppress inline** only with documented justification (see "When Suppression Is Acceptable" below).
+
 ### Severity Levels
 
 | Severity | Build Impact | Action |
