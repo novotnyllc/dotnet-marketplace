@@ -97,12 +97,12 @@ Strategy:
 - Prototype and validate budget math in task fn-2.2
 
 **Budget validation thresholds** (coherent across all files):
-- `PROJECTED_SKILLS_COUNT`: 95 (derived from spec catalog, buffered up from ~90)
+- `PROJECTED_SKILLS_COUNT`: 100 (derived from spec catalog, buffered up from ~95 after adding data access + container skills)
 - `MAX_DESC_CHARS`: 120 (aggressive target per description, enforces compression)
-- Projected max: 95 x 120 = 11,400 chars
+- Projected max: 100 x 120 = 12,000 chars
 - **WARN** at 12,000 chars (current or projected)
 - **FAIL** at 15,000 chars (hard platform limit)
-- Target: keep current combined descriptions under 12,000 chars
+- Target: keep current combined descriptions under 12,000 chars (at budget ceiling — some descriptions must be <120 chars to stay within budget)
 
 `validate-skills.sh` outputs stable keys for CI parsing:
 ```
@@ -186,7 +186,7 @@ ln -sf $(pwd) ~/.claude/plugins/dotnet-artisan
 - [ ] `dotnet-version-detection` skill correctly reads TFMs with defined precedence algorithm
 - [ ] `dotnet-project-analysis` skill understands solution structure, uses canonical frontmatter and `[skill:name]` cross-refs
 - [ ] Combined skill descriptions under 12,000 characters (warn), hard fail at 15,000
-- [ ] Projected budget: 95 skills x 120 chars = 11,400 (under 12,000 warn threshold)
+- [ ] Projected budget: 100 skills x 120 chars = 12,000 (at warn threshold — validates descriptions average ≤120 chars)
 - [ ] Validation script catches malformed SKILL.md frontmatter (canonical required fields: name, description)
 - [ ] Validation script validates `[skill:name]` cross-references
 - [ ] Validation script outputs stable keys: CURRENT_DESC_CHARS, PROJECTED_DESC_CHARS, BUDGET_STATUS

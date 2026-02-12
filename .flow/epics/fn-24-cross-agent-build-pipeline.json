@@ -2,7 +2,8 @@
   "branch_name": "fn-24-cross-agent-build-pipeline",
   "created_at": "2026-02-11T22:23:33.306858Z",
   "depends_on_epics": [
-    "fn-19-ci-cd-skills"
+    "fn-19-ci-cd-skills",
+    "fn-23-hooks-and-mcp-integration"
   ],
   "id": "fn-24-cross-agent-build-pipeline",
   "next_task": 1,

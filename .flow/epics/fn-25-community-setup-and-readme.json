@@ -2,7 +2,9 @@
   "branch_name": "fn-25-community-setup-and-readme",
   "created_at": "2026-02-11T22:23:33.558351Z",
   "depends_on_epics": [
-    "fn-20-packaging-and-publishing-skills"
+    "fn-20-packaging-and-publishing-skills",
+    "fn-21-documentation-skills",
+    "fn-24-cross-agent-build-pipeline"
   ],
   "id": "fn-25-community-setup-and-readme",
   "next_task": 1,

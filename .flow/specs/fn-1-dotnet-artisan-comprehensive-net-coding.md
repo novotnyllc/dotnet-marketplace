@@ -38,7 +38,10 @@ graph TD
     FN3 --> FN22[fn-22: Localization]
     FN2 --> FN23[fn-23: Hooks & MCP]
     FN19 --> FN24[fn-24: Cross-Agent Pipeline]
+    FN23 --> FN24
     FN20 --> FN25[fn-25: Community & README]
+    FN21 --> FN25
+    FN24 --> FN25
 ```
 
 ## Epic Decomposition
@@ -49,44 +52,44 @@ graph TD
 | fn-2 | Plugin Skeleton & Infrastructure | 6     |
 
 ### Wave 1: Core Skills (parallel after fn-2)
-| Epic  | Title                               | Skills             |
-|-------|-------------------------------------|--------------------|
-| fn-3  | Core C# & Language Patterns         | 7 skills + 1 agent |
-| fn-4  | Project Structure & Scaffolding     | 6 skills           |
-| fn-5  | Architecture Patterns               | 5 skills           |
-| fn-6  | Serialization & Communication       | 4 skills           |
-| fn-7  | Testing Foundation                  | 10 skills          |
-| fn-8  | Security Skills                     | 3 skills + 1 agent |
-| fn-9  | Agent Meta-Skills                   | 4 skills           |
-| fn-10 | Version Detection & Multi-Targeting | 2 skills           |
-| fn-11 | API Development                     | 4 skills           |
+| Epic  | Title                               | Skills             | Note |
+|-------|-------------------------------------|--------------------|------|
+| fn-3  | Core C# & Language Patterns         | 7 skills + 1 agent | |
+| fn-4  | Project Structure & Scaffolding     | 6 skills           | |
+| fn-5  | Architecture Patterns               | 10 skills          | includes data access + containers |
+| fn-6  | Serialization & Communication       | 4 skills           | |
+| fn-7  | Testing Foundation                  | 10 skills          | |
+| fn-8  | Security Skills                     | 3 skills + 1 agent | |
+| fn-9  | Agent Meta-Skills                   | 4 skills           | |
+| fn-10 | Version Detection & Multi-Targeting | 2 skills           | |
+| fn-11 | API Development                     | 4 skills           | |
+| fn-23 | Hooks & MCP Integration             |                    | depends on fn-2 only |
 
 ### Wave 2: Frameworks & Specialized (parallel after Wave 1)
-| Epic  | Title                      | Skills              |
-|-------|----------------------------|---------------------|
-| fn-12 | Blazor Skills              | 3 skills + 1 agent  |
-| fn-13 | Uno Platform Skills        | 3 skills + 1 agent  |
-| fn-14 | MAUI Skills                | 2 skills + 1 agent  |
-| fn-15 | Desktop Frameworks         | 4 skills            |
-| fn-16 | Native AOT & Trimming      | 4 skills            |
-| fn-17 | CLI Tool Development       | 7 skills            |
-| fn-18 | Performance & Benchmarking | 4 skills + 2 agents |
+| Epic  | Title                      | Skills              | Note |
+|-------|----------------------------|---------------------|------|
+| fn-12 | Blazor Skills              | 3 skills + 1 agent  | |
+| fn-13 | Uno Platform Skills        | 3 skills + 1 agent  | |
+| fn-14 | MAUI Skills                | 2 skills + 1 agent  | |
+| fn-15 | Desktop Frameworks         | 4 skills            | |
+| fn-16 | Native AOT & Trimming      | 4 skills            | |
+| fn-17 | CLI Tool Development       | 7 skills            | |
+| fn-18 | Performance & Benchmarking | 4 skills + 2 agents | |
+| fn-22 | Localization               | 1 skill             | depends on fn-3 |
 
 ### Wave 3: Integration & Polish (parallel after Wave 2)
-| Epic  | Title                                  |
-|-------|----------------------------------------|
-| fn-19 | CI/CD (GitHub Actions + Azure DevOps)  |
-| fn-20 | Packaging & Publishing                 |
-| fn-21 | Documentation Skills                   |
-| fn-22 | Localization                           |
-| fn-23 | Hooks & MCP Integration                |
-| fn-24 | Cross-Agent Build Pipeline             |
-| fn-25 | Community Setup (README, CONTRIBUTING) |
+| Epic  | Title                                  | Note |
+|-------|----------------------------------------|------|
+| fn-19 | CI/CD (GitHub Actions + Azure DevOps)  | |
+| fn-20 | Packaging & Publishing                 | |
+| fn-21 | Documentation Skills                   | |
+| fn-24 | Cross-Agent Build Pipeline             | depends on fn-19 + fn-23 |
+| fn-25 | Community Setup (README, CONTRIBUTING) | depends on fn-20 + fn-21 + fn-24 |
 
 ## Critical Architectural Decisions
 
-### Context Budget Strategy (resolves gap: 80+ skills vs 15,000 char limit)
-- **Router/advisor skill** contains a compressed catalog (~50 chars per skill = ~4,000 chars for 80 skills)
+### Context Budget Strategy (resolves gap: 100 skills vs 15,000 char limit)
+- **Router/advisor skill** contains a compressed catalog (~50 chars per skill = ~5,000 chars for 100 skills)
 - **Progressive disclosure**: Only name+description loaded initially; full SKILL.md on invoke
 - **MCP Tool Search**: Auto-activates when >10% context consumed (96% reduction)
 - **Validate in fn-2**: First task must prototype router skill and verify budget math
@@ -96,6 +99,11 @@ graph TD
 - `dotnet restore` runs **async** after .csproj edits
 - Only **fast validation** (<1s) runs synchronously (XAML syntax, frontmatter check)
 - Configurable aggressiveness: low (nothing sync), moderate (fast checks), aggressive (all sync)
+- **Concurrency controls** (required for reliability):
+  - Per-project job coalescing: rapid edits debounce into single format/restore run
+  - Cancellation: new edit cancels in-flight background format for same file
+  - Per-solution serialization: only one `dotnet restore` per solution at a time
+  - Stale-result suppression: discard diagnostics from runs that started before latest edit
 
 ### Version Detection Strategy (resolves gap: multi-targeting, caching)
 - Detection runs **on first .NET file encounter** per session
@@ -138,4 +146,7 @@ Skills degrade gracefully: Claude-specific features (hooks, MCP, agents) are omi
 - [ ] Wave 1 epics have task breakdowns
 - [ ] Wave 2-3 epics have titles and lightweight specs
 - [ ] RP review passes for Wave 0-1
-- [ ] Epic dependency graph matches Wave structure
+- [ ] Epic dependency graph matches Wave classification (no wave label contradicts dependency edges)
+- [ ] Cross-agent conformance tests defined in fn-24 (routing, trigger, fallback scenarios)
+- [ ] Technical claims in spec have source URLs and "last verified" dates
+- [ ] Hook concurrency controls specified (debounce, cancellation, serialization)

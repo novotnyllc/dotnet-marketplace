@@ -365,7 +365,7 @@ Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` 
 - Agent Skills open standard (SKILL.md) as shared base format
 
 ### Epic Structure
-- **15-20+ fine-grained epics** maximizing parallelism for swarm execution
+- **24 sub-epics (fn-2 through fn-25)** maximizing parallelism for swarm execution
 - **Foundation + parallel**: One foundation epic (plugin structure, shared patterns) blocks everything, then all others parallelize
 - **Ralph loop swarm** will handle dependency resolution and parallel development
 - Each epic should be minimal in tasks, fleshed out during implementation via plan syncs
@@ -417,6 +417,19 @@ Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` 
 - `dotnet-resilience` - Polly v8 + Microsoft.Extensions.Resilience + Microsoft.Extensions.Http.Resilience (the modern stack). NOT Microsoft.Extensions.Http.Polly (deprecated).
 - `dotnet-http-client` - IHttpClientFactory + resilience pipelines: typed clients, named clients, DelegatingHandlers, testing
 - `dotnet-observability` - OpenTelemetry (traces, metrics, logs), Serilog/MS.Extensions.Logging structured logging, health checks, custom metrics
+
+### 4b. Data Access & Persistence
+
+**Skills:**
+- `dotnet-efcore-patterns` - EF Core best practices: DbContext lifecycle, change tracking (AsNoTracking by default), query splitting, migrations, dedicated migration DbContext, interceptors
+- `dotnet-efcore-architecture` - EF Core architecture patterns: separate read/write models, repository vs direct DbContext, avoiding N+1, row limits, application-side sorting/filtering anti-patterns
+- `dotnet-data-access-strategy` - Choosing the right data access approach: EF Core vs Dapper vs raw ADO.NET. When to use each, performance tradeoffs, AOT compatibility
+
+### 4c. Containers & Cloud Deployment
+
+**Skills:**
+- `dotnet-containers` - Container best practices for .NET: multi-stage Dockerfiles, `dotnet publish` container images (.NET 8+ built-in), rootless containers, health checks, signal handling
+- `dotnet-container-deployment` - Deploying .NET containers: Kubernetes basics (manifests, probes, resource limits), Docker Compose for local dev, container registries, CI/CD integration
 
 ### 5. Serialization & Communication
 
@@ -689,34 +702,44 @@ skills/ (canonical SKILL.md)
 ## Epic Dependency Structure
 
 ### Wave 0: Foundation (blocks all others)
-1. **Plugin infrastructure** - plugin.json, directory structure, build pipeline, cross-agent generation, index/router skill
+| Epic | Title | Depends On |
+|------|-------|------------|
+| fn-2 | Plugin Skeleton & Infrastructure | — |
 
-### Wave 1: Core Skills (parallel after Wave 0)
-2. **Core C# & Language** - Modern patterns, async, nullable, DI, configuration, source generators
-3. **Project Structure & Scaffolding** - Solution layout, scaffolding, modernization
-4. **Architecture Patterns** - Minimal APIs, background services, resilience, HTTP client, observability
-5. **Serialization & Communication** - STJ, gRPC, real-time, service communication
-6. **Testing Foundation** - Strategy, xUnit, integration testing, snapshot testing, quality
-7. **Security** - OWASP, secrets, cryptography, API security
-8. **Agent Meta-Skills** - Gotchas, build analysis, csproj reading, solution navigation
-9. **Version Detection & Upgrade** - TFM detection, .NET 11 preview support, polyfills, multi-targeting
+### Wave 1: Core Skills (parallel after fn-2)
+| Epic | Title | Depends On |
+|------|-------|------------|
+| fn-3 | Core C# & Language Patterns | fn-2 |
+| fn-4 | Project Structure & Scaffolding | fn-2 |
+| fn-5 | Architecture Patterns (incl. Data Access, Containers) | fn-2 |
+| fn-6 | Serialization & Communication | fn-2 |
+| fn-7 | Testing Foundation | fn-2 |
+| fn-8 | Security Skills | fn-2 |
+| fn-9 | Agent Meta-Skills | fn-2 |
+| fn-10 | Version Detection & Multi-Targeting | fn-2 |
+| fn-11 | API Development | fn-2 |
+| fn-23 | Hooks & MCP Integration | fn-2 |
 
 ### Wave 2: Frameworks & Tools (parallel after relevant Wave 1 items)
-10. **Blazor** - Patterns, components, auth, testing
-11. **Uno Platform** - Full ecosystem, targets, MCP integration, testing
-12. **MAUI** - Development, AOT, testing
-13. **WinUI / WPF / WinForms** - Desktop frameworks, migration
-14. **Native AOT & Trimming** - Full AOT pipeline, architecture, WASM AOT
-15. **CLI Tool Development** - System.CommandLine, architecture, distribution (Homebrew, apt, winget)
-16. **Performance & Benchmarking** - BenchmarkDotNet, profiling, CI benchmarking, performance patterns
+| Epic | Title | Depends On |
+|------|-------|------------|
+| fn-12 | Blazor Skills | fn-3, fn-7 |
+| fn-13 | Uno Platform Skills | fn-3, fn-7 |
+| fn-14 | MAUI Skills | fn-3, fn-7 |
+| fn-15 | Desktop Frameworks (WinUI/WPF/WinForms) | fn-3 |
+| fn-16 | Native AOT & Trimming | fn-5 |
+| fn-17 | CLI Tool Development | fn-5 |
+| fn-18 | Performance & Benchmarking | fn-5 |
+| fn-22 | Localization | fn-3 |
 
-### Wave 3: Integration & Polish (parallel after relevant Wave 2 items)
-17. **CI/CD** - GitHub Actions + Azure DevOps (platform + scenario skills)
-18. **Packaging & Publishing** - NuGet, MSIX, GitHub Releases, release management
-19. **Documentation** - Strategy, Mermaid, GitHub docs, XML docs, API docs
-20. **Localization** - Full i18n stack
-21. **Hooks & MCP** - Plugin hooks, MCP server configs, custom MCP development
-22. **Cross-Agent Compatibility** - Build pipeline, Copilot/Codex format generation, testing across agents
+### Wave 3: Integration & Polish (parallel after Wave 2)
+| Epic | Title | Depends On |
+|------|-------|------------|
+| fn-19 | CI/CD (GitHub Actions + Azure DevOps) | fn-11, fn-16, fn-17, fn-18 |
+| fn-20 | Packaging & Publishing | fn-19 |
+| fn-21 | Documentation Skills | fn-19 |
+| fn-24 | Cross-Agent Build Pipeline | fn-19, fn-23 |
+| fn-25 | Community Setup (README, CONTRIBUTING) | fn-20, fn-21, fn-24 |
 
 ---
 
@@ -730,22 +753,32 @@ skills/ (canonical SKILL.md)
 
 ---
 
+## Fact Provenance Policy
+
+Technical claims in this spec and in generated skills must include:
+- **Source URL** linking to the authoritative documentation or announcement
+- **Last verified date** (YYYY-MM-DD format)
+- Claims about deprecated/removed APIs must cite the official deprecation notice or migration guide
+- Preview-era feature details (.NET 11 Preview) are marked as volatile and must be re-verified before each release
+
+Skills should use a `<!-- Last verified: YYYY-MM-DD -->` comment in their SKILL.md body for claims that may change.
+
 ## Research Findings Referenced
 
-### Resilience Stack (Feb 2026)
+### Resilience Stack (Last verified: 2026-02-11)
 - **Polly v8.6.5** is the definitive standard (no alternatives gaining traction)
 - **Microsoft.Extensions.Resilience** and **Microsoft.Extensions.Http.Resilience** are the official approach
-- **Microsoft.Extensions.Http.Polly** is DEPRECATED - do not use
+- **Microsoft.Extensions.Http.Polly** is superseded by Microsoft.Extensions.Http.Resilience ([migration guide](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/resilience/migration-guide)) — do not use for new projects
 - Standard HTTP resilience pipeline: Rate limiter -> Total timeout -> Retry -> Circuit breaker -> Attempt timeout
 - Hedging strategy now first-class for distributed systems
 - Chaos engineering support since Polly v8.3.0
 
-### API Patterns (Feb 2026)
+### API Patterns (Last verified: 2026-02-11)
 - **Minimal APIs** are Microsoft's official recommendation for new projects
 - .NET 10 brings built-in validation, SSE, OpenAPI 3.1 to Minimal APIs
 - **FastEndpoints** and **Carter** remain viable alternatives for more structure
 - **Vertical slice architecture** is increasingly mainstream
-- Swashbuckle deprecated in favor of built-in Microsoft.AspNetCore.OpenApi
+- Swashbuckle: no longer actively maintained; Microsoft.AspNetCore.OpenApi is the built-in replacement for .NET 9+ projects. Existing Swashbuckle-based projects can continue using it but should plan migration.
 
 ### MAUI State (Feb 2026)
 - Production-ready with significant caveats

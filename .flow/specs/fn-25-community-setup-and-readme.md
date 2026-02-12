@@ -12,6 +12,11 @@ Create comprehensive community setup including README.md with skill catalog and 
 - [ ] All documentation references the Agent Skills open standard
 - [ ] Cross-references to documentation skills, build pipeline
 
+## Dependencies
+- fn-20 (Packaging & Publishing) — README references installation/publishing
+- fn-21 (Documentation Skills) — README references documentation tooling
+- fn-24 (Cross-Agent Build Pipeline) — README documents cross-agent support, CONTRIBUTING references build pipeline
+
 ## Key Context
 - README must be comprehensive but approachable
 - Mermaid diagrams show plugin architecture, skill relationships, agent delegation

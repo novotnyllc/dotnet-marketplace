@@ -13,7 +13,7 @@ Delivers modern API development skills covering minimal APIs, API versioning, Op
 ## Key Context
 - Minimal APIs are Microsoft's official recommendation for new projects (ASP.NET Core best practices)
 - .NET 10 brings built-in validation, SSE, OpenAPI 3.1 to Minimal APIs
-- Swashbuckle deprecated in favor of built-in Microsoft.AspNetCore.OpenApi
+- Swashbuckle is no longer actively maintained; Microsoft.AspNetCore.OpenApi is the built-in replacement for .NET 9+ (existing projects can continue using Swashbuckle but should plan migration)
 - .NET 10 adds passkey authentication (WebAuthn) support
 - Vertical slice architecture increasingly mainstream for API organization
 
@@ -40,7 +40,7 @@ grep -i "passkey\|WebAuthn" skills/api/dotnet-api-security.md
 
 ## Test Notes
 - Verify minimal APIs skill recommends organization patterns for large projects
-- Test OpenAPI skill warns against deprecated Swashbuckle patterns
+- Test OpenAPI skill recommends Microsoft.AspNetCore.OpenApi for new projects, notes Swashbuckle migration path
 - Validate API security skill covers OWASP API security best practices
 
 ## References

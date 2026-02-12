@@ -43,7 +43,7 @@ grep -r "Microsoft.CodeAnalysis.NetAnalyzers" skills/project-structure/
 ## Test Notes
 - Test scaffolding skill by generating a new project and validating structure
 - Verify analyzer skill recommends appropriate analyzers for detected TFM
-- Check modernize skill detects deprecated patterns (e.g., Microsoft.Extensions.Http.Polly)
+- Check modernize skill detects superseded patterns (e.g., Microsoft.Extensions.Http.Polly → Microsoft.Extensions.Http.Resilience)
 
 ## References
 - .NET Library Design Guidance: https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/

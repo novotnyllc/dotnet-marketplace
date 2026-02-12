@@ -1,13 +1,18 @@
 {
   "branch_name": "fn-1-dotnet-artisan-comprehensive-net-coding",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
   "created_at": "2026-02-11T20:41:48.289103Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
   "depends_on_epics": [],
   "id": "fn-1-dotnet-artisan-comprehensive-net-coding",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-12T00:36:55.206532Z",
   "spec_path": ".flow/specs/fn-1-dotnet-artisan-comprehensive-net-coding.md",
   "status": "open",
   "title": "dotnet-artisan: Comprehensive .NET Coding Agent Skills Plugin",
-  "updated_at": "2026-02-11T22:23:04.472860Z"
+  "updated_at": "2026-02-12T00:36:55.215757Z"
 }
