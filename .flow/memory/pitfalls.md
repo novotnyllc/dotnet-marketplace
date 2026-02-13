@@ -162,3 +162,6 @@ Never hardcode secrets in CLI examples — always use env-var placeholders with 
 
 ## 2026-02-13 manual [pitfall]
 Native AOT trimming preservation uses ILLink descriptors (TrimmerRootDescriptor) and [DynamicDependency] attributes, NOT RD.xml (which is a legacy .NET Native/UWP format) -- using the wrong format produces files that are silently ignored
+
+## 2026-02-13 manual [pitfall]
+Hot Reload support for new methods improved in .NET 9+: instance methods on non-generic classes work partially, only static/generic require rebuild
