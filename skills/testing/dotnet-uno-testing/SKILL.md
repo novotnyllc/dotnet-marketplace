@@ -13,7 +13,7 @@ Testing Uno Platform applications across target heads (WASM, Desktop, Mobile). C
 
 **Prerequisites:** Uno Platform application with WASM head configured. For WASM testing: Playwright browsers installed (see [skill:dotnet-playwright]). For mobile testing: platform SDKs configured (Android SDK, Xcode).
 
-Cross-references: [skill:dotnet-ui-testing-core] for page object model and selector strategies, [skill:dotnet-playwright] for Playwright installation, CI caching, and trace viewer.
+Cross-references: [skill:dotnet-ui-testing-core] for page object model and selector strategies, [skill:dotnet-playwright] for Playwright installation, CI caching, and trace viewer, [skill:dotnet-uno-platform] for Uno Extensions, MVUX, Toolkit, and theme guidance, [skill:dotnet-uno-targets] for per-target deployment and platform-specific gotchas.
 
 ---
 
