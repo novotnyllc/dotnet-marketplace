@@ -144,3 +144,6 @@ File magic-byte validation must use exact full signatures (PNG=8 bytes starting 
 
 ## 2026-02-13 manual [pitfall]
 [GeneratedRegex] improves performance and AOT compat but does NOT eliminate catastrophic backtracking -- always combine with RegexOptions.NonBacktracking or a matchTimeout for ReDoS safety
+
+## 2026-02-13 manual [pitfall]
+Soft cross-refs (skills that may not exist yet) must be explicitly excluded from validation commands — don't mix them with hard cross-refs in acceptance checks or CI will fail

@@ -13,7 +13,7 @@ bUnit testing for Blazor components. Covers component rendering and markup asser
 
 **Prerequisites:** A Blazor test project scaffolded via [skill:dotnet-add-testing] with bUnit packages referenced. The component under test must be in a referenced Blazor project.
 
-Cross-references: [skill:dotnet-ui-testing-core] for shared UI testing patterns (POM, selectors, wait strategies), [skill:dotnet-xunit] for xUnit fixtures and test organization.
+Cross-references: [skill:dotnet-ui-testing-core] for shared UI testing patterns (POM, selectors, wait strategies), [skill:dotnet-xunit] for xUnit fixtures and test organization, [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-components] for component architecture and state management.
 
 ---
 

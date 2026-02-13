@@ -33,3 +33,9 @@ Per-subsection acceptance: when skill definition says 'each section MUST include
 
 ## 2026-02-12 manual [convention]
 Every skill section (overview, prerequisites, slopwatch, etc.) MUST use explicit ## headers, not inline bold labels — spec validation checks for headers
+
+## 2026-02-13 manual [convention]
+Agent preloaded skills must include foundation skills (version-detection, project-analysis) used in workflow steps, not just domain skills — match the dotnet-architect pattern
+
+## 2026-02-13 manual [convention]
+Quick command counts (grep -c) break when other epics add files to the same directory — use explicit per-file checks instead

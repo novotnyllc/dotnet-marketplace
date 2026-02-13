@@ -1,0 +1,83 @@
+{
+  "created_at": "2026-02-13T00:29:22.055999Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-12-blazor-skills",
+      "created_at": "2026-02-11T22:23:18.800907Z",
+      "depends_on_epics": [
+        "fn-3-core-c-and-language-patterns-skills",
+        "fn-7-testing-foundation-skills"
+      ],
+      "id": "fn-12-blazor-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-12-blazor-skills.md",
+      "status": "open",
+      "title": "Blazor Skills",
+      "updated_at": "2026-02-11T22:29:04.042827Z"
+    },
+    "spec": "# fn-12: Blazor Skills\n\n## Problem/Goal\nAdd comprehensive Blazor development skills covering all hosting models (Server, WASM, Hybrid, Blazor Web App) with modern patterns for components, state management, and authentication. Enable dotnet-blazor-specialist agent to guide Blazor development without bias toward any single hosting model.\n\n## Acceptance Checks\n- [ ] `dotnet-blazor-patterns` skill covers all hosting models (Server, WASM, Hybrid, Auto/Streaming)\n- [ ] `dotnet-blazor-components` skill covers component architecture, state management, JS interop, forms, validation\n- [ ] `dotnet-blazor-auth` skill covers authentication/authorization across all hosting models\n- [ ] `dotnet-blazor-specialist` agent configured with preloaded skills and delegation triggers\n- [ ] Skills integrate with existing testing skills (bUnit references)\n- [ ] Cross-references to dotnet-ui-chooser, dotnet-realtime-communication, dotnet-api-security\n\n## Key Context\n- Modern .NET 10 Blazor: WebAssembly preloading, form validation, diagnostics\n- .NET 11 Preview 1: EnvironmentBoundary, Label/DisplayName, QuickGrid OnRowClick, SignalR ConfigureConnection, IHostedService in WASM\n- No hosting model bias - present all options objectively\n- Skills must be AOT-aware for Blazor WASM scenarios\n"
+  },
+  "epic_id": "fn-12-blazor-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:48.081393Z",
+        "depends_on": [],
+        "epic": "fn-12-blazor-skills",
+        "id": "fn-12-blazor-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-12-blazor-skills.1.md",
+        "status": "todo",
+        "title": "Create Blazor skills (patterns, components, auth)",
+        "updated_at": "2026-02-11T22:31:48.081580Z"
+      },
+      "id": "fn-12-blazor-skills.1",
+      "runtime": null,
+      "spec": "# fn-12-blazor-skills.1 Create Blazor skills (patterns, components, auth)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:48.313567Z",
+        "depends_on": [],
+        "epic": "fn-12-blazor-skills",
+        "id": "fn-12-blazor-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-12-blazor-skills.2.md",
+        "status": "todo",
+        "title": "Create dotnet-blazor-specialist agent",
+        "updated_at": "2026-02-11T22:31:48.313738Z"
+      },
+      "id": "fn-12-blazor-skills.2",
+      "runtime": null,
+      "spec": "# fn-12-blazor-skills.2 Create dotnet-blazor-specialist agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:48.442390Z",
+        "depends_on": [],
+        "epic": "fn-12-blazor-skills",
+        "id": "fn-12-blazor-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-12-blazor-skills.3.md",
+        "status": "todo",
+        "title": "Integrate with existing testing and UI chooser skills",
+        "updated_at": "2026-02-11T22:31:48.442545Z"
+      },
+      "id": "fn-12-blazor-skills.3",
+      "runtime": null,
+      "spec": "# fn-12-blazor-skills.3 Integrate with existing testing and UI chooser skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
