@@ -420,8 +420,8 @@ Input validation is a first line of defense against injection and abuse. These p
 Regular expressions with backtracking can be exploited to cause catastrophic performance degradation (Regular Expression Denial of Service). Always apply timeouts or use source-generated regex.
 
 ```csharp
-// PREFERRED: [GeneratedRegex] -- compiled at build time, no backtracking risk,
-// AOT-compatible (.NET 7+)
+// PREFERRED: [GeneratedRegex] -- compiled at build time, AOT-compatible (.NET 7+).
+// Combine with RegexOptions.NonBacktracking or a timeout for ReDoS safety.
 public static partial class InputPatterns
 {
     [GeneratedRegex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
@@ -541,8 +541,18 @@ app.MapPost("/api/uploads", async (IFormFile file) =>
 
     // 3. Validate content by reading magic bytes (not Content-Type header)
     using var stream = file.OpenReadStream();
-    var header = new byte[8];
-    await stream.ReadExactlyAsync(header);
+    const int headerSize = 12; // Need 12 bytes for WebP (RIFF + WEBP)
+    var header = new byte[headerSize];
+
+    // Guard against files shorter than header size
+    int bytesRead = await stream.ReadAtLeastAsync(header, headerSize, throwOnEndOfStream: false);
+    if (bytesRead < headerSize)
+        return TypedResults.ValidationProblem(
+            new Dictionary<string, string[]>
+            {
+                ["file"] = ["File is too small to be a valid image"]
+            });
+
     stream.Position = 0;
 
     if (!IsValidImageHeader(header))
@@ -563,10 +573,10 @@ app.MapPost("/api/uploads", async (IFormFile file) =>
 .DisableAntiforgery(); // Only if using JWT/bearer auth, not cookie auth
 
 static bool IsValidImageHeader(ReadOnlySpan<byte> header) =>
-    header[..2].SequenceEqual(new byte[] { 0xFF, 0xD8 })             // JPEG
-    || header[..8].SequenceEqual("PNG\r\n\x1a\n"u8)                  // PNG (after 0x89)
-    || header[..4].SequenceEqual("GIF8"u8)                            // GIF
-    || header[..4].SequenceEqual("RIFF"u8);                           // WebP (RIFF container)
+    header[..2].SequenceEqual(new byte[] { 0xFF, 0xD8 })                                   // JPEG
+    || header[..8].SequenceEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }) // PNG
+    || header[..4].SequenceEqual("GIF8"u8)                                                  // GIF
+    || (header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8));      // WebP
 ```
 
 For OWASP injection prevention beyond input validation (SQL injection, XSS, command injection), see [skill:dotnet-security-owasp].
