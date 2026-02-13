@@ -24,9 +24,8 @@ Add cross-reference integrations between the new Uno skills and existing skills.
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Added reverse cross-references [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets] to dotnet-uno-testing SKILL.md. Validated all hard cross-references from fn-13.1 and fn-13.2 resolve, confirmed no duplicate skill IDs in advisor catalog, and verified soft cross-refs are present.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 46127ac1f8efcca6a9009ffaa6c06ae98313f54e
+- Tests: ./scripts/validate-skills.sh
 - PRs:
