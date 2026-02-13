@@ -51,7 +51,7 @@ On first use of Uno MCP tools in a session, invoke both initialization tools to 
 
 ### Agent Rules Initialization
 
-Call `uno_platform_agent_rules_init` to load:
+Call `mcp__uno__uno_platform_agent_rules_init` to load:
 - Core identity and expertise scope for Uno Platform development
 - IDE guidance (Visual Studio, VS Code, CLI) per operating system
 - Knowledge routing rules mapping topics to canonical search queries
@@ -60,7 +60,7 @@ Call `uno_platform_agent_rules_init` to load:
 
 ### Usage Rules Initialization
 
-Call `uno_platform_usage_rules_init` to load:
+Call `mcp__uno__uno_platform_usage_rules_init` to load:
 - Design system guidelines (Material preferred, responsive layouts)
 - Data binding policy (MVUX vs MVVM binding patterns, forbidden WPF-isms)
 - Navigation policy (prefer XAML attached properties over code-behind)
@@ -72,9 +72,9 @@ Call `uno_platform_usage_rules_init` to load:
 ### Invocation Order
 
 ```
-1. Call uno_platform_agent_rules_init (loads routing rules and feature catalog)
-2. Call uno_platform_usage_rules_init (loads design and coding conventions)
-3. Proceed with documentation searches using uno_platform_docs_search
+1. Call mcp__uno__uno_platform_agent_rules_init (loads routing rules and feature catalog)
+2. Call mcp__uno__uno_platform_usage_rules_init (loads design and coding conventions)
+3. Proceed with documentation searches using mcp__uno__uno_platform_docs_search
 ```
 
 Both init tools are idempotent -- calling them multiple times in the same session is safe but unnecessary.
@@ -87,7 +87,7 @@ The primary workflow for retrieving Uno documentation uses a two-step pattern: b
 
 ### Step 1: Search
 
-Use `uno_platform_docs_search` to find relevant documentation pages.
+Use `mcp__uno__uno_platform_docs_search` to find relevant documentation pages.
 
 ```
 Search parameters:
@@ -104,7 +104,7 @@ Search results include:
 
 ### Step 2: Fetch
 
-Use `uno_platform_docs_fetch` to retrieve full content of high-value pages identified by search.
+Use `mcp__uno__uno_platform_docs_fetch` to retrieve full content of high-value pages identified by search.
 
 ```
 Fetch parameters:
@@ -118,10 +118,10 @@ Fetch parameters:
 ```
 Topic: "How to implement region-based navigation with Uno Extensions"
 
-1. Search: uno_platform_docs_search("Navigation Extensions region-based", topK=8)
+1. Search: mcp__uno__uno_platform_docs_search("Navigation Extensions region-based", topK=8)
    -> Returns multiple results including "Navigation Overview", "Region Navigation", etc.
 
-2. Fetch: uno_platform_docs_fetch(
+2. Fetch: mcp__uno__uno_platform_docs_fetch(
      sourcePath="articles/external/uno.extensions/doc/Learn/Navigation/Overview.md",
      maxChars=8000)
    -> Returns full navigation documentation with code examples
