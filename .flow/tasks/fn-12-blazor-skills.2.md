@@ -57,9 +57,8 @@ tools:
 - [ ] Agent follows pattern of `dotnet-architect.md` (frontmatter + preloaded skills + workflow + guidelines)
 
 ## Done summary
-TBD
-
+Created dotnet-blazor-specialist agent with full frontmatter, 5 preloaded skills, 4-step workflow (detect, assess, recommend, delegate), trigger lexicon, and explicit delegation boundaries. Registered in plugin.json agents array.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 2566ffc37586059174855163422bb354085ba96d
+- Tests: ./scripts/validate-skills.sh
 - PRs:
