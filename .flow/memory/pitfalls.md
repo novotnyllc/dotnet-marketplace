@@ -138,3 +138,9 @@ MVC controller [controller] route token resolves to class name -- versioned cont
 
 ## 2026-02-13 manual [pitfall]
 Microsoft.AspNetCore.OpenApi is a NuGet package included in default project templates, not part of the ASP.NET Core shared framework -- it requires an explicit PackageReference with version matching the target framework major
+
+## 2026-02-13 manual [pitfall]
+File magic-byte validation must use exact full signatures (PNG=8 bytes starting 0x89, WebP=RIFF+WEBP at offset 8) and handle files shorter than the header size without throwing
+
+## 2026-02-13 manual [pitfall]
+[GeneratedRegex] improves performance and AOT compat but does NOT eliminate catastrophic backtracking -- always combine with RegexOptions.NonBacktracking or a matchTimeout for ReDoS safety

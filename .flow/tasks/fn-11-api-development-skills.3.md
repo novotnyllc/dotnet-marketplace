@@ -49,9 +49,8 @@ Create the `dotnet-input-validation` skill covering comprehensive input validati
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created dotnet-input-validation skill covering .NET 10 built-in validation (AddValidation, ValidatableType, source generators), FluentValidation (manual validation, endpoint filters), Data Annotations (standard attributes, custom ValidationAttribute, IValidatableObject), endpoint filters for Minimal APIs, ProblemDetails error responses, and security-focused validation (ReDoS prevention, allowlist patterns, max length enforcement, file upload validation). Registered in plugin.json and added to dotnet-advisor catalog and routing.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7420821, 4a97810
+- Tests: ./scripts/validate-skills.sh
 - PRs:
