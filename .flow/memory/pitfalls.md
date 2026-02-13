@@ -156,3 +156,6 @@ MCP tool documentation must use fully qualified tool IDs (mcp__server__tool_name
 
 ## 2026-02-13 manual [pitfall]
 WASM AOT and trimming have opposite size effects: trimming reduces download size, AOT increases artifact size (but improves runtime speed) -- do not conflate them as both reducing payload
+
+## 2026-02-13 manual [pitfall]
+Never hardcode secrets in CLI examples — always use env-var placeholders with a comment about CI secret storage
