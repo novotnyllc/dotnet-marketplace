@@ -20,7 +20,7 @@ Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotne
 | Target | TFM | Tooling | Packaging | Key Constraints |
 |--------|-----|---------|-----------|----------------|
 | Web/WASM | `net8.0-browserwasm` | Browser DevTools | Static hosting / Azure SWA | No filesystem access, AOT recommended, limited threading |
-| iOS | `net8.0-ios` | Xcode / VS Mac | App Store / TestFlight | Provisioning profiles, entitlements, no JIT |
+| iOS | `net8.0-ios` | Xcode / VS Code / Rider | App Store / TestFlight | Provisioning profiles, entitlements, no JIT |
 | Android | `net8.0-android` | Android SDK / Emulator | Play Store / APK sideload | SDK version targeting, permissions |
 | macOS (Catalyst) | `net8.0-maccatalyst` | Xcode | Mac App Store / notarization | Sandbox restrictions, entitlements |
 | Windows | `net8.0-windows10.0.19041` | Visual Studio | MSIX / Windows Store | WinAppSDK version alignment |
@@ -40,7 +40,7 @@ Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotne
 dotnet run -f net8.0-browserwasm --project MyApp/MyApp.csproj
 ```
 
-The WASM target uses the Uno Skia renderer to render XAML controls as HTML canvas or WebGL elements in the browser. The app loads via a JavaScript bootstrap (`uno-bootstrap.js`) that initializes the .NET WASM runtime.
+The WASM target renders XAML controls in the browser. The renderer depends on project configuration: Skia (canvas/WebGL) or native HTML mapping. The app loads via a JavaScript bootstrap (`uno-bootstrap.js`) that initializes the .NET WASM runtime.
 
 ### Debugging
 
@@ -105,7 +105,7 @@ dotnet build -f net8.0-ios
 dotnet run -f net8.0-ios
 ```
 
-Requires Xcode installed on macOS. The iOS target uses the Uno Skia renderer (Uno 5.x) for consistent rendering.
+Requires Xcode installed on macOS. The renderer (Skia or native) depends on project configuration and Uno version.
 
 ### Debugging
 
@@ -231,7 +231,7 @@ Uses Mac Catalyst (iOS APIs adapted for macOS). Requires Xcode on macOS.
 
 ### Debugging
 
-- **Visual Studio for Mac / VS Code:** Native macOS debugging
+- **Visual Studio (Pair to Mac) / VS Code + C# Dev Kit / Rider:** Native macOS debugging
 - **Xcode Instruments:** Profile performance and memory
 - **Console.app:** View system logs for the app process
 
@@ -490,9 +490,9 @@ Direct deployment to device filesystem. No app store or package manager.
 | Target | IDE Debugger | Hot Reload | Profiling |
 |--------|-------------|-----------|-----------|
 | Web/WASM | VS / VS Code (CDP) | Yes | Browser DevTools |
-| iOS | VS Mac / VS Code | Yes | Xcode Instruments |
+| iOS | VS (Pair to Mac) / VS Code / Rider | Yes | Xcode Instruments |
 | Android | VS / VS Code | Yes | Android Profiler |
-| macOS | VS Mac / VS Code | Yes | Xcode Instruments |
+| macOS | VS (Pair to Mac) / VS Code / Rider | Yes | Xcode Instruments |
 | Windows | Visual Studio | Yes (+ Live Visual Tree) | VS Diagnostic Tools |
 | Linux | VS Code / Rider | Yes | dotnet-counters / dotnet-trace |
 | Embedded | VS Code Remote | Yes (SSH) | dotnet-trace (remote) |
