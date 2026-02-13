@@ -461,7 +461,7 @@ var token = result.AccessToken;
 ## Agent Gotchas
 
 1. **Do not access `HttpContext` in interactive components.** `HttpContext` is only available during the initial HTTP request. After the SignalR circuit is established (InteractiveServer) or the WASM runtime loads, it is `null`. Use `AuthenticationStateProvider` or `CascadingAuthenticationState` instead.
-2. **Do not use cookie auth for WASM API calls.** Blazor WebAssembly runs in the browser and makes cross-origin API calls. Use token-based auth (JWT/OIDC) with `AuthorizationMessageHandler`.
+2. **Do not rely on cookies for cross-origin or delegated API access in WASM.** Use OIDC/JWT with `AuthorizationMessageHandler` for cross-origin APIs. Same-origin and Backend-for-Frontend (BFF) cookie auth remains valid for WASM apps.
 3. **Do not render login/logout pages in Interactive mode.** `SignInManager` requires `HttpContext` to set/clear cookies. Login and logout pages must use Static SSR render mode.
 4. **Do not store tokens in `localStorage` without considering XSS.** If the app is vulnerable to XSS, tokens in `localStorage` can be stolen. Use `sessionStorage` (cleared on tab close) or the OIDC library's built-in storage mechanisms with PKCE.
 5. **Do not forget `AddCascadingAuthenticationState()`.** Without it, `[CascadingParameter] Task<AuthenticationState>` is always `null` in components, silently breaking auth checks.

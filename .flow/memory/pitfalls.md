@@ -147,3 +147,6 @@ File magic-byte validation must use exact full signatures (PNG=8 bytes starting 
 
 ## 2026-02-13 manual [pitfall]
 Soft cross-refs (skills that may not exist yet) must be explicitly excluded from validation commands — don't mix them with hard cross-refs in acceptance checks or CI will fail
+
+## 2026-02-13 manual [pitfall]
+Agent Gotchas section must be internally consistent with the skill body -- if guidance is nuanced (e.g., cookie auth valid for same-origin), gotchas must not use absolute prohibitions that contradict it
