@@ -150,3 +150,6 @@ Soft cross-refs (skills that may not exist yet) must be explicitly excluded from
 
 ## 2026-02-13 manual [pitfall]
 Agent Gotchas section must be internally consistent with the skill body -- if guidance is nuanced (e.g., cookie auth valid for same-origin), gotchas must not use absolute prohibitions that contradict it
+
+## 2026-02-13 manual [pitfall]
+MCP tool documentation must use fully qualified tool IDs (mcp__server__tool_name) in all actionable examples -- unprefixed shorthand causes call failures when agents invoke tools literally

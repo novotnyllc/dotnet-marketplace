@@ -66,12 +66,12 @@ Published output is a self-contained static site. No server-side runtime require
 - **No filesystem access:** Use browser storage APIs (IndexedDB, localStorage) via JS interop or Uno.Storage
 - **Threading limitations:** Web Workers provide limited multi-threading; `Task.Run` may not parallelize on WASM
 - **CORS restrictions:** HTTP requests from WASM are subject to browser CORS policy
-- **Initial load time:** The .NET WASM runtime and assemblies must download before the app is usable. Use AOT and assembly trimming to reduce payload size
+- **Initial load time:** The .NET WASM runtime and assemblies must download before the app is usable. Use assembly trimming to reduce download size. AOT improves runtime execution speed but increases artifact size
 - **Deep linking:** Configure URL routing in the Uno Navigation Extensions for browser URL bar navigation
 
 ### AOT/Trimming
 
-AOT compilation significantly improves WASM startup performance by pre-compiling IL to WebAssembly.
+**Trimming** reduces download size by removing unused code. **AOT** pre-compiles IL to WebAssembly, improving runtime execution speed but increasing artifact size. Use both together and measure the tradeoffs for your app.
 
 ```xml
 <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-browserwasm'">
@@ -80,7 +80,7 @@ AOT compilation significantly improves WASM startup performance by pre-compiling
 </PropertyGroup>
 ```
 
-**Trimming is critical for WASM.** Untrimmed apps can exceed 30MB. With trimming and AOT, typical apps are 5-15MB.
+**Trimming is critical for WASM.** Untrimmed apps can exceed 30MB. With trimming, typical apps are 5-15MB. AOT adds to the artifact size but eliminates interpreter overhead at runtime -- profile both download time and execution speed in target conditions.
 
 For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see the AOT section. For general WASM AOT patterns, see [skill:dotnet-aot-wasm] (may not exist yet).
 

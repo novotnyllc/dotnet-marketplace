@@ -289,9 +289,11 @@ OIDC, custom auth providers, and token management. Integrates with navigation fo
 ```csharp
 .UseAuthentication(auth =>
     auth.AddOidc(oidc =>
-        oidc.Authority = "https://login.example.com"
-            .ClientId = "my-app"
-            .Scope = "openid profile email"))
+    {
+        oidc.Authority = "https://login.example.com";
+        oidc.ClientId = "my-app";
+        oidc.Scope = "openid profile email";
+    }))
 ```
 
 Token management is automatic: tokens are stored securely per platform (Keychain on iOS/macOS, KeyStore on Android, Credential Manager on Windows, browser storage on WASM) and refreshed transparently.
