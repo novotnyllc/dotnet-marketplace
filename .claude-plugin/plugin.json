@@ -58,6 +58,8 @@
     "skills/ui-frameworks/dotnet-uno-platform",
     "skills/ui-frameworks/dotnet-uno-targets",
     "skills/ui-frameworks/dotnet-uno-mcp",
+    "skills/ui-frameworks/dotnet-maui-development",
+    "skills/ui-frameworks/dotnet-maui-aot",
     "skills/agent-meta-skills/dotnet-agent-gotchas",
     "skills/agent-meta-skills/dotnet-build-analysis",
     "skills/agent-meta-skills/dotnet-csproj-reading",

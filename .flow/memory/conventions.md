@@ -39,3 +39,6 @@ Agent preloaded skills must include foundation skills (version-detection, projec
 
 ## 2026-02-13 manual [convention]
 Quick command counts (grep -c) break when other epics add files to the same directory — use explicit per-file checks instead
+
+## 2026-02-13 manual [convention]
+New framework epics must match fn-13 parity: scope table, content coverage tables, agent schema with trigger lexicon, scope boundaries matrix, cross-ref classification (hard/soft), serial task deps, quick commands, 15+ acceptance criteria, and restructure validation task (task N) to match cross-refs+validate pattern
