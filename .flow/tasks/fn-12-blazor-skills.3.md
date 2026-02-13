@@ -58,9 +58,8 @@ echo "OK: no duplicate advisor IDs"
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Added [skill:dotnet-blazor-patterns] cross-reference to dotnet-realtime-communication SKILL.md (Out of scope and Cross-references sections). Verified reverse cross-refs in dotnet-blazor-testing already present, no duplicate skill IDs in advisor catalog, all hard cross-references resolve, and validate-skills.sh passes.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 9d1a95cae24158a4aab0644673be26970ba11ff5
+- Tests: ./scripts/validate-skills.sh
 - PRs:
