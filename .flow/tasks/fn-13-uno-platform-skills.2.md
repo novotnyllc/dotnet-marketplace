@@ -29,9 +29,8 @@ Create the `dotnet-uno-specialist` agent following the established pattern from 
 - [ ] Pattern consistency with `agents/dotnet-blazor-specialist.md` verified
 
 ## Done summary
-TBD
-
+Created dotnet-uno-specialist agent at agents/dotnet-uno-specialist.md following the Blazor specialist pattern. Agent preloads 5 skills (dotnet-uno-platform, dotnet-uno-targets, dotnet-uno-mcp, dotnet-version-detection, dotnet-project-analysis), defines a 4-step workflow (detect context, identify targets, recommend patterns, delegate), includes all 11 trigger phrases, documents delegation boundaries for testing/AOT/framework-selection, and is registered in plugin.json.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: d0f0e98b06d636654a2ddf09296fca0fa6838d71
+- Tests: ./scripts/validate-skills.sh
 - PRs:
