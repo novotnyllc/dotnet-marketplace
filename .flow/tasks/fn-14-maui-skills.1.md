@@ -36,9 +36,8 @@ Create two MAUI skills covering development patterns with honest current-state a
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created dotnet-maui-development (project structure, XAML/MVVM, platform services, .NET 11 improvements, honest current-state assessment, migration options) and dotnet-maui-aot (Native AOT pipeline for iOS/Mac Catalyst, size/startup gains, library compatibility matrix, ILLink trimming, testing workflow) skills. Both registered in plugin.json and present in dotnet-advisor catalog with proper cross-references.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 109d04e, 02ca624, 99306cd
+- Tests: ./scripts/validate-skills.sh
 - PRs:
