@@ -627,7 +627,7 @@ dotnet run --project MyApp/MyApp.csproj -f net8.0-android
 1. **Do not create separate platform projects.** MAUI uses a single-project structure. Platform-specific code goes in the `Platforms/` folder within the same project, not in separate Android/iOS projects (that was Xamarin.Forms).
 2. **Do not mix MVVM Toolkit attributes with manual `INotifyPropertyChanged`.** Use `[ObservableProperty]` consistently. Mixing source-generated and hand-written property changed implementations causes subtle binding bugs.
 3. **Do not call async methods in constructors.** Use `OnAppearing()` or a loaded command to trigger data loading. Constructor async calls cause unobserved exceptions and race conditions with binding context initialization.
-4. **Do not use `Device.BeginInvokeOnMainThread`.** It is deprecated. Use `MainThread.InvokeOnMainThreadAsync()` from `Microsoft.Maui.ApplicationModel` instead.
+4. **Do not use `Device.BeginInvokeOnMainThread`.** It is deprecated. Use `MainThread.BeginInvokeOnMainThread()` or `MainThread.InvokeOnMainThreadAsync()` from `Microsoft.Maui.ApplicationModel` instead.
 5. **Do not hardcode platform checks with `RuntimeInformation`.** Use `DeviceInfo.Platform` comparisons (`DevicePlatform.Android`, `DevicePlatform.iOS`) which are MAUI's cross-platform abstraction for platform detection.
 6. **Do not use `{Binding}` without `x:DataType`.** Always set `x:DataType` on the page and data templates to enable compiled bindings. Reflection-based bindings are slower and not caught at build time.
 7. **Do not register pages as Singleton in DI.** Pages should be Transient so each navigation creates a fresh instance with correct lifecycle. Singleton pages cause stale data and memory leaks from retained bindings.

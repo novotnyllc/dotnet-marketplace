@@ -140,7 +140,7 @@ Many .NET libraries are not fully AOT-compatible. Common compatibility issues st
 | HttpClient | Compatible | Standard usage works |
 | MAUI Essentials | Compatible | Platform APIs are AOT-safe |
 | SQLite-net | Compatible | Uses P/Invoke, AOT-safe |
-| Refit | Breaks | Use source-gen Refit (Refit.GeneratorAttribute) |
+| Refit | Breaks | Use Refit source generators (`Refit.Generator` package) |
 | FluentValidation | Partial | Avoid runtime expression compilation |
 
 ### Detecting Incompatible Code
@@ -203,35 +203,47 @@ When a specific library is not AOT-compatible, you can preserve it from trimming
 
 Native AOT requires trimming. When `PublishAot` is true, trimming is automatically enabled. Understanding trimming configuration is essential for a successful AOT build.
 
-### RD.xml for Reflection Preservation
+### ILLink Descriptors for Reflection Preservation
 
-When code uses reflection that the trimmer cannot statically analyze, use an RD.xml (Runtime Directives) file to preserve types:
+When code uses reflection that the trimmer cannot statically analyze, use an ILLink descriptor XML file to preserve types. You can also use `[DynamicDependency]` attributes for fine-grained preservation in code.
+
+**ILLink descriptor XML (preferred for bulk preservation):**
 
 ```xml
-<!-- rd.xml -- preserve types needed at runtime -->
-<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
-  <Application>
-    <!-- Preserve all public members of a type -->
-    <Type Name="MyApp.Models.LegacyConfig" Dynamic="Required All" />
+<!-- ILLink.Descriptors.xml -- preserve types needed at runtime -->
+<linker>
+  <!-- Preserve all public members of a type -->
+  <assembly fullname="MyApp">
+    <type fullname="MyApp.Models.LegacyConfig" preserve="all" />
+    <type fullname="MyApp.Services.PluginLoader">
+      <method name="LoadPlugin" />
+    </type>
+  </assembly>
 
-    <!-- Preserve a specific method -->
-    <Type Name="MyApp.Services.PluginLoader">
-      <Method Name="LoadPlugin" Dynamic="Required" />
-    </Type>
-
-    <!-- Preserve all types in a namespace -->
-    <Assembly Name="MyApp">
-      <Namespace Name="MyApp.Models" Dynamic="Required All" />
-    </Assembly>
-  </Application>
-</Directives>
+  <!-- Preserve all types in an external assembly -->
+  <assembly fullname="IncompatibleLibrary" preserve="all" />
+</linker>
 ```
 
 ```xml
-<!-- Register the RD.xml file in .csproj -->
+<!-- Register the descriptor in .csproj -->
 <ItemGroup>
-  <RdXmlFile Include="rd.xml" />
+  <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
 </ItemGroup>
+```
+
+**`[DynamicDependency]` attribute (preferred for targeted preservation):**
+
+```csharp
+using System.Diagnostics.CodeAnalysis;
+
+// Preserve a specific method on a type
+[DynamicDependency(nameof(LegacyConfig.Initialize), typeof(LegacyConfig))]
+public void ConfigureApp() { /* ... */ }
+
+// Preserve all public members of a type
+[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(LegacyConfig))]
+public void LoadPlugins() { /* ... */ }
 ```
 
 ### Source Generator Alternatives
