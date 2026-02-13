@@ -432,6 +432,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ProductListPage>();
         builder.Services.AddTransient<ProductDetailPage>();
 
+        // For DI patterns beyond MAUI-specific registration, see [skill:dotnet-csharp-dependency-injection]
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
@@ -444,6 +446,8 @@ public static class MauiProgram
 ---
 
 ## Current State Assessment (Feb 2026)
+
+> **Last verified: 2026-02-13**
 
 ### Production Readiness
 
@@ -534,6 +538,8 @@ For the full framework decision tree, see [skill:dotnet-ui-chooser] (may not exi
 
 ## .NET 11 Improvements
 
+> **Last verified: 2026-02-13**
+
 ### XAML Source Gen (Default in .NET 11 Preview 1)
 
 .NET 11 Preview 1 makes XAML source generation the default XAML compilation mode, replacing the traditional XAMLC (XamlCompilationAttribute) approach. Source-generated XAML is AOT-friendly, produces better diagnostics, and enables faster startup.
@@ -599,7 +605,8 @@ MAUI supports both XAML Hot Reload and C# Hot Reload, but capabilities vary by p
 |-------------|---------|-----|-------|---------|
 | XAML layout/styling | Yes | Yes | Yes | Yes |
 | C# method bodies | Yes | Yes | Yes | Yes |
-| New methods/properties | Rebuild | Rebuild | Rebuild | Rebuild |
+| New instance methods (non-generic classes) | Partial (.NET 9+) | Partial (.NET 9+) | Partial (.NET 9+) | Partial (.NET 9+) |
+| New static methods / generic type members | Rebuild | Rebuild | Rebuild | Rebuild |
 | Resource dictionary | Yes | Yes | Yes | Yes |
 | Add new XAML page | Rebuild | Rebuild | Rebuild | Rebuild |
 | CSS changes | Yes | Yes | Yes | Yes |
@@ -630,7 +637,7 @@ dotnet run --project MyApp/MyApp.csproj -f net8.0-android
 4. **Do not use `Device.BeginInvokeOnMainThread`.** It is deprecated. Use `MainThread.BeginInvokeOnMainThread()` or `MainThread.InvokeOnMainThreadAsync()` from `Microsoft.Maui.ApplicationModel` instead.
 5. **Do not hardcode platform checks with `RuntimeInformation`.** Use `DeviceInfo.Platform` comparisons (`DevicePlatform.Android`, `DevicePlatform.iOS`) which are MAUI's cross-platform abstraction for platform detection.
 6. **Do not use `{Binding}` without `x:DataType`.** Always set `x:DataType` on the page and data templates to enable compiled bindings. Reflection-based bindings are slower and not caught at build time.
-7. **Do not register pages as Singleton in DI.** Pages should be Transient so each navigation creates a fresh instance with correct lifecycle. Singleton pages cause stale data and memory leaks from retained bindings.
+7. **Pages should generally be Transient, not Singleton.** Singleton pages cause stale data and memory leaks from retained bindings. If state preservation is needed (e.g., tabbed pages), use a Singleton ViewModel with a Transient page.
 8. **Do not forget to register Shell routes for non-tab pages.** Pages pushed onto the navigation stack (via `GoToAsync`) must be registered with `Routing.RegisterRoute` in `AppShell` constructor, or navigation throws `RouteNotFoundException`.
 
 ---

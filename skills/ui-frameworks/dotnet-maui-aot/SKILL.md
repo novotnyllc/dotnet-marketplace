@@ -9,7 +9,7 @@ Native AOT compilation for .NET MAUI on iOS and Mac Catalyst: compilation pipeli
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for MAUI is available on iOS and Mac Catalyst. Android uses a different compilation model (CoreCLR in .NET 11, Mono/AOT in .NET 8-10).
 
-**Scope boundary:** This skill owns MAUI-specific Native AOT on iOS/Mac Catalyst -- the compilation pipeline, publish configuration, size/startup improvements, library compatibility for MAUI apps, and testing AOT builds. General Native AOT patterns and architecture are owned by [skill:dotnet-native-aot] (may not exist yet).
+**Scope boundary:** This skill owns MAUI-specific Native AOT on iOS/Mac Catalyst -- the compilation pipeline, publish configuration, size/startup improvements, library compatibility for MAUI apps, and testing AOT builds. General Native AOT patterns are owned by [skill:dotnet-native-aot]; AOT architecture decisions by [skill:dotnet-aot-architecture] (both may not exist yet).
 
 **Out of scope:** MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]. MAUI testing -- see [skill:dotnet-maui-testing]. WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm] (may not exist yet). General AOT architecture -- see [skill:dotnet-native-aot] (may not exist yet).
 
@@ -140,7 +140,7 @@ Many .NET libraries are not fully AOT-compatible. Common compatibility issues st
 | HttpClient | Compatible | Standard usage works |
 | MAUI Essentials | Compatible | Platform APIs are AOT-safe |
 | SQLite-net | Compatible | Uses P/Invoke, AOT-safe |
-| Refit | Breaks | Use Refit source generators (`Refit.Generator` package) |
+| Refit | Breaks | Use Refit 7+ (includes source generator; enable with `[GenerateRefitClient]`) |
 | FluentValidation | Partial | Avoid runtime expression compilation |
 
 ### Detecting Incompatible Code
@@ -205,6 +205,8 @@ Native AOT requires trimming. When `PublishAot` is true, trimming is automatical
 
 ### ILLink Descriptors for Reflection Preservation
 
+> **Note:** In Xamarin/Mono-era documentation, these were called "rd.xml" (Runtime Directives). In .NET 8+ Native AOT, use ILLink descriptor XML files instead.
+
 When code uses reflection that the trimmer cannot statically analyze, use an ILLink descriptor XML file to preserve types. You can also use `[DynamicDependency]` attributes for fine-grained preservation in code.
 
 **ILLink descriptor XML (preferred for bulk preservation):**
@@ -247,6 +249,8 @@ public void LoadPlugins() { /* ... */ }
 ```
 
 ### Source Generator Alternatives
+
+When source generators aren't available, use `[DynamicDependency]` attributes (shown above) for targeted preservation without ILLink XML files.
 
 Prefer source generators over reflection to avoid trimming issues entirely:
 
@@ -319,6 +323,7 @@ dotnet publish -f net8.0-ios -c Release -r iossimulator-arm64 /p:PublishAot=true
 xharness apple test \
     --app bin/Release/net8.0-ios/iossimulator-arm64/publish/MyApp.app \
     --target ios-simulator-64 \
+    --timeout 00:10:00 \
     --output-directory test-results/aot
 ```
 
