@@ -5,7 +5,7 @@ description: "WHEN generating or customizing OpenAPI docs. MS.AspNetCore.OpenApi
 
 # dotnet-openapi
 
-OpenAPI/Swagger integration for ASP.NET Core. Microsoft.AspNetCore.OpenApi is the built-in, recommended approach for .NET 9+ and is the default for all new projects. Swashbuckle is no longer actively maintained; existing projects using Swashbuckle should plan migration. NSwag remains an alternative for client generation and advanced scenarios.
+OpenAPI/Swagger integration for ASP.NET Core. Microsoft.AspNetCore.OpenApi is the recommended first-party approach for .NET 9+ and is the default in new project templates. Swashbuckle is no longer actively maintained; existing projects using Swashbuckle should plan migration. NSwag remains an alternative for client generation and advanced scenarios.
 
 **Out of scope:** Minimal API endpoint patterns (route groups, filters, TypedResults) -- see [skill:dotnet-minimal-apis]. API versioning strategies -- see [skill:dotnet-api-versioning]. Authentication and authorization -- see [skill:dotnet-api-security].
 
@@ -15,13 +15,14 @@ Cross-references: [skill:dotnet-minimal-apis] for endpoint patterns that generat
 
 ## Microsoft.AspNetCore.OpenApi (Recommended)
 
-The built-in OpenAPI package ships with ASP.NET Core 9+ and is the default for new projects. .NET 10 adds OpenAPI 3.1 support with JSON Schema draft 2020-12 compliance.
+Microsoft.AspNetCore.OpenApi is the first-party OpenAPI package for ASP.NET Core 9+ and is included by default in new project templates. .NET 10 adds OpenAPI 3.1 support with JSON Schema draft 2020-12 compliance.
 
 ### Basic Setup
 
 ```csharp
-// Microsoft.AspNetCore.OpenApi is included in the ASP.NET Core shared framework (.NET 9+)
-// No additional NuGet package needed for .NET 9+
+// Microsoft.AspNetCore.OpenApi -- included by default in .NET 9+ project templates
+// If not present, add: <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.*" />
+// Version must match the project's target framework major version
 
 builder.Services.AddOpenApi();
 
@@ -319,6 +320,7 @@ nswag openapi2csclient /input:https://api.example.com/openapi/v1.json \
 
 ```csharp
 // .NET 10: OpenAPI 3.1 is the default
+// <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.*" />
 builder.Services.AddOpenApi(options =>
 {
     // Explicitly set version if needed (3.1 is default in .NET 10)
@@ -332,7 +334,7 @@ builder.Services.AddOpenApi(options =>
 
 ## Agent Gotchas
 
-1. **Do not install `Microsoft.AspNetCore.OpenApi` as a NuGet package on .NET 9+** -- it is included in the ASP.NET Core shared framework. Adding the package explicitly can cause version conflicts.
+1. **Do not pin mismatched major versions of `Microsoft.AspNetCore.OpenApi`** -- the package version must match the project's target framework major version. Do not mix incompatible OpenAPI stacks (e.g., Swashbuckle + built-in) in the same project.
 2. **Do not recommend Swashbuckle for new .NET 9+ projects** -- it is no longer actively maintained. Use the built-in `Microsoft.AspNetCore.OpenApi` instead.
 3. **Do not say Swashbuckle is "deprecated"** -- it is not formally deprecated, but it is no longer actively maintained. Say "preferred" or "recommended" when referring to the built-in alternative.
 4. **Do not forget the Swagger UI replacement** -- `MapOpenApi()` only serves the raw JSON spec. Add Scalar, Swagger UI standalone, or another UI separately.
@@ -343,7 +345,7 @@ builder.Services.AddOpenApi(options =>
 
 ## Prerequisites
 
-- .NET 9.0+ for `Microsoft.AspNetCore.OpenApi` (included in shared framework)
+- .NET 9.0+ for `Microsoft.AspNetCore.OpenApi` (included in default project templates)
 - .NET 10.0 for OpenAPI 3.1, JSON Schema draft 2020-12, and Scalar integration
 - `NSwag.AspNetCore` (optional) for NSwag-based generation and UI
 - `Swashbuckle.AspNetCore` (legacy) for existing projects not yet migrated
