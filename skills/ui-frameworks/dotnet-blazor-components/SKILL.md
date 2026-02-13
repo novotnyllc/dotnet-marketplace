@@ -85,11 +85,11 @@ Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render m
 
 ### Lifecycle Behavior per Render Mode
 
-| Lifecycle Event | Static SSR | InteractiveServer | InteractiveWebAssembly | Hybrid |
-|---|---|---|---|---|
-| `OnInitialized(Async)` | Runs on server | Runs on server | Runs in browser | Runs in-process |
-| `OnAfterRender(Async)` | Never called | Runs on server after SignalR confirms render | Runs in browser after DOM update | Runs after WebView render |
-| `Dispose(Async)` | Called after response | Called when circuit ends | Called on component removal | Called on component removal |
+| Lifecycle Event | Static SSR | InteractiveServer | InteractiveWebAssembly | InteractiveAuto | Hybrid |
+|---|---|---|---|---|---|
+| `OnInitialized(Async)` | Runs on server | Runs on server | Runs in browser | Server on first load, browser after WASM cached | Runs in-process |
+| `OnAfterRender(Async)` | Never called | Runs on server after SignalR confirms render | Runs in browser after DOM update | Server-side then browser-side (matches active runtime) | Runs after WebView render |
+| `Dispose(Async)` | Called after response | Called when circuit ends | Called on component removal | Called when circuit ends (Server phase) or on removal (WASM phase) | Called on component removal |
 
 **Gotcha:** In Static SSR, `OnAfterRender` never executes because there is no persistent connection. Do not place critical logic in `OnAfterRender` for Static SSR pages.
 
@@ -144,11 +144,11 @@ builder.Services.AddSingleton<AppState>();
 
 **DI lifetime behavior per render mode:**
 
-| Lifetime | InteractiveServer | InteractiveWebAssembly | Hybrid |
-|---|---|---|---|
-| Singleton | Shared across all circuits on the server | One per browser tab | One per app instance |
-| Scoped | One per circuit (acts like per-user) | One per browser tab (same as Singleton) | One per app instance (same as Singleton) |
-| Transient | New instance each injection | New instance each injection | New instance each injection |
+| Lifetime | InteractiveServer | InteractiveWebAssembly | InteractiveAuto | Hybrid |
+|---|---|---|---|---|
+| Singleton | Shared across all circuits on the server | One per browser tab | Server-shared during Server phase; per-tab after WASM switch | One per app instance |
+| Scoped | One per circuit (acts like per-user) | One per browser tab (same as Singleton) | Per-circuit (Server phase), per-tab (WASM phase) -- state does not transfer between phases | One per app instance (same as Singleton) |
+| Transient | New instance each injection | New instance each injection | New instance each injection | New instance each injection |
 
 **Gotcha:** In Blazor Server, `Scoped` services live for the entire circuit duration (not per-request like in MVC). A circuit persists until the user navigates away or the connection drops. Long-lived scoped services may accumulate state -- use `OwningComponentBase<T>` for component-scoped DI.
 
@@ -285,12 +285,12 @@ export function registerCallback(dotNetRef) {
 
 ### JS Interop per Render Mode
 
-| Concern | InteractiveServer | InteractiveWebAssembly | Hybrid |
-|---|---|---|---|
-| JS call timing | After SignalR confirms render | After WASM runtime loads | After WebView loads |
-| `OnAfterRender` available | Yes | Yes | Yes |
-| IJSRuntime sync calls | Not supported (async only) | `IJSInProcessRuntime` available | `IJSInProcessRuntime` available |
-| Module imports | Via SignalR (latency) | Direct (fast) | Direct (fast) |
+| Concern | InteractiveServer | InteractiveWebAssembly | InteractiveAuto | Hybrid |
+|---|---|---|---|---|
+| JS call timing | After SignalR confirms render | After WASM runtime loads | SignalR initially, then direct after WASM switch | After WebView loads |
+| `OnAfterRender` available | Yes | Yes | Yes | Yes |
+| IJSRuntime sync calls | Not supported (async only) | `IJSInProcessRuntime` available | Async-only during Server phase; `IJSInProcessRuntime` after WASM switch | `IJSInProcessRuntime` available |
+| Module imports | Via SignalR (latency) | Direct (fast) | SignalR (Server phase), direct (WASM phase) | Direct (fast) |
 
 **Gotcha:** In InteractiveServer, all JS interop calls travel over SignalR, adding network latency. Minimize round trips by batching operations into a single JS function call.
 

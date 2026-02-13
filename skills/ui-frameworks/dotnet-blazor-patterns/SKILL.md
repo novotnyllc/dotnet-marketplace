@@ -415,6 +415,61 @@ State computed during prerendering is lost when the component reinitializes inte
 
 ---
 
+## .NET 10 Stable Features
+
+These features are available when `net10.0` TFM is detected. They are stable and require no preview opt-in.
+
+### WebAssembly Preloading
+
+.NET 10 adds `blazor.web.js` preloading of WebAssembly assemblies during the Server phase of InteractiveAuto. When the user first loads a page, the WASM runtime and app assemblies download in the background while the Server circuit handles interactivity. Subsequent navigations switch to WASM faster because assemblies are already cached.
+
+```razor
+<!-- No code changes needed -- preloading is automatic in .NET 10 -->
+<!-- Verify in browser DevTools Network tab: assemblies download during Server phase -->
+```
+
+### Enhanced Form Validation
+
+.NET 10 extends `EditForm` validation with improved error message formatting and support for `IValidatableObject` in Static SSR forms. Validation messages render correctly with enhanced form handling (`Enhance` attribute) without requiring a full page reload.
+
+```csharp
+// IValidatableObject works in Static SSR enhanced forms in .NET 10
+public sealed class OrderModel : IValidatableObject
+{
+    [Required]
+    public string ProductId { get; set; } = "";
+
+    [Range(1, 100)]
+    public int Quantity { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext context)
+    {
+        if (ProductId == "DISCONTINUED" && Quantity > 0)
+        {
+            yield return new ValidationResult(
+                "Cannot order discontinued products",
+                [nameof(ProductId), nameof(Quantity)]);
+        }
+    }
+}
+```
+
+### Blazor Diagnostics Middleware
+
+.NET 10 adds `MapBlazorDiagnostics` middleware for inspecting Blazor circuit and component state in development:
+
+```csharp
+// Program.cs -- available in .NET 10
+if (app.Environment.IsDevelopment())
+{
+    app.MapBlazorDiagnostics(); // Exposes /_blazor/diagnostics endpoint
+}
+```
+
+The diagnostics endpoint shows active circuits, component tree, render mode assignments, and timing data. Use it to debug render mode boundaries and component lifecycle issues during development.
+
+---
+
 ## Agent Gotchas
 
 1. **Do not default to InteractiveServer for every page.** Static SSR is the default and most efficient render mode. Only add interactivity where user interaction requires it.
@@ -429,7 +484,7 @@ State computed during prerendering is lost when the component reinitializes inte
 ## Prerequisites
 
 - .NET 8.0+ (Blazor Web App template, render modes, enhanced navigation, streaming rendering)
-- .NET 10.0 for stable enhanced features (WebAssembly preloading, enhanced form validation)
+- .NET 10.0 for stable enhanced features (WebAssembly preloading, enhanced form validation, diagnostics middleware)
 - MAUI workload for Blazor Hybrid (`dotnet workload install maui`)
 
 ---
