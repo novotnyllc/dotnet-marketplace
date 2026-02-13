@@ -47,9 +47,8 @@ Create the `dotnet-openapi` and `dotnet-api-security` skills covering OpenAPI/Sw
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Added dotnet-openapi skill (Microsoft.AspNetCore.OpenApi, Swashbuckle migration, NSwag, document/operation/schema transformers, OpenAPI 3.1) and dotnet-api-security skill (Identity, OAuth/OIDC, JWT bearer, passkeys/WebAuthn, CORS, CSP, rate limiting). Updated OWASP skill scope text for auth ownership split, advisor catalog/routing entries, and plugin.json registration.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 084e790, 983b30a
+- Tests: ./scripts/validate-skills.sh
 - PRs:

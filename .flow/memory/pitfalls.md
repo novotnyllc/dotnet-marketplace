@@ -135,3 +135,6 @@ dotnet publish --no-actual-publish is not a valid CLI switch; use 'dotnet build 
 
 ## 2026-02-12 manual [pitfall]
 MVC controller [controller] route token resolves to class name -- versioned controllers like ProductsV2Controller produce /ProductsV2 not /products. Use explicit route segments for versioned controllers.
+
+## 2026-02-13 manual [pitfall]
+Microsoft.AspNetCore.OpenApi is a NuGet package included in default project templates, not part of the ASP.NET Core shared framework -- it requires an explicit PackageReference with version matching the target framework major
