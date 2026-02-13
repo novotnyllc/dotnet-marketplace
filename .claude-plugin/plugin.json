@@ -63,7 +63,8 @@
   "agents": [
     "agents/dotnet-architect.md",
     "agents/dotnet-csharp-concurrency-specialist.md",
-    "agents/dotnet-security-reviewer.md"
+    "agents/dotnet-security-reviewer.md",
+    "agents/dotnet-blazor-specialist.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"
