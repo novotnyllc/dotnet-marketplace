@@ -39,9 +39,8 @@ Document in `dotnet-blazor-patterns`: source-gen serialization, trim-safe JS int
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created three Blazor SKILL.md files (dotnet-blazor-patterns, dotnet-blazor-components, dotnet-blazor-auth) covering all five hosting models/render modes, component lifecycle, state management, JS interop, EditForm validation, QuickGrid, auth flows, AOT-safe patterns, and .NET 11 preview features. Registered all 3 skills in plugin.json and added reverse cross-refs to dotnet-blazor-testing.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 79e96e0, 2a04eed, bde6e0e
+- Tests: ./scripts/validate-skills.sh
 - PRs:
