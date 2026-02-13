@@ -153,3 +153,6 @@ Agent Gotchas section must be internally consistent with the skill body -- if gu
 
 ## 2026-02-13 manual [pitfall]
 MCP tool documentation must use fully qualified tool IDs (mcp__server__tool_name) in all actionable examples -- unprefixed shorthand causes call failures when agents invoke tools literally
+
+## 2026-02-13 manual [pitfall]
+WASM AOT and trimming have opposite size effects: trimming reduces download size, AOT increases artifact size (but improves runtime speed) -- do not conflate them as both reducing payload

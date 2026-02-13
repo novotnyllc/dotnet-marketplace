@@ -109,7 +109,7 @@ Requires Xcode installed on macOS. The iOS target uses the Uno Skia renderer (Un
 
 ### Debugging
 
-- **Visual Studio for Mac / VS Code:** Attach to iOS simulator or device
+- **Visual Studio (Pair to Mac) / VS Code + C# Dev Kit / Rider:** Attach to iOS simulator or device
 - **Xcode Instruments:** Profile CPU, memory, and energy usage
 - **Hot Reload:** Supported via `DOTNET_MODIFIABLE_ASSEMBLIES=debug`
 
@@ -178,13 +178,13 @@ Requires Android SDK (installed via `dotnet workload install android` or Android
 ### Packaging/Distribution
 
 ```bash
-# Publish signed APK/AAB
+# Publish signed APK/AAB (use env vars or CI secrets for passwords — never hardcode)
 dotnet publish -f net8.0-android -c Release \
   /p:AndroidKeyStore=true \
   /p:AndroidSigningKeyStore=mykey.keystore \
-  /p:AndroidSigningStorePass=password \
+  /p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASS" \
   /p:AndroidSigningKeyAlias=myalias \
-  /p:AndroidSigningKeyPass=password
+  /p:AndroidSigningKeyPass="$ANDROID_KEY_PASS"
 ```
 
 Google Play requires Android App Bundle (AAB) format. Sideloading uses APK.

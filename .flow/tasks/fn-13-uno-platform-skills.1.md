@@ -38,9 +38,8 @@ Create three Uno Platform skills covering the core ecosystem, per-target deploym
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created three Uno Platform skills: dotnet-uno-platform (Extensions ecosystem with 8 modules, MVUX, Toolkit, themes, Hot Reload), dotnet-uno-targets (per-target guidance for all 7 platforms with setup/debugging/packaging/gotchas/AOT), and dotnet-uno-mcp (MCP server integration with detection, search-fetch workflow, init rules, fallback, citation). All registered in plugin.json and verified in dotnet-advisor catalog.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6d6f913, f76b399, e61ee09
+- Tests: ./scripts/validate-skills.sh
 - PRs:
