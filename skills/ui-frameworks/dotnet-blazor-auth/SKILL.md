@@ -47,7 +47,7 @@ builder.Services.AddAuthorization();
 
 ### InteractiveWebAssembly Auth
 
-WASM runs in the browser and cannot use cookies directly for API calls. Use token-based auth (OIDC/JWT):
+WASM runs in the browser. Cookie auth works for same-origin APIs (and Backend-for-Frontend / BFF patterns), but token-based auth (OIDC/JWT) is the standard approach for cross-origin APIs and delegated access scenarios:
 
 ```csharp
 // Client Program.cs (WASM)
@@ -61,10 +61,15 @@ builder.Services.AddOidcAuthentication(options =>
 ```
 
 ```csharp
-// Custom AuthorizationMessageHandler for API calls
+// Attach tokens to API calls using BaseAddressAuthorizationMessageHandler
+// (auto-attaches tokens for requests to the app's base address)
 builder.Services.AddHttpClient("API", client =>
     client.BaseAddress = new Uri("https://api.example.com"))
-    .AddHttpMessageHandler<AuthorizationMessageHandler>();
+    .AddHttpMessageHandler(sp =>
+        sp.GetRequiredService<AuthorizationMessageHandler>()
+            .ConfigureHandler(
+                authorizedUrls: ["https://api.example.com"],
+                scopes: ["api"]));
 
 builder.Services.AddScoped(sp =>
     sp.GetRequiredService<IHttpClientFactory>().CreateClient("API"));

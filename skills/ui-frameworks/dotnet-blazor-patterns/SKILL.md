@@ -64,7 +64,7 @@ Blazor Web App (.NET 8+) is the default project template, replacing the separate
 <Counter @rendermode="InteractiveWebAssembly" />
 ```
 
-**Gotcha:** A child component cannot request a more interactive render mode than its parent. A Static SSR parent cannot host an InteractiveServer child -- the parent must also be interactive or use a render mode boundary.
+**Gotcha:** Without an explicit render mode boundary, a child component cannot request a more interactive render mode than its parent. However, interactive islands are supported: you can place an `@rendermode` attribute on a component embedded in a Static SSR page to create a render mode boundary, enabling interactive children under otherwise static content.
 
 ---
 
