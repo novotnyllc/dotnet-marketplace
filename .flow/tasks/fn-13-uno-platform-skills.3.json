@@ -9,6 +9,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-13-uno-platform-skills.3.md",
   "status": "todo",
-  "title": "Integrate with UI chooser and AOT skills",
-  "updated_at": "2026-02-11T22:31:55.989849Z"
+  "title": "Add reverse cross-refs and validate integrations",
+  "updated_at": "2026-02-13T01:52:01.858639Z"
 }

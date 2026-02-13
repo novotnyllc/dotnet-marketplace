@@ -1,0 +1,83 @@
+{
+  "created_at": "2026-02-13T01:41:21.480915Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-13-uno-platform-skills",
+      "created_at": "2026-02-11T22:23:18.983787Z",
+      "depends_on_epics": [
+        "fn-3-core-c-and-language-patterns-skills",
+        "fn-7-testing-foundation-skills"
+      ],
+      "id": "fn-13-uno-platform-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-13-uno-platform-skills.md",
+      "status": "open",
+      "title": "Uno Platform Skills",
+      "updated_at": "2026-02-11T22:29:13.332976Z"
+    },
+    "spec": "# fn-13: Uno Platform Skills\n\n## Problem/Goal\nAdd comprehensive Uno Platform skills covering full ecosystem (Extensions, MVUX, Toolkit, Theme resources), multi-platform deployment, and MCP integration for live documentation lookups. Enable dotnet-uno-specialist agent to guide cross-platform development with Uno.\n\n## Acceptance Checks\n- [ ] `dotnet-uno-platform` skill covers Extensions (Navigation, DI, Config, Serialization), MVUX, Toolkit, themes\n- [ ] `dotnet-uno-targets` skill covers deployment by target: Web/WASM, Mobile, Desktop, Embedded\n- [ ] `dotnet-uno-mcp` skill leverages Uno MCP server, works standalone if unavailable\n- [ ] `dotnet-uno-specialist` agent configured with preloaded skills\n- [ ] Cross-references to dotnet-ui-chooser, dotnet-aot-wasm, dotnet-uno-testing\n\n## Key Context\n- Uno Platform MCP server integration for live doc lookups\n- Multi-platform targeting requires platform-specific guidance\n- WASM target benefits from AOT compilation\n- Skills must detect if Uno MCP is available and adapt accordingly\n"
+  },
+  "epic_id": "fn-13-uno-platform-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:55.709314Z",
+        "depends_on": [],
+        "epic": "fn-13-uno-platform-skills",
+        "id": "fn-13-uno-platform-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-13-uno-platform-skills.1.md",
+        "status": "todo",
+        "title": "Create Uno Platform skills (platform, targets, MCP)",
+        "updated_at": "2026-02-11T22:31:55.709497Z"
+      },
+      "id": "fn-13-uno-platform-skills.1",
+      "runtime": null,
+      "spec": "# fn-13-uno-platform-skills.1 Create Uno Platform skills (platform, targets, MCP)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:55.831653Z",
+        "depends_on": [],
+        "epic": "fn-13-uno-platform-skills",
+        "id": "fn-13-uno-platform-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-13-uno-platform-skills.2.md",
+        "status": "todo",
+        "title": "Create dotnet-uno-specialist agent",
+        "updated_at": "2026-02-11T22:31:55.831802Z"
+      },
+      "id": "fn-13-uno-platform-skills.2",
+      "runtime": null,
+      "spec": "# fn-13-uno-platform-skills.2 Create dotnet-uno-specialist agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:31:55.989700Z",
+        "depends_on": [],
+        "epic": "fn-13-uno-platform-skills",
+        "id": "fn-13-uno-platform-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-13-uno-platform-skills.3.md",
+        "status": "todo",
+        "title": "Integrate with UI chooser and AOT skills",
+        "updated_at": "2026-02-11T22:31:55.989849Z"
+      },
+      "id": "fn-13-uno-platform-skills.3",
+      "runtime": null,
+      "spec": "# fn-13-uno-platform-skills.3 Integrate with UI chooser and AOT skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
