@@ -283,8 +283,8 @@ AOT builds can behave differently from Debug/JIT builds. Always test on a real d
 
 | Failure | Symptom | Fix |
 |---------|---------|-----|
-| Missing type metadata | `MissingMetadataException` at runtime | Add type to RD.xml or use source gen |
-| Trimmed method | `MissingMethodException` | Add `[DynamicDependency]` or RD.xml entry |
+| Missing type metadata | `MissingMetadataException` at runtime | Add type to ILLink descriptor or use `[DynamicDependency]` |
+| Trimmed method | `MissingMethodException` | Add `[DynamicDependency]` or ILLink descriptor entry |
 | Dynamic code gen | `PlatformNotSupportedException` | Replace with source generator alternative |
 | Reflection-based serialization | Empty/null deserialized objects | Use `[JsonSerializable]` source gen |
 | Assembly scanning | Missing services at runtime | Register services explicitly in DI |
@@ -351,5 +351,5 @@ For MAUI testing patterns (Appium, XHarness), see [skill:dotnet-maui-testing].
 - [Native AOT Deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
 - [Trim Self-Contained Applications](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options)
 - [Prepare .NET Libraries for Trimming](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/prepare-libraries-for-trimming)
-- [Runtime Directives (RD.xml)](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options#runtime-directives)
+- [Trimming Descriptor Format](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options#descriptor-format)
 - [.NET 11 Preview 1 Announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-1/)
