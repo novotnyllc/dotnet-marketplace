@@ -82,9 +82,8 @@ Create `CONTRIBUTING.md` and `CHANGELOG.md` at the repo root. These files enable
   ```
 
 ## Done summary
-TBD
-
+Created CONTRIBUTING.md with skill authoring guide (frontmatter requirements, cross-reference syntax, description budget), agent authoring guide, PR process, all 4 validation commands, hooks/MCP reference, and prerequisites. Created CHANGELOG.md in Keep a Changelog format with v0.1.0 initial release documenting all 97 skills across 18 categories, 9 agents, hooks, MCP integrations, and cross-agent build pipeline.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: da26c8fafa119e84961bf36f092b02f76edb8972
+- Tests: grep validation commands in CONTRIBUTING.md, grep Keep a Changelog in CHANGELOG.md, grep version 0.1.0 in CHANGELOG.md, grep Agent Skills in CONTRIBUTING.md
 - PRs:
