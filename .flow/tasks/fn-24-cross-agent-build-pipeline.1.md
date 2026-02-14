@@ -30,3 +30,6 @@ Version stamping: reads version from `git describe --tags` and stamps `plugin.js
 - [ ] `dist/` added to `.gitignore`
 - [ ] Version stamped from git tags
 - [ ] Script runs without .NET SDK dependency (pure Python + bash)
+
+## Done summary
+<!-- filled by flowctl done -->
