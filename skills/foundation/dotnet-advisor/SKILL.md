@@ -126,12 +126,12 @@ Before any .NET guidance, determine the project's target framework:
 ### 14. Localization & Internationalization `planned`
 - [skill:dotnet-localization] -- i18n: .resx, IStringLocalizer, RTL, pluralization
 
-### 15. Packaging & Publishing `planned`
-- [skill:dotnet-nuget-modern] -- CPM, source generators, SourceLink, CI publish
+### 15. Packaging & Publishing `implemented`
+- [skill:dotnet-nuget-authoring] -- NuGet package authoring, signing, validation, source generators
 - [skill:dotnet-msix] -- MSIX creation, signing, distribution, auto-update
 - [skill:dotnet-github-releases] -- GitHub Releases with release notes
 
-### 16. Release Management `planned`
+### 16. Release Management `implemented`
 - [skill:dotnet-release-management] -- NBGV, changelogs, SemVer strategy
 
 ### 17. CI/CD `implemented`
@@ -244,7 +244,7 @@ Use this decision tree to load the right skills for the current task.
 - Azure DevOps -> [skill:dotnet-ado-patterns], [skill:dotnet-ado-build-test], [skill:dotnet-ado-publish], [skill:dotnet-ado-unique]
 
 ### Packaging & Releases
-- NuGet publishing -> [skill:dotnet-nuget-modern]
+- NuGet publishing -> [skill:dotnet-nuget-authoring]
 - MSIX -> [skill:dotnet-msix]
 - GitHub Releases -> [skill:dotnet-github-releases]
 - Versioning -> [skill:dotnet-release-management]

@@ -89,7 +89,11 @@
     "skills/cicd/dotnet-ado-patterns",
     "skills/cicd/dotnet-ado-build-test",
     "skills/cicd/dotnet-ado-publish",
-    "skills/cicd/dotnet-ado-unique"
+    "skills/cicd/dotnet-ado-unique",
+    "skills/packaging/dotnet-nuget-authoring",
+    "skills/packaging/dotnet-msix",
+    "skills/packaging/dotnet-github-releases",
+    "skills/release-management/dotnet-release-management"
   ],
   "agents": [
     "agents/dotnet-architect.md",
