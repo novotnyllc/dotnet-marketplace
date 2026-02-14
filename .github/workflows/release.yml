@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and release dist/ artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          # Strip leading 'v' for semver
+          VERSION="${TAG#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate plugin structure
+        run: |
+          set -o pipefail
+          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+
+      - name: Validate marketplace
+        run: ./scripts/validate-marketplace.sh
+
+      - name: Generate dist/ outputs
+        run: |
+          set -o pipefail
+          python3 scripts/generate_dist.py --strict 2>&1 | tee /tmp/generate-output.txt
+
+      - name: Validate cross-agent conformance
+        run: |
+          set -o pipefail
+          python3 scripts/validate_cross_agent.py 2>&1 | tee /tmp/conformance-output.txt
+
+      - name: Package dist/ artifacts
+        run: |
+          cd dist
+          zip -r ../dist-claude.zip claude/
+          zip -r ../dist-copilot.zip copilot/
+          zip -r ../dist-codex.zip codex/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body: |
+            ## dotnet-artisan ${{ steps.version.outputs.tag }}
+
+            Cross-agent plugin packages for .NET development skills.
+
+            ### Artifacts
+            - **dist-claude.zip** -- Claude Code plugin package
+            - **dist-copilot.zip** -- GitHub Copilot instructions package
+            - **dist-codex.zip** -- OpenAI Codex AGENTS.md package
+
+            ### Validation
+            All validation checks passed before packaging:
+            - Plugin structure and skill validation
+            - Marketplace metadata validation
+            - Cross-agent generation (--strict mode)
+            - Cross-agent conformance (5 checks + corpus completeness)
+          files: |
+            dist-claude.zip
+            dist-copilot.zip
+            dist-codex.zip

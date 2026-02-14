@@ -49,6 +49,16 @@ jobs:
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
 
+      - name: Generate dist/ outputs
+        run: |
+          set -o pipefail
+          python3 scripts/generate_dist.py --strict 2>&1 | tee /tmp/generate-output.txt
+
+      - name: Validate cross-agent conformance
+        run: |
+          set -o pipefail
+          python3 scripts/validate_cross_agent.py 2>&1 | tee /tmp/conformance-output.txt
+
       - name: Write job summary
         if: always()
         run: |
