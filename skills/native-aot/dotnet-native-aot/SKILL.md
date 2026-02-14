@@ -333,19 +333,37 @@ Use `CreateSlimBuilder` for Native AOT applications. It excludes features that r
 
 ### .NET 10 ASP.NET Core AOT Improvements
 
-.NET 10 brings significant improvements to ASP.NET Core Native AOT:
-
-- **Enhanced Request Delegate Generator:** The source generator that creates request delegates for Minimal API endpoints now handles more parameter binding scenarios, reducing the need for manual workarounds.
-- **Expanded Minimal API AOT coverage:** Additional result types (`TypedResults`) and binding scenarios are AOT-compatible out of the box.
-- **Reduced linker warning surface:** Many framework APIs that previously emitted trim/AOT warnings have been annotated or refactored for AOT compatibility, producing fewer false-positive warnings.
+.NET 10 brings improvements across the ASP.NET Core and runtime Native AOT stack. Target `net10.0` to benefit automatically.
 
 ```xml
-<!-- .NET 10 projects benefit automatically -->
 <PropertyGroup>
   <TargetFramework>net10.0</TargetFramework>
   <PublishAot>true</PublishAot>
 </PropertyGroup>
 ```
+
+**Request Delegate Generator improvements:** The source generator that creates request delegates for Minimal API endpoints handles more parameter binding scenarios in .NET 10, including additional `TypedResults` return types and complex binding patterns. This reduces the need for manual workarounds that were required in .NET 8/9 when the generator could not produce AOT-safe code for certain endpoint signatures.
+
+**Reduced linker warning surface:** Many ASP.NET Core framework APIs that previously emitted trim/AOT warnings (IL2xxx/IL3xxx) have been annotated or refactored for AOT compatibility. Projects upgrading from .NET 9 to .NET 10 will see fewer false-positive linker warnings when publishing with `PublishAot`.
+
+**OpenAPI in the `webapiaot` template:** The `webapiaot` project template now includes OpenAPI document generation via `Microsoft.AspNetCore.OpenApi` by default, so AOT-published APIs get auto-generated API documentation without additional setup.
+
+**Runtime NativeAOT code generation:** The .NET 10 runtime improves AOT code generation for struct arguments, enhances loop inversion optimizations, and improves method devirtualization -- resulting in better throughput for AOT-published applications without code changes.
+
+**Blazor Server and SignalR:** Blazor Server and SignalR remain **not supported** with Native AOT in .NET 10. Blazor WebAssembly AOT (client-side compilation) is a separate concern covered by [skill:dotnet-aot-wasm]. For Blazor Server apps, continue using JIT deployment.
+
+**Compatibility snapshot (.NET 10):**
+
+| Feature | AOT Support |
+|---------|-------------|
+| gRPC | Fully supported |
+| Minimal APIs | Partially supported (most scenarios work) |
+| MVC | Not supported |
+| Blazor Server | Not supported |
+| SignalR | Not supported |
+| JWT Authentication | Fully supported |
+| CORS, HealthChecks, OutputCaching | Fully supported |
+| WebSockets, StaticFiles | Fully supported |
 
 ---
 

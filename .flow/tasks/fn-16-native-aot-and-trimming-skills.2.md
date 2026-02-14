@@ -13,9 +13,17 @@ Add a dedicated .NET 10 ASP.NET Core AOT improvements section to the `dotnet-nat
 - [ ] Only modifies `skills/native-aot/dotnet-native-aot/SKILL.md`
 
 ## Done summary
-TBD
+Expanded the .NET 10 ASP.NET Core AOT Improvements section in `dotnet-native-aot` SKILL.md with detailed, research-verified content:
 
+- **Request Delegate Generator improvements**: Documented enhanced parameter binding scenarios, additional TypedResults support, and reduced need for manual workarounds vs .NET 8/9
+- **Reduced linker warning surface**: Documented IL2xxx/IL3xxx warning reduction when upgrading from .NET 9 to .NET 10
+- **OpenAPI in webapiaot template**: Documented new default OpenAPI document generation via Microsoft.AspNetCore.OpenApi
+- **Runtime NativeAOT code generation**: Documented struct argument improvements, loop inversion, and method devirtualization
+- **Blazor Server and SignalR status**: Accurately documented both remain NOT supported with Native AOT in .NET 10 (verified against official Microsoft Learn docs)
+- **Compatibility snapshot table**: Added .NET 10 AOT feature support matrix sourced from official ASP.NET Core docs
+
+Only `skills/native-aot/dotnet-native-aot/SKILL.md` was modified. No plugin.json changes. Validation passes with 0 errors.
 ## Evidence
 - Commits:
-- Tests:
+- Tests: ./scripts/validate-skills.sh passes with 0 errors
 - PRs:
