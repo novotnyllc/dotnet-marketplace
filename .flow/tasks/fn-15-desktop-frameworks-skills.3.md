@@ -17,10 +17,22 @@ This task is the sole owner of `plugin.json` and `dotnet-advisor/SKILL.md` modif
 - `.claude-plugin/plugin.json` (register ALL 5 fn-15 skills — sole owner)
 - `skills/foundation/dotnet-advisor/SKILL.md` (verify/deduplicate ALL 5 catalog entries — sole owner)
 
+<!-- Updated by plan-sync: fn-15-desktop-frameworks-skills.2 created dotnet-ui-chooser, so "(may not exist yet)" annotations on [skill:dotnet-ui-chooser] in task-1 skills are now stale and need cleanup. Also, after this task creates dotnet-wpf-migration, "(may not exist yet)" / "(fn-15.3)" annotations for that skill in ui-chooser and task-1 skills become stale. -->
+
 **Updates (cross-refs only):**
 - `skills/ui-frameworks/dotnet-maui-development/SKILL.md` — strengthen `[skill:dotnet-ui-chooser]` from soft to hard ref
 - `skills/ui-frameworks/dotnet-blazor-patterns/SKILL.md` — strengthen `[skill:dotnet-ui-chooser]` from soft to hard ref
 - `skills/ui-frameworks/dotnet-uno-platform/SKILL.md` — strengthen `[skill:dotnet-ui-chooser]` from soft to hard ref
+- `skills/ui-frameworks/dotnet-winui/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-wpf-modern/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-winforms-basics/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-blazor-auth/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-blazor-components/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-uno-targets/SKILL.md` — remove `(may not exist yet)` from `[skill:dotnet-ui-chooser]` ref (skill now exists)
+- `skills/ui-frameworks/dotnet-ui-chooser/SKILL.md` — after creating `dotnet-wpf-migration`, remove `(created in fn-15.3, may not exist yet)` from `[skill:dotnet-wpf-migration]` refs
+- `skills/ui-frameworks/dotnet-winui/SKILL.md` — after creating `dotnet-wpf-migration`, remove `(fn-15.3)` annotation from `[skill:dotnet-wpf-migration]` ref
+- `skills/ui-frameworks/dotnet-wpf-modern/SKILL.md` — after creating `dotnet-wpf-migration`, remove `(fn-15.3)` annotation from `[skill:dotnet-wpf-migration]` ref
+- `skills/ui-frameworks/dotnet-winforms-basics/SKILL.md` — after creating `dotnet-wpf-migration`, remove `(fn-15.3)` annotation from `[skill:dotnet-wpf-migration]` ref
 
 **Content requirements per epic spec:**
 - 7 migration paths from WPF Migration Content Coverage table (includes UWP → Uno cross-ref)
@@ -48,6 +60,8 @@ This task is the sole owner of `plugin.json` and `dotnet-advisor/SKILL.md` modif
 - [ ] All hard cross-references across all 5 fn-15 skills resolve: `grep -r 'skill:[a-z-]*' skills/ui-frameworks/dotnet-{winui,wpf-modern,wpf-migration,winforms-basics,ui-chooser}/SKILL.md`
 - [ ] No duplicate skill IDs in advisor catalog: `grep -oP 'skill:[a-z-]+' skills/foundation/dotnet-advisor/SKILL.md | sort | uniq -d` returns empty
 - [ ] Reverse cross-refs: `[skill:dotnet-ui-chooser]` present in `dotnet-maui-development`, `dotnet-blazor-patterns`, `dotnet-uno-platform` SKILL.md files (no longer soft dep)
+- [ ] No stale `(may not exist yet)` annotations on `[skill:dotnet-ui-chooser]` in `dotnet-winui`, `dotnet-wpf-modern`, `dotnet-winforms-basics`, `dotnet-blazor-auth`, `dotnet-blazor-components`, `dotnet-uno-targets` SKILL.md files (skill now exists)
+- [ ] No stale `(may not exist yet)` or `(fn-15.3)` annotations on `[skill:dotnet-wpf-migration]` in `dotnet-ui-chooser`, `dotnet-winui`, `dotnet-wpf-modern`, `dotnet-winforms-basics` SKILL.md files (skill created by this task)
 - [ ] All 5 fn-15 skills appear in plugin.json
 - [ ] Skill description ≤ 120 chars
 - [ ] `./scripts/validate-skills.sh` passes
