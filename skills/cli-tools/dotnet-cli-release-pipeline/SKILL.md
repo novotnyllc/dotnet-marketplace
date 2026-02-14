@@ -88,6 +88,10 @@ on:
 permissions:
   contents: write  # Create GitHub Releases
 
+defaults:
+  run:
+    shell: bash
+
 env:
   PROJECT: src/MyCli/MyCli.csproj
   DOTNET_VERSION: "8.0.x"
@@ -128,8 +132,8 @@ jobs:
 
       - name: Package (Unix)
         if: runner.os != 'Windows'
-        shell: bash
         run: |
+          set -euo pipefail
           cd publish
           tar -czf "$GITHUB_WORKSPACE/mytool-${{ steps.version.outputs.version }}-${{ matrix.rid }}.tar.gz" .
 
@@ -165,12 +169,14 @@ jobs:
       - name: Generate checksums
         working-directory: artifacts
         run: |
+          set -euo pipefail
           shasum -a 256 *.tar.gz *.zip > checksums-sha256.txt
           cat checksums-sha256.txt
 
       - name: Detect pre-release
         id: prerelease
         run: |
+          set -euo pipefail
           if [[ "${{ steps.version.outputs.version }}" == *-* ]]; then
             echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
           else
@@ -319,6 +325,7 @@ artifacts/
 - name: Generate checksums
   working-directory: artifacts
   run: |
+    set -euo pipefail
     shasum -a 256 *.tar.gz *.zip > checksums-sha256.txt
     cat checksums-sha256.txt
 ```
@@ -374,11 +381,13 @@ After the GitHub Release is published, update the Homebrew tap automatically:
 
       - name: Download checksums
         run: |
+          set -euo pipefail
           curl -sL "https://github.com/myorg/mytool/releases/download/v${{ steps.version.outputs.version }}/checksums-sha256.txt" \
             -o checksums.txt
 
       - name: Update formula
         run: |
+          set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
           LINUX_X64_SHA=$(grep "linux-x64" checksums.txt | awk '{print $1}')
           LINUX_ARM64_SHA=$(grep "linux-arm64" checksums.txt | awk '{print $1}')
@@ -444,11 +453,13 @@ After the GitHub Release is published, update the Homebrew tap automatically:
 
       - name: Download checksums
         run: |
+          set -euo pipefail
           curl -sL "https://github.com/myorg/mytool/releases/download/v${{ steps.version.outputs.version }}/checksums-sha256.txt" \
             -o checksums.txt
 
       - name: Update manifest
         run: |
+          set -euo pipefail
           VERSION="${{ steps.version.outputs.version }}"
           WIN_X64_SHA=$(grep "win-x64" checksums.txt | awk '{print $1}')
 

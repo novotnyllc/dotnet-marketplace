@@ -250,6 +250,8 @@ PROJECT="src/MyCli/MyCli.csproj"
 OUTPUT_DIR="artifacts"
 
 RIDS=("linux-x64" "linux-arm64" "osx-arm64" "win-x64")
+# Note: Native AOT cross-compilation for ARM64 on x64 requires platform toolchain
+# See [skill:dotnet-cli-release-pipeline] for CI-based cross-compilation setup
 
 for rid in "${RIDS[@]}"; do
   echo "Publishing for $rid..."
