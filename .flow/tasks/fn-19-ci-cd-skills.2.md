@@ -58,9 +58,8 @@ All skills must have `name` and `description` frontmatter. Each skill must conta
 - [ ] Validation: `grep -q "^description:" skills/cicd/dotnet-ado-*/SKILL.md`
 
 ## Done summary
-TBD
-
+Created 4 Azure DevOps SKILL.md files (dotnet-ado-patterns, dotnet-ado-build-test, dotnet-ado-publish, dotnet-ado-unique) with comprehensive ADO pipeline examples, cross-references to dotnet-add-ci/dotnet-native-aot/dotnet-containers/dotnet-cli-release-pipeline, and out-of-scope boundary statements.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: aa1f12caf956e1b3e3a19ed1d6366d06e1b8e2e7, f90a475830b2318ef513ed014e044f7e424a7d24
+- Tests: ./scripts/validate-skills.sh, grep -q '^name:' skills/cicd/dotnet-ado-*/SKILL.md, grep -q '^description:' skills/cicd/dotnet-ado-*/SKILL.md, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:
