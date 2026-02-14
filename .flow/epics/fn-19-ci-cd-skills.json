@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-19-ci-cd-skills",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-14T06:03:28.385065Z",
   "created_at": "2026-02-11T22:23:26.181488Z",
   "default_impl": null,
   "default_review": null,
@@ -16,7 +16,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-14T04:57:50.795059Z",
   "spec_path": ".flow/specs/fn-19-ci-cd-skills.md",
-  "status": "open",
+  "status": "done",
   "title": "CI CD Skills",
-  "updated_at": "2026-02-14T04:57:50.795188Z"
+  "updated_at": "2026-02-14T06:03:40.451715Z"
 }
