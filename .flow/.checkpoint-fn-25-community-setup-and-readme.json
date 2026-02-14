@@ -1,0 +1,84 @@
+{
+  "created_at": "2026-02-14T11:16:11.411346Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-25-community-setup-and-readme",
+      "created_at": "2026-02-11T22:23:33.558351Z",
+      "depends_on_epics": [
+        "fn-20-packaging-and-publishing-skills",
+        "fn-21-documentation-skills",
+        "fn-24-cross-agent-build-pipeline"
+      ],
+      "id": "fn-25-community-setup-and-readme",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-25-community-setup-and-readme.md",
+      "status": "open",
+      "title": "Community Setup and README",
+      "updated_at": "2026-02-11T22:31:42.181687Z"
+    },
+    "spec": "# fn-25: Community Setup and README\n\n## Problem/Goal\nCreate comprehensive community setup including README.md with skill catalog and architecture diagrams, CONTRIBUTING.md with skill authoring guide, CHANGELOG.md, and updated CLAUDE.md/AGENTS.md with plugin-specific instructions.\n\n## Acceptance Checks\n- [ ] README.md created with skill catalog, installation, usage examples, Mermaid architecture diagrams, acknowledgements\n- [ ] CONTRIBUTING.md created with skill authoring guide, PR process, validation requirements\n- [ ] CHANGELOG.md created with initial release notes\n- [ ] CLAUDE.md updated with dotnet-artisan plugin-specific instructions\n- [ ] AGENTS.md updated with skill index and agent delegation patterns\n- [ ] All documentation references the Agent Skills open standard\n- [ ] Cross-references to documentation skills, build pipeline\n\n## Dependencies\n- fn-20 (Packaging & Publishing) \u2014 README references installation/publishing\n- fn-21 (Documentation Skills) \u2014 README references documentation tooling\n- fn-24 (Cross-Agent Build Pipeline) \u2014 README documents cross-agent support, CONTRIBUTING references build pipeline\n\n## Key Context\n- README must be comprehensive but approachable\n- Mermaid diagrams show plugin architecture, skill relationships, agent delegation\n- CONTRIBUTING.md must enable high-quality community contributions\n- Acknowledgements section credits dotnet-skills and other references\n- Open but curated community model with automated validation\n"
+  },
+  "epic_id": "fn-25-community-setup-and-readme",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.435694Z",
+        "depends_on": [],
+        "epic": "fn-25-community-setup-and-readme",
+        "id": "fn-25-community-setup-and-readme.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-25-community-setup-and-readme.1.md",
+        "status": "todo",
+        "title": "Create README.md with skill catalog and Mermaid diagrams",
+        "updated_at": "2026-02-11T22:32:33.435899Z"
+      },
+      "id": "fn-25-community-setup-and-readme.1",
+      "runtime": null,
+      "spec": "# fn-25-community-setup-and-readme.1 Create README.md with skill catalog and Mermaid diagrams\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.596497Z",
+        "depends_on": [],
+        "epic": "fn-25-community-setup-and-readme",
+        "id": "fn-25-community-setup-and-readme.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-25-community-setup-and-readme.2.md",
+        "status": "todo",
+        "title": "Create CONTRIBUTING.md and CHANGELOG.md",
+        "updated_at": "2026-02-11T22:32:33.596646Z"
+      },
+      "id": "fn-25-community-setup-and-readme.2",
+      "runtime": null,
+      "spec": "# fn-25-community-setup-and-readme.2 Create CONTRIBUTING.md and CHANGELOG.md\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.712281Z",
+        "depends_on": [],
+        "epic": "fn-25-community-setup-and-readme",
+        "id": "fn-25-community-setup-and-readme.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-25-community-setup-and-readme.3.md",
+        "status": "todo",
+        "title": "Update CLAUDE.md and AGENTS.md with plugin instructions",
+        "updated_at": "2026-02-11T22:32:33.712407Z"
+      },
+      "id": "fn-25-community-setup-and-readme.3",
+      "runtime": null,
+      "spec": "# fn-25-community-setup-and-readme.3 Update CLAUDE.md and AGENTS.md with plugin instructions\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

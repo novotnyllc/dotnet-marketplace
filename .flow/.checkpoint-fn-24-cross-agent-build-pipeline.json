@@ -1,23 +1,28 @@
 {
-  "created_at": "2026-02-14T10:03:48.821818Z",
+  "created_at": "2026-02-14T11:09:24.119332Z",
   "epic": {
     "data": {
       "branch_name": "fn-24-cross-agent-build-pipeline",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
       "created_at": "2026-02-11T22:23:33.306858Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
       "depends_on_epics": [
         "fn-19-ci-cd-skills",
         "fn-23-hooks-and-mcp-integration"
       ],
       "id": "fn-24-cross-agent-build-pipeline",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-14T10:11:38.937424Z",
       "spec_path": ".flow/specs/fn-24-cross-agent-build-pipeline.md",
       "status": "open",
       "title": "Cross-Agent Build Pipeline",
-      "updated_at": "2026-02-11T22:31:31.715221Z"
+      "updated_at": "2026-02-14T10:11:38.937580Z"
     },
-    "spec": "# fn-24: Cross-Agent Build Pipeline\n\n## Problem/Goal\nCreate dotnet tool for inner loop validation and GitHub Action for cross-agent format generation, producing Claude Code plugin, GitHub Copilot instructions, and OpenAI Codex AGENTS.md from canonical SKILL.md source.\n\n## Acceptance Checks\n- [ ] dotnet tool created for local development (validates skill format, frontmatter, cross-references, generates dist/ outputs)\n- [ ] GitHub Action workflow generates dist/claude/, dist/copilot/, dist/codex/ on push/release\n- [ ] Action publishes to Claude Code marketplace\n- [ ] Action creates GitHub Release with all artifacts\n- [ ] Build pipeline validates skill format, frontmatter, cross-references, markdown lint\n- [ ] Cross-agent conformance test suite validates behavioral equivalence across generated outputs\n- [ ] Cross-references to CI/CD skills, packaging skills\n\n## Cross-Agent Conformance Tests\n\nGeneration success \u2260 behavioral equivalence. The build pipeline must include a conformance test suite:\n\n### Required Tests\n1. **Routing parity**: Every canonical SKILL.md trigger phrase appears in all generated agent formats (Claude plugin description, Copilot `applyTo` instructions, Codex AGENTS.md sections)\n2. **Trigger coverage**: Spot-check that sample queries would activate the same skill across all three agent formats\n3. **Graceful degradation**: Verify that Claude-only features (hooks, MCP, agents) are cleanly omitted from Copilot/Codex outputs without broken references or dangling cross-refs\n4. **Semantic diff**: Detect unintended content drift between canonical SKILL.md and generated outputs (beyond expected format transformations)\n5. **Cross-reference integrity**: All `[skill:name]` references in generated outputs resolve to valid targets within that agent's format\n\n### Implementation\n- Tests run as part of the dotnet tool validation (`dotnet artisan validate --cross-agent`)\n- CI gate: conformance failures block merge\n- Report format: per-skill pass/fail with diff for failures\n\n## Dependencies\n- fn-19 (CI/CD Skills) \u2014 pipeline patterns and workflow templates\n- fn-23 (Hooks & MCP Integration) \u2014 conformance tests must validate against the fully-featured Claude baseline including hooks and MCP, not a partial implementation\n\n## Trigger Corpus\nTrigger coverage tests (item 2 above) must use a **deterministic minimum corpus** of at least 20 representative queries spanning all skill categories. The corpus is a maintained test artifact (not ad-hoc spot checks) and must be updated when skills are added or renamed.\n\n## Key Context\n- Canonical source is skills/ directory using Agent Skills SKILL.md format\n- Cross-agent compatibility via build-time generation (not manual duplication)\n- Inner loop validation prevents broken commits\n- Publishing workflow uses NBGV for versioning\n"
+    "spec": "# fn-24: Cross-Agent Build Pipeline\n\n## Problem/Goal\nCreate a Python-based generator and conformance validator that produces Claude Code plugin, GitHub Copilot instructions, and OpenAI Codex AGENTS.md from canonical SKILL.md source. Wire into CI for gating and GitHub Releases for distribution.\n\n## Tooling Decision\n**Python scripts extending the existing validation stack** \u2014 not a dotnet tool. Rationale:\n- The repo has zero .NET source code; the entire validation stack is Python (`_validate_skills.py`) and bash\n- Conformance checks are text-processing tasks where Python excels\n- Avoids adding `setup-dotnet` to CI (~30-60s overhead) for a non-.NET repo\n- Shares existing frontmatter parser and cross-reference resolver from `_validate_skills.py`\n- Future: if the plugin ships .NET projects, a dotnet tool wrapper can delegate to these scripts\n\n## dist/ Output Schema\n\n```\ndist/\n  claude/                          # Claude Code plugin structure\n    plugin.json                    # Copy from .claude-plugin/plugin.json\n    marketplace.json               # Copy from .claude-plugin/marketplace.json\n    skills/                        # Copy of skills/ directory\n    agents/                        # Copy of agents/ directory\n    hooks/                         # Copy of hooks/ directory (hooks.json + scripts)\n    .mcp.json                      # Copy of .mcp.json\n  copilot/\n    .github/\n      copilot-instructions.md      # Concatenated routing index + skill summaries\n    skills/\n      <skill-name>.md              # SKILL.md transformed with Copilot conventions\n  codex/\n    AGENTS.md                      # Top-level routing index by category\n    skills/\n      <category>/\n        AGENTS.md                  # Per-category skill guidance\n```\n\n`dist/` is gitignored. Generated fresh on every CI run and attached to GitHub Releases.\n\n## Cross-Agent Transformation Rules\n\n| Source construct | Claude output | Copilot output | Codex output |\n|-----------------|--------------|----------------|--------------|\n| `[skill:name]` cross-ref | Preserved as-is | Converted to relative `../name/SKILL.md` link | Converted to section anchor `#name` |\n| Agent reference | Preserved | Omitted (sentence removed) | Omitted (sentence removed) |\n| Hook reference (e.g., \"SessionStart hook detects...\") | Preserved | Rewritten: \"Detect manually by running `dotnet --version`\" or omitted if no manual equivalent | Omitted |\n| MCP tool reference (e.g., \"use Context7 to look up...\") | Preserved | Rewritten: \"look up docs at [url]\" or omitted | Omitted |\n| `${CLAUDE_PLUGIN_ROOT}` path | Preserved | Omitted | Omitted |\n| SKILL.md frontmatter (`name`, `description`) | Preserved | `name` \u2192 heading, `description` \u2192 first paragraph | `name` \u2192 heading, `description` \u2192 first paragraph |\n\n**Rule**: After applying known transformations, remaining body content sections must be textually identical (modulo whitespace). Any unexpected diff = conformance failure.\n\n## Cross-Agent Conformance Tests\n\nGeneration success \u2260 behavioral equivalence. The pipeline includes a conformance test suite:\n\n### Required Tests\n1. **Routing parity**: Every canonical SKILL.md `description` field appears (possibly reformatted) in all generated agent formats\n2. **Trigger coverage**: Deterministic corpus of queries tested against all formats (see Trigger Corpus below)\n3. **Graceful degradation**: Claude-only features (hooks, MCP, agents) are cleanly omitted from Copilot/Codex outputs \u2014 no broken references, no dangling cross-refs, no orphan sentences\n4. **Structural comparison**: After applying the transformation rules above, remaining content sections are textually identical (modulo whitespace/formatting). This is a deterministic text comparison, not semantic.\n5. **Cross-reference integrity**: All `[skill:name]` references in generated outputs resolve to valid targets within that agent's format (directory for Claude, file for Copilot, section for Codex)\n\n### Trigger Corpus\n- Format: JSON array in `tests/trigger-corpus.json`\n  ```json\n  [\n    {\n      \"query\": \"How do I set up dependency injection in my .NET app?\",\n      \"expected_skill\": \"microsoft-extensions-dependency-injection\",\n      \"category\": \"core-csharp\"\n    }\n  ]\n  ```\n- Minimum: one entry per skill category (currently 19 categories \u2192 19+ entries)\n- Completeness check: CI validates every skill category has at least one corpus entry\n- Maintenance: corpus must be updated when skills are added/removed/renamed\n\n### Implementation\n- Tests run via `python3 scripts/validate_cross_agent.py` (new script)\n- CI gate: conformance failures block merge\n- Report format: per-skill pass/fail with diff output for failures\n\n## Failure Modes\n- Generation failure for any format \u2192 CI fails, no partial output\n- Conformance check failure \u2192 CI fails, merge blocked\n- Partial `dist/` output is never published\n- Release workflow only runs after all validation passes\n\n## Versioning\nVersion source: git tags parsed by the generator script. `plugin.json` and `marketplace.json` version fields are stamped during generation. NBGV is not used (no .NET projects to integrate with); a simple `git describe --tags` approach suffices for v0.x.\n\n## Acceptance Checks\n- [ ] Python generator script produces `dist/claude/`, `dist/copilot/`, `dist/codex/` from canonical sources\n- [ ] Conformance validator implements all 5 checks with deterministic pass/fail\n- [ ] Trigger corpus covers all skill categories with completeness CI check\n- [ ] `dist/` is gitignored\n- [ ] GitHub Actions validate.yml runs generator + conformance checks on push\n- [ ] Release workflow creates GitHub Release with dist/ artifacts on tag push\n- [ ] Transformation rules documented and tested (hook/MCP/agent omission)\n- [ ] Cross-references resolve correctly in each output format\n\n## Dependencies\n- fn-19 (CI/CD Skills) \u2014 pipeline patterns and workflow templates (done)\n- fn-23 (Hooks & MCP Integration) \u2014 hooks/MCP content exists for conformance testing (done)\n\nBoth dependencies are satisfied. fn-24 is unblocked.\n\n## Key Context\n- Canonical source is `skills/` directory using SKILL.md format\n- Cross-agent compatibility via build-time generation (not manual duplication)\n- Inner loop validation prevents broken commits\n- Existing validation stack: `_validate_skills.py`, `validate-skills.sh`, `validate-marketplace.sh`\n"
   },
   "epic_id": "fn-24-cross-agent-build-pipeline",
   "schema_version": 2,
@@ -34,12 +39,30 @@
         "priority": null,
         "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.1.md",
         "status": "todo",
-        "title": "Create dotnet tool for inner loop validation",
-        "updated_at": "2026-02-11T22:32:33.053081Z"
+        "title": "Create dist/ generator script for Claude, Copilot, and Codex outputs",
+        "updated_at": "2026-02-14T10:09:51.525858Z"
       },
       "id": "fn-24-cross-agent-build-pipeline.1",
-      "runtime": null,
-      "spec": "# fn-24-cross-agent-build-pipeline.1 Create dotnet tool for inner loop validation\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-14T10:13:24.031944Z",
+        "evidence": {
+          "commits": [
+            "86c690d1f4e62f1d9e7a2a17adedfe3e30e23321",
+            "f4fe385acfc6a9e468f0b932e28b3452cf900eb3"
+          ],
+          "prs": [],
+          "tests": [
+            "bash scripts/validate-skills.sh",
+            "bash scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-14T10:26:53.148687Z"
+      },
+      "spec": "# fn-24.1 Create dist/ generator script for Claude, Copilot, and Codex outputs\n\n## Description\nCreate `scripts/generate_dist.py` \u2014 a Python script that reads the canonical `skills/`, `agents/`, `hooks/`, and `.mcp.json` sources and produces three output directories under `dist/`:\n\n- `dist/claude/` \u2014 mirror of the plugin structure (plugin.json, marketplace.json, skills/, agents/, hooks/, .mcp.json)\n- `dist/copilot/` \u2014 `.github/copilot-instructions.md` (routing index) + `skills/<name>.md` per skill with Copilot conventions\n- `dist/codex/` \u2014 top-level `AGENTS.md` (routing index by category) + `skills/<category>/AGENTS.md` per category\n\nThe generator applies transformation rules defined in the epic spec:\n- `[skill:name]` \u2192 preserved (Claude), relative link (Copilot), section anchor (Codex)\n- Agent/hook/MCP references \u2192 preserved (Claude), omitted or rewritten (Copilot/Codex) per transformation table\n- SKILL.md frontmatter (`name`, `description`) \u2192 preserved (Claude), heading+paragraph (Copilot/Codex)\n\nThe script reuses the existing frontmatter parser from `_validate_skills.py` where possible.\n\nVersion stamping: reads version from `git describe --tags` and stamps `plugin.json`/`marketplace.json` version fields during generation.\n\n## Files touched\n- `scripts/generate_dist.py` (new)\n- `.gitignore` (add `dist/`)\n\n## Acceptance\n- [ ] `python3 scripts/generate_dist.py` produces `dist/claude/`, `dist/copilot/`, `dist/codex/` from canonical sources\n- [ ] Claude output mirrors plugin structure faithfully\n- [ ] Copilot output has `copilot-instructions.md` routing index and per-skill files\n- [ ] Codex output has top-level `AGENTS.md` and per-category `AGENTS.md` files\n- [ ] Transformation rules applied: agent/hook/MCP refs omitted from non-Claude outputs\n- [ ] `[skill:name]` cross-refs converted per format (relative link for Copilot, anchor for Codex)\n- [ ] `dist/` added to `.gitignore`\n- [ ] Version stamped from git tags\n- [ ] Script runs without .NET SDK dependency (pure Python + bash)\n\n## Done summary\nCreated scripts/generate_dist.py that reads canonical skills/, agents/, hooks/, and .mcp.json sources and produces dist/claude/ (mirror), dist/copilot/ (routing index + per-skill files with relative cross-ref links), and dist/codex/ (top-level AGENTS.md + per-category AGENTS.md with section anchors). Applies transformation rules to omit Claude-only features (agents, hooks, MCP tools) from non-Claude outputs, stamps version from git tags, and supports --strict mode for CI. Added dist/ to .gitignore.\n## Evidence\n- Commits: 86c690d1f4e62f1d9e7a2a17adedfe3e30e23321, f4fe385acfc6a9e468f0b932e28b3452cf900eb3\n- Tests: bash scripts/validate-skills.sh, bash scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict\n- PRs:"
     },
     {
       "data": {
@@ -53,12 +76,27 @@
         "priority": null,
         "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.2.md",
         "status": "todo",
-        "title": "Create GitHub Action for cross-agent format generation",
-        "updated_at": "2026-02-11T22:32:33.191695Z"
+        "title": "Create cross-agent conformance validator with trigger corpus",
+        "updated_at": "2026-02-14T10:10:07.175583Z"
       },
       "id": "fn-24-cross-agent-build-pipeline.2",
-      "runtime": null,
-      "spec": "# fn-24-cross-agent-build-pipeline.2 Create GitHub Action for cross-agent format generation\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-14T10:33:04.769221Z",
+        "evidence": {
+          "commits": [
+            "2cfb55d38a549c6248b82193bf2cc336277f80f1"
+          ],
+          "prs": [],
+          "tests": [
+            "python3 scripts/validate_cross_agent.py --repo-root /Users/claire/dev/dotnet-marketplace"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-14T10:46:28.940187Z"
+      },
+      "spec": "# fn-24.2 Create cross-agent conformance validator with trigger corpus\n\n## Description\nCreate `scripts/validate_cross_agent.py` \u2014 a Python script that validates behavioral equivalence across the three generated `dist/` outputs. Implements the 5 conformance checks from the epic spec:\n\n1. **Routing parity**: Every canonical SKILL.md `description` appears (possibly reformatted) in all generated formats\n2. **Trigger coverage**: Run deterministic corpus (`tests/trigger-corpus.json`) against all formats; verify expected skill matches\n3. **Graceful degradation**: Claude-only features (hooks, MCP, agents) are absent from Copilot/Codex outputs \u2014 no broken references, dangling cross-refs, or orphan sentences referencing removed features\n4. **Structural comparison**: After applying known transformations, remaining content sections are textually identical (modulo whitespace). Deterministic text comparison, not semantic.\n5. **Cross-reference integrity**: `[skill:name]` references are handled per format \u2014 preserved as-is in Claude output, resolved to relative file links (`../name/SKILL.md`) in Copilot, resolved to section anchors (`#name`) in Codex\n<!-- Updated by plan-sync: fn-24.1 preserves [skill:name] unchanged in Claude output (no directory resolution), converts to ../name/SKILL.md for Copilot, and #name anchors for Codex -->\n\nAlso create `tests/trigger-corpus.json` with the initial trigger corpus:\n- Minimum one entry per skill category (19+ entries)\n- Format: `[{\"query\": \"...\", \"expected_skill\": \"...\", \"category\": \"...\"}]`\n- CI completeness check: every skill category must have at least 1 corpus entry\n\nThe script integrates with the existing `_validate_skills.py` frontmatter parser for SKILL.md parsing.\n\n## Files touched\n- `scripts/validate_cross_agent.py` (new)\n- `tests/trigger-corpus.json` (new)\n\n## Acceptance\n- [ ] `python3 scripts/validate_cross_agent.py` runs all 5 conformance checks against `dist/`\n- [ ] Routing parity: detects missing skill descriptions in any format\n- [ ] Trigger coverage: validates corpus entries match expected skills\n- [ ] Graceful degradation: detects hook/MCP/agent references in non-Claude outputs\n- [ ] Structural comparison: flags unexpected content differences after transformation\n- [ ] Cross-reference integrity: validates `[skill:name]` preserved in Claude, relative file link in Copilot, section anchor in Codex\n- [ ] Trigger corpus has 19+ entries covering all skill categories\n- [ ] Completeness check: CI fails if any category lacks a corpus entry\n- [ ] Per-skill pass/fail report with diff output for failures\n- [ ] No .NET SDK dependency (pure Python)\n\n## Done summary\nCreated cross-agent conformance validator (scripts/validate_cross_agent.py) implementing 5 conformance checks plus corpus completeness, and trigger corpus (tests/trigger-corpus.json) with 21 entries covering all 19 skill categories. Validator detects routing parity gaps, trigger coverage mismatches, Claude-only feature leaks, structural mismatches after transformation, and cross-reference integrity issues across Claude/Copilot/Codex dist/ outputs.\n## Evidence\n- Commits: 2cfb55d38a549c6248b82193bf2cc336277f80f1\n- Tests: python3 scripts/validate_cross_agent.py --repo-root /Users/claire/dev/dotnet-marketplace\n- PRs:"
     },
     {
       "data": {
@@ -66,18 +104,39 @@
         "claim_note": "",
         "claimed_at": null,
         "created_at": "2026-02-11T22:32:33.312178Z",
-        "depends_on": [],
+        "depends_on": [
+          "fn-24-cross-agent-build-pipeline.1",
+          "fn-24-cross-agent-build-pipeline.2"
+        ],
         "epic": "fn-24-cross-agent-build-pipeline",
         "id": "fn-24-cross-agent-build-pipeline.3",
         "priority": null,
         "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.3.md",
         "status": "todo",
-        "title": "Configure marketplace publishing workflow",
-        "updated_at": "2026-02-11T22:32:33.312325Z"
+        "title": "Wire CI validation and release workflow for dist/ artifacts",
+        "updated_at": "2026-02-14T10:10:20.629203Z"
       },
       "id": "fn-24-cross-agent-build-pipeline.3",
-      "runtime": null,
-      "spec": "# fn-24-cross-agent-build-pipeline.3 Configure marketplace publishing workflow\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-14T10:56:01.511522Z",
+        "evidence": {
+          "commits": [
+            "0e33c5c13e5478df5c238bb034be2b681d2a59b2"
+          ],
+          "prs": [],
+          "tests": [
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py",
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-14T11:01:57.548535Z"
+      },
+      "spec": "# fn-24.3 Wire CI validation and release workflow for dist/ artifacts\n\n## Description\nIntegrate the generator (fn-24.1) and conformance validator (fn-24.2) into CI and create a release workflow.\n\n**CI changes** (`validate.yml`):\n- Add step: `python3 scripts/generate_dist.py --strict` \u2014 generate dist/ outputs (--strict fails on parse errors instead of skipping)\n<!-- Updated by plan-sync: fn-24.1 added --strict mode for CI; bare invocation silently skips unparseable SKILL.md files -->\n- Add step: `python3 scripts/validate_cross_agent.py` \u2014 run conformance checks\n- Both steps gate merge (failure blocks PR)\n- Runs after existing validation steps (validate-skills.sh, validate-marketplace.sh)\n\n**Release workflow** (`.github/workflows/release.yml`, new):\n- Triggered on tag push (e.g., `v*`)\n- Runs full validation pipeline (generate with `--strict` + validate)\n- Creates GitHub Release with dist/ artifacts:\n  - `dist-claude.zip` \u2014 Claude Code plugin package\n  - `dist-copilot.zip` \u2014 Copilot instructions package\n  - `dist-codex.zip` \u2014 Codex AGENTS.md package\n- Version in release matches git tag\n\n**No \"marketplace publish\" step** \u2014 Claude Code marketplace registration is via repo URL in `marketplace.json`, not a push mechanism. The release workflow makes artifacts downloadable.\n\n## Dependencies\n- fn-24.1 (generator script must exist)\n- fn-24.2 (conformance validator must exist)\n\n## Files touched\n- `.github/workflows/validate.yml` (edit \u2014 add generate + validate steps)\n- `.github/workflows/release.yml` (new \u2014 tag-triggered release workflow)\n\n## Acceptance\n- [ ] `validate.yml` runs generator with `--strict` + conformance checks on push/PR\n- [ ] Conformance failure blocks merge\n- [ ] `release.yml` triggered on tag push creates GitHub Release\n- [ ] Release includes dist-claude.zip, dist-copilot.zip, dist-codex.zip\n- [ ] Release version matches git tag\n- [ ] No new CI dependencies beyond Python 3 (already available)\n\n## Done summary\nWired cross-agent generation (generate_dist.py --strict) and conformance validation (validate_cross_agent.py) into validate.yml CI pipeline after existing skill/marketplace steps. Created release.yml workflow triggered on v* tag push that runs full validation, packages dist/ into per-agent zip archives, and creates a GitHub Release with dist-claude.zip, dist-copilot.zip, and dist-codex.zip artifacts.\n## Evidence\n- Commits: 0e33c5c13e5478df5c238bb034be2b681d2a59b2\n- Tests: python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh\n- PRs:"
     }
   ]
 }
