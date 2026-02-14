@@ -559,10 +559,9 @@ After packing, verify the layout:
 
 ```bash
 dotnet pack -c Release
-# Inspect the package contents
-dotnet nuget inspect ./bin/Release/MyAnalyzers.1.0.0.nupkg
-# Or extract and check
-unzip -l ./bin/Release/MyAnalyzers.1.0.0.nupkg | grep analyzers
+# Inspect package contents (nupkg is a zip file)
+unzip -l ./bin/Release/MyAnalyzers.1.0.0.nupkg | grep analyzers/
+# Or use NuGet Package Explorer (GUI) for interactive inspection
 ```
 
 See [skill:dotnet-csharp-source-generators] for additional shared packaging concepts (the `analyzers/dotnet/cs/` layout is identical for both analyzers and source generators).
@@ -578,34 +577,32 @@ Analyzers run in real-time during editing. Poor performance degrades the IDE exp
 Avoid allocations in hot-path callbacks. Every `RegisterSyntaxNodeAction` callback runs per-node, potentially thousands of times per keystroke:
 
 ```csharp
-// BAD: allocates a closure and delegate on every compilation
-context.RegisterCompilationStartAction(compilationCtx =>
+// BAD: resolves type on every symbol callback (per-symbol overhead)
+context.RegisterSymbolAction(symbolCtx =>
 {
-    var importantType = compilationCtx.Compilation
+    // GetTypeByMetadataName is called for EVERY symbol in the compilation
+    var disposableType = symbolCtx.Compilation
         .GetTypeByMetadataName("System.IDisposable");
+    if (disposableType is null) return;
 
-    // This lambda captures 'importantType' -- new closure per compilation
-    compilationCtx.RegisterSymbolAction(
-        symbolCtx => Analyze(symbolCtx, importantType!),
-        SymbolKind.NamedType);
-});
+    Analyze(symbolCtx, disposableType);
+}, SymbolKind.NamedType);
 
-// GOOD: use static lambdas and pass state via RegisterCompilationStartAction
+// GOOD: resolve state once per compilation, closure allocated once
 context.RegisterCompilationStartAction(compilationCtx =>
 {
     var importantType = compilationCtx.Compilation
         .GetTypeByMetadataName("System.IDisposable");
     if (importantType is null) return;
 
-    // State is resolved once per compilation, not per callback
+    // One closure per compilation -- acceptable cost
     compilationCtx.RegisterSymbolAction(
-        static (symbolCtx, state) => Analyze(symbolCtx, state),
-        importantType,
+        symbolCtx => Analyze(symbolCtx, importantType),
         SymbolKind.NamedType);
 });
 ```
 
-> **Note:** The two-parameter `RegisterSymbolAction` overload accepting a state argument is available in `Microsoft.CodeAnalysis` 4.4+. For older SDK versions, a closure is unavoidable but should be allocated only once per compilation (inside `RegisterCompilationStartAction`), not per callback invocation.
+> **Note:** A single closure allocated once per compilation inside `RegisterCompilationStartAction` is acceptable. The anti-pattern is resolving types or allocating closures inside per-node or per-symbol callbacks, where the cost multiplies across thousands of invocations.
 
 ### Symbol-Based Filtering
 
