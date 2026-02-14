@@ -24,9 +24,8 @@ Add cross-reference integrations between the new MAUI skills and existing skills
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Added reverse cross-references [skill:dotnet-maui-development] and [skill:dotnet-maui-aot] to dotnet-maui-testing SKILL.md. Validated all hard cross-references resolve, no duplicate skill IDs in advisor catalog, soft cross-refs present, plugin.json registrations correct, and validate-skills.sh passes.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 691dd830a1ac89b82c7e6399b304ef001cfe1a77
+- Tests: ./scripts/validate-skills.sh
 - PRs:
