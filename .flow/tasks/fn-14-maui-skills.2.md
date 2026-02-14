@@ -33,9 +33,8 @@ Create the `dotnet-maui-specialist` agent following the established pattern from
 - [ ] Pattern consistency with `agents/dotnet-blazor-specialist.md` and `agents/dotnet-uno-specialist.md` verified
 
 ## Done summary
-TBD
-
+Created dotnet-maui-specialist agent at agents/dotnet-maui-specialist.md with frontmatter (name, description, model, capabilities, tools), 4 preloaded skills, 4-step workflow (detect context, identify platform targets, recommend patterns, delegate), 11 trigger phrases, delegation boundaries (testing, AOT, framework selection), explicit boundaries, read-only Bash constraint, and analysis guidelines. Registered agent in plugin.json agents array. Pattern consistent with dotnet-blazor-specialist and dotnet-uno-specialist.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 042e9c5d16641d0a2d74089cdcd518ca073cf0c1
+- Tests: ./scripts/validate-skills.sh
 - PRs:
