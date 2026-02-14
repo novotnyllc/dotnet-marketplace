@@ -54,9 +54,8 @@ The initial config uses `@upstash/context7-mcp@latest` for convenience. **Follow
 - [ ] Done summary notes the @latest vs pinned version tradeoff
 
 ## Done summary
-TBD
-
+Populated `.mcp.json` with Context7 MCP server configuration (`npx -y @upstash/context7-mcp@latest`) for library documentation lookup covering Microsoft Learn, NuGet, and .NET ecosystem docs. No API key required. Note: uses `@latest` tag for initial ship convenience; evaluate pinning to a specific version (e.g., `@1.x.x`) after stabilization to prevent upstream breaking changes.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5784087de655a3f00ef145645c47c0ea5753deab
+- Tests: bash scripts/validate-marketplace.sh, jq empty .mcp.json, npx -y @upstash/context7-mcp@latest (manual server start test)
 - PRs:
