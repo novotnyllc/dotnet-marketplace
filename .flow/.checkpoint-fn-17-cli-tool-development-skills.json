@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-02-14T02:34:15.628749Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-17-cli-tool-development-skills",
+      "created_at": "2026-02-11T22:23:25.656283Z",
+      "depends_on_epics": [
+        "fn-5-architecture-patterns-skills"
+      ],
+      "id": "fn-17-cli-tool-development-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-17-cli-tool-development-skills.md",
+      "status": "open",
+      "title": "CLI Tool Development Skills",
+      "updated_at": "2026-02-11T22:29:59.590589Z"
+    },
+    "spec": "# fn-17: CLI Tool Development Skills\n\n## Problem/Goal\nAdd comprehensive CLI tool development skills covering System.CommandLine, architecture patterns (avoiding \"one big bash script\"), Native AOT distribution, and multi-platform package manager publishing (Homebrew, apt, winget).\n\n## Acceptance Checks\n- [ ] `dotnet-system-commandline` skill covers full System.CommandLine API (commands, options, arguments, middleware, hosting, tab completion)\n- [ ] `dotnet-cli-architecture` skill covers layered CLI design patterns (reference: clig.dev) for maintainability\n- [ ] `dotnet-cli-aot-distribution` skill covers Native AOT for CLI tools plus cross-platform distribution\n- [ ] `dotnet-cli-homebrew`, `dotnet-cli-apt`, `dotnet-cli-winget` skills cover platform-specific packaging + CI/CD\n- [ ] `dotnet-cli-unified-pipeline` skill covers unified CI/CD producing all package formats from single build\n- [ ] Cross-references to dotnet-native-aot, CI/CD skills\n\n## Key Context\n- System.CommandLine is the modern standard (not CommandLineParser)\n- CLI apps benefit significantly from Native AOT (fast startup, no runtime dependency)\n- clig.dev principles for good CLI design\n- Unified CI/CD pipeline maximizes maintainability across package managers\n"
+  },
+  "epic_id": "fn-17-cli-tool-development-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:09.162251Z",
+        "depends_on": [],
+        "epic": "fn-17-cli-tool-development-skills",
+        "id": "fn-17-cli-tool-development-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-17-cli-tool-development-skills.1.md",
+        "status": "todo",
+        "title": "Create System.CommandLine and architecture skills",
+        "updated_at": "2026-02-11T22:32:09.162463Z"
+      },
+      "id": "fn-17-cli-tool-development-skills.1",
+      "runtime": null,
+      "spec": "# fn-17-cli-tool-development-skills.1 Create System.CommandLine and architecture skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:09.327862Z",
+        "depends_on": [],
+        "epic": "fn-17-cli-tool-development-skills",
+        "id": "fn-17-cli-tool-development-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-17-cli-tool-development-skills.2.md",
+        "status": "todo",
+        "title": "Create distribution skills (Homebrew, apt, winget, unified pipeline)",
+        "updated_at": "2026-02-11T22:32:09.328015Z"
+      },
+      "id": "fn-17-cli-tool-development-skills.2",
+      "runtime": null,
+      "spec": "# fn-17-cli-tool-development-skills.2 Create distribution skills (Homebrew, apt, winget, unified pipeline)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:09.453960Z",
+        "depends_on": [],
+        "epic": "fn-17-cli-tool-development-skills",
+        "id": "fn-17-cli-tool-development-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-17-cli-tool-development-skills.3.md",
+        "status": "todo",
+        "title": "Integrate with AOT skills for CLI distribution",
+        "updated_at": "2026-02-11T22:32:09.454135Z"
+      },
+      "id": "fn-17-cli-tool-development-skills.3",
+      "runtime": null,
+      "spec": "# fn-17-cli-tool-development-skills.3 Integrate with AOT skills for CLI distribution\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
