@@ -9,9 +9,9 @@ Authentication and authorization across all Blazor hosting models. Covers Author
 
 **Scope boundary:** This skill owns Blazor-specific auth UI patterns -- AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, client-side token handling, and per-hosting-model auth flow configuration. API-level auth (JWT, OAuth/OIDC, passkeys, CORS, rate limiting) is owned by fn-11 -- see [skill:dotnet-api-security].
 
-**Out of scope:** JWT token generation and validation -- see [skill:dotnet-api-security]. OWASP security principles -- see [skill:dotnet-security-owasp]. bUnit testing of auth components -- see [skill:dotnet-blazor-testing]. E2E auth testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** JWT token generation and validation -- see [skill:dotnet-api-security]. OWASP security principles -- see [skill:dotnet-security-owasp]. bUnit testing of auth components -- see [skill:dotnet-blazor-testing]. E2E auth testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-api-security] for API-level auth, [skill:dotnet-security-owasp] for OWASP principles, [skill:dotnet-blazor-patterns] for hosting models, [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-api-security] for API-level auth, [skill:dotnet-security-owasp] for OWASP principles, [skill:dotnet-blazor-patterns] for hosting models, [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

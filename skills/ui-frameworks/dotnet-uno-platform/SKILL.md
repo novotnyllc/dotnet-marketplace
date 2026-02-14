@@ -9,9 +9,9 @@ Uno Platform core development: Extensions ecosystem (Navigation, DI, Configurati
 
 **Scope boundary:** This skill owns Uno Platform project structure, Extensions ecosystem configuration, MVUX patterns, Toolkit controls, theming, and Hot Reload. Per-target deployment (WASM, iOS, Android, Desktop, Embedded) is owned by [skill:dotnet-uno-targets]. MCP server integration for live documentation is owned by [skill:dotnet-uno-mcp].
 
-**Out of scope:** Uno Platform testing (Playwright for WASM, platform-specific tests) -- see [skill:dotnet-uno-testing]. General serialization patterns -- see [skill:dotnet-serialization]. AOT/trimming for WASM -- see [skill:dotnet-aot-wasm] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** Uno Platform testing (Playwright for WASM, platform-specific tests) -- see [skill:dotnet-uno-testing]. General serialization patterns -- see [skill:dotnet-serialization]. AOT/trimming for WASM -- see [skill:dotnet-aot-wasm] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

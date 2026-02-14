@@ -9,9 +9,9 @@ Blazor hosting models, render modes, project setup, routing, enhanced navigation
 
 **Scope boundary:** This skill owns Blazor project setup, hosting model selection, render mode configuration, routing, enhanced navigation, streaming rendering, and AOT-safe patterns. Component architecture (lifecycle, state management, JS interop, EditForm) is owned by [skill:dotnet-blazor-components]. Authentication across hosting models is owned by [skill:dotnet-blazor-auth].
 
-**Out of scope:** bUnit component testing -- see [skill:dotnet-blazor-testing]. Standalone SignalR patterns -- see [skill:dotnet-realtime-communication]. Browser-based E2E testing -- see [skill:dotnet-playwright]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** bUnit component testing -- see [skill:dotnet-blazor-testing]. Standalone SignalR patterns -- see [skill:dotnet-realtime-communication]. Browser-based E2E testing -- see [skill:dotnet-playwright]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

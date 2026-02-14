@@ -9,9 +9,9 @@ Blazor component architecture: lifecycle methods, state management (cascading va
 
 **Scope boundary:** This skill owns component implementation patterns. Hosting model selection and render mode configuration are owned by [skill:dotnet-blazor-patterns]. Authentication components (AuthorizeView, CascadingAuthenticationState) are owned by [skill:dotnet-blazor-auth].
 
-**Out of scope:** bUnit testing -- see [skill:dotnet-blazor-testing]. Standalone SignalR hub patterns -- see [skill:dotnet-realtime-communication]. E2E testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** bUnit testing -- see [skill:dotnet-blazor-testing]. Standalone SignalR hub patterns -- see [skill:dotnet-realtime-communication]. E2E testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

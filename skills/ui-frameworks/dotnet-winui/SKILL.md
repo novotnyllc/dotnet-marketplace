@@ -9,11 +9,11 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 **Version assumptions:** .NET 8.0+ baseline. Windows App SDK 1.6+ (current stable). TFM `net8.0-windows10.0.19041.0`. .NET 9 features explicitly marked.
 
-**Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by [skill:dotnet-wpf-migration] (fn-15.3).
+**Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by [skill:dotnet-wpf-migration].
 
-**Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser] (may not exist yet). WPF patterns -- see [skill:dotnet-wpf-modern].
+**Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser]. WPF patterns -- see [skill:dotnet-wpf-modern].
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 
@@ -495,7 +495,7 @@ Migrating from UWP to WinUI 3 involves namespace changes, API replacements, and 
 6. **Update NuGet packages** to Windows App SDK-compatible versions
 7. **Test Windows integration** features (notifications, background tasks, file associations)
 
-For comprehensive migration path guidance across frameworks, see [skill:dotnet-wpf-migration] (created in fn-15.3).
+For comprehensive migration path guidance across frameworks, see [skill:dotnet-wpf-migration].
 
 **UWP .NET 9 preview path:** Microsoft announced UWP support on .NET 9 as a preview. This allows UWP apps to use modern .NET without migrating to WinUI 3. Evaluate this path if full WinUI migration is too costly but you need modern .NET runtime features.
 
