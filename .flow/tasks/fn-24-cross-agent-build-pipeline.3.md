@@ -38,5 +38,8 @@ Integrate the generator (fn-24.1) and conformance validator (fn-24.2) into CI an
 - [ ] No new CI dependencies beyond Python 3 (already available)
 
 ## Done summary
-
+Wired cross-agent generation (generate_dist.py --strict) and conformance validation (validate_cross_agent.py) into validate.yml CI pipeline after existing skill/marketplace steps. Created release.yml workflow triggered on v* tag push that runs full validation, packages dist/ into per-agent zip archives, and creates a GitHub Release with dist-claude.zip, dist-copilot.zip, and dist-codex.zip artifacts.
 ## Evidence
+- Commits: 0e33c5c13e5478df5c238bb034be2b681d2a59b2
+- Tests: python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
