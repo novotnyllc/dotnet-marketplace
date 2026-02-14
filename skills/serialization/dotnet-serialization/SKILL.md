@@ -7,7 +7,7 @@ description: "WHEN serializing data. AOT-friendly System.Text.Json source genera
 
 AOT-friendly serialization patterns for .NET applications. Covers System.Text.Json source generators for compile-time serialization, Protocol Buffers (Protobuf) for efficient binary serialization, and MessagePack for high-performance compact binary format. Includes performance tradeoff guidance for choosing the right serializer and warnings about reflection-based serialization in AOT scenarios.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth.
+**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
 
 Cross-references: [skill:dotnet-csharp-source-generators] for understanding how STJ source generators work under the hood. See [skill:dotnet-integration-testing] for testing serialization round-trip correctness.
 
@@ -356,7 +356,7 @@ var json = JsonSerializer.Serialize(order, AppJsonContext.Default.Order);
 - **Always register `JsonSerializerContext` in ASP.NET Core** -- use `ConfigureHttpJsonOptions` for Minimal APIs and `AddJsonOptions` for MVC controllers (they are separate registrations)
 - **Annotate all serialized types** -- STJ source generators only generate code for types listed in `[JsonSerializable]`; MessagePack requires `[MessagePackObject]`
 
-<!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> See [skill:dotnet-native-aot] for comprehensive AOT architecture, trimming strategies, and RD.xml configuration.
+See [skill:dotnet-native-aot] for comprehensive AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trimming strategies and ILLink descriptor configuration.
 
 ---
 

@@ -7,7 +7,7 @@ description: "WHEN building gRPC services. Proto definition, code-gen, ASP.NET C
 
 Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, code generation, ASP.NET Core gRPC server implementation and endpoint hosting, `Grpc.Net.Client` client patterns, all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth.
+**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
 
 Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. See [skill:dotnet-integration-testing] for testing gRPC services.
 
@@ -725,7 +725,7 @@ public override async Task<OrderResponse> GetOrder(
 - **Use L7 load balancers** -- L4 load balancers pin all traffic to one backend because HTTP/2 multiplexes on a single TCP connection
 - **Implement the gRPC health check protocol** -- enables Kubernetes probes and load balancers to monitor service health
 
-<!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> See [skill:dotnet-native-aot] for Native AOT considerations when building gRPC services with ahead-of-time compilation.
+See [skill:dotnet-native-aot] for Native AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible patterns when building gRPC services with ahead-of-time compilation.
 
 ---
 

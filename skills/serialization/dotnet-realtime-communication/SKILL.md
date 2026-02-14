@@ -7,7 +7,7 @@ description: "WHEN choosing real-time protocols. Compare SignalR, SSE (.NET 10),
 
 Real-time communication patterns for .NET applications. Compares SignalR (full-duplex over WebSockets with automatic fallback), Server-Sent Events (SSE, built-in to ASP.NET Core in .NET 10), JSON-RPC 2.0 (structured request-response over any transport), and gRPC streaming (high-performance binary streaming). Provides decision guidance for choosing the right protocol based on requirements.
 
-**Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture, trimming strategies, and RD.xml configuration depth are owned by fn-16 -- <!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> see [skill:dotnet-native-aot] for AOT architecture depth. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) is owned by fn-12 -- see [skill:dotnet-blazor-patterns] for Blazor hosting models and circuit patterns.
+**Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) is owned by fn-12 -- see [skill:dotnet-blazor-patterns] for Blazor hosting models and circuit patterns.
 
 Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. See [skill:dotnet-integration-testing] for testing real-time communication endpoints. See [skill:dotnet-blazor-patterns] for Blazor-specific SignalR circuit management and render mode interaction.
 
@@ -349,7 +349,7 @@ See [skill:dotnet-grpc] for complete gRPC implementation details including all f
 - **Use strongly-typed hubs** -- `Hub<T>` catches method name typos at compile time instead of runtime
 - **Scale SignalR with a backplane** -- Redis or Azure SignalR Service for multi-server deployments
 
-<!-- TODO(fn-16): Replace with canonical cross-ref when fn-16 lands --> See [skill:dotnet-native-aot] for AOT considerations when using real-time communication protocols.
+See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible real-time communication patterns.
 
 ---
 
