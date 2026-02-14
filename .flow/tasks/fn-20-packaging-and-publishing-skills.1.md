@@ -49,9 +49,8 @@ Create two packaging skills: `dotnet-nuget-authoring` (NuGet package authoring f
 - [ ] Description frontmatter < 120 chars per skill
 
 ## Done summary
-TBD
-
+Created `dotnet-nuget-authoring` and `dotnet-msix` packaging skills covering SDK-style csproj package properties, source generator NuGet layout, multi-TFM, symbol packages, signing, validation/API compat (NuGet) and MSIX creation, certificate signing, distribution channels (Store/App Installer/enterprise), auto-update, bundles, CI build steps, and Windows SDK version requirements (MSIX). Both skills include out-of-scope boundary statements and all required cross-references.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7a0cdc94e15f97c98cd99c2f5e6f3e2f6b1ecb0a, 2cdb19385d258952c44eebfc56c70cf5cc0cfe0a
+- Tests: ./scripts/validate-skills.sh
 - PRs:

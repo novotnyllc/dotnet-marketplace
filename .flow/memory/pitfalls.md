@@ -195,3 +195,9 @@ Empty task specs (all TBD) are unshippable - must include descriptions, file pat
 
 ## 2026-02-14 manual [pitfall]
 Vague task titles (like 'Reference dotnet-skills material') need clarification - rename to explicit deliverables or risk implementer confusion
+
+## 2026-02-14 manual [pitfall]
+WAP projects (.wapproj) use a specialized project format with custom MSBuild imports, not Microsoft.NET.Sdk -- do not show them as SDK-style projects or agents will generate invalid project files
+
+## 2026-02-14 manual [pitfall]
+Windows SDK tool paths (signtool.exe, MakeAppx.exe) vary by installed SDK version -- use dynamic path discovery (Get-ChildItem with version sort) instead of hardcoding version-specific paths
