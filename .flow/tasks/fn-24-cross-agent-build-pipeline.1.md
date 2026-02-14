@@ -32,7 +32,8 @@ Version stamping: reads version from `git describe --tags` and stamps `plugin.js
 - [ ] Script runs without .NET SDK dependency (pure Python + bash)
 
 ## Done summary
-<!-- filled by flowctl done -->
-
+Created scripts/generate_dist.py that reads canonical skills/, agents/, hooks/, and .mcp.json sources and produces dist/claude/ (mirror), dist/copilot/ (routing index + per-skill files with relative cross-ref links), and dist/codex/ (top-level AGENTS.md + per-category AGENTS.md with section anchors). Applies transformation rules to omit Claude-only features (agents, hooks, MCP tools) from non-Claude outputs, stamps version from git tags, and supports --strict mode for CI. Added dist/ to .gitignore.
 ## Evidence
-<!-- filled by flowctl done -->
+- Commits: 86c690d1f4e62f1d9e7a2a17adedfe3e30e23321, f4fe385acfc6a9e468f0b932e28b3452cf900eb3
+- Tests: bash scripts/validate-skills.sh, bash scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict
+- PRs:
