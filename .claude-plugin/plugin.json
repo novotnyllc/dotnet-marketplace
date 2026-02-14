@@ -81,7 +81,15 @@
     "skills/performance/dotnet-benchmarkdotnet",
     "skills/performance/dotnet-performance-patterns",
     "skills/performance/dotnet-profiling",
-    "skills/performance/dotnet-ci-benchmarking"
+    "skills/performance/dotnet-ci-benchmarking",
+    "skills/cicd/dotnet-gha-patterns",
+    "skills/cicd/dotnet-gha-build-test",
+    "skills/cicd/dotnet-gha-publish",
+    "skills/cicd/dotnet-gha-deploy",
+    "skills/cicd/dotnet-ado-patterns",
+    "skills/cicd/dotnet-ado-build-test",
+    "skills/cicd/dotnet-ado-publish",
+    "skills/cicd/dotnet-ado-unique"
   ],
   "agents": [
     "agents/dotnet-architect.md",

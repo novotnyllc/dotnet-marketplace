@@ -134,7 +134,7 @@ Before any .NET guidance, determine the project's target framework:
 ### 16. Release Management `planned`
 - [skill:dotnet-release-management] -- NBGV, changelogs, SemVer strategy
 
-### 17. CI/CD `planned`
+### 17. CI/CD `implemented`
 - [skill:dotnet-gha-patterns] -- reusable workflows, composite actions, matrix
 - [skill:dotnet-gha-build-test] -- .NET build + test workflows
 - [skill:dotnet-gha-publish] -- NuGet/container publishing workflows

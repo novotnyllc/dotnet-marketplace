@@ -7,7 +7,7 @@ description: "WHEN adding starter CI/CD to a .NET project. Detects GitHub Action
 
 Add starter CI/CD workflows to an existing .NET project. Detects the hosting platform (GitHub Actions or Azure DevOps) and generates an appropriate starter workflow for build, test, and pack.
 
-**Scope boundary:** This skill provides **starter templates** only. For advanced CI/CD patterns — composable reusable workflows, matrix builds, deployment pipelines, release automation, and environment promotion — see fn-19 (CI/CD depth epic).
+**Scope boundary:** This skill provides **starter templates** only. For advanced CI/CD patterns — composable reusable workflows, matrix builds, deployment pipelines, release automation, and environment promotion — see [skill:dotnet-gha-patterns], [skill:dotnet-ado-patterns], and related CI/CD depth skills.
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine SDK version for the workflow. Run [skill:dotnet-project-analysis] to understand solution structure.
 
@@ -213,7 +213,7 @@ Push a branch and open a PR to trigger the workflow.
 
 ## What's Next
 
-This starter covers build-test-pack. For advanced scenarios, see fn-19 (CI/CD depth):
+This starter covers build-test-pack. For advanced scenarios, see the CI/CD depth skills:
 - Reusable composite actions and workflow templates
 - Matrix builds across OS/TFM combinations
 - Deployment pipelines with environment gates

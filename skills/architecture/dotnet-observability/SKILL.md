@@ -7,7 +7,7 @@ description: "WHEN adding observability. OpenTelemetry traces/metrics/logs, stru
 
 Modern observability for .NET applications using OpenTelemetry, structured logging, health checks, and custom metrics. Covers the three pillars of observability (traces, metrics, logs), integration with `Microsoft.Extensions.Diagnostics` and `System.Diagnostics`, and production-ready health check patterns.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Testing observability output -- see [skill:dotnet-integration-testing] for verifying telemetry in integration tests. CI/CD pipeline integration for telemetry collection is owned by fn-19.
+**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Testing observability output -- see [skill:dotnet-integration-testing] for verifying telemetry in integration tests. CI/CD pipeline integration for telemetry collection is owned by fn-19 -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns].
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async patterns in background exporters, [skill:dotnet-resilience] for Polly telemetry integration.
 

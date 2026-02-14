@@ -9,7 +9,7 @@ Multi-platform packaging for .NET CLI tools: Homebrew formula authoring (binary 
 
 **Version assumptions:** .NET 8.0+ baseline. Package manager formats are stable across .NET versions.
 
-**Out of scope:** CLI distribution strategy (AOT vs framework-dependent vs dotnet tool decision) -- see [skill:dotnet-cli-distribution] (fn-17). Release CI/CD pipeline that automates packaging -- see [skill:dotnet-cli-release-pipeline] (fn-17). Native AOT compilation -- see [skill:dotnet-native-aot] (fn-16). Container-based distribution -- see [skill:dotnet-containers] (fn-5). General CI/CD patterns -- see fn-19.
+**Out of scope:** CLI distribution strategy (AOT vs framework-dependent vs dotnet tool decision) -- see [skill:dotnet-cli-distribution] (fn-17). Release CI/CD pipeline that automates packaging -- see [skill:dotnet-cli-release-pipeline] (fn-17). Native AOT compilation -- see [skill:dotnet-native-aot] (fn-16). Container-based distribution -- see [skill:dotnet-containers] (fn-5). General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns].
 
 Cross-references: [skill:dotnet-cli-distribution] for distribution strategy and RID matrix, [skill:dotnet-cli-release-pipeline] for automated package publishing, [skill:dotnet-native-aot] for AOT binary production, [skill:dotnet-containers] for container-based distribution.
 

@@ -292,7 +292,7 @@ This skill covers test project scaffolding. For deeper testing guidance:
 - **UI testing (Blazor, MAUI, Uno)** -- [skill:dotnet-blazor-testing], [skill:dotnet-maui-testing], [skill:dotnet-uno-testing]
 - **Snapshot testing** -- [skill:dotnet-snapshot-testing]
 - **Test quality and coverage enforcement** -- [skill:dotnet-test-quality]
-- **CI test reporting** -- [skill:dotnet-add-ci] for starter, fn-19 for advanced
+- **CI test reporting** -- [skill:dotnet-add-ci] for starter, [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test] for advanced
 
 ---
 

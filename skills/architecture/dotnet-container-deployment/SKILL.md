@@ -7,7 +7,7 @@ description: "WHEN deploying .NET containers. Kubernetes Deployment/Service/prob
 
 Deploying .NET containers to Kubernetes and local development environments. Covers Kubernetes Deployment + Service + probe YAML, Docker Compose for local dev workflows, and CI/CD integration for building and pushing container images.
 
-**Out of scope:** Dockerfile authoring, multi-stage builds, base image selection, and `dotnet publish` container images are covered in [skill:dotnet-containers]. Advanced CI/CD pipeline patterns (matrix builds, deploy pipelines, environment promotion) are owned by fn-19. DI and async patterns are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Testing container deployments -- see [skill:dotnet-integration-testing] for Testcontainers patterns and [skill:dotnet-playwright] for E2E testing against deployed containers.
+**Out of scope:** Dockerfile authoring, multi-stage builds, base image selection, and `dotnet publish` container images are covered in [skill:dotnet-containers]. Advanced CI/CD pipeline patterns (matrix builds, deploy pipelines, environment promotion) are owned by fn-19 -- see [skill:dotnet-gha-deploy] and [skill:dotnet-ado-patterns]. DI and async patterns are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Testing container deployments -- see [skill:dotnet-integration-testing] for Testcontainers patterns and [skill:dotnet-playwright] for E2E testing against deployed containers.
 
 Cross-references: [skill:dotnet-containers] for Dockerfile and image best practices, [skill:dotnet-observability] for health check endpoint patterns used by Kubernetes probes.
 
@@ -350,7 +350,7 @@ docker compose -f docker-compose.yml -f docker-compose.observability.yml up
 
 ## CI/CD Integration
 
-Basic CI/CD patterns for building and pushing .NET container images. Advanced CI patterns (matrix builds, environment promotion, deploy pipelines) are owned by fn-19.
+Basic CI/CD patterns for building and pushing .NET container images. Advanced CI patterns (matrix builds, environment promotion, deploy pipelines) are owned by fn-19 -- see [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy], and [skill:dotnet-ado-publish].
 
 ### GitHub Actions: Build and Push
 

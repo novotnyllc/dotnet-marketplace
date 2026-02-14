@@ -9,7 +9,7 @@ System.CommandLine 2.0 API for building .NET CLI applications: RootCommand, Comm
 
 **Version assumptions:** .NET 8.0+ baseline. System.CommandLine 2.0.0-beta4 (pre-release NuGet package). Despite the beta version number, the API surface is stable and battle-tested -- it powers the `dotnet` CLI itself, the .NET Interactive kernel, and many Microsoft-internal tools. The package has been in active use since 2020 with a stable API contract.
 
-**Out of scope:** CLI application architecture patterns (layered command/handler/service design, configuration precedence, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot] (fn-16). CLI distribution strategy and packaging -- see [skill:dotnet-cli-distribution] (fn-17). General CI/CD patterns -- see fn-19. DI container mechanics -- see [skill:dotnet-csharp-dependency-injection] (fn-3).
+**Out of scope:** CLI application architecture patterns (layered command/handler/service design, configuration precedence, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot] (fn-16). CLI distribution strategy and packaging -- see [skill:dotnet-cli-distribution] (fn-17). General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container mechanics -- see [skill:dotnet-csharp-dependency-injection] (fn-3).
 
 Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns and testing, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration.
 

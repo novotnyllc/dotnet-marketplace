@@ -9,11 +9,9 @@ Continuous benchmarking guidance for detecting performance regressions in CI pip
 
 **Version assumptions:** BenchmarkDotNet v0.14+ for JSON export, GitHub Actions runner environment. Examples use `actions/upload-artifact@v4` and `actions/download-artifact@v4`.
 
-**Out of scope:** BenchmarkDotNet setup, benchmark class design, memory diagnosers, and common pitfalls are owned by this epic's companion skill -- see [skill:dotnet-benchmarkdotnet]. Performance-oriented architecture patterns are owned by [skill:dotnet-performance-patterns]. Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) are covered by `dotnet-profiling`. OpenTelemetry metrics collection and distributed tracing are owned by fn-5 -- see [skill:dotnet-observability]. Composable CI/CD workflow design and matrix build strategies are owned by fn-19 -- see deferred placeholders below. Architecture patterns (caching, resilience) are owned by fn-5 -- see [skill:dotnet-architecture-patterns].
+**Out of scope:** BenchmarkDotNet setup, benchmark class design, memory diagnosers, and common pitfalls are owned by this epic's companion skill -- see [skill:dotnet-benchmarkdotnet]. Performance-oriented architecture patterns are owned by [skill:dotnet-performance-patterns]. Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) are covered by `dotnet-profiling`. OpenTelemetry metrics collection and distributed tracing are owned by fn-5 -- see [skill:dotnet-observability]. Composable CI/CD workflow design and matrix build strategies are owned by fn-19 -- see [skill:dotnet-gha-patterns]. Architecture patterns (caching, resilience) are owned by fn-5 -- see [skill:dotnet-architecture-patterns].
 
-Cross-references: [skill:dotnet-benchmarkdotnet] for benchmark class setup and JSON exporter configuration, [skill:dotnet-observability] for correlating benchmark regressions with runtime metrics changes.
-
-<!-- TODO(fn-19): Add [skill:dotnet-github-actions] cross-ref when fn-19 lands for composable workflow patterns -->
+Cross-references: [skill:dotnet-benchmarkdotnet] for benchmark class setup and JSON exporter configuration, [skill:dotnet-observability] for correlating benchmark regressions with runtime metrics changes, [skill:dotnet-gha-patterns] for composable workflow patterns (reusable workflows, composite actions, matrix builds).
 
 ---
 
@@ -99,9 +97,7 @@ Key fields for regression comparison:
 | GitHub Actions artifacts | No repo bloat; automatic retention | 90-day default retention; cross-workflow access requires tokens | Large benchmark suites, shared runners |
 | External storage (S3/Azure Blob) | Unlimited history; cross-repo sharing | Extra infrastructure; credential management | Multi-repo benchmark comparison |
 
-This skill focuses on the **GitHub Actions artifact** strategy as the default. For composable workflow patterns and reusable actions, see deferred fn-19 guidance.
-
-<!-- TODO(fn-19): Add [skill:dotnet-github-actions] cross-ref for reusable workflow patterns when fn-19 lands -->
+This skill focuses on the **GitHub Actions artifact** strategy as the default. For composable workflow patterns and reusable actions, see [skill:dotnet-gha-patterns].
 
 ---
 
@@ -223,7 +219,7 @@ jobs:
 - Baseline is only updated from `main` branch merges to prevent PR branches from polluting the baseline
 - `overwrite: true` replaces the previous baseline artifact
 
-<!-- TODO(fn-19): Replace inline YAML with [skill:dotnet-github-actions] reusable workflow pattern when fn-19 lands -->
+For converting these inline workflows into reusable `workflow_call` patterns, see [skill:dotnet-gha-patterns].
 
 ---
 
@@ -386,7 +382,7 @@ Exit with non-zero status from the comparison script to fail the GitHub Actions 
           # Script exits non-zero if regressions found -- fails the job
 ```
 
-<!-- TODO(fn-19): Add [skill:dotnet-github-actions] cross-ref for required status checks and branch protection integration when fn-19 lands -->
+For required status checks and branch protection integration with benchmark gates, see [skill:dotnet-gha-patterns].
 
 ### Trend Tracking
 
@@ -500,7 +496,7 @@ jobs:
           retention-days: 90
 ```
 
-<!-- TODO(fn-19): Add [skill:dotnet-github-actions] cross-ref for scheduled workflow patterns and matrix builds across TFMs when fn-19 lands -->
+For scheduled workflow patterns and matrix builds across TFMs, see [skill:dotnet-gha-patterns].
 
 ---
 
