@@ -48,9 +48,8 @@ Create two documentation skills: `dotnet-documentation-strategy` (in `skills/doc
 - [ ] Description frontmatter < 120 chars per skill
 
 ## Done summary
-TBD
-
+Created dotnet-documentation-strategy skill (Starlight/Docusaurus/DocFX decision tree, MarkdownSnippets, migration paths) and dotnet-mermaid-diagrams skill (23 .NET-specific Mermaid examples across 7 diagram types with diagram-as-code conventions).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5bd44150c1c2f32c5f72b5dfabdfc2ee3eda2eef, d2eb136ab22faccccdab7b5eb37ebcbfeb6cc1af
+- Tests: ./scripts/validate-skills.sh, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:
