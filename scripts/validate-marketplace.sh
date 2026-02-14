@@ -9,6 +9,9 @@
 #   4. All skill directories referenced in plugin.json contain SKILL.md
 #   5. All agent files referenced in plugin.json exist
 #   6. hooks and mcpServers paths exist
+#   7. hooks/hooks.json has "hooks" key
+#   8. .mcp.json has "mcpServers" key
+#   9. scripts/hooks/*.sh are executable
 #
 # Design constraints:
 #   - Single-pass validation (no subprocess spawning per entry, no network)
@@ -184,6 +187,56 @@ else
             fi
         fi
     fi
+fi
+
+echo ""
+
+# --- hooks content validation ---
+
+echo "--- hooks/MCP content ---"
+
+# 1. Validate hooks/hooks.json has a "hooks" key
+HOOKS_FILE="$REPO_ROOT/hooks/hooks.json"
+if [ -f "$HOOKS_FILE" ]; then
+    if ! jq -e '.hooks' "$HOOKS_FILE" >/dev/null 2>&1; then
+        echo "ERROR: hooks/hooks.json missing 'hooks' key"
+        errors=$((errors + 1))
+    else
+        echo "OK: hooks/hooks.json has 'hooks' key"
+    fi
+else
+    echo "WARN: hooks/hooks.json not found (skipping content validation)"
+    warnings=$((warnings + 1))
+fi
+
+# 2. Validate .mcp.json has "mcpServers" key
+MCP_FILE="$REPO_ROOT/.mcp.json"
+if [ -f "$MCP_FILE" ]; then
+    if ! jq -e '.mcpServers' "$MCP_FILE" >/dev/null 2>&1; then
+        echo "ERROR: .mcp.json missing 'mcpServers' key"
+        errors=$((errors + 1))
+    else
+        echo "OK: .mcp.json has 'mcpServers' key"
+    fi
+else
+    echo "WARN: .mcp.json not found (skipping content validation)"
+    warnings=$((warnings + 1))
+fi
+
+# 3. Check all scripts/hooks/*.sh are executable
+HOOKS_SCRIPT_DIR="$REPO_ROOT/scripts/hooks"
+if ls "$HOOKS_SCRIPT_DIR"/*.sh 1>/dev/null 2>&1; then
+    for script in "$HOOKS_SCRIPT_DIR"/*.sh; do
+        if [ ! -x "$script" ]; then
+            echo "ERROR: $(basename "$script") is not executable (chmod +x needed)"
+            errors=$((errors + 1))
+        else
+            echo "OK: $(basename "$script") is executable"
+        fi
+    done
+else
+    echo "WARN: no scripts/hooks/*.sh files found"
+    warnings=$((warnings + 1))
 fi
 
 echo ""
