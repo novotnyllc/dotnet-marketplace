@@ -1,23 +1,28 @@
 {
-  "created_at": "2026-02-13T23:25:16.268937Z",
+  "created_at": "2026-02-14T00:22:24.624683Z",
   "epic": {
     "data": {
       "branch_name": "fn-14-maui-skills",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
       "created_at": "2026-02-11T22:23:24.927101Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
       "depends_on_epics": [
         "fn-3-core-c-and-language-patterns-skills",
         "fn-7-testing-foundation-skills"
       ],
       "id": "fn-14-maui-skills",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-13T23:33:59.565384Z",
       "spec_path": ".flow/specs/fn-14-maui-skills.md",
       "status": "open",
       "title": "MAUI Skills",
-      "updated_at": "2026-02-11T22:29:24.874780Z"
+      "updated_at": "2026-02-13T23:33:59.565517Z"
     },
-    "spec": "# fn-14: MAUI Skills\n\n## Problem/Goal\nAdd MAUI development skills with honest assessment of current state, platform-specific patterns, and Native AOT support. Enable dotnet-maui-specialist agent to guide MAUI development including platform-specific issues and workarounds.\n\n## Acceptance Checks\n- [ ] `dotnet-maui-development` skill covers modern patterns with honest current-state assessment (VS 2026 issues, iOS gaps)\n- [ ] `dotnet-maui-aot` skill covers Native AOT on iOS/Mac Catalyst (50% size/startup improvements, library compatibility)\n- [ ] `dotnet-maui-specialist` agent configured with deep platform-specific expertise\n- [ ] Cross-references to dotnet-ui-chooser, dotnet-native-aot, dotnet-maui-testing\n- [ ] .NET 11 XAML source gen and CoreCLR for Android defaults documented\n\n## Key Context\n- Production-ready with caveats (36% YoY growth, 557% community PR increase)\n- .NET 11 Preview 1: XAML source gen default, CoreCLR for Android default\n- Native AOT: 50% size/startup improvement, library compatibility gaps\n- Skills must present migration options (WinUI for Windows-only, Uno for cross-platform)\n"
+    "spec": "# fn-14: MAUI Skills\n\n## Overview\nDelivers MAUI development skills covering modern patterns with honest current-state assessment, Native AOT on iOS/Mac Catalyst, and .NET 11 improvements (XAML source gen, CoreCLR for Android). Includes a specialist agent for platform-specific guidance. Skills present migration options (WinUI for Windows-only, Uno for cross-platform) and document known caveats.\n\n## Scope\n\n**Skills (2 total, directory: `skills/ui-frameworks/<name>/SKILL.md`):**\n\n| Skill ID | Directory | Summary |\n|----------|-----------|---------|\n| `dotnet-maui-development` | `skills/ui-frameworks/dotnet-maui-development/` | MAUI patterns, current-state assessment, platform-specific guidance, .NET 11 XAML source gen, CoreCLR for Android |\n| `dotnet-maui-aot` | `skills/ui-frameworks/dotnet-maui-aot/` | MAUI Native AOT on iOS/Mac Catalyst: size/startup improvements, library compatibility, opt-out mechanisms |\n\nSkill IDs use `dotnet-maui-*` naming. Each SKILL.md uses canonical frontmatter (`name`, `description`) per fn-2 conventions. Cross-references use `[skill:name]` syntax.\n\n**Agents (1 total, file: `agents/dotnet-maui-specialist.md`):**\n\n| Agent ID | File | Summary |\n|----------|------|---------|\n| `dotnet-maui-specialist` | `agents/dotnet-maui-specialist.md` | Deep MAUI expertise including platform-specific issues, migration guidance, and AOT optimization |\n\nAgent registration: added to `plugin.json` `agents` array as `\"agents/dotnet-maui-specialist.md\"`.\n\nTrigger phrases: \"maui\", \"maui app\", \"maui xaml\", \"maui native aot\", \"maui ios\", \"maui android\", \"maui catalyst\", \"maui windows\", \"xamarin migration\", \"maui hot reload\", \"maui aot\".\n\nPreloaded skills: `[skill:dotnet-maui-development]`, `[skill:dotnet-maui-aot]`, `[skill:dotnet-version-detection]`, `[skill:dotnet-project-analysis]`.\n\n## MAUI Development Content Coverage\n\nThe `dotnet-maui-development` skill must cover these topics:\n\n| Topic | Key Concepts |\n|-------|-------------|\n| Project Structure | Single-project with platform folders, conditional compilation, resource management |\n| XAML Patterns | XAML data binding, MVVM with CommunityToolkit.Mvvm, Shell navigation, ContentPage lifecycle |\n| Platform Services | Platform-specific code via partial classes, conditional compilation, dependency injection |\n| Current State (Feb 2026) | Production-ready with caveats: VS 2026 Android toolchain bugs, iOS 26.x compatibility gaps |\n| Growth Metrics | 36% YoY user growth, 557% community PR increase, strong enterprise traction |\n| Migration Options | WinUI for Windows-only, Uno Platform for web/Linux targets, when to choose each |\n| .NET 11: XAML Source Gen | Default in .NET 11 Preview 1, replaces XAMLC, AOT-friendly, revert with `<MauiXamlInflator>XamlC</MauiXamlInflator>` |\n| .NET 11: CoreCLR for Android | Default runtime for Android Release builds, replaces Mono, opt out with `<UseMonoRuntime>true</UseMonoRuntime>` |\n| `dotnet run` Device Selection | .NET 11: interactive target framework and device selection |\n| Hot Reload | XAML Hot Reload, C# Hot Reload limitations per platform |\n\n## MAUI AOT Content Coverage\n\nThe `dotnet-maui-aot` skill must cover:\n\n| Topic | Key Concepts |\n|-------|-------------|\n| iOS/Mac Catalyst AOT | Native AOT compilation pipeline, publish profile, entitlements |\n| Size Reduction | Up to 50% app size reduction vs interpreter mode |\n| Startup Improvement | Up to 50% faster cold startup |\n| Library Compatibility | Many libraries don't support AOT \u2014 compatibility matrix, common failures |\n| Opt-out Mechanisms | `<PublishAot>false</PublishAot>`, per-assembly trimming overrides |\n| Trimming Interplay | Trim warnings, RD.xml for reflection, source generator alternatives |\n| Testing AOT Builds | Verifying AOT builds work on device, common AOT-only failures |\n\n## Scope Boundaries\n\n| Concern | fn-14 owns (MAUI) | Other epic owns | Enforcement |\n|---|---|---|---|\n| MAUI-specific testing | Brief mention with cross-ref only | fn-7: `dotnet-maui-testing` owns Appium, XHarness, platform-specific testing | Cross-ref `[skill:dotnet-maui-testing]` (hard) |\n| General Native AOT patterns | MAUI-specific AOT (iOS/Catalyst pipeline) | fn-16: `dotnet-native-aot` owns general AOT patterns and architecture | Cross-ref `[skill:dotnet-native-aot]` (soft dep, skill may not exist yet) |\n| WASM AOT | N/A (MAUI doesn't target WASM) | fn-16: `dotnet-aot-wasm` | Cross-ref `[skill:dotnet-aot-wasm]` (soft dep, skill may not exist yet) |\n| UI framework selection | Presents migration options only | fn-15: `dotnet-ui-chooser` owns framework decision tree | Cross-ref `[skill:dotnet-ui-chooser]` (soft dep, skill may not exist yet) |\n\n## .NET Version Policy\n\n- **Baseline:** .NET 8.0+ (MAUI ships with .NET 8+)\n- **.NET 11 Preview 1:** XAML source gen default, CoreCLR for Android default, `dotnet run` device selection\n- Cross-reference `[skill:dotnet-version-detection]` for TFM detection\n\n## Key Context\n- Production-ready with caveats (36% YoY growth, 557% community PR increase)\n- .NET 11 Preview 1: XAML source gen default, CoreCLR for Android default\n- Native AOT: 50% size/startup improvement on iOS/Mac Catalyst, library compatibility gaps\n- Skills must present migration options (WinUI for Windows-only, Uno for cross-platform)\n- `dotnet-maui-testing` skill (fn-7) already exists \u2014 fn-14 must cross-reference, not duplicate\n- `dotnet-native-aot` skill (fn-16) does not exist yet \u2014 use soft cross-reference\n- `dotnet-ui-chooser` skill (fn-15) does not exist yet \u2014 use soft cross-reference\n\n## Task Decomposition\n\nTasks must execute serially (1 \u2192 2 \u2192 3) because task 2 depends on skills created in task 1, and task 3 validates the outputs of tasks 1 and 2.\n\n### fn-14.1: Create MAUI development and AOT skills\n**Delivers:** `dotnet-maui-development`, `dotnet-maui-aot`\n- `skills/ui-frameworks/dotnet-maui-development/SKILL.md`\n- `skills/ui-frameworks/dotnet-maui-aot/SKILL.md`\n- Registers both skills in `plugin.json`\n- Verifies existing `dotnet-advisor` catalog entries for both skills; ensures entries match and are deduplicated\n- Cross-references: `[skill:dotnet-maui-testing]` (hard); `[skill:dotnet-native-aot]`, `[skill:dotnet-aot-wasm]`, `[skill:dotnet-ui-chooser]` (soft)\n- .NET 11 content (XAML source gen, CoreCLR for Android, `dotnet run` device selection) included in skill content\n- **Modifies:** `skills/ui-frameworks/` (new dirs), `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md` (verify/deduplicate)\n\n### fn-14.2: Create dotnet-maui-specialist agent\n**Delivers:** `dotnet-maui-specialist` agent\n- `agents/dotnet-maui-specialist.md` with frontmatter (name, description, model, capabilities, tools)\n- Agent registered in `plugin.json` `agents` array\n- Preloaded skills: `[skill:dotnet-maui-development]`, `[skill:dotnet-maui-aot]`, `[skill:dotnet-version-detection]`, `[skill:dotnet-project-analysis]`\n- Workflow: detect context \u2192 identify platform targets \u2192 recommend patterns \u2192 delegate to specialist skills\n- Delegation: `[skill:dotnet-maui-testing]` for testing, `[skill:dotnet-native-aot]` (soft) for general AOT, `[skill:dotnet-ui-chooser]` (soft) for framework selection\n- Trigger lexicon and explicit boundaries defined\n- **Modifies:** `agents/` (new file), `.claude-plugin/plugin.json`\n\n### fn-14.3: Add reverse cross-refs and validate integrations\n**Delivers:** Cross-reference updates to existing skills and validation\n- Updates `dotnet-maui-testing` to add reverse cross-refs: `[skill:dotnet-maui-development]`, `[skill:dotnet-maui-aot]`\n- Validates all hard cross-references resolve (grep check); `dotnet-native-aot`, `dotnet-aot-wasm`, `dotnet-ui-chooser` excluded as soft deps\n- No duplicate skill IDs in advisor catalog\n- **Modifies:** `skills/testing/dotnet-maui-testing/SKILL.md` only\n- **Validates (read-only):** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`\n\n## Quick Commands\n```bash\n# Smoke test: verify both skills exist\nfor s in dotnet-maui-development dotnet-maui-aot; do\n  test -f \"skills/ui-frameworks/$s/SKILL.md\" && echo \"OK: $s\" || echo \"MISSING: $s\"\ndone\n\n# Verify agent exists\ntest -f \"agents/dotnet-maui-specialist.md\" && echo \"OK: agent\" || echo \"MISSING: agent\"\n\n# Verify MAUI development content coverage\ngrep -ci \"XAML\\|MVVM\\|Shell\\|Hot Reload\\|CoreCLR\\|source gen\" skills/ui-frameworks/dotnet-maui-development/SKILL.md\n\n# Verify AOT content coverage\ngrep -ci \"Native AOT\\|size reduction\\|startup\\|library compat\\|trimming\" skills/ui-frameworks/dotnet-maui-aot/SKILL.md\n\n# Verify .NET 11 content in development skill\ngrep -i \"MauiXamlInflator\\|UseMonoRuntime\\|dotnet run\" skills/ui-frameworks/dotnet-maui-development/SKILL.md\n\n# Verify cross-references (hard)\ngrep \"skill:dotnet-maui-testing\" skills/ui-frameworks/dotnet-maui-development/SKILL.md\n\n# Verify cross-references (soft)\ngrep \"skill:dotnet-native-aot\\|skill:dotnet-aot-wasm\\|skill:dotnet-ui-chooser\" skills/ui-frameworks/dotnet-maui-aot/SKILL.md\n\n# Verify skills registered in plugin.json\nfor s in dotnet-maui-development dotnet-maui-aot; do\n  grep -q \"skills/ui-frameworks/$s\" .claude-plugin/plugin.json && echo \"OK: $s\" || echo \"MISSING: $s\"\ndone\n\n# Verify agent registered\ngrep -q \"dotnet-maui-specialist\" .claude-plugin/plugin.json && echo \"OK: agent\" || echo \"MISSING: agent\"\n\n# Verify reverse cross-refs added\ngrep \"skill:dotnet-maui-development\\|skill:dotnet-maui-aot\" skills/testing/dotnet-maui-testing/SKILL.md\n\n# Verify no duplicate skill IDs in advisor catalog\ngrep -oP 'skill:[a-z-]+' skills/foundation/dotnet-advisor/SKILL.md | sort | uniq -d  # expect empty\n\n# Run validation\n./scripts/validate-skills.sh\n```\n\n## Acceptance Criteria\n1. Both skills created at `skills/ui-frameworks/<name>/SKILL.md` with `name` and `description` frontmatter\n2. `dotnet-maui-development` covers all 10 topics from the Development Content Coverage table\n3. `dotnet-maui-development` includes .NET 11 content: XAML source gen default, CoreCLR for Android default, `dotnet run` device selection\n4. `dotnet-maui-development` provides honest current-state assessment (VS 2026 issues, iOS gaps, growth metrics)\n5. `dotnet-maui-development` presents migration options (WinUI, Uno Platform) with decision guidance\n6. `dotnet-maui-aot` covers all 7 topics from the AOT Content Coverage table\n7. `dotnet-maui-aot` documents opt-out mechanisms (`PublishAot`, `UseMonoRuntime`, `MauiXamlInflator`)\n8. Scope boundaries enforced: testing cross-refs to `[skill:dotnet-maui-testing]` (hard); AOT cross-refs to `[skill:dotnet-native-aot]`, `[skill:dotnet-aot-wasm]` (soft)\n9. `dotnet-maui-specialist` agent at `agents/dotnet-maui-specialist.md` with frontmatter (name, description, model, capabilities, tools), trigger phrases, preloaded skills (4 total), workflow, delegation boundaries\n10. Agent registered in `plugin.json` `agents` array\n11. Both skills registered in `plugin.json` `skills` array (verified per-skill)\n12. Both skills present in `dotnet-advisor` catalog and routing logic; no duplicate skill IDs\n13. Hard cross-references present and resolvable: `[skill:dotnet-maui-testing]`\n14. Soft cross-references: `[skill:dotnet-native-aot]`, `[skill:dotnet-aot-wasm]`, `[skill:dotnet-ui-chooser]` (validated only if files present)\n15. Reverse cross-refs added to `dotnet-maui-testing` SKILL.md pointing to new MAUI skills\n16. `./scripts/validate-skills.sh` passes\n17. Combined skill description budget remains under 12,000 chars (2 new skills \u00d7 ~120 chars \u2248 240 chars added)\n\n## Dependencies\n- **Hard:** fn-3 (core C# patterns), fn-7 (testing foundation \u2014 `dotnet-maui-testing` must exist for reverse cross-ref updates)\n- **Soft:** fn-15 (`dotnet-ui-chooser` may not exist yet), fn-16 (`dotnet-native-aot`, `dotnet-aot-wasm` may not exist yet)\n- **Pattern reference:** fn-13 (Uno Platform skills \u2014 structural template, not a code dependency)\n\n## Conventions\n- Canonical SKILL.md frontmatter: `name` and `description` only\n- Cross-reference syntax: `[skill:name]`\n- Description budget guardrail: each skill description \u2264 120 chars, total budget < 12,000 chars\n\n## Test Notes\n- Verify MAUI current-state assessment is honest (mentions caveats, not just positive spin)\n- Verify migration options are presented objectively (not just \"use MAUI\")\n- Verify .NET 11 content documents both the new defaults AND opt-out mechanisms\n- Verify AOT skill covers library compatibility gaps realistically\n- Verify agent triggers on MAUI-related keywords and delegates correctly\n- Verify agent preloads `dotnet-version-detection` and `dotnet-project-analysis` for context detection\n- Run `./scripts/validate-skills.sh` to confirm all frontmatter and cross-refs pass\n\n## References\n- .NET MAUI Docs: https://learn.microsoft.com/en-us/dotnet/maui/\n- .NET 11 Preview 1: https://devblogs.microsoft.com/dotnet/dotnet-11-preview-1/\n- MAUI Native AOT: https://learn.microsoft.com/en-us/dotnet/maui/deployment/nativeaot\n- CommunityToolkit.Mvvm: https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/\n- MAUI Shell: https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/shell/\n"
   },
   "epic_id": "fn-14-maui-skills",
   "schema_version": 2,
@@ -35,11 +40,28 @@
         "spec_path": ".flow/tasks/fn-14-maui-skills.1.md",
         "status": "todo",
         "title": "Create MAUI development and AOT skills",
-        "updated_at": "2026-02-11T22:31:56.153825Z"
+        "updated_at": "2026-02-13T23:31:58.718690Z"
       },
       "id": "fn-14-maui-skills.1",
-      "runtime": null,
-      "spec": "# fn-14-maui-skills.1 Create MAUI development and AOT skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-13T23:36:01.072650Z",
+        "evidence": {
+          "commits": [
+            "109d04e",
+            "02ca624",
+            "99306cd"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-13T23:48:24.854897Z"
+      },
+      "spec": "# fn-14-maui-skills.1 Create MAUI development and AOT skills\n\n## Description\nCreate two MAUI skills covering development patterns with honest current-state assessment and Native AOT on iOS/Mac Catalyst. Each skill follows canonical frontmatter (`name`, `description`) and uses `[skill:name]` cross-reference syntax. Both skills are registered in `plugin.json` and verified in the `dotnet-advisor` catalog.\n\n### Deliverables\n- `skills/ui-frameworks/dotnet-maui-development/SKILL.md` \u2014 MAUI development patterns: project structure (single-project with platform folders), XAML patterns (data binding, MVVM with CommunityToolkit.Mvvm, Shell navigation), platform services (partial classes, conditional compilation, DI), honest current-state assessment (VS 2026 bugs, iOS gaps, 36% YoY growth, 557% community PR increase), migration options (WinUI for Windows-only, Uno for web/Linux), .NET 11 content (XAML source gen default with `<MauiXamlInflator>XamlC</MauiXamlInflator>` revert, CoreCLR for Android default with `<UseMonoRuntime>true</UseMonoRuntime>` opt-out, `dotnet run` device selection), Hot Reload per platform\n- `skills/ui-frameworks/dotnet-maui-aot/SKILL.md` \u2014 Native AOT on iOS/Mac Catalyst: compilation pipeline, up to 50% size reduction, up to 50% startup improvement, library compatibility gaps, opt-out mechanisms (`<PublishAot>false</PublishAot>`), trimming interplay (RD.xml, source generators), testing AOT builds on device\n- Both skills registered in `.claude-plugin/plugin.json` `skills` array\n- Verify existing `dotnet-advisor` catalog entries for both skills match implemented descriptions; deduplicate if needed\n\n### Cross-references\n- Hard: `[skill:dotnet-maui-testing]` (exists at `skills/testing/dotnet-maui-testing/SKILL.md`)\n- Soft: `[skill:dotnet-native-aot]`, `[skill:dotnet-aot-wasm]`, `[skill:dotnet-ui-chooser]` (may not exist yet)\n\n### Files modified\n- `skills/ui-frameworks/dotnet-maui-development/SKILL.md` (new)\n- `skills/ui-frameworks/dotnet-maui-aot/SKILL.md` (new)\n- `.claude-plugin/plugin.json` (add 2 skill paths)\n- `skills/foundation/dotnet-advisor/SKILL.md` (verify/deduplicate catalog entries)\n\n## Acceptance\n- [ ] `dotnet-maui-development` SKILL.md exists with `name` and `description` frontmatter\n- [ ] `dotnet-maui-development` covers all 10 topics from epic Development Content Coverage table\n- [ ] `dotnet-maui-development` includes .NET 11: XAML source gen default, CoreCLR for Android default, `dotnet run` device selection\n- [ ] `dotnet-maui-development` includes honest current-state assessment (VS 2026 issues, iOS gaps, growth metrics)\n- [ ] `dotnet-maui-development` presents migration options (WinUI, Uno) with objective guidance\n- [ ] `dotnet-maui-aot` SKILL.md exists with `name` and `description` frontmatter\n- [ ] `dotnet-maui-aot` covers all 7 topics from epic AOT Content Coverage table\n- [ ] `dotnet-maui-aot` documents opt-out mechanisms and library compatibility gaps\n- [ ] Both skills registered in `plugin.json`\n- [ ] Both skills present in `dotnet-advisor` catalog; no duplicate IDs\n- [ ] Hard cross-ref `[skill:dotnet-maui-testing]` present and resolvable\n- [ ] Soft cross-refs `[skill:dotnet-native-aot]`, `[skill:dotnet-aot-wasm]`, `[skill:dotnet-ui-chooser]` present\n- [ ] Each skill description \u2264 120 chars\n- [ ] `./scripts/validate-skills.sh` passes\n\n## Done summary\nCreated dotnet-maui-development (project structure, XAML/MVVM, platform services, .NET 11 improvements, honest current-state assessment, migration options) and dotnet-maui-aot (Native AOT pipeline for iOS/Mac Catalyst, size/startup gains, library compatibility matrix, ILLink trimming, testing workflow) skills. Both registered in plugin.json and present in dotnet-advisor catalog with proper cross-references.\n## Evidence\n- Commits: 109d04e, 02ca624, 99306cd\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     },
     {
       "data": {
@@ -47,18 +69,35 @@
         "claim_note": "",
         "claimed_at": null,
         "created_at": "2026-02-11T22:31:56.274693Z",
-        "depends_on": [],
+        "depends_on": [
+          "fn-14-maui-skills.1"
+        ],
         "epic": "fn-14-maui-skills",
         "id": "fn-14-maui-skills.2",
         "priority": null,
         "spec_path": ".flow/tasks/fn-14-maui-skills.2.md",
         "status": "todo",
         "title": "Create dotnet-maui-specialist agent",
-        "updated_at": "2026-02-11T22:31:56.274923Z"
+        "updated_at": "2026-02-13T23:32:11.844987Z"
       },
       "id": "fn-14-maui-skills.2",
-      "runtime": null,
-      "spec": "# fn-14-maui-skills.2 Create dotnet-maui-specialist agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-13T23:58:57.155734Z",
+        "evidence": {
+          "commits": [
+            "042e9c5d16641d0a2d74089cdcd518ca073cf0c1"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-14T00:05:00.174615Z"
+      },
+      "spec": "# fn-14-maui-skills.2 Create dotnet-maui-specialist agent\n\n## Description\nCreate the `dotnet-maui-specialist` agent following the established pattern from `agents/dotnet-blazor-specialist.md` and `agents/dotnet-uno-specialist.md`. The agent provides deep MAUI expertise for platform-specific development, migration guidance, and AOT optimization.\n\n### Deliverables\n- `agents/dotnet-maui-specialist.md` with frontmatter: name, description, model, capabilities, tools\n- Agent registered in `.claude-plugin/plugin.json` `agents` array as `\"agents/dotnet-maui-specialist.md\"`\n\n### Agent Schema\n- **Preloaded skills:** `[skill:dotnet-maui-development]`, `[skill:dotnet-maui-aot]`, `[skill:dotnet-version-detection]`, `[skill:dotnet-project-analysis]`\n- **Workflow:** detect context \u2192 identify platform targets \u2192 recommend patterns \u2192 delegate to specialist skills\n- **Trigger lexicon:** \"maui\", \"maui app\", \"maui xaml\", \"maui native aot\", \"maui ios\", \"maui android\", \"maui catalyst\", \"maui windows\", \"xamarin migration\", \"maui hot reload\", \"maui aot\"\n- **Delegation boundaries:**\n  - `[skill:dotnet-maui-testing]` for Appium and XHarness testing\n  - `[skill:dotnet-native-aot]` (soft) for general AOT patterns\n  - `[skill:dotnet-ui-chooser]` (soft) for framework selection\n- **Explicit boundaries:** Does NOT own testing (delegates to `dotnet-maui-testing`), does NOT own general AOT (delegates to `dotnet-native-aot`), does NOT own framework selection (defers to `dotnet-ui-chooser`). Read-only Bash only.\n\n### Files modified\n- `agents/dotnet-maui-specialist.md` (new)\n- `.claude-plugin/plugin.json` (add agent path to `agents` array)\n\n## Acceptance\n- [ ] `agents/dotnet-maui-specialist.md` exists with required frontmatter (name, description, model, capabilities, tools)\n- [ ] Agent registered in `plugin.json` `agents` array\n- [ ] Preloads all 4 specified skills (2 MAUI + version-detection + project-analysis)\n- [ ] Workflow section documents detect \u2192 identify \u2192 recommend \u2192 delegate flow\n- [ ] Trigger lexicon includes all 11 trigger phrases from epic spec\n- [ ] Delegation boundaries explicitly defined (testing, AOT, framework selection)\n- [ ] Explicit boundaries section documents what agent does NOT own\n- [ ] Read-only Bash constraint documented\n- [ ] Pattern consistency with `agents/dotnet-blazor-specialist.md` and `agents/dotnet-uno-specialist.md` verified\n\n## Done summary\nCreated dotnet-maui-specialist agent at agents/dotnet-maui-specialist.md with frontmatter (name, description, model, capabilities, tools), 4 preloaded skills, 4-step workflow (detect context, identify platform targets, recommend patterns, delegate), 11 trigger phrases, delegation boundaries (testing, AOT, framework selection), explicit boundaries, read-only Bash constraint, and analysis guidelines. Registered agent in plugin.json agents array. Pattern consistent with dotnet-blazor-specialist and dotnet-uno-specialist.\n## Evidence\n- Commits: 042e9c5d16641d0a2d74089cdcd518ca073cf0c1\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     },
     {
       "data": {
@@ -66,18 +105,36 @@
         "claim_note": "",
         "claimed_at": null,
         "created_at": "2026-02-11T22:31:56.430925Z",
-        "depends_on": [],
+        "depends_on": [
+          "fn-14-maui-skills.1",
+          "fn-14-maui-skills.2"
+        ],
         "epic": "fn-14-maui-skills",
         "id": "fn-14-maui-skills.3",
         "priority": null,
         "spec_path": ".flow/tasks/fn-14-maui-skills.3.md",
         "status": "todo",
-        "title": "Document .NET 11 XAML source gen and CoreCLR defaults",
-        "updated_at": "2026-02-11T22:31:56.431116Z"
+        "title": "Add reverse cross-refs and validate integrations",
+        "updated_at": "2026-02-13T23:32:22.132662Z"
       },
       "id": "fn-14-maui-skills.3",
-      "runtime": null,
-      "spec": "# fn-14-maui-skills.3 Document .NET 11 XAML source gen and CoreCLR defaults\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-14T00:11:43.069475Z",
+        "evidence": {
+          "commits": [
+            "691dd830a1ac89b82c7e6399b304ef001cfe1a77"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-14T00:16:23.704850Z"
+      },
+      "spec": "# fn-14-maui-skills.3 Add reverse cross-refs and validate integrations\n\n## Description\nAdd cross-reference integrations between the new MAUI skills and existing skills. Update `dotnet-maui-testing` with reverse cross-refs to the new MAUI skills. Validate all hard cross-references resolve. Ensure no duplicate skill IDs in advisor catalog.\n\n### Deliverables\n- Updated `skills/testing/dotnet-maui-testing/SKILL.md` with reverse cross-refs: `[skill:dotnet-maui-development]`, `[skill:dotnet-maui-aot]`\n- Validation that all hard cross-references resolve (grep check)\n- Validation that no duplicate skill IDs exist in `dotnet-advisor` catalog\n- Soft cross-refs (`dotnet-native-aot`, `dotnet-aot-wasm`, `dotnet-ui-chooser`) validated only if target files exist\n\n### Files modified\n- `skills/testing/dotnet-maui-testing/SKILL.md` (add reverse cross-refs)\n\n### Files validated (read-only)\n- `.claude-plugin/plugin.json` (verify registrations from fn-14.1 and fn-14.2)\n- `skills/foundation/dotnet-advisor/SKILL.md` (verify catalog entries, no duplicates)\n\n## Acceptance\n- [ ] `dotnet-maui-testing` SKILL.md contains `[skill:dotnet-maui-development]` and `[skill:dotnet-maui-aot]` cross-refs\n- [ ] All hard cross-references from fn-14.1 and fn-14.2 resolve (grep finds target files)\n- [ ] Soft cross-refs (`dotnet-native-aot`, `dotnet-aot-wasm`, `dotnet-ui-chooser`) are present in skill files but not validated for resolution\n- [ ] No duplicate skill IDs in `dotnet-advisor` catalog (`grep | sort | uniq -d` returns empty)\n- [ ] `./scripts/validate-skills.sh` passes\n\n## Done summary\nAdded reverse cross-references [skill:dotnet-maui-development] and [skill:dotnet-maui-aot] to dotnet-maui-testing SKILL.md. Validated all hard cross-references resolve, no duplicate skill IDs in advisor catalog, soft cross-refs present, plugin.json registrations correct, and validate-skills.sh passes.\n## Evidence\n- Commits: 691dd830a1ac89b82c7e6399b304ef001cfe1a77\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     }
   ]
 }

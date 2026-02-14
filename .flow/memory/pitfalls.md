@@ -165,3 +165,9 @@ Native AOT trimming preservation uses ILLink descriptors (TrimmerRootDescriptor)
 
 ## 2026-02-13 manual [pitfall]
 Hot Reload support for new methods improved in .NET 9+: instance methods on non-generic classes work partially, only static/generic require rebuild
+
+## 2026-02-14 manual [pitfall]
+Task JSON depends_on must mirror prose serial-execution claims — empty depends_on silently allows parallel execution by task runners
+
+## 2026-02-14 manual [pitfall]
+When fixing task specs, always sync the epic spec's Task Decomposition subsections to match -- reviewers flag cross-section inconsistency within the same epic spec file
