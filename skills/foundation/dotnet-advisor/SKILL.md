@@ -144,7 +144,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-ado-publish] -- ADO publishing pipelines
 - [skill:dotnet-ado-unique] -- ADO-specific: classic pipelines, service connections
 
-### 18. Documentation `planned`
+### 18. Documentation `implemented`
 - [skill:dotnet-documentation-strategy] -- Starlight, Docusaurus, DocFX
 - [skill:dotnet-mermaid-diagrams] -- architecture/sequence/class diagrams
 - [skill:dotnet-github-docs] -- README, CONTRIBUTING, issue templates

@@ -93,7 +93,12 @@
     "skills/packaging/dotnet-nuget-authoring",
     "skills/packaging/dotnet-msix",
     "skills/packaging/dotnet-github-releases",
-    "skills/release-management/dotnet-release-management"
+    "skills/release-management/dotnet-release-management",
+    "skills/documentation/dotnet-documentation-strategy",
+    "skills/documentation/dotnet-mermaid-diagrams",
+    "skills/documentation/dotnet-github-docs",
+    "skills/documentation/dotnet-xml-docs",
+    "skills/documentation/dotnet-api-docs"
   ],
   "agents": [
     "agents/dotnet-architect.md",
@@ -103,7 +108,8 @@
     "agents/dotnet-uno-specialist.md",
     "agents/dotnet-maui-specialist.md",
     "agents/dotnet-performance-analyst.md",
-    "agents/dotnet-benchmark-designer.md"
+    "agents/dotnet-benchmark-designer.md",
+    "agents/dotnet-docs-generator.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"
