@@ -27,7 +27,7 @@ Install the plugin using the Claude Code CLI:
 claude plugin add novotnyllc/dotnet-marketplace
 ```
 
-Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
+Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development. Installation syntax may change as the Claude Code plugin system evolves.
 
 ## Skill Catalog
 
@@ -146,15 +146,13 @@ graph TB
 sequenceDiagram
     participant User
     participant Claude as Claude Code
-    participant Advisor as dotnet-advisor<br/>(Foundation Skill)
     participant Router as dotnet-architect<br/>(Routing Agent)
     participant Specialist as Specialist Agent
     participant Skills as Skill Files
 
     User->>Claude: "How do I set up Blazor auth?"
-    Claude->>Advisor: Route query
-    Advisor->>Router: Delegate to architect
-    Router->>Router: Analyze query context
+    Claude->>Router: Route query
+    Router->>Router: Load dotnet-advisor catalog<br/>+ analyze query context
     Router->>Specialist: Delegate to blazor-specialist
     Specialist->>Skills: Load dotnet-blazor-auth<br/>+ dotnet-blazor-patterns
     Skills-->>Specialist: Skill content
@@ -182,7 +180,7 @@ During generation, the pipeline applies several transformations to ensure compat
 
 - **Cross-references** (`[skill:skill-name]`) are resolved to platform-appropriate links or inline text
 - **Agent-specific directives** are omitted for platforms that do not support agent delegation
-- **Hook definitions** are rewritten to match each platform's extension mechanism
+- **Hook and MCP references** are omitted for platforms that do not support these features
 - **Validation** via `scripts/validate_cross_agent.py` ensures all generated outputs conform to their target platform's requirements
 
 The CI workflow (`validate.yml`) runs both generation and conformance validation on every push and pull request.

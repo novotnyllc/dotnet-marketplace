@@ -43,9 +43,8 @@ Create `README.md` at the repo root for the dotnet-artisan Claude Code plugin. T
   ```
 
 ## Done summary
-TBD
-
+Created README.md with all 12 required sections including skill catalog table (18 categories, 97 skills with accurate per-category counts), 2 Mermaid architecture diagrams (plugin structure overview and agent delegation flow), cross-agent support documentation referencing the dist/ pipeline, Agent Skills open standard references, and CI/license/version badges.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: bc773b996745b8b65b9513c0c6affbaaf2df0e25
+- Tests: grep section checks, mermaid diagram count, Agent Skills reference check
 - PRs:
