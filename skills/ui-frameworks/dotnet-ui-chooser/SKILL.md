@@ -7,9 +7,9 @@ description: "WHEN selecting a .NET UI framework. Decision tree across Blazor, M
 
 UI framework selection decision tree for .NET applications. Covers Web (Blazor Server, Blazor WebAssembly, Blazor Hybrid), cross-platform (MAUI, Uno Platform, Avalonia), and Windows-only (WinUI 3, WPF, WinForms) frameworks. Presents structured trade-off analysis across five decision factors to help teams evaluate options based on their specific constraints.
 
-**Scope boundary:** This skill owns the framework selection decision tree and cross-framework comparison. Individual framework depth, patterns, and APIs are owned by the respective framework skills. Migration guidance between frameworks is owned by [skill:dotnet-wpf-migration] (fn-15.3).
+**Scope boundary:** This skill owns the framework selection decision tree and cross-framework comparison. Individual framework depth, patterns, and APIs are owned by the respective framework skills. Migration guidance between frameworks is owned by [skill:dotnet-wpf-migration] (created in fn-15.3, may not exist yet).
 
-**Out of scope:** Framework-specific implementation patterns -- see individual skills listed below. Migration paths between frameworks -- see [skill:dotnet-wpf-migration] (fn-15.3). Desktop UI testing -- see [skill:dotnet-ui-testing-core].
+**Out of scope:** Framework-specific implementation patterns -- see individual skills listed below. Migration paths between frameworks -- see [skill:dotnet-wpf-migration] (created in fn-15.3, may not exist yet). Desktop UI testing -- see [skill:dotnet-ui-testing-core].
 
 Cross-references: [skill:dotnet-blazor-patterns] for Blazor hosting and render modes, [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-modern] for modern WPF on .NET 8+, [skill:dotnet-winforms-basics] for WinForms modernization.
 
@@ -85,7 +85,7 @@ Framework rendering architecture affects performance characteristics.
 |---|---|---|---|---|---|---|---|
 | Startup time | Fast | Fast | Fast | Fast (server) | Slow (download) | Moderate | Moderate |
 | Rendering | DirectX (native) | DirectX (managed) | GDI+ | Server-side HTML | Browser DOM | Platform-native | Skia or native |
-| AOT support | N/A (Windows) | N/A (Windows) | N/A (Windows) | N/A (server) | Yes (.NET 9+) | Yes (iOS required) | Yes (WASM) |
+| AOT support | N/A (Windows) | N/A (Windows) | N/A (Windows) | N/A (server) | Yes (.NET 8+) | Yes (required on iOS) | Yes (WASM) |
 | GPU acceleration | Yes | Yes | Limited | N/A | Browser GPU | Platform GPU | Skia GPU |
 | Memory per user | Local only | Local only | Local only | Server circuit | Browser sandbox | Local only | Local only |
 | Offline capable | Yes | Yes | Yes | No | Yes | Yes | Yes (native targets) |
@@ -168,7 +168,7 @@ When the application must run on multiple platforms, compare reach, rendering mo
 | Ecosystem | NuGet + MAUI Community Toolkit | NuGet + Uno Toolkit + Uno Extensions | NuGet + Avalonia community |
 | Blazor Hybrid | Built-in (BlazorWebView) | Supported | Not built-in |
 | Linux desktop | Not supported | Supported (Skia + GTK/Framebuffer) | Supported |
-| Web (WASM) | Not supported | Supported | Supported (preview) |
+| Web (WASM) | Not supported | Supported | Supported (browser) |
 | Migration from | Xamarin.Forms (direct) | UWP (direct WinUI surface) | WPF (similar XAML) |
 
 ### When to Choose Each
