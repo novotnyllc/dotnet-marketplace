@@ -42,9 +42,8 @@ Both skills must have `name` and `description` frontmatter. Does NOT touch `plug
 - [ ] Validation: `grep -l "TODO.*fn-19\|placeholder.*fn-19" skills/performance/dotnet-ci-benchmarking/SKILL.md`
 
 ## Done summary
-Created `dotnet-profiling` and `dotnet-ci-benchmarking` skills with comprehensive coverage of diagnostic tools and continuous benchmarking workflows. Profiling skill cross-references fn-5 observability; CI benchmarking includes deferred fn-19 placeholders.
-
+Created `dotnet-profiling` and `dotnet-ci-benchmarking` skills with comprehensive coverage of diagnostic tools and continuous benchmarking workflows. Profiling skill covers dotnet-counters, dotnet-trace (flame graphs, CPU sampling, allocation tracking), and dotnet-dump (SOS commands, memory leak investigation). CI benchmarking skill covers baseline management, GitHub Actions workflows with YAML snippets, threshold-based regression detection, and alerting strategies. Both cross-reference [skill:dotnet-observability]; CI benchmarking includes deferred fn-19 placeholders.
 ## Evidence
-- Commits: Skills created with frontmatter and content
-- Tests: `./scripts/validate-skills.sh` passes for both skills
-- PRs: N/A (single-repo workflow)
+- Commits: bea0e8a79cd157cc20917952100eedc1fd697038
+- Tests: ./scripts/validate-skills.sh, grep -q '^name:' skills/performance/dotnet-profiling/SKILL.md, grep -q '^name:' skills/performance/dotnet-ci-benchmarking/SKILL.md, grep -l 'TODO.*fn-19' skills/performance/dotnet-ci-benchmarking/SKILL.md
+- PRs:
