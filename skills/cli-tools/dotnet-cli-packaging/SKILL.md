@@ -36,6 +36,7 @@ class Mytool < Formula
       url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-osx-arm64.tar.gz"
       sha256 "abc123..."
     end
+    # Optional: remove on_intel block if not targeting Intel Macs
     on_intel do
       url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-osx-x64.tar.gz"
       sha256 "def456..."
@@ -205,7 +206,7 @@ PackageIdentifier: MyOrg.MyTool
 PackageVersion: 1.2.3
 DefaultLocale: en-US
 ManifestType: version
-ManifestVersion: 1.6.0
+ManifestVersion: 1.9.0
 ```
 
 **Installer manifest (MyOrg.MyTool.installer.yaml):**
@@ -226,7 +227,7 @@ Installers:
     InstallerUrl: https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-arm64.zip
     InstallerSha256: DEF456...
 ManifestType: installer
-ManifestVersion: 1.6.0
+ManifestVersion: 1.9.0
 ```
 
 **Locale manifest (MyOrg.MyTool.locale.en-US.yaml):**
@@ -241,7 +242,7 @@ ShortDescription: A CLI tool for managing widgets
 License: MIT
 PackageUrl: https://github.com/myorg/mytool
 ManifestType: defaultLocale
-ManifestVersion: 1.6.0
+ManifestVersion: 1.9.0
 ```
 
 ### Submitting to winget-pkgs
@@ -339,7 +340,7 @@ mytool/
     <title>MyTool</title>
     <authors>My Org</authors>
     <projectUrl>https://github.com/myorg/mytool</projectUrl>
-    <licenseUrl>https://github.com/myorg/mytool/blob/main/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <description>A CLI tool for managing widgets.</description>
     <tags>cli dotnet tools</tags>
   </metadata>

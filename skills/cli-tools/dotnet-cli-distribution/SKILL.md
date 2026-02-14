@@ -167,21 +167,7 @@ Trimming removes unused code from the published output. For self-contained non-A
 
 ### AOT Size Optimization
 
-For Native AOT builds, size is controlled by different properties. See [skill:dotnet-native-aot] for full details. Key CLI-relevant settings:
-
-```xml
-<PropertyGroup>
-  <PublishAot>true</PublishAot>
-  <!-- Strip symbols (saves 30-50% on Linux/macOS) -->
-  <StripSymbols>true</StripSymbols>
-  <!-- Optimize for size over speed -->
-  <OptimizationPreference>Size</OptimizationPreference>
-  <!-- Remove stack trace metadata (saves ~10%, lose readable stack traces) -->
-  <StackTraceSupport>false</StackTraceSupport>
-  <!-- Disable globalization (saves ~25 MB if not needed) -->
-  <InvariantGlobalization>true</InvariantGlobalization>
-</PropertyGroup>
-```
+For Native AOT builds, size is controlled by AOT-specific MSBuild properties. See [skill:dotnet-native-aot] for the full configuration. Key CLI-relevant properties include `StripSymbols`, `OptimizationPreference`, `InvariantGlobalization`, and `StackTraceSupport`.
 
 ### Size Comparison (Typical CLI Tool)
 

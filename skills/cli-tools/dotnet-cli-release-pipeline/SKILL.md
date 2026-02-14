@@ -123,21 +123,21 @@ jobs:
           dotnet publish ${{ env.PROJECT }}
           -c Release
           -r ${{ matrix.rid }}
+          -o ./publish
           /p:Version=${{ steps.version.outputs.version }}
 
       - name: Package (Unix)
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          cd src/MyCli/bin/Release/net8.0/${{ matrix.rid }}/publish
+          cd publish
           tar -czf "$GITHUB_WORKSPACE/mytool-${{ steps.version.outputs.version }}-${{ matrix.rid }}.tar.gz" .
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $publishDir = "src/MyCli/bin/Release/net8.0/${{ matrix.rid }}/publish"
-          Compress-Archive -Path "$publishDir/*" `
+          Compress-Archive -Path "publish/*" `
             -DestinationPath "mytool-${{ steps.version.outputs.version }}-${{ matrix.rid }}.zip"
 
       - name: Upload artifact
@@ -177,6 +177,7 @@ jobs:
             echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # Pin third-party actions to a commit SHA in production for supply-chain security
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -241,7 +242,7 @@ strategy:
 
 ### Cross-Compilation Notes
 
-- **linux-arm64 on ubuntu-latest:** .NET supports cross-compilation. `dotnet publish -r linux-arm64` on an x64 runner produces a valid ARM64 binary. No QEMU or ARM runner needed.
+- **linux-arm64 on ubuntu-latest:** .NET supports cross-compilation for managed (non-AOT) builds. `dotnet publish -r linux-arm64` on an x64 runner produces a valid ARM64 binary without QEMU. For Native AOT, cross-compiling ARM64 on an x64 runner requires the ARM64 cross-compilation toolchain (`gcc-aarch64-linux-gnu` or equivalent). See [skill:dotnet-native-aot] for cross-compile prerequisites.
 - **osx-arm64:** Use `macos-latest` (which provides ARM64 runners) for native compilation. Cross-compiling macOS ARM64 from Linux is not supported.
 - **win-x64 on windows-latest:** Native compilation on Windows runner.
 
@@ -539,7 +540,7 @@ Use job-level permissions when different jobs need different scopes. Never grant
 ## Agent Gotchas
 
 1. **Do not use `set -e` without `set -o pipefail` in GitHub Actions bash steps.** Without `pipefail`, a failing command piped to `tee` or another utility exits 0, masking the failure. Always use `set -euo pipefail`.
-2. **Do not hardcode the .NET version in the publish path.** Use `${{ env.DOTNET_VERSION }}` or extract the TFM dynamically. Hardcoding `net8.0` in artifact paths breaks when upgrading to .NET 9+.
+2. **Do not hardcode the .NET version in the publish path.** Use `dotnet publish -o ./publish` to control the output directory explicitly. Hardcoding `net8.0` in artifact paths breaks when upgrading to .NET 9+.
 3. **Do not skip the pre-release detection step.** Package manager submissions (Homebrew, winget, Scoop, Chocolatey, NuGet) must be gated on stable versions. Publishing a `-rc.1` to winget-pkgs or NuGet as stable causes user confusion.
 4. **Do not use `actions/upload-artifact` v3 with `merge-multiple`.** The `merge-multiple` parameter requires `actions/download-artifact@v4`. Using v3 silently ignores the flag and creates nested directories.
 5. **Do not forget `retention-days: 1` on intermediate build artifacts.** Release artifacts are published to GitHub Releases (permanent). Workflow artifacts are temporary and should expire quickly to save storage.
