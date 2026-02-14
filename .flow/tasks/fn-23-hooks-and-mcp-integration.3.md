@@ -69,9 +69,8 @@ fi
 - [ ] All validation passes (exit 0)
 
 ## Done summary
-TBD
-
+Added docs/hooks-and-mcp-guide.md documenting hook behaviors, disable instructions, MCP server requirements, and troubleshooting. Extended validate-marketplace.sh with hooks content validation (hooks key, mcpServers key, executable permissions).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 34753cb611c323d997f5a093f499ddbc9b952a32
+- Tests: bash scripts/validate-marketplace.sh
 - PRs:
