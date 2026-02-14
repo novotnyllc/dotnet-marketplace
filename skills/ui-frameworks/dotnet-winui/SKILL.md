@@ -9,7 +9,7 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 **Version assumptions:** .NET 8.0+ baseline. Windows App SDK 1.6+ (current stable). TFM `net8.0-windows10.0.19041.0`. .NET 9 features explicitly marked.
 
-**Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by `dotnet-wpf-migration` (fn-15.3).
+**Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by [skill:dotnet-wpf-migration] (fn-15.3).
 
 **Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser] (may not exist yet). WPF patterns -- see [skill:dotnet-wpf-modern].
 
@@ -94,9 +94,16 @@ public partial class App : Application
             .Build();
     }
 
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+        await _host.StartAsync();
+
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.Closed += async (_, _) =>
+        {
+            await _host.StopAsync();
+            _host.Dispose();
+        };
         mainWindow.Activate();
     }
 
@@ -425,40 +432,26 @@ AppNotificationManager.Default.Show(builder.BuildNotification());
 
 ### Widgets (Windows 11)
 
-Widgets require Windows 11 (build 22000+) and MSIX packaged deployment:
+Widgets require Windows 11 (build 22000+) and MSIX packaged deployment. The implementation involves creating a widget provider that implements `IWidgetProvider` and registering it in the MSIX manifest.
 
-```csharp
-// Widget provider implementation
-[ComVisible(true)]
-[ClassInterface(ClassInterfaceType.None)]
-public class MyWidgetProvider : IWidgetProvider
-{
-    public void CreateWidget(WidgetContext widgetContext)
-    {
-        // Initialize widget state
-    }
+**Key steps:**
+1. Implement `IWidgetProvider` interface (methods: `CreateWidget`, `DeleteWidget`, `OnActionInvoked`, `OnWidgetContextChanged`, `OnCustomizationRequested`, `Activate`, `Deactivate`)
+2. Register the provider as a COM class in the MSIX manifest
+3. Define widget templates using Adaptive Cards JSON format
+4. Return updated widget content from provider methods
 
-    public void OnActionInvoked(WidgetActionInvokedArgs actionInvokedArgs)
-    {
-        // Handle widget actions
-    }
-
-    public void OnWidgetContextChanged(WidgetContextChangedArgs contextChangedArgs)
-    {
-        // Update widget based on context changes
-    }
-
-    // Additional IWidgetProvider members...
-}
-```
+See the [Windows App SDK Widget documentation](https://learn.microsoft.com/en-us/windows/apps/develop/widgets/widget-providers) for the complete interface contract and manifest registration.
 
 ### Taskbar Integration
 
+Taskbar progress in WinUI 3 requires Win32 COM interop via the `ITaskbarList3` interface. Unlike UWP which had a managed `TaskbarManager`, WinUI 3 does not expose a managed wrapper.
+
 ```csharp
-// Set taskbar progress (requires Windows 10 1903+)
-var taskbar = TaskbarManager.GetDefault();
-taskbar.SetProgressState(MainWindow, TaskbarProgressBarState.Normal);
-taskbar.SetProgressValue(MainWindow, currentProgress, maxProgress);
+// Taskbar progress requires COM interop in WinUI 3
+// Use CsWin32 source generator or manual P/Invoke for ITaskbarList3
+// 1. Add CsWin32: <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.*" />
+// 2. Add to NativeMethods.txt: ITaskbarList3
+// See: https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist3
 ```
 
 ---
@@ -502,7 +495,7 @@ Migrating from UWP to WinUI 3 involves namespace changes, API replacements, and 
 6. **Update NuGet packages** to Windows App SDK-compatible versions
 7. **Test Windows integration** features (notifications, background tasks, file associations)
 
-For comprehensive migration path guidance across frameworks, see `dotnet-wpf-migration` (created in fn-15.3).
+For comprehensive migration path guidance across frameworks, see [skill:dotnet-wpf-migration] (created in fn-15.3).
 
 **UWP .NET 9 preview path:** Microsoft announced UWP support on .NET 9 as a preview. This allows UWP apps to use modern .NET without migrating to WinUI 3. Evaluate this path if full WinUI migration is too costly but you need modern .NET runtime features.
 
@@ -518,6 +511,7 @@ For comprehensive migration path guidance across frameworks, see `dotnet-wpf-mig
 6. **Do not target Windows 10 builds below 19041.** Windows App SDK 1.6+ requires a minimum of build 19041 (version 2004). Targeting lower builds causes runtime failures.
 7. **Do not use Widgets or Mica in unpackaged apps.** These features require MSIX packaged deployment with app identity. Attempting to use them in unpackaged mode fails silently or throws.
 8. **Do not mix CommunityToolkit.Mvvm with manual INotifyPropertyChanged.** Use `[ObservableProperty]` consistently. Mixing source-generated and hand-written implementations causes subtle binding bugs.
+9. **Do not forget the Host builder lifecycle.** Call `_host.StartAsync()` in `OnLaunched` and `_host.StopAsync()` when the window closes. Forgetting lifecycle management causes DI-registered `IHostedService` instances to never start or stop.
 
 ---
 

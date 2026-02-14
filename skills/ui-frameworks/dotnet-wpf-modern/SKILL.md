@@ -9,9 +9,9 @@ WPF on .NET 8+: Host builder and dependency injection, MVVM with CommunityToolki
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). TFM `net8.0-windows`. .NET 9 features (Fluent theme) explicitly marked.
 
-**Scope boundary:** This skill owns WPF on modern .NET patterns: Host builder, MVVM Toolkit, performance, modern C#, theming. Migration from .NET Framework to .NET 8+ is owned by `dotnet-wpf-migration` (fn-15.3). Desktop testing is owned by [skill:dotnet-ui-testing-core].
+**Scope boundary:** This skill owns WPF on modern .NET patterns: Host builder, MVVM Toolkit, performance, modern C#, theming. Migration from .NET Framework to .NET 8+ is owned by [skill:dotnet-wpf-migration] (fn-15.3). Desktop testing is owned by [skill:dotnet-ui-testing-core].
 
-**Out of scope:** WPF .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see `dotnet-wpf-migration` (fn-15.3). Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** WPF .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see [skill:dotnet-wpf-migration] (fn-15.3). Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
 
 Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection (soft dependency).
 
@@ -246,13 +246,14 @@ WPF on .NET 8+ delivers significant performance improvements over .NET Framework
 - **Dynamic PGO** -- runtime profiles guide JIT optimizations for hot paths
 - **Reduced working set** -- .NET 8 runtime uses less baseline memory than .NET Framework CLR
 
-### Benchmarks (Indicative)
+### Expected Improvements
 
-| Metric | .NET Framework 4.8 | .NET 8 | Improvement |
-|--------|-------------------|--------|-------------|
-| Cold startup | ~1.5s | ~0.8s | ~45% faster |
-| ListBox virtualization (10K items) | ~350ms | ~180ms | ~49% faster |
-| GC pause (Gen2) | ~15ms | ~5ms | ~67% shorter |
+WPF on .NET 8 delivers measurable improvements over .NET Framework 4.8 across key metrics. Exact numbers depend on workload, hardware, and application complexity -- always benchmark your own scenarios:
+
+- **Cold startup** -- significantly faster due to ReadyToRun, tiered compilation, and reduced framework initialization overhead
+- **UI virtualization** -- improved rendering pipeline and GC reduce time for large ItemsControls (ListBox, DataGrid)
+- **GC pauses** -- shorter and less frequent Gen2 collections from .NET 8 GC improvements (Dynamic PGO, frozen object heap, pinned object heap)
+- **Memory footprint** -- lower baseline working set compared to .NET Framework CLR
 
 ---
 
@@ -334,21 +335,30 @@ List<string> categories = ["Electronics", "Clothing", "Books"];
 .NET 9 introduces the Fluent theme for WPF, providing modern Windows 11-style visuals. It applies rounded corners, updated control templates, and Mica/Acrylic backdrop support.
 
 ```xml
-<!-- App.xaml: enable Fluent theme (.NET 9+) -->
+<!-- App.xaml: enable Fluent theme (.NET 9+) via ThemeMode property -->
 <Application x:Class="MyApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ThemeMode="System"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <!-- Fluent theme -->
-                <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
 </Application>
 ```
+
+Or in code-behind:
+
+```csharp
+// App.xaml.cs: set theme programmatically (.NET 9+)
+Application.Current.ThemeMode = ThemeMode.System; // or ThemeMode.Light / ThemeMode.Dark
+
+// Per-window theming is also supported
+mainWindow.ThemeMode = ThemeMode.Dark;
+```
+
+**ThemeMode values:**
+- `None` -- classic WPF look (no Fluent styling)
+- `Light` -- Fluent theme with light colors
+- `Dark` -- Fluent theme with dark colors
+- `System` -- follow Windows system light/dark theme setting
 
 **Fluent theme includes:**
 - Rounded corners on buttons, text boxes, and list items
@@ -420,7 +430,7 @@ public void ApplyTheme(AppTheme theme)
 1. **Do not use .NET Framework WPF patterns in .NET 8+ projects.** Avoid `App.config` for DI (use Host builder), `packages.config` (use `PackageReference`), `ServiceLocator` pattern (use constructor injection), and `AssemblyInfo.cs` (use `<PropertyGroup>` properties).
 2. **Do not use deprecated WPF APIs.** `BitmapEffect` (replaced by `Effect`/`ShaderEffect`), `DrawingContext.PushEffect` (removed), and `VisualBrush` tile modes with hardware acceleration disabled are obsolete.
 3. **Do not mix `{Binding}` and manual `INotifyPropertyChanged` when using MVVM Toolkit.** Use `[ObservableProperty]` source generators consistently. Mixing approaches causes subtle binding update bugs.
-4. **Do not use `Dispatcher.Invoke` directly.** In modern WPF with Host builder, prefer `SynchronizationContext.Post` or `await` with `ConfigureAwait(true)` (the default) to marshal back to the UI thread from async methods.
+4. **Do not use `Dispatcher.Invoke` from async code.** In async methods, `await` automatically marshals back to the UI thread (the default `ConfigureAwait(true)` behavior). `Dispatcher.Invoke`/`BeginInvoke` is still appropriate from non-async contexts (timers, COM callbacks, native interop).
 5. **Do not set `TrimMode=full` for WPF apps.** WPF uses XAML reflection extensively. Use `TrimMode=partial` and test all views after trimming to catch missing types.
 6. **Do not forget the Host builder lifecycle.** Call `_host.StartAsync()` in `OnStartup` and `_host.StopAsync()` in `OnExit`. Forgetting lifecycle management causes DI-registered `IHostedService` instances to never start or stop.
 7. **Do not hardcode colors when using Fluent theme.** Reference theme resources (`{DynamicResource SystemAccentColor}`) to maintain compatibility with light/dark mode and system accent color changes.

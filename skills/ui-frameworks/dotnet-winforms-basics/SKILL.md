@@ -9,9 +9,9 @@ WinForms on .NET 8+: updated project templates with Host builder and DI, high-DP
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). TFM `net8.0-windows`. .NET 9 features (dark mode experimental) explicitly marked. .NET 11 finalization targets noted.
 
-**Scope boundary:** This skill owns WinForms on modern .NET patterns: project setup, high-DPI, dark mode, DI, when to use, modernization. Migration from .NET Framework to .NET 8+ is owned by `dotnet-wpf-migration` (fn-15.3). Desktop testing is owned by [skill:dotnet-ui-testing-core].
+**Scope boundary:** This skill owns WinForms on modern .NET patterns: project setup, high-DPI, dark mode, DI, when to use, modernization. Migration from .NET Framework to .NET 8+ is owned by [skill:dotnet-wpf-migration] (fn-15.3). Desktop testing is owned by [skill:dotnet-ui-testing-core].
 
-**Out of scope:** WinForms .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see `dotnet-wpf-migration` (fn-15.3). Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
+**Out of scope:** WinForms .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see [skill:dotnet-wpf-migration] (fn-15.3). Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser] (may not exist yet).
 
 Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection (soft dependency).
 
@@ -134,6 +134,8 @@ WinForms on .NET 8+ has significantly improved high-DPI support. The recommended
 // Program.cs -- set before ApplicationConfiguration.Initialize()
 Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 ApplicationConfiguration.Initialize();
+// Note: SetHighDpiMode() called before Initialize() takes precedence
+// over the default SystemAware mode set by Initialize().
 ```
 
 Or configure via `runtimeconfig.json`:
