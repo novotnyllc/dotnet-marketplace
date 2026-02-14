@@ -514,7 +514,9 @@ public async Task List_StderrContainsLogs_StdoutContainsDataOnly()
     var (_, stdout, stderr) = await harness.InvokeAsync("list --json --verbose");
 
     // Stdout must be valid JSON (no log noise)
-    Assert.DoesNotThrow(() => JsonDocument.Parse(stdout));
+    // xUnit: just call it -- if it throws, the test fails
+    var doc = JsonDocument.Parse(stdout);
+    Assert.NotNull(doc);
 
     // Stderr contains diagnostic output
     Assert.Contains("Connected to", stderr);

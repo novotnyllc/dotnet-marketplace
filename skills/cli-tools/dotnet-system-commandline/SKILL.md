@@ -36,6 +36,8 @@ System.CommandLine 2.0 is distributed as a pre-release NuGet package (`2.0.0-bet
   <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.24324.3" />
   <!-- Hosting integration for DI + UseCommandHandler -->
   <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.24324.3" />
+  <!-- Required for UseCommandHandler property binding by name -->
+  <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.24324.3" />
 </ItemGroup>
 ```
 
@@ -108,13 +110,14 @@ listCommand.SetHandler(
     },
     outputOption, verbosityOption);
 
-// Async handler
+// Async handler with cancellation (use InvocationContext for CancellationToken)
 listCommand.SetHandler(
-    async (FileInfo output, int verbosity, CancellationToken ct) =>
+    async (InvocationContext context) =>
     {
-        await ProcessAsync(output, verbosity, ct);
-    },
-    outputOption, verbosityOption);
+        var output = context.ParseResult.GetValueForOption(outputOption)!;
+        var verbosity = context.ParseResult.GetValueForOption(verbosityOption);
+        await ProcessAsync(output, verbosity, context.GetCancellationToken());
+    });
 ```
 
 ### Invoking the Command
