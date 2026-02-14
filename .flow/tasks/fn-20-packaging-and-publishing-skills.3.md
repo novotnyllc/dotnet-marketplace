@@ -47,9 +47,8 @@ Register all 4 fn-20 skills in `plugin.json`, update the advisor catalog, reconc
 - [ ] Cross-references validated in all 4 skills
 
 ## Done summary
-TBD
-
+Registered all 4 fn-20 packaging/release skills in plugin.json, updated advisor catalog sections 15 (Packaging & Publishing) and 16 (Release Management) from planned to implemented, and renamed dotnet-nuget-modern to dotnet-nuget-authoring across the advisor catalog and routing sections.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: fd9233e6c88bd08aca60b03be41f1fc36fb9dd4a
+- Tests: ./scripts/validate-skills.sh, grep -r 'TODO(fn-20)' skills/, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:
