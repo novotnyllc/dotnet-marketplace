@@ -41,7 +41,7 @@ nbgv install
   "version": "1.0",
   "publicReleaseRefSpec": [
     "^refs/heads/main$",
-    "^refs/tags/v\\d+\\.\\d+"
+    "^refs/tags/v\\d+\\.\\d+(\\.\\d+)?(-.*)?$"
   ],
   "cloudBuild": {
     "buildNumber": {
@@ -87,7 +87,7 @@ The version height ensures every commit has a unique version without manual inte
   "version": "1.2-beta",
   "publicReleaseRefSpec": [
     "^refs/heads/main$",
-    "^refs/tags/v\\d+\\.\\d+"
+    "^refs/tags/v\\d+\\.\\d+(\\.\\d+)?(-.*)?$"
   ]
 }
 ```

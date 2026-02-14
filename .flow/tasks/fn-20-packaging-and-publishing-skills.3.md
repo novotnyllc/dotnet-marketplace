@@ -13,9 +13,11 @@ Register all 4 fn-20 skills in `plugin.json`, update the advisor catalog, reconc
 **Advisor catalog updates in `skills/foundation/dotnet-advisor/SKILL.md`:**
 - Section 15 ("Packaging & Publishing"): change `planned` to `implemented`
 - Section 16 ("Release Management"): change `planned` to `implemented`
-- Update `[skill:dotnet-nuget-modern]` reference to `[skill:dotnet-nuget-authoring]` (name change from original plan)
+- Update ALL references of `[skill:dotnet-nuget-modern]` to `[skill:dotnet-nuget-authoring]` (name change from original plan) — occurs on lines 130 and 247
 - Add `[skill:dotnet-github-releases]` routing entry under "Packaging & Releases" section
 - Verify all skill names in advisor match their SKILL.md `name` frontmatter values exactly
+
+<!-- Updated by plan-sync: fn-20.2 created [skill:dotnet-nuget-authoring] not [skill:dotnet-nuget-modern] —  fn-20.2 scope boundary and created skills confirm canonical name is dotnet-nuget-authoring -->
 
 **Cross-reference reconciliation:**
 - Search for `<!-- TODO(fn-20) -->` placeholders in all skills — resolve with canonical cross-refs

@@ -278,6 +278,8 @@ Use a maintained `CHANGELOG.md` as the release notes source. For CHANGELOG forma
 
 ```bash
 # Extract the section for this version from CHANGELOG.md
+# Note: requires a subsequent ## [ section as delimiter. For the last section:
+#   sed -n "/^## \[${VERSION}\]/,\$p" CHANGELOG.md | sed '1d'
 VERSION="1.2.3"
 NOTES=$(sed -n "/^## \[${VERSION}\]/,/^## \[/p" CHANGELOG.md | sed '1d;$d')
 

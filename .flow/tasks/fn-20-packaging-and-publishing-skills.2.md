@@ -42,9 +42,8 @@ Create two release-focused skills: `dotnet-github-releases` (in `skills/packagin
 - [ ] Description frontmatter < 120 chars per skill
 
 ## Done summary
-TBD
-
+Created dotnet-github-releases skill (release creation via gh CLI/API, asset attachment, softprops/action-gh-release, release notes generation, pre-release management) and dotnet-release-management skill (NBGV setup, SemVer strategy for libraries/apps, changelog generation, pre-release workflows, release branching patterns). Both skills include scope boundary statements and cross-references to fn-17/fn-19/fn-2 skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 35c84720c4e0f2be3f3f2c1b4f19b3e9b0fd32c6, 6ab009eeb2e652cc638e1392eba4b5d7ab005cb2
+- Tests: ./scripts/validate-skills.sh
 - PRs:
