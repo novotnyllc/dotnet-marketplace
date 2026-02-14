@@ -11,7 +11,7 @@ GitHub Releases for .NET projects: release creation via `gh release create` CLI 
 
 **Scope boundary:** This skill owns GitHub Release creation and management for .NET projects -- the release lifecycle on GitHub including asset attachment, release notes, and pre-release workflows. CLI-specific release pipelines (build matrix, artifact staging, checksums, package manager PR creation) are owned by [skill:dotnet-cli-release-pipeline] (fn-17). CI/CD publish workflows (NuGet push, container push) are owned by [skill:dotnet-gha-publish] (fn-19). Full CI pipeline patterns (reusable workflows, matrix testing) are owned by [skill:dotnet-gha-patterns] (fn-19).
 
-**Out of scope:** CLI-specific release automation (build matrix, RID-specific artifacts, package manager PRs) -- see [skill:dotnet-cli-release-pipeline] (fn-17). CI/CD NuGet push and container publish workflows -- see [skill:dotnet-gha-publish] (fn-19). CI pipeline structure and reusable workflows -- see [skill:dotnet-gha-patterns] (fn-19). Release lifecycle strategy (NBGV, SemVer, changelogs, branching) -- see `dotnet-release-management` (fn-20). NuGet package authoring -- see [skill:dotnet-nuget-authoring] (fn-20).
+**Out of scope:** CLI-specific release automation (build matrix, RID-specific artifacts, package manager PRs) -- see [skill:dotnet-cli-release-pipeline] (fn-17). CI/CD NuGet push and container publish workflows -- see [skill:dotnet-gha-publish] (fn-19). CI pipeline structure and reusable workflows -- see [skill:dotnet-gha-patterns] (fn-19). Release lifecycle strategy (NBGV, SemVer, changelogs, branching) -- see [skill:dotnet-release-management] (fn-20). NuGet package authoring -- see [skill:dotnet-nuget-authoring] (fn-20).
 
 Cross-references: [skill:dotnet-cli-release-pipeline] for CLI-specific release pipelines with checksums, [skill:dotnet-gha-publish] for CI publish workflows, [skill:dotnet-gha-patterns] for CI pipeline structure, [skill:dotnet-nuget-authoring] for NuGet package creation.
 
@@ -274,7 +274,7 @@ changelog:
 
 ### Changelog-Based Notes
 
-Use a maintained `CHANGELOG.md` as the release notes source. For CHANGELOG format and auto-generation tooling, see `dotnet-release-management` (fn-20).
+Use a maintained `CHANGELOG.md` as the release notes source. For CHANGELOG format and auto-generation tooling, see [skill:dotnet-release-management] (fn-20).
 
 ```bash
 # Extract the section for this version from CHANGELOG.md
@@ -380,7 +380,7 @@ For automation scenarios beyond the `gh` CLI:
 ```bash
 # Create a release via GitHub REST API
 curl -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/OWNER/REPO/releases" \
   -d '{
@@ -396,10 +396,10 @@ curl -X POST \
 ### Uploading Assets via API
 
 ```bash
-# Upload an asset to an existing release
-RELEASE_ID=$(gh release view v1.2.3 --json id -q .id)
+# Upload an asset to an existing release (REST API needs numeric release ID)
+RELEASE_ID=$(gh api repos/OWNER/REPO/releases/tags/v1.2.3 --jq .id)
 curl -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
   -H "Content-Type: application/octet-stream" \
   "https://uploads.github.com/repos/OWNER/REPO/releases/${RELEASE_ID}/assets?name=MyApp.nupkg" \
   --data-binary @artifacts/MyApp.1.2.3.nupkg

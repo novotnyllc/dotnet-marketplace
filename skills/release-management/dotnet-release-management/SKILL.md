@@ -9,9 +9,9 @@ Release lifecycle management for .NET projects: Nerdbank.GitVersioning (NBGV) se
 
 **Version assumptions:** .NET 8.0+ baseline. `Nerdbank.GitVersioning` 3.6+ (current stable). SemVer 2.0 specification.
 
-**Scope boundary:** This skill owns the release lifecycle strategy -- versioning, changelogs, pre-release workflows, and branching patterns. Plugin-specific release workflows (dotnet-artisan versioning and publishing) are owned by [skill:plugin-self-publish] (fn-2). CI/CD publish workflows (NuGet push, container push, deployment) are owned by [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). GitHub Release creation and asset management are owned by `dotnet-github-releases` (fn-20). NuGet package versioning properties (`Version`, `PackageVersion`) are owned by [skill:dotnet-nuget-authoring] (fn-20).
+**Scope boundary:** This skill owns the release lifecycle strategy -- versioning, changelogs, pre-release workflows, and branching patterns. Plugin-specific release workflows (dotnet-artisan versioning and publishing) are owned by [skill:plugin-self-publish] (fn-2). CI/CD publish workflows (NuGet push, container push, deployment) are owned by [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). GitHub Release creation and asset management are owned by [skill:dotnet-github-releases] (fn-20). NuGet package versioning properties (`Version`, `PackageVersion`) are owned by [skill:dotnet-nuget-authoring] (fn-20).
 
-**Out of scope:** Plugin-specific release workflow -- see [skill:plugin-self-publish] (fn-2). CI/CD NuGet push and deployment workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). GitHub Release creation and asset attachment -- see `dotnet-github-releases` (fn-20). NuGet package metadata and signing -- see [skill:dotnet-nuget-authoring] (fn-20). Project-level configuration (SourceLink, CPM) -- see [skill:dotnet-project-structure] (fn-4).
+**Out of scope:** Plugin-specific release workflow -- see [skill:plugin-self-publish] (fn-2). CI/CD NuGet push and deployment workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). GitHub Release creation and asset attachment -- see [skill:dotnet-github-releases] (fn-20). NuGet package metadata and signing -- see [skill:dotnet-nuget-authoring] (fn-20). Project-level configuration (SourceLink, CPM) -- see [skill:dotnet-project-structure] (fn-4).
 
 Cross-references: [skill:plugin-self-publish] for plugin-specific release workflow, [skill:dotnet-gha-publish] for CI publish workflows, [skill:dotnet-ado-publish] for ADO publish workflows, [skill:dotnet-nuget-authoring] for NuGet package versioning properties.
 
@@ -336,7 +336,7 @@ commit_parsers = [
     { message = "^fix", group = "Fixed" },
     { message = "^perf", group = "Changed" },
     { message = "^refactor", group = "Changed" },
-    { message = "^doc", group = "Documentation" },
+    { message = "^docs", group = "Documentation" },
     { message = "^chore\\(deps\\)", group = "Dependencies" },
     { message = "^chore", skip = true },
     { message = "^ci", skip = true },
@@ -557,7 +557,7 @@ For most .NET open-source libraries, trunk-based with tags and NBGV is sufficien
 
 3. **`publicReleaseRefSpec` patterns are regex, not globs** -- use `^refs/heads/main$` not `main`. Missing anchors will match unintended refs.
 
-4. **SemVer pre-release ordering is lexical for non-numeric segments** -- `alpha` < `beta` < `rc` because of alphabetical comparison. But `beta.10` < `beta.2` because `10` is compared as the integer 10, which is greater than 2 (numeric segments are compared as integers).
+4. **SemVer pre-release ordering is lexical for non-numeric segments** -- `alpha` < `beta` < `rc` because of alphabetical comparison. Numeric segments are compared as integers, so `beta.2` < `beta.10` (because 2 < 10). Do not assume lexical ordering for numeric identifiers.
 
 5. **Do not use CalVer for NuGet libraries** -- NuGet resolution depends on SemVer ordering. CalVer versions like `2024.1.0` work mechanically but violate consumer expectations for API stability signals.
 
