@@ -35,9 +35,8 @@ Both agents must have frontmatter compatible with existing agents (see `agents/d
 - [ ] Validation: Both agents follow existing agent frontmatter/structure conventions
 
 ## Done summary
-Created `dotnet-performance-analyst` and `dotnet-benchmark-designer` agents with distinct personas and skill loads. Performance analyst focuses on analyzing data and identifying issues; benchmark designer focuses on designing valid benchmarks and avoiding methodology pitfalls.
-
+Created `dotnet-performance-analyst` and `dotnet-benchmark-designer` agents with distinct personas and skill loads. Performance analyst focuses on analyzing profiling data (flame graphs, heap dumps, benchmark comparisons) and loads dotnet-profiling, dotnet-benchmarkdotnet, dotnet-observability. Benchmark designer focuses on designing valid benchmarks and avoiding methodology pitfalls (dead code elimination, constant folding, measurement bias) and loads dotnet-benchmarkdotnet, dotnet-performance-patterns.
 ## Evidence
-- Commits: Agents created with frontmatter and content
-- Tests: Manual verification of frontmatter compatibility with existing agents
-- PRs: N/A (single-repo workflow)
+- Commits: c899a6a2b603182dcfe891e06c063a6e0429f5fc
+- Tests: ./scripts/validate-skills.sh, test -f agents/dotnet-performance-analyst.md, test -f agents/dotnet-benchmark-designer.md, grep -q '^name:' agents/dotnet-performance-analyst.md, grep -q '^name:' agents/dotnet-benchmark-designer.md
+- PRs:
