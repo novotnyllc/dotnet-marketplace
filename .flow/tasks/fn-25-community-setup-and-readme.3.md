@@ -51,9 +51,8 @@ Preserve the existing Flow-Next section at the bottom. Add new content above it.
   ```
 
 ## Done summary
-TBD
-
+Replaced CLAUDE.md one-line @AGENTS.md redirect with standalone plugin instructions covering key conventions (SKILL.md frontmatter, cross-reference syntax, description budget), file structure overview, validation commands, and development workflow. Expanded AGENTS.md with a skill routing index table (18 categories with counts and usage descriptions) and agent delegation patterns table (9 agents with preloaded skills and delegation triggers), preserving the existing Flow-Next section.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 4ed1d4ec79134924ce24a0d94ba5f28cbc4c7c25
+- Tests: wc -l CLAUDE.md (95 lines), grep validate-skills CLAUDE.md, grep skill AGENTS.md, grep flow-next AGENTS.md, grep agent AGENTS.md
 - PRs:
