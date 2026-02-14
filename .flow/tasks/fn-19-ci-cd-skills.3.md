@@ -52,9 +52,8 @@ This is the single owner of `plugin.json` to eliminate merge conflicts.
 - [ ] Scope boundary statements present in all 8 skills: `grep -l "Out of scope\|Scope boundary" skills/cicd/*/SKILL.md | wc -l` returns 8
 
 ## Done summary
-TBD
-
+Registered all 8 CI/CD skills in plugin.json, updated advisor catalog section 17 from planned to implemented, replaced 5 TODO(fn-19) placeholders in dotnet-ci-benchmarking with canonical [skill:dotnet-gha-patterns] cross-references, and updated bare fn-19 mentions across 11 other skills to use canonical [skill:...] syntax.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7a581c3
+- Tests: ./scripts/validate-skills.sh, python3 -m json.tool .claude-plugin/plugin.json
 - PRs:
