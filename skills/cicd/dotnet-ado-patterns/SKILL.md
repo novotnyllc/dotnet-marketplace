@@ -289,27 +289,7 @@ Key Vault-linked variable groups require a service connection with Key Vault acc
 
 ## Pipeline Decorators
 
-Pipeline decorators inject steps into every pipeline in an organization or project, enforcing policies without modifying individual pipeline files:
-
-```yaml
-# decorator.yml (deployed as Azure DevOps extension)
-steps:
-  - task: CredentialScanner@1
-    displayName: '[Decorator] Credential scan'
-    condition: always()
-
-  - ${{ if eq(resources.repositories['self'].ref, 'refs/heads/main') }}:
-    - task: SonarQubeAnalyze@5
-      displayName: '[Decorator] SonarQube analysis'
-```
-
-**Decorator deployment:** Decorators are packaged as Azure DevOps extensions and installed at the organization level. They cannot be overridden by individual pipeline authors.
-
-**Common decorator use cases:**
-- Mandatory credential scanning on all pipelines
-- Compliance logging and audit trail
-- Required security scanning before production deployments
-- Automatic telemetry collection
+Pipeline decorators inject steps into every pipeline in an organization or project, enforcing policies without modifying individual pipeline files. Decorators are an ADO-exclusive feature with no GitHub Actions equivalent -- see `dotnet-ado-unique` for implementation details including extension manifests, deployment guidance, and use case examples.
 
 ---
 
@@ -421,10 +401,10 @@ steps:
     inputs:
       command: 'test'
       projects: '**/*Tests.csproj'
-      arguments: >-
-        -c Release
-        ${{ if eq(parameters.collectCoverage, true) }}:
-          --collect:"XPlat Code Coverage"
+      ${{ if eq(parameters.collectCoverage, true) }}:
+        arguments: '-c Release --collect:"XPlat Code Coverage"'
+      ${{ else }}:
+        arguments: '-c Release'
 
   - ${{ if eq(parameters.collectCoverage, true) }}:
     - task: PublishCodeCoverageResults@2

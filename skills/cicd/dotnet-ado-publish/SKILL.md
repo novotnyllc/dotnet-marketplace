@@ -81,17 +81,20 @@ stages:
 
 ### Version from Git Tag
 
-Extract the version from the triggering Git tag:
+Extract the version from the triggering Git tag using a script step. `Build.SourceBranch` is a runtime variable, so use a script to parse it rather than compile-time template expressions:
 
 ```yaml
-variables:
-  - name: packageVersion
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
-      value: $[ replace(variables['Build.SourceBranch'], 'refs/tags/v', '') ]
-    ${{ else }}:
-      value: '0.0.0-ci.$(Build.BuildId)'
-
 steps:
+  - script: |
+      set -euo pipefail
+      if [[ "$(Build.SourceBranch)" == refs/tags/v* ]]; then
+        VERSION="${BUILD_SOURCEBRANCH#refs/tags/v}"
+      else
+        VERSION="0.0.0-ci.$(Build.BuildId)"
+      fi
+      echo "##vso[task.setvariable variable=packageVersion]$VERSION"
+    displayName: 'Extract version from tag'
+
   - task: DotNetCoreCLI@2
     displayName: 'Pack'
     inputs:

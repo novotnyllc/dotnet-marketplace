@@ -144,8 +144,8 @@ For simple setups without a `nuget.config`, select feeds directly in the restore
 
 Azure Artifacts feeds can proxy nuget.org as an upstream source. When configured, a single feed reference provides access to both private packages and public NuGet packages:
 
-```yaml
-# nuget.config with Azure Artifacts upstream
+```xml
+<!-- nuget.config with Azure Artifacts upstream -->
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
@@ -294,6 +294,7 @@ For custom coverage reports beyond the built-in rendering:
       --results-directory $(Agent.TempDirectory)/coverage
 
 - script: |
+    set -euo pipefail
     dotnet tool install -g dotnet-reportgenerator-globaltool
     reportgenerator \
       -reports:$(Agent.TempDirectory)/coverage/**/coverage.cobertura.xml \
@@ -319,9 +320,11 @@ Enforce minimum coverage by parsing the Cobertura XML in a script step:
 
 ```yaml
 - script: |
+    set -euo pipefail
+    COVERAGE_FILE=$(find $(Agent.TempDirectory)/coverage -name 'coverage.cobertura.xml' | head -1)
     COVERAGE=$(python3 -c "
     import xml.etree.ElementTree as ET
-    tree = ET.parse('$(Agent.TempDirectory)/coverage/*/coverage.cobertura.xml')
+    tree = ET.parse('$COVERAGE_FILE')
     print(float(tree.getroot().attrib['line-rate']) * 100)
     ")
     echo "Line coverage: ${COVERAGE}%"
@@ -454,11 +457,12 @@ jobs:
 
 ## Agent Gotchas
 
-1. **Use `continueOnError: true` on the test task, not on the result publisher** -- the test task must not fail the pipeline before results are published, but the publisher should reflect the actual test outcome.
-2. **Install all required SDK versions for multi-TFM builds** -- `dotnet test` without the matching SDK produces `NETSDK1045`; add a `UseDotNet@2` step for each required version.
-3. **`NuGetAuthenticate@1` must precede the restore step** -- authentication tokens are injected into the agent's NuGet config at task execution time; restoring before authentication fails with 401.
-4. **Use `feedsToUse: 'config'` with `nuget.config` for complex feed setups** -- `feedsToUse: 'select'` supports only one Azure Artifacts feed; multi-feed scenarios require a `nuget.config` file.
-5. **Coverage collection requires `--collect:"XPlat Code Coverage"`** -- the default `dotnet test` does not produce coverage files; the `XPlat Code Coverage` collector is built into the .NET SDK.
-6. **`PublishCodeCoverageResults@2` expects Cobertura XML** -- passing TRX or other formats to the coverage publisher produces no output; ensure the collector outputs Cobertura format.
-7. **ADO matrix syntax differs from GHA** -- ADO uses named matrix entries with key-value pairs, not arrays; each entry must define all variable names used in the job.
-8. **Never hardcode credentials in pipeline YAML** -- use variable groups linked to Azure Key Vault or pipeline-level secret variables; hardcoded secrets are visible in repository history.
+1. **Use `set -euo pipefail` in multi-line `script:` steps** -- ADO `script:` tasks on Linux default to `set -e` but do not set `pipefail` or `nounset`; without `pipefail`, a failure in a piped command is silently swallowed.
+2. **Use `continueOnError: true` on the test task, not on the result publisher** -- the test task must not fail the pipeline before results are published, but the publisher should reflect the actual test outcome.
+3. **Install all required SDK versions for multi-TFM builds** -- `dotnet test` without the matching SDK produces `NETSDK1045`; add a `UseDotNet@2` step for each required version.
+4. **`NuGetAuthenticate@1` must precede the restore step** -- authentication tokens are injected into the agent's NuGet config at task execution time; restoring before authentication fails with 401.
+5. **Use `feedsToUse: 'config'` with `nuget.config` for complex feed setups** -- `feedsToUse: 'select'` supports only one Azure Artifacts feed; multi-feed scenarios require a `nuget.config` file.
+6. **Coverage collection requires `--collect:"XPlat Code Coverage"`** -- the default `dotnet test` does not produce coverage files; the `XPlat Code Coverage` collector is built into the .NET SDK.
+7. **`PublishCodeCoverageResults@2` expects Cobertura XML** -- passing TRX or other formats to the coverage publisher produces no output; ensure the collector outputs Cobertura format.
+8. **ADO matrix syntax differs from GHA** -- ADO uses named matrix entries with key-value pairs, not arrays; each entry must define all variable names used in the job.
+9. **Never hardcode credentials in pipeline YAML** -- use variable groups linked to Azure Key Vault or pipeline-level secret variables; hardcoded secrets are visible in repository history.
