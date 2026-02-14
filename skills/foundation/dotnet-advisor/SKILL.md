@@ -97,14 +97,12 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-trimming] -- trim-safe annotations, linker config, testing
 - [skill:dotnet-aot-wasm] -- WASM AOT for Blazor and Uno
 
-### 11. CLI Tool Development `planned`
+### 11. CLI Tool Development
 - [skill:dotnet-system-commandline] -- System.CommandLine, middleware, hosting
 - [skill:dotnet-cli-architecture] -- layered CLI design, testability
-- [skill:dotnet-cli-aot-distribution] -- Native AOT + cross-platform distribution
-- [skill:dotnet-cli-homebrew] -- Homebrew formula authoring
-- [skill:dotnet-cli-apt] -- apt/dpkg packaging for Linux
-- [skill:dotnet-cli-winget] -- winget manifest for Windows
-- [skill:dotnet-cli-unified-pipeline] -- unified multi-platform CI/CD
+- [skill:dotnet-cli-distribution] -- Native AOT + cross-platform distribution strategy
+- [skill:dotnet-cli-packaging] -- Homebrew, apt/deb, winget, Scoop, Chocolatey, dotnet tool
+- [skill:dotnet-cli-release-pipeline] -- unified multi-platform CI/CD release workflow
 
 ### 12. UI Frameworks `planned`
 - [skill:dotnet-blazor-patterns] -- Server, WASM, Hybrid, auto/streaming
@@ -225,7 +223,7 @@ Use this decision tree to load the right skills for the current task.
 ### CLI Tools
 - System.CommandLine -> [skill:dotnet-system-commandline]
 - CLI design -> [skill:dotnet-cli-architecture]
-- Distribution -> [skill:dotnet-cli-aot-distribution], [skill:dotnet-cli-homebrew], [skill:dotnet-cli-apt], [skill:dotnet-cli-winget], [skill:dotnet-cli-unified-pipeline]
+- Distribution -> [skill:dotnet-cli-distribution], [skill:dotnet-cli-packaging], [skill:dotnet-cli-release-pipeline]
 
 ### Containers & Deployment
 - Dockerfiles -> [skill:dotnet-containers]
