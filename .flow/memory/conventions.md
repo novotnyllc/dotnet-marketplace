@@ -54,3 +54,6 @@ Create dedicated integration task (like fn-5.6, fn-18.4) as single owner of plug
 
 ## 2026-02-14 manual [convention]
 Scope boundary table in epic spec prevents duplication across epics - must map what epic owns vs cross-references to other epics
+
+## 2026-02-14 manual [convention]
+Epic specs must include scope boundary table, .NET version policy, task decomposition with file paths, cross-ref classification, and testable AC with validation commands — not just intent statements

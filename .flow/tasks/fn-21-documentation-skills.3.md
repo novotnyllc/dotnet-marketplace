@@ -60,9 +60,8 @@ Register all 5 fn-21 documentation skills in `plugin.json`, update the advisor c
 - [ ] plugin.json syntax is valid JSON (`python3 -m json.tool .claude-plugin/plugin.json > /dev/null`)
 
 ## Done summary
-TBD
-
+Created dotnet-docs-generator agent with proper frontmatter, preloaded skills, 5-step workflow, explicit boundaries, trigger lexicon, and example prompts. Registered all 5 documentation skill paths and the agent in plugin.json. Updated advisor section 18 from planned to implemented.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1081f07b3dbd5836b15a352a01a747d19f6f5094
+- Tests: ./scripts/validate-skills.sh, python3 -m json.tool .claude-plugin/plugin.json > /dev/null, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:

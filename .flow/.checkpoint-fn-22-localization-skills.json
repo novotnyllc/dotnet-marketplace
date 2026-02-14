@@ -1,0 +1,63 @@
+{
+  "created_at": "2026-02-14T08:28:10.272302Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-22-localization-skills",
+      "created_at": "2026-02-11T22:23:32.905294Z",
+      "depends_on_epics": [
+        "fn-3-core-c-and-language-patterns-skills"
+      ],
+      "id": "fn-22-localization-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-22-localization-skills.md",
+      "status": "open",
+      "title": "Localization Skills",
+      "updated_at": "2026-02-11T22:31:11.753660Z"
+    },
+    "spec": "# fn-22: Localization Skills\n\n## Problem/Goal\nAdd comprehensive internationalization and localization skill covering full i18n stack including .resx resources, modern alternatives (JSON resources, source generators), IStringLocalizer, date/number formatting, RTL support, pluralization, and UI framework integration.\n\n## Acceptance Checks\n- [ ] `dotnet-localization` skill covers full i18n stack (.resx + modern alternatives, IStringLocalizer, formatting, RTL, pluralization)\n- [ ] Skill covers UI framework integration (Blazor, MAUI, Uno, WPF)\n- [ ] Research-based on current .NET community practices (Feb 2026)\n- [ ] Cross-references to UI framework skills, architecture patterns\n\n## Key Context\n- Research current .NET localization best practices (community has evolved beyond just .resx)\n- Source generator approaches may exist for compile-time resource validation\n- Different UI frameworks have different localization integration patterns\n- RTL and pluralization are often overlooked but critical for proper i18n\n"
+  },
+  "epic_id": "fn-22-localization-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:32.423950Z",
+        "depends_on": [],
+        "epic": "fn-22-localization-skills",
+        "id": "fn-22-localization-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-22-localization-skills.1.md",
+        "status": "todo",
+        "title": "Research current .NET localization best practices",
+        "updated_at": "2026-02-11T22:32:32.424124Z"
+      },
+      "id": "fn-22-localization-skills.1",
+      "runtime": null,
+      "spec": "# fn-22-localization-skills.1 Research current .NET localization best practices\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:32.543264Z",
+        "depends_on": [],
+        "epic": "fn-22-localization-skills",
+        "id": "fn-22-localization-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-22-localization-skills.2.md",
+        "status": "todo",
+        "title": "Create comprehensive localization skill with UI framework integration",
+        "updated_at": "2026-02-11T22:32:32.543430Z"
+      },
+      "id": "fn-22-localization-skills.2",
+      "runtime": null,
+      "spec": "# fn-22-localization-skills.2 Create comprehensive localization skill with UI framework integration\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
