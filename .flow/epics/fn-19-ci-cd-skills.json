@@ -1,6 +1,11 @@
 {
   "branch_name": "fn-19-ci-cd-skills",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
   "created_at": "2026-02-11T22:23:26.181488Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
   "depends_on_epics": [
     "fn-11-api-development-skills",
     "fn-16-native-aot-and-trimming-skills",
@@ -8,10 +13,10 @@
   ],
   "id": "fn-19-ci-cd-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-14T04:57:50.795059Z",
   "spec_path": ".flow/specs/fn-19-ci-cd-skills.md",
   "status": "open",
   "title": "CI CD Skills",
-  "updated_at": "2026-02-11T22:30:43.343665Z"
+  "updated_at": "2026-02-14T04:57:50.795188Z"
 }

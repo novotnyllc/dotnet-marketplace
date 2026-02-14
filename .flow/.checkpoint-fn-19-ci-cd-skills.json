@@ -1,0 +1,84 @@
+{
+  "created_at": "2026-02-14T04:49:15.937518Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-19-ci-cd-skills",
+      "created_at": "2026-02-11T22:23:26.181488Z",
+      "depends_on_epics": [
+        "fn-11-api-development-skills",
+        "fn-16-native-aot-and-trimming-skills",
+        "fn-17-cli-tool-development-skills"
+      ],
+      "id": "fn-19-ci-cd-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-19-ci-cd-skills.md",
+      "status": "open",
+      "title": "CI CD Skills",
+      "updated_at": "2026-02-11T22:30:43.343665Z"
+    },
+    "spec": "# fn-19: CI/CD Skills\n\n## Problem/Goal\nAdd comprehensive CI/CD skills for GitHub Actions and Azure DevOps covering composable patterns, build/test/publish workflows, and platform-unique features. Support both platforms equally with reusable patterns.\n\n## Acceptance Checks\n- [ ] `dotnet-gha-patterns` skill covers composable GitHub Actions (reusable workflows, composite actions, matrix builds)\n- [ ] `dotnet-gha-build-test`, `dotnet-gha-publish`, `dotnet-gha-deploy` skills cover scenario-specific workflows\n- [ ] `dotnet-ado-patterns` skill covers composable ADO YAML + ADO-unique features (Environments, Gates, Approvals)\n- [ ] `dotnet-ado-build-test`, `dotnet-ado-publish`, `dotnet-ado-unique` skills cover scenarios + unique capabilities\n- [ ] Cross-references to AOT, CLI distribution, package publishing, benchmarking skills\n- [ ] Skills integrate with dotnet-cli-unified-pipeline for multi-platform package publishing\n\n## Key Context\n- Both platforms supported equally (no bias)\n- Composability is key for maintainability\n- ADO has unique features (classic pipelines, release management) that GHA doesn't\n- Skills must support Native AOT build workflows and multi-platform distribution\n"
+  },
+  "epic_id": "fn-19-ci-cd-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:20.241463Z",
+        "depends_on": [],
+        "epic": "fn-19-ci-cd-skills",
+        "id": "fn-19-ci-cd-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-19-ci-cd-skills.1.md",
+        "status": "todo",
+        "title": "Create GitHub Actions skills (patterns, build-test, publish, deploy)",
+        "updated_at": "2026-02-11T22:32:20.241599Z"
+      },
+      "id": "fn-19-ci-cd-skills.1",
+      "runtime": null,
+      "spec": "# fn-19-ci-cd-skills.1 Create GitHub Actions skills (patterns, build-test, publish, deploy)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:20.357519Z",
+        "depends_on": [],
+        "epic": "fn-19-ci-cd-skills",
+        "id": "fn-19-ci-cd-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-19-ci-cd-skills.2.md",
+        "status": "todo",
+        "title": "Create Azure DevOps skills (patterns, build-test, publish, unique features)",
+        "updated_at": "2026-02-11T22:32:20.357661Z"
+      },
+      "id": "fn-19-ci-cd-skills.2",
+      "runtime": null,
+      "spec": "# fn-19-ci-cd-skills.2 Create Azure DevOps skills (patterns, build-test, publish, unique features)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:20.467577Z",
+        "depends_on": [],
+        "epic": "fn-19-ci-cd-skills",
+        "id": "fn-19-ci-cd-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-19-ci-cd-skills.3.md",
+        "status": "todo",
+        "title": "Integrate with AOT and CLI distribution skills",
+        "updated_at": "2026-02-11T22:32:20.467705Z"
+      },
+      "id": "fn-19-ci-cd-skills.3",
+      "runtime": null,
+      "spec": "# fn-19-ci-cd-skills.3 Integrate with AOT and CLI distribution skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
