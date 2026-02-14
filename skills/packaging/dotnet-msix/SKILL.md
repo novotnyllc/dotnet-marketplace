@@ -54,23 +54,25 @@ dotnet publish --configuration Release --runtime win-x64 \
 
 ### WAP Project (Desktop Bridge)
 
-For non-WinUI desktop apps (WPF, WinForms), use a Windows Application Packaging Project to wrap the existing app as MSIX:
+For non-WinUI desktop apps (WPF, WinForms), use a Windows Application Packaging Project to wrap the existing app as MSIX. WAP projects (`.wapproj`) are created via the Visual Studio "Windows Application Packaging Project" template -- they use a specialized project format, not the standard `Microsoft.NET.Sdk`.
+
+The key configuration is referencing the desktop app project:
 
 ```xml
-<!-- MyApp.Package.wapproj -->
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <AppxPackageDir>$(SolutionDir)AppPackages\</AppxPackageDir>
-  </PropertyGroup>
+<!-- MyApp.Package.wapproj (created via VS template) -->
+<!-- Key elements in the generated .wapproj file: -->
+<ItemGroup>
+  <!-- Reference the desktop app project to include in MSIX -->
+  <ProjectReference Include="..\MyWpfApp\MyWpfApp.csproj" />
+</ItemGroup>
 
-  <ItemGroup>
-    <!-- Reference the desktop app project -->
-    <ProjectReference Include="..\MyWpfApp\MyWpfApp.csproj" />
-  </ItemGroup>
-</Project>
+<!-- Set target platform versions in the .wapproj PropertyGroup -->
+<PropertyGroup>
+  <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
+  <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+  <DefaultLanguage>en-US</DefaultLanguage>
+  <AppxPackageDir>$(SolutionDir)AppPackages\</AppxPackageDir>
+</PropertyGroup>
 ```
 
 ### Package.appxmanifest
@@ -146,14 +148,19 @@ $cert = New-SelfSignedCertificate `
                     "2.5.29.19={text}")
 
 # Export PFX for CI usage
-$password = ConvertTo-SecureString -String "DevPassword123!" -Force -AsPlainText
+$password = ConvertTo-SecureString -String "$env:CERT_PASSWORD" -Force -AsPlainText
 Export-PfxCertificate -Cert $cert `
   -FilePath "MyApp_DevSigning.pfx" `
   -Password $password
 
+# Find signtool.exe dynamically (SDK version varies by machine)
+$signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe" |
+  Sort-Object { [version]($_.Directory.Parent.Name) } -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
 # Sign the MSIX package
-& "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe" `
-  sign /fd SHA256 /a /f "MyApp_DevSigning.pfx" /p "DevPassword123!" `
+& $signtool sign /fd SHA256 /a /f "MyApp_DevSigning.pfx" `
+  /p "$env:CERT_PASSWORD" `
   "AppPackages\MyApp_1.0.0.0_x64.msix"
 ```
 
@@ -307,24 +314,18 @@ The App Installer XML file controls automatic update behavior:
 
 ### Programmatic Update Check (Windows App SDK)
 
-For apps that need custom update UI or logic:
+For apps that need custom update UI or logic, use `Package.Current.CheckUpdateAvailabilityAsync()`:
 
 ```csharp
-using Windows.Management.Deployment;
+using Windows.ApplicationModel;
 
 public class AppUpdateService
 {
     public async Task<bool> CheckForUpdatesAsync()
     {
-        var pm = new PackageManager();
-        var package = Package.Current;
-
-        var updates = await pm.FindPackageForUserAsync(
-            string.Empty,
-            package.Id.FullName);
-
-        // Custom update logic
-        return updates != null;
+        var result = await Package.Current.CheckUpdateAvailabilityAsync();
+        return result.Availability == PackageUpdateAvailability.Available
+            || result.Availability == PackageUpdateAvailability.Required;
     }
 }
 ```
@@ -346,14 +347,18 @@ MSIX bundles (`.msixbundle`) package multiple architecture-specific MSIX package
 
 ### Creating a Bundle
 
-```bash
+```powershell
 # Build for multiple architectures
 dotnet publish -c Release -r win-x64 /p:GenerateAppxPackageOnBuild=true
 dotnet publish -c Release -r win-arm64 /p:GenerateAppxPackageOnBuild=true
 
-# Create bundle with MakeAppx
-& "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\MakeAppx.exe" `
-  bundle /d "AppPackages" /p "MyApp_1.0.0.0.msixbundle"
+# Find MakeAppx.exe dynamically (SDK version varies by machine)
+$makeappx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\MakeAppx.exe" |
+  Sort-Object { [version]($_.Directory.Parent.Name) } -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+# Create bundle
+& $makeappx bundle /d "AppPackages" /p "MyApp_1.0.0.0.msixbundle"
 ```
 
 ### MSBuild Bundle Generation

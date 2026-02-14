@@ -5,9 +5,9 @@ description: "WHEN creating NuGet packages. SDK-style csproj metadata, source ge
 
 # dotnet-nuget-authoring
 
-NuGet package authoring for .NET library authors: SDK-style `.csproj` package properties (`PackageId`, `PackageTags`, `PackageReadmeFile`, `PackageLicenseExpression`), source generator NuGet packaging with `analyzers/dotnet/cs/` folder layout and `buildTransitive` targets, multi-TFM packages, symbol packages (snupkg) with deterministic builds, package signing (author signing with certificates, repository signing), package validation (`dotnet pack --validate`, `Microsoft.DotNet.ApiCompat.Task` for API compatibility), and NuGet versioning strategies (SemVer 2.0, pre-release suffixes, NBGV integration).
+NuGet package authoring for .NET library authors: SDK-style `.csproj` package properties (`PackageId`, `PackageTags`, `PackageReadmeFile`, `PackageLicenseExpression`), source generator NuGet packaging with `analyzers/dotnet/cs/` folder layout and `buildTransitive` targets, multi-TFM packages, symbol packages (snupkg) with deterministic builds, package signing (author signing with certificates, repository signing), package validation (`EnablePackageValidation`, `Microsoft.DotNet.ApiCompat.Task` for API compatibility), and NuGet versioning strategies (SemVer 2.0, pre-release suffixes, NBGV integration).
 
-**Version assumptions:** .NET 8.0+ baseline. NuGet 6.8+ for SDK-style packaging. `Microsoft.DotNet.ApiCompat.Task` 8.0+ for API compatibility validation.
+**Version assumptions:** .NET 8.0+ baseline. NuGet client bundled with .NET 8+ SDK. `Microsoft.DotNet.ApiCompat.Task` 8.0+ for API compatibility validation.
 
 **Scope boundary:** This skill owns NuGet package authoring for library consumers -- the properties, metadata, packaging layout, signing, and validation. Project-level NuGet configuration (Central Package Management, SourceLink, nuget.config, NuGet Audit, lock files) is owned by [skill:dotnet-project-structure] (fn-4). CI/CD publish workflows (NuGet push to feeds, container image push) are owned by [skill:dotnet-gha-publish] (fn-19) and [skill:dotnet-ado-publish] (fn-19). CLI tool packaging (Homebrew, apt, winget, Scoop, `dotnet tool`) is owned by [skill:dotnet-cli-packaging] (fn-17).
 
@@ -101,7 +101,7 @@ Individual `.csproj` files then only set package-specific properties (`PackageId
 
 ## Source Generator NuGet Packaging
 
-Source generators and analyzers require a specific NuGet package layout. The generator DLL must be placed in the `analyzers/dotnet/cs/` folder, not the `lib/` folder.
+Source generators and analyzers require a specific NuGet package layout. The generator DLL must be placed in the `analyzers/dotnet/cs/` folder, not the `lib/` folder. For Roslyn source generator authoring (IIncrementalGenerator, syntax/semantic analysis), see [skill:dotnet-csharp-source-generators]. This section covers NuGet *packaging* of generators only.
 
 ### Project Setup for Source Generator Package
 
