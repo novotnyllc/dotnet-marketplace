@@ -1,0 +1,107 @@
+[
+  {
+    "query": "How do I set up dependency injection in my .NET app?",
+    "expected_skill": "dotnet-csharp-dependency-injection",
+    "category": "core-csharp"
+  },
+  {
+    "query": "What version of .NET is my project targeting?",
+    "expected_skill": "dotnet-version-detection",
+    "category": "foundation"
+  },
+  {
+    "query": "How do I build a minimal API endpoint with route groups?",
+    "expected_skill": "dotnet-minimal-apis",
+    "category": "api-development"
+  },
+  {
+    "query": "Set up vertical slice architecture with request pipelines",
+    "expected_skill": "dotnet-architecture-patterns",
+    "category": "architecture"
+  },
+  {
+    "query": "Configure GitHub Actions to build and test my .NET solution",
+    "expected_skill": "dotnet-gha-build-test",
+    "category": "cicd"
+  },
+  {
+    "query": "How do I design a CLI tool with System.CommandLine?",
+    "expected_skill": "dotnet-system-commandline",
+    "category": "cli-tools"
+  },
+  {
+    "query": "Write xUnit integration tests with WebApplicationFactory",
+    "expected_skill": "dotnet-integration-testing",
+    "category": "testing"
+  },
+  {
+    "query": "How do I manage secrets safely in my .NET app?",
+    "expected_skill": "dotnet-secrets-management",
+    "category": "security"
+  },
+  {
+    "query": "What common mistakes do AI agents make in .NET code?",
+    "expected_skill": "dotnet-agent-gotchas",
+    "category": "agent-meta-skills"
+  },
+  {
+    "query": "Configure multi-targeting for net8.0 and net10.0",
+    "expected_skill": "dotnet-multi-targeting",
+    "category": "multi-targeting"
+  },
+  {
+    "query": "How do I publish a Native AOT compiled application?",
+    "expected_skill": "dotnet-native-aot",
+    "category": "native-aot"
+  },
+  {
+    "query": "Author and publish a NuGet package with source link",
+    "expected_skill": "dotnet-nuget-authoring",
+    "category": "packaging"
+  },
+  {
+    "query": "How do I run BenchmarkDotNet performance tests?",
+    "expected_skill": "dotnet-benchmarkdotnet",
+    "category": "performance"
+  },
+  {
+    "query": "Organize my solution with Directory.Build.props",
+    "expected_skill": "dotnet-project-structure",
+    "category": "project-structure"
+  },
+  {
+    "query": "Create a release with version tagging and changelog",
+    "expected_skill": "dotnet-release-management",
+    "category": "release-management"
+  },
+  {
+    "query": "Configure System.Text.Json serialization options",
+    "expected_skill": "dotnet-serialization",
+    "category": "serialization"
+  },
+  {
+    "query": "Build a MAUI cross-platform mobile app",
+    "expected_skill": "dotnet-maui-development",
+    "category": "ui-frameworks"
+  },
+  {
+    "query": "Generate XML documentation and API reference docs",
+    "expected_skill": "dotnet-xml-docs",
+    "category": "documentation"
+  },
+  {
+    "query": "Add localization and resource files to my .NET app",
+    "expected_skill": "dotnet-localization",
+    "category": "localization"
+  },
+  {
+    "query": "How do I use async/await patterns correctly in C#?",
+    "expected_skill": "dotnet-csharp-async-patterns",
+    "category": "core-csharp"
+  },
+  {
+    "query": "Set up EF Core with migrations and DbContext",
+    "expected_skill": "dotnet-efcore-patterns",
+    "category": "architecture"
+  }
+]
