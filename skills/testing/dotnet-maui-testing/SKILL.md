@@ -13,7 +13,7 @@ Testing .NET MAUI applications using Appium for UI automation and XHarness for c
 
 **Prerequisites:** MAUI test project scaffolded via [skill:dotnet-add-testing]. Appium server installed (`npm install -g appium`). For Android: Android SDK with emulator configured. For iOS: Xcode with simulator (macOS only). For Windows: WinAppDriver installed.
 
-Cross-references: [skill:dotnet-ui-testing-core] for page object model, test selectors, and async wait patterns, [skill:dotnet-xunit] for xUnit fixtures and test organization.
+Cross-references: [skill:dotnet-ui-testing-core] for page object model, test selectors, and async wait patterns, [skill:dotnet-xunit] for xUnit fixtures and test organization, [skill:dotnet-maui-development] for MAUI project structure, XAML/MVVM patterns, and platform services, [skill:dotnet-maui-aot] for Native AOT on iOS/Mac Catalyst and AOT build testing considerations.
 
 ---
 
