@@ -21,9 +21,8 @@ Create `skills/localization/dotnet-localization/SKILL.md` covering the full .NET
 - `skills/foundation/dotnet-advisor/SKILL.md` (edit — update catalog status)
 
 ## Done summary
-TBD
-
+Created comprehensive `dotnet-localization` SKILL.md covering .resx resources, modern alternatives (JSON, source generators for AOT), IStringLocalizer patterns, date/number/currency formatting, RTL support, pluralization engines (MessageFormat.NET, SmartFormat.NET), and UI framework integration subsections for Blazor, MAUI, Uno Platform, and WPF with cross-references to framework-specific skills. Registered in plugin.json and updated advisor catalog section 14 from `planned` to `implemented`.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 66d3215a9e3b9c2ff36e4eb2e7d42f0c69e2b4a5, f6307a75925e9f2f3a8f288bc1b354614958a055
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, STRICT_REFS=1 ./scripts/validate-skills.sh
 - PRs:

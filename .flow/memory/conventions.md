@@ -57,3 +57,6 @@ Scope boundary table in epic spec prevents duplication across epics - must map w
 
 ## 2026-02-14 manual [convention]
 Epic specs must include scope boundary table, .NET version policy, task decomposition with file paths, cross-ref classification, and testable AC with validation commands — not just intent statements
+
+## 2026-02-14 manual [convention]
+Task specs for validation/doc tasks should include concrete code snippets matching the existing script's conventions (variable names, path prefixes)

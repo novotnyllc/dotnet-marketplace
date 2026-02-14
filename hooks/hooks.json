@@ -1,2 +1,30 @@
 {
+  "description": "dotnet-artisan: smart defaults for .NET development",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-dotnet.sh",
+            "async": true,
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start-context.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
 }

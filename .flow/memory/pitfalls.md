@@ -204,3 +204,9 @@ Windows SDK tool paths (signtool.exe, MakeAppx.exe) vary by installed SDK versio
 
 ## 2026-02-14 manual [pitfall]
 After marking a task complete via flowctl, on-disk JSON files (task status, epic next_task, checkpoint) may not be fully synced -- always verify and manually update task JSON status, epic next_task advancement, and regenerate checkpoint with fresh spec content
+
+## 2026-02-14 manual [pitfall]
+Task JSON title and task markdown heading must match -- reviewers flag metadata/content title mismatches
+
+## 2026-02-14 manual [pitfall]
+Checkpoints embed epic spec verbatim -- regenerate checkpoint after spec updates or reviewers flag stale embedded specs
