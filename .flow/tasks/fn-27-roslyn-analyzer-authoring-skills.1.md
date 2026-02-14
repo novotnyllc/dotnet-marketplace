@@ -40,9 +40,8 @@ Create the `dotnet-roslyn-analyzers` skill covering custom Roslyn analyzer autho
 - [ ] Does NOT touch plugin.json (handled by fn-27.2)
 
 ## Done summary
-TBD
-
+Created the dotnet-roslyn-analyzers skill covering custom Roslyn analyzer authoring: DiagnosticAnalyzer with all registration contexts, CodeFixProvider with CodeAction and FixAll, DiagnosticSuppressor, DiagnosticDescriptor conventions (ID prefixes, categories, severity, helpLinkUri), testing with Microsoft.CodeAnalysis.Testing (CSharpAnalyzerVerifier, CSharpCodeFixVerifier, markup syntax, multi-file), NuGet packaging (analyzers/dotnet/cs/ layout, separate assemblies), performance best practices, and RS-series meta-diagnostics reference table.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: beb4a924dea32e7a3e00b2dbfb7313a63c1e8bba, e1032205d8121ad21b8f345542224aef08af9d5a
+- Tests: ./scripts/validate-skills.sh
 - PRs:

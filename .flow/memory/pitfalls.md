@@ -213,3 +213,9 @@ Checkpoints embed epic spec verbatim -- regenerate checkpoint after spec updates
 
 ## 2026-02-14 manual [pitfall]
 When building line-removal filters, regex-based whole-line deletion leaves orphaned markdown table headers (header+separator with no data rows) -- add a cleanup pass to strip empty table structures
+
+## 2026-02-14 manual [pitfall]
+Roslyn RegisterSymbolAction/RegisterSyntaxNodeAction have no state-passing overload -- do not fabricate two-parameter (context, state) callback signatures; use a closure inside RegisterCompilationStartAction instead
+
+## 2026-02-14 manual [pitfall]
+dotnet nuget inspect is not a valid CLI subcommand -- nupkg files are zip archives; use 'unzip -l' or NuGet Package Explorer for package content inspection
