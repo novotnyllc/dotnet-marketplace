@@ -41,9 +41,8 @@ Both skills must have `name` and `description` frontmatter. Does NOT touch `plug
 - [ ] Validation: `grep -q "^name:" skills/performance/dotnet-performance-patterns/SKILL.md`
 
 ## Done summary
-Created `dotnet-benchmarkdotnet` and `dotnet-performance-patterns` skills with comprehensive coverage of microbenchmarking and performance-oriented architecture patterns. Both skills properly cross-reference fn-3, fn-5, fn-6, and fn-16 for boundary management.
-
+Created `dotnet-benchmarkdotnet` and `dotnet-performance-patterns` skills with comprehensive coverage of BenchmarkDotNet microbenchmarking (diagnosers, exporters, baselines, pitfalls) and performance-oriented architecture patterns (Span/Memory, ArrayPool, readonly/ref struct, sealed devirtualization, stackalloc, string performance). Both skills properly cross-reference fn-3, fn-5, fn-6, and fn-16 with explicit Out of scope boundary sections.
 ## Evidence
-- Commits: Skills created with frontmatter and content
-- Tests: `./scripts/validate-skills.sh` passes for both skills
-- PRs: N/A (single-repo workflow)
+- Commits: 9480c7e21e15fc00e503f1c014e0de84e7c3c5d9
+- Tests: ./scripts/validate-skills.sh, grep -q '^name:' skills/performance/dotnet-benchmarkdotnet/SKILL.md, grep -q '^name:' skills/performance/dotnet-performance-patterns/SKILL.md, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
+- PRs:
