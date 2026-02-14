@@ -287,10 +287,15 @@ bool isRtl = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
 
 **Blazor:** No native `FlowDirection` -- use CSS `dir` attribute:
 
+```javascript
+// wwwroot/js/app.js
+window.setDocumentDirection = (dir) => document.documentElement.dir = dir;
+```
+
 ```csharp
-// Set via JS interop on the document element
-await JSRuntime.InvokeVoidAsync("eval",
-    $"document.documentElement.dir = '{(isRtl ? "rtl" : "ltr")}'");
+// Set via named JS function (avoid eval -- causes CSP unsafe-eval violations)
+await JSRuntime.InvokeVoidAsync("setDocumentDirection",
+    isRtl ? "rtl" : "ltr");
 ```
 
 For deep Blazor component patterns, see [skill:dotnet-blazor-components].
@@ -520,7 +525,7 @@ For Uno Extensions ecosystem configuration and MVUX patterns, see [skill:dotnet-
 ```xml
 <!-- Resources/Strings.en-US.xaml -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
   <sys:String x:Key="Welcome">Welcome</sys:String>
   <sys:String x:Key="LoginButton">Log In</sys:String>
 </ResourceDictionary>
