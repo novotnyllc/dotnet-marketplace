@@ -1,0 +1,16 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-02-14T21:58:54.323382Z",
+  "depends_on": [
+    "fn-30-cross-agent-auto-updating-distribution.1"
+  ],
+  "epic": "fn-30-cross-agent-auto-updating-distribution",
+  "id": "fn-30-cross-agent-auto-updating-distribution.2",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.2.md",
+  "status": "todo",
+  "title": "Implement auto-updating distribution pipeline",
+  "updated_at": "2026-02-14T22:02:22.111336Z"
+}

@@ -1,0 +1,13 @@
+{
+  "branch_name": "fn-29-fleet-skill-review-and-improvement-sweep",
+  "created_at": "2026-02-14T21:23:40.682603Z",
+  "depends_on_epics": [],
+  "id": "fn-29-fleet-skill-review-and-improvement-sweep",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-29-fleet-skill-review-and-improvement-sweep.md",
+  "status": "open",
+  "title": "Fleet Skill Review and Improvement Sweep",
+  "updated_at": "2026-02-14T21:23:40.682731Z"
+}

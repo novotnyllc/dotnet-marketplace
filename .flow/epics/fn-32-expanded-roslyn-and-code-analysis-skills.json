@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-32-expanded-roslyn-and-code-analysis-skills",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-14T21:56:34.704085Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-32-expanded-roslyn-and-code-analysis-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-32-expanded-roslyn-and-code-analysis-skills.md",
+  "status": "open",
+  "title": "Expanded Roslyn and Code Analysis Skills",
+  "updated_at": "2026-02-14T21:57:47.964386Z"
+}

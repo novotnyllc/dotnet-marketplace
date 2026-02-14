@@ -1,0 +1,14 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-02-14T21:58:54.189364Z",
+  "depends_on": [],
+  "epic": "fn-30-cross-agent-auto-updating-distribution",
+  "id": "fn-30-cross-agent-auto-updating-distribution.1",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.1.md",
+  "status": "todo",
+  "title": "Evaluate distribution mechanisms and choose approach",
+  "updated_at": "2026-02-14T22:02:21.982661Z"
+}

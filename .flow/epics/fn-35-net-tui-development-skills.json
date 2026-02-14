@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-35-net-tui-development-skills",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-14T21:56:36.974675Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-35-net-tui-development-skills",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-35-net-tui-development-skills.md",
+  "status": "open",
+  "title": "NET TUI Development Skills",
+  "updated_at": "2026-02-14T21:58:16.539496Z"
+}
