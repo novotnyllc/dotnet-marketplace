@@ -281,10 +281,10 @@ Export the OpenAPI spec at build time for use in static documentation sites:
 
 ```bash
 # Generate OpenAPI spec from the running application
-dotnet run -- --urls "http://localhost:0" &
+dotnet run -- --urls "http://localhost:5099" &
 APP_PID=$!
 sleep 3
-curl -s http://localhost:$PORT/openapi/v1.json > docs/openapi/v1.json
+curl -s http://localhost:5099/openapi/v1.json > docs/openapi/v1.json
 kill $APP_PID
 ```
 

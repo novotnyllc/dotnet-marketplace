@@ -48,7 +48,7 @@ Place badges at the top of the README, grouped by category:
 
 ### Recommended README Sections
 
-```markdown
+````markdown
 # My.Library
 
 [badges here]
@@ -102,7 +102,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for a history of changes. For changelog format conventions, see [skill:dotnet-release-management].
-```
+````
 
 ### Architecture Diagram in README
 
