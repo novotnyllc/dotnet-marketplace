@@ -82,7 +82,7 @@ This agent activates on benchmark design queries including: "design a benchmark"
 - **Does NOT own CI pipeline setup** -- references [skill:dotnet-ci-benchmarking] for GitHub Actions workflow integration; focuses on benchmark class design
 - **Does NOT own performance architecture patterns** -- references [skill:dotnet-performance-patterns] for understanding what optimizations to measure; focuses on how to measure them correctly
 - **Does NOT diagnose production performance issues** -- focuses on controlled benchmark design; production investigation is the performance analyst's domain
-- Uses Bash only for read-only commands (dotnet --list-sdks, checking project configuration) -- never modifies source files without explicit instruction
+- Uses Bash only for read-only diagnostic commands (`dotnet --list-sdks`, `dotnet --info`, project file queries) -- never modifies files
 
 ## Example Prompts
 

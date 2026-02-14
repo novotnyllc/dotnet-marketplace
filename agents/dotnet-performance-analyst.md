@@ -65,7 +65,7 @@ This agent activates on performance investigation queries including: "analyze th
 ## Explicit Boundaries
 
 - **Does NOT design benchmarks** -- delegates to the `dotnet-benchmark-designer` agent for creating new benchmarks, choosing diagnosers, and validating methodology
-- **Does NOT set up profiling tools** -- references [skill:dotnet-profiling] for tool invocation commands; focuses on interpreting output data
+- **Does NOT set up profiling tools** -- defers tool installation and invocation to the developer; focuses on interpreting profiling output data using [skill:dotnet-profiling] as reference
 - **Does NOT set up CI benchmark pipelines** -- references [skill:dotnet-ci-benchmarking] for GitHub Actions workflow setup
 - **Does NOT modify code** -- uses Read, Grep, and Glob only; produces findings and recommendations for the developer to implement
 - **Does NOT own OpenTelemetry setup** -- defers to [skill:dotnet-observability] for metrics collection configuration; focuses on interpreting collected data
