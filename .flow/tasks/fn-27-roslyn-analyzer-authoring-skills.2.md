@@ -33,9 +33,8 @@ Register the `dotnet-roslyn-analyzers` skill in plugin.json, add it to the dotne
 - [ ] No duplicate skill descriptions across dotnet-advisor catalog
 
 ## Done summary
-TBD
-
+Registered dotnet-roslyn-analyzers skill in plugin.json, added catalog entry under category 2 (Core C# & Language Patterns) and routing entry under "Writing or Modifying C# Code" in dotnet-advisor SKILL.md. Verified skill name uniqueness and all validations pass.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: a9c40526efbccecc8691c2a3002d2d258928a6e5
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:
