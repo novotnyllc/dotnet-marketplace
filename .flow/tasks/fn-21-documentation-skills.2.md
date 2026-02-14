@@ -67,9 +67,8 @@ Create three documentation skills: `dotnet-github-docs` (GitHub-native documenta
 - [ ] Description frontmatter < 120 chars per skill
 
 ## Done summary
-TBD
-
+Created three documentation skills: dotnet-github-docs (README structure, CONTRIBUTING, issue/PR templates, GitHub Pages, repo metadata), dotnet-xml-docs (all XML doc tags, inheritdoc, GenerateDocumentationFile, warning suppression, IntelliSense), and dotnet-api-docs (DocFX setup with docfx.json, OpenAPI-as-docs, doc-code sync, API changelogs, versioned docs). All skills include frontmatter, scope boundaries, cross-references, code examples, and agent gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 38cf9d7, 9ae05bc9d8415ec1cd2d57207d61d46848978380
+- Tests: ./scripts/validate-skills.sh
 - PRs:
