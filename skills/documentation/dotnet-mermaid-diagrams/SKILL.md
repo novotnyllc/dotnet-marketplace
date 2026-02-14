@@ -25,8 +25,8 @@ Shows the system in its environment with external actors and systems.
 
 ```mermaid
 graph TB
-    User["fa:fa-user End User<br/>(Browser/Mobile)"]
-    Admin["fa:fa-user-shield Admin<br/>(Internal)"]
+    User["End User<br/>(Browser/Mobile)"]
+    Admin["Admin<br/>(Internal)"]
 
     subgraph System["My .NET Application"]
         API["ASP.NET Core API<br/>(.NET 8)"]
@@ -443,7 +443,7 @@ graph TB
         end
     end
 
-    Internet["fa:fa-globe Internet"] -->|"443"| Nginx
+    Internet["Internet"] -->|"443"| Nginx
     Nginx -->|"8080"| App
     App -->|"1433"| DB
     App -->|"6379"| Redis
@@ -472,7 +472,7 @@ graph TB
         end
     end
 
-    Internet["fa:fa-globe Internet"] --> Ingress
+    Internet["Internet"] --> Ingress
     Ingress -->|"/api/orders"| SVC1
     Ingress -->|"/api/catalog"| SVC2
     SVC1 --> Pod1A
@@ -855,4 +855,8 @@ graph LR
 
 7. **Sequence diagram participant names cannot contain special characters** -- use `participant DB as "SQL Server"` alias syntax for names with spaces or special characters.
 
-8. **Do not configure Mermaid rendering in doc platforms** -- platform setup (Starlight remark plugin, Docusaurus theme, DocFX template) belongs to [skill:dotnet-documentation-strategy]. This skill provides the diagram content only.
+8. **Nested generics (`Task~List~T~~`) may not render on all Mermaid versions** -- the double `~~` at the end of nested generic types requires Mermaid v10.3+. Test rendering in your target environment before committing complex generic type diagrams.
+
+9. **Do not use Font Awesome icon syntax (`fa:fa-user`) in diagrams intended for GitHub** -- GitHub's native Mermaid renderer does not load Font Awesome CSS. Icons render as literal text. Use plain text labels instead.
+
+10. **Do not configure Mermaid rendering in doc platforms** -- platform setup (Starlight remark plugin, Docusaurus theme, DocFX template) belongs to [skill:dotnet-documentation-strategy]. This skill provides the diagram content only.

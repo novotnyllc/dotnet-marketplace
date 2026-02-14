@@ -170,7 +170,9 @@ After configuration, use standard Mermaid fenced code blocks in any Markdown fil
 
 ### Versioned Documentation
 
-Starlight supports versioned docs through directory structure and routing:
+Use the `@lorenzo_lewis/starlight-utils` plugin for version dropdown navigation -- this is the recommended approach for Starlight versioned docs.
+
+Alternatively, use directory-based versioning with explicit routing in `astro.config.mjs`:
 
 ```
 src/content/docs/
@@ -180,10 +182,9 @@ src/content/docs/
   v2/
     getting-started.md
     api-reference.md
-  latest -> v2/         # Symlink or redirect
 ```
 
-Alternatively, use the `@lorenzo_lewis/starlight-utils` plugin for version dropdown navigation.
+Configure the sidebar to point to the current version directory and add a version selector via the plugin or custom Astro component.
 
 ---
 
@@ -395,7 +396,7 @@ DocFX requires a template plugin for Mermaid rendering:
 }
 ```
 
-The `modern` template includes Mermaid support. For the `default` template, add the Mermaid JavaScript library via a custom template extension.
+The `modern` template includes Mermaid support since DocFX v2.75+. Earlier versions require a custom template extension. Note that `_enableMermaid` is a template-specific convention, not an officially documented DocFX property. For the `default` template, add the Mermaid JavaScript library via a custom template extension.
 
 ---
 
