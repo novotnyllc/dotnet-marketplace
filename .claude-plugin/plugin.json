@@ -77,7 +77,11 @@
     "skills/agent-meta-skills/dotnet-agent-gotchas",
     "skills/agent-meta-skills/dotnet-build-analysis",
     "skills/agent-meta-skills/dotnet-csproj-reading",
-    "skills/agent-meta-skills/dotnet-solution-navigation"
+    "skills/agent-meta-skills/dotnet-solution-navigation",
+    "skills/performance/dotnet-benchmarkdotnet",
+    "skills/performance/dotnet-performance-patterns",
+    "skills/performance/dotnet-profiling",
+    "skills/performance/dotnet-ci-benchmarking"
   ],
   "agents": [
     "agents/dotnet-architect.md",
@@ -85,7 +89,9 @@
     "agents/dotnet-security-reviewer.md",
     "agents/dotnet-blazor-specialist.md",
     "agents/dotnet-uno-specialist.md",
-    "agents/dotnet-maui-specialist.md"
+    "agents/dotnet-maui-specialist.md",
+    "agents/dotnet-performance-analyst.md",
+    "agents/dotnet-benchmark-designer.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"

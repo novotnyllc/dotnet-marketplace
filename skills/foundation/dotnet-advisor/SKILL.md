@@ -85,7 +85,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-snapshot-testing] -- Verify for snapshot testing
 - [skill:dotnet-test-quality] -- coverage, CRAP analysis, mutation testing
 
-### 9. Performance & Benchmarking `planned`
+### 9. Performance & Benchmarking `implemented`
 - [skill:dotnet-benchmarkdotnet] -- BenchmarkDotNet setup, configs, CI
 - [skill:dotnet-performance-patterns] -- Span, pooling, zero-alloc, sealed
 - [skill:dotnet-profiling] -- dotnet-counters, trace, dump, memory
