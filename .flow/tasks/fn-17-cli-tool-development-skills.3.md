@@ -23,7 +23,7 @@ Register all 5 CLI skills in plugin.json, run validation, and audit cross-refere
 - fn-17.2 (distribution, packaging, and pipeline skills must exist)
 
 ## Done summary
-Registered all 5 CLI tool skills in plugin.json and updated dotnet-advisor to use canonical CLI skill names (dotnet-cli-distribution, dotnet-cli-packaging, dotnet-cli-release-pipeline) replacing stale planned names. Removed `planned` tag from CLI section. All validation passes with 0 errors and unique skill names.
+Registered all 5 CLI tool skills in plugin.json and updated dotnet-advisor to use canonical CLI skill names (dotnet-cli-distribution, dotnet-cli-packaging, dotnet-cli-release-pipeline) replacing stale planned names. Removed planned tag from CLI section. All validation passes with 0 errors and unique skill names.
 ## Evidence
 - Commits: 4a362ae7db03c84ed5f9ced167485b447b42b7e7
 - Tests: ./scripts/validate-skills.sh, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d, grep -r 'TODO(fn-17)' skills/
