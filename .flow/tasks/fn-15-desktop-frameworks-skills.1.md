@@ -43,9 +43,8 @@ Create three desktop framework skills: `dotnet-winui`, `dotnet-wpf-modern`, and 
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created three desktop framework skills (dotnet-winui, dotnet-wpf-modern, dotnet-winforms-basics) with full topic coverage, canonical frontmatter, hard/soft cross-references, and Agent Gotchas sections. All skills pass validation with 0 errors.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 16acd976a4dca21a8f1dfb1c4b5e4fbd18f6bcfc, dae03d90710c51c73c9a1947a7e603796b03301f
+- Tests: ./scripts/validate-skills.sh
 - PRs:

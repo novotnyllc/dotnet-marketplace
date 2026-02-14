@@ -171,3 +171,9 @@ Task JSON depends_on must mirror prose serial-execution claims — empty depends
 
 ## 2026-02-14 manual [pitfall]
 When fixing task specs, always sync the epic spec's Task Decomposition subsections to match -- reviewers flag cross-section inconsistency within the same epic spec file
+
+## 2026-02-14 manual [pitfall]
+WPF Fluent theme (.NET 9+) uses Application.ThemeMode property, not a ResourceDictionary merge -- the pack://application URI approach is incorrect and generates non-functional code
+
+## 2026-02-14 manual [pitfall]
+WinUI 3 does not expose a managed TaskbarManager API -- taskbar progress requires Win32 COM interop (ITaskbarList3 via CsWin32 or P/Invoke), unlike UWP which had Windows.UI.Shell.TaskbarManager
