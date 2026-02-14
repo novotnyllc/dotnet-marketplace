@@ -189,3 +189,9 @@ Code examples must not contradict their own Agent Gotchas section -- if a gotcha
 
 ## 2026-02-14 manual [pitfall]
 When skills have Agent Gotchas about shell practices (set -euo pipefail), all code examples in the same skill must demonstrate that practice -- reviewers flag self-contradictions
+
+## 2026-02-14 manual [pitfall]
+Empty task specs (all TBD) are unshippable - must include descriptions, file paths, acceptance criteria, and validation commands before review
+
+## 2026-02-14 manual [pitfall]
+Vague task titles (like 'Reference dotnet-skills material') need clarification - rename to explicit deliverables or risk implementer confusion

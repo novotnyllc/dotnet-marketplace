@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-02-14T03:40:46.856172Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-18-performance-and-benchmarking-skills",
+      "created_at": "2026-02-11T22:23:25.938563Z",
+      "depends_on_epics": [
+        "fn-5-architecture-patterns-skills"
+      ],
+      "id": "fn-18-performance-and-benchmarking-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-18-performance-and-benchmarking-skills.md",
+      "status": "open",
+      "title": "Performance and Benchmarking Skills",
+      "updated_at": "2026-02-11T22:30:09.409782Z"
+    },
+    "spec": "# fn-18: Performance and Benchmarking Skills\n\n## Problem/Goal\nAdd comprehensive performance and benchmarking skills covering BenchmarkDotNet, performance-oriented architecture patterns, profiling tools, and continuous benchmarking in CI. Enable dotnet-performance-analyst and dotnet-benchmark-designer agents.\n\n## Acceptance Checks\n- [ ] `dotnet-benchmarkdotnet` skill covers setup, custom configs, memory diagnosers, exporters, baselines, CI integration\n- [ ] `dotnet-performance-patterns` skill covers performance architecture (Span<T>, pooling, zero-alloc, struct design, sealed classes)\n- [ ] `dotnet-profiling` skill covers dotnet-counters, dotnet-trace, dotnet-dump, memory profiling, allocation analysis\n- [ ] `dotnet-ci-benchmarking` skill covers continuous benchmarking (comparison, regression detection, alerting)\n- [ ] `dotnet-performance-analyst` agent analyzes profiling results and benchmark comparisons\n- [ ] `dotnet-benchmark-designer` agent designs effective benchmarks\n- [ ] Cross-references to AOT skills, serialization, architecture patterns\n\n## Key Context\n- BenchmarkDotNet is the industry standard\n- Performance patterns reference existing dotnet-skills material\n- CI benchmarking prevents performance regressions\n- Profiling tools are built into .NET SDK\n"
+  },
+  "epic_id": "fn-18-performance-and-benchmarking-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:09.719980Z",
+        "depends_on": [],
+        "epic": "fn-18-performance-and-benchmarking-skills",
+        "id": "fn-18-performance-and-benchmarking-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-18-performance-and-benchmarking-skills.1.md",
+        "status": "todo",
+        "title": "Create performance skills (BenchmarkDotNet, patterns, profiling, CI)",
+        "updated_at": "2026-02-11T22:32:09.720163Z"
+      },
+      "id": "fn-18-performance-and-benchmarking-skills.1",
+      "runtime": null,
+      "spec": "# fn-18-performance-and-benchmarking-skills.1 Create performance skills (BenchmarkDotNet, patterns, profiling, CI)\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:09.897417Z",
+        "depends_on": [],
+        "epic": "fn-18-performance-and-benchmarking-skills",
+        "id": "fn-18-performance-and-benchmarking-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-18-performance-and-benchmarking-skills.2.md",
+        "status": "todo",
+        "title": "Create performance analyst and benchmark designer agents",
+        "updated_at": "2026-02-11T22:32:09.897590Z"
+      },
+      "id": "fn-18-performance-and-benchmarking-skills.2",
+      "runtime": null,
+      "spec": "# fn-18-performance-and-benchmarking-skills.2 Create performance analyst and benchmark designer agents\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:10.059051Z",
+        "depends_on": [],
+        "epic": "fn-18-performance-and-benchmarking-skills",
+        "id": "fn-18-performance-and-benchmarking-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-18-performance-and-benchmarking-skills.3.md",
+        "status": "todo",
+        "title": "Reference dotnet-skills performance material",
+        "updated_at": "2026-02-11T22:32:10.059190Z"
+      },
+      "id": "fn-18-performance-and-benchmarking-skills.3",
+      "runtime": null,
+      "spec": "# fn-18-performance-and-benchmarking-skills.3 Reference dotnet-skills performance material\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

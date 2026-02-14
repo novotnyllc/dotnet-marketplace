@@ -45,3 +45,12 @@ New framework epics must match fn-13 parity: scope table, content coverage table
 
 ## 2026-02-14 manual [convention]
 Epic specs must include Dependencies (hard/soft epic deps), .NET Version Policy (baseline + version-gating), and Conventions sections for peer-epic parity
+
+## 2026-02-14 manual [convention]
+Epic specs need task decomposition section mapping each task to exact file paths and deliverables (following fn-5 pattern)
+
+## 2026-02-14 manual [convention]
+Create dedicated integration task (like fn-5.6, fn-18.4) as single owner of plugin.json to prevent merge conflicts in parallel workflows
+
+## 2026-02-14 manual [convention]
+Scope boundary table in epic spec prevents duplication across epics - must map what epic owns vs cross-references to other epics
