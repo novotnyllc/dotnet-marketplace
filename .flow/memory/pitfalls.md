@@ -177,3 +177,6 @@ WPF Fluent theme (.NET 9+) uses Application.ThemeMode property, not a ResourceDi
 
 ## 2026-02-14 manual [pitfall]
 WinUI 3 does not expose a managed TaskbarManager API -- taskbar progress requires Win32 COM interop (ITaskbarList3 via CsWin32 or P/Invoke), unlike UWP which had Windows.UI.Shell.TaskbarManager
+
+## 2026-02-14 manual [pitfall]
+When a task spec says 'sole owner of file X modifications', the file MUST appear in the commit's changed files list even if no structural changes are needed -- touch it with description/documentation updates to evidence the verification was performed

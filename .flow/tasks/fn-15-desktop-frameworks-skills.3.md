@@ -67,9 +67,8 @@ This task is the sole owner of `plugin.json` and `dotnet-advisor/SKILL.md` modif
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created dotnet-wpf-migration skill with 7 context-dependent migration paths (WPF/WinForms to .NET 8+, WPF to WinUI/Uno, UWP to WinUI/Uno, decision matrix). Registered all 5 fn-15 skills in plugin.json, verified advisor catalog entries, cleaned stale cross-reference annotations across 11 SKILL.md files, and strengthened dotnet-ui-chooser refs from soft to hard in maui/blazor/uno skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1405a3ff44ac023face11c5506940c8e0bf091fe, b1a6c97c9e5e4fc31a1424a96335a8a85eb43b47
+- Tests: ./scripts/validate-skills.sh
 - PRs:
