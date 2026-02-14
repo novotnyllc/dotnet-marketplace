@@ -35,7 +35,7 @@ The script integrates with the existing `_validate_skills.py` frontmatter parser
 
 ## Done summary
 Created cross-agent conformance validator (scripts/validate_cross_agent.py) implementing 5 conformance checks plus corpus completeness, and trigger corpus (tests/trigger-corpus.json) with 21 entries covering all 19 skill categories. Validator detects routing parity gaps, trigger coverage mismatches, Claude-only feature leaks, structural mismatches after transformation, and cross-reference integrity issues across Claude/Copilot/Codex dist/ outputs.
-
 ## Evidence
-commits: 2cfb55d38a549c6248b82193bf2cc336277f80f1
-tests: python3 scripts/validate_cross_agent.py --repo-root /Users/claire/dev/dotnet-marketplace
+- Commits: 2cfb55d38a549c6248b82193bf2cc336277f80f1
+- Tests: python3 scripts/validate_cross_agent.py --repo-root /Users/claire/dev/dotnet-marketplace
+- PRs:
