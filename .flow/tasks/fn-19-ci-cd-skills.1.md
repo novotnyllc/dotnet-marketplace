@@ -62,9 +62,8 @@ All skills must have `name` and `description` frontmatter. Each skill must conta
 - [ ] Validation: `grep -q "^description:" skills/cicd/dotnet-gha-*/SKILL.md`
 
 ## Done summary
-TBD
-
+Created 4 GitHub Actions CI/CD skills: dotnet-gha-patterns (reusable workflows, composite actions, matrix builds, caching, concurrency, environments, workflow_dispatch), dotnet-gha-build-test (setup-dotnet v4, NuGet caching, test reporting, coverage, multi-TFM matrix, sharding), dotnet-gha-publish (NuGet push, container image push, signing, SBOM, conditional tags), and dotnet-gha-deploy (GitHub Pages, container registries, Azure Web Apps, environments with protection rules, rollback patterns). All skills include cross-references to dotnet-add-ci, dotnet-native-aot, dotnet-containers, dotnet-ci-benchmarking, dotnet-cli-release-pipeline, dotnet-container-deployment, and dotnet-testing-strategy with proper scope boundaries.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 20f8304244e280ef6fb754c7a736f7438387a72f
+- Tests: ./scripts/validate-skills.sh, grep -q '^name:' skills/cicd/dotnet-gha-*/SKILL.md, grep -q '^description:' skills/cicd/dotnet-gha-*/SKILL.md, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
 - PRs:
