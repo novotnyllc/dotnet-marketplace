@@ -52,6 +52,8 @@ Create the `dotnet-csharp-code-smells` SKILL.md at `skills/core-csharp/dotnet-cs
 - [ ] `details.md` includes both motivating examples: TryEnqueue async lambda exception routing (bad→fix) and CS0067 warning suppression hack (bad→fix)
 
 ## Done summary
-
+Created dotnet-csharp-code-smells skill with SKILL.md (120 lines, 6 anti-pattern categories as scannable tables with Smell/Why/Fix/Rule columns) and details.md (442 lines with bad-to-fix code examples for all categories including both motivating examples: TryEnqueue async lambda exception routing and CS0067 warning suppression hack).
 ## Evidence
-
+- Commits: 0d0d737e0aa998001cde2af53e354ade891df03d
+- Tests: ./scripts/validate-skills.sh
+- PRs:
