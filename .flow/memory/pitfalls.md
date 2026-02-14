@@ -180,3 +180,6 @@ WinUI 3 does not expose a managed TaskbarManager API -- taskbar progress require
 
 ## 2026-02-14 manual [pitfall]
 When a task spec says 'sole owner of file X modifications', the file MUST appear in the commit's changed files list even if no structural changes are needed -- touch it with description/documentation updates to evidence the verification was performed
+
+## 2026-02-14 manual [pitfall]
+When scope lists sub-features (e.g. lazy loading, Brotli), each must appear in a dedicated AC item or be explicitly included in an existing AC — implicit coverage via umbrella phrases gets flagged by reviewers

@@ -1,15 +1,20 @@
 {
   "branch_name": "fn-16-native-aot-and-trimming-skills",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
   "created_at": "2026-02-11T22:23:25.299563Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
   "depends_on_epics": [
     "fn-5-architecture-patterns-skills"
   ],
   "id": "fn-16-native-aot-and-trimming-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-14T01:46:28.478573Z",
   "spec_path": ".flow/specs/fn-16-native-aot-and-trimming-skills.md",
   "status": "open",
   "title": "Native AOT and Trimming Skills",
-  "updated_at": "2026-02-11T22:29:48.957598Z"
+  "updated_at": "2026-02-14T01:46:28.478724Z"
 }

@@ -42,3 +42,6 @@ Quick command counts (grep -c) break when other epics add files to the same dire
 
 ## 2026-02-13 manual [convention]
 New framework epics must match fn-13 parity: scope table, content coverage tables, agent schema with trigger lexicon, scope boundaries matrix, cross-ref classification (hard/soft), serial task deps, quick commands, 15+ acceptance criteria, and restructure validation task (task N) to match cross-refs+validate pattern
+
+## 2026-02-14 manual [convention]
+Epic specs must include Dependencies (hard/soft epic deps), .NET Version Policy (baseline + version-gating), and Conventions sections for peer-epic parity
