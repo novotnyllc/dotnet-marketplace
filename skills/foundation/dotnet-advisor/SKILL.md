@@ -34,6 +34,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-csharp-dependency-injection] -- MS DI, keyed services, decoration
 - [skill:dotnet-csharp-configuration] -- options pattern, feature flags, secrets
 - [skill:dotnet-csharp-source-generators] -- IIncrementalGenerator, emit patterns
+- [skill:dotnet-csharp-code-smells] -- code smells, anti-patterns, common pitfalls
 
 ### 3. Project Structure & Scaffolding `planned`
 - [skill:dotnet-project-structure] -- .slnx, Directory.Build.props, CPM, analyzers
@@ -177,6 +178,7 @@ Use this decision tree to load the right skills for the current task.
 - Configuration -> [skill:dotnet-csharp-configuration]
 - Async/await, concurrency -> [skill:dotnet-csharp-async-patterns]
 - Source generators -> [skill:dotnet-csharp-source-generators]
+- Code review, code quality, anti-patterns -> [skill:dotnet-csharp-code-smells]
 
 ### Building APIs
 - Minimal APIs (default for new) -> [skill:dotnet-minimal-apis]

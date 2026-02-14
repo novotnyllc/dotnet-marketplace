@@ -395,6 +395,7 @@ Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` 
 - `csharp-dependency-injection` - MS DI advanced patterns: keyed services, decoration, factory patterns, scopes, hosted service registration
 - `csharp-configuration` - Options pattern, user secrets, environment-based config, Microsoft.FeatureManagement for feature flags
 - `csharp-source-generators` - Creating AND using source generators: IIncrementalGenerator, syntax/semantic analysis, emit patterns, testing, project-specific generators
+- [skill:dotnet-csharp-code-smells] - Proactive code smell and anti-pattern detection: IDisposable misuse, warning suppression hacks, LINQ anti-patterns, event handling leaks, design smells
 
 **Agents:**
 - `csharp-concurrency-specialist` - Deep expertise in Task/async patterns, thread safety, synchronization, race condition analysis

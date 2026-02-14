@@ -14,6 +14,7 @@
     "skills/core-csharp/dotnet-csharp-dependency-injection",
     "skills/core-csharp/dotnet-csharp-configuration",
     "skills/core-csharp/dotnet-csharp-source-generators",
+    "skills/core-csharp/dotnet-csharp-code-smells",
     "skills/project-structure/dotnet-project-structure",
     "skills/project-structure/dotnet-scaffold-project",
     "skills/project-structure/dotnet-add-analyzers",

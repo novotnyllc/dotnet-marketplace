@@ -19,6 +19,7 @@ graph TD
     FN2 --> FN9[fn-9: Meta-Skills]
     FN2 --> FN10[fn-10: Version Detection]
     FN2 --> FN11[fn-11: API Development]
+    FN2 --> FN26[fn-26: Code Smells]
     FN3 --> FN12[fn-12: Blazor]
     FN3 --> FN13[fn-13: Uno]
     FN3 --> FN14[fn-14: MAUI]
@@ -54,7 +55,7 @@ graph TD
 ### Wave 1: Core Skills (parallel after fn-2)
 | Epic  | Title                               | Skills             | Note |
 |-------|-------------------------------------|--------------------|------|
-| fn-3  | Core C# & Language Patterns         | 7 skills + 1 agent | |
+| fn-3  | Core C# & Language Patterns         | 8 skills + 1 agent | |
 | fn-4  | Project Structure & Scaffolding     | 6 skills           | |
 | fn-5  | Architecture Patterns               | 10 skills          | includes data access + containers |
 | fn-6  | Serialization & Communication       | 4 skills           | |
@@ -64,6 +65,7 @@ graph TD
 | fn-10 | Version Detection & Multi-Targeting | 2 skills           | |
 | fn-11 | API Development                     | 4 skills           | |
 | fn-23 | Hooks & MCP Integration             |                    | depends on fn-2 only |
+| fn-26 | Code Smells & Anti-Patterns         | 1 skill            | depends on fn-2 |
 
 ### Wave 2: Frameworks & Specialized (parallel after Wave 1)
 | Epic  | Title                      | Skills              | Note |
