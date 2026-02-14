@@ -115,10 +115,10 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-uno-mcp] -- Uno MCP server for live docs
 - [skill:dotnet-maui-development] -- MAUI patterns, current state
 - [skill:dotnet-maui-aot] -- MAUI Native AOT on iOS/Mac Catalyst
-- [skill:dotnet-winui] -- WinUI 3 development patterns
-- [skill:dotnet-wpf-modern] -- WPF on .NET Core, MVVM Toolkit
-- [skill:dotnet-wpf-migration] -- migration to WinUI or Uno
-- [skill:dotnet-winforms-basics] -- WinForms on .NET Core
+- [skill:dotnet-winui] -- WinUI 3 / Windows App SDK, XAML, MSIX, UWP migration
+- [skill:dotnet-wpf-modern] -- WPF on .NET 8+, Host builder, MVVM Toolkit, Fluent theme
+- [skill:dotnet-wpf-migration] -- WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP migration
+- [skill:dotnet-winforms-basics] -- WinForms on .NET 8+, high-DPI, dark mode, DI
 - [skill:dotnet-ui-chooser] -- decision tree for UI framework selection
 
 ### 13. Multi-Targeting & Polyfills `planned`

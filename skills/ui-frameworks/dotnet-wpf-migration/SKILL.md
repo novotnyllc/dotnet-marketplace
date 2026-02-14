@@ -131,7 +131,7 @@ Migrate when you need modern Windows-native UI: Fluent Design, touch/pen input, 
 
 | WPF XAML | WinUI 3 XAML | Notes |
 |---|---|---|
-| `xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"` | Same URI (WinUI uses same default namespace) | No change needed in xmlns |
+| `xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"` | Same URI (but resolves to `Microsoft.UI.Xaml` types, not `System.Windows`) | No xmlns change, but runtime types differ |
 | `{Binding Path=Name}` | `{x:Bind Name, Mode=OneWay}` | Prefer `x:Bind` (compiled, type-safe) |
 | `DataContext` binding | Code-behind property + `x:Bind` | `x:Bind` resolves against code-behind |
 | `Window` inherits from `System.Windows.Window` | `Window` inherits from `Microsoft.UI.Xaml.Window` | Different base class and API |
