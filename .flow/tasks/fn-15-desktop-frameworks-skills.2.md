@@ -46,9 +46,8 @@ Create the `dotnet-ui-chooser` skill — a comprehensive UI framework decision t
 - [ ] `./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Created dotnet-ui-chooser decision tree skill covering all 5 decision factors (target platforms, team expertise, UI complexity, performance needs, migration path) across Web (Blazor Server/WASM/Hybrid), cross-platform (MAUI, Uno, Avalonia), and Windows-only (WinUI, WPF, WinForms) frameworks with trade-off comparison tables and objective guidance.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 493bb8d, 63b0aa2
+- Tests: ./scripts/validate-skills.sh
 - PRs:
