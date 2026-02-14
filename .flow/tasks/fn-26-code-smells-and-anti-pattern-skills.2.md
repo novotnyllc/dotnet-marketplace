@@ -41,3 +41,10 @@ This task modifies high-contention registry files also touched by other Wave 1 e
 - [ ] `fn-1` umbrella spec: mermaid graph includes fn-26 node with dependency on fn-2
 - [ ] `./scripts/validate-skills.sh` passes with `BUDGET_STATUS=OK` or `BUDGET_STATUS=WARN`
 - [ ] No cross-reference uses bare skill name (all use `[skill:dotnet-csharp-code-smells]` syntax)
+
+## Done summary
+Registered dotnet-csharp-code-smells skill in plugin.json, added catalog entry and routing logic in dotnet-advisor SKILL.md, updated docs/dotnet-artisan-spec.md Core C# section, and updated fn-1 umbrella spec with fn-26 Wave 1 table row, fn-3 skill count bump to 8, and mermaid dependency graph node.
+## Evidence
+- Commits: bc75a77147c8516e3c267caf5924110bed30948c
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
+- PRs:
