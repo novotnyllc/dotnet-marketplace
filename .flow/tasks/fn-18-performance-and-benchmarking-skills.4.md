@@ -42,9 +42,8 @@ This is the single owner of `plugin.json` to eliminate merge conflicts.
 - [ ] plugin.json syntax is valid JSON (run `python3 -m json.tool .claude-plugin/plugin.json > /dev/null`)
 
 ## Done summary
-Registered all fn-18 skills and agents in plugin.json, updated dotnet-advisor catalog from planned to implemented, and validated all cross-references and uniqueness constraints. All validation scripts pass.
-
+Registered all 4 fn-18 performance skills and 2 agents in plugin.json, updated dotnet-advisor catalog section 9 from planned to implemented, and validated all cross-references, uniqueness constraints, and JSON syntax.
 ## Evidence
-- Commits: plugin.json and advisor catalog updates
-- Tests: `./scripts/validate-skills.sh` passes, uniqueness check passes
-- PRs: N/A (single-repo workflow)
+- Commits: c25a01d8452c56a031f8cb0884ea3cf4ee41854f
+- Tests: ./scripts/validate-skills.sh, python3 -m json.tool .claude-plugin/plugin.json, grep -rh '^name:' skills/*/*/SKILL.md | sort | uniq -d
+- PRs:
