@@ -210,3 +210,6 @@ Task JSON title and task markdown heading must match -- reviewers flag metadata/
 
 ## 2026-02-14 manual [pitfall]
 Checkpoints embed epic spec verbatim -- regenerate checkpoint after spec updates or reviewers flag stale embedded specs
+
+## 2026-02-14 manual [pitfall]
+When building line-removal filters, regex-based whole-line deletion leaves orphaned markdown table headers (header+separator with no data rows) -- add a cleanup pass to strip empty table structures

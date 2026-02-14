@@ -7,7 +7,8 @@ Create `scripts/validate_cross_agent.py` — a Python script that validates beha
 2. **Trigger coverage**: Run deterministic corpus (`tests/trigger-corpus.json`) against all formats; verify expected skill matches
 3. **Graceful degradation**: Claude-only features (hooks, MCP, agents) are absent from Copilot/Codex outputs — no broken references, dangling cross-refs, or orphan sentences referencing removed features
 4. **Structural comparison**: After applying known transformations, remaining content sections are textually identical (modulo whitespace). Deterministic text comparison, not semantic.
-5. **Cross-reference integrity**: `[skill:name]` references resolve to valid targets per format (directory for Claude, file for Copilot, section anchor for Codex)
+5. **Cross-reference integrity**: `[skill:name]` references are handled per format — preserved as-is in Claude output, resolved to relative file links (`../name/SKILL.md`) in Copilot, resolved to section anchors (`#name`) in Codex
+<!-- Updated by plan-sync: fn-24.1 preserves [skill:name] unchanged in Claude output (no directory resolution), converts to ../name/SKILL.md for Copilot, and #name anchors for Codex -->
 
 Also create `tests/trigger-corpus.json` with the initial trigger corpus:
 - Minimum one entry per skill category (19+ entries)
@@ -26,7 +27,7 @@ The script integrates with the existing `_validate_skills.py` frontmatter parser
 - [ ] Trigger coverage: validates corpus entries match expected skills
 - [ ] Graceful degradation: detects hook/MCP/agent references in non-Claude outputs
 - [ ] Structural comparison: flags unexpected content differences after transformation
-- [ ] Cross-reference integrity: validates `[skill:name]` resolution per format
+- [ ] Cross-reference integrity: validates `[skill:name]` preserved in Claude, relative file link in Copilot, section anchor in Codex
 - [ ] Trigger corpus has 19+ entries covering all skill categories
 - [ ] Completeness check: CI fails if any category lacks a corpus entry
 - [ ] Per-skill pass/fail report with diff output for failures

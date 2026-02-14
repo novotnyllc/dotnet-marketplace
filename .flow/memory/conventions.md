@@ -60,3 +60,6 @@ Epic specs must include scope boundary table, .NET version policy, task decompos
 
 ## 2026-02-14 manual [convention]
 Task specs for validation/doc tasks should include concrete code snippets matching the existing script's conventions (variable names, path prefixes)
+
+## 2026-02-14 manual [convention]
+Configuration lists (agent names, tool prefixes) should be read from canonical source files (e.g. plugin.json) at runtime, not hardcoded -- eliminates drift when the source is updated
