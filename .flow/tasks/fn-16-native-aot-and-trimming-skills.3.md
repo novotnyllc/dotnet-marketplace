@@ -15,9 +15,8 @@ Register all 4 fn-16 skills in `.claude-plugin/plugin.json`, run validation, aud
 - [ ] No skill references legacy RD.xml (verified by grep)
 
 ## Done summary
-TBD
-
+Registered all 4 native-aot skills in plugin.json and replaced 8 TODO(fn-16) placeholders across 4 serialization skills with canonical [skill:...] cross-references to dotnet-native-aot, dotnet-aot-architecture, and dotnet-trimming.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 090fb4e1cbeed1330bd55e853acbf74b778664e6
+- Tests: ./scripts/validate-skills.sh, grep -r TODO(fn-16) skills/, grep -rh ^name: skills/*/*/SKILL.md | sort | uniq -d, grep -ri rd.xml skills/native-aot/, grep -l 'Out of scope' skills/native-aot/*/SKILL.md
 - PRs:
