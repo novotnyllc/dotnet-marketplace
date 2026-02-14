@@ -186,3 +186,6 @@ When scope lists sub-features (e.g. lazy loading, Brotli), each must appear in a
 
 ## 2026-02-14 manual [pitfall]
 Code examples must not contradict their own Agent Gotchas section -- if a gotcha says 'do not hardcode X', the example must not hardcode X (e.g. TFM paths in CI workflows)
+
+## 2026-02-14 manual [pitfall]
+When skills have Agent Gotchas about shell practices (set -euo pipefail), all code examples in the same skill must demonstrate that practice -- reviewers flag self-contradictions
