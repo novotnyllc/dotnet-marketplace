@@ -201,3 +201,6 @@ WAP projects (.wapproj) use a specialized project format with custom MSBuild imp
 
 ## 2026-02-14 manual [pitfall]
 Windows SDK tool paths (signtool.exe, MakeAppx.exe) vary by installed SDK version -- use dynamic path discovery (Get-ChildItem with version sort) instead of hardcoding version-specific paths
+
+## 2026-02-14 manual [pitfall]
+After marking a task complete via flowctl, on-disk JSON files (task status, epic next_task, checkpoint) may not be fully synced -- always verify and manually update task JSON status, epic next_task advancement, and regenerate checkpoint with fresh spec content
