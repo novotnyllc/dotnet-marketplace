@@ -183,3 +183,6 @@ When a task spec says 'sole owner of file X modifications', the file MUST appear
 
 ## 2026-02-14 manual [pitfall]
 When scope lists sub-features (e.g. lazy loading, Brotli), each must appear in a dedicated AC item or be explicitly included in an existing AC — implicit coverage via umbrella phrases gets flagged by reviewers
+
+## 2026-02-14 manual [pitfall]
+Code examples must not contradict their own Agent Gotchas section -- if a gotcha says 'do not hardcode X', the example must not hardcode X (e.g. TFM paths in CI workflows)

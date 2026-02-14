@@ -23,9 +23,8 @@ Create the three skills covering CLI distribution strategy, multi-platform packa
 - fn-16.1 (`[skill:dotnet-native-aot]` must exist for hard cross-refs)
 
 ## Done summary
-TBD
-
+Created three CLI tool skills: dotnet-cli-distribution (AOT vs framework-dependent vs dotnet tool, RID matrix, single-file publish, size optimization), dotnet-cli-packaging (Homebrew formula/tap, apt/deb, winget, Scoop, Chocolatey, dotnet tool, NuGet), and dotnet-cli-release-pipeline (unified GitHub Actions workflow, build matrix, artifact staging, GitHub Releases with checksums, automated formula/manifest PR creation, SemVer versioning).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1e6504459a23bfe2d5e0b80f2a54ee43e5b24b9b, c2b6d896fe1c39aa832636889fe05be49dc1f874
+- Tests: ./scripts/validate-skills.sh
 - PRs:
