@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-02-14T07:20:40.350459Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-21-documentation-skills",
+      "created_at": "2026-02-11T22:23:32.678585Z",
+      "depends_on_epics": [
+        "fn-19-ci-cd-skills"
+      ],
+      "id": "fn-21-documentation-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-21-documentation-skills.md",
+      "status": "open",
+      "title": "Documentation Skills",
+      "updated_at": "2026-02-11T22:31:03.037015Z"
+    },
+    "spec": "# fn-21: Documentation Skills\n\n## Problem/Goal\nAdd comprehensive documentation skills covering modern tooling recommendation (Starlight vs Docusaurus vs DocFX), Mermaid diagrams, GitHub-native docs, XML docs, and API documentation generation. Enable dotnet-docs-generator agent.\n\n## Acceptance Checks\n- [ ] `dotnet-documentation-strategy` skill recommends tooling based on project context (Starlight modern, Docusaurus feature-rich, DocFX legacy)\n- [ ] `dotnet-mermaid-diagrams` skill provides dedicated Mermaid reference for .NET projects (architecture, sequence, class, deployment diagrams)\n- [ ] `dotnet-github-docs` skill covers GitHub-native documentation (README, CONTRIBUTING, templates, GitHub Pages)\n- [ ] `dotnet-xml-docs` skill covers XML doc comments best practices, auto-generation, integration\n- [ ] `dotnet-api-docs` skill covers API doc generation (OpenAPI specs, doc site generation, keeping in sync)\n- [ ] `dotnet-docs-generator` agent generates documentation with Mermaid diagrams\n- [ ] Cross-references to CI/CD for doc deployment\n\n## Key Context\n- Mermaid diagrams preferred over other diagram tools\n- DocFX is community-maintained (MS dropped official support Nov 2022)\n- Starlight + MarkdownSnippets is modern choice\n- All modern tools support Mermaid\n"
+  },
+  "epic_id": "fn-21-documentation-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:20.939010Z",
+        "depends_on": [],
+        "epic": "fn-21-documentation-skills",
+        "id": "fn-21-documentation-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-21-documentation-skills.1.md",
+        "status": "todo",
+        "title": "Create documentation tooling and Mermaid skills",
+        "updated_at": "2026-02-11T22:32:20.939164Z"
+      },
+      "id": "fn-21-documentation-skills.1",
+      "runtime": null,
+      "spec": "# fn-21-documentation-skills.1 Create documentation tooling and Mermaid skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:21.055287Z",
+        "depends_on": [],
+        "epic": "fn-21-documentation-skills",
+        "id": "fn-21-documentation-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-21-documentation-skills.2.md",
+        "status": "todo",
+        "title": "Create GitHub docs, XML docs, and API docs skills",
+        "updated_at": "2026-02-11T22:32:21.055437Z"
+      },
+      "id": "fn-21-documentation-skills.2",
+      "runtime": null,
+      "spec": "# fn-21-documentation-skills.2 Create GitHub docs, XML docs, and API docs skills\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:21.173458Z",
+        "depends_on": [],
+        "epic": "fn-21-documentation-skills",
+        "id": "fn-21-documentation-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-21-documentation-skills.3.md",
+        "status": "todo",
+        "title": "Create dotnet-docs-generator agent",
+        "updated_at": "2026-02-11T22:32:21.173632Z"
+      },
+      "id": "fn-21-documentation-skills.3",
+      "runtime": null,
+      "spec": "# fn-21-documentation-skills.3 Create dotnet-docs-generator agent\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

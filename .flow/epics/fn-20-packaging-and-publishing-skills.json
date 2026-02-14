@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-20-packaging-and-publishing-skills",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-14T07:15:07.541507Z",
   "created_at": "2026-02-11T22:23:32.518216Z",
   "default_impl": null,
   "default_review": null,
@@ -14,7 +14,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-14T06:21:32.715455Z",
   "spec_path": ".flow/specs/fn-20-packaging-and-publishing-skills.md",
-  "status": "open",
+  "status": "done",
   "title": "Packaging and Publishing Skills",
-  "updated_at": "2026-02-14T06:21:32.715588Z"
+  "updated_at": "2026-02-14T07:15:18.103554Z"
 }
