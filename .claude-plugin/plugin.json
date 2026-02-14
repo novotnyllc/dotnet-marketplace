@@ -98,7 +98,8 @@
     "skills/documentation/dotnet-mermaid-diagrams",
     "skills/documentation/dotnet-github-docs",
     "skills/documentation/dotnet-xml-docs",
-    "skills/documentation/dotnet-api-docs"
+    "skills/documentation/dotnet-api-docs",
+    "skills/localization/dotnet-localization"
   ],
   "agents": [
     "agents/dotnet-architect.md",

@@ -123,7 +123,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-multi-targeting] -- PolySharp, Polyfill, conditional compilation
 - [skill:dotnet-version-upgrade] -- .NET 8 -> 10 -> 11 upgrade guidance
 
-### 14. Localization & Internationalization `planned`
+### 14. Localization & Internationalization `implemented`
 - [skill:dotnet-localization] -- i18n: .resx, IStringLocalizer, RTL, pluralization
 
 ### 15. Packaging & Publishing `implemented`
