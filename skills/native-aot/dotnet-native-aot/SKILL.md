@@ -337,7 +337,6 @@ Use `CreateSlimBuilder` for Native AOT applications. It excludes features that r
 
 - **Enhanced Request Delegate Generator:** The source generator that creates request delegates for Minimal API endpoints now handles more parameter binding scenarios, reducing the need for manual workarounds.
 - **Expanded Minimal API AOT coverage:** Additional result types (`TypedResults`) and binding scenarios are AOT-compatible out of the box.
-- **Blazor Server AOT compatibility:** Initial support for Blazor Server components in AOT-published applications, enabling server-rendered Blazor with AOT benefits.
 - **Reduced linker warning surface:** Many framework APIs that previously emitted trim/AOT warnings have been annotated or refactored for AOT compatibility, producing fewer false-positive warnings.
 
 ```xml

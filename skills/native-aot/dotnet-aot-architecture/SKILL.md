@@ -26,12 +26,11 @@ The primary AOT enabler is replacing runtime reflection with compile-time source
 | `JsonSerializer.Deserialize<T>()` | `[JsonSerializable]` context | System.Text.Json (built-in) |
 | `Activator.CreateInstance<T>()` | Factory pattern with explicit `new` | Manual |
 | `Type.GetProperties()` for mapping | `[Mapper]` attribute | Mapperly |
-| `[Required]` + runtime validation | `[GeneratedRegex]` + manual checks | Built-in / manual |
+| `Regex` pattern compilation | `[GeneratedRegex]` attribute | Built-in (.NET 7+) |
 | `ILogger.Log(...)` with string interpolation | `[LoggerMessage]` attribute | Microsoft.Extensions.Logging |
 | Assembly scanning for DI | Explicit `services.Add*()` | Manual |
 | `[DllImport]` P/Invoke | `[LibraryImport]` | Built-in (.NET 7+) |
 | AutoMapper `CreateMap<>()` | `[Mapper]` source gen | Mapperly |
-| `Regex` pattern compilation | `[GeneratedRegex]` | Built-in (.NET 7+) |
 
 ### Example: Migrating to Source Gen
 
@@ -198,7 +197,6 @@ builder.Services.AddKeyedScoped<IPaymentProcessor, WalletProcessor>("Wallet");
 // Resolve at runtime without reflection
 app.MapPost("/pay", (
     [FromQuery] string type,
-    [FromKeyedServices("CreditCard")] IPaymentProcessor cc,
     IServiceProvider sp) =>
 {
     var processor = sp.GetRequiredKeyedService<IPaymentProcessor>(type);

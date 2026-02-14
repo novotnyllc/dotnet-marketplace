@@ -62,9 +62,9 @@ dotnet publish -c Release
 
 Note: `RunAOTCompilation` is the Blazor WASM property (not `PublishAot` which is for server-side Native AOT). AOT compilation only happens during `dotnet publish`, not during `dotnet run` or `dotnet build`.
 
-### Selective AOT
+### Selective AOT via Lazy Loading
 
-AOT-compile only specific assemblies to balance size and speed:
+Blazor WASM AOT compiles all non-lazy-loaded assemblies. To control which assemblies are AOT-compiled, mark non-critical assemblies as lazy-loaded -- they will use IL interpretation instead:
 
 ```xml
 <PropertyGroup>
@@ -72,12 +72,10 @@ AOT-compile only specific assemblies to balance size and speed:
 </PropertyGroup>
 
 <ItemGroup>
-  <!-- Only AOT-compile these performance-critical assemblies -->
-  <WasmAotProfile Include="MyApp.Core" />
-  <WasmAotProfile Include="MyApp.Calculations" />
-
-  <!-- Or exclude specific assemblies from AOT -->
+  <!-- These assemblies are NOT AOT-compiled (loaded on demand via IL interpreter) -->
   <BlazorWebAssemblyLazyLoad Include="MyApp.Reporting.wasm" />
+  <BlazorWebAssemblyLazyLoad Include="MyApp.Admin.wasm" />
+  <!-- All other assemblies (MyApp.Core, MyApp.Calculations, etc.) ARE AOT-compiled -->
 </ItemGroup>
 ```
 
@@ -104,31 +102,18 @@ The publish pipeline runs: trim unused IL first, then AOT-compile the remaining 
 
 ## Uno WASM AOT
 
-Uno Platform uses a similar WASM AOT pipeline with Uno-specific configuration.
+Uno Platform 5+ with .NET 8+ uses the standard .NET WASM workload, so the AOT configuration is the same as Blazor WASM.
 
-### Enabling AOT
+### Enabling AOT (Uno 5+ / .NET 8+)
 
 ```xml
 <!-- Uno WASM head .csproj -->
 <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0-browserwasm'">
-  <WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
+  <RunAOTCompilation>true</RunAOTCompilation>
 </PropertyGroup>
 ```
 
-### AOT Profile Modes
-
-| Mode | Description | Size | Speed |
-|------|-------------|------|-------|
-| `Interpreter` | IL interpretation only | Smallest | Slowest |
-| `InterpreterAndAOT` | AOT for hot paths, interpreter for rest | Balanced | Good |
-| `FullAOT` | Everything AOT-compiled | Largest | Fastest |
-
-```xml
-<!-- Full AOT for maximum performance -->
-<PropertyGroup>
-  <WasmShellMonoRuntimeExecutionMode>FullAOT</WasmShellMonoRuntimeExecutionMode>
-</PropertyGroup>
-```
+Older Uno versions using `Uno.Wasm.Bootstrap` had a separate `WasmShellMonoRuntimeExecutionMode` property with `Interpreter`, `InterpreterAndAOT`, and `FullAOT` modes. On .NET 8+, use `RunAOTCompilation` instead.
 
 ### Trimming in Uno WASM
 
@@ -180,6 +165,8 @@ Lazy loading defers downloading assemblies until they are needed, reducing initi
 
 ```csharp
 <!-- App.razor -->
+@inject LazyAssemblyLoader LazyLoader
+
 <Router AppAssembly="typeof(App).Assembly"
         AdditionalAssemblies="@_lazyLoadedAssemblies"
         OnNavigateAsync="@OnNavigateAsync">
@@ -190,8 +177,6 @@ Lazy loading defers downloading assemblies until they are needed, reducing initi
 
 @code {
     private List<Assembly> _lazyLoadedAssemblies = new();
-
-    @inject LazyAssemblyLoader LazyLoader
 
     private async Task OnNavigateAsync(NavigationContext context)
     {
@@ -329,7 +314,7 @@ Pre-compressed `.br` files are served automatically when the `Accept-Encoding: b
 3. **Do not forget to publish when testing AOT.** WASM AOT only runs during `dotnet publish`, not `dotnet run`. Debug builds always use IL interpretation.
 4. **Do not lazy-load assemblies that are needed at startup.** Only lazy-load assemblies for features accessed after initial navigation. Loading a lazy assembly triggers a network request.
 5. **Do not skip Brotli compression verification.** Ensure your web server serves `.br` files. Without compression, WASM downloads are 3-5x larger than necessary. Check browser DevTools for `content-encoding: br` header.
-6. **Do not AOT-compile all assemblies when download size matters.** Use selective AOT (`WasmAotProfile`) to only compile performance-critical assemblies. The rest can use IL interpretation.
+6. **Do not AOT-compile all assemblies when download size matters.** Use `BlazorWebAssemblyLazyLoad` to defer non-critical assemblies -- lazy-loaded assemblies use IL interpretation instead of AOT.
 
 ---
 

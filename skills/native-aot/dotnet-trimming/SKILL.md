@@ -271,11 +271,10 @@ dotnet build /p:EnableTrimAnalyzer=true /p:TrimmerSingleWarn=false \
 ```xml
 <!-- Library .csproj -->
 <PropertyGroup>
+  <!-- Auto-enables trim analyzer -->
   <IsTrimmable>true</IsTrimmable>
+  <!-- Auto-enables AOT analyzer; implies IsTrimmable in .NET 8+ -->
   <IsAotCompatible>true</IsAotCompatible>
-
-  <!-- Treat trim warnings as errors in this library -->
-  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 </PropertyGroup>
 ```
 
