@@ -1,0 +1,83 @@
+{
+  "created_at": "2026-02-14T10:03:48.821818Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-24-cross-agent-build-pipeline",
+      "created_at": "2026-02-11T22:23:33.306858Z",
+      "depends_on_epics": [
+        "fn-19-ci-cd-skills",
+        "fn-23-hooks-and-mcp-integration"
+      ],
+      "id": "fn-24-cross-agent-build-pipeline",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-24-cross-agent-build-pipeline.md",
+      "status": "open",
+      "title": "Cross-Agent Build Pipeline",
+      "updated_at": "2026-02-11T22:31:31.715221Z"
+    },
+    "spec": "# fn-24: Cross-Agent Build Pipeline\n\n## Problem/Goal\nCreate dotnet tool for inner loop validation and GitHub Action for cross-agent format generation, producing Claude Code plugin, GitHub Copilot instructions, and OpenAI Codex AGENTS.md from canonical SKILL.md source.\n\n## Acceptance Checks\n- [ ] dotnet tool created for local development (validates skill format, frontmatter, cross-references, generates dist/ outputs)\n- [ ] GitHub Action workflow generates dist/claude/, dist/copilot/, dist/codex/ on push/release\n- [ ] Action publishes to Claude Code marketplace\n- [ ] Action creates GitHub Release with all artifacts\n- [ ] Build pipeline validates skill format, frontmatter, cross-references, markdown lint\n- [ ] Cross-agent conformance test suite validates behavioral equivalence across generated outputs\n- [ ] Cross-references to CI/CD skills, packaging skills\n\n## Cross-Agent Conformance Tests\n\nGeneration success \u2260 behavioral equivalence. The build pipeline must include a conformance test suite:\n\n### Required Tests\n1. **Routing parity**: Every canonical SKILL.md trigger phrase appears in all generated agent formats (Claude plugin description, Copilot `applyTo` instructions, Codex AGENTS.md sections)\n2. **Trigger coverage**: Spot-check that sample queries would activate the same skill across all three agent formats\n3. **Graceful degradation**: Verify that Claude-only features (hooks, MCP, agents) are cleanly omitted from Copilot/Codex outputs without broken references or dangling cross-refs\n4. **Semantic diff**: Detect unintended content drift between canonical SKILL.md and generated outputs (beyond expected format transformations)\n5. **Cross-reference integrity**: All `[skill:name]` references in generated outputs resolve to valid targets within that agent's format\n\n### Implementation\n- Tests run as part of the dotnet tool validation (`dotnet artisan validate --cross-agent`)\n- CI gate: conformance failures block merge\n- Report format: per-skill pass/fail with diff for failures\n\n## Dependencies\n- fn-19 (CI/CD Skills) \u2014 pipeline patterns and workflow templates\n- fn-23 (Hooks & MCP Integration) \u2014 conformance tests must validate against the fully-featured Claude baseline including hooks and MCP, not a partial implementation\n\n## Trigger Corpus\nTrigger coverage tests (item 2 above) must use a **deterministic minimum corpus** of at least 20 representative queries spanning all skill categories. The corpus is a maintained test artifact (not ad-hoc spot checks) and must be updated when skills are added or renamed.\n\n## Key Context\n- Canonical source is skills/ directory using Agent Skills SKILL.md format\n- Cross-agent compatibility via build-time generation (not manual duplication)\n- Inner loop validation prevents broken commits\n- Publishing workflow uses NBGV for versioning\n"
+  },
+  "epic_id": "fn-24-cross-agent-build-pipeline",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.052878Z",
+        "depends_on": [],
+        "epic": "fn-24-cross-agent-build-pipeline",
+        "id": "fn-24-cross-agent-build-pipeline.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.1.md",
+        "status": "todo",
+        "title": "Create dotnet tool for inner loop validation",
+        "updated_at": "2026-02-11T22:32:33.053081Z"
+      },
+      "id": "fn-24-cross-agent-build-pipeline.1",
+      "runtime": null,
+      "spec": "# fn-24-cross-agent-build-pipeline.1 Create dotnet tool for inner loop validation\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.191550Z",
+        "depends_on": [],
+        "epic": "fn-24-cross-agent-build-pipeline",
+        "id": "fn-24-cross-agent-build-pipeline.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.2.md",
+        "status": "todo",
+        "title": "Create GitHub Action for cross-agent format generation",
+        "updated_at": "2026-02-11T22:32:33.191695Z"
+      },
+      "id": "fn-24-cross-agent-build-pipeline.2",
+      "runtime": null,
+      "spec": "# fn-24-cross-agent-build-pipeline.2 Create GitHub Action for cross-agent format generation\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-11T22:32:33.312178Z",
+        "depends_on": [],
+        "epic": "fn-24-cross-agent-build-pipeline",
+        "id": "fn-24-cross-agent-build-pipeline.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.3.md",
+        "status": "todo",
+        "title": "Configure marketplace publishing workflow",
+        "updated_at": "2026-02-11T22:32:33.312325Z"
+      },
+      "id": "fn-24-cross-agent-build-pipeline.3",
+      "runtime": null,
+      "spec": "# fn-24-cross-agent-build-pipeline.3 Configure marketplace publishing workflow\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

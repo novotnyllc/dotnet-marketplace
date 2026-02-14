@@ -9,6 +9,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-24-cross-agent-build-pipeline.1.md",
   "status": "todo",
-  "title": "Create dotnet tool for inner loop validation",
-  "updated_at": "2026-02-11T22:32:33.053081Z"
+  "title": "Create dist/ generator script for Claude, Copilot, and Codex outputs",
+  "updated_at": "2026-02-14T10:09:51.525858Z"
 }

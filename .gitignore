@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Generated dist/ output (cross-agent build pipeline)
+dist/
+
 # User-specific files
 *.rsuser
 *.suo
