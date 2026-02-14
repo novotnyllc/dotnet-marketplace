@@ -10,14 +10,13 @@ Reads canonical skills/, agents/, hooks/, and .mcp.json sources and produces:
 Reuses the frontmatter parser from _validate_skills.py.
 
 Usage:
-    python3 scripts/generate_dist.py [--repo-root <path>]
+    python3 scripts/generate_dist.py [--repo-root <path>] [--strict]
 
 Runs without .NET SDK dependency (pure Python).
 """
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -59,6 +58,15 @@ def get_version_from_git() -> str:
     return "0.0.0-dev"
 
 
+def load_agent_names(plugin_json_path: Path) -> list:
+    """Read agent names from plugin.json agents array (canonical source of truth)."""
+    try:
+        data = json.loads(plugin_json_path.read_text(encoding="utf-8"))
+        return [Path(a).stem for a in data.get("agents", [])]
+    except (json.JSONDecodeError, FileNotFoundError):
+        return []
+
+
 def read_file(path: Path) -> str:
     """Read a file with CRLF normalization."""
     content = path.read_text(encoding="utf-8")
@@ -97,9 +105,13 @@ def parse_skill_file(path: Path) -> dict:
     }
 
 
-def collect_skills(skills_dir: Path) -> list:
-    """Collect all SKILL.md files grouped by category (parent dir name)."""
+def collect_skills(skills_dir: Path) -> tuple:
+    """Collect all SKILL.md files grouped by category (parent dir name).
+
+    Returns (skills_list, skipped_count) so callers can enforce strict mode.
+    """
     results = []
+    skipped = 0
     for skill_file in sorted(skills_dir.rglob("SKILL.md")):
         category = skill_file.parent.parent.name  # e.g. core-csharp
         skill_name = skill_file.parent.name  # e.g. dotnet-csharp-dependency-injection
@@ -117,8 +129,9 @@ def collect_skills(skills_dir: Path) -> list:
                 }
             )
         except ValueError as e:
-            print(f"WARNING: skipping {skill_file}: {e}", file=sys.stderr)
-    return results
+            print(f"ERROR: failed to parse {skill_file}: {e}", file=sys.stderr)
+            skipped += 1
+    return results, skipped
 
 
 # ---------------------------------------------------------------------------
@@ -126,47 +139,70 @@ def collect_skills(skills_dir: Path) -> list:
 # ---------------------------------------------------------------------------
 
 
-# Patterns that reference Claude-only features (agents, hooks, MCP tools,
-# plugin root paths).  Sentences containing these are omitted from
-# non-Claude outputs.
-_AGENT_NAMES = [
-    "dotnet-architect",
-    "dotnet-csharp-concurrency-specialist",
-    "dotnet-security-reviewer",
-    "dotnet-blazor-specialist",
-    "dotnet-uno-specialist",
-    "dotnet-maui-specialist",
-    "dotnet-performance-analyst",
-    "dotnet-benchmark-designer",
-    "dotnet-docs-generator",
-]
+def build_claude_only_patterns(agent_names: list) -> list:
+    """Build regex patterns for Claude-only line detection.
 
-_CLAUDE_ONLY_LINE_PATTERNS = [
-    # Agent references (agent name as standalone mention with "agent" suffix)
-    re.compile(
-        r"\b(?:"
-        + "|".join(re.escape(a) for a in _AGENT_NAMES)
-        + r")\s+agent\b",
-        re.IGNORECASE,
-    ),
+    Agent names are read from plugin.json at runtime (not hardcoded) to stay
+    in sync with the canonical source of truth.
+
+    NOTE: For v1, hook and MCP references are omitted entirely from non-Claude
+    outputs. The fn-24 spec also describes rewrite rules (e.g., hook sentences
+    to manual detection guidance, MCP refs to direct URLs) which are deferred
+    to a future iteration. Current behavior matches the spec's "or omitted if
+    no manual equivalent" fallback for all cases.
+    TODO: Implement selective rewrite rules for Copilot hook/MCP references.
+    """
+    patterns = []
+
+    if agent_names:
+        # Agent references -- match agent names at word boundaries. We use
+        # the canonical agent file stems from plugin.json. These names are
+        # kebab-cased identifiers (e.g. dotnet-architect) that don't appear
+        # as substrings of skill names, so word-boundary matching is safe.
+        patterns.append(
+            re.compile(
+                r"\b(?:" + "|".join(re.escape(a) for a in agent_names) + r")\s+agent\b",
+                re.IGNORECASE,
+            )
+        )
+
     # Hook references
-    re.compile(r"(?:SessionStart hook|PostToolUse hook|hook detect)", re.IGNORECASE),
+    patterns.append(
+        re.compile(r"(?:SessionStart hook|PostToolUse hook|hook detect)", re.IGNORECASE)
+    )
+
     # MCP tool references (mcp__server__tool or mcp__prefix__ patterns)
-    re.compile(r"mcp__\w+__"),
+    patterns.append(re.compile(r"mcp__\w+__"))
+
     # ${CLAUDE_PLUGIN_ROOT} path references
-    re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}"),
-]
+    patterns.append(re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}"))
+
+    return patterns
 
 
-def remove_claude_only_sentences(text: str) -> str:
-    """Remove lines that reference Claude-only features (agents, hooks, MCP, plugin root)."""
+def remove_claude_only_lines(text: str, patterns: list) -> str:
+    """Remove lines that reference Claude-only features (agents, hooks, MCP, plugin root).
+
+    Also cleans up orphaned markdown table structures left after line removal
+    (e.g., header + separator rows with no data rows).
+    """
     lines = text.split("\n")
     filtered = []
     for line in lines:
-        if any(p.search(line) for p in _CLAUDE_ONLY_LINE_PATTERNS):
+        if any(p.search(line) for p in patterns):
             continue
         filtered.append(line)
+
     result = "\n".join(filtered)
+
+    # Clean up orphaned markdown tables: header + separator with no data rows.
+    # Pattern: a table header line, separator line, then a blank line (no data rows).
+    result = re.sub(
+        r"(?m)^\|[^\n]+\|\n\|[-| :]+\|\n(?=\n|$)",
+        "",
+        result,
+    )
+
     # Collapse runs of 3+ newlines to 2
     result = re.sub(r"\n{3,}", "\n\n", result)
     return result
@@ -182,10 +218,14 @@ def transform_crossrefs_copilot(text: str) -> str:
 
 
 def transform_crossrefs_codex(text: str) -> str:
-    """Convert [skill:name] to section anchors for Codex format."""
+    """Convert [skill:name] to section anchors for Codex format.
+
+    Anchors are lowercased to match GitHub/standard markdown heading anchor
+    generation (headings are lowercased, spaces replaced with hyphens).
+    """
     return re.sub(
         r"\[skill:([a-zA-Z0-9_-]+)\]",
-        r"[\1](#\1)",
+        lambda m: f"[{m.group(1)}](#{m.group(1).lower()})",
         text,
     )
 
@@ -205,7 +245,10 @@ def frontmatter_to_heading(name: str, description: str) -> str:
 
 
 def generate_claude(repo_root: Path, dist_claude: Path, version: str):
-    """Generate dist/claude/ -- mirror of the plugin structure."""
+    """Generate dist/claude/ -- mirror of the plugin structure.
+
+    Raises on copy failures so the caller can clean up partial output.
+    """
     plugin_dir = repo_root / ".claude-plugin"
 
     # Copy plugin.json with version stamping
@@ -238,11 +281,14 @@ def generate_claude(repo_root: Path, dist_claude: Path, version: str):
     if agents_src.is_dir():
         shutil.copytree(agents_src, dist_claude / "agents", dirs_exist_ok=True)
 
-    # Copy hooks/
+    # Copy hooks/ (hooks.json metadata)
     hooks_src = repo_root / "hooks"
     if hooks_src.is_dir():
         shutil.copytree(hooks_src, dist_claude / "hooks", dirs_exist_ok=True)
-    # Also copy hook scripts from scripts/hooks/
+
+    # Copy hook scripts from scripts/hooks/ -- these are referenced by
+    # hooks.json via relative paths (e.g. ${CLAUDE_PLUGIN_ROOT}/scripts/hooks/...)
+    # so we preserve the directory structure to keep path resolution intact.
     hooks_scripts_src = repo_root / "scripts" / "hooks"
     if hooks_scripts_src.is_dir():
         dest_scripts_hooks = dist_claude / "scripts" / "hooks"
@@ -259,7 +305,7 @@ def generate_claude(repo_root: Path, dist_claude: Path, version: str):
 # ---------------------------------------------------------------------------
 
 
-def generate_copilot(skills: list, dist_copilot: Path):
+def generate_copilot(skills: list, claude_only_patterns: list, dist_copilot: Path):
     """Generate dist/copilot/ -- routing index + per-skill files."""
     github_dir = dist_copilot / ".github"
     github_dir.mkdir(parents=True, exist_ok=True)
@@ -291,31 +337,33 @@ def generate_copilot(skills: list, dist_copilot: Path):
         index_lines.append("")
         for skill in sorted(cat_skills, key=lambda s: s["name"]):
             name = skill["name"]
+            dir_name = skill["dir_name"]
             desc = skill["description"]
-            # Link to per-skill file
+            # Link to per-skill file using dir_name for path consistency
             index_lines.append(
-                f"- [{name}](../skills/{name}/SKILL.md) -- {desc}"
+                f"- [{name}](../skills/{dir_name}/SKILL.md) -- {desc}"
             )
         index_lines.append("")
 
-    # Write routing index
+    # Write routing index with trailing newline
     (github_dir / "copilot-instructions.md").write_text(
-        "\n".join(index_lines), encoding="utf-8"
+        "\n".join(index_lines) + "\n", encoding="utf-8"
     )
 
     # Write per-skill files
     for skill in skills:
-        skill_out_dir = skills_dir / skill["name"]
+        # Use dir_name for output path to match file-system convention
+        skill_out_dir = skills_dir / skill["dir_name"]
         skill_out_dir.mkdir(parents=True, exist_ok=True)
 
         # Transform body: remove Claude-only refs, convert cross-refs
-        body = skill["body"]
-        body = remove_claude_only_sentences(body)
+        body = skill["body"].lstrip("\n")
+        body = remove_claude_only_lines(body, claude_only_patterns)
         body = transform_crossrefs_copilot(body)
 
         # Build output: heading + description + body
         output = frontmatter_to_heading(skill["name"], skill["description"])
-        output += body
+        output += body.rstrip("\n") + "\n"
 
         (skill_out_dir / "SKILL.md").write_text(output, encoding="utf-8")
 
@@ -325,7 +373,7 @@ def generate_copilot(skills: list, dist_copilot: Path):
 # ---------------------------------------------------------------------------
 
 
-def generate_codex(skills: list, dist_codex: Path):
+def generate_codex(skills: list, claude_only_patterns: list, dist_codex: Path):
     """Generate dist/codex/ -- top-level AGENTS.md + per-category AGENTS.md."""
     skills_dir = dist_codex / "skills"
     skills_dir.mkdir(parents=True, exist_ok=True)
@@ -355,10 +403,15 @@ def generate_codex(skills: list, dist_codex: Path):
         for skill in sorted(cat_skills, key=lambda s: s["name"]):
             name = skill["name"]
             desc = skill["description"]
-            top_lines.append(f"- [{name}](skills/{cat}/AGENTS.md#{name}) -- {desc}")
+            top_lines.append(
+                f"- [{name}](skills/{cat}/AGENTS.md#{name.lower()}) -- {desc}"
+            )
         top_lines.append("")
 
-    (dist_codex / "AGENTS.md").write_text("\n".join(top_lines), encoding="utf-8")
+    # Write with trailing newline
+    (dist_codex / "AGENTS.md").write_text(
+        "\n".join(top_lines) + "\n", encoding="utf-8"
+    )
 
     # Write per-category AGENTS.md
     for cat in sorted(categories.keys()):
@@ -370,8 +423,8 @@ def generate_codex(skills: list, dist_codex: Path):
 
         for skill in cat_skills:
             # Transform body: remove Claude-only refs, convert cross-refs
-            body = skill["body"]
-            body = remove_claude_only_sentences(body)
+            body = skill["body"].lstrip("\n")
+            body = remove_claude_only_lines(body, claude_only_patterns)
             body = transform_crossrefs_codex(body)
 
             # Use name as section anchor target
@@ -385,7 +438,10 @@ def generate_codex(skills: list, dist_codex: Path):
             cat_lines.append("---")
             cat_lines.append("")
 
-        (cat_dir / "AGENTS.md").write_text("\n".join(cat_lines), encoding="utf-8")
+        # Write with trailing newline
+        (cat_dir / "AGENTS.md").write_text(
+            "\n".join(cat_lines) + "\n", encoding="utf-8"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -406,6 +462,11 @@ def main():
         "--output-dir",
         default=None,
         help="Output directory (default: <repo-root>/dist)",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Fail if any SKILL.md files cannot be parsed (default: warn and skip)",
     )
     args = parser.parse_args()
 
@@ -435,6 +496,15 @@ def main():
         )
         sys.exit(1)
 
+    # Load agent names from plugin.json (canonical source of truth)
+    plugin_json_path = plugin_dir / "plugin.json"
+    agent_names = load_agent_names(plugin_json_path)
+    if agent_names:
+        print(f"Agent names loaded from plugin.json: {len(agent_names)}")
+
+    # Build transformation patterns
+    claude_only_patterns = build_claude_only_patterns(agent_names)
+
     # Get version
     version = get_version_from_git()
     print(f"Version: {version}")
@@ -452,22 +522,45 @@ def main():
     dist_codex.mkdir(parents=True, exist_ok=True)
 
     # Collect all skills
-    skills = collect_skills(skills_dir)
+    skills, skipped = collect_skills(skills_dir)
     if not skills:
         print("ERROR: no SKILL.md files found", file=sys.stderr)
         sys.exit(1)
 
+    if skipped > 0:
+        if args.strict:
+            print(
+                f"ERROR: {skipped} SKILL.md file(s) failed to parse (--strict mode)",
+                file=sys.stderr,
+            )
+            # Clean up partial output
+            if dist_root.exists():
+                shutil.rmtree(dist_root)
+            sys.exit(1)
+        else:
+            print(
+                f"WARNING: {skipped} SKILL.md file(s) skipped due to parse errors",
+                file=sys.stderr,
+            )
+
     print(f"Skills found: {len(skills)}")
 
-    # Generate each format
-    print("Generating dist/claude/ ...")
-    generate_claude(repo_root, dist_claude, version)
+    # Generate each format, cleaning up on failure
+    try:
+        print("Generating dist/claude/ ...")
+        generate_claude(repo_root, dist_claude, version)
 
-    print("Generating dist/copilot/ ...")
-    generate_copilot(skills, dist_copilot)
+        print("Generating dist/copilot/ ...")
+        generate_copilot(skills, claude_only_patterns, dist_copilot)
 
-    print("Generating dist/codex/ ...")
-    generate_codex(skills, dist_codex)
+        print("Generating dist/codex/ ...")
+        generate_codex(skills, claude_only_patterns, dist_codex)
+    except Exception as e:
+        print(f"ERROR: generation failed: {e}", file=sys.stderr)
+        # Clean up partial output per spec: no partial dist/ on failure
+        if dist_root.exists():
+            shutil.rmtree(dist_root)
+        sys.exit(1)
 
     # Summary
     claude_skills = len(list((dist_claude / "skills").rglob("SKILL.md")))
