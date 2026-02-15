@@ -314,7 +314,7 @@ logger.OrderCreated(order.Id, order.CustomerId, order.Lines.Count, order.Total);
 - **Compile-time validation** of message templates and parameters
 - **Structured by default** -- parameters become named properties in the log event
 
-### LoggerMessage.Define (Delegate-Based)
+### LoggerMessage.Define (Legacy / Pre-.NET 6)
 
 Before source generators (.NET 5 and earlier), use `LoggerMessage.Define` to achieve the same zero-allocation benefits. This approach still works in modern .NET and is useful in non-partial classes or when targeting older frameworks:
 
@@ -507,7 +507,7 @@ The built-in `Microsoft.Extensions.Diagnostics.HealthChecks` package provides th
 
 | Package | Extension Method |
 |---------|-----------------|
-| `AspNetCore.HealthChecks.NpgSql` | `.AddNpgSql()` |
+| `AspNetCore.HealthChecks.Npgsql` | `.AddNpgSql()` |
 | `AspNetCore.HealthChecks.Redis` | `.AddRedis()` |
 | `AspNetCore.HealthChecks.Uris` | `.AddUrlGroup()` |
 | `AspNetCore.HealthChecks.UI.Client` | `UIResponseWriter.WriteHealthCheckUIResponse` |

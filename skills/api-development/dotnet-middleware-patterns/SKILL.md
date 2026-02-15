@@ -38,6 +38,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 // 5. Routing (matches endpoints but does not execute them yet)
+// .NET 6+ calls UseRouting() implicitly if omitted; shown here for clarity
 app.UseRouting();
 
 // 6. CORS (must be after routing, before auth)
@@ -166,7 +167,7 @@ app.UseMiddleware<TenantMiddleware>();
 | Lifetime | Singleton (created once) | Per-request (from DI) |
 | Scoped services | Via `InvokeAsync` parameters only | Via constructor injection |
 | Registration | `UseMiddleware<T>()` only | Requires `services.Add*<T>()` + `UseMiddleware<T>()` |
-| Performance | Slightly faster (no per-request allocation) | Creates instance each request |
+| Performance | Slightly faster (no per-request allocation) | Resolved from DI each request (lifetime depends on registration) |
 
 ---
 
@@ -482,6 +483,7 @@ app.UseWhen(
     context => context.Request.Path.StartsWithSegments("/api"),
     apiApp =>
     {
+        // Requires builder.Services.AddRateLimiter() in service registration
         apiApp.UseRateLimiter();
     });
 ```
