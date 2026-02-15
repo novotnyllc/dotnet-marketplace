@@ -19,9 +19,8 @@ The 11 rubric dimensions are: Description Quality, Description Triggering, Instr
 - [ ] Run `./scripts/validate-skills.sh` to baseline current state
 
 ## Done summary
-TBD
-
+Created docs/fleet-review-rubric.md with 11-dimension evaluation rubric, pass/warn/fail scoring guidance, per-skill output template, category batch assignments reconciled against plugin.json (99 registered, 101 on disk across 18 categories), and self-contained worker agent instructions for the fleet skill review sweep.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: bccd5dfe3be5451d06140f891501fd0ce5c2bbfb
+- Tests: ./scripts/validate-skills.sh
 - PRs:
