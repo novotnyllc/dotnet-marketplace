@@ -25,9 +25,8 @@ Create skills/api-development/dotnet-api-surface-validation/SKILL.md covering to
 - [ ] Description under 120 characters in frontmatter
 
 ## Done summary
-TBD
-
+Created API surface validation skill covering PublicApiAnalyzers (RS0016/RS0017 shipped/unshipped lifecycle, multi-TFM tracking files), Verify reflection-based API surface snapshot pattern, and ApiCompat CI enforcement workflows (package validation, standalone tool comparison, PR labeling, monorepo enforcement).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 132757c34f93f99553d69ec657f4b5cd4999b623
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
