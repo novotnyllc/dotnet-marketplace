@@ -1,6 +1,6 @@
 ---
 name: dotnet-ci-benchmarking
-description: "WHEN automating benchmark regression detection. Baseline management, GitHub Actions integration, threshold alerts, BenchmarkDotNet CI workflows."
+description: "WHEN automating benchmark regression detection. Baseline management, threshold alerts, BenchmarkDotNet CI workflows."
 ---
 
 # dotnet-ci-benchmarking
