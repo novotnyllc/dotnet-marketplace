@@ -58,9 +58,8 @@ grep -q '## References' skills/build-system/dotnet-msbuild-tasks/SKILL.md
 ```
 
 ## Done summary
-TBD
-
+Created MSBuild custom tasks skill (dotnet-msbuild-tasks) covering ITask interface, ToolTask base class, IIncrementalTask with MSBuild 17.8+ version gate, inline tasks via CodeTaskFactory, UsingTask registration, task parameters with ITaskItem metadata access, MSBUILDDEBUGONSTART debugging, and NuGet task packaging with build/buildTransitive folders.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 07e6ff29a3a5d75a8f7cd68e30a9b8c4b08f8e57, e77cee3afb4063ebd5d6ccacf0123fecf3d28795
+- Tests: ./scripts/validate-skills.sh
 - PRs:

@@ -264,3 +264,9 @@ Minimal API endpoints returning IAsyncEnumerable<T> should return the enumerable
 
 ## 2026-02-15 manual [pitfall]
 MSBuild double-import sentinel guards must place content properties inside the \!= 'true' condition block alongside the sentinel -- a separate == 'true' block runs on every import because the sentinel is already set after first evaluation
+
+## 2026-02-15 manual [pitfall]
+IIncrementalTask signals that MSBuild engine should pre-filter inputs (passing only changed items) -- the task does NOT do its own timestamp comparison; the engine handles change detection via target-level Inputs/Outputs
+
+## 2026-02-15 manual [pitfall]
+ToolTask.GenerateFullPathToTool() must not return null -- return ToolName to let the OS resolve via PATH, or return a full path; null causes NullReferenceException or tool-not-found errors

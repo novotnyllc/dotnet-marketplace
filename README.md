@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 101 skills across 19 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 104 skills across 20 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -31,7 +31,7 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 101 skills into 19 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 104 skills into 20 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
@@ -54,6 +54,7 @@ The plugin organizes 101 skills into 19 categories. Each skill follows the Agent
 | **Release Management** | 1 | dotnet-release-management |
 | **Documentation** | 5 | dotnet-documentation-strategy, dotnet-mermaid-diagrams, dotnet-github-docs |
 | **Localization** | 1 | dotnet-localization |
+| **Build System** | 3 | dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization |
 
 ## Agents
 
@@ -93,7 +94,7 @@ graph TB
             DG[docs-generator]
         end
 
-        subgraph Skills["19 Skill Categories / 101 Skills"]
+        subgraph Skills["20 Skill Categories / 104 Skills"]
             F[Foundation<br/>4 skills]
             CC[Core C#<br/>9 skills]
             PS[Project Structure<br/>6 skills]
@@ -113,6 +114,7 @@ graph TB
             RM[Release Mgmt<br/>1 skill]
             DO[Documentation<br/>5 skills]
             LO[Localization<br/>1 skill]
+            BS[Build System<br/>3 skills]
         end
 
         subgraph Infra["Infrastructure"]
