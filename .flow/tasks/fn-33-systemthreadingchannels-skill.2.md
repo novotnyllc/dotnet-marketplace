@@ -19,9 +19,8 @@ Slim the Channels section in skills/architecture/dotnet-background-services/SKIL
 - [ ] Channel options table, multiple consumers, drain pattern removed (covered by new skill)
 - [ ] No broken cross-references
 ## Done summary
-TBD
-
+Slimmed the ~230-line Channels section in dotnet-background-services SKILL.md to a ~48-line Channels Integration section with a condensed BackgroundTaskQueue + consumer worker example and cross-references to the new standalone [skill:dotnet-channels] skill. Removed Channel options table, multiple consumers, and drain pattern (all covered by the standalone skill).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 4935b645233f7d3bc53571aa6ed531e975b49388
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
