@@ -246,3 +246,6 @@ When computing aggregate savings from per-item deltas in a consolidation report,
 
 ## 2026-02-15 manual [pitfall]
 When planning new skills, always check plugin.json and skills/ tree for existing skills that overlap — enhance existing over creating duplicates
+
+## 2026-02-15 manual [pitfall]
+Recursive validation/traversal examples must use IsSimpleType helper covering all common value types (DateTime, DateOnly, Guid, enums, Nullable<T>) and track visited objects to prevent circular reference stack overflow -- naive IsPrimitive+string checks miss most BCL types

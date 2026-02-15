@@ -26,9 +26,8 @@ Create `skills/core-csharp/dotnet-validation-patterns/SKILL.md` covering built-i
 - [ ] Validation passes
 
 ## Done summary
-TBD
-
+Created dotnet-validation-patterns skill covering built-in .NET validation: DataAnnotations, IValidatableObject, IValidateOptions<T>, custom ValidationAttribute, Validator.TryValidateObject with recursive nested object support. Registered in plugin.json (102 skills total). Attribution section credits Aaronontheweb/dotnet-skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 9f8c395, e592789
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
