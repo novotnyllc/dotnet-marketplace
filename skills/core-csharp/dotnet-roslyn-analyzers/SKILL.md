@@ -398,7 +398,7 @@ public sealed class ExtractInterfaceRefactoring : CodeRefactoringProvider
 }
 ```
 
-See `details.md` for the complete `ExtractInterfaceAsync` implementation and `CSharpCodeRefactoringVerifier<T>` test examples.
+See `details.md` for the complete `ExtractInterfaceAsync` implementation (which adds a `methods` parameter for the extracted method list) and `CSharpCodeRefactoringVerifier<T>` test examples.
 
 ### Key CodeRefactoringProvider Patterns
 
@@ -445,8 +445,8 @@ Define constants following the `ROSLYN_X_Y` and `ROSLYN_X_Y_OR_GREATER` pattern 
 Use these constants to guard version-specific code:
 
 ```csharp
-#if ROSLYN_4_4_OR_GREATER
-    // Use newer operation kinds available in Roslyn 4.4+
+#if ROSLYN_4_8_OR_GREATER
+    // CollectionExpression operation kind available in Roslyn 4.8+
     context.RegisterOperationAction(AnalyzeCollectionExpression,
         OperationKind.CollectionExpression);
 #endif

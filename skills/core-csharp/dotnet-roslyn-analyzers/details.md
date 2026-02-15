@@ -9,8 +9,10 @@ Extended code examples for CodeRefactoringProvider authoring, multi-Roslyn-versi
 A complete `CodeRefactoringProvider` that extracts an interface from a class. The provider is offered when the cursor is on a class identifier and the class has at least one public method.
 
 ```csharp
-using System.Composition;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
@@ -313,8 +315,8 @@ public sealed class MyAdvancedAnalyzer : DiagnosticAnalyzer
         });
 #endif
 
-#if ROSLYN_4_4_OR_GREATER
-        // Use newer OperationKind values (Roslyn 4.4+)
+#if ROSLYN_4_8_OR_GREATER
+        // CollectionExpression operation kind available in Roslyn 4.8+
         context.RegisterOperationAction(AnalyzeCollectionExpression,
             OperationKind.CollectionExpression);
 #endif
