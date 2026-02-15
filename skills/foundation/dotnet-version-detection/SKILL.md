@@ -1,6 +1,6 @@
 ---
 name: dotnet-version-detection
-description: "WHEN project has .csproj, global.json, or Directory.Build.props. Detects TFMs, SDK versions, preview features. WHEN NOT no .NET project present."
+description: "WHEN project has .csproj, global.json, or Directory.Build.props. Detects TFMs, SDK versions, and preview features."
 ---
 
 # dotnet-version-detection

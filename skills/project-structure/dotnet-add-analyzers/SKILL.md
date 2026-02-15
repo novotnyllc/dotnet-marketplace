@@ -244,7 +244,7 @@ For large codebases, avoid fixing all warnings at once:
 Remove `NoWarn` entries as each category is addressed. Track progress with:
 
 ```bash
-dotnet build 2>&1 | grep -oP 'CA\d+' | sort | uniq -c | sort -rn
+dotnet build 2>&1 | grep -oE 'CA[0-9]+' | sort | uniq -c | sort -rn
 ```
 
 ---

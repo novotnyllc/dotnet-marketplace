@@ -9,7 +9,7 @@ Proactive code-smell and anti-pattern detection for C# code. This skill triggers
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for async gotchas, [skill:dotnet-csharp-coding-standards] for naming and style, [skill:dotnet-csharp-dependency-injection] for DI lifetime misuse, [skill:dotnet-csharp-nullable-reference-types] for NRT annotation mistakes.
 
-**Out of Scope:** LLM-specific generation mistakes (wrong NuGet packages, bad project structure, MSBuild errors) are covered by the planned fn-9 `dotnet-agent-gotchas` skill. This skill covers general .NET code smells that any developer -- human or AI -- should avoid.
+**Out of Scope:** LLM-specific generation mistakes (wrong NuGet packages, bad project structure, MSBuild errors) are covered by [skill:dotnet-agent-gotchas]. This skill covers general .NET code smells that any developer -- human or AI -- should avoid.
 
 ---
 

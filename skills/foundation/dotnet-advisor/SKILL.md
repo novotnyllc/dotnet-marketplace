@@ -1,6 +1,6 @@
 ---
 name: dotnet-advisor
-description: "WHEN user creates APIs, adds tests, fixes async, scaffolds projects, or works with .NET, C#, ASP.NET Core, Blazor, MAUI, Uno Platform, EF Core, NuGet, or MSBuild. Routes to specialist skills. WHEN NOT non-.NET languages (Python, JavaScript, Go, Rust, Java)."
+description: "WHEN working with .NET, C#, ASP.NET Core, or related frameworks. Routes queries to specialist skills by context."
 ---
 
 # dotnet-advisor
@@ -39,7 +39,7 @@ Before any .NET guidance, determine the project's target framework:
 
 ### 3. Project Structure & Scaffolding `planned`
 - [skill:dotnet-project-structure] -- .slnx, Directory.Build.props, CPM, analyzers
-- [skill:dotnet-scaffolding-base] -- project scaffolding with best practices
+- [skill:dotnet-scaffold-project] -- project scaffolding with best practices
 - [skill:dotnet-add-analyzers] -- Roslyn analyzers, nullable, trimming, AOT compat
 - [skill:dotnet-add-ci] -- add CI/CD to existing project
 - [skill:dotnet-add-testing] -- add test infrastructure
@@ -168,7 +168,7 @@ Use this decision tree to load the right skills for the current task.
 ### Starting a New Project
 1. [skill:dotnet-version-detection] -- detect or choose target framework
 2. [skill:dotnet-project-analysis] -- understand existing solution (if any)
-3. [skill:dotnet-project-structure], [skill:dotnet-scaffolding-base] -- scaffold project
+3. [skill:dotnet-project-structure], [skill:dotnet-scaffold-project] -- scaffold project
 4. [skill:dotnet-architecture-patterns] -- design decisions
 
 ### Writing or Modifying C# Code

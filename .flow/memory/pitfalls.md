@@ -240,3 +240,6 @@ When a rubric dimension uses '~N' (approximate threshold), values clearly below 
 
 ## 2026-02-15 manual [pitfall]
 When counting issues in audit summary tables, reconcile per-skill Issues sections with Recommended Changes sections -- monitoring-only notes and consolidated items can cause count mismatches
+
+## 2026-02-15 manual [pitfall]
+When computing aggregate savings from per-item deltas in a consolidation report, verify the per-tier breakdown sums match the individual line items in each priority table -- off-by-one tier misallocations (e.g. an item listed in Low but counted as High) corrupt sub-totals even when the grand total is correct
