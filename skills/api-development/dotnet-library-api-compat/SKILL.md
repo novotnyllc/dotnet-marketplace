@@ -11,7 +11,7 @@ Binary and source compatibility rules for .NET library authors. Covers which API
 
 **Out of scope:** HTTP API versioning -- see [skill:dotnet-api-versioning]. NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]. Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]. PublicApiAnalyzers and API surface validation tooling -- see [skill:dotnet-api-surface-validation]. Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers].
 
-Cross-references: [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for NuGet packaging and SemVer rules, [skill:dotnet-multi-targeting] for multi-TFM packaging and ApiCompat tooling, [skill:dotnet-api-surface-validation] for PublicApiAnalyzers and CI enforcement.
+Cross-references: [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for NuGet packaging and SemVer rules, [skill:dotnet-multi-targeting] for multi-TFM packaging and ApiCompat tooling.
 
 ---
 
@@ -26,10 +26,10 @@ Binary compatibility means existing compiled assemblies continue to work at runt
 | Add new public type | Existing code never references it |
 | Add new public method to non-sealed class | Existing call sites resolve to their original overload |
 | Add new overload with different parameter count | Existing binaries bind to the original method token |
-| Add optional parameter to existing method | Callers compiled against old signature still bind to old overload; only recompiled callers see the new signature |
+| Add optional parameter to existing method | Callers compiled against the old signature have default values embedded in their IL; the runtime resolves the same method token regardless of whether the optional parameter is supplied |
 | Widen access modifier (`protected` to `public`) | Existing references remain valid at higher visibility |
 | Add non-abstract interface member with default implementation | Existing implementors inherit the default; no `TypeLoadException` |
-| Change `sealed` class to `unsealed` | Removes a restriction; existing code never subclassed it |
+| Remove `sealed` from class | Removes a restriction; existing code never subclassed it |
 | Add new `enum` member | Existing binaries that switch on the enum simply fall through to `default` |
 
 ### Breaking Changes (Binary Incompatible)
@@ -47,7 +47,7 @@ Binary compatibility means existing compiled assemblies continue to work at runt
 | Change `virtual` method to `non-virtual` | `MissingMethodException` for overriders | Overriders compiled expecting virtual dispatch |
 | Seal a previously unsealed class | `TypeLoadException` | Existing subclasses cannot load |
 | Change namespace of public type | `TypeLoadException` | Unless a type forwarder is added (see below) |
-| Remove `virtual` from a method | Runtime binding failure | Consumers compiled with `callvirt` find no virtual slot |
+| Remove `virtual` from a method | `MissingMethodException` | Consumers compiled with `callvirt` find no virtual slot |
 
 ### Default Interface Members
 
@@ -63,7 +63,7 @@ public interface IWidget
 }
 ```
 
-However, if a consumer explicitly casts to the interface and the runtime cannot find the default implementation (older runtime), this fails. DIMs require a runtime that supports them (.NET Core 3.0+ / .NET 5+).
+However, if a consumer explicitly casts to the interface and the runtime cannot find the default implementation (older runtime), this fails. All runtimes in the .NET 8.0+ baseline support DIMs.
 
 ---
 
@@ -79,7 +79,7 @@ Source compatibility means existing consumer code continues to compile without c
 | Add extension method conflicting with instance method | New extension hides or conflicts | Adding `Where()` extension in a namespace the consumer imports |
 | Change optional parameter default value | Silent behavior change | `void Log(string level = "info")` to `"debug"` -- recompiled callers get new default |
 | Add member to interface (even with DIM) | CS0535 if consumer explicitly implements all members | Consumer using explicit interface implementation must add the new member |
-| Remove `optional` from parameter | CS7036 (required argument missing) | Callers relying on default value must now pass it explicitly |
+| Remove default value from parameter (make required) | CS7036 (required argument missing) | Callers relying on default value must now pass it explicitly |
 | Add required namespace import | CS0246 if consumer does not import | New public types in consumer's namespace collide |
 | Change parameter name | Breaks callers using named arguments | `Process(id: 5)` fails if parameter renamed to `identifier` |
 | Change `class` to `struct` (or vice versa) | Breaks `new()` constraints, `is null` checks, boxing behavior | Fundamental semantic change |
@@ -204,9 +204,10 @@ Map API changes to Semantic Versioning increments. For full SemVer rules and NuG
 | Change method signature (return type, parameters) | **Major** | Binary-breaking |
 | Add abstract member to public class | **Major** | Binary-breaking for subclasses |
 | Add interface member without DIM | **Major** | Binary-breaking for implementors |
-| Seal a previously unsealed class | **Major** | Binary-breaking for subclasses |
+| Add `sealed` to a previously unsealed class | **Major** | Binary-breaking for subclasses |
 | Change struct field layout | **Major** | Binary-breaking for interop consumers |
 | Change namespace without type forwarder | **Major** | Binary-breaking |
+| Mark member `[Obsolete]` (warning or error) | **Minor** | Binary-compatible; signals deprecation |
 | Add new public type | **Minor** | Additive, no breaking impact |
 | Add overload (may be source-breaking) | **Minor** | Binary-compatible; source impact is accepted at minor |
 | Add optional parameter | **Minor** | Binary-compatible; recompilation picks up new default |
@@ -216,6 +217,30 @@ Map API changes to Semantic Versioning increments. For full SemVer rules and NuG
 | Bug fix with no API change | **Patch** | No public API impact |
 | Documentation or metadata-only change | **Patch** | No public API impact |
 | Performance improvement with same API | **Patch** | No public API impact |
+
+### Deprecation Lifecycle with `[Obsolete]`
+
+The standard workflow for removing public API members across major versions:
+
+| Release | Action | Effect |
+|---------|--------|--------|
+| v2.1 (Minor) | Add `[Obsolete("Use Widget.CalculateAsync() instead.")]` | Compiler warning CS0618; existing code compiles and runs |
+| v2.3 (Minor) | Change to `[Obsolete("Use Widget.CalculateAsync() instead.", error: true)]` | Compiler error CS0619; existing binaries still run (binary-compatible) |
+| v3.0 (Major) | Remove the member entirely | Binary-breaking; consumers must migrate |
+
+```csharp
+// v2.1 -- warn consumers
+[Obsolete("Use CalculateAsync() instead. This method will be removed in v3.0.")]
+public int Calculate() => CalculateAsync().GetAwaiter().GetResult();
+
+// v2.3 -- block new compilation against this member
+[Obsolete("Use CalculateAsync() instead. This method will be removed in v3.0.", error: true)]
+public int Calculate() => CalculateAsync().GetAwaiter().GetResult();
+
+// v3.0 -- remove the member (Major version bump)
+```
+
+Always include the replacement API and the planned removal version in the obsolete message so both humans and agents can migrate proactively.
 
 ### Multi-TFM Binary Compatibility
 
@@ -254,13 +279,15 @@ To suppress known intentional breaks, generate a suppression file:
 dotnet pack /p:GenerateCompatibilitySuppressionFile=true
 ```
 
-This produces a `CompatibilitySuppressions.xml` file that can be checked in. Reference it with:
+This produces a `CompatibilitySuppressions.xml` file that can be checked in. If unspecified, the SDK reads `CompatibilitySuppressions.xml` from the project directory automatically. To specify explicit suppression files:
 
 ```xml
-<PropertyGroup>
-  <ApiCompatSuppressionFile>CompatibilitySuppressions.xml</ApiCompatSuppressionFile>
-</PropertyGroup>
+<ItemGroup>
+  <ApiCompatSuppressionFile Include="CompatibilitySuppressions.xml" />
+</ItemGroup>
 ```
+
+Note: `ApiCompatSuppressionFile` is an **ItemGroup item**, not a PropertyGroup property. Multiple suppression files can be included.
 
 For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workflows, see [skill:dotnet-api-surface-validation].
 
@@ -274,7 +301,7 @@ For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workf
 4. **Do not change `optional` parameter default values in patch releases** -- this silently changes behavior for recompiled consumers while old binaries retain the old default, creating version-dependent behavior divergence.
 5. **Do not confuse binary compatibility with source compatibility** -- a change can be binary-safe but source-breaking (new overload) or source-safe but binary-breaking (changing return type from `int` to `long`). Test both.
 6. **Do not skip `[TypeForwardedFrom]` on serializable types** -- serializers that encode assembly-qualified type names (DataContractSerializer, legacy BinaryFormatter) will fail to deserialize data written by older versions.
-7. **Do not use `ApiCompatSuppressionFile` without documenting the rationale** -- each suppression should have a comment explaining why the break is intentional and what consumers should do.
+7. **Do not put `ApiCompatSuppressionFile` in a PropertyGroup** -- it is an ItemGroup item (`<ApiCompatSuppressionFile Include="..." />`), not a property. Using PropertyGroup syntax silently does nothing.
 8. **Do not remove a TFM from a library package without a major version bump** -- consumers on the removed TFM lose compatibility with no fallback.
 
 ---
