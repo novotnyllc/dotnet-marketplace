@@ -1,6 +1,6 @@
 ---
 name: dotnet-solution-navigation
-description: "WHEN orienting in a .NET solution. Entry point discovery, solution file parsing (.sln/.slnx), dependency traversal, config file locations, common solution layouts."
+description: "WHEN orienting in a .NET solution. Entry points, solution files (.sln/.slnx), dependency graphs, config locations."
 ---
 
 # dotnet-solution-navigation

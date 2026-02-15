@@ -1,6 +1,6 @@
 ---
 name: dotnet-build-analysis
-description: "WHEN interpreting MSBuild output, NuGet errors, or analyzer warnings. Error code reference, restore failures, multi-targeting differences, CI drift diagnosis."
+description: "WHEN interpreting MSBuild output, NuGet errors, or analyzer warnings. Error codes, restore failures, CI drift fixes."
 ---
 
 # dotnet-build-analysis

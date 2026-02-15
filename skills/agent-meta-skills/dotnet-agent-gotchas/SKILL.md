@@ -1,6 +1,6 @@
 ---
 name: dotnet-agent-gotchas
-description: "WHEN generating or modifying .NET code. Common mistakes AI agents make: async misuse, NuGet errors, deprecated APIs, project structure, NRT, source generators, trimming, test org, DI."
+description: "WHEN generating or modifying .NET code. Catches common agent mistakes: async, NuGet, deprecated APIs, trimming, DI."
 ---
 
 # dotnet-agent-gotchas
