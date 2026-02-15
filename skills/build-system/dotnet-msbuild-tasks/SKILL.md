@@ -7,7 +7,7 @@ description: "WHEN writing custom MSBuild tasks. ITask, ToolTask, IIncrementalTa
 
 Guidance for authoring custom MSBuild tasks: implementing the `ITask` interface, extending `ToolTask` for CLI wrappers, using `IIncrementalTask` (MSBuild 17.8+) for incremental execution, defining inline tasks with `CodeTaskFactory`, registering tasks via `UsingTask`, declaring task parameters, debugging tasks, and packaging tasks as NuGet packages.
 
-**Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). `IIncrementalTask` requires MSBuild 17.8+ (VS 2022 17.8+, .NET 8 SDK). All examples use SDK-style projects.
+**Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). `IIncrementalTask` requires MSBuild 17.8+ (VS 2022 17.8+, .NET 8 SDK). All examples use SDK-style projects. All C# examples assume `using Microsoft.Build.Framework;` and `using Microsoft.Build.Utilities;` are in scope unless shown explicitly.
 
 **Scope boundary:** This skill owns custom MSBuild task authoring -- ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask, parameters, debugging, and NuGet packaging. MSBuild project system authoring (targets, props, items, conditions) is owned by [skill:dotnet-msbuild-authoring].
 
@@ -90,11 +90,11 @@ public class RunLintTool : ToolTask
     // Required: name of the executable
     protected override string ToolName => "dotnet-lint";
 
-    // Required: full path to the tool (return null to search PATH)
+    // Required: full path or tool name (OS resolves via PATH)
     protected override string GenerateFullPathToTool()
     {
-        // Search PATH for the tool
-        return null!;
+        // Return tool name; the OS resolves it via PATH at process start
+        return ToolName;
     }
 
     // Required: build the command-line arguments
@@ -122,12 +122,39 @@ public class RunLintTool : ToolTask
 | Override | Purpose |
 |---|---|
 | `ToolName` | Executable file name (e.g., `dotnet-lint`) |
-| `GenerateFullPathToTool()` | Full path to executable; return `null` to search `PATH` |
+| `GenerateFullPathToTool()` | Full path to executable, or return `ToolName` to let the OS resolve via `PATH` |
 | `GenerateCommandLineCommands()` | Build argument string for the tool |
 | `GenerateResponseFileCommands()` | Arguments written to a response file (for long command lines) |
 | `HandleTaskExecutionErrors()` | Custom handling of non-zero exit codes |
 | `StandardOutputLoggingImportance` | Log level for stdout (default: `Low`) |
 | `StandardErrorLoggingImportance` | Log level for stderr (default: `Normal`) |
+
+### Response Files for Long Command Lines
+
+When the argument list is too long for the OS command line (common with many source files), use `GenerateResponseFileCommands()` to write arguments to a temporary response file:
+
+```csharp
+protected override string GenerateResponseFileCommands()
+{
+    var builder = new CommandLineBuilder();
+    // These arguments go into a @response.rsp file
+    foreach (var source in SourceFiles)
+    {
+        builder.AppendFileNameIfNotNull(source.ItemSpec);
+    }
+    return builder.ToString();
+}
+
+protected override string GenerateCommandLineCommands()
+{
+    // These arguments stay on the command line (before the @file ref)
+    var builder = new CommandLineBuilder();
+    builder.AppendSwitchIfNotNull("--config ", ConfigFile);
+    return builder.ToString();
+}
+```
+
+MSBuild creates the response file, passes `@responsefile.rsp` to the tool, and cleans up afterward. The tool must support `@file` syntax (most .NET tools do).
 
 **When to use ToolTask vs Task:** Use `ToolTask` when wrapping an external CLI tool. Use `Task` (ITask) when the logic is pure .NET code with no external process.
 
@@ -135,7 +162,7 @@ public class RunLintTool : ToolTask
 
 ## IIncrementalTask
 
-`Microsoft.Build.Framework.IIncrementalTask` (MSBuild 17.8+, VS 2022 17.8+, .NET 8 SDK) enables fine-grained incremental execution at the task level. Unlike target-level `Inputs`/`Outputs` (which skip the entire target), `IIncrementalTask` lets the task itself decide what work to skip based on changed inputs.
+`Microsoft.Build.Framework.IIncrementalTask` (MSBuild 17.8+, VS 2022 17.8+, .NET 8 SDK) signals to the MSBuild engine that a task supports receiving pre-filtered inputs. When a target declares `Inputs`/`Outputs` and the engine determines which inputs have changed, it passes only the changed items to an `IIncrementalTask`-implementing task instead of the full item list.
 
 ### Version Gate
 
@@ -144,6 +171,17 @@ public class RunLintTool : ToolTask
 - .NET 8.0 SDK or later
 
 Tasks targeting older MSBuild versions must not reference this interface. Use target-level `Inputs`/`Outputs` for incrementality on older versions. See [skill:dotnet-msbuild-authoring] for target-level incremental patterns.
+
+### How It Works
+
+1. The target declares `Inputs` and `Outputs` (required -- the engine uses these for change detection).
+2. MSBuild compares timestamps and determines which inputs are out of date.
+3. If the task implements `IIncrementalTask`, MSBuild passes only the changed items to the task's `ITaskItem[]` parameters instead of the full set.
+4. The task processes only those items -- no manual timestamp logic needed.
+
+The `FailIfIncrementalBuildIsNotPossible` property controls fallback behavior:
+- `false` (default): If the engine cannot determine changed inputs (e.g., missing `Outputs`), it falls back to passing all inputs. The task runs in full-rebuild mode.
+- `true`: If the engine cannot provide incremental inputs, the task logs an error and fails. Use this when full rebuilds are unacceptably slow.
 
 ### Implementation
 
@@ -154,34 +192,25 @@ using Microsoft.Build.Utilities;
 public class TransformTemplates : Task, IIncrementalTask
 {
     [Required]
-    public ITaskItem[] Templates { get; set; } = Array.Empty<ITaskItem>();
+    public ITaskItem[] Templates { get; set; } = [];
 
     [Output]
-    public ITaskItem[] GeneratedFiles { get; set; } = Array.Empty<ITaskItem>();
+    public ITaskItem[] GeneratedFiles { get; set; } = [];
 
-    // IIncrementalTask: MSBuild calls this to determine which
-    // inputs need reprocessing
+    // IIncrementalTask: if true, the task errors when the engine
+    // cannot provide filtered inputs (falls back to full set if false)
     public bool FailIfIncrementalBuildIsNotPossible { get; set; }
 
     public override bool Execute()
     {
+        // Templates contains ONLY changed items (filtered by engine)
+        // when the target has Inputs/Outputs and incremental build is possible
         var outputs = new List<ITaskItem>();
 
         foreach (var template in Templates)
         {
             var inputPath = template.GetMetadata("FullPath");
             var outputPath = Path.ChangeExtension(inputPath, ".g.cs");
-
-            // Skip if output exists and is newer than input
-            if (File.Exists(outputPath) &&
-                File.GetLastWriteTimeUtc(outputPath) >=
-                File.GetLastWriteTimeUtc(inputPath))
-            {
-                Log.LogMessage(MessageImportance.Low,
-                    "Skipping up-to-date: {0}", inputPath);
-                outputs.Add(new TaskItem(outputPath));
-                continue;
-            }
 
             var content = ProcessTemplate(File.ReadAllText(inputPath));
             File.WriteAllText(outputPath, content);
@@ -203,7 +232,19 @@ public class TransformTemplates : Task, IIncrementalTask
 }
 ```
 
-**IIncrementalTask vs target-level Inputs/Outputs:** Target-level incrementality is all-or-nothing: if any input changed, the entire target re-runs. `IIncrementalTask` allows the task to process only the changed items, which is faster for targets that process large collections of files.
+```xml
+<!-- Target MUST declare Inputs/Outputs for engine-level change detection -->
+<Target Name="TransformAllTemplates"
+        BeforeTargets="CoreCompile"
+        Inputs="@(Template)"
+        Outputs="@(Template->'%(RootDir)%(Directory)%(Filename).g.cs')">
+  <TransformTemplates Templates="@(Template)">
+    <Output TaskParameter="GeneratedFiles" ItemName="Compile" />
+  </TransformTemplates>
+</Target>
+```
+
+**IIncrementalTask vs target-level Inputs/Outputs alone:** Without `IIncrementalTask`, target-level incrementality is all-or-nothing: if any input changed, the entire target re-runs with all items. With `IIncrementalTask`, the engine pre-filters the item list so the task receives only changed items, which is faster for targets that process large collections of files.
 
 ---
 
@@ -238,10 +279,10 @@ Task parameters are public properties on the task class. MSBuild maps XML attrib
 public class ProcessAssets : Task
 {
     [Required]
-    public ITaskItem[] Assets { get; set; } = Array.Empty<ITaskItem>();
+    public ITaskItem[] Assets { get; set; } = [];
 
     [Output]
-    public ITaskItem[] ProcessedAssets { get; set; } = Array.Empty<ITaskItem>();
+    public ITaskItem[] ProcessedAssets { get; set; } = [];
 
     public override bool Execute()
     {
@@ -483,7 +524,7 @@ MyCompany.Build.Tasks.nupkg
     MyCompany.Build.Tasks.props       (optional: set defaults)
     MyCompany.Build.Tasks.targets     (UsingTask + target definitions)
   tools/
-    net8.0/
+    net8.0/                           (matches csproj TargetFramework)
       MyCompany.Build.Tasks.dll       (task assembly)
       (other dependencies)
 ```
@@ -502,6 +543,7 @@ Use `buildTransitive/` for tasks that must run in every project in the dependenc
 ```xml
 <!-- build/MyCompany.Build.Tasks.targets -->
 <Project>
+  <!-- TFM in path must match the csproj's TargetFramework -->
   <UsingTask TaskName="MyCompany.Build.GenerateFileHash"
              AssemblyFile="$(MSBuildThisFileDirectory)..\tools\net8.0\MyCompany.Build.Tasks.dll" />
 
@@ -558,10 +600,10 @@ Use `buildTransitive/` for tasks that must run in every project in the dependenc
                       PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- Pack task assembly into tools/ -->
+  <!-- Pack task assembly into tools/ (uses TFM from project) -->
   <ItemGroup>
     <None Include="$(OutputPath)/**/*.dll" Pack="true"
-          PackagePath="tools/net8.0/" />
+          PackagePath="tools/$(TargetFramework)/" />
   </ItemGroup>
 
   <!-- Pack .props and .targets into build/ and buildTransitive/ -->
@@ -585,7 +627,7 @@ Use `buildTransitive/` for tasks that must run in every project in the dependenc
 
 2. **Using `Console.WriteLine` instead of `Log.LogMessage`.** Console output bypasses MSBuild's logging infrastructure and may not appear in build logs, binary logs, or IDE error lists. Always use `Log.LogMessage`, `Log.LogWarning`, or `Log.LogError`.
 
-3. **Referencing `IIncrementalTask` without version-gating.** This interface requires MSBuild 17.8+ (.NET 8 SDK). Tasks referencing it will fail to load on older MSBuild versions with a `TypeLoadException`. If supporting older SDKs, use target-level `Inputs`/`Outputs` instead.
+3. **Referencing `IIncrementalTask` without version-gating.** This interface requires MSBuild 17.8+ (.NET 8 SDK). Tasks referencing it will fail to load on older MSBuild versions with a `TypeLoadException`. If supporting older SDKs, use target-level `Inputs`/`Outputs` instead. If the task must support both old and new MSBuild, ship separate task assemblies per MSBuild version range or use `#if` conditional compilation with a version constant.
 
 4. **Placing task DLLs in the NuGet `lib/` folder.** This adds the assembly as a compile reference to consuming projects, polluting their type namespace. Set `IncludeBuildOutput=false` and pack into `tools/` instead.
 
