@@ -1,6 +1,6 @@
 ---
 name: dotnet-efcore-architecture
-description: "WHEN designing data layer architecture. Read/write split, aggregate boundaries, repository policy, N+1 governance, row limits."
+description: "WHEN designing data layer architecture. Read/write split, aggregate boundaries, repository policy, N+1 governance."
 ---
 
 # dotnet-efcore-architecture

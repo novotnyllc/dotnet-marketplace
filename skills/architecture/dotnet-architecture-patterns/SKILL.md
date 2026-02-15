@@ -619,6 +619,18 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 
 ---
 
+## Agent Gotchas
+
+1. **Idempotency must handle three states** -- An idempotency implementation must distinguish no-record (claim it), in-progress (reject duplicate), and completed (replay cached response). Check-then-act without guarding the in-progress state allows concurrent duplicate execution.
+2. **Always finalize idempotency records unconditionally** -- Do NOT gate completion on specific `IResult` subtypes (e.g., `IValueHttpResult`). Non-value results like `Results.NoContent()` or `Results.Accepted()` would be left permanently stuck in the in-progress state.
+3. **Cache invalidation must be explicit** -- When using output caching or distributed caching, ALWAYS invalidate (evict by tag or key) after write operations. Forgetting invalidation causes stale reads that are hard to debug.
+4. **HybridCache stampede protection only works with `GetOrCreateAsync`** -- Do NOT use separate get-then-set patterns with `HybridCache`; use the factory overload so the library serializes concurrent requests for the same key.
+5. **Outbox messages must be written in the same transaction as domain data** -- If you write the outbox message outside the domain transaction, a crash between the two writes loses the event. ALWAYS use `BeginTransactionAsync` to wrap both writes atomically.
+6. **Endpoint filter order matters** -- Filters added first run outermost. A validation filter must run before an idempotency filter, otherwise invalid requests get cached as idempotent responses.
+7. **Do NOT share `DbContext` across concurrent requests** -- `DbContext` is not thread-safe. Each request must resolve its own scoped instance from DI. Using a singleton or static `DbContext` causes data corruption under concurrency.
+
+---
+
 ## References
 
 - [ASP.NET Core Best Practices](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0)

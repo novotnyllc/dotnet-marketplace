@@ -1,6 +1,6 @@
 ---
 name: dotnet-data-access-strategy
-description: "WHEN choosing a data access approach. EF Core vs Dapper vs ADO.NET decision framework, performance tradeoffs, AOT compatibility."
+description: "WHEN choosing a data access approach. EF Core vs Dapper vs ADO.NET decision framework, performance tradeoffs."
 ---
 
 # dotnet-data-access-strategy
