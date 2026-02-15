@@ -21,9 +21,8 @@ Apply all Critical and High-value improvements from consolidated findings to ski
 - [ ] No modifications to plugin.json, AGENTS.md, or README.md
 
 ## Done summary
-TBD
-
+Implemented all Critical and High improvements for Batches C+D: trimmed 8 over-budget descriptions (4 Critical over 140 chars, 4 High in 121-140 range), wrapped 41 bare skill references with [skill:] syntax across all 8 CI/CD and 2 testing skills, fixed xUnit v3 IAsyncLifetime signatures (Task->ValueTask) in dotnet-maui-testing, and updated stale "not yet landed" reference in dotnet-benchmarkdotnet. All four validation commands pass. Budget reduced from 11,822 to 11,640 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 21d62b2c32d3e4a4da38d9d23d26b1e89b1f3b43, 11799eea9e3e6175abaabffc9f12e7e91ee9d3c1, 3f2e71ac5d9d4ac21966e328d8b1dae4a7433277
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

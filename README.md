@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 97 skills across 18 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 101 skills across 19 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -31,18 +31,19 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 97 skills into 18 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 101 skills into 19 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
 | **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis |
-| **Core C#** | 7 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-csharp-source-generators |
+| **Core C#** | 9 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-csharp-source-generators |
 | **Project Structure** | 6 | dotnet-project-structure, dotnet-scaffold-project, dotnet-modernize |
 | **Architecture** | 10 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-containers |
 | **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
 | **Testing** | 10 | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing |
 | **API Development** | 5 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi |
 | **Security** | 3 | dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography |
+| **Multi-Targeting** | 2 | dotnet-multi-targeting, dotnet-version-upgrade |
 | **UI Frameworks** | 13 | dotnet-blazor-patterns, dotnet-maui-development, dotnet-uno-platform |
 | **Native AOT** | 4 | dotnet-native-aot, dotnet-trimming, dotnet-aot-wasm |
 | **CLI Tools** | 5 | dotnet-system-commandline, dotnet-cli-architecture, dotnet-cli-distribution |
@@ -92,15 +93,16 @@ graph TB
             DG[docs-generator]
         end
 
-        subgraph Skills["18 Skill Categories / 97 Skills"]
+        subgraph Skills["19 Skill Categories / 101 Skills"]
             F[Foundation<br/>4 skills]
-            CC[Core C#<br/>7 skills]
+            CC[Core C#<br/>9 skills]
             PS[Project Structure<br/>6 skills]
             AR[Architecture<br/>10 skills]
             SE[Serialization<br/>4 skills]
             TE[Testing<br/>10 skills]
             AD[API Development<br/>5 skills]
             SC[Security<br/>3 skills]
+            MT[Multi-Targeting<br/>2 skills]
             UI[UI Frameworks<br/>13 skills]
             NA[Native AOT<br/>4 skills]
             CL[CLI Tools<br/>5 skills]

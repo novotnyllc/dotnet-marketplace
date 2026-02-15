@@ -1,6 +1,6 @@
 ---
 name: dotnet-profiling
-description: "WHEN diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump analysis, flame graphs, allocation tracking."
+description: "WHEN diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs."
 ---
 
 # dotnet-profiling

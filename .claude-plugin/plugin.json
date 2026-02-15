@@ -54,6 +54,8 @@
     "skills/security/dotnet-security-owasp",
     "skills/security/dotnet-secrets-management",
     "skills/security/dotnet-cryptography",
+    "skills/multi-targeting/dotnet-multi-targeting",
+    "skills/multi-targeting/dotnet-version-upgrade",
     "skills/ui-frameworks/dotnet-blazor-patterns",
     "skills/ui-frameworks/dotnet-blazor-components",
     "skills/ui-frameworks/dotnet-blazor-auth",

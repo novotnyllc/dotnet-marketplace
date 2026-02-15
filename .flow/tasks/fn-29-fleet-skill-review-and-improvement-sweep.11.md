@@ -21,9 +21,8 @@ Apply all Critical and High-value improvements from consolidated findings to ski
 - [ ] No modifications to plugin.json, AGENTS.md, or README.md
 
 ## Done summary
-TBD
-
+Implemented all Critical and High improvements for Batches E+F: trimmed 4 agent-meta-skills descriptions (saving ~221 chars), removed stale "(may not exist yet)" and "(soft dependency)" markers from 7 UI framework skills, trimmed dotnet-blazor-patterns description, and fixed bare-text refs and stale "planned" marker in dotnet-nuget-authoring. Budget reduced from 11,640 to 11,411 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 69bd4cd, b429c0e, 6c43e6c
+- Tests: ./scripts/validate-skills.sh
 - PRs:
