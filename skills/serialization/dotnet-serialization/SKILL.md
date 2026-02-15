@@ -1,6 +1,6 @@
 ---
 name: dotnet-serialization
-description: "WHEN serializing data. AOT-friendly System.Text.Json source generators, Protobuf, MessagePack. Performance tradeoffs and anti-patterns."
+description: "WHEN serializing data. AOT-friendly System.Text.Json source generators, Protobuf, MessagePack anti-patterns."
 ---
 
 # dotnet-serialization

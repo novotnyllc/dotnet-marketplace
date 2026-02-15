@@ -1,6 +1,6 @@
 ---
 name: dotnet-service-communication
-description: "WHEN choosing a communication protocol. Decision matrix mapping requirements to gRPC, SignalR, SSE, JSON-RPC, REST with routing to deeper skills."
+description: "WHEN choosing a communication protocol. Decision matrix mapping requirements to gRPC, SignalR, SSE, JSON-RPC, REST."
 ---
 
 # dotnet-service-communication
