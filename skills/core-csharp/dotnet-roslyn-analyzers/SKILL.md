@@ -30,7 +30,7 @@ Analyzer projects **must** target `netstandard2.0`. The compiler loads analyzers
     <!-- NuGet: Microsoft.CodeAnalysis.CSharp -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" PrivateAssets="all" />
     <!-- NuGet: Microsoft.CodeAnalysis.Analyzers (meta-diagnostics for analyzer authors) -->
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>
 ```
@@ -458,16 +458,16 @@ Multi-version analyzers use version-specific NuGet paths: `analyzers/dotnet/rosl
 
 ### Multi-Version Test Matrix
 
-Test each Roslyn version build independently by parameterizing `$(RoslynVersion)` in the test project:
+Test each Roslyn version build independently by parameterizing `$(RoslynVersion)` in the test project. Use xUnit v3 with Microsoft.Testing.Platform v2 (MTP2) for the test runner:
 
 ```bash
-# Build and test each Roslyn version
+# Build and test each Roslyn version (xUnit v3 + MTP2)
 for version in 3.8 4.2 4.4; do
   dotnet test -p:RoslynVersion=$version
 done
 ```
 
-See `details.md` for a complete multi-version project structure (Directory.Build.props, Directory.Build.targets, packaging .csproj, and GitHub Actions CI matrix).
+See `details.md` for a complete multi-version project structure (Directory.Build.props, Directory.Build.targets, packaging .csproj, and GitHub Actions CI matrix with xUnit v3).
 
 ---
 
@@ -478,17 +478,24 @@ Use the `Microsoft.CodeAnalysis.Testing` infrastructure for ergonomic, high-leve
 ### Required NuGet Packages
 
 ```xml
+<PropertyGroup>
+  <!-- Enable Microsoft.Testing.Platform v2 runner -->
+  <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+</PropertyGroup>
+
 <ItemGroup>
-  <!-- NuGet: Microsoft.CodeAnalysis.CSharp.Analyzer.Testing -->
-  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.2" />
+  <!-- NuGet: Microsoft.CodeAnalysis.CSharp.Analyzer.Testing (framework-agnostic, uses DefaultVerifier) -->
+  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.3" />
   <!-- NuGet: Microsoft.CodeAnalysis.CSharp.CodeFix.Testing -->
-  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.2" />
+  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.3" />
   <!-- NuGet: Microsoft.CodeAnalysis.CSharp.Workspaces (dependency) -->
   <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
-  <!-- NuGet: xunit (test framework) -->
-  <PackageReference Include="xunit" Version="2.9.3" />
+  <!-- NuGet: xunit.v3 (xUnit v3 test framework) -->
+  <PackageReference Include="xunit.v3" Version="3.2.2" />
 </ItemGroup>
 ```
+
+> **Migration note:** The framework-specific packages (e.g., `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit`) are obsolete. Use the generic packages with `DefaultVerifier` instead. This decouples Roslyn testing infrastructure from the test framework, making it compatible with xUnit v3 and Microsoft.Testing.Platform v2 (MTP2).
 
 ### Analyzer-Only Testing
 

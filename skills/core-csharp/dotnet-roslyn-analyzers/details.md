@@ -101,12 +101,19 @@ public sealed class ExtractInterfaceRefactoring : CodeRefactoringProvider
 
 ## CodeRefactoringProvider Testing
 
-Use `CSharpCodeRefactoringVerifier<T>` to test refactoring providers:
+Use `CSharpCodeRefactoringVerifier<T>` to test refactoring providers. Use the framework-agnostic package with `DefaultVerifier` (the framework-specific `.XUnit` suffix packages are obsolete):
 
 ```xml
+<PropertyGroup>
+  <!-- Enable Microsoft.Testing.Platform v2 runner -->
+  <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+</PropertyGroup>
+
 <ItemGroup>
-  <!-- NuGet: Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing -->
-  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" Version="1.1.2" />
+  <!-- NuGet: Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing (framework-agnostic) -->
+  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" Version="1.1.3" />
+  <!-- NuGet: xunit.v3 (xUnit v3 test framework) -->
+  <PackageReference Include="xunit.v3" Version="3.2.2" />
 </ItemGroup>
 ```
 
@@ -241,6 +248,8 @@ MyAnalyzers/
 
 ### CI Multi-Version Test Matrix (GitHub Actions)
 
+Uses xUnit v3 with Microsoft.Testing.Platform v2 (MTP2). Set `UseMicrosoftTestingPlatformRunner` in the test project (see CodeRefactoringProvider Testing above) and parameterize `$(RoslynVersion)`:
+
 ```yaml
 jobs:
   test:
@@ -251,7 +260,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
       - name: Test with Roslyn ${{ matrix.roslyn-version }}
         run: >
           dotnet test
