@@ -16,7 +16,9 @@ No .NET SDK is required for the plugin repo itself. The plugin provides guidance
 
 ## Skill Authoring Guide
 
-Skills are the primary content unit. Each skill is a `SKILL.md` file with structured frontmatter and rich guidance content.
+> **Comprehensive guide available:** For the full skill authoring how-to manual -- including quick start, writing effective descriptions, testing, common patterns, and troubleshooting -- see [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md).
+
+The section below provides a quick reference. Skills are the primary content unit. Each skill is a `SKILL.md` file with structured frontmatter and rich guidance content.
 
 ### Directory Convention
 

@@ -91,5 +91,6 @@ python3 scripts/validate_cross_agent.py
 ## References
 
 - See [AGENTS.md](AGENTS.md) for skill routing index and agent delegation patterns
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, and skill authoring guide
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, and skill authoring quick reference
+- See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the comprehensive skill authoring how-to manual
 - See [README.md](README.md) for the full skill catalog, architecture diagrams, and installation instructions

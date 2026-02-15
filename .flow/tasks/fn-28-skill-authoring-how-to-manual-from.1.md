@@ -32,9 +32,8 @@ Target under 3,000 words. Use progressive disclosure — link to external refere
 - `CONTRIBUTING-SKILLS.md` (new)
 
 ## Done summary
-TBD
-
+Created CONTRIBUTING-SKILLS.md at repo root with 8 sections covering skill authoring for dotnet-artisan: Quick Start, Skill Anatomy, Writing Effective Descriptions, Writing Instructions, Testing Your Skill, Common Patterns, Troubleshooting, and Pre-Commit Checklist. The guide adapts Anthropic's skill authoring guide to dotnet-artisan conventions at 1,701 words (under the 3,000 word target).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 0d34fff1f4fa4b6fad2895bf174086688751146b
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
