@@ -22,9 +22,8 @@ Register both new skills in plugin.json, add them to the dotnet-advisor catalog 
 - [ ] All validation commands pass: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh && python3 scripts/generate_dist.py --strict && python3 scripts/validate_cross_agent.py`
 
 ## Done summary
-TBD
-
+Registered dotnet-library-api-compat and dotnet-api-surface-validation in plugin.json, added both to dotnet-advisor catalog and routing sections, updated skill counts from 111 to 113 across AGENTS.md, README.md, CLAUDE.md (including Mermaid diagram), and added two trigger-corpus entries for binary compatibility and API surface validation queries.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6a2964d5c03503bafcc8a60fea39145ba2691b64
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
