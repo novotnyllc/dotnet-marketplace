@@ -54,25 +54,33 @@ Applying all Critical and High changes brings the aggregate description budget f
 | F | 985 | 0 | 0 | 0 |
 | Unregistered (B) | 393 | 2 | 2 | (new: +233 after trim) |
 
+**Reconciliation note:** Batch totals sum to 12,494 chars (including the 2 unregistered skills' 393 chars in Batch B's total). The "Current total" of 12,065 represents only the 99 registered skills measured from plugin.json at report time. The 36-char gap between 12,494 - 393 = 12,101 and the measured 12,065 is due to minor measurement variance between batch audit time and consolidation (some batch reports used `wc -c` while the consolidation used the canonical Python parser from `_validate_skills.py`). The canonical parser measurement of 12,065 is authoritative.
+
 ### Projected State After All Changes
 
 | Metric | Value |
 |--------|-------|
 | Total skills (after registering 2) | 101 |
-| Savings from description trims | -839 chars |
-| Added from 2 new registrations (trimmed) | +233 chars |
+| Savings from registered skill description trims | -839 chars |
+| Added from 2 new registrations (at trimmed length) | +233 chars |
 | Projected total | 11,459 chars |
 | Delta from current | -606 chars |
 | Budget status | OK (below 12,000 WARN threshold) |
+
+**Savings breakdown:** The -839 chars comes from trimming 29 registered skills: 15 Critical trims (-673), 9 High trims (-129), 5 Low trims (-37). The 2 unregistered skills (dotnet-multi-targeting, dotnet-version-upgrade) are not counted as "savings" -- they are new additions at their proposed trimmed lengths (115 + 118 = 233 chars). Math: 12,065 - 839 + 233 = 11,459.
 
 ### Projected State After Critical+High Changes Only
 
 | Metric | Value |
 |--------|-------|
-| Savings from Critical+High trims | -802 chars |
-| Added from 2 new registrations (trimmed) | +233 chars |
+| Savings from Critical+High registered trims | -802 chars |
+| Added from 2 new registrations (at trimmed length) | +233 chars |
 | Projected total | 11,496 chars |
 | Budget status | OK (below 12,000 WARN threshold) |
+
+**Savings breakdown:** -802 = 15 Critical registered trims (-673) + 9 High trims (-129). The 5 Low trims (-37) are excluded. Math: 12,065 - 802 + 233 = 11,496.
+
+**Char count methodology:** All "Current" values in the tables below were measured using the canonical Python parser (`len()` after stripping YAML quotes and trimming whitespace) against the actual SKILL.md files on disk at consolidation time. Some batch reports measured slightly different values (up to 2 chars variance) due to using different extraction methods; the consolidated values are authoritative.
 
 ## Prioritized Improvement Plan
 
@@ -232,7 +240,7 @@ Minor polish: formatting, monitoring suggestions, small consistency gaps.
 |---|-------|----------|-------|-------|
 | 25 | dotnet-modernize | project-structure | "What's Next" fn-10 references could point to concrete skills | A |
 | 26 | dotnet-csharp-code-smells | core-csharp | Missing bidirectional cross-ref from dotnet-csharp-async-patterns | A |
-| 27 | dotnet-ado-unique | cicd | Description 119 chars -- technically under 120 but proposed trim to 120 is neutral | C |
+| 27 | dotnet-ado-unique | cicd | Description 119 chars (canonical measurement) -- under 120; Batch C reported 121 due to measurement variance. No trim needed. | C |
 | 28 | dotnet-benchmarkdotnet | performance | Missing bidirectional cross-ref to dotnet-ci-benchmarking via `[skill:]` in Out of Scope | D |
 | 29 | dotnet-blazor-patterns | ui-frameworks | Could drop "AOT-safe patterns" from description for tighter scope signal | E |
 | 30 | dotnet-xml-docs | documentation | At 2,998 words; extract comprehensive example section if content grows | F |
@@ -246,7 +254,7 @@ Five skills use "WHEN NOT" negative clauses in their descriptions: dotnet-adviso
 
 ### 2. Systematic Bare-Text Skill References in CI/CD (All 8 Skills)
 
-All 8 CI/CD skills use bare text skill names (e.g., `dotnet-ado-patterns` instead of `[skill:dotnet-ado-patterns]`) in scope boundary and Out of scope sections. This produces 40+ bare reference occurrences across the category. The worst offender is dotnet-ado-unique with 10 bare references. By contrast, other categories have at most 1-2 bare references per skill.
+All 8 CI/CD skills use bare text skill names (e.g., `dotnet-ado-patterns` instead of `[skill:dotnet-ado-patterns]`) in scope boundary and Out of scope sections. This produces 37 bare reference occurrences in CI/CD skills alone, plus 5 more in testing and performance skills (42 total across Batches C and D). The worst offender is dotnet-ado-unique with 10 bare references. By contrast, other categories have at most 1-2 bare references per skill.
 
 ### 3. Stale "May Not Exist Yet" Markers in UI Frameworks (7 Skills)
 
@@ -274,9 +282,9 @@ All 4 agent-meta-skills have descriptions over 120 chars (3 of 4 over 140 chars)
 
 Across all 6 batches, every `[skill:name]` reference that uses proper syntax resolves to an existing skill. The only broken reference is `[skill:dotnet-scaffolding-base]` in dotnet-advisor (should be `[skill:dotnet-scaffold-project]`). Cross-reference infrastructure quality is high.
 
-### 9. xUnit v3 IAsyncLifetime Inconsistency
+### 9. xUnit v3 IAsyncLifetime Inconsistency (Single-Batch Finding)
 
-dotnet-maui-testing uses `Task` return types for `InitializeAsync`/`DisposeAsync` while xUnit v3 requires `ValueTask`. Three other testing skills (dotnet-xunit, dotnet-integration-testing, dotnet-uno-testing) correctly use `ValueTask`. This is a technical accuracy issue that could cause agents to generate code triggering xUnit v3 analyzer warnings.
+dotnet-maui-testing uses `Task` return types for `InitializeAsync`/`DisposeAsync` while xUnit v3 requires `ValueTask`. Three other testing skills (dotnet-xunit, dotnet-integration-testing, dotnet-uno-testing) correctly use `ValueTask`. This is a technical accuracy issue that could cause agents to generate code triggering xUnit v3 analyzer warnings. Note: This finding is from Batch C only, but is elevated as a cross-cutting pattern because it affects consistency across the entire testing category.
 
 ### 10. No details.md Companions Needed Yet
 
@@ -291,8 +299,8 @@ The following maps each recommended change to the implementation task that owns 
 **Critical changes:**
 - Trim 3 foundation skill descriptions (dotnet-advisor, dotnet-version-detection, dotnet-project-analysis)
 - Fix 2 broken cross-refs in dotnet-advisor (`dotnet-scaffolding-base` to `dotnet-scaffold-project`)
-- Register dotnet-multi-targeting and dotnet-version-upgrade in plugin.json (NOTE: plugin.json registration is owned by Task 12; Task 9 trims descriptions only)
-- Trim 6 Batch B descriptions (dotnet-cryptography, dotnet-grpc, dotnet-service-communication, dotnet-secrets-management, plus multi-targeting pair)
+- Trim dotnet-multi-targeting and dotnet-version-upgrade descriptions (registration in plugin.json is owned by Task 12)
+- Trim 4 Batch B descriptions (dotnet-cryptography, dotnet-grpc, dotnet-service-communication, dotnet-secrets-management)
 
 **High changes:**
 - Remove WHEN NOT clauses from foundation descriptions
@@ -314,7 +322,7 @@ The following maps each recommended change to the implementation task that owns 
 
 **High changes:**
 - Fix xUnit v3 IAsyncLifetime in dotnet-maui-testing (Task -> ValueTask)
-- Wrap 40+ bare skill references in all 8 CI/CD skills with `[skill:]` syntax
+- Wrap 37 bare skill references in all 8 CI/CD skills with `[skill:]` syntax
 - Wrap 4 bare `dotnet-add-testing` refs in testing skills with `[skill:]` syntax
 - Trim 4 testing descriptions in warn range (dotnet-xunit, dotnet-integration-testing, dotnet-blazor-testing, dotnet-playwright)
 - Fix bare backtick ref in dotnet-profiling
@@ -346,3 +354,16 @@ The following maps each recommended change to the implementation task that owns 
 - Verify aggregate budget is below 12K WARN threshold
 - Update AGENTS.md and README.md if skills were added/renamed
 - Archive batch reports
+
+## Acceptance Criteria Verification
+
+Mapping each acceptance criterion from the task spec to where it is satisfied in this document:
+
+| AC | Criterion | Satisfied By |
+|----|-----------|-------------|
+| 1 | All 6 batch findings reports merged into consolidated report | Per-Batch Summary table (line 22), all 6 batches represented; Prioritized Improvement Plan references every batch |
+| 2 | Issues categorized with consistent severity levels (Critical/High/Low) | Three-tier tables in Prioritized Improvement Plan: Critical (20 issues), High (31 issues), Low (31 issues); severity definitions match batch-a pattern |
+| 3 | Cross-cutting patterns identified from batch-level observations | 10 cross-cutting patterns in "Cross-Cutting Patterns" section, each citing evidence from specific batches |
+| 4 | Projected description budget calculation included | "Description Budget Impact" section with current total (12,065), proposed totals (11,459 all / 11,496 Critical+High), delta vs thresholds, savings breakdowns |
+| 5 | Each proposed change tagged with affected skill name, category, and priority level | Every item in the three priority tables includes skill name, category, and batch columns |
+| 6 | Reference batch-a-findings.md severity categorization pattern for consistency | Critical = broken cross-refs, missing registrations, >140 chars; High = stale refs, bare-text refs, 121-140 chars; Low = formatting, monitoring -- consistent with Batch A pattern |
