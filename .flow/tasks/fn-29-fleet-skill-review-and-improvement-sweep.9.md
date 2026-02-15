@@ -21,9 +21,8 @@ Apply all Critical and High-value improvements from consolidated findings to ski
 - [ ] No modifications to plugin.json, AGENTS.md, or README.md
 
 ## Done summary
-TBD
-
+Implemented all Critical and High improvements for Batches A+B from consolidated findings: trimmed 18 skill descriptions to under 120 chars (budget reduced from 12,458 to 11,822), fixed 2 broken cross-refs in dotnet-advisor, removed WHEN NOT clauses from 5 descriptions, added 7-item Agent Gotchas section to dotnet-architecture-patterns, renamed cryptography heading to "Agent Gotchas", fixed grep portability in dotnet-add-analyzers, and updated stale "planned" reference in dotnet-csharp-code-smells.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1de958f, 33bf240, 1e09d71, 553b4c9, 4f7a353
+- Tests: ./scripts/validate-skills.sh
 - PRs:
