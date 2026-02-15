@@ -1,6 +1,6 @@
 ---
 name: dotnet-test-quality
-description: "WHEN measuring test effectiveness. Code coverage (coverlet + ReportGenerator), CRAP analysis, mutation testing (Stryker.NET), flaky test detection."
+description: "WHEN measuring test effectiveness. Code coverage with coverlet, mutation testing with Stryker.NET, flaky test detection."
 ---
 
 # dotnet-test-quality
@@ -9,9 +9,9 @@ Test quality analysis for .NET projects. Covers code coverage collection with co
 
 **Version assumptions:** Coverlet 6.x+, ReportGenerator 5.x+, Stryker.NET 4.x+ (.NET 8.0+ baseline). Coverlet supports both the MSBuild integration (`coverlet.msbuild`) and the `coverlet.collector` data collector; examples use `coverlet.collector` as the recommended approach.
 
-**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by `dotnet-add-testing`. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration are owned by fn-19 -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
+**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration are owned by fn-19 -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
 
-**Prerequisites:** Test project already scaffolded via `dotnet-add-testing` with coverlet packages referenced. .NET 8.0+ baseline required.
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with coverlet packages referenced. .NET 8.0+ baseline required.
 
 Cross-references: [skill:dotnet-testing-strategy] for deciding what to test and coverage target guidance, [skill:dotnet-xunit] for xUnit test framework features and configuration.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-snapshot-testing
-description: "WHEN verifying complex outputs with Verify. API surfaces, HTTP responses, rendered emails, scrubbing/filtering for dates and GUIDs, custom converters."
+description: "WHEN verifying complex outputs with Verify. API responses, rendered emails, scrubbing for non-deterministic values."
 ---
 
 # dotnet-snapshot-testing
@@ -9,9 +9,9 @@ Snapshot (approval) testing with the Verify library for .NET. Covers verifying A
 
 **Version assumptions:** Verify 20.x+ (.NET 8.0+ baseline). Examples use the `Verify.Xunit` integration package; equivalent packages exist for NUnit (`Verify.NUnit`) and MSTest (`Verify.MSTest`). Verify auto-discovers the test framework from the referenced package.
 
-**Out of scope:** Test project scaffolding (creating projects, package references) is owned by `dotnet-add-testing`. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration test infrastructure (WebApplicationFactory, Testcontainers) is covered by [skill:dotnet-integration-testing].
+**Out of scope:** Test project scaffolding (creating projects, package references) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration test infrastructure (WebApplicationFactory, Testcontainers) is covered by [skill:dotnet-integration-testing].
 
-**Prerequisites:** Test project already scaffolded via `dotnet-add-testing` with Verify packages referenced. .NET 8.0+ baseline required.
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with Verify packages referenced. .NET 8.0+ baseline required.
 
 Cross-references: [skill:dotnet-testing-strategy] for deciding when snapshot tests are appropriate, [skill:dotnet-integration-testing] for combining Verify with WebApplicationFactory and Testcontainers.
 

@@ -34,7 +34,7 @@ public class AppiumFixture : IAsyncLifetime
 {
     public AppiumDriver Driver { get; private set; } = null!;
 
-    public async Task InitializeAsync()
+    public ValueTask InitializeAsync()
     {
         var options = new AppiumOptions();
 
@@ -68,13 +68,13 @@ public class AppiumFixture : IAsyncLifetime
         // additive timeout behavior when combined with WebDriverWait)
         Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
 
-        await Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
-    public async Task DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         Driver?.Quit();
-        await Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }
 ```
