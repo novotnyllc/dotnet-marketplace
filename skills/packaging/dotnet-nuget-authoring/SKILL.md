@@ -11,9 +11,9 @@ NuGet package authoring for .NET library authors: SDK-style `.csproj` package pr
 
 **Scope boundary:** This skill owns NuGet package authoring for library consumers -- the properties, metadata, packaging layout, signing, and validation. Project-level NuGet configuration (Central Package Management, SourceLink, nuget.config, NuGet Audit, lock files) is owned by [skill:dotnet-project-structure] (fn-4). CI/CD publish workflows (NuGet push to feeds, container image push) are owned by [skill:dotnet-gha-publish] (fn-19) and [skill:dotnet-ado-publish] (fn-19). CLI tool packaging (Homebrew, apt, winget, Scoop, `dotnet tool`) is owned by [skill:dotnet-cli-packaging] (fn-17).
 
-**Out of scope:** Central Package Management, SourceLink, nuget.config, NuGet Audit -- see [skill:dotnet-project-structure] (fn-4). CI/CD NuGet push workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). CLI tool packaging and distribution -- see [skill:dotnet-cli-packaging] (fn-17). Roslyn analyzer authoring (Roslyn API, diagnostic descriptors) -- see `dotnet-roslyn-analyzers` (fn-27, planned). Release lifecycle and NBGV setup -- see `dotnet-release-management` (fn-20).
+**Out of scope:** Central Package Management, SourceLink, nuget.config, NuGet Audit -- see [skill:dotnet-project-structure] (fn-4). CI/CD NuGet push workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish] (fn-19). CLI tool packaging and distribution -- see [skill:dotnet-cli-packaging] (fn-17). Roslyn analyzer authoring (Roslyn API, diagnostic descriptors) -- see [skill:dotnet-roslyn-analyzers]. Release lifecycle and NBGV setup -- see [skill:dotnet-release-management].
 
-Cross-references: [skill:dotnet-project-structure] for CPM, SourceLink, nuget.config, [skill:dotnet-gha-publish] for CI NuGet push workflows, [skill:dotnet-ado-publish] for ADO NuGet push workflows, [skill:dotnet-cli-packaging] for CLI tool distribution formats, [skill:dotnet-csharp-source-generators] for Roslyn source generator authoring.
+Cross-references: [skill:dotnet-project-structure] for CPM, SourceLink, nuget.config, [skill:dotnet-gha-publish] for CI NuGet push workflows, [skill:dotnet-ado-publish] for ADO NuGet push workflows, [skill:dotnet-cli-packaging] for CLI tool distribution formats, [skill:dotnet-csharp-source-generators] for Roslyn source generator authoring, [skill:dotnet-release-management] for release lifecycle and NBGV setup, [skill:dotnet-roslyn-analyzers] for Roslyn analyzer authoring.
 
 ---
 
@@ -472,7 +472,7 @@ NuGet follows Semantic Versioning 2.0:
 
 ### NBGV Integration
 
-Nerdbank.GitVersioning (NBGV) calculates versions from git history. For NBGV setup and `version.json` configuration, see `dotnet-release-management` (fn-20). This skill covers how NBGV-generated versions interact with NuGet packaging:
+Nerdbank.GitVersioning (NBGV) calculates versions from git history. For NBGV setup and `version.json` configuration, see [skill:dotnet-release-management]. This skill covers how NBGV-generated versions interact with NuGet packaging:
 
 ```xml
 <PropertyGroup>
