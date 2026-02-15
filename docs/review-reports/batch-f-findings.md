@@ -8,9 +8,9 @@
 | Clean | 7 |
 | Needs Work | 2 |
 | Critical | 0 |
-| Total issues | 5 |
+| Total issues | 4 |
 | Critical issues | 0 |
-| High issues | 3 |
+| High issues | 2 |
 | Low issues | 2 |
 
 ## Current Description Budget Impact
