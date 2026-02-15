@@ -9,9 +9,9 @@ description: "WHEN configuring .NET build and test in Azure DevOps. DotNetCoreCL
 
 **Version assumptions:** `DotNetCoreCLI@2` task (current). `UseDotNet@2` for SDK installation. `NuGetAuthenticate@1` for Azure Artifacts. `PublishTestResults@2` and `PublishCodeCoverageResults@2` for reporting.
 
-**Scope boundary:** This skill owns .NET build and test pipeline configuration for Azure DevOps. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] (fn-4). Composable pipeline patterns (templates, multi-stage, triggers) are in `dotnet-ado-patterns` (fn-19). Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy] (fn-7). Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking] (fn-18).
+**Scope boundary:** This skill owns .NET build and test pipeline configuration for Azure DevOps. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] (fn-4). Composable pipeline patterns (templates, multi-stage, triggers) are in [skill:dotnet-ado-patterns] (fn-19). Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy] (fn-7). Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking] (fn-18).
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). Test architecture and strategy -- see [skill:dotnet-testing-strategy] (fn-7). Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking] (fn-18). Publishing and deployment -- see `dotnet-ado-publish` and `dotnet-ado-unique` (fn-19). GitHub Actions build/test workflows -- see `dotnet-gha-build-test` (fn-19).
+**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). Test architecture and strategy -- see [skill:dotnet-testing-strategy] (fn-7). Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking] (fn-18). Publishing and deployment -- see [skill:dotnet-ado-publish] and [skill:dotnet-ado-unique] (fn-19). GitHub Actions build/test workflows -- see [skill:dotnet-gha-build-test] (fn-19).
 
 Cross-references: [skill:dotnet-add-ci] for starter build/test templates, [skill:dotnet-testing-strategy] for test architecture guidance, [skill:dotnet-ci-benchmarking] for benchmark CI integration.
 

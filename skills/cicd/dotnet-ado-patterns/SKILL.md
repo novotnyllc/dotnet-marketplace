@@ -9,9 +9,9 @@ Composable Azure DevOps YAML pipeline patterns for .NET projects: template refer
 
 **Version assumptions:** Azure Pipelines YAML schema. `DotNetCoreCLI@2` task for .NET 8/9/10 builds. Template expressions syntax v2.
 
-**Scope boundary:** This skill owns composable pipeline design patterns for Azure DevOps YAML. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] (fn-4) -- this skill extends those templates with advanced composition. CLI-specific release pipelines (build-package-release for CLI binaries) are owned by [skill:dotnet-cli-release-pipeline] (fn-17) -- this skill covers general pipeline patterns that CLI pipelines consume. ADO-unique features (environments with approvals, service connections, classic releases) are in `dotnet-ado-unique` (fn-19).
+**Scope boundary:** This skill owns composable pipeline design patterns for Azure DevOps YAML. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] (fn-4) -- this skill extends those templates with advanced composition. CLI-specific release pipelines (build-package-release for CLI binaries) are owned by [skill:dotnet-cli-release-pipeline] (fn-17) -- this skill covers general pipeline patterns that CLI pipelines consume. ADO-unique features (environments with approvals, service connections, classic releases) are in [skill:dotnet-ado-unique] (fn-19).
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline] (fn-17). ADO-unique features (environments, service connections, classic releases) -- see `dotnet-ado-unique` (fn-19). Build/test specifics -- see `dotnet-ado-build-test` (fn-19). Publishing pipelines -- see `dotnet-ado-publish` (fn-19). GitHub Actions workflow patterns -- see `dotnet-gha-patterns` (fn-19).
+**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline] (fn-17). ADO-unique features (environments, service connections, classic releases) -- see [skill:dotnet-ado-unique] (fn-19). Build/test specifics -- see [skill:dotnet-ado-build-test] (fn-19). Publishing pipelines -- see [skill:dotnet-ado-publish] (fn-19). GitHub Actions workflow patterns -- see [skill:dotnet-gha-patterns] (fn-19).
 
 Cross-references: [skill:dotnet-add-ci] for starter templates that these patterns extend, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
 
@@ -289,7 +289,7 @@ Key Vault-linked variable groups require a service connection with Key Vault acc
 
 ## Pipeline Decorators
 
-Pipeline decorators inject steps into every pipeline in an organization or project, enforcing policies without modifying individual pipeline files. Decorators are an ADO-exclusive feature with no GitHub Actions equivalent -- see `dotnet-ado-unique` for implementation details including extension manifests, deployment guidance, and use case examples.
+Pipeline decorators inject steps into every pipeline in an organization or project, enforcing policies without modifying individual pipeline files. Decorators are an ADO-exclusive feature with no GitHub Actions equivalent -- see [skill:dotnet-ado-unique] for implementation details including extension manifests, deployment guidance, and use case examples.
 
 ---
 
