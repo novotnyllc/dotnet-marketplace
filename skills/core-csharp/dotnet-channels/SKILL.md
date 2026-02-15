@@ -262,16 +262,12 @@ await foreach (var item in reader.ReadAllAsync(cancellationToken))
 
 ### Streaming from an API Endpoint
 
-Channels combine naturally with ASP.NET Core streaming responses:
+Channels combine naturally with ASP.NET Core streaming responses. Return the `IAsyncEnumerable<T>` directly -- minimal APIs will stream items as JSON array elements:
 
 ```csharp
-app.MapGet("/api/events/stream", async (
+app.MapGet("/api/events/stream", (
     ChannelReader<ServerEvent> reader,
-    CancellationToken ct) =>
-{
-    // Return IAsyncEnumerable<T> for streaming response
-    return Results.Ok(reader.ReadAllAsync(ct));
-});
+    CancellationToken ct) => reader.ReadAllAsync(ct));
 ```
 
 ### LINQ Async Operators
@@ -307,10 +303,12 @@ async IAsyncEnumerable<PriceUpdate> StreamPricesAsync(
             {
                 await channel.Writer.WriteAsync(tick, ct);
             }
-        }
-        finally
-        {
             channel.Writer.TryComplete();
+        }
+        catch (Exception ex)
+        {
+            // Propagate error to reader -- ReadAllAsync will throw
+            channel.Writer.TryComplete(ex);
         }
     }, ct);
 
@@ -429,7 +427,7 @@ public sealed class DrainableProcessor(
             // Shutdown requested -- fall through to drain
         }
 
-        // Signal producers to stop
+        // Signal producers to stop -- any concurrent WriteAsync will throw ChannelClosedException
         channel.Writer.TryComplete();
 
         // Drain remaining items with a deadline
@@ -474,7 +472,7 @@ builder.Services.Configure<HostOptions>(options =>
 1. **Do not use unbounded channels in production without rate control** -- they can exhaust memory under sustained producer pressure. Always prefer bounded channels with explicit capacity.
 2. **Do not violate SingleReader/SingleWriter promises** -- these flags enable lock-free optimizations. Multiple concurrent readers with `SingleReader = true` causes data corruption, not exceptions.
 3. **Do not forget to call `Complete()` on the writer** -- without completion, consumers using `ReadAllAsync()` or `WaitToReadAsync` will wait indefinitely after the last item.
-4. **Do not catch `ChannelClosedException` globally** -- it signals normal completion (writer called `Complete()`). Catch it only around `ReadAsync` calls, not around `WaitToReadAsync`/`TryRead` loops.
+4. **Do not catch `ChannelClosedException` globally** -- it signals that the writer called `Complete()`, possibly with an error. Catch it only around `ReadAsync` calls; `WaitToReadAsync`/`TryRead` loops handle completion via `false` return.
 5. **Do not use `ReadAsync` in hot paths** -- prefer the `WaitToReadAsync` + `TryRead` pattern to drain buffered items synchronously and reduce async state machine allocations.
 6. **Do not block in the `itemDropped` callback** -- it runs synchronously on the writer's thread. Keep it fast (increment counter, log) or offload heavy work.
 
