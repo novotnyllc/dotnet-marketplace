@@ -131,24 +131,9 @@ dotnet_diagnostic.IDE0003.severity = none
 
 ## Code Quality Rules (CA*)
 
-CA rules detect design, performance, security, reliability, and usage issues. They are shipped with the .NET SDK and controlled by `AnalysisLevel`.
+CA rules detect design, performance, security, reliability, and usage issues. They are shipped with the .NET SDK and controlled by `AnalysisLevel`. For a complete CA rule category table and `AnalysisLevel` setup guidance, see [skill:dotnet-add-analyzers].
 
-### CA Rule Categories
-
-| Range | Category | Key Rules |
-|-------|----------|-----------|
-| CA1000-CA1099 | Design | CA1002 (do not expose generic lists), CA1010 (collections should implement generic interface), CA1062 (validate arguments of public methods) |
-| CA1200-CA1299 | Documentation | CA1200 (avoid using cref tags with a prefix) |
-| CA1300-CA1399 | Globalization | CA1304 (specify CultureInfo), CA1307 (specify StringComparison), CA1310 (specify StringComparison for correctness) |
-| CA1400-CA1499 | Interoperability | CA1401 (P/Invokes should not be visible), CA1416 (validate platform compatibility) |
-| CA1500-CA1599 | Maintainability | CA1507 (use nameof), CA1510 (use ArgumentNullException.ThrowIfNull) |
-| CA1700-CA1799 | Naming | CA1707 (remove underscores from member names), CA1715 (prefix interface names with I), CA1720 (don't use type names in parameters) |
-| CA1800-CA1899 | Performance | CA1822 (mark members as static), CA1826 (use property instead of Enumerable method), CA1848 (use LoggerMessage delegates), CA1861 (avoid constant arrays as arguments) |
-| CA2000-CA2099 | Reliability | CA2000 (dispose objects before losing scope), CA2007 (consider ConfigureAwait), CA2016 (forward CancellationToken) |
-| CA2100-CA2199 | Security | CA2100 (review SQL queries for security), CA2153 (do not catch CorruptedStateExceptions) |
-| CA2200-CA2299 | Usage | CA2211 (non-constant static fields), CA2234 (pass System.Uri instead of string), CA2245 (do not assign a property to itself) |
-| CA3001-CA3147 | Web Security | CA3001 (review code for SQL injection), CA3003 (review code for file path injection), CA3012 (review code for regex injection) |
-| CA5300-CA5405 | Cryptography/Config | CA5350 (do not use weak crypto algorithms), CA5394 (do not use insecure randomness) |
+The main CA categories are: Design (CA1000s), Globalization (CA1300s), Interoperability (CA1400s), Maintainability (CA1500s), Naming (CA1700s), Performance (CA1800s), Reliability (CA2000s), Security (CA2100s, CA3xxx, CA5xxx), and Usage (CA2200s).
 
 ### CA Rule Severity Configuration
 
@@ -179,7 +164,7 @@ The five severity levels control how a diagnostic is reported:
 | `error` | Yes (error) | Red | Error tab | Always |
 | `warning` | Yes (warning) | Green | Warning tab | Yes (with `TreatWarningsAsErrors`) |
 | `suggestion` | No | Gray dots | Message tab | No |
-| `silent` | No | No | No | No (refactoring only) |
+| `silent` | No | No | No | No (code fix available, not shown in build or Error List) |
 | `none` | No | No | No | No (rule fully disabled) |
 
 ### Bulk Severity Configuration
@@ -195,8 +180,10 @@ dotnet_analyzer_diagnostic.category-Design.severity = warning
 dotnet_analyzer_diagnostic.category-Performance.severity = error
 
 # Set all naming rules to suggestion
-dotnet_analyzer_diagnostic.category-Style.severity = suggestion
+dotnet_analyzer_diagnostic.category-Naming.severity = suggestion
 ```
+
+Valid category names for `dotnet_analyzer_diagnostic.category-{Category}.severity` include: `Design`, `Documentation`, `Globalization`, `Interoperability`, `Maintainability`, `Naming`, `Performance`, `SingleFile`, `Reliability`, `Security`, `Usage`. IDE* rules do not participate in category-level bulk configuration -- configure them individually via `dotnet_diagnostic.IDE*.severity`.
 
 Per-rule entries override category-level settings. Category-level settings override `AnalysisLevel` defaults.
 
@@ -207,28 +194,9 @@ Per-rule entries override category-level settings. Category-level settings overr
 
 ---
 
-## AnalysisLevel
+## AnalysisLevel and EnforceCodeStyleInBuild
 
-`AnalysisLevel` controls which built-in rules are enabled and their default severities. Set it in `Directory.Build.props` to apply consistently across all projects:
-
-```xml
-<PropertyGroup>
-  <AnalysisLevel>latest-all</AnalysisLevel>
-</PropertyGroup>
-```
-
-### AnalysisLevel Values
-
-| Value | Behavior |
-|-------|----------|
-| `latest` | Default rule set -- correctness rules only |
-| `latest-minimum` | Fewer rules than default |
-| `latest-recommended` | Default + additional recommended rules |
-| `latest-all` | All rules enabled -- most comprehensive |
-| `9-all`, `10-all` | Pin to a specific SDK version's rule set |
-| `preview` | All rules including experimental/preview |
-
-Replace `latest` with a specific version (e.g., `10-all`) to lock the rule set and prevent new SDK upgrades from introducing unexpected warnings.
+`AnalysisLevel` controls which built-in CA rules are enabled and their default severities. Values range from `latest` (default, correctness only) through `latest-all` (all rules). Pin to a specific .NET SDK major version (e.g., `8-all`, `10-all`) to lock the rule set across SDK upgrades. Use `preview-all` for the broadest coverage including experimental rules. For the full AnalysisLevel values table and setup guidance, see [skill:dotnet-add-analyzers].
 
 ### EnforceCodeStyleInBuild
 
@@ -379,15 +347,32 @@ dotnet_diagnostic.CA2016.severity = warning
 
 ### Test Project Overrides (tests/.editorconfig)
 
+Place a separate `.editorconfig` in the `tests/` directory to relax rules that conflict with test readability. For common per-project-type suppression patterns (ASP.NET Core apps, libraries, test projects), see [skill:dotnet-add-analyzers].
+
 ```ini
 [*.cs]
 # Relax rules for test readability
 dotnet_diagnostic.CA1707.severity = none          # Allow underscores in test names
-dotnet_diagnostic.CA1062.severity = none          # Parameters validated by test framework
-dotnet_diagnostic.CA2007.severity = none          # ConfigureAwait not relevant in tests
 dotnet_diagnostic.CA1822.severity = none          # Test methods often not static
 dotnet_diagnostic.IDE0058.severity = none         # Expression value is never used
 ```
+
+---
+
+## Generated Code Configuration
+
+Source generators and scaffolding tools produce code that often triggers IDE/CA warnings. Use the `generated_code = true` setting or file glob patterns to suppress analysis on generated files:
+
+```ini
+# Suppress warnings in generated code files
+[*.g.cs]
+generated_code = true
+
+[*.generated.cs]
+generated_code = true
+```
+
+When `generated_code = true` is set, Roslyn treats the file as generated code and applies the `GeneratedCodeAnalysisFlags` configured in each analyzer (most analyzers skip generated code by default). This is particularly relevant when using source generators -- see [skill:dotnet-csharp-source-generators].
 
 ---
 

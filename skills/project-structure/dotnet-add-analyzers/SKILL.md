@@ -9,7 +9,7 @@ Add and configure .NET code analyzers to an existing project. Covers built-in Ro
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first — analyzer features vary by SDK version. Run [skill:dotnet-project-analysis] to understand the current project layout.
 
-Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects.
+Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE* code style preferences, naming rules, and global AnalyzerConfig files.
 
 ---
 
