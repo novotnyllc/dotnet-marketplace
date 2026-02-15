@@ -22,9 +22,8 @@ Enhance two existing skills with ported content from dotnet-skills: `skills/seri
 - [ ] Validation passes
 
 ## Done summary
-TBD
-
+Enhanced gRPC skill with gRPC-Web section (server config, JS client, Envoy proxy, limitations) and SignalR/real-time skill with connection lifecycle, groups management, client-to-server streaming, JWT authentication, IUserIdProvider, and Azure SignalR Service scaling. Removed fn-N references and added Attribution sections crediting Aaronontheweb/dotnet-skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c3d09fcc4369738f8912c7acc41e2adc1ad68b22
+- Tests: ./scripts/validate-skills.sh, python3 scripts/generate_dist.py --strict
 - PRs:

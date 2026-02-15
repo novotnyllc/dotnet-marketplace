@@ -33,6 +33,7 @@
     "skills/architecture/dotnet-data-access-strategy",
     "skills/architecture/dotnet-containers",
     "skills/architecture/dotnet-container-deployment",
+    "skills/architecture/dotnet-solid-principles",
     "skills/serialization/dotnet-grpc",
     "skills/serialization/dotnet-realtime-communication",
     "skills/serialization/dotnet-serialization",
