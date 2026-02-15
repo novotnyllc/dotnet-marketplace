@@ -14,12 +14,12 @@ Create skills/core-csharp/dotnet-editorconfig/SKILL.md as a dedicated EditorConf
 - AnalysisLevel property (latest, preview, 5.0, 6.0, etc.)
 - EnforceCodeStyleInBuild for CI enforcement
 - Global AnalyzerConfig files (.globalconfig)
-- Cross-ref to [skill:dotnet-roslyn-analyzers] and [skill:dotnet-project-structure]
+- Cross-ref to [skill:dotnet-roslyn-analyzers], [skill:dotnet-project-structure], and [skill:dotnet-add-analyzers] (scope overlap: consuming analyzers and EditorConfig severity configuration)
 ## Acceptance
 - [ ] IDE* and CA* rule categories documented
 - [ ] Severity and AnalysisLevel covered
 - [ ] Global AnalyzerConfig documented
-- [ ] Cross-refs to related skills
+- [ ] Cross-refs to related skills (dotnet-roslyn-analyzers, dotnet-project-structure, dotnet-add-analyzers)
 - [ ] Registered in plugin.json
 ## Done summary
 TBD

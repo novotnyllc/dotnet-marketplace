@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-32-expanded-roslyn-and-code-analysis-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T06:47:32.294503Z",
   "spec_path": ".flow/specs/fn-32-expanded-roslyn-and-code-analysis-skills.md",
   "status": "open",
   "title": "Expanded Roslyn and Code Analysis Skills",
-  "updated_at": "2026-02-14T21:57:47.964386Z"
+  "updated_at": "2026-02-15T06:47:32.294668Z"
 }

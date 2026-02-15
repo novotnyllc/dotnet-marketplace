@@ -1,11 +1,11 @@
 ---
 name: dotnet-roslyn-analyzers
-description: "WHEN authoring custom Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, DiagnosticSuppressor, testing, packaging."
+description: "WHEN authoring custom Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoringProvider, multi-version."
 ---
 
 # dotnet-roslyn-analyzers
 
-Guidance for **authoring** custom Roslyn analyzers, code fix providers, and diagnostic suppressors. Covers project setup, DiagnosticDescriptor conventions, analysis context registration, code fix actions, testing with Microsoft.CodeAnalysis.Testing, NuGet packaging, and performance best practices.
+Guidance for **authoring** custom Roslyn analyzers, code fix providers, code refactoring providers, and diagnostic suppressors. Covers project setup, DiagnosticDescriptor conventions, analysis context registration, code fix actions, code refactoring actions, multi-Roslyn-version targeting (3.8 through 4.14), testing with Microsoft.CodeAnalysis.Testing, NuGet packaging, and performance best practices.
 
 **Scope boundary:** This skill covers *writing* analyzers. For *consuming and configuring* existing analyzers (CA rules, EditorConfig severity, third-party packages), see [skill:dotnet-add-analyzers]. For *authoring source generators* (IIncrementalGenerator, syntax providers, code emission), see [skill:dotnet-csharp-source-generators]. Analyzers and source generators share the same NuGet packaging layout (`analyzers/dotnet/cs/`) and `Microsoft.CodeAnalysis.CSharp` dependency, but serve different purposes: analyzers report diagnostics, generators emit code.
 
@@ -145,7 +145,7 @@ context.RegisterCompilationStartAction(compilationContext =>
 
 ## DiagnosticDescriptor Conventions
 
-fn-27 is the canonical owner of DiagnosticDescriptor guidance. Follow these conventions for all custom analyzers:
+Follow these conventions for all custom analyzers:
 
 ### ID Prefix Patterns
 
@@ -343,6 +343,132 @@ public sealed class CustomNullCheckSuppressor : DiagnosticSuppressor
 
 Suppressors cannot report new diagnostics -- they can only suppress existing ones. They participate in the same analyzer pipeline and follow the same `netstandard2.0` targeting requirements.
 
+> **Version gate:** `DiagnosticSuppressor` requires Roslyn 3.8+. If your analyzer package targets older Roslyn versions via multi-version packaging, guard suppressor registration behind `#if ROSLYN_3_8_OR_GREATER` (see Multi-Roslyn-Version Targeting below).
+
+---
+
+## CodeRefactoringProvider
+
+A `CodeRefactoringProvider` offers code transformations triggered by the user (lightbulb menu) without requiring a diagnostic. Use this for structural improvements, pattern applications, or code generation that are not defects.
+
+```csharp
+using System.Composition;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeRefactorings;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+[ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(ExtractInterfaceRefactoring))]
+[Shared]
+public sealed class ExtractInterfaceRefactoring : CodeRefactoringProvider
+{
+    public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
+    {
+        var root = await context.Document
+            .GetSyntaxRootAsync(context.CancellationToken)
+            .ConfigureAwait(false);
+
+        var node = root?.FindNode(context.Span);
+        var classDecl = node?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+
+        if (classDecl is null)
+            return;
+
+        // Only offer when cursor is on the class identifier
+        if (!classDecl.Identifier.Span.IntersectsWith(context.Span))
+            return;
+
+        context.RegisterRefactoring(
+            CodeAction.Create(
+                title: $"Extract interface I{classDecl.Identifier.Text}",
+                createChangedSolution: ct =>
+                    ExtractInterfaceAsync(context.Document, classDecl, ct),
+                equivalenceKey: "ExtractInterface"));
+    }
+
+    private static async Task<Solution> ExtractInterfaceAsync(
+        Document document,
+        ClassDeclarationSyntax classDecl,
+        CancellationToken cancellationToken)
+    {
+        // ... build interface from public method signatures, add base type
+        // See details.md for complete implementation
+        throw new NotImplementedException();
+    }
+}
+```
+
+See `details.md` for the complete `ExtractInterfaceAsync` implementation and `CSharpCodeRefactoringVerifier<T>` test examples.
+
+### Key CodeRefactoringProvider Patterns
+
+- **Span check:** Only offer refactorings when the cursor/selection intersects the relevant node. Broad span matching clutters the lightbulb menu.
+- **No diagnostic required:** Unlike `CodeFixProvider`, refactoring providers do not fix a diagnostic -- they offer optional transformations.
+- **Solution-level changes:** Use `createChangedSolution` when the refactoring adds files, renames symbols, or modifies multiple documents.
+- **Attribute requirements:** Decorate with `[ExportCodeRefactoringProvider(LanguageNames.CSharp)]` and `[Shared]` (MEF). The provider is not registered via `SupportedDiagnostics`.
+- **Testing:** Use `CSharpCodeRefactoringVerifier<T>` from `Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing` (see `details.md`).
+
+---
+
+## Multi-Roslyn-Version Targeting
+
+Analyzer NuGet packages can ship multiple DLLs targeting different Roslyn versions, allowing the analyzer to use newer APIs when available while maintaining compatibility with older compilers.
+
+### Version Boundaries
+
+The Roslyn SDK uses these version boundaries for multi-targeting:
+
+| Roslyn Version | Ships With | Key APIs Added |
+|---------------|------------|----------------|
+| 3.8 | VS 16.8 / .NET 5 SDK | `DiagnosticSuppressor`, `IOperation` improvements |
+| 4.2 | VS 17.2 / .NET 6 SDK | `RegisterHostObjectAction`, improved incremental analysis |
+| 4.4 | VS 17.4 / .NET 7 SDK | `SyntaxValueProvider.ForAttributeWithMetadataName` (generators) |
+| 4.6 | VS 17.6 / .NET 8 SDK | Interceptors preview, enhanced `IOperation` nodes |
+| 4.8 | VS 17.8 / .NET 8 U1 | `CollectionExpression` syntax support |
+| 4.14 | VS 17.14 / .NET 10 SDK | Latest API surface |
+
+### Project Configuration (Meziantou.Analyzer Pattern)
+
+Define a `$(RoslynVersion)` MSBuild property and reference `Microsoft.CodeAnalysis.CSharp` using `Version="$(RoslynVersion).0"`. For multi-version builds, use `Directory.Build.targets` to parameterize the Roslyn version across build configurations (see `details.md` for the full project structure).
+
+### Conditional Compilation Constants
+
+Define constants following the `ROSLYN_X_Y` and `ROSLYN_X_Y_OR_GREATER` pattern in `Directory.Build.targets`:
+
+```xml
+<PropertyGroup Condition="'$(RoslynVersion)' >= '3.8'">
+  <DefineConstants>$(DefineConstants);ROSLYN_3_8;ROSLYN_3_8_OR_GREATER</DefineConstants>
+</PropertyGroup>
+<!-- Repeat for 4.2, 4.4, 4.6, 4.8, 4.14 -- see details.md for all six -->
+```
+
+Use these constants to guard version-specific code:
+
+```csharp
+#if ROSLYN_4_4_OR_GREATER
+    // Use newer operation kinds available in Roslyn 4.4+
+    context.RegisterOperationAction(AnalyzeCollectionExpression,
+        OperationKind.CollectionExpression);
+#endif
+```
+
+### NuGet Packaging Paths
+
+Multi-version analyzers use version-specific NuGet paths: `analyzers/dotnet/roslyn{version}/cs/` for each version, plus `analyzers/dotnet/cs/` as the fallback for hosts below 3.8. The host selects the DLL from the highest matching `roslyn{version}` directory. Use `<None Include="..." Pack="true" PackagePath="analyzers/dotnet/roslyn{version}/cs" />` items to place each build in its correct path. See `details.md` for the complete packaging .csproj and pack verification commands.
+
+### Multi-Version Test Matrix
+
+Test each Roslyn version build independently by parameterizing `$(RoslynVersion)` in the test project:
+
+```bash
+# Build and test each Roslyn version
+for version in 3.8 4.2 4.4; do
+  dotnet test -p:RoslynVersion=$version
+done
+```
+
+See `details.md` for a complete multi-version project structure (Directory.Build.props, Directory.Build.targets, packaging .csproj, and GitHub Actions CI matrix).
+
 ---
 
 ## Testing Analyzers
@@ -402,18 +528,7 @@ public class NoPublicFieldsAnalyzerTests
         await Verify.VerifyAnalyzerAsync(test);
     }
 
-    [Fact]
-    public async Task PublicConstField_NoDiagnostic()
-    {
-        var test = """
-            public class MyClass
-            {
-                public const int MaxRetries = 3;
-            }
-            """;
-
-        await Verify.VerifyAnalyzerAsync(test);
-    }
+    // Also test: public const fields (no diagnostic), public readonly fields (no diagnostic)
 }
 ```
 
@@ -463,35 +578,7 @@ public class NoPublicFieldsCodeFixTests
 
 ### Multi-File Test Scenarios
 
-```csharp
-[Fact]
-public async Task MultiFile_DiagnosticInSecondFile()
-{
-    var test = new Verify.Test
-    {
-        TestState =
-        {
-            Sources =
-            {
-                ("Helpers.cs", """
-                    public static class Helpers
-                    {
-                        public static void DoWork() { }
-                    }
-                    """),
-                ("Models.cs", """
-                    public class Order
-                    {
-                        public decimal {|MYLIB001:Total|};
-                    }
-                    """)
-            }
-        }
-    };
-
-    await test.RunAsync();
-}
-```
+For multi-file tests, use the `Verify.Test` class with `TestState.Sources` to add multiple named source files. Set expected diagnostics in each file using the standard markup syntax. Use `test.RunAsync()` instead of the static `VerifyAnalyzerAsync` shorthand.
 
 ---
 
@@ -532,39 +619,11 @@ MyAnalyzers.nupkg
 
 ### Separate Analyzer and Code Fix Assemblies
 
-For multi-analyzer NuGet packages, separating analyzers from code fixes improves IDE load time. The IDE loads code fix assemblies lazily (only when the user requests a fix), while analyzer assemblies load immediately:
-
-```
-MyAnalyzers.nupkg
-  analyzers/dotnet/cs/
-    MyAnalyzers.dll               # Analyzers only -- loaded immediately
-    MyAnalyzers.CodeFixes.dll     # Code fixes -- loaded on demand
-```
-
-Create two projects: `MyAnalyzers` (analyzers) and `MyAnalyzers.CodeFixes` (fixes that reference the analyzer project). Pack both into the same NuGet package:
-
-```xml
-<!-- In the analyzer .csproj -->
-<ItemGroup>
-  <None Include="$(OutputPath)\$(AssemblyName).dll"
-        Pack="true" PackagePath="analyzers/dotnet/cs" />
-  <None Include="$(OutputPath)\MyAnalyzers.CodeFixes.dll"
-        Pack="true" PackagePath="analyzers/dotnet/cs" />
-</ItemGroup>
-```
+For multi-analyzer NuGet packages, separating analyzers from code fixes improves IDE load time. The IDE loads code fix assemblies lazily (only when the user requests a fix), while analyzer assemblies load immediately. Create two projects (`MyAnalyzers` and `MyAnalyzers.CodeFixes`), then pack both DLLs into `analyzers/dotnet/cs/` using `<None Include="..." Pack="true" PackagePath="analyzers/dotnet/cs" />` items.
 
 ### Pack Verification
 
-After packing, verify the layout:
-
-```bash
-dotnet pack -c Release
-# Inspect package contents (nupkg is a zip file)
-unzip -l ./bin/Release/MyAnalyzers.1.0.0.nupkg | grep analyzers/
-# Or use NuGet Package Explorer (GUI) for interactive inspection
-```
-
-See [skill:dotnet-csharp-source-generators] for additional shared packaging concepts (the `analyzers/dotnet/cs/` layout is identical for both analyzers and source generators).
+After packing, verify the layout with `unzip -l ./bin/Release/MyAnalyzers.1.0.0.nupkg | grep analyzers/` (nupkg files are zip archives). See [skill:dotnet-csharp-source-generators] for additional shared packaging concepts (the `analyzers/dotnet/cs/` layout is identical for both analyzers and source generators).
 
 ---
 

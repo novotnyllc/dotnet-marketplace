@@ -22,9 +22,8 @@ Enhance existing `skills/architecture/dotnet-observability/SKILL.md` with struct
 - [ ] Validation passes
 
 ## Done summary
-TBD
-
+Enhanced dotnet-observability skill with LoggerMessage.Define (legacy/pre-.NET 6), message template best practices, log level guidance, log filtering configuration, and attribution. Created new dotnet-middleware-patterns skill in api-development category covering pipeline ordering, custom middleware classes vs inline vs IMiddleware, short-circuit logic, request/response manipulation, exception handling (UseExceptionHandler + IExceptionHandler), and conditional middleware (UseWhen/MapWhen). Registered in plugin.json (104 skills total).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: cec6b5d, f2eec81
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

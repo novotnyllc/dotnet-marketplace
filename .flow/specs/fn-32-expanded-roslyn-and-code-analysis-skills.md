@@ -1,10 +1,10 @@
 # Expanded Roslyn and Code Analysis Skills
 
 ## Overview
-Extend the existing `dotnet-roslyn-analyzers` skill and add new skills to cover the full Roslyn authoring surface: multi-version targeting (Roslyn 3.7, 3.8, 4.x), CodeRefactoringProvider, DiagnosticSuppressor patterns, and a dedicated EditorConfig skill covering .NET CA/IDE rules, severity configuration, and AnalysisLevel settings.
+Extend the existing `dotnet-roslyn-analyzers` skill and add new skills to cover the full Roslyn authoring surface: multi-version targeting (Roslyn 3.8, 4.2, 4.4+), CodeRefactoringProvider, DiagnosticSuppressor patterns (noting DiagnosticSuppressor requires Roslyn 3.8+), and a dedicated EditorConfig skill covering .NET CA/IDE rules, severity configuration, and AnalysisLevel settings.
 
 ## Scope
-- **Roslyn version targeting** — Extend `dotnet-roslyn-analyzers` to cover multi-TFM analyzer packaging (Meziantou.Analyzer pattern: `analyzers/dotnet/roslyn3.8/cs/` path structure, `$(RoslynVersion)` property)
+- **Roslyn version targeting** — Extend `dotnet-roslyn-analyzers` to cover multi-TFM analyzer packaging (Meziantou.Analyzer pattern: `analyzers/dotnet/roslyn{version}/cs/` path structure with version boundaries 3.8, 4.2, 4.4, 4.6, 4.8, 4.14; `$(RoslynVersion)` property and `ROSLYN_X_Y` conditional compilation constants)
 - **CodeRefactoringProvider** — New or extended coverage for code refactoring authoring (currently missing entirely)
 - **EditorConfig skill** — Dedicated `dotnet-editorconfig` skill covering: .NET code style rules (IDE*), code quality rules (CA*), severity levels, AnalysisLevel, EnforceCodeStyleInBuild, global AnalyzerConfig
 - **Analyzer testing** — Ensure coverage of CSharpAnalyzerVerifier, CSharpCodeFixVerifier for multi-Roslyn-version test matrices
@@ -18,7 +18,7 @@ python3 scripts/generate_dist.py --strict
 ```
 
 ## Acceptance
-- [ ] Roslyn version targeting documented (3.7, 3.8, 4.x packaging paths)
+- [ ] Roslyn version targeting documented (3.8, 4.2, 4.4+ packaging paths and conditional compilation)
 - [ ] CodeRefactoringProvider authoring covered
 - [ ] Dedicated EditorConfig skill created with CA/IDE rules, severity, AnalysisLevel
 - [ ] Multi-version analyzer test patterns included
