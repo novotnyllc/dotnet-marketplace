@@ -255,3 +255,9 @@ When using conditional compilation guards for Roslyn API features, verify the ve
 
 ## 2026-02-15 manual [pitfall]
 dotnet_analyzer_diagnostic.category-Style.severity is invalid -- 'Style' is not a valid .NET analyzer category; use Design, Documentation, Globalization, Interoperability, Maintainability, Naming, Performance, SingleFile, Reliability, Security, or Usage; IDE rules use per-rule dotnet_diagnostic.IDE*.severity instead
+
+## 2026-02-15 manual [pitfall]
+Channel producer examples using fire-and-forget Task.Run must propagate errors via TryComplete(exception) not just TryComplete() in finally -- otherwise consumer blocks forever on silent producer failure
+
+## 2026-02-15 manual [pitfall]
+Minimal API endpoints returning IAsyncEnumerable<T> should return the enumerable directly, not wrapped in Results.Ok() -- wrapping may buffer the entire sequence instead of streaming

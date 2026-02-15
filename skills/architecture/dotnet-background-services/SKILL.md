@@ -1,15 +1,15 @@
 ---
 name: dotnet-background-services
-description: "WHEN implementing background work. BackgroundService, IHostedService, Channels producer/consumer, graceful shutdown."
+description: "WHEN implementing background work. BackgroundService, IHostedService, hosted service lifecycle, graceful shutdown."
 ---
 
 # dotnet-background-services
 
-Patterns for long-running background work in .NET applications. Covers `BackgroundService`, `IHostedService`, `System.Threading.Channels` for producer/consumer queues, and graceful shutdown handling.
+Patterns for long-running background work in .NET applications. Covers `BackgroundService`, `IHostedService`, hosted service lifecycle, and graceful shutdown handling.
 
-**Out of scope:** DI registration mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Project scaffolding is owned by fn-4 -- see [skill:dotnet-scaffold-project]. Testing strategies for background services -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for hosted service testing patterns.
+**Out of scope:** DI registration mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Project scaffolding is owned by fn-4 -- see [skill:dotnet-scaffold-project]. Testing strategies for background services -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for hosted service testing patterns. Channel<T> fundamentals, bounded/unbounded options, and drain patterns -- see [skill:dotnet-channels].
 
-Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns in background workers, [skill:dotnet-csharp-dependency-injection] for hosted service registration and scope management.
+Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns in background workers, [skill:dotnet-csharp-dependency-injection] for hosted service registration and scope management, [skill:dotnet-channels] for Channel<T> patterns used in background work queues.
 
 ---
 
@@ -189,221 +189,53 @@ public sealed class MyWorker : BackgroundService
 
 ---
 
-## Channels-Based Producer/Consumer
+## Channels Integration
 
-`System.Threading.Channels` provides a high-performance, thread-safe producer/consumer queue that is ideal for decoupling work submission from processing.
+See [skill:dotnet-channels] for comprehensive `Channel<T>` guidance including bounded/unbounded options, `BoundedChannelFullMode`, backpressure strategies, `itemDropped` callbacks, multiple consumers, performance tuning, and drain patterns.
 
-### Background Work Queue
-
-```csharp
-// The queue abstraction
-public interface IBackgroundTaskQueue
-{
-    ValueTask EnqueueAsync(
-        Func<IServiceProvider, CancellationToken, Task> workItem,
-        CancellationToken ct = default);
-
-    ValueTask<Func<IServiceProvider, CancellationToken, Task>> DequeueAsync(
-        CancellationToken ct);
-
-    /// <summary>
-    /// Try to dequeue a work item without blocking. Used during graceful drain.
-    /// </summary>
-    bool TryDequeue(
-        [MaybeNullWhen(false)] out Func<IServiceProvider, CancellationToken, Task> workItem);
-
-    /// <summary>
-    /// Signal that no more items will be enqueued. Allows drain loop to complete.
-    /// </summary>
-    void CompleteWriter();
-}
-
-// Channel-backed implementation
-public sealed class BackgroundTaskQueue : IBackgroundTaskQueue
-{
-    private readonly Channel<Func<IServiceProvider, CancellationToken, Task>> _queue;
-
-    public BackgroundTaskQueue(int capacity = 100)
-    {
-        var options = new BoundedChannelOptions(capacity)
-        {
-            FullMode = BoundedChannelFullMode.Wait,  // Back-pressure
-            SingleReader = false,
-            SingleWriter = false
-        };
-
-        _queue = Channel.CreateBounded<Func<IServiceProvider, CancellationToken, Task>>(options);
-    }
-
-    public ValueTask EnqueueAsync(
-        Func<IServiceProvider, CancellationToken, Task> workItem,
-        CancellationToken ct = default)
-    {
-        ArgumentNullException.ThrowIfNull(workItem);
-        return _queue.Writer.WriteAsync(workItem, ct);
-    }
-
-    public ValueTask<Func<IServiceProvider, CancellationToken, Task>> DequeueAsync(
-        CancellationToken ct)
-    {
-        return _queue.Reader.ReadAsync(ct);
-    }
-
-    public bool TryDequeue(
-        [MaybeNullWhen(false)] out Func<IServiceProvider, CancellationToken, Task> workItem)
-    {
-        return _queue.Reader.TryRead(out workItem);
-    }
-
-    public void CompleteWriter()
-    {
-        _queue.Writer.TryComplete();
-    }
-}
-```
-
-### Channel Consumer Worker
+The most common integration is a channel-backed background task queue consumed by a `BackgroundService`:
 
 ```csharp
+// Channel-backed work queue -- register as singleton
+public sealed class BackgroundTaskQueue
+{
+    private readonly Channel<Func<IServiceProvider, CancellationToken, Task>> _queue
+        = Channel.CreateBounded<Func<IServiceProvider, CancellationToken, Task>>(
+            new BoundedChannelOptions(100) { FullMode = BoundedChannelFullMode.Wait });
+
+    public ChannelWriter<Func<IServiceProvider, CancellationToken, Task>> Writer => _queue.Writer;
+    public ChannelReader<Func<IServiceProvider, CancellationToken, Task>> Reader => _queue.Reader;
+}
+
+// Consumer worker
 public sealed class QueueProcessorWorker(
-    IBackgroundTaskQueue taskQueue,
+    BackgroundTaskQueue queue,
     IServiceScopeFactory scopeFactory,
     ILogger<QueueProcessorWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("Queue processor started, waiting for work items");
-
-        while (!stoppingToken.IsCancellationRequested)
+        while (await queue.Reader.WaitToReadAsync(stoppingToken))
         {
-            try
+            while (queue.Reader.TryRead(out var workItem))
             {
-                var workItem = await taskQueue.DequeueAsync(stoppingToken);
-
-                using var scope = scopeFactory.CreateScope();
-                await workItem(scope.ServiceProvider, stoppingToken);
-            }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error executing queued work item");
+                try
+                {
+                    using var scope = scopeFactory.CreateScope();
+                    await workItem(scope.ServiceProvider, stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error executing queued work item");
+                }
             }
         }
-
-        logger.LogInformation("Queue processor stopped");
     }
 }
-```
 
-### Producer (Enqueueing Work)
-
-```csharp
-// In an endpoint -- offload slow work to background
-app.MapPost("/api/orders/{id}/notify", async (
-    string id,
-    IBackgroundTaskQueue queue,
-    CancellationToken ct) =>
-{
-    await queue.EnqueueAsync(async (sp, token) =>
-    {
-        var notifier = sp.GetRequiredService<IOrderNotifier>();
-        await notifier.SendNotificationsAsync(id, token);
-    }, ct);
-
-    return Results.Accepted();
-});
-```
-
-### Registration
-
-```csharp
-builder.Services.AddSingleton<IBackgroundTaskQueue>(
-    new BackgroundTaskQueue(capacity: 100));
+// Registration
+builder.Services.AddSingleton<BackgroundTaskQueue>();
 builder.Services.AddHostedService<QueueProcessorWorker>();
-```
-
-### Channel Options
-
-| Option | Bounded | Unbounded |
-|--------|---------|-----------|
-| Back-pressure | Yes (`FullMode` controls behavior) | No (unbounded growth risk) |
-| Memory safety | Capped at `capacity` items | Can exhaust memory |
-| Use when | Production workloads | Prototyping or guaranteed-low-volume |
-
-```csharp
-// Bounded -- preferred for production
-Channel.CreateBounded<T>(new BoundedChannelOptions(100)
-{
-    FullMode = BoundedChannelFullMode.Wait,     // Block producer until space
-    // Alternatives:
-    // FullMode = BoundedChannelFullMode.DropOldest  // Drop oldest item
-    // FullMode = BoundedChannelFullMode.DropNewest  // Drop the item being written
-    // FullMode = BoundedChannelFullMode.DropWrite   // Drop and return false
-});
-
-// Unbounded -- use only when you control the producer rate
-Channel.CreateUnbounded<T>(new UnboundedChannelOptions
-{
-    SingleReader = true,   // Optimization when only one consumer
-    SingleWriter = false
-});
-```
-
----
-
-## Multiple Consumers (Fan-Out)
-
-Scale processing by running multiple consumer instances:
-
-```csharp
-public sealed class ScaledQueueProcessor(
-    IBackgroundTaskQueue taskQueue,
-    IServiceScopeFactory scopeFactory,
-    ILogger<ScaledQueueProcessor> logger) : BackgroundService
-{
-    private const int WorkerCount = 3;
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        logger.LogInformation(
-            "Starting {WorkerCount} queue consumers", WorkerCount);
-
-        var workers = Enumerable.Range(0, WorkerCount)
-            .Select(i => ProcessQueueAsync(i, stoppingToken));
-
-        await Task.WhenAll(workers);
-    }
-
-    private async Task ProcessQueueAsync(
-        int workerId, CancellationToken ct)
-    {
-        logger.LogDebug("Consumer {WorkerId} started", workerId);
-
-        while (!ct.IsCancellationRequested)
-        {
-            try
-            {
-                var workItem = await taskQueue.DequeueAsync(ct);
-                using var scope = scopeFactory.CreateScope();
-                await workItem(scope.ServiceProvider, ct);
-            }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex,
-                    "Consumer {WorkerId}: error processing work item", workerId);
-            }
-        }
-
-        logger.LogDebug("Consumer {WorkerId} stopped", workerId);
-    }
-}
 ```
 
 ---
@@ -419,59 +251,6 @@ builder.Services.Configure<HostOptions>(options =>
 {
     options.ShutdownTimeout = TimeSpan.FromSeconds(60);
 });
-```
-
-### Drain Pattern for Channels
-
-Complete the writer to signal no more items will arrive, then drain remaining items before stopping:
-
-```csharp
-public sealed class GracefulQueueProcessor(
-    IBackgroundTaskQueue taskQueue,
-    IServiceScopeFactory scopeFactory,
-    ILogger<GracefulQueueProcessor> logger) : BackgroundService
-{
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        logger.LogInformation("Queue processor started");
-
-        try
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                var workItem = await taskQueue.DequeueAsync(stoppingToken);
-                using var scope = scopeFactory.CreateScope();
-                await workItem(scope.ServiceProvider, stoppingToken);
-            }
-        }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-        {
-            // Shutdown requested -- fall through to drain
-        }
-
-        // Signal producers that no more items will be accepted
-        taskQueue.CompleteWriter();
-
-        // Drain: process remaining items with a deadline
-        logger.LogInformation("Draining remaining work items");
-        using var drainCts = new CancellationTokenSource(TimeSpan.FromSeconds(25));
-
-        while (taskQueue.TryDequeue(out var remaining))
-        {
-            try
-            {
-                using var scope = scopeFactory.CreateScope();
-                await remaining(scope.ServiceProvider, drainCts.Token);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Error during drain");
-            }
-        }
-
-        logger.LogInformation("Queue processor stopped, drain complete");
-    }
-}
 ```
 
 ### Responding to Application Lifetime Events
@@ -547,7 +326,6 @@ public sealed class HealthCheckReporter(
 ## References
 
 - [Background tasks with hosted services](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services)
-- [System.Threading.Channels](https://learn.microsoft.com/en-us/dotnet/core/extensions/channels)
 - [BackgroundService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.backgroundservice)
 - [IHostedService interface](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice)
 - [Generic host shutdown](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host#host-shutdown)

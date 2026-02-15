@@ -29,9 +29,8 @@ Create skills/core-csharp/dotnet-channels/SKILL.md as a standalone deep skill fo
 - [ ] Registered in plugin.json
 - [ ] Description under 120 chars, budget verified
 ## Done summary
-TBD
-
+Created standalone dotnet-channels skill with comprehensive System.Threading.Channels coverage: Channel<T> fundamentals, all BoundedChannelFullMode modes, itemDropped callback (.NET 7+), producer/consumer patterns, IAsyncEnumerable integration (ReadAllAsync, await foreach, LINQ async operators), performance section (SingleReader/SingleWriter, WaitToReadAsync+TryRead, TryWrite fast path), and graceful shutdown/drain patterns. Registered in plugin.json (106 skills total).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c364d08, e1441d8
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
