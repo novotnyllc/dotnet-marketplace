@@ -5,13 +5,13 @@
 | Metric | Count |
 |--------|-------|
 | Skills reviewed | 9 |
-| Clean | 6 |
-| Needs Work | 3 |
+| Clean | 7 |
+| Needs Work | 2 |
 | Critical | 0 |
-| Total issues | 6 |
+| Total issues | 5 |
 | Critical issues | 0 |
 | High issues | 3 |
-| Low issues | 3 |
+| Low issues | 2 |
 
 ## Current Description Budget Impact
 
@@ -22,6 +22,8 @@
 | Projected savings if all trimmed to 120 | 0 chars |
 
 All 9 skills have descriptions at or under 120 characters. No budget pressure from this batch.
+
+Character counts measured using Python `len()` after stripping YAML quotes and trimming whitespace, consistent with the canonical parser from `_validate_skills.py`.
 
 ## Findings by Skill
 
@@ -169,9 +171,8 @@ All 9 skills have descriptions at or under 120 characters. No budget pressure fr
 | 11 | Progressive Disclosure Compliance | pass | 2,121 words |
 
 **Issues:**
-- [High] Two bare-text references to `dotnet-release-management` on lines 14 and 475 use backtick formatting instead of `[skill:dotnet-release-management]` syntax -- replace with proper cross-ref syntax
-- [High] Bare-text reference to `dotnet-roslyn-analyzers` on line 14 labeled "fn-27, planned" but this skill exists and is registered -- replace with `[skill:dotnet-roslyn-analyzers]` and remove "planned" qualifier
-- [Low] The "NBGV Integration" section (line 475) references `dotnet-release-management` as backtick text -- replace with `[skill:dotnet-release-management]`
+- [High] Two bare-text references to `dotnet-release-management` (Out of scope section and NBGV Integration section) use backtick formatting instead of `[skill:dotnet-release-management]` syntax -- replace with proper cross-ref syntax. Additionally, `dotnet-release-management` is missing from the formal Cross-references line at the end of the scope boundary section and should be added there.
+- [High] Bare-text reference to `dotnet-roslyn-analyzers` in the Out of scope section labeled "fn-27, planned" but this skill exists and is registered at `skills/core-csharp/dotnet-roslyn-analyzers` in plugin.json -- replace with `[skill:dotnet-roslyn-analyzers]` and remove "planned" qualifier
 
 ---
 
@@ -228,7 +229,7 @@ All 9 skills have descriptions at or under 120 characters. No budget pressure fr
 ### dotnet-localization
 
 **Category:** localization
-**Overall:** Needs Work
+**Overall:** Clean
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -242,10 +243,10 @@ All 9 skills have descriptions at or under 120 characters. No budget pressure fr
 | 8 | Composability | pass | Clear cross-refs to 4 UI framework skills and source generator skill |
 | 9 | Consistency | pass | Single skill in category -- no peers to compare against |
 | 10 | Registration & Budget | pass | 115 chars, registered |
-| 11 | Progressive Disclosure Compliance | warn | 2,226 words -- under 3,000 threshold, but the UI Framework Integration section (Blazor, MAUI, Uno, WPF subsections) covers 4 frameworks in moderate depth; if content grows, this section is the primary candidate for details.md extraction |
+| 11 | Progressive Disclosure Compliance | pass | 2,226 words -- well under 3,000 threshold |
 
 **Issues:**
-- [Low] At 2,226 words with 4 UI framework subsections, the skill is well within limits but has the most growth-prone content structure. Monitor if framework-specific content expands beyond architectural overview.
+(none)
 
 ---
 
@@ -259,7 +260,7 @@ All 9 skills have descriptions at or under 120 characters. No budget pressure fr
 
 4. **Bare-text skill references in dotnet-nuget-authoring:** The only cross-reference syntax issue in this batch is in dotnet-nuget-authoring, which uses backtick formatting (`` `dotnet-release-management` ``) instead of `[skill:dotnet-release-management]` for two references, and labels `dotnet-roslyn-analyzers` as "planned" when it already exists.
 
-5. **No missing details.md companion files:** No skill in this batch exceeds the 3,000-word threshold requiring a details.md companion. dotnet-xml-docs (2,998 words) is the closest but still under the threshold. dotnet-mermaid-diagrams (2,689 words) also approaches the threshold due to extensive diagram examples.
+5. **No missing details.md companion files:** No skill in this batch exceeds the 3,000-word threshold requiring a details.md companion. dotnet-xml-docs (2,998 words) is the closest but still under the threshold. dotnet-mermaid-diagrams (2,689 words) and dotnet-localization (2,226 words) are also worth monitoring if their content grows.
 
 6. **Epic identifier inconsistency in cross-references:** Some skills append `(fn-XX)` to cross-references (e.g., "see [skill:dotnet-gha-deploy] (fn-19)") while this is informational context, it varies in usage. This is a cross-batch pattern not specific to Batch F.
 
@@ -276,12 +277,9 @@ All 9 skills have descriptions at or under 120 characters. No budget pressure fr
 (none)
 
 ### High (should fix)
-- Replace bare-text backtick reference `` `dotnet-release-management` `` in `dotnet-nuget-authoring` (line 14, Out of scope section) with `[skill:dotnet-release-management]`
-- Replace bare-text backtick reference `` `dotnet-roslyn-analyzers` `` in `dotnet-nuget-authoring` (line 14, Out of scope section) with `[skill:dotnet-roslyn-analyzers]` and remove "planned" and "fn-27" qualifier since the skill exists and is registered
-- Replace bare-text backtick reference `` `dotnet-release-management` `` in `dotnet-nuget-authoring` (line 475, NBGV Integration section) with `[skill:dotnet-release-management]`
+- Replace bare-text backtick references to `` `dotnet-release-management` `` in `dotnet-nuget-authoring` (Out of scope section and NBGV Integration section) with `[skill:dotnet-release-management]`; also add `[skill:dotnet-release-management]` to the formal Cross-references line at the end of the scope boundary section
+- Replace bare-text backtick reference `` `dotnet-roslyn-analyzers` `` in `dotnet-nuget-authoring` (Out of scope section) with `[skill:dotnet-roslyn-analyzers]` and remove "planned" and "fn-27" qualifier -- skill is registered at `skills/core-csharp/dotnet-roslyn-analyzers` in plugin.json
 
 ### Low (nice to have)
 - Monitor `dotnet-xml-docs` (2,998 words) for details.md extraction if content grows beyond 3,000 words -- the comprehensive XML doc example section is the primary candidate
 - Monitor `dotnet-mermaid-diagrams` (2,689 words) for details.md extraction if content grows -- the extensive diagram examples could move to details.md
-- Monitor `dotnet-localization` (2,226 words) if UI framework subsections expand beyond architectural overview
-- Consider standardizing or removing `(fn-XX)` epic identifiers in cross-references across all skills (cross-batch observation, not specific to Batch F)
