@@ -53,9 +53,8 @@ grep -q '## References' skills/build-system/dotnet-msbuild-authoring/SKILL.md
 ```
 
 ## Done summary
-TBD
-
+Created dotnet-msbuild-authoring skill covering MSBuild authoring fundamentals: custom targets (BeforeTargets/AfterTargets/DependsOnTargets), incremental builds (Inputs/Outputs), import ordering, items and metadata, conditions, property functions, and Directory.Build.props/targets advanced patterns (import chain, condition guards, double-import prevention). Includes 8 Agent Gotchas and References section.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ee1b32a, c78ef3d
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

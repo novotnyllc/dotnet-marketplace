@@ -103,5 +103,10 @@
     "query": "Set up EF Core with migrations and DbContext",
     "expected_skill": "dotnet-efcore-patterns",
     "category": "architecture"
+  },
+  {
+    "query": "How do I write custom MSBuild targets with BeforeTargets and AfterTargets?",
+    "expected_skill": "dotnet-msbuild-authoring",
+    "category": "build-system"
   }
 ]

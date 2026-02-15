@@ -261,3 +261,6 @@ Channel producer examples using fire-and-forget Task.Run must propagate errors v
 
 ## 2026-02-15 manual [pitfall]
 Minimal API endpoints returning IAsyncEnumerable<T> should return the enumerable directly, not wrapped in Results.Ok() -- wrapping may buffer the entire sequence instead of streaming
+
+## 2026-02-15 manual [pitfall]
+MSBuild double-import sentinel guards must place content properties inside the \!= 'true' condition block alongside the sentinel -- a separate == 'true' block runs on every import because the sentinel is already set after first evaluation
