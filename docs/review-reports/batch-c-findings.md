@@ -493,7 +493,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 
 ## Cross-Cutting Observations
 
-1. **Bare skill name references are systematic in CI/CD skills:** All 8 CI/CD skills use bare text skill names (e.g., `dotnet-ado-patterns` instead of `[skill:dotnet-ado-patterns]`) in their scope boundary and Out of scope sections. This is a systematic pattern producing 39 bare references across the category. The worst offender is `dotnet-ado-unique` with 10 bare references. By contrast, the testing category has only 4 bare references across 2 skills. This is the highest-priority cross-cutting fix.
+1. **Bare skill name references are systematic in CI/CD skills:** All 8 CI/CD skills use bare text skill names (e.g., `dotnet-ado-patterns` instead of `[skill:dotnet-ado-patterns]`) in their scope boundary and Out of scope sections. This is a systematic pattern producing 36 bare reference occurrences across the category. The worst offender is `dotnet-ado-unique` with 10 bare references. By contrast, the testing category has only 4 bare references across 2 skills. This is the highest-priority cross-cutting fix.
 
 2. **Testing description budget pressure is severe:** 8 of 10 testing skills (80%) exceed the 120-char target. Three exceed the 140-char fail threshold (dotnet-snapshot-testing at 152, dotnet-test-quality at 149, dotnet-testing-strategy at 144). The CI/CD category is much healthier with only 1 of 8 skills slightly over (dotnet-ado-unique at 121). Trimming all testing descriptions to 120 chars would save approximately 261 chars from the aggregate budget.
 
@@ -520,7 +520,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 
 ### High (should fix)
 - Fix `dotnet-maui-testing` AppiumFixture to use `ValueTask` return types for `InitializeAsync` and `DisposeAsync` -- consistent with xUnit v3 and all testing category peers
-- Wrap all 39 bare skill name references in CI/CD skills with `[skill:]` syntax -- systematic issue across all 8 skills
+- Wrap all 36 bare skill name references in CI/CD skills with `[skill:]` syntax -- systematic issue across all 8 skills
 - Wrap 4 bare `dotnet-add-testing` references in `dotnet-snapshot-testing` and `dotnet-test-quality` with `[skill:]` syntax
 - Trim `dotnet-xunit` description from 133 to under 120 chars
 - Trim `dotnet-integration-testing` description from 130 to under 120 chars
