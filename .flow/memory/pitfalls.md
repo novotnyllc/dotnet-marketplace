@@ -249,3 +249,6 @@ When planning new skills, always check plugin.json and skills/ tree for existing
 
 ## 2026-02-15 manual [pitfall]
 Recursive validation/traversal examples must use IsSimpleType helper covering all common value types (DateTime, DateOnly, Guid, enums, Nullable<T>) and track visited objects to prevent circular reference stack overflow -- naive IsPrimitive+string checks miss most BCL types
+
+## 2026-02-15 manual [pitfall]
+When using conditional compilation guards for Roslyn API features, verify the version gate matches the version boundary table -- CollectionExpression is Roslyn 4.8 (VS 17.8), not 4.4 (VS 17.4); cross-check code examples against version tables in the same document

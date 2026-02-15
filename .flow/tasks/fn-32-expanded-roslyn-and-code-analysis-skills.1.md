@@ -24,9 +24,8 @@ Extend skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md to add: (1) multi-Ros
 - [ ] Multi-version test matrix guidance
 - [ ] No fn-N spec references
 ## Done summary
-TBD
-
+Extended dotnet-roslyn-analyzers SKILL.md with CodeRefactoringProvider authoring section and multi-Roslyn-version targeting (3.8-4.14) including conditional compilation constants, NuGet packaging paths, and test matrix guidance. Created companion details.md with full code examples to manage skill size.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 491ecd5e3339e8c9dcb2a1d0f95e0e4b61418a05, c4c4f2c7778cb57bdafbec843163d28739d10a62
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
