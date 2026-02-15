@@ -9,9 +9,9 @@ Per-target deployment guidance for Uno Platform applications: Web/WASM, iOS, And
 
 **Scope boundary:** This skill owns per-target deployment, debugging, packaging, and platform-specific gotchas. Core Uno Platform development (Extensions, MVUX, Toolkit, themes) is owned by [skill:dotnet-uno-platform]. MCP integration for live docs is owned by [skill:dotnet-uno-mcp].
 
-**Out of scope:** Uno Platform testing (Playwright for WASM, platform Appium tests) -- see [skill:dotnet-uno-testing]. General AOT/trimming patterns -- see [skill:dotnet-aot-wasm] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser].
+**Out of scope:** Uno Platform testing (Playwright for WASM, platform Appium tests) -- see [skill:dotnet-uno-testing]. General AOT/trimming patterns -- see [skill:dotnet-aot-wasm]. UI framework selection -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing, [skill:dotnet-aot-wasm] for general WASM AOT patterns (soft dependency), [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing, [skill:dotnet-aot-wasm] for general WASM AOT patterns, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 
@@ -82,7 +82,7 @@ Published output is a self-contained static site. No server-side runtime require
 
 **Trimming is critical for WASM.** Untrimmed apps can exceed 30MB. With trimming, typical apps are 5-15MB. AOT adds to the artifact size but eliminates interpreter overhead at runtime -- profile both download time and execution speed in target conditions.
 
-For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see the AOT section. For general WASM AOT patterns, see [skill:dotnet-aot-wasm] (may not exist yet).
+For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see the AOT section. For general WASM AOT patterns, see [skill:dotnet-aot-wasm].
 
 ### Behavior Differences
 

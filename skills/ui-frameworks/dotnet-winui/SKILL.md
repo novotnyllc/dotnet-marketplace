@@ -11,9 +11,9 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 **Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by [skill:dotnet-wpf-migration].
 
-**Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection decision tree -- see [skill:dotnet-ui-chooser]. WPF patterns -- see [skill:dotnet-wpf-modern].
+**Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser]. WPF patterns -- see [skill:dotnet-wpf-modern].
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

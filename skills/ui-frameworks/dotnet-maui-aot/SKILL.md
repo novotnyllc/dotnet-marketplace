@@ -9,11 +9,11 @@ Native AOT compilation for .NET MAUI on iOS and Mac Catalyst: compilation pipeli
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for MAUI is available on iOS and Mac Catalyst. Android uses a different compilation model (CoreCLR in .NET 11, Mono/AOT in .NET 8-10).
 
-**Scope boundary:** This skill owns MAUI-specific Native AOT on iOS/Mac Catalyst -- the compilation pipeline, publish configuration, size/startup improvements, library compatibility for MAUI apps, and testing AOT builds. General Native AOT patterns are owned by [skill:dotnet-native-aot]; AOT architecture decisions by [skill:dotnet-aot-architecture] (both may not exist yet).
+**Scope boundary:** This skill owns MAUI-specific Native AOT on iOS/Mac Catalyst -- the compilation pipeline, publish configuration, size/startup improvements, library compatibility for MAUI apps, and testing AOT builds. General Native AOT patterns are owned by [skill:dotnet-native-aot]; AOT architecture decisions by [skill:dotnet-aot-architecture].
 
-**Out of scope:** MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]. MAUI testing -- see [skill:dotnet-maui-testing]. WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm] (may not exist yet). General AOT architecture -- see [skill:dotnet-native-aot] (may not exist yet).
+**Out of scope:** MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]. MAUI testing -- see [skill:dotnet-maui-testing]. WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm]. General AOT architecture -- see [skill:dotnet-native-aot].
 
-Cross-references: [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-maui-testing] for testing AOT builds, [skill:dotnet-native-aot] for general AOT patterns (soft dependency), [skill:dotnet-aot-wasm] for WASM AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection (soft dependency).
+Cross-references: [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-maui-testing] for testing AOT builds, [skill:dotnet-native-aot] for general AOT patterns, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 

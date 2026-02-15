@@ -11,9 +11,9 @@ WPF on .NET 8+: Host builder and dependency injection, MVVM with CommunityToolki
 
 **Scope boundary:** This skill owns WPF on modern .NET patterns: Host builder, MVVM Toolkit, performance, modern C#, theming. Migration from .NET Framework to .NET 8+ is owned by [skill:dotnet-wpf-migration]. Desktop testing is owned by [skill:dotnet-ui-testing-core].
 
-**Out of scope:** WPF .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see [skill:dotnet-wpf-migration]. Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot] (may not exist yet). UI framework selection -- see [skill:dotnet-ui-chooser].
+**Out of scope:** WPF .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see [skill:dotnet-wpf-migration]. Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT (soft dependency), [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection.
 
 ---
 
