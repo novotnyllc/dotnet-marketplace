@@ -1,0 +1,29 @@
+{
+  "created_at": "2026-02-15T12:37:35.704029Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-37-skill-cleanup-sweep",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T21:56:38.736312Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [
+        "fn-31-self-contained-skills-port"
+      ],
+      "id": "fn-37-skill-cleanup-sweep",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-37-skill-cleanup-sweep.md",
+      "status": "open",
+      "title": "Skill Cleanup Sweep",
+      "updated_at": "2026-02-14T22:04:47.153406Z"
+    },
+    "spec": "# Skill Cleanup Sweep\n\n## Overview\nHousekeeping pass across all skills to remove internal tracking artifacts, fix stale references, update testing defaults, and enforce package version policy.\n\n## Scope\n1. **Remove fn-N references** \u2014 57 files contain fn-N spec references (e.g., \"implemented in fn-7\"). Skills should never reference internal planning IDs.\n2. **Remove .gitkeep files** \u2014 19+ unnecessary .gitkeep files in skill directories that now have content.\n3. **Fix broken cross-references** \u2014 `dotnet-advisor` references `[skill:dotnet-scaffolding-base]` which should be `[skill:dotnet-scaffold-project]` (lines 42, 171)\n4. **Update testing defaults** \u2014 All testing guidance should default to xUnit v3 with Microsoft.Testing.Platform v2 (MTP2), not xUnit v2\n5. **Minimize third-party deps** \u2014 Replace FluentValidation references with built-in alternatives (DataAnnotations, IValidateOptions, MinimalApis.Extensions)\n6. **System.CommandLine version** \u2014 Ensure any System.CommandLine references target >= 2.0.0 stable, not earlier betas\n7. **Package version updates** \u2014 Ensure all library version references use latest stable (prefer stable over prerelease)\n8. **Remove internal artifacts** \u2014 `skills/architecture/FN7-RECONCILIATION.md` should not ship\n9. **SOLID/DRY/SRP enforcement** \u2014 Ensure architecture-related skills engrain these principles (check `dotnet-clean-architecture`, `dotnet-csharp-coding-standards`, `dotnet-architecture-patterns`)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] Zero fn-N references in any skill SKILL.md content\n- [ ] Zero unnecessary .gitkeep files\n- [ ] All cross-references valid (validate-skills.sh passes)\n- [ ] Testing defaults updated to xUnit v3 + MTP2 across all testing skills\n- [ ] Third-party dep references minimized (built-in preferred)\n- [ ] System.CommandLine references target >= 2.0.0\n- [ ] Package versions updated to latest stable\n- [ ] FN7-RECONCILIATION.md removed\n- [ ] Architecture skills reference SOLID/DRY/SRP principles\n- [ ] All four validation commands pass\n\n## References\n- Context-scout findings: 57 files with fn-N refs, 19 .gitkeep files\n- `skills/foundation/dotnet-advisor/SKILL.md:42,171` \u2014 broken cross-ref\n- `skills/architecture/FN7-RECONCILIATION.md` \u2014 internal artifact to remove\n- https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/ \u2014 SRP anti-patterns reference\n"
+  },
+  "epic_id": "fn-37-skill-cleanup-sweep",
+  "schema_version": 2,
+  "tasks": []
+}
