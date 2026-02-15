@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-15T06:40:59.522075Z",
+  "created_at": "2026-02-15T07:38:38.928108Z",
   "epic": {
     "data": {
       "branch_name": "fn-32-expanded-roslyn-and-code-analysis-skills",
@@ -12,14 +12,14 @@
       "depends_on_epics": [],
       "id": "fn-32-expanded-roslyn-and-code-analysis-skills",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-15T06:47:32.294503Z",
       "spec_path": ".flow/specs/fn-32-expanded-roslyn-and-code-analysis-skills.md",
       "status": "open",
       "title": "Expanded Roslyn and Code Analysis Skills",
-      "updated_at": "2026-02-14T21:57:47.964386Z"
+      "updated_at": "2026-02-15T06:47:32.294668Z"
     },
-    "spec": "# Expanded Roslyn and Code Analysis Skills\n\n## Overview\nExtend the existing `dotnet-roslyn-analyzers` skill and add new skills to cover the full Roslyn authoring surface: multi-version targeting (Roslyn 3.7, 3.8, 4.x), CodeRefactoringProvider, DiagnosticSuppressor patterns, and a dedicated EditorConfig skill covering .NET CA/IDE rules, severity configuration, and AnalysisLevel settings.\n\n## Scope\n- **Roslyn version targeting** \u2014 Extend `dotnet-roslyn-analyzers` to cover multi-TFM analyzer packaging (Meziantou.Analyzer pattern: `analyzers/dotnet/roslyn3.8/cs/` path structure, `$(RoslynVersion)` property)\n- **CodeRefactoringProvider** \u2014 New or extended coverage for code refactoring authoring (currently missing entirely)\n- **EditorConfig skill** \u2014 Dedicated `dotnet-editorconfig` skill covering: .NET code style rules (IDE*), code quality rules (CA*), severity levels, AnalysisLevel, EnforceCodeStyleInBuild, global AnalyzerConfig\n- **Analyzer testing** \u2014 Ensure coverage of CSharpAnalyzerVerifier, CSharpCodeFixVerifier for multi-Roslyn-version test matrices\n\n**Testing default**: All test guidance uses xUnit v3 with Microsoft.Testing.Platform v2 (MTP2).\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Roslyn version targeting documented (3.7, 3.8, 4.x packaging paths)\n- [ ] CodeRefactoringProvider authoring covered\n- [ ] Dedicated EditorConfig skill created with CA/IDE rules, severity, AnalysisLevel\n- [ ] Multi-version analyzer test patterns included\n- [ ] Testing examples use xUnit v3 + MTP2\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected (< 15,000 chars total)\n- [ ] All validation commands pass\n\n## References\n- `skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md` \u2014 existing analyzer skill (692 lines)\n- Meziantou.Analyzer \u2014 multi-Roslyn-version packaging pattern\n- Microsoft Roslyn SDK docs \u2014 CodeRefactoringProvider, DiagnosticSuppressor\n"
+    "spec": "# Expanded Roslyn and Code Analysis Skills\n\n## Overview\nExtend the existing `dotnet-roslyn-analyzers` skill and add new skills to cover the full Roslyn authoring surface: multi-version targeting (Roslyn 3.8, 4.2, 4.4+), CodeRefactoringProvider, DiagnosticSuppressor patterns (noting DiagnosticSuppressor requires Roslyn 3.8+), and a dedicated EditorConfig skill covering .NET CA/IDE rules, severity configuration, and AnalysisLevel settings.\n\n## Scope\n- **Roslyn version targeting** \u2014 Extend `dotnet-roslyn-analyzers` to cover multi-TFM analyzer packaging (Meziantou.Analyzer pattern: `analyzers/dotnet/roslyn{version}/cs/` path structure with version boundaries 3.8, 4.2, 4.4, 4.6, 4.8, 4.14; `$(RoslynVersion)` property and `ROSLYN_X_Y` conditional compilation constants)\n- **CodeRefactoringProvider** \u2014 New or extended coverage for code refactoring authoring (currently missing entirely)\n- **EditorConfig skill** \u2014 Dedicated `dotnet-editorconfig` skill covering: .NET code style rules (IDE*), code quality rules (CA*), severity levels, AnalysisLevel, EnforceCodeStyleInBuild, global AnalyzerConfig\n- **Analyzer testing** \u2014 Ensure coverage of CSharpAnalyzerVerifier, CSharpCodeFixVerifier for multi-Roslyn-version test matrices\n\n**Testing default**: All test guidance uses xUnit v3 with Microsoft.Testing.Platform v2 (MTP2).\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Roslyn version targeting documented (3.8, 4.2, 4.4+ packaging paths and conditional compilation)\n- [ ] CodeRefactoringProvider authoring covered\n- [ ] Dedicated EditorConfig skill created with CA/IDE rules, severity, AnalysisLevel\n- [ ] Multi-version analyzer test patterns included\n- [ ] Testing examples use xUnit v3 + MTP2\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected (< 15,000 chars total)\n- [ ] All validation commands pass\n\n## References\n- `skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md` \u2014 existing analyzer skill (692 lines)\n- Meziantou.Analyzer \u2014 multi-Roslyn-version packaging pattern\n- Microsoft Roslyn SDK docs \u2014 CodeRefactoringProvider, DiagnosticSuppressor\n"
   },
   "epic_id": "fn-32-expanded-roslyn-and-code-analysis-skills",
   "schema_version": 2,
@@ -40,8 +40,27 @@
         "updated_at": "2026-02-14T22:03:12.175440Z"
       },
       "id": "fn-32-expanded-roslyn-and-code-analysis-skills.1",
-      "runtime": null,
-      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.1 Add Roslyn multi-version targeting and CodeRefactoringProvider coverage\n\n## Description\nExtend skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md to add: (1) multi-Roslyn-version targeting (3.7, 3.8, 4.x) with version-specific packaging paths, and (2) CodeRefactoringProvider authoring (currently missing entirely).\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md\n\n## Approach\n- Multi-version targeting: Follow Meziantou.Analyzer pattern with $(RoslynVersion) property and analyzers/dotnet/roslyn3.8/cs/ NuGet packaging paths\n- CodeRefactoringProvider: Register via [ExportCodeRefactoringProvider], implement ComputeRefactoringsAsync, create CodeAction instances\n- Version-specific conditional compilation: #if ROSLYN3_8 patterns\n- Add section after existing DiagnosticAnalyzer/CodeFixProvider sections\n\n## Key context\n- Existing skill is 692 lines -- add sections, do not restructure\n## Acceptance\n- [ ] Multi-Roslyn-version targeting documented (3.7, 3.8, 4.x packaging paths)\n- [ ] CodeRefactoringProvider authoring covered\n- [ ] Multi-version test matrix guidance\n- [ ] No fn-N spec references\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T06:50:05.765513Z",
+        "evidence": {
+          "commits": [
+            "491ecd5e3339e8c9dcb2a1d0f95e0e4b61418a05",
+            "c4c4f2c7778cb57bdafbec843163d28739d10a62"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T07:00:58.654888Z"
+      },
+      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.1 Add Roslyn multi-version targeting and CodeRefactoringProvider coverage\n\n## Description\nExtend skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md to add: (1) multi-Roslyn-version targeting (3.8, 4.2, 4.4, 4.6, 4.8, 4.14) with version-specific NuGet packaging paths and conditional compilation constants, and (2) CodeRefactoringProvider authoring (currently missing entirely).\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md\n\n## Approach\n- Multi-version targeting: Follow Meziantou.Analyzer pattern with $(RoslynVersion) property and analyzers/dotnet/roslyn{version}/cs/ NuGet packaging paths (version boundaries: 3.8, 4.2, 4.4, 4.6, 4.8, 4.14)\n- Conditional compilation constants: ROSLYN_X_Y and ROSLYN_X_Y_OR_GREATER (e.g., #if ROSLYN_4_2_OR_GREATER)\n- CodeRefactoringProvider: Register via [ExportCodeRefactoringProvider], implement ComputeRefactoringsAsync, create CodeAction instances\n- DiagnosticSuppressor version gate: Note that DiagnosticSuppressor requires Roslyn 3.8+ in the multi-version targeting section\n- Add sections after existing DiagnosticSuppressor section\n- **Size management:** If skill exceeds ~750 lines after additions, extract extended code examples to a companion details.md file (following the pattern used by dotnet-csharp-code-smells)\n\n## Key context\n- Existing skill is 692 lines -- add sections, do not restructure\n## Acceptance\n- [ ] Multi-Roslyn-version targeting documented (3.8, 4.2, 4.4+ packaging paths and conditional compilation)\n- [ ] DiagnosticSuppressor Roslyn 3.8+ version gate documented\n- [ ] Skill size managed (details.md if >750 lines)\n- [ ] CodeRefactoringProvider authoring covered\n- [ ] Multi-version test matrix guidance\n- [ ] No fn-N spec references\n## Done summary\nExtended dotnet-roslyn-analyzers SKILL.md with CodeRefactoringProvider authoring section and multi-Roslyn-version targeting (3.8-4.14) including conditional compilation constants, NuGet packaging paths, and test matrix guidance. Created companion details.md with full code examples to manage skill size.\n## Evidence\n- Commits: 491ecd5e3339e8c9dcb2a1d0f95e0e4b61418a05, c4c4f2c7778cb57bdafbec843163d28739d10a62\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     },
     {
       "data": {
@@ -59,8 +78,27 @@
         "updated_at": "2026-02-14T22:03:12.312255Z"
       },
       "id": "fn-32-expanded-roslyn-and-code-analysis-skills.2",
-      "runtime": null,
-      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.2 Create dedicated EditorConfig skill\n\n## Description\nCreate skills/core-csharp/dotnet-editorconfig/SKILL.md as a dedicated EditorConfig skill covering .NET code style rules (IDE*), code quality rules (CA*), severity configuration, AnalysisLevel, EnforceCodeStyleInBuild, and global AnalyzerConfig files.\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-editorconfig/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- .editorconfig structure and precedence (directory hierarchy)\n- .NET code style rules: IDE0001-IDE0090+ (naming, formatting, expression-level preferences)\n- Code quality rules: CA1000+ (design, globalization, performance, reliability)\n- Severity levels: none, silent, suggestion, warning, error\n- AnalysisLevel property (latest, preview, 5.0, 6.0, etc.)\n- EnforceCodeStyleInBuild for CI enforcement\n- Global AnalyzerConfig files (.globalconfig)\n- Cross-ref to [skill:dotnet-roslyn-analyzers] and [skill:dotnet-project-structure]\n## Acceptance\n- [ ] IDE* and CA* rule categories documented\n- [ ] Severity and AnalysisLevel covered\n- [ ] Global AnalyzerConfig documented\n- [ ] Cross-refs to related skills\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T07:08:49.265021Z",
+        "evidence": {
+          "commits": [
+            "b08ca5c",
+            "39975a2"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T07:18:59.713972Z"
+      },
+      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.2 Create dedicated EditorConfig skill\n\n## Description\nCreate skills/core-csharp/dotnet-editorconfig/SKILL.md as a dedicated EditorConfig skill covering .NET code style rules (IDE*), code quality rules (CA*), severity configuration, AnalysisLevel, EnforceCodeStyleInBuild, and global AnalyzerConfig files.\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-editorconfig/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- .editorconfig structure and precedence (directory hierarchy)\n- .NET code style rules: IDE0001-IDE0090+ (naming, formatting, expression-level preferences)\n- Code quality rules: CA1000+ (design, globalization, performance, reliability)\n- Severity levels: none, silent, suggestion, warning, error\n- AnalysisLevel property (latest, preview, 5.0, 6.0, etc.)\n- EnforceCodeStyleInBuild for CI enforcement\n- Global AnalyzerConfig files (.globalconfig)\n- Cross-ref to [skill:dotnet-roslyn-analyzers], [skill:dotnet-project-structure], and [skill:dotnet-add-analyzers] (scope overlap: consuming analyzers and EditorConfig severity configuration)\n## Acceptance\n- [ ] IDE* and CA* rule categories documented\n- [ ] Severity and AnalysisLevel covered\n- [ ] Global AnalyzerConfig documented\n- [ ] Cross-refs to related skills (dotnet-roslyn-analyzers, dotnet-project-structure, dotnet-add-analyzers)\n- [ ] Registered in plugin.json\n## Done summary\nCreated dedicated dotnet-editorconfig skill covering EditorConfig hierarchy/precedence, IDE* code style rules, CA* quality rule severity configuration, bulk category severity, AnalysisLevel/EnforceCodeStyleInBuild, global AnalyzerConfig files (.globalconfig), naming rules (IDE1006), generated code configuration, and configuration templates. Deduplicated overlapping content with dotnet-add-analyzers via bidirectional cross-references.\n## Evidence\n- Commits: b08ca5c, 39975a2\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     },
     {
       "data": {
@@ -80,8 +118,26 @@
         "updated_at": "2026-02-14T22:03:12.440082Z"
       },
       "id": "fn-32-expanded-roslyn-and-code-analysis-skills.3",
-      "runtime": null,
-      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.3 Update analyzer testing patterns for xUnit v3 and MTP2\n\n## Description\nUpdate analyzer testing examples in dotnet-roslyn-analyzers to use xUnit v3 with Microsoft.Testing.Platform v2 (MTP2). Update CSharpAnalyzerVerifier/CSharpCodeFixVerifier patterns and package references.\n\n**Size:** S\n**Files:** skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md\n\n## Approach\n- Update test examples from xUnit v2 to xUnit v3 patterns\n- Use Microsoft.Testing.Platform v2 runner\n- Update NuGet package references to latest stable versions\n- Ensure multi-Roslyn-version test matrix works with xUnit v3\n## Acceptance\n- [ ] Test examples use xUnit v3 + MTP2\n- [ ] Package references updated to latest stable\n- [ ] Multi-version test matrix compatible\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T07:25:02.522221Z",
+        "evidence": {
+          "commits": [
+            "6e90efa1afd49ad783214ac5192a806c1d1671b2"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T07:32:41.429760Z"
+      },
+      "spec": "# fn-32-expanded-roslyn-and-code-analysis-skills.3 Update analyzer testing patterns for xUnit v3 and MTP2\n\n## Description\nUpdate analyzer testing examples in dotnet-roslyn-analyzers to use xUnit v3 with Microsoft.Testing.Platform v2 (MTP2). Update CSharpAnalyzerVerifier/CSharpCodeFixVerifier/CSharpCodeRefactoringVerifier patterns and package references.\n<!-- Updated by plan-sync: fn-32.1 added CSharpCodeRefactoringVerifier<T> patterns in details.md -->\n\n**Size:** S\n**Files:** skills/core-csharp/dotnet-roslyn-analyzers/SKILL.md, skills/core-csharp/dotnet-roslyn-analyzers/details.md\n\n## Approach\n- Update test examples from xUnit v2 to xUnit v3 patterns in both SKILL.md and details.md\n- Use Microsoft.Testing.Platform v2 runner\n- Update NuGet package references to latest stable versions\n- Update CSharpCodeRefactoringVerifier<T> test examples in details.md (added by fn-32.1) alongside CSharpAnalyzerVerifier and CSharpCodeFixVerifier\n- Ensure multi-Roslyn-version test matrix works with xUnit v3\n## Acceptance\n- [ ] Test examples use xUnit v3 + MTP2 in SKILL.md\n- [ ] Test examples use xUnit v3 + MTP2 in details.md (CSharpCodeRefactoringVerifier<T> tests)\n- [ ] Package references updated to latest stable\n- [ ] Multi-version test matrix compatible\n## Done summary\nUpdated analyzer testing patterns from xUnit v2 to xUnit v3 (3.2.2) with Microsoft.Testing.Platform v2 (MTP2) runner in both SKILL.md and details.md. Updated Roslyn testing packages to 1.1.3 (framework-agnostic with DefaultVerifier), Microsoft.CodeAnalysis.Analyzers to 3.11.0, and CI matrix to .NET 10 SDK.\n## Evidence\n- Commits: 6e90efa1afd49ad783214ac5192a806c1d1671b2\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     }
   ]
 }

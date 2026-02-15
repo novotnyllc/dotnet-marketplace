@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-33-systemthreadingchannels-skill",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T07:50:27.090984Z",
   "spec_path": ".flow/specs/fn-33-systemthreadingchannels-skill.md",
   "status": "open",
   "title": "System.Threading.Channels Skill",
-  "updated_at": "2026-02-14T21:57:58.272882Z"
+  "updated_at": "2026-02-15T07:50:27.091188Z"
 }

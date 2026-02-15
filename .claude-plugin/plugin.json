@@ -18,6 +18,7 @@
     "skills/core-csharp/dotnet-roslyn-analyzers",
     "skills/core-csharp/dotnet-editorconfig",
     "skills/core-csharp/dotnet-validation-patterns",
+    "skills/core-csharp/dotnet-channels",
     "skills/project-structure/dotnet-project-structure",
     "skills/project-structure/dotnet-scaffold-project",
     "skills/project-structure/dotnet-add-analyzers",
