@@ -18,9 +18,8 @@ Review all skills in: foundation (4), core-csharp (9), project-structure (6), re
 - [ ] Description lengths measured and aggregate budget impact noted
 
 ## Done summary
-TBD
-
+Audited all 20 Batch A skills (foundation/4, core-csharp/9, project-structure/6, release-management/1) against the 11-dimension rubric. Produced findings report at docs/review-reports/batch-a-findings.md with per-skill evaluations: Clean=11, Needs Work=6, Critical=3. Key findings: 3 descriptions over 140 chars (fail), 2 broken cross-refs in dotnet-advisor, 1 stale planned reference, 1 non-portable grep flag.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ec40d55, ad9af29471e2dee3d151c5b1cf0828e1349d3247
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
