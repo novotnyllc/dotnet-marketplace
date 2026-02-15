@@ -23,9 +23,8 @@ Add a prominent cross-reference to `CONTRIBUTING-SKILLS.md` in `CONTRIBUTING.md`
 - `AGENTS.md` (edit, if needed)
 
 ## Done summary
-TBD
-
+Added cross-references to CONTRIBUTING-SKILLS.md in CONTRIBUTING.md (blockquote callout in Skill Authoring Guide section), CLAUDE.md (References section), and AGENTS.md (Cross-References section) so contributors can discover the comprehensive skill authoring how-to manual.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f348651c089355ae528525e371fe0250ac924151
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
