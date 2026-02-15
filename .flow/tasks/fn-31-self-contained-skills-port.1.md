@@ -28,9 +28,8 @@ Enhance existing `skills/cli-tools/dotnet-system-commandline/SKILL.md` with port
 - [ ] Validation passes
 
 ## Done summary
-TBD
-
+Enhanced System.CommandLine skill from beta4 to 2.0.0 GA API: rewrote all code examples for SetAction/ParseResult patterns, added custom type parsing (CustomParser property), testing with TextWriter capture via InvocationConfiguration, DI integration without discontinued Hosting package, comprehensive beta4-to-GA migration table, and Aaronontheweb/dotnet-skills attribution.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: a9dfbeaffbdc15d0ba9c54c66fc9ee3d680845fa
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

@@ -7,7 +7,8 @@ The spec references Aaronontheweb/dotnet-skills as reference material but the pl
 Skills to port/adapt from dotnet-skills. Several already exist and should be **enhanced** rather than duplicated:
 
 ### Enhance existing skills (port additional content into them)
-- **System.CommandLine** (`skills/cli-tools/dotnet-system-commandline/`) — enhance with >= 2.0.0 GA patterns, SetHandler, custom type converters, testing
+- **System.CommandLine** (`skills/cli-tools/dotnet-system-commandline/`) — enhance with >= 2.0.0 GA patterns, SetAction, CustomParser, testing
+<!-- Updated by plan-sync: fn-31-self-contained-skills-port.1 used SetAction (not SetHandler) and CustomParser property (not "custom type converters") -->
 - **gRPC** (`skills/serialization/dotnet-grpc/`) — enhance with interceptors, streaming patterns, gRPC-Web, deadline/cancellation
 - **SignalR / real-time** (`skills/serialization/dotnet-realtime-communication/`) — enhance with hub design, strongly-typed hubs, groups, scaling with Redis backplane
 - **Logging/Observability** (`skills/architecture/dotnet-observability/`) — enhance with structured logging patterns, LoggerMessage, message templates, scopes
