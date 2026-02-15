@@ -113,5 +113,10 @@
     "query": "Build a rich console UI with Spectre.Console tables and progress bars",
     "expected_skill": "dotnet-spectre-console",
     "category": "tui"
+  },
+  {
+    "query": "How do I build a terminal UI app with windows and menus using Terminal.Gui?",
+    "expected_skill": "dotnet-terminal-gui",
+    "category": "tui"
   }
 ]

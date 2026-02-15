@@ -4,22 +4,23 @@
 
 ## Skill Routing Index
 
-The plugin organizes 101 skills into 19 categories. Use this index to identify which category covers your domain.
+The plugin organizes 111 skills into 21 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
 | **Foundation** | 4 | Project analysis, version detection, skill routing, plugin publishing |
-| **Core C#** | 9 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers |
+| **Core C#** | 12 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels |
 | **Project Structure** | 6 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization |
-| **Architecture** | 10 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers |
+| **Architecture** | 11 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID principles |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |
 | **Testing** | 10 | Test strategy, xUnit v3, integration testing, UI testing, Playwright, snapshot testing |
-| **API Development** | 5 | Minimal APIs, versioning, OpenAPI, API security, input validation |
+| **API Development** | 6 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns |
 | **Security** | 3 | OWASP compliance, secrets management, cryptography |
 | **Multi-Targeting** | 2 | TFM multi-targeting with polyfills, .NET version upgrade paths and migration |
 | **UI Frameworks** | 13 | Blazor, Uno Platform, MAUI, WinUI, WPF, WinForms, UI framework selection |
 | **Native AOT** | 4 | Native AOT compilation, trimming, AOT architecture, WASM AOT |
 | **CLI Tools** | 5 | System.CommandLine, CLI architecture, distribution, packaging, release pipelines |
+| **TUI** | 2 | Terminal.Gui full TUI apps, Spectre.Console rich console output and CLI framework |
 | **Agent Meta-Skills** | 4 | Agent gotchas, build analysis, csproj reading, solution navigation |
 | **Performance** | 4 | BenchmarkDotNet, performance patterns, profiling, CI benchmarking |
 | **CI/CD** | 8 | GitHub Actions (patterns, build, publish, deploy), Azure DevOps (patterns, build, publish, unique) |
@@ -27,6 +28,7 @@ The plugin organizes 101 skills into 19 categories. Use this index to identify w
 | **Release Management** | 1 | NBGV versioning, changelogs, SemVer strategy |
 | **Documentation** | 5 | Doc strategy, Mermaid diagrams, GitHub docs, XML docs, API docs |
 | **Localization** | 1 | i18n with .resx, IStringLocalizer, RTL, pluralization |
+| **Build System** | 3 | MSBuild authoring, custom MSBuild tasks, build optimization |
 
 For the complete skill-level catalog with routing decision trees, see the `dotnet-advisor` skill at `skills/foundation/dotnet-advisor/SKILL.md`.
 

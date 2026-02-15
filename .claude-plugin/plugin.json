@@ -111,7 +111,9 @@
     "skills/localization/dotnet-localization",
     "skills/build-system/dotnet-msbuild-authoring",
     "skills/build-system/dotnet-msbuild-tasks",
-    "skills/build-system/dotnet-build-optimization"
+    "skills/build-system/dotnet-build-optimization",
+    "skills/tui/dotnet-terminal-gui",
+    "skills/tui/dotnet-spectre-console"
   ],
   "agents": [
     "agents/dotnet-architect.md",
