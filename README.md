@@ -164,7 +164,51 @@ sequenceDiagram
 
 ## Cross-Agent Support
 
-dotnet-artisan supports multiple AI coding assistants through a cross-agent build pipeline. The canonical skill definitions in `skills/` are authored once using the Agent Skills open standard and then transformed into platform-specific formats.
+dotnet-artisan supports multiple AI coding assistants through a cross-agent build pipeline. The canonical skill definitions in `skills/` are authored once using the Agent Skills open standard and then transformed into platform-specific formats. Generated outputs are deployed to GitHub Pages for stable, auto-updatable distribution.
+
+### Distribution URLs
+
+On each tagged release, the `dist/` directory is deployed to GitHub Pages:
+
+| Resource | URL |
+|---|---|
+| **Manifest** | `https://novotnyllc.github.io/dotnet-marketplace/manifest.json` |
+| **Claude Code** | `https://novotnyllc.github.io/dotnet-marketplace/claude/` |
+| **GitHub Copilot** | `https://novotnyllc.github.io/dotnet-marketplace/copilot/` |
+| **OpenAI Codex** | `https://novotnyllc.github.io/dotnet-marketplace/codex/` |
+
+### Auto-Update Polling
+
+Consumers can poll `manifest.json` to detect new releases and auto-update their local copies. The manifest includes version, timestamp, and per-target SHA256 checksums:
+
+```json
+{
+  "version": "1.2.3",
+  "generated_at": "2026-02-14T12:00:00Z",
+  "targets": {
+    "claude": { "path": "claude/", "sha256": "<checksum>" },
+    "copilot": { "path": "copilot/", "sha256": "<checksum>" },
+    "codex": { "path": "codex/", "sha256": "<checksum>" }
+  }
+}
+```
+
+**Polling contract:**
+- Poll `manifest.json` no more than every **15 minutes**
+- GitHub Pages CDN has an approximate **10-minute TTL** -- content may take up to 10 minutes to propagate after a release
+- Compare `version` or `sha256` fields to detect updates; download only changed targets
+
+### One-Time Repository Setup
+
+To enable GitHub Pages deployment for a fork or new instance:
+
+1. Go to **Settings** > **Pages** in your GitHub repository
+2. Under **Source**, select **Deploy from GitHub Actions** (not "Deploy from a branch")
+3. No further configuration is needed -- the `release.yml` workflow handles deployment automatically on tag push
+
+### Private Repository Considerations
+
+GitHub Pages requires the repository to be **public** (or requires GitHub Pro/Enterprise for private repositories). For private repositories, consumers can use the GitHub API to fetch release assets directly as a fallback. The GitHub Release is still created on each tag push for changelog notes.
 
 ### Pipeline Overview
 
@@ -183,9 +227,10 @@ During generation, the pipeline applies several transformations to ensure compat
 - **Cross-references** (`[skill:skill-name]`) are resolved to platform-appropriate links or inline text
 - **Agent-specific directives** are omitted for platforms that do not support agent delegation
 - **Hook and MCP references** are omitted for platforms that do not support these features
-- **Validation** via `scripts/validate_cross_agent.py` ensures all generated outputs conform to their target platform's requirements
+- **Manifest generation** produces `dist/manifest.json` with version, timestamp, and per-target SHA256 checksums
+- **Validation** via `scripts/validate_cross_agent.py` ensures all generated outputs conform to their target platform's requirements (including manifest schema and checksum correctness)
 
-The CI workflow (`validate.yml`) runs both generation and conformance validation on every push and pull request.
+The CI workflow (`validate.yml`) runs both generation and conformance validation on every push and pull request. The release workflow (`release.yml`) deploys validated outputs to GitHub Pages on tag push.
 
 ## Usage Examples
 

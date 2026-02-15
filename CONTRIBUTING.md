@@ -147,7 +147,7 @@ Generates platform-specific outputs in `dist/` (Claude, Copilot, Codex) and vali
 python3 scripts/validate_cross_agent.py
 ```
 
-Validates that generated distribution outputs conform to each target platform's requirements.
+Validates that generated distribution outputs conform to each target platform's requirements, including manifest schema and SHA256 checksum correctness.
 
 Run all four before submitting:
 
@@ -157,6 +157,12 @@ Run all four before submitting:
 python3 scripts/generate_dist.py --strict && \
 python3 scripts/validate_cross_agent.py
 ```
+
+### Release and Deployment
+
+On tag push (`v*`), the `release.yml` workflow validates the plugin, generates cross-agent outputs, deploys `dist/` to GitHub Pages, and creates a GitHub Release for changelog notes. The deployed content is available at `https://novotnyllc.github.io/dotnet-marketplace/` with a `manifest.json` at the root for auto-update polling.
+
+See the [Cross-Agent Support](README.md#cross-agent-support) section of the README for Pages URLs, polling contract, and one-time repository setup instructions.
 
 ## Hooks and MCP Contributions
 
