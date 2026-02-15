@@ -20,9 +20,8 @@ Review all skills in: ui-frameworks (13), agent-meta-skills (4) — 17 skills to
 - [ ] Issues tagged by severity: Critical (broken refs, budget violations), High, Low
 
 ## Done summary
-TBD
-
+Audited 17 skills in Batch E (13 ui-frameworks + 4 agent-meta-skills) against the 11-dimension rubric. Found 3 Clean, 10 Needs Work, 4 Critical. Key findings: 4 agent-meta-skills have descriptions over 140 chars (fail), 7 ui-frameworks skills have stale "(may not exist yet)" markers on AOT skills that now exist.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 12dab990c1c2bdb4c0b6a4128d26c7e3b80ff8fd
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

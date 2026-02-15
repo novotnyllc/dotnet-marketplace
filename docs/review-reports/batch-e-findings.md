@@ -75,6 +75,8 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 10 | Registration & Budget | pass | 107 chars, registered |
 | 11 | Progressive Disclosure Compliance | pass | 2,169 words |
 
+**Issues:** (none)
+
 ---
 
 ### dotnet-blazor-auth
@@ -95,6 +97,8 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 9 | Consistency | pass | - |
 | 10 | Registration & Budget | pass | 120 chars, registered |
 | 11 | Progressive Disclosure Compliance | pass | 1,569 words |
+
+**Issues:** (none)
 
 ---
 
@@ -164,6 +168,8 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 9 | Consistency | pass | - |
 | 10 | Registration & Budget | pass | 104 chars, registered |
 | 11 | Progressive Disclosure Compliance | pass | 1,948 words |
+
+**Issues:** (none)
 
 ---
 
