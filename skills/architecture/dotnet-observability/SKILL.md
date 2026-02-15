@@ -7,9 +7,9 @@ description: "WHEN adding observability. OpenTelemetry traces/metrics/logs, stru
 
 Modern observability for .NET applications using OpenTelemetry, structured logging, health checks, and custom metrics. Covers the three pillars of observability (traces, metrics, logs), integration with `Microsoft.Extensions.Diagnostics` and `System.Diagnostics`, and production-ready health check patterns.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Testing observability output -- see [skill:dotnet-integration-testing] for verifying telemetry in integration tests. CI/CD pipeline integration for telemetry collection is owned by fn-19 -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns].
+**Out of scope:** DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns -- see [skill:dotnet-csharp-async-patterns]. Testing observability output -- see [skill:dotnet-integration-testing] for verifying telemetry in integration tests. CI/CD pipeline integration for telemetry collection -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. Middleware pipeline patterns (request logging middleware, exception handling middleware) -- see [skill:dotnet-middleware-patterns].
 
-Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async patterns in background exporters, [skill:dotnet-resilience] for Polly telemetry integration.
+Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async patterns in background exporters, [skill:dotnet-resilience] for Polly telemetry integration, [skill:dotnet-middleware-patterns] for request/exception logging middleware.
 
 ---
 
@@ -314,6 +314,100 @@ logger.OrderCreated(order.Id, order.CustomerId, order.Lines.Count, order.Total);
 - **Compile-time validation** of message templates and parameters
 - **Structured by default** -- parameters become named properties in the log event
 
+### LoggerMessage.Define (Delegate-Based)
+
+Before source generators (.NET 5 and earlier), use `LoggerMessage.Define` to achieve the same zero-allocation benefits. This approach still works in modern .NET and is useful in non-partial classes or when targeting older frameworks:
+
+```csharp
+public static class LogMessages
+{
+    private static readonly Action<ILogger, string, int, Exception?> s_orderCreated =
+        LoggerMessage.Define<string, int>(
+            LogLevel.Information,
+            new EventId(1, nameof(OrderCreated)),
+            "Order {OrderId} created with {LineCount} items");
+
+    public static void OrderCreated(
+        ILogger logger, string orderId, int lineCount)
+        => s_orderCreated(logger, orderId, lineCount, null);
+
+    private static readonly Action<ILogger, string, Exception?> s_orderFailed =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(2, nameof(OrderFailed)),
+            "Failed to process order {OrderId}");
+
+    public static void OrderFailed(
+        ILogger logger, string orderId, Exception exception)
+        => s_orderFailed(logger, orderId, exception);
+}
+```
+
+Prefer `[LoggerMessage]` source generators for new code targeting .NET 6+. Use `LoggerMessage.Define` only when source generators are unavailable.
+
+### Message Templates: Do and Do Not
+
+Message templates use named placeholders that become structured properties. This is fundamental to structured logging -- violations prevent log indexing and search.
+
+```csharp
+// CORRECT: structured message template with named placeholders
+logger.LogInformation("Order {OrderId} shipped to {City}", orderId, city);
+
+// WRONG: string interpolation -- bypasses structured logging entirely
+logger.LogInformation($"Order {orderId} shipped to {city}");
+
+// WRONG: string concatenation -- same problem
+logger.LogInformation("Order " + orderId + " shipped to " + city);
+
+// WRONG: ToString() in template -- loses type information
+logger.LogInformation("Order {OrderId} shipped at {Time}",
+    orderId, DateTime.UtcNow.ToString("o")); // pass DateTime directly
+
+// CORRECT: pass objects directly, let the formatter handle rendering
+logger.LogInformation("Order {OrderId} shipped at {ShippedAt}",
+    orderId, DateTime.UtcNow);
+```
+
+### Log Level Best Practices
+
+| Level | When to Use | Example |
+|-------|-------------|---------|
+| `Trace` | Detailed diagnostic info (method entry/exit, variable values) | `Entering ProcessOrder with {OrderId}` |
+| `Debug` | Internal app state useful during development | `Cache hit for product {ProductId}` |
+| `Information` | Normal application flow, business events | `Order {OrderId} created successfully` |
+| `Warning` | Unexpected situations that do not prevent operation | `Retry {Attempt} for external API call` |
+| `Error` | Failures that affect the current operation | `Failed to save order {OrderId}` |
+| `Critical` | Application-wide failures requiring immediate action | `Database connection pool exhausted` |
+
+### Log Filtering (Microsoft.Extensions.Logging)
+
+Configure log level filtering in `appsettings.json` to suppress noisy framework logs while keeping application logs at the desired level:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.AspNetCore.HttpLogging": "Information",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Warning",
+      "System.Net.Http.HttpClient": "Warning",
+      "MyApp": "Debug"
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    }
+  }
+}
+```
+
+Key filtering rules:
+- **Most-specific category wins** -- `MyApp.Orders` matches `MyApp` if no more specific override exists
+- **Provider-level overrides** -- the `Console` section above overrides the default for the console provider only
+- **Environment overrides** -- use `appsettings.Development.json` to enable `Debug`/`Trace` locally without affecting production
+
 ### Log Scopes for Correlation
 
 ```csharp
@@ -609,7 +703,7 @@ app.Run();
 
 1. **Do not create `Meter` or `ActivitySource` via `new` in DI-registered services without using `IMeterFactory`** -- instruments created outside the factory are not collected by the OpenTelemetry SDK. Use `IMeterFactory.Create()` for `Meter` instances. `ActivitySource` is static and registered via `.AddSource()`.
 2. **Do not add dependency checks to liveness endpoints** -- a database outage should not restart the app. Only the readiness endpoint should check dependencies.
-3. **Do not use `ILogger.LogInformation("message: " + value)`** -- use structured logging templates: `ILogger.LogInformation("message: {Value}", value)`. String concatenation bypasses structured logging and prevents log indexing.
+3. **Do not use `ILogger.LogInformation("message: " + value)` or string interpolation `$"message: {value}"`** -- use structured logging templates: `ILogger.LogInformation("message: {Value}", value)`. String concatenation and interpolation bypass structured logging and prevent log indexing.
 4. **Do not configure OTLP endpoints in code for production** -- use environment variables (`OTEL_EXPORTER_OTLP_ENDPOINT`) so the same image works across environments.
 5. **Do not forget to register custom `ActivitySource` names** with `.AddSource("MyApp.*")` -- unregistered sources are silently ignored and produce no traces.
 
@@ -622,4 +716,11 @@ app.Run();
 - [ASP.NET Core health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks)
 - [System.Diagnostics.Metrics](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/metrics)
 - [High-performance logging in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/high-performance-logging)
+- [Logging in .NET: Log filtering](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging#how-filtering-rules-are-applied)
 - [Serilog OpenTelemetry sink](https://github.com/serilog/serilog-sinks-opentelemetry)
+
+---
+
+## Attribution
+
+Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) (MIT license).
