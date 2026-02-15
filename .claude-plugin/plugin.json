@@ -16,6 +16,7 @@
     "skills/core-csharp/dotnet-csharp-source-generators",
     "skills/core-csharp/dotnet-csharp-code-smells",
     "skills/core-csharp/dotnet-roslyn-analyzers",
+    "skills/core-csharp/dotnet-editorconfig",
     "skills/core-csharp/dotnet-validation-patterns",
     "skills/project-structure/dotnet-project-structure",
     "skills/project-structure/dotnet-scaffold-project",
