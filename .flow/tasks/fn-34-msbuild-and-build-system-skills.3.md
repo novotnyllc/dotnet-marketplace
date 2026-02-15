@@ -76,9 +76,8 @@ python3 scripts/validate_cross_agent.py
 ```
 
 ## Done summary
-TBD
-
+Created dotnet-build-optimization skill covering incremental build diagnosis workflow, binary log analysis, parallel builds, build caching, and restore optimization. Registered all 3 build-system skills in plugin.json and updated README.md/CLAUDE.md counts (101->104 skills, 19->20 categories).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 936b69d, b5cc96c
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
