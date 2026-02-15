@@ -1,6 +1,6 @@
 ---
 name: dotnet-version-upgrade
-description: "WHEN upgrading a .NET project to a newer TFM or evaluating upgrade paths. LTS-to-LTS, staged through STS, preview exploration. WHEN NOT project is already on the latest LTS with no upgrade planned."
+description: "WHEN upgrading a .NET project to a newer TFM or evaluating upgrade paths. LTS-to-LTS, staged through STS, preview."
 ---
 
 # dotnet-version-upgrade

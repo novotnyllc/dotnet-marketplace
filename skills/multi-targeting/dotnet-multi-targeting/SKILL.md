@@ -1,6 +1,6 @@
 ---
 name: dotnet-multi-targeting
-description: "WHEN project targets multiple TFMs or needs newer C# features on older TFMs. Polyfill-first strategy, conditional compilation, API compat validation. WHEN NOT single TFM with no backporting needs."
+description: "WHEN project targets multiple TFMs or needs newer C# features on older TFMs. Polyfill strategy, API compat."
 ---
 
 # dotnet-multi-targeting
