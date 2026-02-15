@@ -2,7 +2,7 @@
 
 ## Description
 
-Run all four validation commands, verify context budget, check all cross-references, and update shared files (plugin.json, AGENTS.md, README.md) if any skills were added/removed/renamed. Clean up review reports — keep consolidated findings, archive batch reports.
+Final gating step after all improvements from tasks 9-11 are merged. Run all four validation commands, verify context budget stays under thresholds, check all cross-references resolve correctly, and update shared files (plugin.json, AGENTS.md, README.md) if any skills were added/removed/renamed during improvement implementation. Clean up review reports — keep consolidated-findings.md for reference, archive or remove individual batch-{a..f}-findings.md reports.
 
 **File ownership:** This task is the sole owner of modifications to `plugin.json`, `AGENTS.md`, and `README.md`. All shared-file updates (skill counts, routing index, catalog) happen here.
 
