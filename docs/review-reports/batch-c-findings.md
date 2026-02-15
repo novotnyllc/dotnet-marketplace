@@ -5,8 +5,8 @@
 | Metric | Count |
 |--------|-------|
 | Skills reviewed | 18 |
-| Clean | 5 |
-| Needs Work | 10 |
+| Clean | 1 |
+| Needs Work | 14 |
 | Critical | 3 |
 | Total issues | 23 |
 | Critical issues | 3 |
@@ -43,7 +43,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear decision tree for unit vs integration vs E2E; actionable coverage thresholds |
 | 4 | Progressive Disclosure | pass | 1,698 words -- well under threshold |
 | 5 | Cross-References | pass | 15 cross-refs, all resolve correctly; proper [skill:] syntax throughout |
-| 6 | Error Handling | pass | Agent Gotchas section with 4 items and 7 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas section with 5 items and 5 strong directives (Do not) |
 | 7 | Examples | pass | Concrete naming conventions, test structure examples |
 | 8 | Composability | pass | Clear out-of-scope markers with attribution to owning skills |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -70,7 +70,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear v2 vs v3 migration notes; concrete fixture patterns |
 | 4 | Progressive Disclosure | pass | 1,979 words |
 | 5 | Cross-References | pass | 7 cross-refs, all resolve |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items; covers key v3 migration pitfalls |
+| 6 | Error Handling | pass | Agent Gotchas with 5 items and 5 strong directives (Do not); covers key v3 migration pitfalls |
 | 7 | Examples | pass | Real C# examples with xUnit v3 patterns; correct ValueTask usage for IAsyncLifetime |
 | 8 | Composability | pass | Clear scope boundary and out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -96,7 +96,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Concrete patterns for WAF, Testcontainers, and Aspire; clear isolation strategies |
 | 4 | Progressive Disclosure | pass | 1,977 words |
 | 5 | Cross-References | pass | 9 cross-refs, all resolve; proper [skill:] syntax |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 8 strong directives; covers port conflicts, service registration |
+| 6 | Error Handling | pass | Agent Gotchas with 6 items and 7 strong directives (6 Do not, 1 Always); covers port conflicts, service registration |
 | 7 | Examples | pass | Complete WAF and Testcontainers examples with correct ValueTask for IAsyncLifetime |
 | 8 | Composability | pass | Clear scope boundary separating from unit and E2E testing |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -122,7 +122,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear POM patterns, selector strategies, and wait patterns |
 | 4 | Progressive Disclosure | pass | 1,557 words |
 | 5 | Cross-References | pass | 12 cross-refs; all resolve; comprehensive routing to framework-specific skills |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 5 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 5 items and 5 strong directives (Do not) |
 | 7 | Examples | pass | Concrete POM examples with proper async patterns |
 | 8 | Composability | pass | Excellent hub design -- routes to blazor-testing, maui-testing, uno-testing, playwright |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -148,7 +148,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear bUnit rendering patterns, event handling, cascading parameters |
 | 4 | Progressive Disclosure | pass | 1,333 words |
 | 5 | Cross-References | pass | 9 cross-refs, all resolve; links to playwright for E2E and ui-testing-core for shared patterns |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 5 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 5 items and 5 strong directives (Do not) |
 | 7 | Examples | pass | Real bUnit code examples; covers component lifecycle testing |
 | 8 | Composability | pass | Clear scope boundary between bUnit (unit) and Playwright (E2E) |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -174,7 +174,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear Appium setup and XHarness execution patterns |
 | 4 | Progressive Disclosure | pass | 1,374 words |
 | 5 | Cross-References | pass | 9 cross-refs, all resolve |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 6 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 5 items and 6 strong directives (5 Do not, 1 Always) |
 | 7 | Examples | warn | AppiumFixture.InitializeAsync and DisposeAsync return `Task` (lines 37, 74) but xUnit v3 requires `ValueTask` -- inconsistent with dotnet-xunit and dotnet-integration-testing which correctly use `ValueTask` |
 | 8 | Composability | pass | Clear scope boundary and out-of-scope markers |
 | 9 | Consistency | warn | IAsyncLifetime return type inconsistency vs category peers (dotnet-xunit, dotnet-integration-testing, dotnet-uno-testing all use ValueTask) |
@@ -201,7 +201,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear Playwright WASM patterns and platform-specific test strategies |
 | 4 | Progressive Disclosure | pass | 1,426 words |
 | 5 | Cross-References | pass | 8 cross-refs, all resolve; proper routing to ui-testing-core and playwright |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 6 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 5 items and 6 strong directives (5 Do not, 1 Always) |
 | 7 | Examples | pass | Correct ValueTask for IAsyncLifetime; concrete Playwright patterns for Uno WASM |
 | 8 | Composability | pass | Clear scope boundary and out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure; consistent IAsyncLifetime usage |
@@ -225,7 +225,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear setup, test patterns, CI caching, and debugging guidance |
 | 4 | Progressive Disclosure | pass | 1,824 words |
 | 5 | Cross-References | pass | 7 cross-refs, all resolve |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 6 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 6 items and 6 strong directives (Do not) |
 | 7 | Examples | pass | Concrete Playwright patterns with proper async/await |
 | 8 | Composability | pass | Good scope boundary separating from framework-specific testing skills |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -251,7 +251,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear Verify patterns with scrubbing and custom converters |
 | 4 | Progressive Disclosure | pass | 1,695 words |
 | 5 | Cross-References | warn | 4 proper [skill:] refs resolve, but 2 bare `dotnet-add-testing` references in Out of scope and Prerequisites sections (lines 12, 14) |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 9 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 6 items and 8 strong directives (6 Do not, 2 Always) |
 | 7 | Examples | pass | Concrete Verify examples with scrubbing patterns |
 | 8 | Composability | pass | Clear out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -278,7 +278,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear coverage, CRAP, mutation testing, and flaky test patterns |
 | 4 | Progressive Disclosure | pass | 2,343 words -- approaching 3,000-word suggestion threshold |
 | 5 | Cross-References | warn | 7 proper [skill:] refs resolve, but 2 bare `dotnet-add-testing` references in Out of scope and Prerequisites (lines 12, 14) |
-| 6 | Error Handling | pass | Agent Gotchas with 4 items and 8 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 6 items and 8 strong directives (7 Do not, 1 Always) |
 | 7 | Examples | pass | Concrete coverage and CRAP analysis examples |
 | 8 | Composability | pass | Clear out-of-scope markers and scope boundary |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -307,7 +307,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear workflow composition patterns, caching strategies, matrix builds |
 | 4 | Progressive Disclosure | pass | 1,727 words |
 | 5 | Cross-References | warn | 9 proper [skill:] refs resolve, but 4 bare skill name references in Out of scope section (dotnet-ado-patterns, dotnet-gha-build-test, dotnet-gha-publish, dotnet-gha-deploy) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 2 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 2 strong directives (Do not) |
 | 7 | Examples | pass | Complete YAML workflow examples |
 | 8 | Composability | pass | Clear out-of-scope markers with attribution |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -331,7 +331,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear build and test pipeline patterns with coverage reporting |
 | 4 | Progressive Disclosure | pass | 1,458 words |
 | 5 | Cross-References | warn | 9 proper [skill:] refs resolve, but 4 bare skill name references in scope boundary and Out of scope (dotnet-gha-patterns, dotnet-gha-publish, dotnet-gha-deploy, dotnet-ado-build-test) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 5 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 3 strong directives (1 Always, 1 Do not, 1 Never) |
 | 7 | Examples | pass | Complete YAML workflow examples with test reporting |
 | 8 | Composability | pass | Clear scope boundary separating from peer CI/CD skills |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -346,7 +346,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 ### dotnet-gha-publish
 
 **Category:** cicd
-**Overall:** Clean
+**Overall:** Needs Work
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -355,7 +355,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear artifact publishing patterns with signing and SBOM generation |
 | 4 | Progressive Disclosure | pass | 1,538 words |
 | 5 | Cross-References | warn | 17 proper [skill:] refs resolve, but 2 bare skill name references in Out of scope (dotnet-ado-publish, dotnet-gha-deploy) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 5 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 2 strong directives (1 Always, 1 Never) |
 | 7 | Examples | pass | Complete YAML publish workflow examples |
 | 8 | Composability | pass | Clear out-of-scope markers with attribution |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -370,7 +370,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 ### dotnet-gha-deploy
 
 **Category:** cicd
-**Overall:** Clean
+**Overall:** Needs Work
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -379,7 +379,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear deployment patterns for multiple targets |
 | 4 | Progressive Disclosure | pass | 1,787 words |
 | 5 | Cross-References | warn | 11 proper [skill:] refs resolve, but 3 bare skill name references in scope boundary and Out of scope (dotnet-gha-publish, dotnet-gha-patterns, dotnet-ado-patterns) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 3 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 3 strong directives (1 Always, 2 Never) |
 | 7 | Examples | pass | Complete deployment workflow examples |
 | 8 | Composability | pass | Clear scope boundary and out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -403,7 +403,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear template patterns, variable groups, and multi-stage pipeline guidance |
 | 4 | Progressive Disclosure | pass | 1,890 words |
 | 5 | Cross-References | warn | 6 proper [skill:] refs resolve, but 5 bare skill name references in scope boundary and Out of scope (dotnet-ado-unique, dotnet-ado-build-test, dotnet-ado-publish, dotnet-gha-patterns) plus 1 additional bare ref at line 292 |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 3 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 0 strong directives -- informational style rather than imperative |
 | 7 | Examples | pass | Complete YAML pipeline template examples |
 | 8 | Composability | pass | Clear scope boundary and out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -418,7 +418,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 ### dotnet-ado-build-test
 
 **Category:** cicd
-**Overall:** Clean
+**Overall:** Needs Work
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -427,7 +427,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear build and test task patterns with coverage reporting |
 | 4 | Progressive Disclosure | pass | 1,565 words |
 | 5 | Cross-References | warn | 9 proper [skill:] refs resolve, but 4 bare skill name references in scope boundary and Out of scope (dotnet-ado-patterns, dotnet-ado-publish, dotnet-ado-unique, dotnet-gha-build-test) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 3 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 9 items and 1 strong directive (Never) |
 | 7 | Examples | pass | Complete YAML pipeline task examples |
 | 8 | Composability | pass | Clear scope boundary separating from peer ADO skills |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -442,7 +442,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 ### dotnet-ado-publish
 
 **Category:** cicd
-**Overall:** Clean
+**Overall:** Needs Work
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -451,7 +451,7 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear artifact publishing patterns for ADO pipelines |
 | 4 | Progressive Disclosure | pass | 1,529 words |
 | 5 | Cross-References | warn | 17 proper [skill:] refs resolve, but 2 bare skill name references in Out of scope (dotnet-gha-publish, dotnet-ado-unique) |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items and 3 strong directives |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items and 1 strong directive (Never) |
 | 7 | Examples | pass | Complete YAML pipeline task examples |
 | 8 | Composability | pass | Clear out-of-scope markers |
 | 9 | Consistency | pass | Matches category peer structure |
@@ -475,17 +475,17 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 | 3 | Instruction Clarity | pass | Clear ADO-exclusive feature patterns |
 | 4 | Progressive Disclosure | pass | 2,325 words -- approaching but under threshold |
 | 5 | Cross-References | warn | 5 proper [skill:] refs resolve, but 10 bare skill name references across scope boundary and Out of scope (dotnet-ado-patterns, dotnet-ado-build-test, dotnet-ado-publish, dotnet-gha-patterns, dotnet-gha-build-test, dotnet-gha-publish, dotnet-gha-deploy) -- worst offender in the batch |
-| 6 | Error Handling | pass | Agent Gotchas with 3 items but 0 strong directives -- weakest gotchas section in batch |
+| 6 | Error Handling | pass | Agent Gotchas with 8 items but 0 strong directives -- informational style; weakest gotchas section in batch |
 | 7 | Examples | pass | Complete YAML examples for ADO-exclusive features |
 | 8 | Composability | pass | Clear scope boundary separating ADO-exclusive from shared ADO skills |
-| 9 | Consistency | warn | Agent Gotchas section has 0 strong directives (DO NOT/NEVER/ALWAYS) while all 7 CI/CD peers have 2-5 each; weakens actionability |
+| 9 | Consistency | warn | Agent Gotchas section has 0 strong directives (DO NOT/NEVER/ALWAYS) while 6 of 7 CI/CD peers have 1-3 each (dotnet-ado-patterns also has 0); weakens actionability |
 | 10 | Registration & Budget | warn | 121 chars marginally over limit |
 | 11 | Progressive Disclosure Compliance | pass | 2,325 words |
 
 **Issues:**
 - [High] 10 bare skill name references should use `[skill:]` syntax -- most systematic cross-reference issue in the batch: `dotnet-ado-patterns` (x2), `dotnet-ado-build-test` (x2), `dotnet-ado-publish` (x2), `dotnet-gha-patterns`, `dotnet-gha-build-test`, `dotnet-gha-publish`, `dotnet-gha-deploy`
 - [Low] Description at 121 chars is 1 char over 120-char target -- trim "with" from "Environments with approvals"
-- [Low] Agent Gotchas section lacks strong directives (0 DO NOT/NEVER/ALWAYS) while all category peers have 2-5 each
+- [Low] Agent Gotchas section lacks strong directives (0 DO NOT/NEVER/ALWAYS) while 6 of 7 CI/CD peers have 1-3 each (dotnet-ado-patterns also has 0)
 
 **Proposed description (120 chars):** `"WHEN using ADO-exclusive features. Environments, approvals, service connections, classic releases, variable groups."`
 
@@ -499,15 +499,15 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 
 3. **xUnit v3 IAsyncLifetime inconsistency in dotnet-maui-testing:** The `dotnet-maui-testing` AppiumFixture uses `async Task InitializeAsync()` and `async Task DisposeAsync()` while `dotnet-xunit` explicitly documents that xUnit v3 changed IAsyncLifetime to return `ValueTask`. Three other testing skills (`dotnet-integration-testing`, `dotnet-uno-testing`, `dotnet-xunit`) correctly use `ValueTask`. This is a technical accuracy issue that could cause agents to generate code that triggers xUnit v3 analyzer warnings.
 
-4. **Agent Gotchas consistency is strong with one outlier:** All 18 skills have Agent Gotchas sections. Testing skills consistently have 4 items each with 5-9 strong directives. CI/CD skills consistently have 3 items each with 2-5 strong directives. The one outlier is `dotnet-ado-unique` which has 3 items but 0 strong directives (DO NOT/NEVER/ALWAYS), making its gotchas significantly less actionable than peers.
+4. **Agent Gotchas coverage is strong but directive style varies:** All 18 skills have Agent Gotchas sections. Testing skills have 5-6 items each with 5-8 strong directives (predominantly "Do not" imperatives). CI/CD skills have 8-9 items each -- more items than testing -- but use fewer strong directives: GHA skills average 2-3 (Always/Never/Do not), while ADO skills average 0-1. Two outliers (`dotnet-ado-patterns` and `dotnet-ado-unique`) have 0 strong directives, using purely informational phrasing instead of imperative DO NOT/NEVER/ALWAYS directives.
 
 5. **All cross-reference targets resolve correctly:** All 146 `[skill:]` references across the 18 skills point to existing registered skills. No broken references. This is consistent with the Batch B finding of excellent cross-reference target accuracy.
 
 6. **No details.md companions needed:** All 18 skills are under the 3,000-word threshold. The highest is `dotnet-test-quality` at 2,343 words and `dotnet-ado-unique` at 2,325 words. Both are approaching but not yet at the suggestion threshold.
 
-7. **Testing category has more severe issues than CI/CD:** 3 of 10 testing skills are Critical (all due to description length >140 chars), while 0 of 8 CI/CD skills are Critical. CI/CD's main issue is the systematic bare cross-reference pattern, which is High severity but consistent and fixable with a single pass.
+7. **Testing category has more severe issues than CI/CD:** 3 of 10 testing skills are Critical (all due to description length >140 chars), while 0 of 8 CI/CD skills are Critical. However, all 8 CI/CD skills are Needs Work due to the systematic bare cross-reference pattern in scope boundary and Out of scope sections.
 
-8. **CI/CD skills demonstrate excellent description discipline:** 7 of 8 CI/CD skills are under 120 chars (the sole exception is dotnet-ado-unique at 121). This contrasts sharply with the testing category where only 1 of 10 (dotnet-uno-testing at 115) passes the description quality check cleanly.
+8. **CI/CD skills demonstrate excellent description discipline but universal cross-ref issues:** 7 of 8 CI/CD skills are under 120 chars (the sole exception is dotnet-ado-unique at 121). This contrasts sharply with the testing category where only 1 of 10 (dotnet-uno-testing at 115) passes the description quality check cleanly. However, every CI/CD skill has bare skill name references, making the only Clean skill in the entire batch `dotnet-uno-testing`.
 
 9. **Section structure is consistent within and across categories:** All 18 skills follow the same inline-scope pattern (scope boundary and Out of scope on dedicated lines) rather than separate ## Scope sections. This is a convention choice and is internally consistent.
 
@@ -531,9 +531,5 @@ Character counts measured using the canonical Python parser (strips YAML quotes,
 - Trim `dotnet-ui-testing-core` description from 126 to under 120 chars
 - Trim `dotnet-maui-testing` description from 126 to under 120 chars
 - Trim `dotnet-ado-unique` description from 121 to under 120 chars (1 char over)
-- Add strong directives (DO NOT/NEVER/ALWAYS) to `dotnet-ado-unique` Agent Gotchas section for consistency with category peers
-- Wrap 2 bare skill refs in `dotnet-gha-publish` Out of scope with `[skill:]` syntax
-- Wrap 3 bare skill refs in `dotnet-gha-deploy` scope boundary and Out of scope with `[skill:]` syntax
-- Wrap 4 bare skill refs in `dotnet-ado-build-test` scope boundary and Out of scope with `[skill:]` syntax
-- Wrap 2 bare skill refs in `dotnet-ado-publish` Out of scope with `[skill:]` syntax
+- Add strong directives (DO NOT/NEVER/ALWAYS) to `dotnet-ado-unique` and `dotnet-ado-patterns` Agent Gotchas sections for consistency with category peers
 - Monitor `dotnet-test-quality` (2,343 words) and `dotnet-ado-unique` (2,325 words) for details.md extraction if content grows
