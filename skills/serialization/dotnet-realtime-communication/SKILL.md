@@ -7,7 +7,7 @@ description: "WHEN choosing real-time protocols. SignalR, SSE (.NET 10), JSON-RP
 
 Real-time communication patterns for .NET applications. Compares SignalR (full-duplex over WebSockets with automatic fallback), Server-Sent Events (SSE, built-in to ASP.NET Core in .NET 10), JSON-RPC 2.0 (structured request-response over any transport), and gRPC streaming (high-performance binary streaming). Provides decision guidance for choosing the right protocol based on requirements.
 
-**Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) is owned by fn-12 -- see [skill:dotnet-blazor-patterns] for Blazor hosting models and circuit patterns.
+**Out of scope:** HTTP client factory patterns and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) -- see [skill:dotnet-blazor-patterns] for Blazor hosting models and circuit patterns.
 
 Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. See [skill:dotnet-integration-testing] for testing real-time communication endpoints. See [skill:dotnet-blazor-patterns] for Blazor-specific SignalR circuit management and render mode interaction.
 
@@ -167,12 +167,173 @@ builder.Services.AddSignalR()
 //     .build();
 ```
 
-### Scaling with Backplane
+### Connection Lifecycle
 
-For multi-server deployments, use a backplane to synchronize messages:
+Override `OnConnectedAsync` and `OnDisconnectedAsync` to manage connection state:
 
 ```csharp
-// Redis backplane
+public sealed class NotificationHub(
+    ILogger<NotificationHub> logger,
+    IConnectionTracker tracker) : Hub<INotificationClient>
+{
+    public override async Task OnConnectedAsync()
+    {
+        var userId = Context.UserIdentifier;
+        var connectionId = Context.ConnectionId;
+
+        logger.LogInformation("Client {ConnectionId} connected (user: {UserId})",
+            connectionId, userId);
+
+        // Track connection for presence features
+        if (userId is not null)
+        {
+            await tracker.AddConnectionAsync(userId, connectionId);
+            await Groups.AddToGroupAsync(connectionId, $"user:{userId}");
+        }
+
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userId = Context.UserIdentifier;
+        var connectionId = Context.ConnectionId;
+
+        if (exception is not null)
+        {
+            logger.LogWarning(exception,
+                "Client {ConnectionId} disconnected with error", connectionId);
+        }
+
+        if (userId is not null)
+        {
+            await tracker.RemoveConnectionAsync(userId, connectionId);
+        }
+
+        await base.OnDisconnectedAsync(exception);
+    }
+}
+```
+
+### Groups Management
+
+Groups provide a lightweight pub/sub mechanism. Connections can belong to multiple groups and group membership is managed per-connection:
+
+```csharp
+public sealed class ChatHub : Hub<IChatClient>
+{
+    // Join a room (called by clients)
+    public async Task JoinRoom(string roomName)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+        await Clients.Group(roomName).UserJoined(Context.UserIdentifier!, roomName);
+    }
+
+    // Leave a room
+    public async Task LeaveRoom(string roomName)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
+        await Clients.Group(roomName).UserLeft(Context.UserIdentifier!, roomName);
+    }
+
+    // Send to specific group
+    public async Task SendToRoom(string roomName, string message)
+    {
+        await Clients.Group(roomName).ReceiveMessage(
+            Context.UserIdentifier!, message);
+    }
+
+    // Send to all except caller
+    public async Task BroadcastExceptSelf(string message)
+    {
+        await Clients.Others.ReceiveMessage(
+            Context.UserIdentifier!, message);
+    }
+}
+```
+
+Groups are not persisted -- they are cleared when a connection disconnects. Re-add connections to groups in `OnConnectedAsync` if needed (e.g., from a database or cache).
+
+### Client-to-Server Streaming
+
+Clients can stream data to the hub using `IAsyncEnumerable<T>` or `ChannelReader<T>`:
+
+```csharp
+public sealed class UploadHub : Hub
+{
+    // Accept a stream of items from the client
+    public async Task UploadData(
+        IAsyncEnumerable<SensorReading> stream,
+        CancellationToken cancellationToken)
+    {
+        await foreach (var reading in stream.WithCancellation(cancellationToken))
+        {
+            await ProcessReading(reading);
+        }
+    }
+}
+```
+
+### Authentication
+
+SignalR uses the same authentication as the ASP.NET Core host. For WebSocket connections, the access token is sent via query string because WebSocket does not support custom headers:
+
+```csharp
+// Server: configure JWT for SignalR
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://identity.example.com";
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Read token from query string for WebSocket requests
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/hubs/notifications")
+    .RequireAuthorization();
+```
+
+Access `Context.UserIdentifier` in the hub to identify the authenticated user. By default this maps to the `ClaimTypes.NameIdentifier` claim. Customize with `IUserIdProvider`:
+
+```csharp
+public sealed class EmailUserIdProvider : IUserIdProvider
+{
+    public string? GetUserId(HubConnectionContext connection)
+    {
+        return connection.User?.FindFirst(ClaimTypes.Email)?.Value;
+    }
+}
+
+// Register
+builder.Services.AddSingleton<IUserIdProvider, EmailUserIdProvider>();
+```
+
+### Scaling with Backplane
+
+For multi-server deployments, use a backplane to synchronize messages across instances. Without a backplane, messages sent on one server are not visible to connections on other servers.
+
+**Redis backplane:**
+
+```csharp
 builder.Services.AddSignalR()
     .AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!,
         options =>
@@ -181,6 +342,15 @@ builder.Services.AddSignalR()
                 RedisChannel.Literal("MyApp:");
         });
 ```
+
+**Azure SignalR Service (managed backplane):**
+
+```csharp
+builder.Services.AddSignalR()
+    .AddAzureSignalR(builder.Configuration["Azure:SignalR:ConnectionString"]);
+```
+
+Azure SignalR Service offloads connection management entirely -- the ASP.NET Core server handles hub logic while Azure manages WebSocket connections, scaling, and message routing.
 
 ---
 
@@ -361,6 +531,15 @@ See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot
 4. **Do not store connection IDs long-term** -- SignalR connection IDs change on reconnection. Use user identifiers or groups for addressing.
 5. **Do not use gRPC streaming to browsers directly** -- browsers do not support HTTP/2 trailers natively. Use gRPC-Web with a proxy or choose SignalR/SSE instead.
 6. **Do not confuse SSE with WebSocket** -- SSE is unidirectional (server-to-client only). If you need client-to-server messages, use SignalR or WebSocket directly.
+7. **Do not forget `OnMessageReceived` for JWT with SignalR** -- WebSocket connections cannot send custom HTTP headers after the initial handshake. The access token must be read from the query string in `JwtBearerEvents.OnMessageReceived`.
+8. **Do not assume group membership persists across reconnections** -- groups are tied to connection IDs, which change on reconnect. Re-add connections to groups in `OnConnectedAsync`.
+9. **Do not deploy multi-server SignalR without a backplane** -- without Redis or Azure SignalR Service, messages sent on one server instance are invisible to connections on other instances.
+
+---
+
+## Attribution
+
+Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) (MIT license).
 
 ---
 
@@ -372,3 +551,5 @@ See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot
 - [StreamJsonRpc](https://github.com/microsoft/vs-streamjsonrpc)
 - [gRPC streaming](https://learn.microsoft.com/en-us/aspnet/core/grpc/client?view=aspnetcore-10.0)
 - [SignalR scaling with Redis](https://learn.microsoft.com/en-us/aspnet/core/signalr/redis-backplane?view=aspnetcore-10.0)
+- [SignalR authentication and authorization](https://learn.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-10.0)
+- [Azure SignalR Service](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-overview)

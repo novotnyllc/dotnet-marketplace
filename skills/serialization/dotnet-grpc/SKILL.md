@@ -7,7 +7,7 @@ description: "WHEN building gRPC services. Proto definition, code-gen, ASP.NET C
 
 Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, code generation, ASP.NET Core gRPC server implementation and endpoint hosting, `Grpc.Net.Client` client patterns, all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
+**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
 
 Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. See [skill:dotnet-integration-testing] for testing gRPC services.
 
@@ -715,6 +715,86 @@ public override async Task<OrderResponse> GetOrder(
 
 ---
 
+## gRPC-Web for Browser Clients
+
+Browsers do not support HTTP/2 trailers required by native gRPC. gRPC-Web is a protocol variant that works over HTTP/1.1 and HTTP/2 without trailers, enabling browser JavaScript clients to call gRPC services.
+
+### Server Configuration
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddGrpc();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("GrpcWeb", policy =>
+    {
+        policy.WithOrigins("https://app.example.com")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding");
+    });
+});
+
+var app = builder.Build();
+
+app.UseRouting();
+app.UseCors();
+app.UseGrpcWeb(); // Must be between UseRouting and MapGrpcService
+
+app.MapGrpcService<OrderGrpcService>()
+    .EnableGrpcWeb()
+    .RequireCors("GrpcWeb");
+```
+
+### JavaScript Client (grpc-web)
+
+```javascript
+// Using @improbable-eng/grpc-web or grpc-web package
+import { OrderServiceClient } from './generated/order_grpc_web_pb';
+import { GetOrderRequest } from './generated/order_pb';
+
+const client = new OrderServiceClient('https://api.example.com');
+
+const request = new GetOrderRequest();
+request.setId(42);
+
+client.getOrder(request, {}, (err, response) => {
+    if (err) {
+        console.error('gRPC error:', err.message);
+        return;
+    }
+    console.log('Order:', response.toObject());
+});
+```
+
+### Envoy Proxy Alternative
+
+Instead of ASP.NET Core gRPC-Web middleware, you can use an Envoy proxy to translate gRPC-Web requests to native gRPC. This is useful when the gRPC service cannot be modified:
+
+```yaml
+# Envoy filter configuration
+http_filters:
+  - name: envoy.filters.http.grpc_web
+    typed_config:
+      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
+  - name: envoy.filters.http.cors
+    typed_config:
+      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
+  - name: envoy.filters.http.router
+    typed_config:
+      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+```
+
+### gRPC-Web Limitations
+
+- **Unary and server streaming only** -- client streaming and bidirectional streaming are not supported by gRPC-Web
+- **No HTTP/2 trailers** -- status and trailing metadata are encoded in the response body
+- **CORS required** -- cross-origin requests need explicit CORS configuration on the server
+- **Consider SignalR for full-duplex browser communication** -- see [skill:dotnet-realtime-communication] for alternatives when bidirectional streaming is required
+
+---
+
 ## Key Principles
 
 - **Use `.proto` files as the contract** -- they are the single source of truth for the API shape, shared between client and server
@@ -724,6 +804,7 @@ public override async Task<OrderResponse> GetOrder(
 - **Always set deadlines** -- calls without deadlines can hang indefinitely if the server is slow or unreachable
 - **Use L7 load balancers** -- L4 load balancers pin all traffic to one backend because HTTP/2 multiplexes on a single TCP connection
 - **Implement the gRPC health check protocol** -- enables Kubernetes probes and load balancers to monitor service health
+- **Use gRPC-Web for browser clients** -- native gRPC requires HTTP/2 trailers which browsers do not support; gRPC-Web bridges this gap
 
 See [skill:dotnet-native-aot] for Native AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible patterns when building gRPC services with ahead-of-time compilation.
 
@@ -737,6 +818,14 @@ See [skill:dotnet-native-aot] for Native AOT compilation pipeline and [skill:dot
 4. **Do not throw generic `Exception` from gRPC services** -- throw `RpcException` with appropriate `StatusCode` and descriptive messages. Unhandled exceptions become `StatusCode.Internal` with no useful detail.
 5. **Do not forget to call `CompleteAsync()` on client streams** -- the server waits for stream completion before sending its response. Forgetting this causes the call to hang.
 6. **Do not use `grpc.health.v1.Health` without registering health checks** -- an empty health service always reports `Serving`, which defeats the purpose of health monitoring.
+7. **Do not enable gRPC-Web globally without CORS** -- `UseGrpcWeb()` without a CORS policy allows any origin to call your gRPC services. Always pair with explicit `RequireCors()`.
+8. **Do not attempt client streaming or bidirectional streaming with gRPC-Web** -- the gRPC-Web protocol only supports unary and server streaming. Use SignalR or native gRPC for full-duplex browser communication.
+
+---
+
+## Attribution
+
+Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) (MIT license).
 
 ---
 
@@ -750,4 +839,5 @@ See [skill:dotnet-native-aot] for Native AOT compilation pipeline and [skill:dot
 - [gRPC load balancing](https://learn.microsoft.com/en-us/aspnet/core/grpc/loadbalancing?view=aspnetcore-10.0)
 - [gRPC authentication](https://learn.microsoft.com/en-us/aspnet/core/grpc/authn-and-authz?view=aspnetcore-10.0)
 - [gRPC interceptors](https://learn.microsoft.com/en-us/aspnet/core/grpc/interceptors?view=aspnetcore-10.0)
+- [gRPC-Web for .NET](https://learn.microsoft.com/en-us/aspnet/core/grpc/grpcweb?view=aspnetcore-10.0)
 - [Protocol Buffers language guide](https://protobuf.dev/programming-guides/proto3/)
