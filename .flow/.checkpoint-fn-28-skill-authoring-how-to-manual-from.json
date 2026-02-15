@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-02-15T00:12:30.228210Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-28-skill-authoring-how-to-manual-from",
+      "created_at": "2026-02-14T21:22:21.794613Z",
+      "depends_on_epics": [],
+      "id": "fn-28-skill-authoring-how-to-manual-from",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-28-skill-authoring-how-to-manual-from.md",
+      "status": "open",
+      "title": "Skill Authoring How-To Manual from Anthropic Guide",
+      "updated_at": "2026-02-14T21:22:21.795287Z"
+    },
+    "spec": "# fn-28: Skill Authoring How-To Manual from Anthropic Guide\n\n## Overview\n\nDistill Anthropic's \"The Complete Guide to Building Skills for Claude\" (33-page PDF) into a concise, actionable how-to manual (`CONTRIBUTING-SKILLS.md`) tailored specifically to this repo's conventions. The manual should be the single reference a contributor needs to author, test, and ship a new skill in dotnet-artisan.\n\n## Source Material\n\nPDF: \"The Complete Guide to Building Skills for Claude\" by Anthropic (33 pages, 6 chapters)\n\n### Key Concepts from the Guide (full distillation)\n\n**Chapter 1 \u2014 Fundamentals:**\n- A skill is a folder containing SKILL.md (required), scripts/, references/, assets/ (all optional)\n- Progressive disclosure: 3 levels \u2014 YAML frontmatter (always in system prompt), SKILL.md body (loaded when relevant), linked files (loaded on demand)\n- Composability: skills work alongside others, don't assume sole capability\n- Portability: skills work across Claude.ai, Claude Code, and API\n- MCP + Skills: MCP = connectivity (tools), Skills = knowledge (workflows)\n\n**Chapter 2 \u2014 Planning and Design:**\n- Start with 2-3 concrete use cases before writing\n- Three use case categories: (1) Document/Asset Creation, (2) Workflow Automation, (3) MCP Enhancement\n- Define success criteria: triggering accuracy (90% target), workflow efficiency (tool call count), reliability (0 failed API calls)\n- File structure: kebab-case folder, SKILL.md (exact case), no README.md inside skill folder\n- YAML frontmatter: `name` (kebab-case, matches folder), `description` (what + when + triggers, under 1024 chars)\n- Optional fields: `license`, `compatibility`, `metadata` (author, version, mcp-server)\n- Security: no XML angle brackets in frontmatter, no \"claude\"/\"anthropic\" in name\n- Description formula: `[What it does] + [When to use it] + [Key capabilities]`\n- Instructions structure: Steps > Examples > Troubleshooting\n- Best practices: be specific/actionable, include error handling, reference bundled resources, use progressive disclosure\n\n**Chapter 3 \u2014 Testing and Iteration:**\n- Three testing levels: manual (Claude.ai), scripted (Claude Code), programmatic (skills API)\n- Pro tip: iterate on single challenging task first, then extract into skill\n- Test categories: (1) Triggering tests, (2) Functional tests, (3) Performance comparison\n- skill-creator skill can generate, review, and iterate on skills\n- Iteration signals: undertriggering (add more description keywords), overtriggering (add negative triggers, be more specific), execution issues (improve instructions, add error handling)\n\n**Chapter 4 \u2014 Distribution and Sharing:**\n- Upload to Claude.ai via Settings > Capabilities > Skills, or place in Claude Code skills directory\n- Organization-level deployment available (Dec 2025)\n- Agent Skills is an open standard (like MCP)\n- API: /v1/skills endpoint, container.skills parameter, Claude Agent SDK\n- Recommended: host on GitHub with README (repo-level, not inside skill), link from MCP docs\n\n**Chapter 5 \u2014 Patterns and Troubleshooting:**\n- Pattern 1: Sequential workflow orchestration (multi-step, ordered, with dependencies)\n- Pattern 2: Multi-MCP coordination (workflows spanning multiple services)\n- Pattern 3: Iterative refinement (quality improves with iteration loops)\n- Pattern 4: Context-aware tool selection (same outcome, different tools per context)\n- Pattern 5: Domain-specific intelligence (specialized knowledge beyond tool access)\n- Troubleshooting: upload errors (SKILL.md casing), frontmatter issues (YAML formatting), triggering issues (description quality), MCP connection issues, instructions not followed (too verbose/buried/ambiguous)\n- Advanced: bundle validation scripts for critical checks instead of relying on language instructions\n- Keep SKILL.md under 5,000 words; move details to references/\n\n**Chapter 6 \u2014 Resources:**\n- Official: Best Practices Guide, Skills Documentation, API Reference, MCP Documentation\n- Examples: github.com/anthropics/skills\n- Tools: skill-creator skill, validation tooling\n\n### dotnet-artisan Specific Conventions (overlay)\n\n- Frontmatter: only `name` and `description` required (our convention is stricter than the guide's 1024 char limit \u2014 we target under 120 chars)\n- Cross-reference syntax: `[skill:skill-name]`\n- Total context budget: 15,000 chars (warn at 12,000)\n- Validation: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`\n- Categories: 21 categories, 101 skills currently\n- Agents: 9 specialist agents in agents/ directory\n- Registration: new skills must be added to `.claude-plugin/plugin.json` skills array\n\n## Scope\n\n### Task 1: Create CONTRIBUTING-SKILLS.md How-To Manual\n\nWrite `CONTRIBUTING-SKILLS.md` that merges the Anthropic guide's best practices with dotnet-artisan repo conventions into a single actionable document.\n\n**Structure:**\n1. Quick Start (create a skill in 5 minutes)\n2. Skill Anatomy (folder structure, SKILL.md, frontmatter)\n3. Writing Effective Descriptions (formula, good/bad examples, budget constraints)\n4. Writing Instructions (progressive disclosure, patterns, cross-references)\n5. Testing Your Skill (triggering, functional, validation commands)\n6. Common Patterns (the 5 patterns from the guide, adapted to .NET context)\n7. Troubleshooting (from the guide + repo-specific issues)\n8. Checklist (pre-commit checklist adapted from the guide's Reference A)\n\n### Task 2: Update CONTRIBUTING.md to Reference Skills Guide\n\nAdd a section to the existing CONTRIBUTING.md that points contributors to the new CONTRIBUTING-SKILLS.md for skill-specific authoring guidance.\n\n## Quick commands\n\n- `./scripts/validate-skills.sh`\n- `./scripts/validate-marketplace.sh`\n- `python3 scripts/generate_dist.py --strict`\n- `python3 scripts/validate_cross_agent.py`\n\n## Acceptance\n\n- [ ] `CONTRIBUTING-SKILLS.md` exists at repo root\n- [ ] Covers all 6 chapters from the Anthropic guide\n- [ ] Adapts examples to .NET/dotnet-artisan context\n- [ ] Includes repo-specific validation commands and conventions\n- [ ] References existing CONTRIBUTING.md for general contribution workflow\n- [ ] Under 3,000 words (concise, actionable)\n- [ ] CONTRIBUTING.md updated with cross-reference\n- [ ] All four validation commands pass\n- [ ] Manual is actionable enough for new contributors to author a skill from scratch\n\n## References\n\n- Source PDF: \"The Complete Guide to Building Skills for Claude\" by Anthropic\n- CONTRIBUTING.md (existing contribution guide)\n- CLAUDE.md (repo conventions)\n- Agent Skills open standard: https://github.com/anthropics/agent-skills\n"
+  },
+  "epic_id": "fn-28-skill-authoring-how-to-manual-from",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:23:31.634391Z",
+        "depends_on": [],
+        "epic": "fn-28-skill-authoring-how-to-manual-from",
+        "id": "fn-28-skill-authoring-how-to-manual-from.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-28-skill-authoring-how-to-manual-from.1.md",
+        "status": "todo",
+        "title": "Create CONTRIBUTING-SKILLS.md how-to manual",
+        "updated_at": "2026-02-14T21:23:31.634537Z"
+      },
+      "id": "fn-28-skill-authoring-how-to-manual-from.1",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-14T21:25:23.627080Z",
+        "status": "in_progress",
+        "updated_at": "2026-02-14T21:25:23.626944Z"
+      },
+      "spec": "# fn-28-skill-authoring-how-to-manual-from.1 Create CONTRIBUTING-SKILLS.md how-to manual\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:23:35.583359Z",
+        "depends_on": [],
+        "epic": "fn-28-skill-authoring-how-to-manual-from",
+        "id": "fn-28-skill-authoring-how-to-manual-from.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-28-skill-authoring-how-to-manual-from.2.md",
+        "status": "todo",
+        "title": "Update CONTRIBUTING.md to reference skills guide",
+        "updated_at": "2026-02-14T21:23:35.583523Z"
+      },
+      "id": "fn-28-skill-authoring-how-to-manual-from.2",
+      "runtime": null,
+      "spec": "# fn-28-skill-authoring-how-to-manual-from.2 Update CONTRIBUTING.md to reference skills guide\n\n## Description\nTBD\n\n## Acceptance\n- [ ] TBD\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

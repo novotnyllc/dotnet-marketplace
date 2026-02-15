@@ -1,115 +1,89 @@
-# fn-28: Skill Authoring How-To Manual from Anthropic Guide
+# fn-10: Version Detection & Multi-Targeting
 
 ## Overview
+Delivers two skills that build on the existing `dotnet-version-detection` foundation skill: multi-targeting strategies with polyfill emphasis, and .NET version upgrade guidance.
 
-Distill Anthropic's "The Complete Guide to Building Skills for Claude" (33-page PDF) into a concise, actionable how-to manual (`CONTRIBUTING-SKILLS.md`) tailored specifically to this repo's conventions. The manual should be the single reference a contributor needs to author, test, and ship a new skill in dotnet-artisan.
-
-## Source Material
-
-PDF: "The Complete Guide to Building Skills for Claude" by Anthropic (33 pages, 6 chapters)
-
-### Key Concepts from the Guide (full distillation)
-
-**Chapter 1 — Fundamentals:**
-- A skill is a folder containing SKILL.md (required), scripts/, references/, assets/ (all optional)
-- Progressive disclosure: 3 levels — YAML frontmatter (always in system prompt), SKILL.md body (loaded when relevant), linked files (loaded on demand)
-- Composability: skills work alongside others, don't assume sole capability
-- Portability: skills work across Claude.ai, Claude Code, and API
-- MCP + Skills: MCP = connectivity (tools), Skills = knowledge (workflows)
-
-**Chapter 2 — Planning and Design:**
-- Start with 2-3 concrete use cases before writing
-- Three use case categories: (1) Document/Asset Creation, (2) Workflow Automation, (3) MCP Enhancement
-- Define success criteria: triggering accuracy (90% target), workflow efficiency (tool call count), reliability (0 failed API calls)
-- File structure: kebab-case folder, SKILL.md (exact case), no README.md inside skill folder
-- YAML frontmatter: `name` (kebab-case, matches folder), `description` (what + when + triggers, under 1024 chars)
-- Optional fields: `license`, `compatibility`, `metadata` (author, version, mcp-server)
-- Security: no XML angle brackets in frontmatter, no "claude"/"anthropic" in name
-- Description formula: `[What it does] + [When to use it] + [Key capabilities]`
-- Instructions structure: Steps > Examples > Troubleshooting
-- Best practices: be specific/actionable, include error handling, reference bundled resources, use progressive disclosure
-
-**Chapter 3 — Testing and Iteration:**
-- Three testing levels: manual (Claude.ai), scripted (Claude Code), programmatic (skills API)
-- Pro tip: iterate on single challenging task first, then extract into skill
-- Test categories: (1) Triggering tests, (2) Functional tests, (3) Performance comparison
-- skill-creator skill can generate, review, and iterate on skills
-- Iteration signals: undertriggering (add more description keywords), overtriggering (add negative triggers, be more specific), execution issues (improve instructions, add error handling)
-
-**Chapter 4 — Distribution and Sharing:**
-- Upload to Claude.ai via Settings > Capabilities > Skills, or place in Claude Code skills directory
-- Organization-level deployment available (Dec 2025)
-- Agent Skills is an open standard (like MCP)
-- API: /v1/skills endpoint, container.skills parameter, Claude Agent SDK
-- Recommended: host on GitHub with README (repo-level, not inside skill), link from MCP docs
-
-**Chapter 5 — Patterns and Troubleshooting:**
-- Pattern 1: Sequential workflow orchestration (multi-step, ordered, with dependencies)
-- Pattern 2: Multi-MCP coordination (workflows spanning multiple services)
-- Pattern 3: Iterative refinement (quality improves with iteration loops)
-- Pattern 4: Context-aware tool selection (same outcome, different tools per context)
-- Pattern 5: Domain-specific intelligence (specialized knowledge beyond tool access)
-- Troubleshooting: upload errors (SKILL.md casing), frontmatter issues (YAML formatting), triggering issues (description quality), MCP connection issues, instructions not followed (too verbose/buried/ambiguous)
-- Advanced: bundle validation scripts for critical checks instead of relying on language instructions
-- Keep SKILL.md under 5,000 words; move details to references/
-
-**Chapter 6 — Resources:**
-- Official: Best Practices Guide, Skills Documentation, API Reference, MCP Documentation
-- Examples: github.com/anthropics/skills
-- Tools: skill-creator skill, validation tooling
-
-### dotnet-artisan Specific Conventions (overlay)
-
-- Frontmatter: only `name` and `description` required (our convention is stricter than the guide's 1024 char limit — we target under 120 chars)
-- Cross-reference syntax: `[skill:skill-name]`
-- Total context budget: 15,000 chars (warn at 12,000)
-- Validation: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`
-- Categories: 21 categories, 101 skills currently
-- Agents: 9 specialist agents in agents/ directory
-- Registration: new skills must be added to `.claude-plugin/plugin.json` skills array
+**Responsibility boundary:** `dotnet-version-detection` (fn-2/foundation) owns all detection logic (TFM resolution, SDK version, preview feature flags). This epic's skills **consume** detected outputs and provide strategy/guidance only — they never re-implement detection.
 
 ## Scope
+**Skills (2):**
+- `dotnet-multi-targeting` → `skills/multi-targeting/dotnet-multi-targeting/SKILL.md` — Multi-targeting strategies with polyfill-first approach: PolySharp, SimonCropp/Polyfill, conditional compilation for runtime gaps, API compat analyzers
+- `dotnet-version-upgrade` → `skills/multi-targeting/dotnet-version-upgrade/SKILL.md` — Modern .NET version upgrades with defined upgrade lanes and polyfill bridge strategies
 
-### Task 1: Create CONTRIBUTING-SKILLS.md How-To Manual
+## Key Context
+- `dotnet-version-detection` already handles TFM detection from .csproj, Directory.Build.props, global.json and cross-references both new skills
+- New skills consume the structured output from version detection and provide actionable guidance
+- PolySharp and SimonCropp/Polyfill enable latest C# language features on older TFMs (compile-time polyfills)
+- Conditional compilation (`#if`) remains necessary for runtime/API behavior gaps that polyfills cannot cover
+- API compatibility analyzers (`EnablePackageValidation`, `ApiCompat`) validate multi-targeting correctness
 
-Write `CONTRIBUTING-SKILLS.md` that merges the Anthropic guide's best practices with dotnet-artisan repo conventions into a single actionable document.
+### Decision Matrix: Polyfill vs Conditional Compilation
+| Gap Type | Strategy | Example |
+|----------|----------|---------|
+| Language/syntax feature | Polyfill (PolySharp/Polyfill) | `required` modifier, `init` properties, collection expressions on net8.0 |
+| BCL API addition | Polyfill if available, else `#if` | `System.Threading.Lock` on net8.0 via Polyfill |
+| Runtime behavior difference | Conditional compilation or adapter | Runtime-async (net11.0 only), different GC modes |
+| Platform API divergence | Conditional compilation with `[SupportedOSPlatform]` | Windows-only APIs, Android-specific features |
 
-**Structure:**
-1. Quick Start (create a skill in 5 minutes)
-2. Skill Anatomy (folder structure, SKILL.md, frontmatter)
-3. Writing Effective Descriptions (formula, good/bad examples, budget constraints)
-4. Writing Instructions (progressive disclosure, patterns, cross-references)
-5. Testing Your Skill (triggering, functional, validation commands)
-6. Common Patterns (the 5 patterns from the guide, adapted to .NET context)
-7. Troubleshooting (from the guide + repo-specific issues)
-8. Checklist (pre-commit checklist adapted from the guide's Reference A)
+### Upgrade Lanes
+| Lane | Path | Use Case |
+|------|------|----------|
+| Production (default) | net8.0 → net10.0 | LTS-to-LTS, recommended for most apps |
+| Staged production | net8.0 → net9.0 → net10.0 | When ecosystem dependencies require incremental migration |
+| Experimental | net10.0 → net11.0 (preview) | Non-production only, exploring upcoming features |
 
-### Task 2: Update CONTRIBUTING.md to Reference Skills Guide
+**.NET 9 note:** While .NET 9 is STS and approaching end-of-support (May 2026), staging through .NET 9 may be necessary when third-party packages or breaking changes require incremental migration.
 
-Add a section to the existing CONTRIBUTING.md that points contributors to the new CONTRIBUTING-SKILLS.md for skill-specific authoring guidance.
+## Quick Commands
+```bash
+# Smoke test: verify polyfill coverage in multi-targeting skill
+grep -i "PolySharp\|Polyfill" skills/multi-targeting/dotnet-multi-targeting/SKILL.md
 
-## Quick commands
+# Verify decision matrix in multi-targeting skill
+grep -i "conditional\|#if\|polyfill" skills/multi-targeting/dotnet-multi-targeting/SKILL.md
 
-- `./scripts/validate-skills.sh`
-- `./scripts/validate-marketplace.sh`
-- `python3 scripts/generate_dist.py --strict`
-- `python3 scripts/validate_cross_agent.py`
+# Test upgrade guidance lanes
+grep -i "upgrade\|migration\|lane" skills/multi-targeting/dotnet-version-upgrade/SKILL.md
 
-## Acceptance
+# Verify cross-references
+grep -i "\[skill:" skills/multi-targeting/*/SKILL.md
+```
 
-- [ ] `CONTRIBUTING-SKILLS.md` exists at repo root
-- [ ] Covers all 6 chapters from the Anthropic guide
-- [ ] Adapts examples to .NET/dotnet-artisan context
-- [ ] Includes repo-specific validation commands and conventions
-- [ ] References existing CONTRIBUTING.md for general contribution workflow
-- [ ] Under 3,000 words (concise, actionable)
-- [ ] CONTRIBUTING.md updated with cross-reference
-- [ ] All four validation commands pass
-- [ ] Manual is actionable enough for new contributors to author a skill from scratch
+## Acceptance Criteria
+1. Both skills written following the standard pattern (frontmatter with `name`+`description`, overview, detailed sections, gotchas, prerequisites, references, cross-references)
+2. Multi-targeting skill includes decision matrix for polyfill vs conditional compilation vs adapter patterns
+3. Multi-targeting skill documents PolySharp and SimonCropp/Polyfill with concrete package references, setup examples, and feature coverage
+4. Multi-targeting skill documents API compatibility validation workflow: `EnablePackageValidation`, `ApiCompat` baseline, pass/fail criteria
+5. Version upgrade skill defines three upgrade lanes (production LTS→LTS, staged through STS, experimental preview) with explicit guardrails
+6. Version upgrade skill covers .NET 9 as a staging option (not skipped), with STS end-of-support context
+7. Both skills consume output from `dotnet-version-detection` — no re-implementation of TFM detection logic
+8. Cross-references: both skills link to `[skill:dotnet-version-detection]`; `dotnet-version-detection` already links back via `[skill:dotnet-multi-targeting]` and `[skill:dotnet-version-upgrade]`
+9. Skills placed in `skills/multi-targeting/` directory (both skills share this category)
+
+## File Ownership (Parallelization)
+Tasks touch **disjoint** files:
+- **fn-10.1**: `skills/multi-targeting/dotnet-multi-targeting/SKILL.md` (creates)
+- **fn-10.2**: `skills/multi-targeting/dotnet-version-upgrade/SKILL.md` (creates)
+
+No shared file edits needed — tasks can run fully in parallel.
+
+## Test Notes
+- Verify multi-targeting skill provides correct guidance for sample scenarios:
+  - Single TFM net8.0 project wanting C# 14 features → PolySharp/Polyfill
+  - Multi-TFM `net8.0;net10.0` project → polyfill for language features + `#if` for runtime gaps
+  - net11.0 preview with `EnablePreviewFeatures` → experimental lane guidance
+  - Mismatched global.json/csproj → consume warning from version-detection, add upgrade guidance
+- Verify upgrade skill provides correct lane selection for:
+  - net8.0 LTS → net10.0 LTS (direct upgrade)
+  - net8.0 with ecosystem constraints → staged through net9.0
+  - net10.0 → net11.0 preview (non-production only)
+- Validate cross-references resolve correctly (no broken `[skill:...]` links)
+- Verify no duplication of detection logic from `dotnet-version-detection`
 
 ## References
-
-- Source PDF: "The Complete Guide to Building Skills for Claude" by Anthropic
-- CONTRIBUTING.md (existing contribution guide)
-- CLAUDE.md (repo conventions)
-- Agent Skills open standard: https://github.com/anthropics/agent-skills
+- PolySharp: https://github.com/Sergio0694/PolySharp
+- SimonCropp Polyfill: https://github.com/SimonCropp/Polyfill
+- .NET Multi-Targeting: https://learn.microsoft.com/en-us/dotnet/standard/frameworks
+- .NET Upgrade Assistant: https://dotnet.microsoft.com/en-us/platform/upgrade-assistant
+- Package Validation: https://learn.microsoft.com/en-us/dotnet/fundamentals/package-validation/overview
+- API Compatibility: https://learn.microsoft.com/en-us/dotnet/fundamentals/apicompat/overview
