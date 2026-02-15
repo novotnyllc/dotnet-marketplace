@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-35-net-tui-development-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T09:42:46.879467Z",
   "spec_path": ".flow/specs/fn-35-net-tui-development-skills.md",
   "status": "open",
   "title": "NET TUI Development Skills",
-  "updated_at": "2026-02-14T21:58:16.539496Z"
+  "updated_at": "2026-02-15T09:42:46.879647Z"
 }

@@ -63,3 +63,12 @@ Task specs for validation/doc tasks should include concrete code snippets matchi
 
 ## 2026-02-14 manual [convention]
 Configuration lists (agent names, tool prefixes) should be read from canonical source files (e.g. plugin.json) at runtime, not hardcoded -- eliminates drift when the source is updated
+
+## 2026-02-15 manual [convention]
+Epic specs must include: scope boundary table, Out of Scope section, .NET Version Policy, Dependencies, Conventions, and Task Decomposition table -- all are required for plan review SHIP
+
+## 2026-02-15 manual [convention]
+Task specs for skills must require Agent Gotchas, Prerequisites, and References sections with grep-verifiable verification commands
+
+## 2026-02-15 manual [convention]
+Always add a dedicated integration task (task .N) that owns plugin.json registration, README/CLAUDE.md/AGENTS.md count updates, and trigger-corpus entries -- prevents merge conflicts when multiple skill tasks touch plugin.json

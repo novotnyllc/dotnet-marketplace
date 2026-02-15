@@ -1,0 +1,66 @@
+{
+  "created_at": "2026-02-15T09:34:52.834227Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-35-net-tui-development-skills",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T21:56:36.974675Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-35-net-tui-development-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-35-net-tui-development-skills.md",
+      "status": "open",
+      "title": "NET TUI Development Skills",
+      "updated_at": "2026-02-14T21:58:16.539496Z"
+    },
+    "spec": "# .NET TUI Development Skills\n\n## Overview\nAdd skills for building terminal user interfaces (TUI) in .NET. Two major frameworks exist: Terminal.Gui (Miguel de Icaza) and Spectre.Console (Patrik Svensson). Both are actively maintained and serve different use cases.\n\n## Scope\n- **Terminal.Gui skill** \u2014 Full TUI framework: windows, menus, dialogs, views, layout (Computed vs Absolute), event handling, color themes, mouse support. Cross-platform (Windows/macOS/Linux).\n- **Spectre.Console skill** \u2014 Rich console output: tables, trees, progress bars, prompts, markup, live displays, canvas, charts. Also covers Spectre.Console.Cli for command-line parsing.\n- Consider whether to create one combined TUI skill or two separate ones (budget impact: 1 skill = ~120 chars, 2 = ~240 chars)\n\n**Package version policy**: Use latest stable versions of Terminal.Gui and Spectre.Console.\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Terminal.Gui skill covering layout, views, event handling, themes\n- [ ] Spectre.Console skill covering rich output, prompts, tables, CLI\n- [ ] Cross-references between TUI skills and `[skill:dotnet-csharp-async-patterns]` for async TUI patterns\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected\n- [ ] All validation commands pass\n\n## References\n- Terminal.Gui GitHub \u2014 https://github.com/gui-cs/Terminal.Gui\n- Spectre.Console GitHub \u2014 https://github.com/spectreconsole/spectre.console\n"
+  },
+  "epic_id": "fn-35-net-tui-development-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:59:06.066968Z",
+        "depends_on": [],
+        "epic": "fn-35-net-tui-development-skills",
+        "id": "fn-35-net-tui-development-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-35-net-tui-development-skills.1.md",
+        "status": "todo",
+        "title": "Create Terminal.Gui TUI skill",
+        "updated_at": "2026-02-14T22:03:55.195089Z"
+      },
+      "id": "fn-35-net-tui-development-skills.1",
+      "runtime": null,
+      "spec": "# fn-35-net-tui-development-skills.1 Create Terminal.Gui TUI skill\n\n## Description\nCreate skills/tui/dotnet-terminal-gui/SKILL.md covering Terminal.Gui for building full terminal user interfaces. Cover layout system, views, menus, dialogs, event handling, color themes, cross-platform considerations.\n\n**Size:** M\n**Files:** skills/tui/dotnet-terminal-gui/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Application lifecycle: Application.Init(), Application.Run(), Application.Shutdown()\n- Layout: Computed layout (Pos/Dim), Absolute positioning\n- Core views: Window, FrameView, Label, TextField, TextView, Button, ListView, TableView\n- Menus and dialogs: MenuBar, StatusBar, Dialog, MessageBox\n- Event handling: key bindings, mouse events\n- Color themes and styling\n- Cross-platform: Windows/macOS/Linux terminal compatibility\n- Latest stable Terminal.Gui package\n## Acceptance\n- [ ] Application lifecycle documented\n- [ ] Layout system covered\n- [ ] Core views with usage patterns\n- [ ] Menus and dialogs\n- [ ] Event handling and key bindings\n- [ ] Latest stable package version\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:59:06.184065Z",
+        "depends_on": [],
+        "epic": "fn-35-net-tui-development-skills",
+        "id": "fn-35-net-tui-development-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-35-net-tui-development-skills.2.md",
+        "status": "todo",
+        "title": "Create Spectre.Console skill",
+        "updated_at": "2026-02-14T22:03:55.326859Z"
+      },
+      "id": "fn-35-net-tui-development-skills.2",
+      "runtime": null,
+      "spec": "# fn-35-net-tui-development-skills.2 Create Spectre.Console skill\n\n## Description\nCreate skills/tui/dotnet-spectre-console/SKILL.md covering Spectre.Console for rich console output and Spectre.Console.Cli for command-line application structure.\n\n**Size:** M\n**Files:** skills/tui/dotnet-spectre-console/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Rich output: AnsiConsole.MarkupLine, tables, trees, panels, rules, figlet text\n- Progress: AnsiConsole.Progress(), status spinners, multi-task progress\n- Prompts: TextPrompt, SelectionPrompt, MultiSelectionPrompt, ConfirmationPrompt\n- Live displays: AnsiConsole.Live() for updating content\n- Spectre.Console.Cli: command hierarchy, settings classes, DI, type converters\n- Latest stable Spectre.Console package\n- Cross-ref to [skill:dotnet-terminal-gui] for full TUI alternative\n## Acceptance\n- [ ] Rich output patterns documented\n- [ ] Progress and prompts covered\n- [ ] Spectre.Console.Cli framework covered\n- [ ] Latest stable package version\n- [ ] Cross-ref to Terminal.Gui\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
