@@ -3,7 +3,14 @@
   "claim_note": "",
   "claimed_at": null,
   "created_at": "2026-02-14T21:24:48.337279Z",
-  "depends_on": [],
+  "depends_on": [
+    "fn-29-fleet-skill-review-and-improvement-sweep.2",
+    "fn-29-fleet-skill-review-and-improvement-sweep.3",
+    "fn-29-fleet-skill-review-and-improvement-sweep.4",
+    "fn-29-fleet-skill-review-and-improvement-sweep.5",
+    "fn-29-fleet-skill-review-and-improvement-sweep.6",
+    "fn-29-fleet-skill-review-and-improvement-sweep.7"
+  ],
   "epic": "fn-29-fleet-skill-review-and-improvement-sweep",
   "id": "fn-29-fleet-skill-review-and-improvement-sweep.8",
   "priority": null,

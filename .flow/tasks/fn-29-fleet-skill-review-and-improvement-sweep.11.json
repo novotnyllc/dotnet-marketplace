@@ -3,7 +3,9 @@
   "claim_note": "",
   "claimed_at": null,
   "created_at": "2026-02-14T21:24:48.671930Z",
-  "depends_on": [],
+  "depends_on": [
+    "fn-29-fleet-skill-review-and-improvement-sweep.8"
+  ],
   "epic": "fn-29-fleet-skill-review-and-improvement-sweep",
   "id": "fn-29-fleet-skill-review-and-improvement-sweep.11",
   "priority": null,

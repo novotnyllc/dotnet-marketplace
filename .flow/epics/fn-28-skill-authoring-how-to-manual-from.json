@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-28-skill-authoring-how-to-manual-from",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-15T00:42:29.436295Z",
   "created_at": "2026-02-14T21:22:21.794613Z",
   "default_impl": null,
   "default_review": null,
@@ -12,7 +12,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-15T00:17:35.753746Z",
   "spec_path": ".flow/specs/fn-28-skill-authoring-how-to-manual-from.md",
-  "status": "open",
+  "status": "done",
   "title": "Skill Authoring How-To Manual from Anthropic Guide",
-  "updated_at": "2026-02-15T00:17:35.753897Z"
+  "updated_at": "2026-02-15T00:42:45.316289Z"
 }
