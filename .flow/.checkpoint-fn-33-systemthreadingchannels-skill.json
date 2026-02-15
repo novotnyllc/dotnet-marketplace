@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-15T07:45:55.614256Z",
+  "created_at": "2026-02-15T08:18:56.451692Z",
   "epic": {
     "data": {
       "branch_name": "fn-33-systemthreadingchannels-skill",
@@ -12,14 +12,14 @@
       "depends_on_epics": [],
       "id": "fn-33-systemthreadingchannels-skill",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-15T07:50:27.090984Z",
       "spec_path": ".flow/specs/fn-33-systemthreadingchannels-skill.md",
       "status": "open",
       "title": "System.Threading.Channels Skill",
-      "updated_at": "2026-02-14T21:57:58.272882Z"
+      "updated_at": "2026-02-15T07:50:27.091188Z"
     },
-    "spec": "# System.Threading.Channels Skill\n\n## Overview\nExtract and expand the Channels coverage currently embedded in `dotnet-background-services` (lines 192-424) into a standalone deep skill. The existing coverage is decent but buried; it deserves first-class treatment as a standalone skill.\n\n## Scope\n- Create `skills/core-csharp/dotnet-channels/SKILL.md` as a standalone skill\n- Cover: Channel<T>, bounded vs unbounded, BoundedChannelFullMode (Wait, DropNewest, DropOldest, DropWrite), backpressure patterns\n- Producer/consumer patterns, multiple readers/writers, cancellation\n- Channel as async enumerable (IAsyncEnumerable integration)\n- Integration with BackgroundService (cross-ref to `[skill:dotnet-background-services]`)\n- Performance considerations: SingleReader/SingleWriter optimizations\n- Graceful shutdown and drain patterns\n- Remove or slim the Channels section from background-services to avoid duplication (replace with cross-ref)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Standalone `dotnet-channels` skill created with full Channel<T> coverage\n- [ ] Bounded/unbounded patterns, BoundedChannelFullMode modes documented\n- [ ] Producer/consumer, multiple readers/writers, IAsyncEnumerable patterns\n- [ ] Performance section (SingleReader/SingleWriter optimizations)\n- [ ] Graceful shutdown/drain patterns\n- [ ] Cross-ref to `[skill:dotnet-background-services]` for hosted service integration\n- [ ] Background-services skill updated to cross-ref Channels instead of inline coverage\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected\n\n## References\n- `skills/architecture/dotnet-background-services/SKILL.md:192-424` \u2014 current Channels coverage\n- System.Threading.Channels API docs\n"
+    "spec": "# System.Threading.Channels Skill\n\n## Overview\nExtract and expand the Channels coverage currently embedded in `dotnet-background-services` (lines 192-424) into a standalone deep skill. The existing coverage is decent but buried; it deserves first-class treatment as a standalone skill.\n\n## Scope\n- Create `skills/core-csharp/dotnet-channels/SKILL.md` as a standalone skill\n- Cover: Channel<T>, bounded vs unbounded, BoundedChannelFullMode (Wait, DropNewest, DropOldest, DropWrite), backpressure patterns\n- `itemDropped` callback for drop modes (.NET 7+)\n- Producer/consumer patterns, multiple readers/writers, cancellation\n- Channel as async enumerable (IAsyncEnumerable integration via `ChannelReader.ReadAllAsync()`) \u2014 net-new content, not present in source material\n- Integration with BackgroundService (cross-ref to `[skill:dotnet-background-services]`)\n- Performance considerations: SingleReader/SingleWriter flags, TryWrite/TryRead fast paths, WaitToReadAsync+TryRead consumer pattern, bounded channel memory behavior\n- Graceful shutdown and drain patterns\n- Remove or slim the Channels section from background-services to avoid duplication (replace with cross-ref)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh && \\\n./scripts/validate-marketplace.sh && \\\npython3 scripts/generate_dist.py --strict && \\\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] Standalone `dotnet-channels` skill created with full Channel<T> coverage\n- [ ] Bounded/unbounded patterns, BoundedChannelFullMode modes documented\n- [ ] `itemDropped` callback for drop modes (.NET 7+)\n- [ ] Producer/consumer, multiple readers/writers, IAsyncEnumerable patterns\n- [ ] Performance section covering SingleReader/SingleWriter, TryWrite/TryRead fast paths, WaitToReadAsync+TryRead pattern\n- [ ] Graceful shutdown/drain patterns\n- [ ] Cross-ref to `[skill:dotnet-background-services]` for hosted service integration\n- [ ] Background-services skill updated to cross-ref Channels instead of inline coverage\n- [ ] Registered in `plugin.json` skills array\n- [ ] Skill description under 120 characters, budget verified via validation\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected (all four validation commands pass)\n\n## References\n- `skills/architecture/dotnet-background-services/SKILL.md:192-424` \u2014 current Channels coverage\n- System.Threading.Channels API docs\n"
   },
   "epic_id": "fn-33-systemthreadingchannels-skill",
   "schema_version": 2,
@@ -37,11 +37,30 @@
         "spec_path": ".flow/tasks/fn-33-systemthreadingchannels-skill.1.md",
         "status": "todo",
         "title": "Create standalone dotnet-channels skill",
-        "updated_at": "2026-02-14T22:03:23.987766Z"
+        "updated_at": "2026-02-15T07:49:21.694055Z"
       },
       "id": "fn-33-systemthreadingchannels-skill.1",
-      "runtime": null,
-      "spec": "# fn-33-systemthreadingchannels-skill.1 Create standalone dotnet-channels skill\n\n## Description\nCreate skills/core-csharp/dotnet-channels/SKILL.md as a standalone deep skill for System.Threading.Channels. Extract and expand coverage currently embedded in dotnet-background-services (lines 192-424).\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-channels/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Channel<T> fundamentals: bounded vs unbounded creation\n- BoundedChannelFullMode: Wait, DropNewest, DropOldest, DropWrite with use cases\n- Producer/consumer patterns: single and multiple readers/writers\n- Cancellation and graceful shutdown (drain patterns)\n- IAsyncEnumerable integration: ChannelReader.ReadAllAsync()\n- Performance: SingleReader/SingleWriter creation options\n- Cross-ref to [skill:dotnet-background-services] and [skill:dotnet-csharp-async-patterns]\n## Acceptance\n- [ ] Full Channel<T> coverage\n- [ ] All BoundedChannelFullMode modes with use cases\n- [ ] Producer/consumer patterns (single and multi reader/writer)\n- [ ] IAsyncEnumerable integration\n- [ ] Performance optimizations\n- [ ] Graceful shutdown/drain\n- [ ] Cross-refs correct\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T07:53:00.141518Z",
+        "evidence": {
+          "commits": [
+            "c364d08",
+            "e1441d8"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T08:00:34.173771Z"
+      },
+      "spec": "# fn-33-systemthreadingchannels-skill.1 Create standalone dotnet-channels skill\n\n## Description\nCreate skills/core-csharp/dotnet-channels/SKILL.md as a standalone deep skill for System.Threading.Channels. Extract and expand coverage currently embedded in dotnet-background-services (lines 192-424).\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-channels/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Frontmatter: `name: dotnet-channels`, `description: \"WHEN using producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain patterns\"` (~95 chars)\n- Channel<T> fundamentals: bounded vs unbounded creation\n- BoundedChannelFullMode: Wait, DropNewest, DropOldest, DropWrite with use cases\n- `itemDropped` callback for drop modes (.NET 7+)\n- Producer/consumer patterns: single and multiple readers/writers\n- Cancellation and graceful shutdown (drain patterns)\n- Author new IAsyncEnumerable section (not present in source material): cover `ReadAllAsync()`, `await foreach`, integration with LINQ async operators\n- Performance: SingleReader/SingleWriter creation flags, TryWrite/TryRead fast paths, WaitToReadAsync+TryRead consumer pattern, bounded channel memory behavior\n- Cross-ref to [skill:dotnet-background-services] and [skill:dotnet-csharp-async-patterns]\n- Add `skills/core-csharp/dotnet-channels` to the `skills` array in `.claude-plugin/plugin.json`\n## Acceptance\n- [ ] Full Channel<T> coverage (bounded/unbounded)\n- [ ] All BoundedChannelFullMode modes with use cases\n- [ ] `itemDropped` callback (.NET 7+) covered\n- [ ] Producer/consumer patterns (single and multi reader/writer)\n- [ ] IAsyncEnumerable integration (new content: ReadAllAsync, await foreach)\n- [ ] Performance section: SingleReader/SingleWriter, TryWrite/TryRead, WaitToReadAsync+TryRead\n- [ ] Graceful shutdown/drain\n- [ ] Cross-refs correct\n- [ ] Registered in plugin.json\n- [ ] Description under 120 chars, budget verified\n## Done summary\nCreated standalone dotnet-channels skill with comprehensive System.Threading.Channels coverage: Channel<T> fundamentals, all BoundedChannelFullMode modes, itemDropped callback (.NET 7+), producer/consumer patterns, IAsyncEnumerable integration (ReadAllAsync, await foreach, LINQ async operators), performance section (SingleReader/SingleWriter, WaitToReadAsync+TryRead, TryWrite fast path), and graceful shutdown/drain patterns. Registered in plugin.json (106 skills total).\n## Evidence\n- Commits: c364d08, e1441d8\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     },
     {
       "data": {
@@ -58,11 +77,29 @@
         "spec_path": ".flow/tasks/fn-33-systemthreadingchannels-skill.2.md",
         "status": "todo",
         "title": "Slim Channels section in background-services and add cross-ref",
-        "updated_at": "2026-02-14T22:03:24.114047Z"
+        "updated_at": "2026-02-15T07:49:29.956668Z"
       },
       "id": "fn-33-systemthreadingchannels-skill.2",
-      "runtime": null,
-      "spec": "# fn-33-systemthreadingchannels-skill.2 Slim Channels section in background-services and add cross-ref\n\n## Description\nSlim the Channels section in skills/architecture/dotnet-background-services/SKILL.md (lines 192-424) to a brief summary with cross-reference to the new standalone [skill:dotnet-channels] skill.\n\n**Size:** S\n**Files:** skills/architecture/dotnet-background-services/SKILL.md\n\n## Approach\n- Replace ~230-line Channels section with brief \"Channels Integration\" subsection (~20-30 lines)\n- Keep only BackgroundService + Channel integration pattern\n- Add [skill:dotnet-channels] cross-ref for full guidance\n- Preserve the skill focus on BackgroundService, IHostedService, IHostedLifecycleService\n## Acceptance\n- [ ] Channels section reduced to ~20-30 lines\n- [ ] Cross-ref to [skill:dotnet-channels] added\n- [ ] BackgroundService + Channel integration pattern preserved\n- [ ] No broken cross-references\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T08:08:04.727784Z",
+        "evidence": {
+          "commits": [
+            "4935b645233f7d3bc53571aa6ed531e975b49388"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T08:13:51.972037Z"
+      },
+      "spec": "# fn-33-systemthreadingchannels-skill.2 Slim Channels section in background-services and add cross-ref\n\n## Description\nSlim the Channels section in skills/architecture/dotnet-background-services/SKILL.md (lines 192-424) to a brief summary with cross-reference to the new standalone [skill:dotnet-channels] skill.\n\n**Size:** S\n**Files:** skills/architecture/dotnet-background-services/SKILL.md\n\n## Approach\n- Replace ~230-line Channels section with brief \"Channels Integration\" subsection (~15-20 lines)\n- Keep: condensed BackgroundTaskQueue + consumer worker pattern (~15 lines of code) as the integration example\n- Remove: Channel options table, multiple consumers section, drain pattern (all moved to [skill:dotnet-channels])\n- Add cross-ref paragraph at top of section: `See [skill:dotnet-channels] for comprehensive Channel<T> guidance`\n- Preserve the skill focus on BackgroundService, IHostedService, IHostedLifecycleService\n## Acceptance\n- [ ] Channels section reduced to ~15-20 lines with integration example\n- [ ] Cross-ref to [skill:dotnet-channels] added\n- [ ] BackgroundTaskQueue + consumer worker pattern preserved as summary\n- [ ] Channel options table, multiple consumers, drain pattern removed (covered by new skill)\n- [ ] No broken cross-references\n## Done summary\nSlimmed the ~230-line Channels section in dotnet-background-services SKILL.md to a ~48-line Channels Integration section with a condensed BackgroundTaskQueue + consumer worker example and cross-references to the new standalone [skill:dotnet-channels] skill. Removed Channel options table, multiple consumers, and drain pattern (all covered by the standalone skill).\n## Evidence\n- Commits: 4935b645233f7d3bc53571aa6ed531e975b49388\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     }
   ]
 }

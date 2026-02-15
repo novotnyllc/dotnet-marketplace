@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-34-msbuild-and-build-system-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T08:36:19.450500Z",
   "spec_path": ".flow/specs/fn-34-msbuild-and-build-system-skills.md",
   "status": "open",
   "title": "MSBuild and Build System Skills",
-  "updated_at": "2026-02-14T21:58:08.150532Z"
+  "updated_at": "2026-02-15T08:36:19.450650Z"
 }
