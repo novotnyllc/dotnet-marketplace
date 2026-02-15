@@ -20,9 +20,8 @@ Review all skills in: api-development (5), cli-tools (5), performance (4), nativ
 - [ ] Issues tagged by severity: Critical (broken refs, budget violations), High, Low
 
 ## Done summary
-TBD
-
+Audited 18 skills across api-development (5), cli-tools (5), performance (4), and native-aot (4) against the 11-dimension rubric. Produced batch-d-findings.md: 13 Clean, 4 Needs Work, 1 Critical (dotnet-ci-benchmarking at 144 chars). Key issues: description budget overages, one bare backtick cross-ref, one stale "not yet landed" reference.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 0218c44, 1d4b6b4
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
