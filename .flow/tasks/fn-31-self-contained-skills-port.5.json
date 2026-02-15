@@ -9,6 +9,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.5.md",
   "status": "todo",
-  "title": "Port logging/observability and middleware skills",
-  "updated_at": "2026-02-14T22:02:53.830616Z"
+  "title": "Enhance observability and create middleware patterns skill",
+  "updated_at": "2026-02-15T05:21:00.852204Z"
 }

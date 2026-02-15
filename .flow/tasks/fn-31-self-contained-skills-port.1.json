@@ -9,6 +9,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.1.md",
   "status": "todo",
-  "title": "Port System.CommandLine skill (>= 2.0.0)",
-  "updated_at": "2026-02-14T22:02:53.322571Z"
+  "title": "Enhance System.CommandLine skill (>= 2.0.0)",
+  "updated_at": "2026-02-15T05:20:36.361714Z"
 }

@@ -243,3 +243,6 @@ When counting issues in audit summary tables, reconcile per-skill Issues section
 
 ## 2026-02-15 manual [pitfall]
 When computing aggregate savings from per-item deltas in a consolidation report, verify the per-tier breakdown sums match the individual line items in each priority table -- off-by-one tier misallocations (e.g. an item listed in Low but counted as High) corrupt sub-totals even when the grand total is correct
+
+## 2026-02-15 manual [pitfall]
+When planning new skills, always check plugin.json and skills/ tree for existing skills that overlap — enhance existing over creating duplicates

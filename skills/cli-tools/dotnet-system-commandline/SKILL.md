@@ -1,45 +1,31 @@
 ---
 name: dotnet-system-commandline
-description: "WHEN building CLI apps. System.CommandLine 2.0: RootCommand, Option<T>, middleware, hosting, tab completion, IConsole."
+description: "WHEN building CLI apps. System.CommandLine 2.0: commands, options, SetAction, ParseResult, custom parsing, testing."
 ---
 
 # dotnet-system-commandline
 
-System.CommandLine 2.0 API for building .NET CLI applications: RootCommand, Command, Option<T>, Argument<T>, the middleware pipeline, hosting integration with `UseCommandHandler`, tab completion, automatic `--version`/`--help` generation, dependency injection via `Microsoft.Extensions.Hosting`, and the `IConsole` abstraction for testable output.
+System.CommandLine 2.0 stable API for building .NET CLI applications. Covers RootCommand, Command, Option\<T\>, Argument\<T\>, SetAction for handler binding, ParseResult-based value access, custom type parsing, validation, tab completion, and testing with TextWriter capture.
 
-**Version assumptions:** .NET 8.0+ baseline. System.CommandLine 2.0.0-beta4 (pre-release NuGet package). Despite the beta version number, the API surface is stable and battle-tested -- it powers the `dotnet` CLI itself, the .NET Interactive kernel, and many Microsoft-internal tools. The package has been in active use since 2020 with a stable API contract.
+**Version assumptions:** .NET 8.0+ baseline. System.CommandLine 2.0.0+ (stable NuGet package, GA since November 2025). All examples target the 2.0.0 GA API surface.
 
-**Out of scope:** CLI application architecture patterns (layered command/handler/service design, configuration precedence, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot] (fn-16). CLI distribution strategy and packaging -- see [skill:dotnet-cli-distribution] (fn-17). General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container mechanics -- see [skill:dotnet-csharp-dependency-injection] (fn-3).
+**Breaking change note:** System.CommandLine 2.0.0 GA differs significantly from the pre-release beta4 API. Key changes: `SetHandler` replaced by `SetAction`, `ICommandHandler` removed in favor of `SynchronousCommandLineAction`/`AsynchronousCommandLineAction`, `InvocationContext` removed (ParseResult passed directly), `CommandLineBuilder` and `AddMiddleware` removed, `IConsole` removed in favor of TextWriter properties, and the `System.CommandLine.Hosting`/`System.CommandLine.NamingConventionBinder` packages discontinued. Do not use beta-era patterns.
 
-Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns and testing, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration.
+**Out of scope:** CLI application architecture patterns (layered command/handler/service design, configuration precedence, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]. Native AOT compilation -- see [skill:dotnet-native-aot]. CLI distribution strategy -- see [skill:dotnet-cli-distribution]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]. General coding standards -- see [skill:dotnet-csharp-coding-standards].
+
+Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-csharp-coding-standards] for naming and style conventions.
 
 ---
 
-## Production Readiness Assessment
-
-System.CommandLine 2.0 is distributed as a pre-release NuGet package (`2.0.0-beta4`). This section explains what that means in practice.
-
-**Why it is production-ready despite beta versioning:**
-- Powers the `dotnet` CLI (millions of daily invocations)
-- Used by .NET Interactive, MAUI workloads, and NuGet client
-- Core API surface (Command, Option, Argument, middleware) has been stable since 2021
-- Breaking changes between betas are rare and well-documented
-
-**What the beta status means:**
-- The NuGet package version includes a pre-release suffix
-- Projects using `<TreatWarningsAsErrors>` may need `<NoWarn>` for the pre-release dependency
-- API could theoretically change before the 1.0/2.0 stable release
-- Some advanced APIs (custom parsing, response files) may see minor changes
+## Package Reference
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.24324.3" />
-  <!-- Hosting integration for DI + UseCommandHandler -->
-  <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.24324.3" />
-  <!-- Required for UseCommandHandler property binding by name -->
-  <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.24324.3" />
+  <PackageReference Include="System.CommandLine" Version="2.0.*" />
 </ItemGroup>
 ```
+
+System.CommandLine 2.0 targets .NET 8+ and .NET Standard 2.0. A single package provides all functionality -- the separate `System.CommandLine.Hosting`, `System.CommandLine.NamingConventionBinder`, and `System.CommandLine.Rendering` packages from the beta era are discontinued.
 
 ---
 
@@ -53,210 +39,365 @@ using System.CommandLine;
 // Root command -- the entry point
 var rootCommand = new RootCommand("My CLI tool description");
 
-// Add a subcommand
+// Add a subcommand via mutable collection
 var listCommand = new Command("list", "List all items");
-rootCommand.AddCommand(listCommand);
+rootCommand.Subcommands.Add(listCommand);
 
 // Nested subcommands: mycli migrate up
 var migrateCommand = new Command("migrate", "Database migrations");
 var upCommand = new Command("up", "Apply pending migrations");
 var downCommand = new Command("down", "Revert last migration");
-migrateCommand.AddCommand(upCommand);
-migrateCommand.AddCommand(downCommand);
-rootCommand.AddCommand(migrateCommand);
+migrateCommand.Subcommands.Add(upCommand);
+migrateCommand.Subcommands.Add(downCommand);
+rootCommand.Subcommands.Add(migrateCommand);
 ```
 
-### Options and Arguments
+### Collection Initializer Syntax
+
+```csharp
+// Fluent collection initializer (commands, options, arguments)
+RootCommand rootCommand = new("My CLI tool")
+{
+    new Option<string>("--output", "-o") { Description = "Output file path" },
+    new Argument<FileInfo>("file") { Description = "Input file" },
+    new Command("list", "List all items")
+    {
+        new Option<int>("--limit") { Description = "Max items to return" }
+    }
+};
+```
+
+---
+
+## Options and Arguments
+
+### Option\<T\> -- Named Parameters
 
 ```csharp
 // Option<T> -- named parameter (--output, -o)
-var outputOption = new Option<FileInfo>(
-    name: "--output",
-    description: "Output file path")
+// name is the first parameter; additional params are aliases
+var outputOption = new Option<FileInfo>("--output", "-o")
 {
-    IsRequired = true
+    Description = "Output file path",
+    Required = true  // was IsRequired in beta4
 };
-outputOption.AddAlias("-o");
 
-// Argument<T> -- positional parameter
-var fileArgument = new Argument<FileInfo>(
-    name: "file",
-    description: "Input file to process");
-
-// Option with default value
-var verbosityOption = new Option<int>(
-    name: "--verbosity",
-    getDefaultValue: () => 1,
-    description: "Verbosity level (0-3)");
-
-// Option with constrained values
-var formatOption = new Option<string>(
-    name: "--format",
-    description: "Output format")
-    .FromAmong("json", "csv", "table");
-
-rootCommand.AddOption(outputOption);
-rootCommand.AddArgument(fileArgument);
-```
-
-### Setting Handlers
-
-```csharp
-// Handler receives parsed values via binding
-listCommand.SetHandler(
-    (FileInfo output, int verbosity) =>
-    {
-        Console.WriteLine($"Output: {output.FullName}, Verbosity: {verbosity}");
-    },
-    outputOption, verbosityOption);
-
-// Async handler with cancellation (use InvocationContext for CancellationToken)
-listCommand.SetHandler(
-    async (InvocationContext context) =>
-    {
-        var output = context.ParseResult.GetValueForOption(outputOption)!;
-        var verbosity = context.ParseResult.GetValueForOption(verbosityOption);
-        await ProcessAsync(output, verbosity, context.GetCancellationToken());
-    });
-```
-
-### Invoking the Command
-
-```csharp
-// Program.cs entry point
-return await rootCommand.InvokeAsync(args);
-```
-
-The return value is the exit code. `InvokeAsync` returns 0 on success, non-zero on failure.
-
----
-
-## Middleware Pipeline
-
-System.CommandLine has a middleware pipeline that intercepts command invocations, similar to ASP.NET Core middleware.
-
-### Built-In Middleware
-
-The default pipeline includes (in order):
-1. **Exception handling** -- catches unhandled exceptions and returns exit code 1
-2. **Parse error reporting** -- shows validation errors for invalid input
-3. **Help** -- `--help` / `-h` / `-?` triggers help text and short-circuits
-4. **Version** -- `--version` triggers version display and short-circuits
-5. **Parse directive** -- `[parse]` shows how input was parsed (debugging aid)
-6. **Suggest directive** -- `[suggest]` provides tab completion suggestions
-7. **User handler** -- the `SetHandler` delegate
-
-### Custom Middleware
-
-```csharp
-var builder = new CommandLineBuilder(rootCommand)
-    .UseDefaults()  // Adds all built-in middleware
-    .AddMiddleware(async (context, next) =>
-    {
-        // Before: runs before the command handler
-        var sw = Stopwatch.StartNew();
-
-        await next(context);
-
-        // After: runs after the command handler
-        sw.Stop();
-        if (context.ParseResult.GetValueForOption(verboseOption))
-        {
-            Console.Error.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms");
-        }
-    })
-    .Build();
-
-return await builder.InvokeAsync(args);
-```
-
-### Middleware Order Matters
-
-Middleware registered with `AddMiddleware` runs in registration order. Place error-handling middleware early and telemetry/logging middleware late.
-
----
-
-## Hosting Integration
-
-`System.CommandLine.Hosting` integrates with `Microsoft.Extensions.Hosting` to provide DI, configuration, and logging -- the same infrastructure used by ASP.NET Core and worker services.
-
-### Setup
-
-```csharp
-using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Hosting;
-using System.CommandLine.NamingConventionBinder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-var rootCommand = new RootCommand("My CLI tool");
-var syncCommand = new Command("sync", "Synchronize data");
-syncCommand.AddOption(new Option<string>("--source", "Source endpoint"));
-rootCommand.AddCommand(syncCommand);
-
-var builder = new CommandLineBuilder(rootCommand)
-    .UseHost(_ => Host.CreateDefaultBuilder(args), host =>
-    {
-        host.ConfigureServices(services =>
-        {
-            services.AddSingleton<ISyncService, SyncService>();
-            services.AddSingleton<IFileSystem, PhysicalFileSystem>();
-        });
-
-        host.UseCommandHandler<SyncCommand, SyncCommand.Handler>();
-    })
-    .UseDefaults()
-    .Build();
-
-return await builder.InvokeAsync(args);
-```
-
-### Command Handler Class Pattern
-
-```csharp
-public class SyncCommand
+// Option with default value via DefaultValueFactory
+var verbosityOption = new Option<int>("--verbosity")
 {
-    public class Handler : ICommandHandler
-    {
-        private readonly ISyncService _syncService;
+    Description = "Verbosity level (0-3)",
+    DefaultValueFactory = _ => 1
+};
+```
 
-        // Constructor injection -- resolved from DI
-        public Handler(ISyncService syncService)
-        {
-            _syncService = syncService;
-        }
+### Argument\<T\> -- Positional Parameters
 
-        // Bound from command-line options (by naming convention)
-        public string Source { get; set; } = "";
+```csharp
+// Argument<T> -- positional parameter
+// name is mandatory in 2.0 (used for help text)
+var fileArgument = new Argument<FileInfo>("file")
+{
+    Description = "Input file to process"
+};
 
-        public int Invoke(InvocationContext context) =>
-            InvokeAsync(context).GetAwaiter().GetResult();
+rootCommand.Arguments.Add(fileArgument);
+```
 
-        public async Task<int> InvokeAsync(InvocationContext context)
-        {
-            await _syncService.SyncAsync(Source, context.GetCancellationToken());
-            return 0;  // exit code
-        }
-    }
+### Constrained Values
+
+```csharp
+var formatOption = new Option<string>("--format")
+{
+    Description = "Output format"
+};
+formatOption.AcceptOnlyFromAmong("json", "csv", "table");
+
+rootCommand.Options.Add(formatOption);
+```
+
+### Aliases
+
+```csharp
+// Aliases are separate from the name in 2.0
+// First constructor param is the name; rest are aliases
+var verboseOption = new Option<bool>("--verbose", "-v")
+{
+    Description = "Enable verbose output"
+};
+
+// Or add aliases after construction
+verboseOption.Aliases.Add("-V");
+```
+
+### Global Options
+
+```csharp
+// Global options are inherited by all subcommands
+var debugOption = new Option<bool>("--debug")
+{
+    Description = "Enable debug mode",
+    Recursive = true  // makes it global (inherited by subcommands)
+};
+rootCommand.Options.Add(debugOption);
+```
+
+---
+
+## Setting Actions (Command Handlers)
+
+In 2.0.0 GA, `SetHandler` is replaced by `SetAction`. Actions receive a `ParseResult` directly (no `InvocationContext`).
+
+### Synchronous Action
+
+```csharp
+var outputOption = new Option<FileInfo>("--output", "-o")
+{
+    Description = "Output file path",
+    Required = true
+};
+var verbosityOption = new Option<int>("--verbosity")
+{
+    DefaultValueFactory = _ => 1
+};
+
+rootCommand.Options.Add(outputOption);
+rootCommand.Options.Add(verbosityOption);
+
+rootCommand.SetAction(parseResult =>
+{
+    var output = parseResult.GetValue(outputOption)!;
+    var verbosity = parseResult.GetValue(verbosityOption);
+    Console.WriteLine($"Output: {output.FullName}, Verbosity: {verbosity}");
+    return 0; // exit code
+});
+```
+
+### Asynchronous Action with CancellationToken
+
+```csharp
+// Async actions receive ParseResult AND CancellationToken
+rootCommand.SetAction(async (ParseResult parseResult, CancellationToken ct) =>
+{
+    var output = parseResult.GetValue(outputOption)!;
+    var verbosity = parseResult.GetValue(verbosityOption);
+    await ProcessAsync(output, verbosity, ct);
+    return 0;
+});
+```
+
+### Getting Values by Name
+
+```csharp
+// Values can also be retrieved by symbol name (requires type parameter)
+rootCommand.SetAction(parseResult =>
+{
+    int delay = parseResult.GetValue<int>("--delay");
+    string? message = parseResult.GetValue<string>("--message");
+    Console.WriteLine($"Delay: {delay}, Message: {message}");
+});
+```
+
+### Parsing and Invoking
+
+```csharp
+// Program.cs entry point -- parse then invoke
+static int Main(string[] args)
+{
+    var rootCommand = BuildCommand();
+    ParseResult parseResult = rootCommand.Parse(args);
+    return parseResult.Invoke();
+}
+
+// Async entry point
+static async Task<int> Main(string[] args)
+{
+    var rootCommand = BuildCommand();
+    ParseResult parseResult = rootCommand.Parse(args);
+    return await parseResult.InvokeAsync();
 }
 ```
 
-`UseCommandHandler<TCommand, THandler>` binds option/argument values to public properties on the handler by name. The handler is resolved from DI, so constructor injection works.
+### Parse Without Invoking
+
+```csharp
+// Parse-only mode: inspect results without running actions
+ParseResult parseResult = rootCommand.Parse(args);
+if (parseResult.Errors.Count > 0)
+{
+    foreach (var error in parseResult.Errors)
+    {
+        Console.Error.WriteLine(error.Message);
+    }
+    return 1;
+}
+
+FileInfo? file = parseResult.GetValue(fileOption);
+// Process directly without SetAction
+```
+
+---
+
+## Custom Type Parsing
+
+### CustomParser Property
+
+For types without built-in parsers, use the `CustomParser` property on `Option<T>` or `Argument<T>`.
+
+```csharp
+public record ConnectionInfo(string Host, int Port);
+
+var connectionOption = new Option<ConnectionInfo?>("--connection")
+{
+    Description = "Connection as host:port",
+    CustomParser = result =>
+    {
+        var raw = result.Tokens.SingleOrDefault()?.Value;
+        if (raw is null)
+        {
+            result.AddError("--connection requires a value");
+            return null;
+        }
+
+        var parts = raw.Split(':');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var port))
+        {
+            result.AddError("Expected format: host:port");
+            return null;
+        }
+
+        return new ConnectionInfo(parts[0], port);
+    }
+};
+```
+
+### DefaultValueFactory
+
+```csharp
+var portOption = new Option<int>("--port")
+{
+    Description = "Server port",
+    DefaultValueFactory = _ => 8080  // type-safe default
+};
+```
+
+### Combining CustomParser with Validation
+
+```csharp
+var uriOption = new Option<Uri?>("--uri")
+{
+    Description = "Target URI",
+    CustomParser = result =>
+    {
+        var raw = result.Tokens.SingleOrDefault()?.Value;
+        if (raw is null) return null;
+
+        if (!Uri.TryCreate(raw, UriKind.Absolute, out var uri))
+        {
+            result.AddError("Invalid URI format");
+            return null;
+        }
+
+        if (uri.Scheme != "https")
+        {
+            result.AddError("Only HTTPS URIs are accepted");
+            return null;
+        }
+
+        return uri;
+    }
+};
+```
+
+---
+
+## Validation
+
+### Option and Argument Validators
+
+```csharp
+// Validators use Validators.Add (not AddValidator in 2.0)
+var portOption = new Option<int>("--port") { Description = "Port number" };
+portOption.Validators.Add(result =>
+{
+    var value = result.GetValue(portOption);
+    if (value < 1 || value > 65535)
+    {
+        result.AddError("Port must be between 1 and 65535");
+    }
+});
+
+// Arity constraints
+var tagsOption = new Option<string[]>("--tag")
+{
+    Arity = new ArgumentArity(1, 5),  // 1 to 5 tags
+    AllowMultipleArgumentsPerToken = true
+};
+```
+
+### Built-In Validators
+
+```csharp
+// Accept only existing files/directories
+var inputOption = new Option<FileInfo>("--input");
+inputOption.AcceptExistingOnly();
+
+// Accept only legal file names
+var nameArg = new Argument<string>("name");
+nameArg.AcceptLegalFileNamesOnly();
+
+// Accept only from a set of values (moved from FromAmong)
+var envOption = new Option<string>("--env");
+envOption.AcceptOnlyFromAmong("dev", "staging", "prod");
+```
+
+---
+
+## Configuration
+
+In 2.0.0 GA, `CommandLineBuilder` is removed. Configuration uses `ParserConfiguration` (for parsing) and `InvocationConfiguration` (for invocation).
+
+### Parser Configuration
+
+```csharp
+using System.CommandLine;
+
+var config = new ParserConfiguration
+{
+    EnablePosixBundling = true,  // -abc == -a -b -c (default: true)
+};
+
+// Response files enabled by default; disable with:
+// config.ResponseFileTokenReplacer = null;
+
+ParseResult parseResult = rootCommand.Parse(args, config);
+```
+
+### Invocation Configuration
+
+```csharp
+var invocationConfig = new InvocationConfiguration
+{
+    // Redirect output for testing or customization
+    Output = Console.Out,
+    Error = Console.Error,
+
+    // Process termination handling (default: 2 seconds)
+    ProcessTerminationTimeout = TimeSpan.FromSeconds(5),
+
+    // Disable default exception handler for custom try/catch
+    EnableDefaultExceptionHandler = false
+};
+
+int exitCode = parseResult.Invoke(invocationConfig);
+```
 
 ---
 
 ## Tab Completion
 
-System.CommandLine provides shell-native tab completion for Bash, Zsh, Fish, and PowerShell.
-
 ### Enabling Completion
 
-```csharp
-var builder = new CommandLineBuilder(rootCommand)
-    .UseDefaults()  // Includes suggest directive
-    .Build();
-```
+Tab completion is built into RootCommand via the SuggestDirective (included by default).
 
 Users register completions for their shell:
 
@@ -274,19 +415,22 @@ mycli [suggest:powershell] | Out-String | Invoke-Expression
 mycli [suggest:fish] | source
 ```
 
-### Custom Completion
+### Custom Completions
 
 ```csharp
+// Static completions
 var envOption = new Option<string>("--environment");
-envOption.AddCompletions("development", "staging", "production");
+envOption.CompletionSources.Add("development", "staging", "production");
 
 // Dynamic completions
 var branchOption = new Option<string>("--branch");
-branchOption.AddCompletions(ctx =>
-{
-    // Return completions based on context
-    return GetGitBranches();
-});
+branchOption.CompletionSources.Add(ctx =>
+[
+    new CompletionItem("main"),
+    new CompletionItem("develop"),
+    // Dynamically fetch branches
+    .. GetGitBranches().Select(b => new CompletionItem(b))
+]);
 ```
 
 ---
@@ -295,7 +439,7 @@ branchOption.AddCompletions(ctx =>
 
 ### Version
 
-`--version` is automatically added to the RootCommand. It reads from:
+`--version` is automatically available on RootCommand via `VersionOption`. It reads from:
 1. `AssemblyInformationalVersionAttribute` (preferred -- includes SemVer metadata)
 2. `AssemblyVersionAttribute` (fallback)
 
@@ -308,138 +452,196 @@ branchOption.AddCompletions(ctx =>
 </PropertyGroup>
 ```
 
-### Help Customization
+### Help
+
+Help is automatically provided via `HelpOption` on RootCommand. Descriptions from constructors and `Description` properties flow into help text.
+
+---
+
+## Directives
+
+Directives replace some beta-era `CommandLineBuilder` extensions. RootCommand exposes a `Directives` collection.
 
 ```csharp
-var rootCommand = new RootCommand("Tool description shown in help");
+// Built-in directives (included by default on RootCommand):
+// [suggest] -- tab completion suggestions
+// Other available directives:
+rootCommand.Directives.Add(new DiagramDirective());           // [diagram] -- shows parse tree
+rootCommand.Directives.Add(new EnvironmentVariablesDirective()); // [env:VAR=value]
+```
 
-// Help is automatic for all commands, options, and arguments
-// Descriptions come from constructor parameters
+### Parse Error Handling
 
-// Customize help layout
-var builder = new CommandLineBuilder(rootCommand)
-    .UseHelp(ctx =>
-    {
-        ctx.HelpBuilder.CustomizeLayout(_ =>
-            HelpBuilder.Default.GetLayout()
-                .Append(_ => _.Output.WriteLine("Examples:"))
-                .Append(_ => _.Output.WriteLine("  mycli sync --source https://api.example.com")));
-    })
-    .UseDefaults()
-    .Build();
+```csharp
+// Customize parse error behavior
+ParseResult result = rootCommand.Parse(args);
+if (result.Action is ParseErrorAction parseError)
+{
+    parseError.ShowTypoCorrections = true;
+    parseError.ShowHelp = false;
+}
+int exitCode = result.Invoke();
 ```
 
 ---
 
-## IConsole Abstraction
+## Dependency Injection Pattern
 
-`IConsole` provides a testable abstraction over `Console`. Use it in command handlers to enable unit testing without capturing stdout/stderr globally.
-
-### Using IConsole in Handlers
+The `System.CommandLine.Hosting` package is discontinued in 2.0.0 GA. For DI integration, use `Microsoft.Extensions.Hosting` directly and compose services before parsing.
 
 ```csharp
-public class ListHandler : ICommandHandler
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.CommandLine;
+
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices(services =>
+    {
+        services.AddSingleton<ISyncService, SyncService>();
+        services.AddSingleton<IFileSystem, PhysicalFileSystem>();
+    })
+    .Build();
+
+var serviceProvider = host.Services;
+
+var sourceOption = new Option<string>("--source") { Description = "Source endpoint" };
+var syncCommand = new Command("sync", "Synchronize data");
+syncCommand.Options.Add(sourceOption);
+
+syncCommand.SetAction(async (ParseResult parseResult, CancellationToken ct) =>
 {
-    private readonly IItemRepository _repository;
+    var syncService = serviceProvider.GetRequiredService<ISyncService>();
+    var source = parseResult.GetValue(sourceOption);
+    await syncService.SyncAsync(source!, ct);
+    return 0;
+});
 
-    public ListHandler(IItemRepository repository)
-    {
-        _repository = repository;
-    }
+var rootCommand = new RootCommand("My CLI tool");
+rootCommand.Subcommands.Add(syncCommand);
 
-    public async Task<int> InvokeAsync(InvocationContext context)
-    {
-        var items = await _repository.GetAllAsync();
-        var console = context.Console;
-
-        foreach (var item in items)
-        {
-            console.Out.Write($"{item.Id}: {item.Name}\n");
-        }
-
-        if (!items.Any())
-        {
-            console.Error.Write("No items found.\n");
-            return 1;
-        }
-
-        return 0;
-    }
-
-    public int Invoke(InvocationContext context) =>
-        InvokeAsync(context).GetAwaiter().GetResult();
-}
+return await rootCommand.Parse(args).InvokeAsync();
 ```
 
-### Testing with TestConsole
+---
+
+## Testing
+
+### Testing with InvocationConfiguration (TextWriter Capture)
+
+`IConsole` is removed in 2.0.0 GA. For testing, redirect output via `InvocationConfiguration`.
 
 ```csharp
 [Fact]
-public async Task ListHandler_WritesItems_ToStdout()
+public void ListCommand_WritesItems_ToOutput()
 {
-    var repository = new FakeItemRepository(
-    [
-        new Item(1, "Widget"),
-        new Item(2, "Gadget")
-    ]);
+    // Arrange
+    var outputWriter = new StringWriter();
+    var errorWriter = new StringWriter();
+    var config = new InvocationConfiguration
+    {
+        Output = outputWriter,
+        Error = errorWriter
+    };
 
-    var handler = new ListHandler(repository);
-    var console = new TestConsole();
-    var context = new InvocationContext(
-        new Parser(new RootCommand()).Parse(""), console);
+    var rootCommand = BuildRootCommand();
 
-    var exitCode = await handler.InvokeAsync(context);
+    // Act
+    ParseResult parseResult = rootCommand.Parse("list --format json");
+    int exitCode = parseResult.Invoke(config);
 
+    // Assert
     Assert.Equal(0, exitCode);
-    Assert.Contains("Widget", console.Out.ToString());
+    Assert.Contains("json", outputWriter.ToString());
+    Assert.Empty(errorWriter.ToString());
 }
 ```
 
----
-
-## Validation
-
-### Option Validators
+### Testing Parsed Values Without Invocation
 
 ```csharp
-var portOption = new Option<int>("--port", "Port number");
-portOption.AddValidator(result =>
+[Fact]
+public void ParseResult_ExtractsOptionValues()
 {
-    var value = result.GetValueForOption(portOption);
-    if (value < 1 || value > 65535)
-    {
-        result.ErrorMessage = "Port must be between 1 and 65535";
-    }
-});
+    var portOption = new Option<int>("--port") { DefaultValueFactory = _ => 8080 };
+    var rootCommand = new RootCommand { portOption };
 
-// Arity constraints
-var tagsOption = new Option<string[]>("--tag")
+    ParseResult result = rootCommand.Parse("--port 3000");
+
+    Assert.Equal(3000, result.GetValue(portOption));
+    Assert.Empty(result.Errors);
+}
+
+[Fact]
+public void ParseResult_ReportsErrors_ForInvalidInput()
 {
-    Arity = new ArgumentArity(1, 5),  // 1 to 5 tags
-    AllowMultipleArgumentsPerToken = true
-};
+    var portOption = new Option<int>("--port");
+    var rootCommand = new RootCommand { portOption };
+
+    ParseResult result = rootCommand.Parse("--port not-a-number");
+
+    Assert.NotEmpty(result.Errors);
+}
 ```
 
-### Global Options
+### Testing Custom Parsers
 
 ```csharp
-// Global options are inherited by all subcommands
-var verboseOption = new Option<bool>("--verbose", "Enable verbose output");
-verboseOption.AddAlias("-v");
-rootCommand.AddGlobalOption(verboseOption);
-
-// Available in any subcommand handler
-syncCommand.SetHandler((bool verbose) =>
+[Fact]
+public void CustomParser_ParsesConnectionInfo()
 {
-    if (verbose) Console.Error.WriteLine("Verbose mode enabled");
-}, verboseOption);
+    var connOption = new Option<ConnectionInfo?>("--connection")
+    {
+        CustomParser = result =>
+        {
+            var parts = result.Tokens.Single().Value.Split(':');
+            return new ConnectionInfo(parts[0], int.Parse(parts[1]));
+        }
+    };
+    var rootCommand = new RootCommand { connOption };
+
+    ParseResult result = rootCommand.Parse("--connection localhost:5432");
+
+    var conn = result.GetValue(connOption);
+    Assert.Equal("localhost", conn!.Host);
+    Assert.Equal(5432, conn.Port);
+}
+```
+
+### Testing with DI Services
+
+```csharp
+[Fact]
+public async Task SyncCommand_CallsService()
+{
+    var mockService = new Mock<ISyncService>();
+    var services = new ServiceCollection()
+        .AddSingleton(mockService.Object)
+        .BuildServiceProvider();
+
+    var sourceOption = new Option<string>("--source");
+    var syncCommand = new Command("sync") { sourceOption };
+    syncCommand.SetAction(async (ParseResult pr, CancellationToken ct) =>
+    {
+        var svc = services.GetRequiredService<ISyncService>();
+        await svc.SyncAsync(pr.GetValue(sourceOption)!, ct);
+        return 0;
+    });
+
+    var root = new RootCommand { syncCommand };
+    int exitCode = await root.Parse("sync --source https://api.example.com")
+        .InvokeAsync();
+
+    Assert.Equal(0, exitCode);
+    mockService.Verify(s => s.SyncAsync("https://api.example.com",
+        It.IsAny<CancellationToken>()), Times.Once);
+}
 ```
 
 ---
 
 ## Response Files
 
-System.CommandLine supports response files (`@filename`) for passing large sets of arguments:
+System.CommandLine supports response files (`@filename`) for passing large sets of arguments. Response file support is enabled by default; disable via `ParserConfiguration.ResponseFileTokenReplacer = null`.
 
 ```bash
 # args.rsp
@@ -451,25 +653,59 @@ System.CommandLine supports response files (`@filename`) for passing large sets 
 mycli sync @args.rsp
 ```
 
-Response file support is included in `UseDefaults()`.
+---
+
+## Migration from Beta4 to 2.0.0 GA
+
+| Beta4 API | 2.0.0 GA Replacement |
+|---|---|
+| `command.SetHandler(...)` | `command.SetAction(...)` |
+| `command.AddOption(opt)` | `command.Options.Add(opt)` |
+| `command.AddCommand(sub)` | `command.Subcommands.Add(sub)` |
+| `command.AddArgument(arg)` | `command.Arguments.Add(arg)` |
+| `option.AddAlias("-x")` | `option.Aliases.Add("-x")` |
+| `option.AddValidator(...)` | `option.Validators.Add(...)` |
+| `option.IsRequired = true` | `option.Required = true` |
+| `option.IsHidden = true` | `option.Hidden = true` |
+| `InvocationContext context` | `ParseResult parseResult` (in SetAction) |
+| `context.GetCancellationToken()` | `CancellationToken ct` (second param in async SetAction) |
+| `context.Console` | `InvocationConfiguration.Output / .Error` |
+| `IConsole` / `TestConsole` | `StringWriter` via `InvocationConfiguration` |
+| `new CommandLineBuilder(root).UseDefaults().Build()` | `root.Parse(args)` (middleware built-in) |
+| `builder.AddMiddleware(...)` | Removed -- use `ParseResult.Action` inspection or wrap `Invoke` |
+| `CommandLineBuilder` | `ParserConfiguration` + `InvocationConfiguration` |
+| `UseCommandHandler<T,T>` (Hosting) | Build host directly, resolve services in SetAction |
+| `Parser` class | `CommandLineParser` (static class) |
+| `FindResultFor(symbol)` | `GetResult(symbol)` |
+| `ErrorMessage = "..."` | `result.AddError("...")` |
+| `getDefaultValue: () => val` | `DefaultValueFactory = _ => val` |
+| `ParseArgument<T>` delegate | `CustomParser` property |
 
 ---
 
 ## Agent Gotchas
 
-1. **Do not use `System.CommandLine` 1.x patterns.** Version 2.0 has a completely different API surface. There is no `CommandHandler.Create()` in 2.0 -- use `SetHandler` or `UseCommandHandler` with hosting.
-2. **Do not confuse `Option<T>` with `Argument<T>`.** Options are named (`--output file.txt`), arguments are positional (`mycli file.txt`). Using the wrong type produces confusing parse errors.
-3. **Do not forget `UseDefaults()` on `CommandLineBuilder`.** Without it, help, version, error reporting, and completion all fail silently. `UseDefaults()` registers all standard middleware.
-4. **Do not use `SetHandler` with more than 8 parameters.** The generic overloads max out at 8. For complex commands, use the hosting pattern with `UseCommandHandler<TCommand, THandler>` and property binding.
-5. **Do not ignore the pre-release package version.** Projects with `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` will fail to build unless the pre-release dependency is acknowledged via `<NoWarn>NU5104</NoWarn>` or explicit version pinning.
-6. **Do not write to `Console.Out` directly in hosted command handlers.** Use the `IConsole` abstraction from `InvocationContext.Console` for testability. Direct console writes bypass the test harness.
+1. **Do not use beta4 API patterns.** The 2.0.0 GA API is fundamentally different. There is no `SetHandler` -- use `SetAction`. There is no `InvocationContext` -- actions receive `ParseResult` directly. There is no `CommandLineBuilder` -- configuration uses `ParserConfiguration`/`InvocationConfiguration`.
+2. **Do not reference discontinued packages.** `System.CommandLine.Hosting`, `System.CommandLine.NamingConventionBinder`, and `System.CommandLine.Rendering` are discontinued. Use the single `System.CommandLine` package.
+3. **Do not confuse `Option<T>` with `Argument<T>`.** Options are named (`--output file.txt`), arguments are positional (`mycli file.txt`). Using the wrong type produces confusing parse errors.
+4. **Do not use `AddOption`/`AddCommand`/`AddAlias` methods.** These were replaced by mutable collection properties: `Options.Add`, `Subcommands.Add`, `Aliases.Add`. The old methods do not exist in 2.0.0.
+5. **Do not use `IConsole` or `TestConsole` for testing.** These interfaces were removed. Use `InvocationConfiguration` with `StringWriter` for `Output`/`Error` to capture test output.
+6. **Do not ignore the `CancellationToken` in async actions.** In 2.0.0 GA, `CancellationToken` is a mandatory second parameter for async `SetAction` delegates. The compiler warns (CA2016) when it is not propagated.
+7. **Do not write `Console.Out` directly in command actions.** Write to `InvocationConfiguration.Output` for testability. If no configuration is provided, output goes to `Console.Out` by default, but direct writes bypass test capture.
+8. **Do not set default values via constructors.** Use the `DefaultValueFactory` property instead. The old `getDefaultValue` constructor parameter does not exist in 2.0.0.
 
 ---
 
 ## References
 
 - [System.CommandLine overview](https://learn.microsoft.com/en-us/dotnet/standard/commandline/)
-- [System.CommandLine API reference](https://learn.microsoft.com/en-us/dotnet/api/system.commandline)
-- [Tab completion](https://learn.microsoft.com/en-us/dotnet/standard/commandline/tab-completion)
-- [Hosting integration](https://learn.microsoft.com/en-us/dotnet/standard/commandline/hosting)
+- [System.CommandLine migration guide (beta5+)](https://learn.microsoft.com/en-us/dotnet/standard/commandline/migration-guide-2.0.0-beta5)
+- [How to parse and invoke](https://learn.microsoft.com/en-us/dotnet/standard/commandline/how-to-parse-and-invoke)
+- [How to customize parsing and validation](https://learn.microsoft.com/en-us/dotnet/standard/commandline/how-to-customize-parsing-and-validation)
 - [System.CommandLine GitHub](https://github.com/dotnet/command-line-api)
+
+---
+
+## Attribution
+
+Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) (MIT license).

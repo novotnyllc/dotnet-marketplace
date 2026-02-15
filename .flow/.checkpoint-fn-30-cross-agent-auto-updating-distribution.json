@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-15T04:37:24.200056Z",
+  "created_at": "2026-02-15T05:09:47.667261Z",
   "epic": {
     "data": {
       "branch_name": "fn-30-cross-agent-auto-updating-distribution",
@@ -12,14 +12,14 @@
       "depends_on_epics": [],
       "id": "fn-30-cross-agent-auto-updating-distribution",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-15T04:44:26.878011Z",
       "spec_path": ".flow/specs/fn-30-cross-agent-auto-updating-distribution.md",
       "status": "open",
       "title": "Cross-Agent Auto-Updating Distribution",
-      "updated_at": "2026-02-14T21:57:17.989321Z"
+      "updated_at": "2026-02-15T04:44:26.878167Z"
     },
-    "spec": "# Cross-Agent Auto-Updating Distribution\n\n## Overview\nReplace the current zip-based release workflow (`.github/workflows/release.yml`) with an auto-updatable distribution mechanism. The current approach requires manual download and extraction \u2014 cross-agent consumers (Claude Code, Copilot, Codex) have no built-in update mechanism for zip files.\n\n## Scope\n- Evaluate and implement one of: GitHub Pages site, dedicated `dist` branch, or GitHub release with manifest\n- Ensure the chosen mechanism supports auto-update detection (version manifest, ETag, or commit SHA)\n- Update `generate_dist.py` to output to the chosen target\n- Update CI/CD workflow to publish on tag push\n- Preserve existing `dist/claude/`, `dist/copilot/`, `dist/codex/` structure\n\n## Approach\n- **Option A: `dist` branch** \u2014 CI pushes generated files to a `dist` branch on each tag. Consumers point at raw GitHub URLs. Auto-update via branch HEAD SHA comparison.\n- **Option B: GitHub Pages** \u2014 CI deploys to Pages site. Consumers fetch from `<user>.github.io/<repo>/`. Auto-update via version manifest JSON.\n- **Option C: Release assets with manifest** \u2014 Keep release workflow but add a `manifest.json` with version + checksums. Consumers poll latest release API.\n\nResearch from scouts: GitHub Pages is most seamless for cross-agent consumption (stable URLs, CDN-cached, no auth needed for public repos). The `dist` branch approach is simpler but raw.githubusercontent.com has aggressive caching.\n\n## Quick commands\n```bash\n# Validate dist generation still works\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] Distribution mechanism chosen and documented\n- [ ] CI/CD workflow updated to publish automatically on tag push\n- [ ] Version manifest exists for consumers to detect updates\n- [ ] Existing `dist/` structure preserved (claude/, copilot/, codex/)\n- [ ] README updated with new installation/update instructions\n- [ ] Old zip-based workflow removed or deprecated\n\n## References\n- `.github/workflows/release.yml` \u2014 current zip workflow\n- `scripts/generate_dist.py` \u2014 cross-agent output generator\n- `scripts/validate_cross_agent.py` \u2014 conformance validator\n"
+    "spec": "# Cross-Agent Auto-Updating Distribution\n\n## Overview\nReplace the current zip-based release workflow (`.github/workflows/release.yml`) with GitHub Pages deployment, enabling auto-updatable distribution for cross-agent consumers (Claude Code, Copilot, Codex). The current approach requires manual download and extraction \u2014 cross-agent consumers have no built-in update mechanism for zip files.\n\n## Chosen Mechanism: GitHub Pages\n\n**Decision**: Deploy generated `dist/` contents to GitHub Pages on tag push.\n\n**Rationale** (evaluated against dist-branch and release-asset alternatives):\n- **GitHub Pages** (chosen): Stable URLs, CDN-cached (~10-min TTL), no auth needed for public repos, standard deployment via `actions/deploy-pages`. Consumers point at `https://<user>.github.io/<repo>/`.\n- **`dist` branch**: Simpler but raw.githubusercontent.com has aggressive caching (5+ min), no CDN, URLs change on force-push. Not recommended.\n- **Release assets + manifest**: Requires GitHub API polling, subject to rate limits, more complex consumer integration. Not recommended for this use case.\n\n**Private repo note**: GitHub Pages requires the repo to be public (or GitHub Pro/Enterprise for private repos). For private repos, consumers can still download release assets directly via the GitHub API. The manifest includes both Pages URLs and a note about private repo alternatives.\n\n## Manifest Schema\n\nEach deployment produces `dist/manifest.json` at the Pages root:\n```json\n{\n  \"version\": \"1.2.3\",\n  \"generated_at\": \"2026-02-14T12:00:00Z\",\n  \"targets\": {\n    \"claude\": { \"path\": \"claude/\", \"sha256\": \"<checksum-of-directory-contents>\" },\n    \"copilot\": { \"path\": \"copilot/\", \"sha256\": \"<checksum-of-directory-contents>\" },\n    \"codex\": { \"path\": \"codex/\", \"sha256\": \"<checksum-of-directory-contents>\" }\n  }\n}\n```\n\n**Consumer auto-update contract**: Poll `manifest.json` no more than every 15 minutes. Compare `version` or `sha256` to detect updates. After a new release, content may take up to 10 minutes to propagate via GitHub Pages CDN.\n\n## Pages URL Convention\n\n```\nhttps://<user>.github.io/<repo>/manifest.json\nhttps://<user>.github.io/<repo>/claude/\nhttps://<user>.github.io/<repo>/copilot/\nhttps://<user>.github.io/<repo>/codex/\n```\n\n## Scope\n- Add manifest generation to `generate_dist.py` (SHA256 checksums, version, timestamp)\n- Update `validate_cross_agent.py` to validate manifest schema and checksum correctness\n- Replace zip packaging in `release.yml` with GitHub Pages deployment (`actions/deploy-pages`)\n- Keep GitHub Release for changelog/tag notes but remove zip artifacts\n- Update README with Pages URLs and consumer polling instructions\n- Document one-time repo setup requirement (Settings \u2192 Pages \u2192 Deploy from GitHub Actions)\n\n**Invariant**: Trigger corpus and `validate_cross_agent.py` conformance checks validate `dist/` content, not packaging format \u2014 they remain unaffected by the distribution mechanism change.\n\n## Quick commands\n```bash\n# Validate dist generation still works\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] `generate_dist.py` produces `dist/manifest.json` with version, timestamp, and per-target SHA256 checksums\n- [ ] `validate_cross_agent.py` validates manifest presence, JSON schema, and checksum correctness\n- [ ] CI/CD workflow deploys `dist/` to GitHub Pages on tag push using `actions/deploy-pages`\n- [ ] Workflow has correct permissions (`pages: write`, `id-token: write`)\n- [ ] GitHub Release still created for changelog notes (without zip artifacts)\n- [ ] Existing `dist/{claude,copilot,codex}/` directory structure preserved\n- [ ] README updated with Pages URLs, auto-update polling instructions, and one-time repo setup note\n- [ ] Old zip packaging steps removed from release workflow\n- [ ] Caching behavior documented: ~10-min CDN TTL, poll no more than every 15 minutes\n\n## References\n- `.github/workflows/release.yml` \u2014 current zip workflow (to be replaced)\n- `scripts/generate_dist.py` \u2014 cross-agent output generator (gains manifest generation)\n- `scripts/validate_cross_agent.py` \u2014 conformance validator (gains manifest validation)\n- `actions/deploy-pages` \u2014 GitHub's official Pages deployment action\n"
   },
   "epic_id": "fn-30-cross-agent-auto-updating-distribution",
   "schema_version": 2,
@@ -36,12 +36,30 @@
         "priority": null,
         "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.1.md",
         "status": "todo",
-        "title": "Evaluate distribution mechanisms and choose approach",
-        "updated_at": "2026-02-14T22:02:21.982661Z"
+        "title": "Implement GitHub Pages distribution with manifest",
+        "updated_at": "2026-02-15T04:42:29.775298Z"
       },
       "id": "fn-30-cross-agent-auto-updating-distribution.1",
-      "runtime": null,
-      "spec": "# fn-30-cross-agent-auto-updating-distribution.1 Evaluate distribution mechanisms and choose approach\n\n## Description\nEvaluate the three distribution approaches (GitHub Pages, dist branch, release assets with manifest) against cross-agent consumer requirements. Consider: URL stability, caching behavior, auth requirements for public/private repos, auto-update detection mechanisms.\n\n**Size:** S\n**Files:** docs/ (evaluation doc)\n\n## Approach\n- Test raw.githubusercontent.com caching behavior (5-minute cache)\n- Test GitHub Pages URL stability and CDN caching\n- Test release API polling overhead\n- Document pros/cons for each approach\n- Recommend one approach with rationale\n## Acceptance\n- [ ] All three distribution approaches evaluated\n- [ ] Recommendation documented with rationale\n- [ ] Auto-update mechanism described\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T04:46:25.648708Z",
+        "evidence": {
+          "commits": [
+            "6cfc1a53270117438eb7a1574ab86a1d6576c3ea"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T04:53:05.857916Z"
+      },
+      "spec": "# fn-30-cross-agent-auto-updating-distribution.1 Implement GitHub Pages distribution with manifest\n\n## Description\nImplement GitHub Pages distribution with manifest\n## Approach\n1. **Manifest generation in `generate_dist.py`**:\n   - After generating `dist/{claude,copilot,codex}/`, compute SHA256 checksums for each target directory (hash of sorted file contents)\n   - Write `dist/manifest.json` with schema: `{version, generated_at, targets: {claude: {path, sha256}, copilot: {path, sha256}, codex: {path, sha256}}}`\n   - Version comes from existing `git describe --tags` logic\n   - Timestamp in ISO 8601 UTC format\n2. **Validation updates in `validate_cross_agent.py`**:\n   - Validate `dist/manifest.json` exists after generation\n   - Validate JSON schema (required fields: version, generated_at, targets with all three keys)\n   - Validate SHA256 checksums match actual directory contents\n3. **Replace zip workflow with Pages deployment in `release.yml`**:\n   - Keep existing validation gates (validate-skills, validate-marketplace, generate_dist, validate_cross_agent)\n   - Remove zip packaging steps and release asset uploads\n   - Add `actions/upload-pages-artifact` to upload `dist/` directory\n   - Add `actions/deploy-pages` to deploy to GitHub Pages\n   - Add required permissions: `pages: write`, `id-token: write`\n   - Keep GitHub Release creation for changelog notes (without zip attachments)\n\n**Invariant**: Trigger corpus (`tests/trigger-corpus.json`) and existing conformance checks validate `dist/` content, not packaging \u2014 they remain unaffected.\n\n## Acceptance\n- [ ] `generate_dist.py` produces `dist/manifest.json` with version, generated_at (ISO 8601), and per-target SHA256 checksums\n- [ ] `validate_cross_agent.py` validates manifest presence, JSON schema, and checksum correctness\n- [ ] Release workflow deploys `dist/` to GitHub Pages via `actions/deploy-pages` on tag push\n- [ ] Workflow has correct permissions (`pages: write`, `id-token: write`)\n- [ ] GitHub Release still created for changelog/tag notes (without zip artifacts)\n- [ ] Existing `dist/{claude,copilot,codex}/` structure preserved\n- [ ] All four validation commands pass: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`\n## Done summary\nAdded manifest.json generation with SHA256 checksums per target directory to generate_dist.py, added Check 7 (manifest validation) to validate_cross_agent.py verifying schema and checksum correctness, and replaced zip packaging in release.yml with GitHub Pages deployment via actions/deploy-pages.\n## Evidence\n- Commits: 6cfc1a53270117438eb7a1574ab86a1d6576c3ea\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     },
     {
       "data": {
@@ -57,33 +75,30 @@
         "priority": null,
         "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.2.md",
         "status": "todo",
-        "title": "Implement auto-updating distribution pipeline",
-        "updated_at": "2026-02-14T22:02:22.111336Z"
+        "title": "Update docs and deprecate zip workflow",
+        "updated_at": "2026-02-15T04:42:42.757042Z"
       },
       "id": "fn-30-cross-agent-auto-updating-distribution.2",
-      "runtime": null,
-      "spec": "# fn-30-cross-agent-auto-updating-distribution.2 Implement auto-updating distribution pipeline\n\n## Description\nImplement the chosen distribution mechanism. Update generate_dist.py if needed and create/modify the CI/CD workflow to publish automatically on tag push. Add version manifest for consumer auto-update detection.\n\n**Size:** M\n**Files:** .github/workflows/release.yml, scripts/generate_dist.py, version manifest file\n\n## Approach\n- Follow pattern from existing release.yml\n- Add version manifest (JSON with version, checksums, timestamp)\n- Ensure dist/claude/, dist/copilot/, dist/codex/ structure preserved\n## Acceptance\n- [ ] CI/CD workflow publishes on tag push\n- [ ] Version manifest generated with each publish\n- [ ] All three dist targets published\n- [ ] Validation scripts pass before publish\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
-    },
-    {
-      "data": {
-        "assignee": null,
+      "runtime": {
+        "assignee": "claire@novotny.org",
         "claim_note": "",
-        "claimed_at": null,
-        "created_at": "2026-02-14T21:58:54.568505Z",
-        "depends_on": [
-          "fn-30-cross-agent-auto-updating-distribution.2"
-        ],
-        "epic": "fn-30-cross-agent-auto-updating-distribution",
-        "id": "fn-30-cross-agent-auto-updating-distribution.3",
-        "priority": null,
-        "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.3.md",
-        "status": "todo",
-        "title": "Update docs and deprecate zip workflow",
-        "updated_at": "2026-02-14T22:02:22.240808Z"
+        "claimed_at": "2026-02-15T05:00:27.175223Z",
+        "evidence": {
+          "commits": [
+            "ea0e32e314ab5f0f5a2bcff8a6f3317718ae07e6"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T05:05:21.486456Z"
       },
-      "id": "fn-30-cross-agent-auto-updating-distribution.3",
-      "runtime": null,
-      "spec": "# fn-30-cross-agent-auto-updating-distribution.3 Update docs and deprecate zip workflow\n\n## Description\nUpdate README with new installation/update instructions for cross-agent consumers. Deprecate or remove the old zip-based workflow.\n\n**Size:** S\n**Files:** README.md, .github/workflows/release.yml\n\n## Approach\n- Update installation section in README\n- Add auto-update instructions per platform (Claude Code, Copilot, Codex)\n- Remove or mark deprecated the zip creation step\n## Acceptance\n- [ ] README installation instructions updated\n- [ ] Old zip workflow deprecated/removed\n- [ ] Cross-agent consumer update instructions documented\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "spec": "# fn-30-cross-agent-auto-updating-distribution.2 Update docs and deprecate zip workflow\n\n## Description\nUpdate README with GitHub Pages URLs, consumer auto-update polling instructions, and one-time repo setup documentation. Remove zip packaging from the release workflow. Add distribution evaluation rationale.\n\n**Size:** S\n**Files:** `README.md`, `CONTRIBUTING.md`, `.github/workflows/release.yml`\n\n## Approach\n1. **Update README installation section**:\n   - Replace zip download instructions with Pages URLs\n   - Add per-platform auto-update instructions (Claude Code, Copilot, Codex)\n   - Document `manifest.json` polling contract: poll no more than every 15 minutes, ~10-min CDN TTL\n   - Note one-time repo setup requirement: Settings \u2192 Pages \u2192 Deploy from GitHub Actions\n2. **Document private repo considerations**:\n   - GitHub Pages requires public repo (or GitHub Pro/Enterprise for private)\n   - For private repos, consumers can use GitHub API to fetch release assets as fallback\n3. **Verify zip packaging removal** (completed by Task 1):\n   - Confirm no zip creation steps remain in release.yml (Task 1 already replaced with `actions/upload-pages-artifact@v3` + `actions/deploy-pages@v4`)\n   - Confirm GitHub Release still created via `softprops/action-gh-release@v2` for changelog notes (no zip attachments)\n<!-- Updated by plan-sync: fn-30.1 already removed zip packaging and replaced with GitHub Pages deployment -->\n4. **Update CONTRIBUTING.md** if it references the zip-based release process\n\n## Acceptance\n- [ ] README installation instructions point to Pages URLs (`https://<user>.github.io/<repo>/`)\n- [ ] Auto-update polling contract documented (15-min poll interval, 10-min CDN TTL)\n- [ ] One-time repo setup documented (Pages \u2192 Deploy from GitHub Actions)\n- [ ] Private repo considerations noted\n- [ ] Zip packaging steps confirmed absent from release workflow (already removed by Task 1)\n<!-- Updated by plan-sync: fn-30.1 already removed zip packaging from release.yml -->\n- [ ] CONTRIBUTING.md updated if it references old release process\n## Done summary\nUpdated README with GitHub Pages distribution URLs, auto-update manifest polling contract (15-min interval, 10-min CDN TTL), one-time repo setup instructions, and private repository considerations. Added release/deployment summary to CONTRIBUTING.md. Verified release.yml has no zip packaging remnants.\n## Evidence\n- Commits: ea0e32e314ab5f0f5a2bcff8a6f3317718ae07e6\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     }
   ]
 }

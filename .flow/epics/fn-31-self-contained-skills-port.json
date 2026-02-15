@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-31-self-contained-skills-port",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T05:22:41.192113Z",
   "spec_path": ".flow/specs/fn-31-self-contained-skills-port.md",
   "status": "open",
   "title": "Self-Contained Skills Port",
-  "updated_at": "2026-02-14T21:57:35.023188Z"
+  "updated_at": "2026-02-15T05:22:41.192276Z"
 }

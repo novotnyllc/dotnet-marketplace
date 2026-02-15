@@ -1,0 +1,123 @@
+{
+  "created_at": "2026-02-15T05:16:41.224411Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-31-self-contained-skills-port",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T21:56:33.775224Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-31-self-contained-skills-port",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-31-self-contained-skills-port.md",
+      "status": "open",
+      "title": "Self-Contained Skills Port",
+      "updated_at": "2026-02-14T21:57:35.023188Z"
+    },
+    "spec": "# Self-Contained Skills Port\n\n## Overview\nThe spec references Aaronontheweb/dotnet-skills as reference material but the plugin must be fully self-contained. Port all relevant skills from dotnet-skills, adapting them to our standards (SKILL.md frontmatter, cross-reference syntax, description budget, no fn-N references). Credit original authors in each ported skill.\n\n## Scope\nSkills to port/adapt from dotnet-skills (not already covered by existing skills):\n- **System.CommandLine** (>= 2.0.0 only, not earlier betas) \u2014 CLI app patterns, command hierarchy, argument binding\n- **FluentValidation alternatives** \u2014 Minimize third-party deps; cover built-in DataAnnotations, IValidatableObject, IValidateOptions, MinimalApis.Extensions validation\n- **Logging/Observability** \u2014 Structured logging with Microsoft.Extensions.Logging, OpenTelemetry patterns\n- **Middleware patterns** \u2014 ASP.NET Core middleware pipeline, request/response manipulation\n- **gRPC** \u2014 service definitions, client/server patterns, streaming, interceptors\n- **SignalR** \u2014 real-time communication patterns, hub design, client integration\n- **Architecture principles** \u2014 DRY, SRP, SOLID principles deeply engrained (reference: https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/), clean architecture, vertical slices\n\n**Budget constraint**: Currently at 12,458/15,000 chars with 101 skills. Each new skill description must stay under 120 chars. Prefer extending existing skills over creating new ones where overlap exists.\n\n**Key rule**: Skills must never reference internal spec IDs (fn-N). No mention of implementation tracking.\n\n**Package version policy**: Always use latest stable versions of libraries. If existing reference is a prerelease, update to latest prerelease; if a higher stable exists, prefer stable.\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] All ported skills have SKILL.md with required frontmatter (name, description)\n- [ ] Original author credited in each ported skill (attribution section or note)\n- [ ] System.CommandLine skill covers >= 2.0.0 only\n- [ ] Built-in validation patterns preferred over FluentValidation\n- [ ] Architecture skill engrain SOLID/DRY/SRP with concrete C# anti-patterns and fixes\n- [ ] No fn-N spec references in any skill content\n- [ ] Description budget remains under 15,000 chars total\n- [ ] All skills registered in plugin.json\n- [ ] Cross-references use `[skill:name]` syntax\n- [ ] All validation commands pass\n\n## References\n- Aaronontheweb/dotnet-skills \u2014 source material (MIT license)\n- https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/ \u2014 SRP anti-patterns reference\n- `skills/` \u2014 existing skill structure to follow\n- `.claude-plugin/plugin.json` \u2014 skill registration\n"
+  },
+  "epic_id": "fn-31-self-contained-skills-port",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:58.438698Z",
+        "depends_on": [],
+        "epic": "fn-31-self-contained-skills-port",
+        "id": "fn-31-self-contained-skills-port.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.1.md",
+        "status": "todo",
+        "title": "Port System.CommandLine skill (>= 2.0.0)",
+        "updated_at": "2026-02-14T22:02:53.322571Z"
+      },
+      "id": "fn-31-self-contained-skills-port.1",
+      "runtime": null,
+      "spec": "# fn-31-self-contained-skills-port.1 Port System.CommandLine skill (>= 2.0.0)\n\n## Description\nCreate skills/cli/dotnet-system-commandline/SKILL.md covering System.CommandLine >= 2.0.0 stable only (no earlier beta APIs). Cover command hierarchy, argument/option binding, middleware pipeline, invocation context, custom type converters, and testing.\n\n**Size:** M\n**Files:** skills/cli/dotnet-system-commandline/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Reference Aaronontheweb/dotnet-skills System.CommandLine content as starting point (credit author)\n- Adapt to our SKILL.md frontmatter format (name, description only)\n- Cover only >= 2.0.0 GA APIs, explicitly note that beta-era APIs are not covered\n- Cross-ref to [skill:dotnet-csharp-coding-standards] for general patterns\n\n## Key context\n- System.CommandLine 2.0.0 changed significantly from beta. Ignore CommandHandler, use SetHandler pattern.\n- The cli category may need to be created\n## Acceptance\n- [ ] SKILL.md with required frontmatter\n- [ ] Covers >= 2.0.0 stable API only\n- [ ] Original author credited\n- [ ] Registered in plugin.json\n- [ ] Validation passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:58.807014Z",
+        "depends_on": [],
+        "epic": "fn-31-self-contained-skills-port",
+        "id": "fn-31-self-contained-skills-port.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.2.md",
+        "status": "todo",
+        "title": "Create built-in validation patterns skill",
+        "updated_at": "2026-02-14T22:02:53.452873Z"
+      },
+      "id": "fn-31-self-contained-skills-port.2",
+      "runtime": null,
+      "spec": "# fn-31-self-contained-skills-port.2 Create built-in validation patterns skill\n\n## Description\nCreate skills/core-csharp/dotnet-validation-patterns/SKILL.md covering built-in .NET validation patterns. Minimize third-party deps. Prefer DataAnnotations, IValidatableObject, IValidateOptions<T>, MinimalApis.Extensions validation over FluentValidation.\n\n**Size:** M\n**Files:** skills/core-csharp/dotnet-validation-patterns/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- DataAnnotations: [Required], [Range], [RegularExpression], custom attributes\n- IValidatableObject for cross-property validation\n- IValidateOptions<T> for options validation on startup\n- Minimal API validation with EndpointFilter\n- FluentValidation mentioned only for complex domain rules, not as default\n## Acceptance\n- [ ] Built-in validation as default recommendation\n- [ ] FluentValidation only for complex cases\n- [ ] IValidateOptions<T> covered\n- [ ] Frontmatter and registration correct\n- [ ] Validation passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:58.946437Z",
+        "depends_on": [],
+        "epic": "fn-31-self-contained-skills-port",
+        "id": "fn-31-self-contained-skills-port.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.3.md",
+        "status": "todo",
+        "title": "Port gRPC and SignalR skills",
+        "updated_at": "2026-02-14T22:02:53.585927Z"
+      },
+      "id": "fn-31-self-contained-skills-port.3",
+      "runtime": null,
+      "spec": "# fn-31-self-contained-skills-port.3 Port gRPC and SignalR skills\n\n## Description\nCreate two skills: skills/communication/dotnet-grpc/SKILL.md for gRPC patterns and skills/communication/dotnet-signalr/SKILL.md for SignalR real-time communication. Port and adapt from dotnet-skills reference material, crediting original authors.\n\n**Size:** M\n**Files:** skills/communication/dotnet-grpc/SKILL.md, skills/communication/dotnet-signalr/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- gRPC: proto definitions, server/client generation, streaming (server, client, bidirectional), interceptors, deadline/cancellation, gRPC-Web for browser clients\n- SignalR: hub design, strongly-typed hubs, client integration (JS/.NET), groups, connection lifecycle, scaling with Redis backplane\n- Both: use latest stable package versions, credit Aaronontheweb/dotnet-skills\n## Acceptance\n- [ ] gRPC skill covers service definitions, streaming, interceptors\n- [ ] SignalR skill covers hubs, groups, scaling\n- [ ] Latest stable package versions\n- [ ] Original authors credited\n- [ ] Both registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:59.063832Z",
+        "depends_on": [],
+        "epic": "fn-31-self-contained-skills-port",
+        "id": "fn-31-self-contained-skills-port.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.4.md",
+        "status": "todo",
+        "title": "Create SOLID/DRY/SRP architecture principles skill",
+        "updated_at": "2026-02-14T22:02:53.711889Z"
+      },
+      "id": "fn-31-self-contained-skills-port.4",
+      "runtime": null,
+      "spec": "# fn-31-self-contained-skills-port.4 Create SOLID/DRY/SRP architecture principles skill\n\n## Description\nCreate skills/architecture/dotnet-solid-principles/SKILL.md deeply engraining SOLID, DRY, and SRP principles with concrete C# anti-patterns and fixes. Foundational skill that other architecture skills should cross-reference.\n\n**Size:** M\n**Files:** skills/architecture/dotnet-solid-principles/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Structure around each SOLID principle with C# anti-patterns and fixes\n- SRP: Cover god classes, fat controllers, mixed abstractions (ref: https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/)\n- OCP: Extension via interfaces/abstract classes, strategy pattern\n- LSP: Behavioral subtypes, collection covariance pitfalls\n- ISP: Interface segregation, role interfaces vs header interfaces\n- DIP: Dependency inversion with M.E.DI, cross-ref to [skill:dotnet-dependency-injection]\n- DRY: When to abstract vs when duplication is acceptable (rule of three)\n- Include \"describe in one sentence\" test for SRP compliance\n## Acceptance\n- [ ] All SOLID principles with C# anti-patterns and fixes\n- [ ] DRY with nuanced guidance (rule of three)\n- [ ] Cross-refs to related skills\n- [ ] No fn-N references\n- [ ] Validation passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:59.186427Z",
+        "depends_on": [],
+        "epic": "fn-31-self-contained-skills-port",
+        "id": "fn-31-self-contained-skills-port.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-31-self-contained-skills-port.5.md",
+        "status": "todo",
+        "title": "Port logging/observability and middleware skills",
+        "updated_at": "2026-02-14T22:02:53.830616Z"
+      },
+      "id": "fn-31-self-contained-skills-port.5",
+      "runtime": null,
+      "spec": "# fn-31-self-contained-skills-port.5 Port logging/observability and middleware skills\n\n## Description\nCreate two skills: skills/observability/dotnet-structured-logging/SKILL.md for Microsoft.Extensions.Logging patterns and skills/api/dotnet-middleware-patterns/SKILL.md for ASP.NET Core middleware pipeline patterns. Port and adapt from dotnet-skills.\n\n**Size:** M\n**Files:** skills/observability/dotnet-structured-logging/SKILL.md, skills/api/dotnet-middleware-patterns/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Logging: structured logging, log levels, scopes, message templates (not string interpolation), high-performance logging with LoggerMessage.Define/[LoggerMessage], filtering, OpenTelemetry integration\n- Middleware: pipeline ordering, custom middleware classes vs inline, short-circuit logic, request/response manipulation, exception handling middleware, conditional middleware\n- Both: latest stable packages, credit original authors\n## Acceptance\n- [ ] Structured logging skill covers message templates, LoggerMessage, scopes\n- [ ] Middleware skill covers pipeline ordering, custom middleware, short-circuit\n- [ ] Latest stable packages\n- [ ] Original authors credited\n- [ ] Both registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
