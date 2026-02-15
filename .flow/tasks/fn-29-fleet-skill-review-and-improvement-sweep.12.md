@@ -24,9 +24,8 @@ Final gating step after all improvements from tasks 9-11 are merged. Run all fou
 - [ ] Batch findings reports archived or removed; consolidated findings retained
 
 ## Done summary
-TBD
-
+Registered 2 missing multi-targeting skills in plugin.json (99->101), trimmed 3 over-budget descriptions to under 120 chars, updated skill counts and categories across AGENTS.md/README.md/CLAUDE.md (97->101 skills, 18->19 categories, Core C# 7->9), removed 6 batch findings reports retaining consolidated-findings.md. All four validation commands pass; context budget at 11,349/15,000 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 03f1e2d5146052ea2dace31dac095044d9a27cec
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
