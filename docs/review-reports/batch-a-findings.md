@@ -5,23 +5,25 @@
 | Metric | Count |
 |--------|-------|
 | Skills reviewed | 20 |
-| Clean | 10 |
-| Needs Work | 7 |
+| Clean | 11 |
+| Needs Work | 6 |
 | Critical | 3 |
-| Total issues | 16 |
-| Critical issues | 3 |
-| High issues | 7 |
-| Low issues | 6 |
+| Total issues | 13 |
+| Critical issues | 4 |
+| High issues | 2 |
+| Low issues | 7 |
 
 ## Current Description Budget Impact
 
 | Metric | Value |
 |--------|-------|
-| Total description chars (this batch) | 2,689 |
-| Skills over 120 chars | 4 |
-| Projected savings if all trimmed to 120 | 469 chars |
+| Total description chars (this batch) | 2,472 |
+| Skills over 120 chars | 3 |
+| Projected savings if all trimmed to 120 | 207 chars |
 
-Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotnet-version-detection (144), dotnet-release-management (117 -- under, but close).
+Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotnet-version-detection (144).
+
+Character counts measured using the canonical Python parser from `_validate_skills.py` (strips YAML quotes, trims whitespace).
 
 ## Findings by Skill
 
@@ -34,7 +36,7 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
-| 1 | Description Quality | fail | 257 chars -- massively over 120-char limit; lists too many technologies |
+| 1 | Description Quality | fail | 257 chars (>140 = fail) -- massively over 120-char limit; lists too many technologies |
 | 2 | Description Triggering | warn | Overly broad -- would trigger for nearly any .NET request; WHEN NOT clause is unusual |
 | 3 | Instruction Clarity | pass | - |
 | 4 | Progressive Disclosure | pass | - |
@@ -51,18 +53,18 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 - [Critical] Two broken cross-references to `[skill:dotnet-scaffolding-base]` (lines 42, 171) -- replace with `[skill:dotnet-scaffold-project]`
 - [High] WHEN NOT clause in description is unconventional -- remove it and let the skill catalog speak for itself
 
-**Proposed description:** `"WHEN working with .NET, C#, ASP.NET Core, or related frameworks. Routes queries to specialist skills by context."`
+**Proposed description (112 chars):** `"WHEN working with .NET, C#, ASP.NET Core, or related frameworks. Routes queries to specialist skills by context."`
 
 ---
 
 ### dotnet-version-detection
 
 **Category:** foundation
-**Overall:** Needs Work
+**Overall:** Critical
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
-| 1 | Description Quality | warn | 144 chars -- over 120-char limit; WHEN NOT clause is unconventional |
+| 1 | Description Quality | fail | 144 chars (>140 = fail) -- over 120-char limit; WHEN NOT clause is unconventional |
 | 2 | Description Triggering | pass | - |
 | 3 | Instruction Clarity | pass | - |
 | 4 | Progressive Disclosure | pass | - |
@@ -71,25 +73,25 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 | 7 | Examples | pass | - |
 | 8 | Composability | pass | - |
 | 9 | Consistency | pass | - |
-| 10 | Registration & Budget | warn | 144 chars pushes budget |
+| 10 | Registration & Budget | warn | 144 chars pushes budget (>120 warn range) |
 | 11 | Progressive Disclosure Compliance | pass | 1,561 words |
 
 **Issues:**
-- [High] Description at 144 chars is over 120-char limit -- trim by removing WHEN NOT clause
+- [Critical] Description at 144 chars exceeds 140-char fail threshold -- trim by removing WHEN NOT clause
 - [Low] WHEN NOT clause ("WHEN NOT no .NET project present") is double-negative and adds no value
 
-**Proposed description:** `"WHEN project has .csproj, global.json, or Directory.Build.props. Detects TFMs, SDK versions, and preview features."`
+**Proposed description (114 chars):** `"WHEN project has .csproj, global.json, or Directory.Build.props. Detects TFMs, SDK versions, and preview features."`
 
 ---
 
 ### dotnet-project-analysis
 
 **Category:** foundation
-**Overall:** Needs Work
+**Overall:** Critical
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
-| 1 | Description Quality | warn | 166 chars -- over 120-char limit; WHEN NOT clause adds little value |
+| 1 | Description Quality | fail | 166 chars (>140 = fail) -- over 120-char limit; WHEN NOT clause adds little value |
 | 2 | Description Triggering | pass | - |
 | 3 | Instruction Clarity | pass | - |
 | 4 | Progressive Disclosure | pass | - |
@@ -98,14 +100,14 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 | 7 | Examples | pass | - |
 | 8 | Composability | pass | - |
 | 9 | Consistency | pass | - |
-| 10 | Registration & Budget | warn | 166 chars significantly over limit |
+| 10 | Registration & Budget | warn | 166 chars significantly over limit (>120 warn range) |
 | 11 | Progressive Disclosure Compliance | pass | 1,778 words |
 
 **Issues:**
-- [High] Description at 166 chars is over 120-char limit -- trim by removing WHEN NOT clause and condensing
+- [Critical] Description at 166 chars exceeds 140-char fail threshold -- trim by removing WHEN NOT clause and condensing
 - [Low] WHEN NOT clause ("WHEN NOT single-file scripts") adds minimal discrimination value
 
-**Proposed description:** `"WHEN navigating .NET solution structure, project references, or build configuration. Analyzes .sln, .csproj, CPM."`
+**Proposed description (113 chars):** `"WHEN navigating .NET solution structure, project references, or build configuration. Analyzes .sln, .csproj, CPM."`
 
 ---
 
@@ -527,7 +529,7 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 
 1. **WHEN NOT clauses in descriptions:** Three foundation skills (dotnet-advisor, dotnet-version-detection, dotnet-project-analysis) use "WHEN NOT" negative clauses in their descriptions. This is unconventional and wastes budget characters. The WHEN NOT information adds little discrimination value -- Claude already knows when a skill does NOT apply from the positive WHEN clause.
 
-2. **Description budget pressure from foundation skills:** The three over-limit descriptions in foundation contribute 469 chars of excess. Trimming these to 120 chars each would save 469 chars from the aggregate budget (currently at 12,458).
+2. **Description budget pressure from foundation skills:** The three over-limit descriptions in foundation contribute 207 chars of excess beyond the 120-char target. Trimming these to 120 chars each would save 207 chars from the aggregate budget (currently at 12,458).
 
 3. **Broken cross-reference pattern:** `dotnet-scaffolding-base` appears twice in dotnet-advisor but the actual skill is named `dotnet-scaffold-project`. This is likely a rename that was not fully propagated.
 
@@ -535,7 +537,7 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 
 5. **Word count distribution:** All 20 skills are well within the 5,000-word SKILL.md limit. Two skills (dotnet-roslyn-analyzers at 2,709 and dotnet-release-management at 2,543) are approaching the 3,000-word details.md extraction suggestion threshold but are not yet at a level that requires action.
 
-6. **Consistent quality in core-csharp category:** The 9 core-csharp skills are remarkably consistent -- all have proper cross-references, Agent Gotchas sections, concrete examples, and stay within budget. This category serves as the quality benchmark for other batches.
+6. **Consistent quality in core-csharp category:** 8 of 9 core-csharp skills are Clean -- all have proper cross-references, Agent Gotchas sections, concrete examples, and stay within budget. The one exception (dotnet-csharp-code-smells) has only a minor stale reference issue. This category serves as the quality benchmark for other batches.
 
 7. **grep portability:** dotnet-add-analyzers uses `grep -oP` (PCRE) which is not available on macOS default grep. Per pitfalls memory, commands should use POSIX character classes and ERE flags for portability.
 
@@ -546,10 +548,10 @@ Skills over 120 chars: dotnet-advisor (257), dotnet-project-analysis (166), dotn
 ### Critical (must fix)
 - Trim `dotnet-advisor` description from 257 to under 120 chars -- remove exhaustive technology list and WHEN NOT clause
 - Fix 2 broken `[skill:dotnet-scaffolding-base]` cross-references in `dotnet-advisor` to `[skill:dotnet-scaffold-project]`
-- Trim `dotnet-project-analysis` description from 166 to under 120 chars
+- Trim `dotnet-project-analysis` description from 166 to under 120 chars (>140 = fail per rubric)
+- Trim `dotnet-version-detection` description from 144 to under 120 chars (>140 = fail per rubric)
 
 ### High (should fix)
-- Trim `dotnet-version-detection` description from 144 to under 120 chars -- remove WHEN NOT clause and double negative
 - Remove WHEN NOT clauses from all three foundation skill descriptions (dotnet-advisor, dotnet-version-detection, dotnet-project-analysis) to save budget and follow convention
 - Update `dotnet-csharp-code-smells` Out of Scope text to remove "planned" and use `[skill:dotnet-agent-gotchas]` cross-ref syntax
 - Consider adding an Agent Gotchas section to `dotnet-add-testing` (common scaffolding mistakes)
