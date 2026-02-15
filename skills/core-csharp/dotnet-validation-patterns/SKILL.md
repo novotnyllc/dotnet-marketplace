@@ -164,7 +164,7 @@ public sealed class DateRangeFilter
 
 ## IValidatableObject
 
-Implement `IValidatableObject` for cross-property validation within the model itself. This interface runs after all individual attribute validations pass.
+Implement `IValidatableObject` for cross-property validation within the model itself. This interface runs after all individual attribute validations pass (when using MVC model binding or `Validator.TryValidateObject` with `validateAllProperties: true`).
 
 ```csharp
 public sealed class CreateOrderRequest : IValidatableObject
@@ -409,20 +409,34 @@ public static class RecursiveValidator
         object instance,
         List<ValidationResult> results)
     {
+        var visited = new HashSet<object>(ReferenceEqualityComparer.Instance);
+        return ValidateRecursive(instance, results, visited, prefix: "");
+    }
+
+    private static bool ValidateRecursive(
+        object instance,
+        List<ValidationResult> results,
+        HashSet<object> visited,
+        string prefix)
+    {
+        if (!visited.Add(instance))
+            return true; // Already validated -- avoid circular reference loops
+
         var context = new ValidationContext(instance);
         bool isValid = Validator.TryValidateObject(
             instance, context, results, validateAllProperties: true);
 
-        // Validate nested complex properties
         foreach (var property in instance.GetType().GetProperties())
         {
-            if (property.PropertyType.IsPrimitive
-                || property.PropertyType == typeof(string)
-                || property.PropertyType == typeof(decimal))
+            if (IsSimpleType(property.PropertyType))
                 continue;
 
             var value = property.GetValue(instance);
             if (value is null) continue;
+
+            var memberPrefix = string.IsNullOrEmpty(prefix)
+                ? property.Name
+                : $"{prefix}.{property.Name}";
 
             if (value is IEnumerable<object> collection)
             {
@@ -430,7 +444,9 @@ public static class RecursiveValidator
                 foreach (var item in collection)
                 {
                     var itemResults = new List<ValidationResult>();
-                    if (!TryValidateObjectRecursive(item, itemResults))
+                    if (!ValidateRecursive(
+                        item, itemResults, visited,
+                        $"{memberPrefix}[{index}]"))
                     {
                         isValid = false;
                         foreach (var result in itemResults)
@@ -438,7 +454,7 @@ public static class RecursiveValidator
                             results.Add(new ValidationResult(
                                 result.ErrorMessage,
                                 result.MemberNames.Select(
-                                    m => $"{property.Name}[{index}].{m}").ToArray()));
+                                    m => $"{memberPrefix}[{index}].{m}").ToArray()));
                         }
                     }
                     index++;
@@ -447,7 +463,7 @@ public static class RecursiveValidator
             else if (property.PropertyType.IsClass)
             {
                 var nestedResults = new List<ValidationResult>();
-                if (!TryValidateObjectRecursive(value, nestedResults))
+                if (!ValidateRecursive(value, nestedResults, visited, memberPrefix))
                 {
                     isValid = false;
                     foreach (var result in nestedResults)
@@ -455,7 +471,7 @@ public static class RecursiveValidator
                         results.Add(new ValidationResult(
                             result.ErrorMessage,
                             result.MemberNames.Select(
-                                m => $"{property.Name}.{m}").ToArray()));
+                                m => $"{memberPrefix}.{m}").ToArray()));
                     }
                 }
             }
@@ -463,8 +479,24 @@ public static class RecursiveValidator
 
         return isValid;
     }
+
+    private static bool IsSimpleType(Type type) =>
+        type.IsPrimitive
+        || type.IsEnum
+        || type == typeof(string)
+        || type == typeof(decimal)
+        || type == typeof(DateTime)
+        || type == typeof(DateTimeOffset)
+        || type == typeof(DateOnly)
+        || type == typeof(TimeOnly)
+        || type == typeof(TimeSpan)
+        || type == typeof(Guid)
+        || (Nullable.GetUnderlyingType(type) is { } underlying
+            && IsSimpleType(underlying));
 }
 ```
+
+**Note:** This implementation tracks visited objects via `HashSet<object>` with `ReferenceEqualityComparer` to safely handle circular reference graphs without stack overflow.
 
 ---
 
@@ -472,7 +504,7 @@ public static class RecursiveValidator
 
 1. **Always pass `validateAllProperties: true`** to `Validator.TryValidateObject`. Without it, only `[Required]` is checked; `[Range]`, `[StringLength]`, and custom attributes are silently skipped.
 2. **Options classes must use `{ get; set; }` not `{ get; init; }`** because the configuration binder and `PostConfigure` need to mutate properties after construction. Use `[Required]` for mandatory fields instead of `init`.
-3. **`IValidatableObject.Validate()` runs only after all attribute validations pass.** If attribute validation fails, the `Validate()` method is never called. Do not rely on it for primary validation.
+3. **`IValidatableObject.Validate()` runs only after all attribute validations pass.** This requires MVC model binding or `Validator.TryValidateObject` with `validateAllProperties: true`. If attribute validation fails, `Validate()` is never called. Do not rely on it for primary validation.
 4. **Do not inject services into `ValidationAttribute` via constructor.** Attributes are instantiated by the runtime and cannot participate in DI. Use `validationContext.GetService<T>()` inside `IsValid()` if service access is needed, but prefer `IValidateOptions<T>` for DI-dependent validation.
 5. **Do not use `[RegularExpression]` without `[GeneratedRegex]` awareness.** The attribute internally creates `Regex` instances. For performance-critical paths, validate with `[GeneratedRegex]` in a custom attribute or `IValidatableObject` instead. See [skill:dotnet-input-validation] for ReDoS prevention.
 6. **Register `IValidateOptions<T>` as singleton.** The options validation infrastructure resolves validators as singletons. Registering as scoped or transient causes resolution failures.
