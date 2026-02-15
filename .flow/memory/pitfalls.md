@@ -228,3 +228,9 @@ When counting Agent Gotchas items, grep for numbered list items (^\d+\.) or bold
 
 ## 2026-02-15 manual [pitfall]
 Per rubric, Clean requires ALL 11 dimensions at pass -- any warn dimension makes the skill Needs Work, not Clean. Verify rubric scoring rules before assigning overall ratings.
+
+## 2026-02-15 manual [pitfall]
+Stale 'not yet landed' or 'planned' references to skills that have since shipped must be rated same severity across batches -- inconsistent severity for identical patterns causes reviewer churn
+
+## 2026-02-15 manual [pitfall]
+Proposed replacement descriptions in audit reports must have character counts verified with the same measurement tool used for existing descriptions -- off-by-one from wc -c vs echo -n piping causes reviewer distrust
