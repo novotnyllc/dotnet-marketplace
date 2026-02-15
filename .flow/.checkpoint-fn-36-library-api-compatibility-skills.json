@@ -1,0 +1,90 @@
+{
+  "created_at": "2026-02-15T11:03:40.011104Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-36-library-api-compatibility-skills",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T21:56:37.768133Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-36-library-api-compatibility-skills",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-36-library-api-compatibility-skills.md",
+      "status": "open",
+      "title": "Library API Compatibility Skills",
+      "updated_at": "2026-02-15T10:59:56.861558Z"
+    },
+    "spec": "# Library API Compatibility Skills\n\n## Overview\nCreate skills focused on managing public API surface area for .NET libraries. Covers binary vs source compatibility, type forwarders, API surface validation, and versioning strategy. This extends beyond the existing `dotnet-api-versioning` (HTTP API versioning) into library/NuGet package API management.\n\n## Scope\n- **Library API Compatibility skill** \u2014 Binary compatibility rules (field layout, virtual dispatch, default interface members), source compatibility (overload resolution, extension method conflicts), type forwarders\n- **API surface validation** \u2014 PublicApiAnalyzers (`PublicAPI.Shipped.txt`/`PublicAPI.Unshipped.txt`), Verify for snapshot testing API surfaces, CI enforcement workflow\n\n### Scope Boundary Table\n\n| Concern | This Epic Owns | Cross-Refs To |\n|---------|---------------|---------------|\n| Binary/source compat rules | Full ownership | \u2014 |\n| Type forwarders | Full ownership | \u2014 |\n| SemVer for NuGet | Summary + cross-ref | `[skill:dotnet-nuget-authoring]` |\n| Multi-TFM packaging | How TFM choices affect binary compat only | `[skill:dotnet-multi-targeting]`, `[skill:dotnet-nuget-authoring]` |\n| EnablePackageValidation / ApiCompat basics | Brief mention + cross-ref | `[skill:dotnet-nuget-authoring]`, `[skill:dotnet-multi-targeting]` |\n| PublicApiAnalyzers (RS0016/RS0017 lifecycle) | Full ownership | `[skill:dotnet-roslyn-analyzers]` for general analyzer config |\n| Verify for API surface snapshots | API surface snapshot pattern | `[skill:dotnet-snapshot-testing]` for Verify fundamentals |\n| ApiCompat CI enforcement workflow | Unique CI gating workflow | `[skill:dotnet-multi-targeting]` for tool basics |\n| HTTP API versioning | Out of scope | `[skill:dotnet-api-versioning]` |\n\n## Out of Scope\n- HTTP API versioning (covered by `[skill:dotnet-api-versioning]`)\n- NuGet feed configuration and publish workflows\n- CI/CD publish pipelines\n- Detailed SemVer rules (covered by `[skill:dotnet-nuget-authoring]`)\n- Multi-TFM packaging mechanics (covered by `[skill:dotnet-multi-targeting]`)\n- Verify fundamentals \u2014 setup, scrubbing, converters (covered by `[skill:dotnet-snapshot-testing]`)\n- General analyzer configuration (covered by `[skill:dotnet-roslyn-analyzers]`)\n\n## Dependencies\n- **Hard:** fn-2 (Plugin Skeleton \u2014 plugin.json infrastructure, already complete)\n- **Soft:** None \u2014 all referenced skills already exist\n\n## .NET Version Policy\n- Baseline: .NET 8.0+\n- No version-gated content\n\n## Task Decomposition\n\n| Task | Skill Path | Size | Depends On |\n|------|-----------|------|------------|\n| 1 | `skills/api-development/dotnet-library-api-compat/SKILL.md` | M | \u2014 |\n| 2 | `skills/api-development/dotnet-api-surface-validation/SKILL.md` | M | Task 1 |\n| 3 | `plugin.json` registration, `dotnet-advisor` catalog, `AGENTS.md` counts, trigger-corpus | S | Tasks 1, 2 |\n\n## Conventions\n- Category: `api-development` (matches existing `dotnet-api-versioning`)\n- Cross-refs use `[skill:skill-name]` syntax\n- Description under 120 characters per skill\n- Each skill must include Agent Gotchas, Prerequisites, and References sections\n- Skills follow CONTRIBUTING-SKILLS.md patterns\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Binary vs source compatibility rules documented with concrete examples\n- [ ] Type forwarder patterns covered (migration between assemblies)\n- [ ] PublicApiAnalyzers workflow documented (RS0016/RS0017 shipped/unshipped lifecycle)\n- [ ] Verify API surface snapshot pattern documented (cross-ref to `[skill:dotnet-snapshot-testing]` for fundamentals)\n- [ ] ApiCompat CI enforcement workflow (cross-ref to `[skill:dotnet-multi-targeting]` for tool basics)\n- [ ] Cross-refs to `[skill:dotnet-api-versioning]` for HTTP API versioning\n- [ ] Cross-refs to `[skill:dotnet-roslyn-analyzers]` for analyzer-based validation\n- [ ] Both skills added to `dotnet-advisor` catalog under API Development section\n- [ ] No fn-N epic references in SKILL.md body text (verified with `grep -r 'fn-[0-9]' skills/api-development/dotnet-library-api-compat/ skills/api-development/dotnet-api-surface-validation/`)\n- [ ] Budget constraint respected (descriptions under 120 chars each)\n- [ ] All validation commands pass\n\n## References\n- Microsoft.CodeAnalysis.PublicApiAnalyzers \u2014 API surface tracking\n- `skills/api-development/dotnet-api-versioning/SKILL.md` \u2014 HTTP API versioning (complementary)\n- `skills/testing/dotnet-snapshot-testing/SKILL.md` \u2014 Verify for API surface snapshots\n- `skills/packaging/dotnet-nuget-authoring/SKILL.md` \u2014 SemVer, EnablePackageValidation\n- `skills/multi-targeting/dotnet-multi-targeting/SKILL.md` \u2014 Multi-TFM, ApiCompat tool\n"
+  },
+  "epic_id": "fn-36-library-api-compatibility-skills",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:59:08.200935Z",
+        "depends_on": [],
+        "epic": "fn-36-library-api-compatibility-skills",
+        "id": "fn-36-library-api-compatibility-skills.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-36-library-api-compatibility-skills.1.md",
+        "status": "todo",
+        "title": "Create library API compatibility skill (binary/source compat, type forwarders)",
+        "updated_at": "2026-02-15T11:00:19.690487Z"
+      },
+      "id": "fn-36-library-api-compatibility-skills.1",
+      "runtime": null,
+      "spec": "# fn-36-library-api-compatibility-skills.1 Create library API compatibility skill (binary/source compat, type forwarders)\n\n## Description\nCreate skills/api-development/dotnet-library-api-compat/SKILL.md covering binary and source compatibility rules for .NET library authors, type forwarders, and how versioning decisions affect compatibility.\n\n**Size:** M\n**Files:** skills/api-development/dotnet-library-api-compat/SKILL.md\n\n## Approach\n- Binary compatibility: field layout, virtual dispatch, default interface members, new overloads, sealed\u2192unsealed transitions\n- Source compatibility: overload resolution, extension method conflicts, namespace additions, optional parameter changes\n- Type forwarders: [TypeForwardedTo]/[TypeForwardedFrom] for migrating types between assemblies without breaking consumers\n- SemVer impact summary: which changes are major/minor/patch (brief \u2014 cross-ref to [skill:dotnet-nuget-authoring] for full SemVer rules)\n- Multi-TFM binary compat: how adding/removing TFMs affects compatibility (cross-ref to [skill:dotnet-multi-targeting] for packaging mechanics)\n- Cross-ref to [skill:dotnet-api-versioning] and [skill:dotnet-nuget-authoring]\n- Include Agent Gotchas, Prerequisites, and References sections\n\n## Acceptance\n- [ ] Binary compatibility rules with examples \u2014 `grep -c 'binary compatibility\\|Binary Compatibility\\|field layout\\|virtual dispatch' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] Source compatibility rules with examples \u2014 `grep -c 'source compatibility\\|Source Compatibility\\|overload resolution' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] Type forwarder patterns documented \u2014 `grep -c 'TypeForwardedTo\\|TypeForwardedFrom' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] SemVer impact summary with cross-ref \u2014 `grep -c '\\[skill:dotnet-nuget-authoring\\]' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] Agent Gotchas section present \u2014 `grep -c 'Agent Gotcha' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] Prerequisites section present \u2014 `grep -c 'Prerequisite' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] Cross-refs use [skill:name] syntax \u2014 `grep -c '\\[skill:' skills/api-development/dotnet-library-api-compat/SKILL.md`\n- [ ] No fn-N references in body \u2014 `grep -c 'fn-[0-9]' skills/api-development/dotnet-library-api-compat/SKILL.md` returns 0\n- [ ] Description under 120 characters in frontmatter\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:59:08.318121Z",
+        "depends_on": [
+          "fn-36-library-api-compatibility-skills.1"
+        ],
+        "epic": "fn-36-library-api-compatibility-skills",
+        "id": "fn-36-library-api-compatibility-skills.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-36-library-api-compatibility-skills.2.md",
+        "status": "todo",
+        "title": "Create API surface validation skill (PublicApiAnalyzers, Verify, ApiCompat)",
+        "updated_at": "2026-02-15T11:00:57.848207Z"
+      },
+      "id": "fn-36-library-api-compatibility-skills.2",
+      "runtime": null,
+      "spec": "# fn-36-library-api-compatibility-skills.2 Create API surface validation skill (PublicApiAnalyzers, Verify, ApiCompat)\n\n## Description\nCreate skills/api-development/dotnet-api-surface-validation/SKILL.md covering tools for validating public API surface area: PublicApiAnalyzers (primary new content), Verify API surface snapshot pattern, and ApiCompat CI enforcement workflow.\n\n**Size:** M\n**Files:** skills/api-development/dotnet-api-surface-validation/SKILL.md\n**Depends on:** fn-36-library-api-compatibility-skills.1\n\n## Approach\n- PublicApiAnalyzers: PublicAPI.Shipped.txt/PublicAPI.Unshipped.txt, RS0016/RS0017, shipped/unshipped lifecycle, shipping workflow\n- Verify for API surface snapshots: the specific pattern of reflecting over assembly types/members to detect unintended public API changes (cross-ref to [skill:dotnet-snapshot-testing] for Verify fundamentals \u2014 setup, scrubbing, converters)\n- ApiCompat CI enforcement: how to gate PRs on API surface changes, CI pipeline integration (cross-ref to [skill:dotnet-multi-targeting] and [skill:dotnet-nuget-authoring] for EnablePackageValidation/ApiCompat tool mechanics)\n- Cross-ref to [skill:dotnet-library-api-compat] for binary/source compat rules, [skill:dotnet-roslyn-analyzers] for general analyzer configuration\n- Include Agent Gotchas, Prerequisites, and References sections\n\n## Acceptance\n- [ ] PublicApiAnalyzers workflow documented \u2014 `grep -c 'PublicAPI.Shipped\\|PublicAPI.Unshipped\\|RS0016\\|RS0017' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] Verify API surface snapshot pattern \u2014 `grep -c 'GetTypes\\|GetMembers\\|Assembly.*Public' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] ApiCompat CI enforcement \u2014 `grep -c 'CI\\|pipeline\\|gate\\|enforce' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] Cross-refs to related skills \u2014 `grep -c '\\[skill:' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] Agent Gotchas section present \u2014 `grep -c 'Agent Gotcha' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] Prerequisites section present \u2014 `grep -c 'Prerequisite' skills/api-development/dotnet-api-surface-validation/SKILL.md`\n- [ ] No fn-N references in body \u2014 `grep -c 'fn-[0-9]' skills/api-development/dotnet-api-surface-validation/SKILL.md` returns 0\n- [ ] Description under 120 characters in frontmatter\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T11:00:53.122912Z",
+        "depends_on": [
+          "fn-36-library-api-compatibility-skills.1",
+          "fn-36-library-api-compatibility-skills.2"
+        ],
+        "epic": "fn-36-library-api-compatibility-skills",
+        "id": "fn-36-library-api-compatibility-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-36-library-api-compatibility-skills.3.md",
+        "status": "todo",
+        "title": "Register skills in plugin.json, update dotnet-advisor catalog and AGENTS.md counts",
+        "updated_at": "2026-02-15T11:01:10.832554Z"
+      },
+      "id": "fn-36-library-api-compatibility-skills.3",
+      "runtime": null,
+      "spec": "# fn-36-library-api-compatibility-skills.3 Register skills in plugin.json, update dotnet-advisor catalog and AGENTS.md counts\n\n## Description\nRegister both new skills in plugin.json, add them to the dotnet-advisor catalog under API Development, update skill counts in AGENTS.md and README.md, and add trigger-corpus entries.\n\n**Size:** S\n**Files:** .claude-plugin/plugin.json, skills/foundation/dotnet-advisor/SKILL.md, AGENTS.md, README.md\n**Depends on:** fn-36-library-api-compatibility-skills.1, fn-36-library-api-compatibility-skills.2\n\n## Approach\n- Add `skills/api-development/dotnet-library-api-compat` and `skills/api-development/dotnet-api-surface-validation` to plugin.json skills array\n- Add both skills to dotnet-advisor catalog under \"API Development\" section\n- Update skill count in AGENTS.md (111 \u2192 113) and README.md\n- Add trigger-corpus entries for the new api-development skills\n- Run all validation commands\n\n## Acceptance\n- [ ] Both skills registered in plugin.json \u2014 `grep -c 'dotnet-library-api-compat\\|dotnet-api-surface-validation' .claude-plugin/plugin.json`\n- [ ] Both skills in dotnet-advisor catalog \u2014 `grep -c 'dotnet-library-api-compat\\|dotnet-api-surface-validation' skills/foundation/dotnet-advisor/SKILL.md`\n- [ ] Skill count updated in AGENTS.md \u2014 `grep '113 skills' AGENTS.md`\n- [ ] Trigger-corpus entries added\n- [ ] All validation commands pass: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh && python3 scripts/generate_dist.py --strict && python3 scripts/validate_cross_agent.py`\n\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

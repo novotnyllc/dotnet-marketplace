@@ -276,3 +276,6 @@ Mermaid diagram node IDs must be unique across the ENTIRE graph including all su
 
 ## 2026-02-15 manual [pitfall]
 When documenting pre-release library APIs, verify every code example against the actual source code on the development branch -- LLM training data mixes v1 and v2 patterns, causing v1 API leaks (removed types, changed constructors, new required parameters) in ostensibly v2-targeted documentation
+
+## 2026-02-15 manual [pitfall]
+flowctl epic set-plan may silently fail to write spec file -- always verify with cat/read after set-plan

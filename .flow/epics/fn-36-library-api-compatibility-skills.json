@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-36-library-api-compatibility-skills",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-15T11:04:45.914328Z",
   "spec_path": ".flow/specs/fn-36-library-api-compatibility-skills.md",
   "status": "open",
   "title": "Library API Compatibility Skills",
-  "updated_at": "2026-02-14T21:58:28.124910Z"
+  "updated_at": "2026-02-15T11:04:45.914491Z"
 }

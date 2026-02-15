@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-15T09:34:52.834227Z",
+  "created_at": "2026-02-15T10:43:48.754055Z",
   "epic": {
     "data": {
       "branch_name": "fn-35-net-tui-development-skills",
@@ -12,14 +12,14 @@
       "depends_on_epics": [],
       "id": "fn-35-net-tui-development-skills",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-15T09:42:46.879467Z",
       "spec_path": ".flow/specs/fn-35-net-tui-development-skills.md",
       "status": "open",
       "title": "NET TUI Development Skills",
-      "updated_at": "2026-02-14T21:58:16.539496Z"
+      "updated_at": "2026-02-15T09:42:46.879647Z"
     },
-    "spec": "# .NET TUI Development Skills\n\n## Overview\nAdd skills for building terminal user interfaces (TUI) in .NET. Two major frameworks exist: Terminal.Gui (Miguel de Icaza) and Spectre.Console (Patrik Svensson). Both are actively maintained and serve different use cases.\n\n## Scope\n- **Terminal.Gui skill** \u2014 Full TUI framework: windows, menus, dialogs, views, layout (Computed vs Absolute), event handling, color themes, mouse support. Cross-platform (Windows/macOS/Linux).\n- **Spectre.Console skill** \u2014 Rich console output: tables, trees, progress bars, prompts, markup, live displays, canvas, charts. Also covers Spectre.Console.Cli for command-line parsing.\n- Consider whether to create one combined TUI skill or two separate ones (budget impact: 1 skill = ~120 chars, 2 = ~240 chars)\n\n**Package version policy**: Use latest stable versions of Terminal.Gui and Spectre.Console.\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Terminal.Gui skill covering layout, views, event handling, themes\n- [ ] Spectre.Console skill covering rich output, prompts, tables, CLI\n- [ ] Cross-references between TUI skills and `[skill:dotnet-csharp-async-patterns]` for async TUI patterns\n- [ ] No fn-N spec references\n- [ ] Budget constraint respected\n- [ ] All validation commands pass\n\n## References\n- Terminal.Gui GitHub \u2014 https://github.com/gui-cs/Terminal.Gui\n- Spectre.Console GitHub \u2014 https://github.com/spectreconsole/spectre.console\n"
+    "spec": "# .NET TUI Development Skills\n\n## Overview\nAdd skills for building terminal user interfaces (TUI) in .NET. Two major frameworks exist: Terminal.Gui (Miguel de Icaza) and Spectre.Console (Patrik Svensson). Both are actively maintained and serve different use cases.\n\n## Scope\n- **Terminal.Gui skill** \u2014 Full TUI framework: windows, menus, dialogs, views, layout (Computed vs Absolute), event handling, color themes, mouse support. Cross-platform (Windows/macOS/Linux).\n- **Spectre.Console skill** \u2014 Rich console output: tables, trees, progress bars, prompts, markup, live displays, canvas, charts. Also covers Spectre.Console.Cli for command-line parsing.\n\n### Scope Boundary Table\n\n| Concern | Owner | Other epic/skill |\n|---|---|---|\n| Full TUI applications (windows, menus, views) | `[skill:dotnet-terminal-gui]` | \u2014 |\n| Rich console output (tables, trees, progress) | `[skill:dotnet-spectre-console]` | \u2014 |\n| Spectre.Console.Cli command parsing | `[skill:dotnet-spectre-console]` | Scope boundary with `[skill:dotnet-system-commandline]` |\n| System.CommandLine parsing | \u2014 | `[skill:dotnet-system-commandline]` (cli-tools) |\n| CLI app structure & distribution | \u2014 | `[skill:dotnet-cli-architecture]`, `[skill:dotnet-cli-distribution]` (cli-tools) |\n| Blazor/web UI | \u2014 | `[skill:dotnet-blazor-patterns]` (ui-frameworks) |\n\n### Out of Scope\n- System.CommandLine patterns \u2014 covered by `[skill:dotnet-system-commandline]`\n- CLI application architecture and distribution \u2014 covered by `[skill:dotnet-cli-architecture]` and `[skill:dotnet-cli-distribution]`\n- Web UI frameworks \u2014 covered by `[skill:dotnet-blazor-patterns]`\n- Native AOT trimming details \u2014 covered by `[skill:dotnet-native-aot]` (cross-referenced where relevant)\n\n## .NET Version Policy\n- Target baseline: `net8.0+`\n- Package versions: latest stable releases of Terminal.Gui and Spectre.Console\n- Both libraries support .NET 8+ and .NET 9+\n\n## Dependencies\n- **Hard:** none\n- **Soft:** fn-17 (CLI tools) for scope boundary alignment with `[skill:dotnet-system-commandline]`\n\n## Conventions\n- Skill names use `dotnet-` prefix: `dotnet-terminal-gui`, `dotnet-spectre-console`\n- SKILL.md frontmatter: `name` and `description` only\n- Cross-references use `[skill:skill-name]` syntax\n- Skill descriptions target under 120 characters\n\n## Task Decomposition\n\n| Task | Deliverables | Files |\n|---|---|---|\n| .1 Terminal.Gui skill | SKILL.md with lifecycle, layout, views, menus, events, themes, Agent Gotchas, References, Prerequisites | `skills/tui/dotnet-terminal-gui/SKILL.md` |\n| .2 Spectre.Console skill | SKILL.md with rich output, progress, prompts, CLI, Agent Gotchas, References, Prerequisites | `skills/tui/dotnet-spectre-console/SKILL.md` |\n| .3 Integration | Register skills in plugin.json, update README/CLAUDE.md/AGENTS.md counts, add trigger-corpus entries, run validation | `.claude-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`, `scripts/trigger-corpus.json` |\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Terminal.Gui skill covering lifecycle, layout, views, menus, event handling, themes\n- [ ] Spectre.Console skill covering rich output, prompts, tables, progress, CLI\n- [ ] Each skill has canonical SKILL.md structure: frontmatter, overview, content sections, Agent Gotchas, Prerequisites, References\n- [ ] Each skill description under 120 characters\n- [ ] Scope boundary with `[skill:dotnet-system-commandline]` documented in Spectre.Console skill\n- [ ] Cross-references use `[skill:skill-name]` syntax: async patterns, Terminal.Gui \u2194 Spectre.Console, system-commandline, cli-architecture, native-aot\n- [ ] Both skills registered in plugin.json\n- [ ] README.md updated with new TUI category and skill counts\n- [ ] CLAUDE.md updated with new counts\n- [ ] AGENTS.md routing index updated with TUI category\n- [ ] Trigger corpus entries added for TUI skill routing\n- [ ] No fn-N spec references in skill content\n- [ ] Budget constraint respected (~240 chars addition within 15,000 limit)\n- [ ] All validation commands pass\n\n## References\n- Terminal.Gui GitHub \u2014 https://github.com/gui-cs/Terminal.Gui\n- Spectre.Console GitHub \u2014 https://github.com/spectreconsole/spectre.console\n"
   },
   "epic_id": "fn-35-net-tui-development-skills",
   "schema_version": 2,
@@ -40,8 +40,24 @@
         "updated_at": "2026-02-14T22:03:55.195089Z"
       },
       "id": "fn-35-net-tui-development-skills.1",
-      "runtime": null,
-      "spec": "# fn-35-net-tui-development-skills.1 Create Terminal.Gui TUI skill\n\n## Description\nCreate skills/tui/dotnet-terminal-gui/SKILL.md covering Terminal.Gui for building full terminal user interfaces. Cover layout system, views, menus, dialogs, event handling, color themes, cross-platform considerations.\n\n**Size:** M\n**Files:** skills/tui/dotnet-terminal-gui/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Application lifecycle: Application.Init(), Application.Run(), Application.Shutdown()\n- Layout: Computed layout (Pos/Dim), Absolute positioning\n- Core views: Window, FrameView, Label, TextField, TextView, Button, ListView, TableView\n- Menus and dialogs: MenuBar, StatusBar, Dialog, MessageBox\n- Event handling: key bindings, mouse events\n- Color themes and styling\n- Cross-platform: Windows/macOS/Linux terminal compatibility\n- Latest stable Terminal.Gui package\n## Acceptance\n- [ ] Application lifecycle documented\n- [ ] Layout system covered\n- [ ] Core views with usage patterns\n- [ ] Menus and dialogs\n- [ ] Event handling and key bindings\n- [ ] Latest stable package version\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T09:47:05.302398Z",
+        "evidence": {
+          "commits": [
+            "d390a641b7f08f0d9e16e03f1fa6b1eef6ed3b0b",
+            "934e891bcdff91ad491af2e33fb8cdf956b1cb1d"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T10:02:06.183871Z"
+      },
+      "spec": "# fn-35-net-tui-development-skills.1 Create Terminal.Gui TUI skill\n\n## Description\nCreate skills/tui/dotnet-terminal-gui/SKILL.md covering Terminal.Gui for building full terminal user interfaces. Cover layout system, views, menus, dialogs, event handling, color themes, cross-platform considerations. Include Agent Gotchas, Prerequisites, and References sections per canonical SKILL.md structure.\n\n**Size:** M\n**Files:** skills/tui/dotnet-terminal-gui/SKILL.md\n\n## Approach\n- Frontmatter: `name: dotnet-terminal-gui`, `description` under 120 chars\n- Application lifecycle: Application.Init(), Application.Run(), Application.Shutdown()\n- Layout: Computed layout (Pos/Dim), Absolute positioning\n- Core views: Window, FrameView, Label, TextField, TextView, Button, ListView, TableView\n- Menus and dialogs: MenuBar, StatusBar, Dialog, MessageBox\n- Event handling: key bindings, mouse events\n- Color themes and styling\n- Cross-platform: Windows/macOS/Linux terminal compatibility\n- Agent Gotchas: TUI-specific pitfalls (threading, terminal state cleanup, layout gotchas)\n- Prerequisites: Terminal.Gui NuGet package, net8.0+ baseline\n- References: GitHub repo, NuGet page, official docs\n- Cross-references: `[skill:dotnet-spectre-console]` for rich output alternative, `[skill:dotnet-csharp-async-patterns]` for async TUI patterns, `[skill:dotnet-native-aot]` for AOT considerations\n- Latest stable Terminal.Gui package\n\n## Acceptance\n- [ ] SKILL.md frontmatter has `name` and `description` (under 120 chars)\n- [ ] Application lifecycle documented\n- [ ] Layout system (Computed + Absolute) covered\n- [ ] Core views with usage patterns\n- [ ] Menus and dialogs covered\n- [ ] Event handling and key bindings\n- [ ] Agent Gotchas section with TUI-specific pitfalls\n- [ ] Prerequisites section with package requirements\n- [ ] References section with GitHub repo and NuGet links\n- [ ] Cross-references use `[skill:skill-name]` syntax\n- [ ] No fn-N spec references in content\n- [ ] Latest stable package version\n\n## Verification\n```bash\ngrep -c \"## Agent Gotchas\" skills/tui/dotnet-terminal-gui/SKILL.md  # expect 1\ngrep -c \"## Prerequisites\" skills/tui/dotnet-terminal-gui/SKILL.md  # expect 1\ngrep -c \"## References\" skills/tui/dotnet-terminal-gui/SKILL.md  # expect 1\ngrep -c \"\\[skill:\" skills/tui/dotnet-terminal-gui/SKILL.md  # expect >= 2\ngrep \"description:\" skills/tui/dotnet-terminal-gui/SKILL.md | wc -c  # expect < 130\n```\n\n## Done summary\nCreated Terminal.Gui v2 TUI skill (skills/tui/dotnet-terminal-gui/SKILL.md) covering instance-based application lifecycle, unified Pos/Dim layout system, core views (Window, Label, TextField, TextView, Button, ListView, CheckBox, RadioGroup, DatePicker, NumericUpDown, ColorPicker), MenuBar with MenuBarItem, StatusBar with v2 Shortcut API, Dialog/MessageBox/FileDialog, command-pattern key bindings, TrueColor themes with ConfigurationManager, adornments, cross-platform compatibility, and 11 Agent Gotchas.\n## Evidence\n- Commits: d390a641b7f08f0d9e16e03f1fa6b1eef6ed3b0b, 934e891bcdff91ad491af2e33fb8cdf956b1cb1d\n- Tests: ./scripts/validate-skills.sh\n- PRs:"
     },
     {
       "data": {
@@ -59,8 +75,64 @@
         "updated_at": "2026-02-14T22:03:55.326859Z"
       },
       "id": "fn-35-net-tui-development-skills.2",
-      "runtime": null,
-      "spec": "# fn-35-net-tui-development-skills.2 Create Spectre.Console skill\n\n## Description\nCreate skills/tui/dotnet-spectre-console/SKILL.md covering Spectre.Console for rich console output and Spectre.Console.Cli for command-line application structure.\n\n**Size:** M\n**Files:** skills/tui/dotnet-spectre-console/SKILL.md, .claude-plugin/plugin.json\n\n## Approach\n- Rich output: AnsiConsole.MarkupLine, tables, trees, panels, rules, figlet text\n- Progress: AnsiConsole.Progress(), status spinners, multi-task progress\n- Prompts: TextPrompt, SelectionPrompt, MultiSelectionPrompt, ConfirmationPrompt\n- Live displays: AnsiConsole.Live() for updating content\n- Spectre.Console.Cli: command hierarchy, settings classes, DI, type converters\n- Latest stable Spectre.Console package\n- Cross-ref to [skill:dotnet-terminal-gui] for full TUI alternative\n## Acceptance\n- [ ] Rich output patterns documented\n- [ ] Progress and prompts covered\n- [ ] Spectre.Console.Cli framework covered\n- [ ] Latest stable package version\n- [ ] Cross-ref to Terminal.Gui\n- [ ] Registered in plugin.json\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T10:09:54.814300Z",
+        "evidence": {
+          "commits": [
+            "68e6b72f63114ad0d33ee190c7e4d11701243c60"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "python3 scripts/generate_dist.py --strict"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T10:18:09.578190Z"
+      },
+      "spec": "# fn-35-net-tui-development-skills.2 Create Spectre.Console skill\n\n## Description\nCreate skills/tui/dotnet-spectre-console/SKILL.md covering Spectre.Console for rich console output and Spectre.Console.Cli for command-line application structure. Include scope boundary with System.CommandLine, Agent Gotchas, Prerequisites, and References sections per canonical SKILL.md structure.\n\n**Size:** M\n**Files:** skills/tui/dotnet-spectre-console/SKILL.md\n\n## Approach\n- Frontmatter: `name: dotnet-spectre-console`, `description` under 120 chars\n- Rich output: AnsiConsole.MarkupLine, tables, trees, panels, rules, figlet text\n- Progress: AnsiConsole.Progress(), status spinners, multi-task progress\n- Prompts: TextPrompt, SelectionPrompt, MultiSelectionPrompt, ConfirmationPrompt\n- Live displays: AnsiConsole.Live() for updating content\n- Spectre.Console.Cli: command hierarchy, settings classes, DI, type converters\n- Scope boundary: \"For System.CommandLine patterns, see `[skill:dotnet-system-commandline]`\"\n- Agent Gotchas: console output pitfalls (ANSI support detection, CI environments, redirected output)\n- Prerequisites: Spectre.Console NuGet package, net8.0+ baseline\n- References: GitHub repo, NuGet page, official docs\n- Cross-references: `[skill:dotnet-terminal-gui]` for full TUI alternative, `[skill:dotnet-system-commandline]` for scope boundary, `[skill:dotnet-cli-architecture]` for CLI structure, `[skill:dotnet-csharp-async-patterns]` for async patterns, `[skill:dotnet-csharp-dependency-injection]` for DI with Spectre.Console.Cli\n- Latest stable Spectre.Console package\n\n## Acceptance\n- [ ] SKILL.md frontmatter has `name` and `description` (under 120 chars)\n- [ ] Rich output patterns documented (markup, tables, trees, panels)\n- [ ] Progress and prompts covered\n- [ ] Live displays covered\n- [ ] Spectre.Console.Cli framework covered (commands, settings, DI)\n- [ ] Scope boundary with `[skill:dotnet-system-commandline]` documented\n- [ ] Agent Gotchas section with console output pitfalls\n- [ ] Prerequisites section with package requirements\n- [ ] References section with GitHub repo and NuGet links\n- [ ] Cross-references use `[skill:skill-name]` syntax\n- [ ] No fn-N spec references in content\n- [ ] Latest stable package version\n\n## Verification\n```bash\ngrep -c \"## Agent Gotchas\" skills/tui/dotnet-spectre-console/SKILL.md  # expect 1\ngrep -c \"## Prerequisites\" skills/tui/dotnet-spectre-console/SKILL.md  # expect 1\ngrep -c \"## References\" skills/tui/dotnet-spectre-console/SKILL.md  # expect 1\ngrep \"dotnet-system-commandline\" skills/tui/dotnet-spectre-console/SKILL.md  # expect scope boundary mention\ngrep -c \"\\[skill:\" skills/tui/dotnet-spectre-console/SKILL.md  # expect >= 4\ngrep \"description:\" skills/tui/dotnet-spectre-console/SKILL.md | wc -c  # expect < 130\n```\n\n## Done summary\nCreated Spectre.Console skill covering rich console output (markup, tables, trees, panels, progress, prompts, live displays) and Spectre.Console.Cli framework (commands, settings, branches, validation, async commands, DI via ITypeRegistrar). Includes 8 Agent Gotchas, scope boundaries with dotnet-system-commandline and dotnet-terminal-gui, and 6 cross-references.\n## Evidence\n- Commits: 68e6b72f63114ad0d33ee190c7e4d11701243c60\n- Tests: ./scripts/validate-skills.sh, python3 scripts/generate_dist.py --strict\n- PRs:"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T09:40:26.147994Z",
+        "depends_on": [
+          "fn-35-net-tui-development-skills.1",
+          "fn-35-net-tui-development-skills.2"
+        ],
+        "epic": "fn-35-net-tui-development-skills",
+        "id": "fn-35-net-tui-development-skills.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-35-net-tui-development-skills.3.md",
+        "status": "todo",
+        "title": "Register TUI skills and update counts",
+        "updated_at": "2026-02-15T09:40:26.148317Z"
+      },
+      "id": "fn-35-net-tui-development-skills.3",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-15T10:27:47.949026Z",
+        "evidence": {
+          "commits": [
+            "2f58d872eb6ac18cbf37a854d19462a0d46faca0"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-15T10:36:23.696581Z"
+      },
+      "spec": "# fn-35-net-tui-development-skills.3 Register TUI skills and update counts\n\n## Description\nRegister both TUI skills in plugin.json, update README.md/CLAUDE.md/AGENTS.md with new skill counts and TUI category, add trigger-corpus entries for routing tests, and run full validation.\n\n**Size:** S\n**Depends on:** .1, .2\n**Files:** .claude-plugin/plugin.json, README.md, CLAUDE.md, AGENTS.md, scripts/trigger-corpus.json\n\n## Approach\n- Add `skills/tui/dotnet-terminal-gui` and `skills/tui/dotnet-spectre-console` to plugin.json skills array\n- Update README.md skill catalog with new TUI category section and total counts\n- Update CLAUDE.md skill/category counts\n- Add TUI category row to AGENTS.md routing index\n- Add trigger-corpus.json entries for TUI-related queries\n- Run all four validation commands\n\n## Acceptance\n- [ ] Both skills registered in plugin.json skills array\n- [ ] README.md lists TUI category with both skills, total counts updated\n- [ ] CLAUDE.md counts updated\n- [ ] AGENTS.md routing index has TUI category row\n- [ ] Trigger corpus has entries routing TUI queries to correct skills\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] `./scripts/validate-marketplace.sh` passes\n- [ ] `python3 scripts/generate_dist.py --strict` passes\n- [ ] `python3 scripts/validate_cross_agent.py` passes\n\n## Verification\n```bash\ngrep -c \"dotnet-terminal-gui\\|dotnet-spectre-console\" .claude-plugin/plugin.json  # expect 2\ngrep -i \"tui\" AGENTS.md  # expect routing row\n./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh && python3 scripts/generate_dist.py --strict && python3 scripts/validate_cross_agent.py\n```\n\n## Done summary\nRegistered both TUI skills (dotnet-terminal-gui, dotnet-spectre-console) in plugin.json, updated skill and category counts across README.md, CLAUDE.md, and AGENTS.md to 111 skills / 21 categories, added TUI category rows and Build System row to routing tables, added Terminal.Gui trigger corpus entry, and fixed stale counts for Core C#, Architecture, and API Development categories.\n## Evidence\n- Commits: 2f58d872eb6ac18cbf37a854d19462a0d46faca0\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
     }
   ]
 }
