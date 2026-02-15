@@ -234,3 +234,9 @@ Stale 'not yet landed' or 'planned' references to skills that have since shipped
 
 ## 2026-02-15 manual [pitfall]
 Proposed replacement descriptions in audit reports must have character counts verified with the same measurement tool used for existing descriptions -- off-by-one from wc -c vs echo -n piping causes reviewer distrust
+
+## 2026-02-15 manual [pitfall]
+When a rubric dimension uses '~N' (approximate threshold), values clearly below the threshold (e.g., 2,226 vs ~3,000) should be rated pass, not warn -- warn is for values actually near the boundary
+
+## 2026-02-15 manual [pitfall]
+When counting issues in audit summary tables, reconcile per-skill Issues sections with Recommended Changes sections -- monitoring-only notes and consolidated items can cause count mismatches
