@@ -31,9 +31,8 @@ Create `skills/architecture/dotnet-solid-principles/SKILL.md` deeply engraining 
 - [ ] Validation passes
 
 ## Done summary
-TBD
-
+Created dotnet-solid-principles skill covering all five SOLID principles (SRP, OCP, LSP, ISP, DIP) with concrete C# anti-patterns and fixes, plus DRY guidance with rule of three and acceptable-duplication scenarios. Registered in plugin.json (103 skills total).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5f7b8935751f9720a1731f717d80e12ac33e95e0
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
