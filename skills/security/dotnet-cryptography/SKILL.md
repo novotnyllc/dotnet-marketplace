@@ -1,6 +1,6 @@
 ---
 name: dotnet-cryptography
-description: "WHEN choosing cryptographic algorithms, hashing, encryption, key derivation, or post-quantum crypto in .NET. AES-GCM, RSA, ECDSA, ML-KEM, ML-DSA, SLH-DSA."
+description: "WHEN choosing cryptographic algorithms, hashing, encryption, or key derivation in .NET. AES-GCM, RSA, ECDSA, PQC."
 ---
 
 # dotnet-cryptography
@@ -421,7 +421,7 @@ For the full list of deprecated security patterns beyond cryptography (CAS, APTC
 
 ---
 
-## Gotchas and Pitfalls
+## Agent Gotchas
 
 1. **Never reuse a nonce with AES-GCM** -- reusing a nonce with the same key breaks both confidentiality and authenticity. Always generate a fresh random nonce per encryption operation.
 2. **Never use ECB mode** -- ECB encrypts identical plaintext blocks to identical ciphertext blocks, leaking patterns. .NET's `Aes.Create()` defaults to CBC, but prefer AES-GCM for authenticated encryption.
