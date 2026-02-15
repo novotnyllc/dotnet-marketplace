@@ -31,9 +31,8 @@ Implement GitHub Pages distribution with manifest
 - [ ] Existing `dist/{claude,copilot,codex}/` structure preserved
 - [ ] All four validation commands pass: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`
 ## Done summary
-TBD
-
+Added manifest.json generation with SHA256 checksums per target directory to generate_dist.py, added Check 7 (manifest validation) to validate_cross_agent.py verifying schema and checksum correctness, and replaced zip packaging in release.yml with GitHub Pages deployment via actions/deploy-pages.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6cfc1a53270117438eb7a1574ab86a1d6576c3ea
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

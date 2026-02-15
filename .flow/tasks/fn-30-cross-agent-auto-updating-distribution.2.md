@@ -15,9 +15,10 @@ Update README with GitHub Pages URLs, consumer auto-update polling instructions,
 2. **Document private repo considerations**:
    - GitHub Pages requires public repo (or GitHub Pro/Enterprise for private)
    - For private repos, consumers can use GitHub API to fetch release assets as fallback
-3. **Remove zip packaging**:
-   - Remove zip creation steps from release.yml (Task 1 will have already replaced with Pages deployment)
-   - Verify GitHub Release is still created for changelog notes (no zip attachments)
+3. **Verify zip packaging removal** (completed by Task 1):
+   - Confirm no zip creation steps remain in release.yml (Task 1 already replaced with `actions/upload-pages-artifact@v3` + `actions/deploy-pages@v4`)
+   - Confirm GitHub Release still created via `softprops/action-gh-release@v2` for changelog notes (no zip attachments)
+<!-- Updated by plan-sync: fn-30.1 already removed zip packaging and replaced with GitHub Pages deployment -->
 4. **Update CONTRIBUTING.md** if it references the zip-based release process
 
 ## Acceptance
@@ -25,7 +26,8 @@ Update README with GitHub Pages URLs, consumer auto-update polling instructions,
 - [ ] Auto-update polling contract documented (15-min poll interval, 10-min CDN TTL)
 - [ ] One-time repo setup documented (Pages → Deploy from GitHub Actions)
 - [ ] Private repo considerations noted
-- [ ] Zip packaging steps fully removed from release workflow
+- [ ] Zip packaging steps confirmed absent from release workflow (already removed by Task 1)
+<!-- Updated by plan-sync: fn-30.1 already removed zip packaging from release.yml -->
 - [ ] CONTRIBUTING.md updated if it references old release process
 ## Done summary
 TBD
