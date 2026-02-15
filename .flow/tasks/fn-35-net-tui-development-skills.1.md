@@ -45,9 +45,8 @@ grep "description:" skills/tui/dotnet-terminal-gui/SKILL.md | wc -c  # expect < 
 ```
 
 ## Done summary
-TBD
-
+Created Terminal.Gui v2 TUI skill (skills/tui/dotnet-terminal-gui/SKILL.md) covering instance-based application lifecycle, unified Pos/Dim layout system, core views (Window, Label, TextField, TextView, Button, ListView, CheckBox, RadioGroup, DatePicker, NumericUpDown, ColorPicker), MenuBar with MenuBarItem, StatusBar with v2 Shortcut API, Dialog/MessageBox/FileDialog, command-pattern key bindings, TrueColor themes with ConfigurationManager, adornments, cross-platform compatibility, and 11 Agent Gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: d390a641b7f08f0d9e16e03f1fa6b1eef6ed3b0b, 934e891bcdff91ad491af2e33fb8cdf956b1cb1d
+- Tests: ./scripts/validate-skills.sh
 - PRs:

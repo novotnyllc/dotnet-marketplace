@@ -273,3 +273,6 @@ ToolTask.GenerateFullPathToTool() must not return null -- return ToolName to let
 
 ## 2026-02-15 manual [pitfall]
 Mermaid diagram node IDs must be unique across the ENTIRE graph including all subgraphs -- reusing an ID (e.g. BS for both an agent and a skill category) causes nodes to merge silently
+
+## 2026-02-15 manual [pitfall]
+When documenting pre-release library APIs, verify every code example against the actual source code on the development branch -- LLM training data mixes v1 and v2 patterns, causing v1 API leaks (removed types, changed constructors, new required parameters) in ostensibly v2-targeted documentation
