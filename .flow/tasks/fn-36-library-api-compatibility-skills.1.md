@@ -27,9 +27,8 @@ Create skills/api-development/dotnet-library-api-compat/SKILL.md covering binary
 - [ ] Description under 120 characters in frontmatter
 
 ## Done summary
-TBD
-
+Created skills/api-development/dotnet-library-api-compat/SKILL.md covering binary and source compatibility rules for .NET library authors, type forwarders (TypeForwardedTo/TypeForwardedFrom), [Obsolete] deprecation lifecycle, SemVer impact mapping, and ApiCompat package validation.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 87d4b49, 876f46f
+- Tests: ./scripts/validate-skills.sh, python3 scripts/generate_dist.py --strict
 - PRs:

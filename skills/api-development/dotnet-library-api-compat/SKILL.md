@@ -9,7 +9,7 @@ Binary and source compatibility rules for .NET library authors. Covers which API
 
 **Version assumptions:** .NET 8.0+ baseline. Compatibility rules apply to all .NET versions but examples target modern SDK-style projects.
 
-**Out of scope:** HTTP API versioning -- see [skill:dotnet-api-versioning]. NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]. Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]. PublicApiAnalyzers and API surface validation tooling -- see [skill:dotnet-api-surface-validation]. Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers].
+**Out of scope:** HTTP API versioning -- see [skill:dotnet-api-versioning]. NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]. Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]. PublicApiAnalyzers and API surface validation tooling -- covered in a companion skill `dotnet-api-surface-validation`. Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers].
 
 Cross-references: [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for NuGet packaging and SemVer rules, [skill:dotnet-multi-targeting] for multi-TFM packaging and ApiCompat tooling.
 
@@ -289,7 +289,7 @@ This produces a `CompatibilitySuppressions.xml` file that can be checked in. If 
 
 Note: `ApiCompatSuppressionFile` is an **ItemGroup item**, not a PropertyGroup property. Multiple suppression files can be included.
 
-For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workflows, see [skill:dotnet-api-surface-validation].
+For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workflows, see the companion skill `dotnet-api-surface-validation`.
 
 ---
 

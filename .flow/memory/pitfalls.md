@@ -279,3 +279,6 @@ When documenting pre-release library APIs, verify every code example against the
 
 ## 2026-02-15 manual [pitfall]
 flowctl epic set-plan may silently fail to write spec file -- always verify with cat/read after set-plan
+
+## 2026-02-15 manual [pitfall]
+ApiCompatSuppressionFile is an MSBuild ItemGroup item, not a PropertyGroup property -- using PropertyGroup syntax silently does nothing; use <ItemGroup><ApiCompatSuppressionFile Include="..." /></ItemGroup>
