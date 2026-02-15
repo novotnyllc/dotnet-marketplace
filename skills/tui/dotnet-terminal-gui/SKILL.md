@@ -7,7 +7,7 @@ description: "WHEN building full TUI apps. Terminal.Gui v2: views, layout (Pos/D
 
 Terminal.Gui v2 for building full terminal user interfaces with windows, menus, dialogs, views, layout, event handling, color themes, and mouse support. Cross-platform across Windows, macOS, and Linux terminals.
 
-**Version assumptions:** .NET 8.0+ baseline. Terminal.Gui 2.0.0-alpha (v2 Alpha is recommended for new projects -- API is stable with comprehensive features; breaking changes possible before Beta but core architecture is solid). v1.x (1.19.0) is in maintenance mode with no new features.
+**Version assumptions:** .NET 8.0+ baseline. Terminal.Gui 2.0.0-alpha (v2 Alpha is the active development line for new projects -- API is stable with comprehensive features; breaking changes possible before Beta but core architecture is solid). v1.x (1.19.0) is in maintenance mode with no new features.
 
 **Scope boundary:** This skill owns full TUI application development with Terminal.Gui -- application lifecycle, layout, views, menus, dialogs, event handling, themes. Rich console output (tables, progress bars, prompts, markup) is owned by [skill:dotnet-spectre-console]. CLI command-line parsing is owned by [skill:dotnet-system-commandline]. CLI application architecture and distribution are owned by [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution].
 
@@ -228,7 +228,8 @@ var button = new Button
 // Accept event (v2 replaces v1's Clicked)
 button.Accepting += (sender, args) =>
 {
-    MessageBox.Query("Info", $"You entered: {textField.Text}", "OK");
+    MessageBox.Query(button.App!, "Info", $"You entered: {textField.Text}", "OK");
+    args.Handled = true; // prevent event bubbling
 };
 ```
 
@@ -308,49 +309,81 @@ var colorPicker = new ColorPicker
 
 ### MenuBar
 
+In v2, `MenuBar` takes a `MenuBarItem[]` constructor parameter. `MenuItem` supports both positional constructors and object initializer syntax.
+
 ```csharp
-var menuBar = new MenuBar
-{
-    Menus =
+var menuBar = new MenuBar([
+    new MenuBarItem("_File",
     [
-        new MenuBarItem("_File",
+        new MenuItem("_New", "Create new file", () => NewFile()),
+        new MenuItem("_Open", "Open existing file", () => OpenFile()),
+        new MenuBarItem("_Recent",
         [
-            new MenuItem("_New", "Create new file", () => NewFile()),
-            new MenuItem("_Open", "Open existing file", () => OpenFile()),
-            new MenuBarItem("_Recent",
-            [
-                new MenuItem("file1.txt", "", () => Open("file1.txt")),
-                new MenuItem("file2.txt", "", () => Open("file2.txt"))
-            ]),
-            null,  // separator
-            new MenuItem("_Quit", "Exit application", () => app.RequestStop())
+            new MenuItem("file1.txt", "", () => Open("file1.txt")),
+            new MenuItem("file2.txt", "", () => Open("file2.txt"))
         ]),
-        new MenuBarItem("_Edit",
-        [
-            new MenuItem("_Copy", "", () => Copy(), shortcutKey: Key.C.WithCtrl),
-            new MenuItem("_Paste", "", () => Paste(), shortcutKey: Key.V.WithCtrl)
-        ]),
-        new MenuBarItem("_Help",
-        [
-            new MenuItem("_About", "", () => ShowAbout())
-        ])
-    ]
-};
+        null,  // separator
+        new MenuItem
+        {
+            Title = "_Quit",
+            HelpText = "Exit application",
+            Key = Application.QuitKey,
+            Command = Command.Quit
+        }
+    ]),
+    new MenuBarItem("_Edit",
+    [
+        new MenuItem("_Copy", "", () => Copy(), Key.C.WithCtrl),
+        new MenuItem("_Paste", "", () => Paste(), Key.V.WithCtrl)
+    ]),
+    new MenuBarItem("_Help",
+    [
+        new MenuItem("_About", "About this app", () =>
+            MessageBox.Query(app, "", "My TUI App v1.0", "OK"))
+    ])
+]);
 window.Add(menuBar);
 ```
 
 ### StatusBar
 
+In v2, `StatusBar` uses `Shortcut` objects instead of v1's `StatusItem` (which was removed). Add shortcuts via `statusBar.Add()`.
+
 ```csharp
-var statusBar = new StatusBar
+var statusBar = new StatusBar();
+
+var helpShortcut = new Shortcut
 {
-    Items =
-    [
-        new StatusItem(Key.F1, "~F1~ Help", () => ShowHelp()),
-        new StatusItem(Key.F2, "~F2~ Save", () => Save()),
-        new StatusItem(Key.Esc, "~Esc~ Quit", () => app.RequestStop())
-    ]
+    Title = "Help",
+    Key = Key.F1,
+    CanFocus = false
 };
+helpShortcut.Accepting += (sender, args) =>
+{
+    ShowHelp();
+    args.Handled = true;
+};
+
+var saveShortcut = new Shortcut
+{
+    Title = "Save",
+    Key = Key.F2,
+    CanFocus = false
+};
+saveShortcut.Accepting += (sender, args) =>
+{
+    Save();
+    args.Handled = true;
+};
+
+var quitShortcut = new Shortcut
+{
+    Title = "Quit",
+    Key = Application.QuitKey,
+    CanFocus = false
+};
+
+statusBar.Add(helpShortcut, saveShortcut, quitShortcut);
 window.Add(statusBar);
 ```
 
@@ -381,12 +414,14 @@ var okButton = new Button { Text = "OK" };
 okButton.Accepting += (sender, args) =>
 {
     dialog.RequestStop();
+    args.Handled = true;
 };
 
 var cancelButton = new Button { Text = "Cancel" };
 cancelButton.Accepting += (sender, args) =>
 {
     dialog.RequestStop();
+    args.Handled = true;
 };
 
 dialog.AddButton(okButton);
@@ -397,9 +432,12 @@ app.Run(dialog);
 
 ### MessageBox
 
+In v2, `MessageBox.Query` and `MessageBox.ErrorQuery` take an `IApplication` parameter first.
+
 ```csharp
 // Simple query dialog (returns button index)
-int result = MessageBox.Query("Confirm Delete",
+// In v2, pass the app instance as first parameter
+int result = MessageBox.Query(app, "Confirm Delete",
     "Delete this file permanently?",
     "Yes", "No");
 
@@ -409,7 +447,7 @@ if (result == 0)
 }
 
 // Error message
-MessageBox.ErrorQuery("Error",
+MessageBox.ErrorQuery(app, "Error",
     "Failed to save file.\nCheck permissions.",
     "OK");
 ```
@@ -481,12 +519,14 @@ view.KeyUp += (sender, args) =>
 
 ### Application-Level Keys
 
+Although v2 uses instance-based `IApplication`, `Application.QuitKey` remains a static configuration property set before `Init()`. These are framework-level settings, not per-instance state.
+
 ```csharp
-// Configure global quit key (default: Esc)
+// Configure global quit key before Init (default: Esc)
 Application.QuitKey = Key.Q.WithCtrl;
 
-// Configure arrange key for movable/resizable windows
-Application.ArrangeKey = Key.F5.WithCtrl;
+IApplication app = Application.Create().Init();
+// Application.QuitKey is now in effect for this app instance
 ```
 
 ### Mouse Events
@@ -549,11 +589,12 @@ view.ColorScheme = new ColorScheme
 Terminal.Gui v2 supports JSON-based theme persistence via `ConfigurationManager`. Users can customize themes, key bindings, and view properties without code changes.
 
 ```csharp
-// Apply a built-in theme
-ConfigurationManager.Apply();
+// Set a built-in theme via runtime config before Init
+ConfigurationManager.RuntimeConfig = """{ "Theme": "Amber Phosphor" }""";
+ConfigurationManager.Enable(ConfigLocations.All);
 
-// Themes can be defined in JSON config files:
-// ~/.tui/config.json or app-local settings
+IApplication app = Application.Create().Init();
+// Theme is now applied
 ```
 
 ---
@@ -622,26 +663,12 @@ using IApplication app = Application.Create().Init();
 
 var window = new Window
 {
-    Title = "Simple Editor",
+    Title = $"Simple Editor ({Application.QuitKey} to quit)",
     Width = Dim.Fill(),
     Height = Dim.Fill()
 };
 
-// Menu bar
-var menuBar = new MenuBar
-{
-    Menus =
-    [
-        new MenuBarItem("_File",
-        [
-            new MenuItem("_New", "", () => textView.Text = ""),
-            null,
-            new MenuItem("_Quit", "", () => app.RequestStop())
-        ])
-    ]
-};
-
-// Text editor area
+// Declare textView first so menu lambda can capture it
 var textView = new TextView
 {
     X = 0, Y = 1,  // below menu bar
@@ -650,16 +677,31 @@ var textView = new TextView
     Text = ""
 };
 
-// Status bar
-var statusBar = new StatusBar
-{
-    Items =
+// Menu bar
+var menuBar = new MenuBar([
+    new MenuBarItem("_File",
     [
-        new StatusItem(Key.F1, "~F1~ Help", () =>
-            MessageBox.Query("Help", "Simple text editor.", "OK")),
-        new StatusItem(Key.Esc, "~Esc~ Quit", () => app.RequestStop())
-    ]
+        new MenuItem("_New", "Clear editor", () => textView.Text = ""),
+        null,
+        new MenuItem
+        {
+            Title = "_Quit",
+            HelpText = "Exit",
+            Key = Application.QuitKey,
+            Command = Command.Quit
+        }
+    ])
+]);
+
+// Status bar with Shortcut objects (v2 API)
+var statusBar = new StatusBar();
+var helpShortcut = new Shortcut { Title = "Help", Key = Key.F1, CanFocus = false };
+helpShortcut.Accepting += (s, e) =>
+{
+    MessageBox.Query(app, "Help", "Simple text editor.", "OK");
+    e.Handled = true;
 };
+statusBar.Add(helpShortcut);
 
 window.Add(menuBar, textView, statusBar);
 app.Run(window);
@@ -679,6 +721,7 @@ app.Run(window);
 8. **Do not ignore terminal state on crash.** If the application crashes without proper disposal, the terminal may be left in raw mode. Wrap `app.Run()` in try/catch and ensure the `using` block disposes the application to restore terminal state.
 9. **Do not use `ScrollView`.** It was removed in v2. All views now support scrolling natively via `SetContentSize()` and the `Viewport` property.
 10. **Do not use `NStack.ustring`.** It was removed in v2. Use standard `System.String` throughout.
+11. **Do not use `StatusItem`.** It was removed in v2. Use `Shortcut` objects with `StatusBar.Add()` instead. Set `CanFocus = false` on status bar shortcuts and handle `Accepting` with `args.Handled = true`.
 
 ---
 
