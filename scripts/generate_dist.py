@@ -6,6 +6,7 @@ Reads canonical skills/, agents/, hooks/, and .mcp.json sources and produces:
   - dist/claude/   -- mirror of the plugin structure
   - dist/copilot/  -- .github/copilot-instructions.md + per-skill files
   - dist/codex/    -- top-level AGENTS.md + per-category AGENTS.md files
+  - dist/manifest.json -- version, timestamp, and per-target SHA256 checksums
 
 Reuses the frontmatter parser from _validate_skills.py.
 
@@ -16,11 +17,13 @@ Runs without .NET SDK dependency (pure Python).
 """
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -132,6 +135,47 @@ def collect_skills(skills_dir: Path) -> tuple:
             print(f"ERROR: failed to parse {skill_file}: {e}", file=sys.stderr)
             skipped += 1
     return results, skipped
+
+
+def compute_directory_sha256(directory: Path) -> str:
+    """Compute a SHA256 checksum over the sorted file contents of a directory.
+
+    Files are sorted by their path relative to the directory root to ensure
+    deterministic output regardless of filesystem ordering. Each file
+    contributes its relative path (UTF-8 encoded) and raw bytes to the hash.
+    """
+    h = hashlib.sha256()
+    for file_path in sorted(directory.rglob("*")):
+        if file_path.is_file():
+            rel = file_path.relative_to(directory)
+            # Include the relative path so renames change the hash
+            h.update(str(rel).encode("utf-8"))
+            h.update(file_path.read_bytes())
+    return h.hexdigest()
+
+
+def generate_manifest(dist_root: Path, version: str) -> None:
+    """Write dist/manifest.json with version, timestamp, and per-target SHA256 checksums."""
+    targets = {}
+    for target_name in ("claude", "copilot", "codex"):
+        target_dir = dist_root / target_name
+        if target_dir.is_dir():
+            targets[target_name] = {
+                "path": f"{target_name}/",
+                "sha256": compute_directory_sha256(target_dir),
+            }
+
+    manifest = {
+        "version": version,
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "targets": targets,
+    }
+
+    manifest_path = dist_root / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"  Manifest written: {manifest_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -555,6 +599,9 @@ def main():
 
         print("Generating dist/codex/ ...")
         generate_codex(skills, claude_only_patterns, dist_codex)
+
+        print("Generating dist/manifest.json ...")
+        generate_manifest(dist_root, version)
     except Exception as e:
         print(f"ERROR: generation failed: {e}", file=sys.stderr)
         # Clean up partial output per spec: no partial dist/ on failure
@@ -567,11 +614,15 @@ def main():
     copilot_skills = len(list((dist_copilot / "skills").rglob("SKILL.md")))
     codex_categories = len(list((dist_codex / "skills").rglob("AGENTS.md")))
 
+    manifest_path = dist_root / "manifest.json"
+    manifest_exists = manifest_path.exists()
+
     print()
     print("=== Generation Summary ===")
     print(f"  dist/claude/  : {claude_skills} skills (mirror)")
     print(f"  dist/copilot/ : {copilot_skills} skills + routing index")
     print(f"  dist/codex/   : {codex_categories} category AGENTS.md files + routing index")
+    print(f"  dist/manifest.json: {'yes' if manifest_exists else 'MISSING'}")
     print(f"  Version: {version}")
     print()
     print("DONE")

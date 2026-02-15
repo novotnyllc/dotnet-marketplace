@@ -1,0 +1,89 @@
+{
+  "created_at": "2026-02-15T04:37:24.200056Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-30-cross-agent-auto-updating-distribution",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T21:56:10.154600Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-30-cross-agent-auto-updating-distribution",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-30-cross-agent-auto-updating-distribution.md",
+      "status": "open",
+      "title": "Cross-Agent Auto-Updating Distribution",
+      "updated_at": "2026-02-14T21:57:17.989321Z"
+    },
+    "spec": "# Cross-Agent Auto-Updating Distribution\n\n## Overview\nReplace the current zip-based release workflow (`.github/workflows/release.yml`) with an auto-updatable distribution mechanism. The current approach requires manual download and extraction \u2014 cross-agent consumers (Claude Code, Copilot, Codex) have no built-in update mechanism for zip files.\n\n## Scope\n- Evaluate and implement one of: GitHub Pages site, dedicated `dist` branch, or GitHub release with manifest\n- Ensure the chosen mechanism supports auto-update detection (version manifest, ETag, or commit SHA)\n- Update `generate_dist.py` to output to the chosen target\n- Update CI/CD workflow to publish on tag push\n- Preserve existing `dist/claude/`, `dist/copilot/`, `dist/codex/` structure\n\n## Approach\n- **Option A: `dist` branch** \u2014 CI pushes generated files to a `dist` branch on each tag. Consumers point at raw GitHub URLs. Auto-update via branch HEAD SHA comparison.\n- **Option B: GitHub Pages** \u2014 CI deploys to Pages site. Consumers fetch from `<user>.github.io/<repo>/`. Auto-update via version manifest JSON.\n- **Option C: Release assets with manifest** \u2014 Keep release workflow but add a `manifest.json` with version + checksums. Consumers poll latest release API.\n\nResearch from scouts: GitHub Pages is most seamless for cross-agent consumption (stable URLs, CDN-cached, no auth needed for public repos). The `dist` branch approach is simpler but raw.githubusercontent.com has aggressive caching.\n\n## Quick commands\n```bash\n# Validate dist generation still works\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] Distribution mechanism chosen and documented\n- [ ] CI/CD workflow updated to publish automatically on tag push\n- [ ] Version manifest exists for consumers to detect updates\n- [ ] Existing `dist/` structure preserved (claude/, copilot/, codex/)\n- [ ] README updated with new installation/update instructions\n- [ ] Old zip-based workflow removed or deprecated\n\n## References\n- `.github/workflows/release.yml` \u2014 current zip workflow\n- `scripts/generate_dist.py` \u2014 cross-agent output generator\n- `scripts/validate_cross_agent.py` \u2014 conformance validator\n"
+  },
+  "epic_id": "fn-30-cross-agent-auto-updating-distribution",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:54.189364Z",
+        "depends_on": [],
+        "epic": "fn-30-cross-agent-auto-updating-distribution",
+        "id": "fn-30-cross-agent-auto-updating-distribution.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.1.md",
+        "status": "todo",
+        "title": "Evaluate distribution mechanisms and choose approach",
+        "updated_at": "2026-02-14T22:02:21.982661Z"
+      },
+      "id": "fn-30-cross-agent-auto-updating-distribution.1",
+      "runtime": null,
+      "spec": "# fn-30-cross-agent-auto-updating-distribution.1 Evaluate distribution mechanisms and choose approach\n\n## Description\nEvaluate the three distribution approaches (GitHub Pages, dist branch, release assets with manifest) against cross-agent consumer requirements. Consider: URL stability, caching behavior, auth requirements for public/private repos, auto-update detection mechanisms.\n\n**Size:** S\n**Files:** docs/ (evaluation doc)\n\n## Approach\n- Test raw.githubusercontent.com caching behavior (5-minute cache)\n- Test GitHub Pages URL stability and CDN caching\n- Test release API polling overhead\n- Document pros/cons for each approach\n- Recommend one approach with rationale\n## Acceptance\n- [ ] All three distribution approaches evaluated\n- [ ] Recommendation documented with rationale\n- [ ] Auto-update mechanism described\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:54.323382Z",
+        "depends_on": [
+          "fn-30-cross-agent-auto-updating-distribution.1"
+        ],
+        "epic": "fn-30-cross-agent-auto-updating-distribution",
+        "id": "fn-30-cross-agent-auto-updating-distribution.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.2.md",
+        "status": "todo",
+        "title": "Implement auto-updating distribution pipeline",
+        "updated_at": "2026-02-14T22:02:22.111336Z"
+      },
+      "id": "fn-30-cross-agent-auto-updating-distribution.2",
+      "runtime": null,
+      "spec": "# fn-30-cross-agent-auto-updating-distribution.2 Implement auto-updating distribution pipeline\n\n## Description\nImplement the chosen distribution mechanism. Update generate_dist.py if needed and create/modify the CI/CD workflow to publish automatically on tag push. Add version manifest for consumer auto-update detection.\n\n**Size:** M\n**Files:** .github/workflows/release.yml, scripts/generate_dist.py, version manifest file\n\n## Approach\n- Follow pattern from existing release.yml\n- Add version manifest (JSON with version, checksums, timestamp)\n- Ensure dist/claude/, dist/copilot/, dist/codex/ structure preserved\n## Acceptance\n- [ ] CI/CD workflow publishes on tag push\n- [ ] Version manifest generated with each publish\n- [ ] All three dist targets published\n- [ ] Validation scripts pass before publish\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T21:58:54.568505Z",
+        "depends_on": [
+          "fn-30-cross-agent-auto-updating-distribution.2"
+        ],
+        "epic": "fn-30-cross-agent-auto-updating-distribution",
+        "id": "fn-30-cross-agent-auto-updating-distribution.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.3.md",
+        "status": "todo",
+        "title": "Update docs and deprecate zip workflow",
+        "updated_at": "2026-02-14T22:02:22.240808Z"
+      },
+      "id": "fn-30-cross-agent-auto-updating-distribution.3",
+      "runtime": null,
+      "spec": "# fn-30-cross-agent-auto-updating-distribution.3 Update docs and deprecate zip workflow\n\n## Description\nUpdate README with new installation/update instructions for cross-agent consumers. Deprecate or remove the old zip-based workflow.\n\n**Size:** S\n**Files:** README.md, .github/workflows/release.yml\n\n## Approach\n- Update installation section in README\n- Add auto-update instructions per platform (Claude Code, Copilot, Codex)\n- Remove or mark deprecated the zip creation step\n## Acceptance\n- [ ] README installation instructions updated\n- [ ] Old zip workflow deprecated/removed\n- [ ] Cross-agent consumer update instructions documented\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

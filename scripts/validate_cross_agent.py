@@ -3,16 +3,15 @@
 Cross-agent conformance validator for dist/ outputs.
 
 Validates behavioral equivalence across Claude, Copilot, and Codex generated
-outputs by running 5 conformance checks:
+outputs by running 7 conformance checks:
 
   1. Routing parity       -- every SKILL.md description appears in all formats
   2. Trigger coverage     -- corpus entries match expected skills in all formats
   3. Graceful degradation -- Claude-only features absent from Copilot/Codex
   4. Structural comparison-- body content identical after known transformations
   5. Cross-ref integrity  -- [skill:name] resolved correctly per format
-
-Also validates trigger corpus completeness (every skill category has at least
-one corpus entry).
+  6. Corpus completeness  -- every skill category has at least one corpus entry
+  7. Manifest validation  -- manifest.json schema, required fields, SHA256 correctness
 
 Usage:
     python3 scripts/validate_cross_agent.py [--repo-root <path>] [--dist-dir <path>]
@@ -21,6 +20,7 @@ Reuses the frontmatter parser from _validate_skills.py. No .NET SDK dependency.
 """
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -846,6 +846,144 @@ def check_corpus_completeness(
 
 
 # ---------------------------------------------------------------------------
+# Check 7: Manifest validation
+# ---------------------------------------------------------------------------
+
+
+def _compute_directory_sha256(directory: Path) -> str:
+    """Compute a SHA256 checksum over the sorted file contents of a directory.
+
+    Must match the algorithm in generate_dist.py exactly.
+    """
+    h = hashlib.sha256()
+    for file_path in sorted(directory.rglob("*")):
+        if file_path.is_file():
+            rel = file_path.relative_to(directory)
+            h.update(str(rel).encode("utf-8"))
+            h.update(file_path.read_bytes())
+    return h.hexdigest()
+
+
+def check_manifest_validation(dist_dir: Path) -> list:
+    """Validate dist/manifest.json presence, JSON schema, and checksum correctness.
+
+    Schema requirements:
+      - version: non-empty string
+      - generated_at: non-empty string in ISO 8601 format
+      - targets: object with claude, copilot, codex keys
+      - Each target: {path: string, sha256: string}
+      - SHA256 checksums must match actual directory contents
+
+    Returns a list of failure dicts.
+    """
+    failures = []
+
+    manifest_path = dist_dir / "manifest.json"
+    if not manifest_path.exists():
+        failures.append({
+            "field": "manifest.json",
+            "reason": "manifest.json not found in dist/",
+        })
+        return failures
+
+    # Parse JSON
+    try:
+        manifest_text = manifest_path.read_text(encoding="utf-8")
+        manifest = json.loads(manifest_text)
+    except json.JSONDecodeError as e:
+        failures.append({
+            "field": "manifest.json",
+            "reason": f"invalid JSON: {e}",
+        })
+        return failures
+
+    # Validate top-level fields
+    if not isinstance(manifest, dict):
+        failures.append({
+            "field": "manifest.json",
+            "reason": "root must be a JSON object",
+        })
+        return failures
+
+    # version
+    version = manifest.get("version")
+    if not isinstance(version, str) or not version.strip():
+        failures.append({
+            "field": "version",
+            "reason": "missing or empty 'version' field (expected non-empty string)",
+        })
+
+    # generated_at
+    generated_at = manifest.get("generated_at")
+    if not isinstance(generated_at, str) or not generated_at.strip():
+        failures.append({
+            "field": "generated_at",
+            "reason": "missing or empty 'generated_at' field (expected ISO 8601 string)",
+        })
+    elif not re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$", generated_at):
+        failures.append({
+            "field": "generated_at",
+            "reason": f"'generated_at' not in expected ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ): {generated_at}",
+        })
+
+    # targets
+    targets = manifest.get("targets")
+    if not isinstance(targets, dict):
+        failures.append({
+            "field": "targets",
+            "reason": "missing or invalid 'targets' field (expected object)",
+        })
+        return failures
+
+    required_targets = ("claude", "copilot", "codex")
+    for target_name in required_targets:
+        target = targets.get(target_name)
+        if not isinstance(target, dict):
+            failures.append({
+                "field": f"targets.{target_name}",
+                "reason": f"missing or invalid target '{target_name}' (expected object)",
+            })
+            continue
+
+        # Validate path field
+        path_val = target.get("path")
+        if not isinstance(path_val, str) or not path_val.strip():
+            failures.append({
+                "field": f"targets.{target_name}.path",
+                "reason": f"missing or empty 'path' in target '{target_name}'",
+            })
+
+        # Validate sha256 field
+        sha256_val = target.get("sha256")
+        if not isinstance(sha256_val, str) or not sha256_val.strip():
+            failures.append({
+                "field": f"targets.{target_name}.sha256",
+                "reason": f"missing or empty 'sha256' in target '{target_name}'",
+            })
+            continue
+
+        # Validate checksum matches actual directory contents
+        target_dir = dist_dir / target_name
+        if target_dir.is_dir():
+            actual_sha256 = _compute_directory_sha256(target_dir)
+            if sha256_val != actual_sha256:
+                failures.append({
+                    "field": f"targets.{target_name}.sha256",
+                    "reason": (
+                        f"SHA256 mismatch for '{target_name}': "
+                        f"manifest={sha256_val[:16]}... actual={actual_sha256[:16]}..."
+                    ),
+                })
+        else:
+            failures.append({
+                "field": f"targets.{target_name}",
+                "reason": f"target directory '{target_name}/' not found but listed in manifest",
+            })
+
+    return failures
+
+
+# ---------------------------------------------------------------------------
 # Report
 # ---------------------------------------------------------------------------
 
@@ -866,7 +1004,7 @@ def print_check_report(
     for f in failures:
         # Build a one-line summary
         parts = []
-        for key in ["skill", "query", "file", "category"]:
+        for key in ["skill", "query", "file", "category", "field"]:
             if key in f:
                 parts.append(f"{key}={f[key]}")
         if "format" in f:
@@ -1005,6 +1143,11 @@ def main():
     if not print_check_report("Corpus completeness", 6, failures_cc):
         all_passed = False
 
+    # Check 7: Manifest validation
+    failures_7 = check_manifest_validation(dist_dir)
+    if not print_check_report("Manifest validation", 7, failures_7):
+        all_passed = False
+
     # Summary
     total_failures = (
         len(failures_1)
@@ -1013,6 +1156,7 @@ def main():
         + len(failures_4)
         + len(failures_5)
         + len(failures_cc)
+        + len(failures_7)
     )
 
     print()
@@ -1025,6 +1169,7 @@ def main():
     print(f"  Check 4 (Structural comparison): {'PASS' if not failures_4 else 'FAIL'} ({len(failures_4)} failures)")
     print(f"  Check 5 (Cross-ref integrity):   {'PASS' if not failures_5 else 'FAIL'} ({len(failures_5)} failures)")
     print(f"  Check 6 (Corpus completeness):   {'PASS' if not failures_cc else 'FAIL'} ({len(failures_cc)} failures)")
+    print(f"  Check 7 (Manifest validation):   {'PASS' if not failures_7 else 'FAIL'} ({len(failures_7)} failures)")
     print()
     print(f"  Total failures: {total_failures}")
     print()

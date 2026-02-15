@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-30-cross-agent-auto-updating-distribution.2.md",
   "status": "todo",
-  "title": "Implement auto-updating distribution pipeline",
-  "updated_at": "2026-02-14T22:02:22.111336Z"
+  "title": "Update docs and deprecate zip workflow",
+  "updated_at": "2026-02-15T04:42:42.757042Z"
 }

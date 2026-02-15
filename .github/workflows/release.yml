@@ -7,12 +7,23 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+# Only allow one Pages deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  release:
-    name: Build and release dist/ artifacts
+  validate-and-deploy:
+    name: Validate, release, and deploy to Pages
     runs-on: ubuntu-latest
     timeout-minutes: 5
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -47,12 +58,17 @@ jobs:
           set -o pipefail
           python3 scripts/validate_cross_agent.py 2>&1 | tee /tmp/conformance-output.txt
 
-      - name: Package dist/ artifacts
-        run: |
-          cd dist
-          zip -r ../dist-claude.zip claude/
-          zip -r ../dist-copilot.zip copilot/
-          zip -r ../dist-codex.zip codex/
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -62,20 +78,19 @@ jobs:
           body: |
             ## dotnet-artisan ${{ steps.version.outputs.tag }}
 
-            Cross-agent plugin packages for .NET development skills.
+            Cross-agent distribution for .NET development skills.
 
-            ### Artifacts
-            - **dist-claude.zip** -- Claude Code plugin package
-            - **dist-copilot.zip** -- GitHub Copilot instructions package
-            - **dist-codex.zip** -- OpenAI Codex AGENTS.md package
+            ### Distribution
+
+            Deployed to GitHub Pages:
+            - **Manifest**: `https://<user>.github.io/<repo>/manifest.json`
+            - **Claude**: `https://<user>.github.io/<repo>/claude/`
+            - **Copilot**: `https://<user>.github.io/<repo>/copilot/`
+            - **Codex**: `https://<user>.github.io/<repo>/codex/`
 
             ### Validation
-            All validation checks passed before packaging:
+            All validation checks passed before deployment:
             - Plugin structure and skill validation
             - Marketplace metadata validation
             - Cross-agent generation (--strict mode)
-            - Cross-agent conformance (5 checks + corpus completeness)
-          files: |
-            dist-claude.zip
-            dist-copilot.zip
-            dist-codex.zip
+            - Cross-agent conformance (7 checks including manifest validation)
