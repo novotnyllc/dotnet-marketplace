@@ -5,12 +5,12 @@
 | Metric | Count |
 |--------|-------|
 | Skills reviewed | 18 |
-| Clean | 14 |
-| Needs Work | 3 |
+| Clean | 13 |
+| Needs Work | 4 |
 | Critical | 1 |
-| Total issues | 6 |
+| Total issues | 7 |
 | Critical issues | 1 |
-| High issues | 2 |
+| High issues | 3 |
 | Low issues | 3 |
 
 ## Current Description Budget Impact
@@ -23,7 +23,7 @@
 
 Skills over 120 chars: dotnet-ci-benchmarking (144), dotnet-profiling (128).
 
-Character counts measured using the canonical shell extraction method (strips YAML quotes, trims whitespace).
+Character counts measured using the canonical shell extraction method consistent with `validate-skills.sh` (strips YAML quotes, trims whitespace).
 
 ## Findings by Skill
 
@@ -276,7 +276,7 @@ Character counts measured using the canonical shell extraction method (strips YA
 ### dotnet-benchmarkdotnet
 
 **Category:** performance
-**Overall:** Clean
+**Overall:** Needs Work
 
 | # | Dimension | Verdict | Notes |
 |---|-----------|---------|-------|
@@ -284,16 +284,16 @@ Character counts measured using the canonical shell extraction method (strips YA
 | 2 | Description Triggering | pass | Good triggers (microbenchmarking, BenchmarkDotNet, memory diagnosers, exporters, baselines) |
 | 3 | Instruction Clarity | pass | - |
 | 4 | Progressive Disclosure | pass | - |
-| 5 | Cross-References | pass | All refs resolve |
+| 5 | Cross-References | warn | Out of Scope uses stale text "fn-18.2 skills (not yet landed)" referring to dotnet-ci-benchmarking which is now registered and live |
 | 6 | Error Handling | pass | Agent Gotchas section (7 items) plus comprehensive Common Pitfalls table |
 | 7 | Examples | pass | Full benchmark class, parameterized benchmarks, CI config examples with NuGet package |
-| 8 | Composability | pass | Clear Out of Scope to companion performance skills |
+| 8 | Composability | warn | Out of Scope references use task IDs (fn-18.2) instead of skill cross-refs; stale "not yet landed" claim |
 | 9 | Consistency | pass | Matches category peer structure |
 | 10 | Registration & Budget | pass | 113 chars |
 | 11 | Progressive Disclosure Compliance | pass | 1,532 words |
 
 **Issues:**
-(none)
+- [High] Out of Scope text says "fn-18.2 skills (not yet landed)" but `dotnet-ci-benchmarking` has landed and is registered in plugin.json -- should use `[skill:dotnet-ci-benchmarking]` and `[skill:dotnet-profiling]` cross-refs. This is the same pattern as Batch A's `dotnet-csharp-code-smells` stale "planned" reference (rated High there).
 
 ---
 
@@ -344,7 +344,7 @@ Character counts measured using the canonical shell extraction method (strips YA
 - [High] Bare backtick reference to `dotnet-ci-benchmarking` in Out of Scope section (line 12) -- should use `[skill:dotnet-ci-benchmarking]` syntax per cross-reference convention
 - [Low] Description at 128 chars exceeds 120-char target -- consider trimming to remove "allocation tracking" or abbreviating "flame graphs"
 
-**Proposed description (118 chars):** `"WHEN diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs, heap analysis."`
+**Proposed description (113 chars):** `"WHEN diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs, heap analysis."`
 
 ---
 
@@ -371,7 +371,7 @@ Character counts measured using the canonical shell extraction method (strips YA
 - [Critical] Description at 144 chars exceeds the 140-char fail threshold -- must trim to under 120 chars
 - [Low] Description lists too many implementation details (baseline management, GitHub Actions, threshold alerts, BenchmarkDotNet CI workflows) -- consolidate using formula `[What] + [When]`
 
-**Proposed description (119 chars):** `"WHEN automating benchmark regression detection. Baseline comparison, threshold alerts, BenchmarkDotNet CI workflows."`
+**Proposed description (116 chars):** `"WHEN automating benchmark regression detection. Baseline comparison, threshold alerts, BenchmarkDotNet CI workflows."`
 
 ---
 
@@ -475,7 +475,7 @@ Character counts measured using the canonical shell extraction method (strips YA
 
 ## Cross-Cutting Observations
 
-1. **Exceptional quality in this batch:** 14 of 18 skills (78%) are Clean with all 11 dimensions passing. This is the highest Clean rate across batches reviewed so far. The three Needs Work skills and one Critical skill have minor, easily fixable issues.
+1. **High quality in this batch:** 13 of 18 skills (72%) are Clean with all 11 dimensions passing. The four Needs Work skills and one Critical skill have fixable issues (stale references, bare backtick cross-refs, and description budget overages).
 
 2. **Description budget pressure is minimal:** Only 2 of 18 skills exceed 120 chars. The total batch description budget of 2,116 chars is well-managed, with only 32 chars of excess beyond the 120-char-per-skill target.
 
@@ -483,7 +483,7 @@ Character counts measured using the canonical shell extraction method (strips YA
 
 4. **Agent Gotchas coverage:** All 18 skills have Agent Gotchas sections with substantive items (5-8 items each). No skill is missing this section, which was an issue in earlier batches.
 
-5. **Cross-reference hygiene:** All `[skill:name]` references resolve to existing skill directories. Only one bare backtick reference was found (dotnet-profiling referencing dotnet-ci-benchmarking). No broken references.
+5. **Cross-reference hygiene:** All `[skill:name]` references resolve to existing skill directories. One bare backtick reference was found (dotnet-profiling referencing dotnet-ci-benchmarking). Additionally, one stale textual reference exists: dotnet-benchmarkdotnet Out of Scope says "fn-18.2 skills (not yet landed)" but dotnet-ci-benchmarking has since landed and is registered. No broken `[skill:]` references.
 
 6. **Progressive disclosure compliance:** All 18 skills are under the 3,000-word suggestion threshold. The longest skill (dotnet-input-validation at 2,510 words) manages its length well through focused decision trees and code examples. No details.md companion files are needed.
 
@@ -507,8 +507,8 @@ Character counts measured using the canonical shell extraction method (strips YA
 ### High (should fix)
 - Fix bare backtick reference to `dotnet-ci-benchmarking` in `dotnet-profiling` Out of Scope section (line 12) -- change `` `dotnet-ci-benchmarking` `` to `[skill:dotnet-ci-benchmarking]`
 - Trim `dotnet-profiling` description from 128 to under 120 chars to stay within budget target
+- Update `dotnet-benchmarkdotnet` Out of Scope text from "fn-18.2 skills (not yet landed)" to `[skill:dotnet-ci-benchmarking]` and `[skill:dotnet-profiling]` -- the skills have landed and are registered (same pattern as Batch A's `dotnet-csharp-code-smells` stale "planned" reference)
 
 ### Low (nice to have)
 - Monitor `dotnet-input-validation` (2,510 words) and `dotnet-profiling` (2,450 words) for details.md extraction if content grows beyond 3,000 words
-- Consider adding bidirectional cross-ref: dotnet-ci-benchmarking references dotnet-profiling but dotnet-benchmarkdotnet does not reference dotnet-ci-benchmarking in its Out of Scope (it uses "fn-18.2 skills (not yet landed)" which is stale -- dotnet-ci-benchmarking has landed)
-- Update `dotnet-benchmarkdotnet` Out of Scope text from "fn-18.2 skills (not yet landed)" to `[skill:dotnet-ci-benchmarking]` since the skill now exists and is registered
+- Consider adding bidirectional cross-ref: dotnet-ci-benchmarking references dotnet-profiling but dotnet-benchmarkdotnet does not reference dotnet-ci-benchmarking via `[skill:]` syntax in its Out of Scope
