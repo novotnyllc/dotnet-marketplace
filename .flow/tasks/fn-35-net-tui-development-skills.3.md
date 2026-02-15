@@ -34,9 +34,8 @@ grep -i "tui" AGENTS.md  # expect routing row
 ```
 
 ## Done summary
-TBD
-
+Registered both TUI skills (dotnet-terminal-gui, dotnet-spectre-console) in plugin.json, updated skill and category counts across README.md, CLAUDE.md, and AGENTS.md to 111 skills / 21 categories, added TUI category rows and Build System row to routing tables, added Terminal.Gui trigger corpus entry, and fixed stale counts for Core C#, Architecture, and API Development categories.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 2f58d872eb6ac18cbf37a854d19462a0d46faca0
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
