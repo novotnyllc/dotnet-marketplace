@@ -252,3 +252,6 @@ Recursive validation/traversal examples must use IsSimpleType helper covering al
 
 ## 2026-02-15 manual [pitfall]
 When using conditional compilation guards for Roslyn API features, verify the version gate matches the version boundary table -- CollectionExpression is Roslyn 4.8 (VS 17.8), not 4.4 (VS 17.4); cross-check code examples against version tables in the same document
+
+## 2026-02-15 manual [pitfall]
+dotnet_analyzer_diagnostic.category-Style.severity is invalid -- 'Style' is not a valid .NET analyzer category; use Design, Documentation, Globalization, Interoperability, Maintainability, Naming, Performance, SingleFile, Reliability, Security, or Usage; IDE rules use per-rule dotnet_diagnostic.IDE*.severity instead

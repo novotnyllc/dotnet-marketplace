@@ -22,9 +22,8 @@ Create skills/core-csharp/dotnet-editorconfig/SKILL.md as a dedicated EditorConf
 - [ ] Cross-refs to related skills (dotnet-roslyn-analyzers, dotnet-project-structure, dotnet-add-analyzers)
 - [ ] Registered in plugin.json
 ## Done summary
-TBD
-
+Created dedicated dotnet-editorconfig skill covering EditorConfig hierarchy/precedence, IDE* code style rules, CA* quality rule severity configuration, bulk category severity, AnalysisLevel/EnforceCodeStyleInBuild, global AnalyzerConfig files (.globalconfig), naming rules (IDE1006), generated code configuration, and configuration templates. Deduplicated overlapping content with dotnet-add-analyzers via bidirectional cross-references.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b08ca5c, 39975a2
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
