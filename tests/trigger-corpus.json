@@ -108,5 +108,10 @@
     "query": "How do I write custom MSBuild targets with BeforeTargets and AfterTargets?",
     "expected_skill": "dotnet-msbuild-authoring",
     "category": "build-system"
+  },
+  {
+    "query": "Build a rich console UI with Spectre.Console tables and progress bars",
+    "expected_skill": "dotnet-spectre-console",
+    "category": "tui"
   }
 ]

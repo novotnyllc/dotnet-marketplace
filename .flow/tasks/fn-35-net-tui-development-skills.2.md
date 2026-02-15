@@ -45,9 +45,8 @@ grep "description:" skills/tui/dotnet-spectre-console/SKILL.md | wc -c  # expect
 ```
 
 ## Done summary
-TBD
-
+Created Spectre.Console skill covering rich console output (markup, tables, trees, panels, progress, prompts, live displays) and Spectre.Console.Cli framework (commands, settings, branches, validation, async commands, DI via ITypeRegistrar). Includes 8 Agent Gotchas, scope boundaries with dotnet-system-commandline and dotnet-terminal-gui, and 6 cross-references.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 68e6b72f63114ad0d33ee190c7e4d11701243c60
+- Tests: ./scripts/validate-skills.sh, python3 scripts/generate_dist.py --strict
 - PRs:
