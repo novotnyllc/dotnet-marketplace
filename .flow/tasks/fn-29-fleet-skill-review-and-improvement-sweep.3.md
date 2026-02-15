@@ -20,9 +20,8 @@ Review all skills in: architecture (10), serialization (4), security (3), multi-
 - [ ] Issues tagged by severity: Critical (broken refs, budget violations), High, Low
 
 ## Done summary
-TBD
-
+Audited 19 skills across architecture (10), serialization (4), security (3), and multi-targeting (2) categories against the 11-dimension fleet review rubric. Produced findings report at docs/review-reports/batch-b-findings.md with 6 Clean, 7 Needs Work, 6 Critical verdicts and 19 issues (8 Critical, 4 High, 7 Low).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 10b88fd6485813315b42f9424428422d6aa308ae
+- Tests: ./scripts/validate-skills.sh
 - PRs:

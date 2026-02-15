@@ -219,3 +219,6 @@ Roslyn RegisterSymbolAction/RegisterSyntaxNodeAction have no state-passing overl
 
 ## 2026-02-14 manual [pitfall]
 dotnet nuget inspect is not a valid CLI subcommand -- nupkg files are zip archives; use 'unzip -l' or NuGet Package Explorer for package content inspection
+
+## 2026-02-15 manual [pitfall]
+When grepping for Agent Gotchas sections, also check variant headings like 'Gotchas and Pitfalls' -- grep for 'Gotcha' not 'Agent Gotcha' to avoid false negatives on non-standard heading names

@@ -10,8 +10,8 @@
 | Critical | 6 |
 | Total issues | 19 |
 | Critical issues | 8 |
-| High issues | 4 |
-| Low issues | 7 |
+| High issues | 3 |
+| Low issues | 8 |
 
 ## Current Description Budget Impact
 
@@ -450,16 +450,16 @@ Character counts measured using Python regex extraction from YAML frontmatter (s
 | 3 | Instruction Clarity | pass | - |
 | 4 | Progressive Disclosure | pass | 2,152 words |
 | 5 | Cross-References | pass | 2 refs, all resolve |
-| 6 | Error Handling | warn | No Agent Gotchas section -- security/crypto is one of the most error-prone domains; peer skill dotnet-secrets-management has 8 gotchas |
+| 6 | Error Handling | pass | "Gotchas and Pitfalls" section with 9 items covering nonce reuse, ECB mode, timing attacks, key hardcoding, RSA key size, PBKDF2 iterations, PQC platform checks |
 | 7 | Examples | pass | 11 code blocks |
 | 8 | Composability | pass | Out-of-scope markers present |
-| 9 | Consistency | warn | Missing Agent Gotchas section that peer security skills have (dotnet-security-owasp: 8 items, dotnet-secrets-management: 8 items) |
+| 9 | Consistency | warn | Section heading "Gotchas and Pitfalls" differs from peer convention "Agent Gotchas" used by dotnet-security-owasp and dotnet-secrets-management |
 | 10 | Registration & Budget | fail | 154 chars exceeds 140-char fail threshold |
 | 11 | Progressive Disclosure Compliance | pass | 2,152 words |
 
 **Issues:**
 - [Critical] Description at 154 chars exceeds 140-char fail threshold -- remove individual algorithm names (ML-KEM, ML-DSA, SLH-DSA) and condense
-- [High] No Agent Gotchas section in the most error-prone security domain. Cryptographic pitfalls are abundant: using ECB mode, hardcoded IVs, incorrect key derivation iteration counts, using SHA-1 for security, not using constant-time comparison for HMAC validation. Add Agent Gotchas with at minimum 6-8 items.
+- [Low] Section heading "Gotchas and Pitfalls" should be renamed to "Agent Gotchas" for consistency with peer security skills
 
 **Proposed description (114 chars):** `"WHEN choosing cryptographic algorithms, hashing, encryption, or key derivation in .NET. AES-GCM, RSA, ECDSA, PQC."`
 
@@ -531,7 +531,7 @@ Character counts measured using Python regex extraction from YAML frontmatter (s
 
 3. **WHEN NOT clauses in descriptions:** Both multi-targeting skills use "WHEN NOT" negative clauses in their descriptions. This pattern was also flagged in Batch A (3 foundation skills). The WHEN NOT information adds no discrimination value and wastes budget characters. This appears to be a systematic pattern in skills authored during the same period.
 
-4. **Agent Gotchas coverage is strong but has two gaps:** 17 of 19 skills have Agent Gotchas sections (89%). The two missing skills are `dotnet-architecture-patterns` and `dotnet-cryptography`. The cryptography gap is more concerning because cryptographic errors are among the most dangerous security mistakes an agent can make.
+4. **Agent Gotchas coverage is strong with one gap:** 18 of 19 skills have Agent Gotchas or equivalent sections (95%). The one missing skill is `dotnet-architecture-patterns`. Note that `dotnet-cryptography` uses the heading "Gotchas and Pitfalls" (9 items) rather than the conventional "Agent Gotchas" -- the content is present but the heading should be renamed for consistency.
 
 5. **Cross-reference quality is excellent:** All 38 unique cross-reference targets across the batch resolve to existing skills. No broken references. No bare-text skill name references to other skills (only self-references in headings, which is expected).
 
@@ -556,7 +556,6 @@ Character counts measured using Python regex extraction from YAML frontmatter (s
 - Trim `dotnet-secrets-management` description from 141 to under 120 chars -- condense
 
 ### High (should fix)
-- Add Agent Gotchas section to `dotnet-cryptography` -- most error-prone security domain lacks agent pitfall guidance
 - Add Agent Gotchas section to `dotnet-architecture-patterns` -- all 9 architecture peers have one; covers idempotency, caching, outbox where agent errors are common
 - Remove WHEN NOT clause from `dotnet-multi-targeting` description
 - Remove WHEN NOT clause from `dotnet-version-upgrade` description
@@ -565,6 +564,7 @@ Character counts measured using Python regex extraction from YAML frontmatter (s
 - Trim `dotnet-containers` description from 134 to under 120 chars
 
 ### Low (nice to have)
+- Rename `dotnet-cryptography` section heading from "Gotchas and Pitfalls" to "Agent Gotchas" for consistency with peer security skills
 - Trim `dotnet-data-access-strategy` description from 128 to under 120 chars
 - Trim `dotnet-efcore-architecture` description from 126 to under 120 chars
 - Trim `dotnet-security-owasp` description from 125 to under 120 chars -- remove "(2021)" year reference
