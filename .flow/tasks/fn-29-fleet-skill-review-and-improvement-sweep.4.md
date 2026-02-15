@@ -20,9 +20,8 @@ Review all skills in: testing (10), cicd (8) — 18 skills total. Evaluate each 
 - [ ] Issues tagged by severity: Critical (broken refs, budget violations), High, Low
 
 ## Done summary
-TBD
-
+Audited all 18 Batch C skills (10 testing, 8 CI/CD) against the 11-dimension fleet review rubric. Produced findings report at docs/review-reports/batch-c-findings.md with 1 Clean, 14 Needs Work, 3 Critical, and 23 total issues. Key findings: systematic bare cross-references across all CI/CD skills, 3 testing descriptions exceeding 140-char fail threshold, and xUnit v3 IAsyncLifetime inconsistency in dotnet-maui-testing.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f263764a8b82705348e4a26c77a22d7b10da97a3
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

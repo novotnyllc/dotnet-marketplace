@@ -222,3 +222,9 @@ dotnet nuget inspect is not a valid CLI subcommand -- nupkg files are zip archiv
 
 ## 2026-02-15 manual [pitfall]
 When grepping for Agent Gotchas sections, also check variant headings like 'Gotchas and Pitfalls' -- grep for 'Gotcha' not 'Agent Gotcha' to avoid false negatives on non-standard heading names
+
+## 2026-02-15 manual [pitfall]
+When counting Agent Gotchas items, grep for numbered list items (^\d+\.) or bold-prefixed bullets -- do not estimate from section-level regex that only captures top-level items; nested content inflates directive counts while deflating item counts
+
+## 2026-02-15 manual [pitfall]
+Per rubric, Clean requires ALL 11 dimensions at pass -- any warn dimension makes the skill Needs Work, not Clean. Verify rubric scoring rules before assigning overall ratings.
