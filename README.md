@@ -114,7 +114,7 @@ graph TB
             RM[Release Mgmt<br/>1 skill]
             DO[Documentation<br/>5 skills]
             LO[Localization<br/>1 skill]
-            BS[Build System<br/>3 skills]
+            BSys[Build System<br/>3 skills]
         end
 
         subgraph Infra["Infrastructure"]

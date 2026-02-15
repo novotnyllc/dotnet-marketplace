@@ -270,3 +270,6 @@ IIncrementalTask signals that MSBuild engine should pre-filter inputs (passing o
 
 ## 2026-02-15 manual [pitfall]
 ToolTask.GenerateFullPathToTool() must not return null -- return ToolName to let the OS resolve via PATH, or return a full path; null causes NullReferenceException or tool-not-found errors
+
+## 2026-02-15 manual [pitfall]
+Mermaid diagram node IDs must be unique across the ENTIRE graph including all subgraphs -- reusing an ID (e.g. BS for both an agent and a skill category) causes nodes to merge silently
