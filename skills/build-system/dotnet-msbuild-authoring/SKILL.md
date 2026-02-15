@@ -381,8 +381,11 @@ repo/
 ```xml
 <!-- src/Directory.Build.props -->
 <Project>
-  <!-- Chain to parent Directory.Build.props -->
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+  <!-- Chain to parent Directory.Build.props (with existence guard) -->
+  <PropertyGroup>
+    <_ParentBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))</_ParentBuildProps>
+  </PropertyGroup>
+  <Import Project="$(_ParentBuildProps)" Condition="'$(_ParentBuildProps)' != ''" />
 
   <PropertyGroup>
     <!-- Source-specific overrides -->
@@ -394,8 +397,11 @@ repo/
 ```xml
 <!-- tests/Directory.Build.props -->
 <Project>
-  <!-- Chain to parent Directory.Build.props -->
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
+  <!-- Chain to parent Directory.Build.props (with existence guard) -->
+  <PropertyGroup>
+    <_ParentBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))</_ParentBuildProps>
+  </PropertyGroup>
+  <Import Project="$(_ParentBuildProps)" Condition="'$(_ParentBuildProps)' != ''" />
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
@@ -435,18 +441,17 @@ When multiple `Directory.Build.props` files chain upward, a shared import could 
 ```xml
 <!-- shared/Common.props -->
 <Project>
-  <!-- Guard: only import once -->
+  <!-- Guard: only evaluate once -->
   <PropertyGroup Condition="'$(_CommonPropsImported)' != 'true'">
     <_CommonPropsImported>true</_CommonPropsImported>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(_CommonPropsImported)' == 'true'">
     <Authors>My Company</Authors>
     <Company>My Company</Company>
     <Copyright>Copyright (c) My Company. All rights reserved.</Copyright>
   </PropertyGroup>
 </Project>
 ```
+
+The sentinel and content properties must be in the **same** `PropertyGroup` with the `!= 'true'` condition. Putting content in a separate block with `== 'true'` does not prevent re-evaluation -- it runs on every import because the sentinel is already set.
 
 A cleaner approach uses `Condition` on the `<Import>` element:
 
