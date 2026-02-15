@@ -30,9 +30,8 @@ Update README with GitHub Pages URLs, consumer auto-update polling instructions,
 <!-- Updated by plan-sync: fn-30.1 already removed zip packaging from release.yml -->
 - [ ] CONTRIBUTING.md updated if it references old release process
 ## Done summary
-TBD
-
+Updated README with GitHub Pages distribution URLs, auto-update manifest polling contract (15-min interval, 10-min CDN TTL), one-time repo setup instructions, and private repository considerations. Added release/deployment summary to CONTRIBUTING.md. Verified release.yml has no zip packaging remnants.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ea0e32e314ab5f0f5a2bcff8a6f3317718ae07e6
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
