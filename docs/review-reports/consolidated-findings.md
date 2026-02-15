@@ -4,7 +4,7 @@
 
 All 101 skills (99 registered + 2 unregistered) reviewed across 6 batches against the 11-dimension rubric. The fleet is in good shape overall with strong Agent Gotchas coverage and excellent cross-reference target accuracy. The primary issues are: (1) 15 descriptions exceeding the 140-char fail threshold, (2) 2 skills on disk but unregistered in plugin.json, (3) systematic bare-text skill references in CI/CD skills, and (4) stale "may not exist yet" markers in UI framework skills.
 
-Applying all Critical and High changes brings the aggregate description budget from 12,065 chars (WARN) to approximately 11,496 chars (below 12K WARN threshold), while adding 2 new registered skills for a total of 101.
+Applying all Critical and High changes brings the aggregate description budget from 12,065 chars (WARN) to approximately 11,511 chars (below 12K WARN threshold), while adding 2 new registered skills for a total of 101.
 
 | Metric | Count |
 |--------|-------|
@@ -67,18 +67,18 @@ Applying all Critical and High changes brings the aggregate description budget f
 | Delta from current | -606 chars |
 | Budget status | OK (below 12,000 WARN threshold) |
 
-**Savings breakdown:** The -839 chars comes from trimming 29 registered skills: 15 Critical trims (-673), 9 High trims (-129), 5 Low trims (-37). The 2 unregistered skills (dotnet-multi-targeting, dotnet-version-upgrade) are not counted as "savings" -- they are new additions at their proposed trimmed lengths (115 + 118 = 233 chars). Math: 12,065 - 839 + 233 = 11,459.
+**Savings breakdown:** The -839 chars comes from trimming 29 registered skills: 15 Critical trims (-673), 8 High trims (-114), 6 Low trims (-52). The 2 unregistered skills (dotnet-multi-targeting, dotnet-version-upgrade) are not counted as "savings" -- they are new additions at their proposed trimmed lengths (115 + 118 = 233 chars). Math: 12,065 - 839 + 233 = 11,459.
 
 ### Projected State After Critical+High Changes Only
 
 | Metric | Value |
 |--------|-------|
-| Savings from Critical+High registered trims | -802 chars |
+| Savings from Critical+High registered trims | -787 chars |
 | Added from 2 new registrations (at trimmed length) | +233 chars |
-| Projected total | 11,496 chars |
+| Projected total | 11,511 chars |
 | Budget status | OK (below 12,000 WARN threshold) |
 
-**Savings breakdown:** -802 = 15 Critical registered trims (-673) + 9 High trims (-129). The 5 Low trims (-37) are excluded. Math: 12,065 - 802 + 233 = 11,496.
+**Savings breakdown:** -787 = 15 Critical registered trims (-673) + 8 High trims (-114). The 6 Low trims (-52) are excluded. Math: 12,065 - 787 + 233 = 11,511.
 
 **Char count methodology:** All "Current" values in the tables below were measured using the canonical Python parser (`len()` after stripping YAML quotes and trimming whitespace) against the actual SKILL.md files on disk at consolidation time. Some batch reports measured slightly different values (up to 2 chars variance) due to using different extraction methods; the consolidated values are authoritative.
 
