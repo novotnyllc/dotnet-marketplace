@@ -56,6 +56,8 @@
     "skills/api-development/dotnet-api-security",
     "skills/api-development/dotnet-input-validation",
     "skills/api-development/dotnet-middleware-patterns",
+    "skills/api-development/dotnet-library-api-compat",
+    "skills/api-development/dotnet-api-surface-validation",
     "skills/security/dotnet-security-owasp",
     "skills/security/dotnet-secrets-management",
     "skills/security/dotnet-cryptography",

@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 111 skills across 21 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 113 skills across 21 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -31,7 +31,7 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 111 skills into 21 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 113 skills into 21 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
@@ -41,7 +41,7 @@ The plugin organizes 111 skills into 21 categories. Each skill follows the Agent
 | **Architecture** | 11 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-containers |
 | **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
 | **Testing** | 10 | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing |
-| **API Development** | 6 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi |
+| **API Development** | 8 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi |
 | **Security** | 3 | dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography |
 | **Multi-Targeting** | 2 | dotnet-multi-targeting, dotnet-version-upgrade |
 | **UI Frameworks** | 13 | dotnet-blazor-patterns, dotnet-maui-development, dotnet-uno-platform |
@@ -95,14 +95,14 @@ graph TB
             DG[docs-generator]
         end
 
-        subgraph Skills["21 Skill Categories / 111 Skills"]
+        subgraph Skills["21 Skill Categories / 113 Skills"]
             F[Foundation<br/>4 skills]
             CC[Core C#<br/>12 skills]
             PS[Project Structure<br/>6 skills]
             AR[Architecture<br/>11 skills]
             SE[Serialization<br/>4 skills]
             TE[Testing<br/>10 skills]
-            AD[API Development<br/>6 skills]
+            AD[API Development<br/>8 skills]
             SC[Security<br/>3 skills]
             MT[Multi-Targeting<br/>2 skills]
             UI[UI Frameworks<br/>13 skills]

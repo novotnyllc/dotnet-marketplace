@@ -118,5 +118,15 @@
     "query": "How do I build a terminal UI app with windows and menus using Terminal.Gui?",
     "expected_skill": "dotnet-terminal-gui",
     "category": "tui"
+  },
+  {
+    "query": "How do I avoid breaking binary compatibility when changing my library's public API?",
+    "expected_skill": "dotnet-library-api-compat",
+    "category": "api-development"
+  },
+  {
+    "query": "How do I track my library's public API surface with PublicApiAnalyzers shipped and unshipped files?",
+    "expected_skill": "dotnet-api-surface-validation",
+    "category": "api-development"
   }
 ]

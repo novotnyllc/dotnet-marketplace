@@ -69,6 +69,8 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-openapi] -- OpenAPI: MS.AspNetCore.OpenApi (built-in .NET 9+), Swashbuckle migration, NSwag, transformers
 - [skill:dotnet-api-security] -- Identity, OAuth/OIDC, JWT, passkeys (WebAuthn), CORS, CSP, rate limiting
 - [skill:dotnet-input-validation] -- .NET 10 AddValidation, FluentValidation, Data Annotations, endpoint filters, ProblemDetails
+- [skill:dotnet-library-api-compat] -- binary/source compatibility rules, type forwarders, SemVer impact
+- [skill:dotnet-api-surface-validation] -- PublicApiAnalyzers, Verify snapshot pattern, ApiCompat CI enforcement
 
 ### 7. Security `planned`
 - [skill:dotnet-security-owasp] -- OWASP top 10 for .NET
@@ -188,6 +190,8 @@ Use this decision tree to load the right skills for the current task.
 - OpenAPI/Swagger, Swashbuckle migration -> [skill:dotnet-openapi]
 - Auth, CORS, rate limiting, CSP -> [skill:dotnet-api-security]
 - Input validation, FluentValidation, Data Annotations -> [skill:dotnet-input-validation]
+- Library binary/source compatibility -> [skill:dotnet-library-api-compat]
+- API surface tracking, PublicApiAnalyzers -> [skill:dotnet-api-surface-validation]
 - Resilience/HTTP clients -> [skill:dotnet-resilience], [skill:dotnet-http-client]
 
 ### Working with Data

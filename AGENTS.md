@@ -4,7 +4,7 @@
 
 ## Skill Routing Index
 
-The plugin organizes 111 skills into 21 categories. Use this index to identify which category covers your domain.
+The plugin organizes 113 skills into 21 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
@@ -14,7 +14,7 @@ The plugin organizes 111 skills into 21 categories. Use this index to identify w
 | **Architecture** | 11 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID principles |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |
 | **Testing** | 10 | Test strategy, xUnit v3, integration testing, UI testing, Playwright, snapshot testing |
-| **API Development** | 6 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns |
+| **API Development** | 8 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns, library API compat, API surface validation |
 | **Security** | 3 | OWASP compliance, secrets management, cryptography |
 | **Multi-Targeting** | 2 | TFM multi-targeting with polyfills, .NET version upgrade paths and migration |
 | **UI Frameworks** | 13 | Blazor, Uno Platform, MAUI, WinUI, WPF, WinForms, UI framework selection |
