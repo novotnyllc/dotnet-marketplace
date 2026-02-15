@@ -19,9 +19,8 @@ Update analyzer testing examples in dotnet-roslyn-analyzers to use xUnit v3 with
 - [ ] Package references updated to latest stable
 - [ ] Multi-version test matrix compatible
 ## Done summary
-TBD
-
+Updated analyzer testing patterns from xUnit v2 to xUnit v3 (3.2.2) with Microsoft.Testing.Platform v2 (MTP2) runner in both SKILL.md and details.md. Updated Roslyn testing packages to 1.1.3 (framework-agnostic with DefaultVerifier), Microsoft.CodeAnalysis.Analyzers to 3.11.0, and CI matrix to .NET 10 SDK.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6e90efa1afd49ad783214ac5192a806c1d1671b2
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
