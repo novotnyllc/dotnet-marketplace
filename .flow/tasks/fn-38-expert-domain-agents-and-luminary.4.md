@@ -29,9 +29,8 @@ Create 3 additional domain-named specialist agents to cover the remaining agent 
 - [ ] No overlap with existing agents (concurrency, performance, security, Blazor, Uno, MAUI)
 - [ ] All four validation commands pass
 ## Done summary
-TBD
-
+Created three specialist agents: dotnet-testing-specialist (test architecture and strategy), dotnet-cloud-specialist (.NET Aspire and cloud deployment), and dotnet-code-review-agent (multi-dimensional code review with triage routing). All agents include frontmatter, decision trees, explicit boundary sections, trigger lexicons, and are registered in plugin.json.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 0b43289dfd764fcd010a8ba138ccad0d6f5bf641
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
