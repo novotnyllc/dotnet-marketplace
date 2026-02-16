@@ -62,7 +62,7 @@ Remove properties already defined in `Directory.Build.props`:
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="coverlet.collector" />
   </ItemGroup>
@@ -87,6 +87,8 @@ Create `tests/Directory.Build.props` to customize settings for all test projects
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <!-- Use Microsoft.Testing.Platform v2 runner (requires Microsoft.NET.Test.Sdk 17.13+/18.x) -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <!-- Relax strictness for test projects -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -105,10 +107,10 @@ Add test package versions to `Directory.Packages.props`:
 <!-- In Directory.Packages.props -->
 <ItemGroup>
   <!-- Test packages -->
-  <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-  <PackageVersion Include="xunit" Version="2.9.3" />
-  <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" />
-  <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+  <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+  <PackageVersion Include="xunit.v3" Version="3.2.2" />
+  <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+  <PackageVersion Include="coverlet.collector" Version="8.0.0" />
 </ItemGroup>
 ```
 

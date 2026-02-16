@@ -106,7 +106,7 @@ Test projects are entry points for `dotnet test`. They may not have a `Program.c
 ```bash
 # Find test projects by IsTestProject property or test SDK references
 grep -rn "<IsTestProject>true</IsTestProject>" --include="*.csproj" .
-grep -rn "Microsoft.NET.Test.Sdk\|xunit\|NUnit\|MSTest" --include="*.csproj" . | grep -v "obj/"
+grep -rn "Microsoft.NET.Test.Sdk\|xunit\|NUnit\|MSTest" --include="*.csproj" . | grep -v "obj/"  # Matches both xunit.v3 and legacy xunit
 ```
 
 **Example output:**

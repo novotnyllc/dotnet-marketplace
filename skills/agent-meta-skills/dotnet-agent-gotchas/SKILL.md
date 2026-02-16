@@ -348,7 +348,7 @@ public class OrderServiceTests
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
     <!-- Missing Microsoft.NET.Test.Sdk and runner -- dotnet test will find zero tests -->
   </ItemGroup>
 </Project>
@@ -364,9 +364,9 @@ public class OrderServiceTests
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="xunit.v3" Version="1.0.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyApp.Api\MyApp.Api.csproj" />

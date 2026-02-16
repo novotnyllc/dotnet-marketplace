@@ -358,7 +358,7 @@ These files centralize shared build configuration. MSBuild automatically imports
 
   <!-- Conditional item that depends on project-set properties -->
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">
-    <PackageReference Include="coverlet.collector" Version="6.0.2"
+    <PackageReference Include="coverlet.collector" Version="8.0.0"
                       PrivateAssets="All" />
   </ItemGroup>
 
@@ -431,9 +431,9 @@ Central Package Management (CPM) centralizes NuGet package versions in a single 
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
 
     <!-- Test packages -->
-    <PackageVersion Include="xunit.v3" Version="1.0.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
   </ItemGroup>
 

@@ -84,7 +84,7 @@ If SDK is `Microsoft.NET.Sdk`, check `<OutputType>` to distinguish:
 
 A project is a test project if any of the following are true:
 - `<IsTestProject>true</IsTestProject>` is set
-- Has a PackageReference to `xunit`, `NUnit`, `MSTest.TestFramework`, or `Microsoft.NET.Test.Sdk`
+- Has a PackageReference to `xunit.v3`, `xunit`, `NUnit`, `MSTest.TestFramework`, or `Microsoft.NET.Test.Sdk`
 - Project name ends with `.Tests`, `.UnitTests`, `.IntegrationTests`, or `.TestUtils`
 
 ### Blazor Project Detection
@@ -199,7 +199,7 @@ Search for `Directory.Packages.props` starting from the solution root and walkin
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.0" />
-    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
   </ItemGroup>
 </Project>
 ```
