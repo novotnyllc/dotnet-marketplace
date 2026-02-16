@@ -1,19 +1,24 @@
 # fn-38-expert-domain-agents-and-luminary.3 Add luminary attribution to existing skills and update routing
 
 ## Description
-Add luminary source attribution ("References" or "Knowledge Sources" sections) to 6+ existing skills and update routing (dotnet-advisor catalog and AGENTS.md) for all 5 new agents and 4 enriched existing agents. Update agent counts in AGENTS.md and CLAUDE.md (9→14).
+Add luminary source attribution ("References" or "Knowledge Sources" sections) to remaining skills not yet enriched and update routing (dotnet-advisor catalog and AGENTS.md) for all 5 new agents and 4 enriched existing agents. Update agent counts in AGENTS.md and CLAUDE.md (9→14).
+<!-- Updated by plan-sync: fn-38.5 already added Knowledge Sources to dotnet-csharp-async-patterns, dotnet-csharp-coding-standards, dotnet-csharp-modern-patterns, dotnet-architecture-patterns, dotnet-solid-principles, and dotnet-middleware-patterns -->
 
 **Size:** M
-**Files:** `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`, `skills/performance/dotnet-performance-patterns/SKILL.md`, `skills/api-development/dotnet-minimal-apis/SKILL.md`, `skills/ui-frameworks/dotnet-blazor-components/SKILL.md`, `skills/architecture/dotnet-architecture-patterns/SKILL.md`, `skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md`, `skills/foundation/dotnet-advisor/SKILL.md`, `AGENTS.md`, `CLAUDE.md`
+**Files:** `skills/performance/dotnet-performance-patterns/SKILL.md`, `skills/api-development/dotnet-minimal-apis/SKILL.md`, `skills/ui-frameworks/dotnet-blazor-components/SKILL.md`, `skills/foundation/dotnet-advisor/SKILL.md`, `AGENTS.md`, `CLAUDE.md`
 
 ## Approach
-- Add "References" sections to existing skills citing authoritative luminary sources:
-  - `dotnet-csharp-async-patterns`: Toub ConfigureAwait FAQ, Fowler async guidance (already partially done at line 314)
-  - `dotnet-performance-patterns`: Toub .NET Performance blog series
-  - `dotnet-minimal-apis`: Fowler AspNetCoreDiagnosticScenarios
-  - `dotnet-blazor-components`: Damian Edwards Blazor guidance
-  - `dotnet-architecture-patterns`: Andrew Lock middleware blog, Steve Smith/Ardalis Clean Architecture
-  - `dotnet-csharp-coding-standards`: Mads Torgersen C# design notes
+- Add "Knowledge Sources" sections to remaining skills not yet enriched by fn-38.5:
+  - `dotnet-performance-patterns`: Toub .NET Performance blog series (no Knowledge Sources yet)
+  - `dotnet-minimal-apis`: Fowler AspNetCoreDiagnosticScenarios (no Knowledge Sources yet)
+  - `dotnet-blazor-components`: Damian Edwards Blazor guidance (no Knowledge Sources yet)
+- Skills already enriched by fn-38.5 (do NOT duplicate):
+  - `dotnet-csharp-async-patterns`: already has Knowledge Sources (Cleary, Fowler, Toub) at line 312
+  - `dotnet-csharp-coding-standards`: already has Knowledge Sources (Torgersen) at line 382
+  - `dotnet-architecture-patterns`: already has Knowledge Sources (Bogard, Chapsas) at line 639
+  - `dotnet-solid-principles`: already has Knowledge Sources (Smith/Ardalis, Bogard) at line 631
+  - `dotnet-middleware-patterns`: already has Knowledge Sources (Andrew Lock) at line 554
+  - `dotnet-csharp-modern-patterns`: already has Knowledge Sources (Torgersen) at line 368
 - Update `dotnet-advisor` catalog to include routing entries for all 5 new agents: async-performance-specialist, aspnetcore-specialist, testing-specialist, cloud-specialist, and code-review-agent
 - Update `AGENTS.md` delegation table with all 5 new agent entries, triggers, and scope boundaries
 - Update `AGENTS.md` agent count (9→14) and `CLAUDE.md` plugin summary count (9→14 agents)
@@ -21,11 +26,12 @@ Add luminary source attribution ("References" or "Knowledge Sources" sections) t
 - Reference sections do NOT count toward the description budget (they're body content, not frontmatter description)
 
 ## Key context
-- Some skills already cite David Fowler (e.g., `dotnet-csharp-async-patterns:314`). Verify what exists before adding duplicates.
+- fn-38.5 already added Knowledge Sources to 6 skills and 5 agents. Verify what exists before adding duplicates.
 - Attribution pattern: "Grounded in guidance from [Name] — [Source URL]" — not "As recommended by" or "According to"
 - Budget impact: zero (references are body content, not description field)
+- Note: fn-38.5 placed Andrew Lock in `dotnet-middleware-patterns` and aspnetcore-specialist (not `dotnet-architecture-patterns`). Steve Smith/Ardalis went to `dotnet-solid-principles` (not `dotnet-architecture-patterns`). These placements are more precise to each luminary's domain.
 ## Acceptance
-- [ ] At least 6 existing skills have luminary attribution in References sections
+- [ ] At least 3 remaining skills have luminary attribution added in Knowledge Sources sections (dotnet-performance-patterns, dotnet-minimal-apis, dotnet-blazor-components)
 - [ ] Attribution uses "Grounded in guidance from" pattern, not impersonation language
 - [ ] dotnet-advisor catalog updated with new agent routing entries
 - [ ] AGENTS.md updated with all 5 new agent entries, triggers, and scope boundaries

@@ -33,9 +33,8 @@ For each enrichment:
 - [ ] No agents renamed or core scope changed
 - [ ] All four validation commands pass
 ## Done summary
-TBD
-
+Enriched 5 existing agents and 6 skills with luminary-sourced Knowledge Sources sections covering 9 luminaries (Edwards, Smith/Ardalis, Torgersen, Lock, Bogard, Cleary, Chapsas, Toub, Fowler). Added actionable decision tree entries to aspnetcore-specialist (Lock config/host-builder patterns) and Edwards-grounded component design patterns to blazor-specialist. All enrichments use "grounded in guidance from" attribution pattern with disclaimers; no agents renamed or core scope changed.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 42acfa4b5e6e9b8e20fc6e12e6dae8f5e29d23d5, 18b2f10a0ae8de6acb338c3a298ce49630d9fd51
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
