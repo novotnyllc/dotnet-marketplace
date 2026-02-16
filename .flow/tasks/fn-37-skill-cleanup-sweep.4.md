@@ -43,5 +43,8 @@ python3 scripts/validate_cross_agent.py
 - [ ] Architecture skills reference SOLID/DRY/SRP principles
 - [ ] All four validation commands pass
 
+## Evidence
+<!-- filled by flowctl done -->
+
 ## Done summary
 <!-- filled by flowctl done -->
