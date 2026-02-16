@@ -11,7 +11,8 @@ Luminaries mapped to existing agents:
 - **Damian Edwards** (Razor/Blazor) → enrich `dotnet-blazor-specialist` with component design patterns, Blazor rendering guidance, Edwards' Razor patterns. Add Knowledge Sources section.
 - **Steve Smith / Ardalis** (Clean Architecture, SOLID) → enrich `dotnet-architect` with Clean Architecture guidance, SOLID decision framework. Add Knowledge Sources section.
 - **Mads Torgersen** (C# language design) → enrich `dotnet-csharp-coding-standards` and `dotnet-csharp-modern-patterns` skills with language design rationale references, NOT the concurrency specialist (Torgersen's expertise is language design broadly, not concurrency). C# Language Design Notes as source.
-- **Andrew Lock** (ASP.NET Core config, middleware) → fold into the new `dotnet-aspnetcore-specialist` and relevant middleware skills. Blog series as source.
+- **Andrew Lock** (ASP.NET Core config, middleware) → aspnetcore-specialist already has Knowledge Sources section citing Lock's blog (added in fn-38.2). Enrich decision tree entries in aspnetcore-specialist with Lock's configuration/host-builder patterns and enrich relevant middleware skills (`dotnet-middleware-patterns` is already a preloaded skill). Do NOT duplicate the existing Knowledge Sources entry.
+<!-- Updated by plan-sync: fn-38.2 already added Andrew Lock Knowledge Sources to aspnetcore-specialist -->
 - **Nick Chapsas** (modern .NET patterns, clean code) → attribution in relevant skills, not a separate agent
 - **Jimmy Bogard** (MediatR, vertical slices, DDD patterns) → attribution in domain modeling and architecture skills. Note: MediatR is now commercial for commercial use.
 - **Stephen Cleary** (async best practices) → enrich async-performance-specialist and async-patterns skill with Cleary's "Concurrency in C#" guidance
@@ -25,7 +26,7 @@ For each enrichment:
 - [ ] dotnet-blazor-specialist enriched with Damian Edwards component design patterns
 - [ ] dotnet-architect enriched with Steve Smith/Ardalis Clean Architecture + SOLID guidance
 - [ ] Mads Torgersen C# language design rationale referenced in `dotnet-csharp-coding-standards` and/or `dotnet-csharp-modern-patterns` skills
-- [ ] Andrew Lock middleware/config guidance folded into aspnetcore-specialist and skills
+- [ ] Andrew Lock middleware/config guidance enriched in aspnetcore-specialist decision tree (Knowledge Sources entry already present from fn-38.2) and relevant middleware skills
 - [ ] Jimmy Bogard DDD/vertical slice guidance attributed in domain modeling content
 - [ ] Stephen Cleary async best practices referenced in async-related content
 - [ ] All enrichments use "Knowledge Sources" sections with proper attribution
