@@ -262,7 +262,7 @@ await using var networkStream = tcpClient.GetStream();
 var reader = PipeReader.Create(networkStream, new StreamPipeReaderOptions(
     bufferSize: 4096,
     minimumReadSize: 1024,
-    leaveOpen: true));
+    leaveOpen: true)); // Caller manages networkStream lifetime
 
 try
 {
@@ -278,7 +278,7 @@ finally
 // Wrap a stream for pipeline-based writing
 var writer = PipeWriter.Create(networkStream, new StreamPipeWriterOptions(
     minimumBufferSize: 4096,
-    leaveOpen: true));
+    leaveOpen: true)); // Caller manages networkStream lifetime
 
 try
 {
@@ -315,12 +315,13 @@ public sealed class MyProtocolHandler : ConnectionHandler
     {
         var reader = connection.Transport.Input;
         var writer = connection.Transport.Output;
+        var ct = connection.ConnectionClosed;
 
         try
         {
             while (true)
             {
-                ReadResult result = await reader.ReadAsync();
+                ReadResult result = await reader.ReadAsync(ct);
                 ReadOnlySequence<byte> buffer = result.Buffer;
 
                 while (TryParseMessage(ref buffer, out var payload))
@@ -343,7 +344,7 @@ public sealed class MyProtocolHandler : ConnectionHandler
     }
 
     private static async Task WriteResponseAsync(
-        PipeWriter writer, byte[] response)
+        PipeWriter writer, ReadOnlyMemory<byte> response)
     {
         // Write length prefix + payload
         var memory = writer.GetMemory(4 + response.Length);

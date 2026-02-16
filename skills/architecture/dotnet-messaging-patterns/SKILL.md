@@ -109,7 +109,6 @@ var body = JsonSerializer.SerializeToUtf8Bytes(
 await channel.BasicPublishAsync(
     exchange: "order-events",
     routingKey: string.Empty,
-    mandatory: false,
     body: body);
 ```
 
@@ -249,10 +248,12 @@ await args.DeadLetterMessageAsync(
     deadLetterErrorDescription: "Missing required field: CustomerId");
 
 // Read from the dead-letter sub-queue
-var dlqPath = EntityNameHelper
-    .FormatDeadLetterPath("order-processing");
-
-await using var dlqReceiver = client.CreateReceiver(dlqPath);
+await using var dlqReceiver = client.CreateReceiver(
+    "order-processing",
+    new ServiceBusReceiverOptions
+    {
+        SubQueue = SubQueue.DeadLetter
+    });
 
 while (true)
 {
@@ -361,7 +362,8 @@ public sealed class OrderStateMachine : MassTransitStateMachine<OrderState>
     }
 }
 
-// Registration
+// Registration -- requires MassTransit.EntityFrameworkCore package for EF persistence
+// NuGet: MassTransit.EntityFrameworkCore Version="8.*"
 builder.Services.AddMassTransit(x =>
 {
     x.AddSagaStateMachine<OrderStateMachine, OrderState>()
@@ -467,7 +469,7 @@ public sealed record MessageEnvelope<T>(
     DateTimeOffset Timestamp,
     string CorrelationId,
     string Source,
-    int Version,
+    int Version, // Schema version for backward-compatible deserialization
     T Payload);
 ```
 
