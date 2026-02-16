@@ -404,7 +404,7 @@ Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` 
 
 **Skills:**
 - `dotnet-project-structure` - Modern solution layout: .slnx, Directory.Build.props, central package management, editorconfig, analyzers
-- `dotnet-scaffolding-base` - Base project scaffolding with all best practices applied
+- `dotnet-scaffold-project` - Base project scaffolding with all best practices applied
 - `dotnet-add-analyzers` - Add/configure .NET analyzers, Roslyn analyzers, nullable, trimming warnings, AOT compat analyzers
 - `dotnet-add-ci` - Add CI/CD to existing project (composable, detects platform)
 - `dotnet-add-testing` - Add test infrastructure to existing project
