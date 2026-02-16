@@ -7,7 +7,7 @@ description: "WHEN choosing a communication protocol. Decision matrix mapping re
 
 Higher-level routing skill for choosing the right service communication protocol. Provides a decision matrix mapping requirements (latency, direction, client type, payload format, browser support) to the five primary .NET communication protocols: gRPC, SignalR, SSE, JSON-RPC 2.0, and REST. Routes to specialized skills for implementation depth.
 
-**Out of scope:** HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
+**Out of scope:** HTTP client factory patterns and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
 
 Cross-references: [skill:dotnet-grpc] for gRPC implementation, [skill:dotnet-realtime-communication] for SignalR/SSE/JSON-RPC details, [skill:dotnet-http-client] for REST/HTTP client patterns. See [skill:dotnet-integration-testing] for testing service communication patterns.
 

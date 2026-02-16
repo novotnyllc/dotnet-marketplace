@@ -7,7 +7,7 @@ description: "WHEN adding auth to Blazor apps. AuthorizeView, CascadingAuthentic
 
 Authentication and authorization across all Blazor hosting models. Covers AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, role/policy-based authorization, per-hosting-model auth flow differences (cookie vs token), and external identity providers.
 
-**Scope boundary:** This skill owns Blazor-specific auth UI patterns -- AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, client-side token handling, and per-hosting-model auth flow configuration. API-level auth (JWT, OAuth/OIDC, passkeys, CORS, rate limiting) is owned by fn-11 -- see [skill:dotnet-api-security].
+**Scope boundary:** This skill owns Blazor-specific auth UI patterns -- AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, client-side token handling, and per-hosting-model auth flow configuration. API-level auth (JWT, OAuth/OIDC, passkeys, CORS, rate limiting) -- see [skill:dotnet-api-security].
 
 **Out of scope:** JWT token generation and validation -- see [skill:dotnet-api-security]. OWASP security principles -- see [skill:dotnet-security-owasp]. bUnit testing of auth components -- see [skill:dotnet-blazor-testing]. E2E auth testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser].
 

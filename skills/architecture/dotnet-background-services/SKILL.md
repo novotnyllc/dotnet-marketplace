@@ -7,7 +7,7 @@ description: "WHEN implementing background work. BackgroundService, IHostedServi
 
 Patterns for long-running background work in .NET applications. Covers `BackgroundService`, `IHostedService`, hosted service lifecycle, and graceful shutdown handling.
 
-**Out of scope:** DI registration mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Project scaffolding is owned by fn-4 -- see [skill:dotnet-scaffold-project]. Testing strategies for background services -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for hosted service testing patterns. Channel<T> fundamentals, bounded/unbounded options, and drain patterns -- see [skill:dotnet-channels].
+**Out of scope:** DI registration mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]. Project scaffolding -- see [skill:dotnet-scaffold-project]. Testing strategies for background services -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for hosted service testing patterns. Channel<T> fundamentals, bounded/unbounded options, and drain patterns -- see [skill:dotnet-channels].
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns in background workers, [skill:dotnet-csharp-dependency-injection] for hosted service registration and scope management, [skill:dotnet-channels] for Channel<T> patterns used in background work queues.
 

@@ -9,7 +9,7 @@ Trim-safe development for .NET 8+ applications and libraries: trimming annotatio
 
 **Version assumptions:** .NET 8.0+ baseline. Trimming shipped in .NET 6, but .NET 8 provides the most complete annotation surface and analyzer coverage. .NET 9 improved warning accuracy and library compat.
 
-**Out of scope:** Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]. AOT-first design patterns -- see [skill:dotnet-aot-architecture]. WASM AOT compilation -- see [skill:dotnet-aot-wasm]. MAUI-specific AOT and trimming -- see [skill:dotnet-maui-aot] (fn-14). Source generator authoring -- see [skill:dotnet-csharp-source-generators] (fn-3). Serialization depth -- see [skill:dotnet-serialization] (fn-6). Container deployment -- see [skill:dotnet-containers] (fn-5).
+**Out of scope:** Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]. AOT-first design patterns -- see [skill:dotnet-aot-architecture]. WASM AOT compilation -- see [skill:dotnet-aot-wasm]. MAUI-specific AOT and trimming -- see [skill:dotnet-maui-aot]. Source generator authoring -- see [skill:dotnet-csharp-source-generators]. Serialization depth -- see [skill:dotnet-serialization]. Container deployment -- see [skill:dotnet-containers].
 
 Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as trimming enabler.
 

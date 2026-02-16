@@ -7,7 +7,7 @@ description: "WHEN deciding how to test .NET code. Unit vs integration vs E2E de
 
 Decision framework for choosing the right test type, organizing test projects, and selecting test doubles in .NET applications. Covers unit vs integration vs E2E trade-offs with concrete criteria, naming conventions, and when to use mocks vs fakes vs stubs.
 
-**Out of scope:** Test project scaffolding (directory layout, xUnit project creation, coverlet setup, editorconfig overrides) is owned by [skill:dotnet-add-testing]. Code coverage tooling and mutation testing are covered by [skill:dotnet-test-quality]. CI test reporting and pipeline integration are owned by fn-19 -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
+**Out of scope:** Test project scaffolding (directory layout, xUnit project creation, coverlet setup, editorconfig overrides) is owned by [skill:dotnet-add-testing]. Code coverage tooling and mutation testing are covered by [skill:dotnet-test-quality]. CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
 
 **Prerequisites:** Run [skill:dotnet-project-analysis] to understand the solution structure before designing a test strategy.
 

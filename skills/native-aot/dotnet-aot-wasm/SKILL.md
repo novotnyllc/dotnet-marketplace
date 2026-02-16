@@ -11,7 +11,7 @@ WebAssembly AOT compilation for Blazor WASM and Uno WASM applications: compilati
 
 **Important tradeoff:** Trimming and AOT have **opposite effects** on WASM artifact size. Trimming reduces download size by removing unused code. AOT **increases** artifact size (native WASM code is larger than IL) but **improves** runtime execution speed. Use both together for the best balance.
 
-**Out of scope:** Native AOT for server-side .NET -- see [skill:dotnet-native-aot]. AOT-first design patterns -- see [skill:dotnet-aot-architecture]. Trim-safe library authoring -- see [skill:dotnet-trimming]. MAUI-specific AOT -- see [skill:dotnet-maui-aot] (fn-14). Blazor component patterns and architecture -- see [skill:dotnet-blazor-patterns] (soft). Uno Platform architecture -- see [skill:dotnet-uno-platform] (soft).
+**Out of scope:** Native AOT for server-side .NET -- see [skill:dotnet-native-aot]. AOT-first design patterns -- see [skill:dotnet-aot-architecture]. Trim-safe library authoring -- see [skill:dotnet-trimming]. MAUI-specific AOT -- see [skill:dotnet-maui-aot]. Blazor component patterns and architecture -- see [skill:dotnet-blazor-patterns] (soft). Uno Platform architecture -- see [skill:dotnet-uno-platform] (soft).
 
 Cross-references: [skill:dotnet-native-aot] for general AOT pipeline, [skill:dotnet-trimming] for trimming annotations, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-blazor-patterns] for Blazor architecture (soft), [skill:dotnet-uno-platform] for Uno Platform patterns (soft).
 

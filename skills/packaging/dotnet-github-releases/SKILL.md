@@ -9,9 +9,9 @@ GitHub Releases for .NET projects: release creation via `gh release create` CLI 
 
 **Version assumptions:** GitHub CLI (`gh`) 2.x+. `softprops/action-gh-release@v2`. GitHub REST API v3 / GraphQL API v4. .NET 8.0+ baseline.
 
-**Scope boundary:** This skill owns GitHub Release creation and management for .NET projects -- the release lifecycle on GitHub including asset attachment, release notes, and pre-release workflows. CLI-specific release pipelines (build matrix, artifact staging, checksums, package manager PR creation) are owned by [skill:dotnet-cli-release-pipeline] (fn-17). CI/CD publish workflows (NuGet push, container push) are owned by [skill:dotnet-gha-publish] (fn-19). Full CI pipeline patterns (reusable workflows, matrix testing) are owned by [skill:dotnet-gha-patterns] (fn-19).
+**Scope boundary:** This skill owns GitHub Release creation and management for .NET projects -- the release lifecycle on GitHub including asset attachment, release notes, and pre-release workflows. CLI-specific release pipelines (build matrix, artifact staging, checksums, package manager PR creation) are owned by [skill:dotnet-cli-release-pipeline]. CI/CD publish workflows (NuGet push, container push) are owned by [skill:dotnet-gha-publish]. Full CI pipeline patterns (reusable workflows, matrix testing) are owned by [skill:dotnet-gha-patterns].
 
-**Out of scope:** CLI-specific release automation (build matrix, RID-specific artifacts, package manager PRs) -- see [skill:dotnet-cli-release-pipeline] (fn-17). CI/CD NuGet push and container publish workflows -- see [skill:dotnet-gha-publish] (fn-19). CI pipeline structure and reusable workflows -- see [skill:dotnet-gha-patterns] (fn-19). Release lifecycle strategy (NBGV, SemVer, changelogs, branching) -- see [skill:dotnet-release-management] (fn-20). NuGet package authoring -- see [skill:dotnet-nuget-authoring] (fn-20).
+**Out of scope:** CLI-specific release automation (build matrix, RID-specific artifacts, package manager PRs) -- see [skill:dotnet-cli-release-pipeline]. CI/CD NuGet push and container publish workflows -- see [skill:dotnet-gha-publish]. CI pipeline structure and reusable workflows -- see [skill:dotnet-gha-patterns]. Release lifecycle strategy (NBGV, SemVer, changelogs, branching) -- see [skill:dotnet-release-management]. NuGet package authoring -- see [skill:dotnet-nuget-authoring].
 
 Cross-references: [skill:dotnet-cli-release-pipeline] for CLI-specific release pipelines with checksums, [skill:dotnet-gha-publish] for CI publish workflows, [skill:dotnet-gha-patterns] for CI pipeline structure, [skill:dotnet-nuget-authoring] for NuGet package creation.
 
@@ -274,7 +274,7 @@ changelog:
 
 ### Changelog-Based Notes
 
-Use a maintained `CHANGELOG.md` as the release notes source. For CHANGELOG format and auto-generation tooling, see [skill:dotnet-release-management] (fn-20).
+Use a maintained `CHANGELOG.md` as the release notes source. For CHANGELOG format and auto-generation tooling, see [skill:dotnet-release-management].
 
 ```bash
 # Extract the section for this version from CHANGELOG.md

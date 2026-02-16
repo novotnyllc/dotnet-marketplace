@@ -7,7 +7,7 @@ description: "WHEN organizing APIs at scale. Vertical slices, request pipelines,
 
 Modern architecture patterns for .NET applications. Covers practical approaches to organizing minimal APIs at scale, vertical slice architecture, request pipeline composition, validation strategies, caching, error handling, and idempotency/outbox patterns.
 
-**Out of scope:** DI container mechanics and async/await patterns are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Project scaffolding and file layout are owned by fn-4 -- see [skill:dotnet-scaffold-project]. Testing strategies -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for WebApplicationFactory patterns.
+**Out of scope:** DI container mechanics and async/await patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Project scaffolding and file layout -- see [skill:dotnet-scaffold-project]. Testing strategies -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for WebApplicationFactory patterns.
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and lifetimes, [skill:dotnet-csharp-async-patterns] for async pipeline patterns, [skill:dotnet-csharp-configuration] for Options pattern in configuration.
 

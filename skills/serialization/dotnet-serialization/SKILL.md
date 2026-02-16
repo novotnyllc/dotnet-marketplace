@@ -7,7 +7,7 @@ description: "WHEN serializing data. AOT-friendly System.Text.Json source genera
 
 AOT-friendly serialization patterns for .NET applications. Covers System.Text.Json source generators for compile-time serialization, Protocol Buffers (Protobuf) for efficient binary serialization, and MessagePack for high-performance compact binary format. Includes performance tradeoff guidance for choosing the right serializer and warnings about reflection-based serialization in AOT scenarios.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) are owned by fn-3 -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines are owned by fn-5 -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies are owned by fn-16 -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
+**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
 
 Cross-references: [skill:dotnet-csharp-source-generators] for understanding how STJ source generators work under the hood. See [skill:dotnet-integration-testing] for testing serialization round-trip correctness.
 

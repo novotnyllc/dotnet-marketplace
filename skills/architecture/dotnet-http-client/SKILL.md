@@ -7,7 +7,7 @@ description: "WHEN consuming HTTP APIs. IHttpClientFactory, typed/named clients,
 
 Best practices for consuming HTTP APIs in .NET applications using `IHttpClientFactory`. Covers named and typed clients, resilience pipeline integration, `DelegatingHandler` chains for cross-cutting concerns, and testing strategies.
 
-**Out of scope:** DI container mechanics and service lifetimes are owned by fn-3 -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation are owned by fn-3 -- see [skill:dotnet-csharp-async-patterns]. Resilience pipeline configuration (Polly v8, retry, circuit breaker, timeout strategies) is owned by [skill:dotnet-resilience]. Integration testing frameworks -- see [skill:dotnet-integration-testing] for WebApplicationFactory and HTTP client testing patterns.
+**Out of scope:** DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]. Resilience pipeline configuration (Polly v8, retry, circuit breaker, timeout strategies) is owned by [skill:dotnet-resilience]. Integration testing frameworks -- see [skill:dotnet-integration-testing] for WebApplicationFactory and HTTP client testing patterns.
 
 Cross-references: [skill:dotnet-resilience] for resilience pipeline configuration, [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async HTTP patterns.
 

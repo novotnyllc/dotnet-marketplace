@@ -7,9 +7,9 @@ description: "WHEN implementing API auth. Identity, OAuth/OIDC, JWT bearer, pass
 
 API-level authentication, authorization, and security patterns for ASP.NET Core. This skill owns API auth implementation: ASP.NET Core Identity configuration, OAuth 2.0/OIDC integration, JWT bearer token handling, passkey (WebAuthn) authentication, CORS policies, Content Security Policy headers, and rate limiting.
 
-**Auth ownership:** This skill (fn-11) owns API-level auth patterns. Blazor-specific auth UI (AuthorizeView, CascadingAuthenticationState, client-side token handling) is owned by fn-12 -- see [skill:dotnet-blazor-auth] when it lands. OWASP security principles (cross-cutting vulnerability mitigations) are owned by fn-8 -- see [skill:dotnet-security-owasp].
+**Auth ownership:** This skill owns API-level auth patterns. Blazor-specific auth UI (AuthorizeView, CascadingAuthenticationState, client-side token handling) -- see [skill:dotnet-blazor-auth] when it lands. OWASP security principles (cross-cutting vulnerability mitigations) -- see [skill:dotnet-security-owasp].
 
-**Out of scope:** OWASP Top 10 mitigations and deprecated security patterns -- see [skill:dotnet-security-owasp]. Secrets management and secure configuration -- see [skill:dotnet-secrets-management]. Cryptographic algorithm selection -- see [skill:dotnet-cryptography]. Blazor auth UI components -- fn-12.
+**Out of scope:** OWASP Top 10 mitigations and deprecated security patterns -- see [skill:dotnet-security-owasp]. Secrets management and secure configuration -- see [skill:dotnet-secrets-management]. Cryptographic algorithm selection -- see [skill:dotnet-cryptography]. Blazor auth UI components -- see [skill:dotnet-blazor-auth].
 
 Cross-references: [skill:dotnet-security-owasp] for OWASP security principles, [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices.
 

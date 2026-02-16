@@ -1,0 +1,70 @@
+{
+  "created_at": "2026-02-15T23:04:31.842743Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-40-fleet-review-findings-implementation",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-15T23:02:45.252698Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [
+        "fn-37-skill-cleanup-sweep"
+      ],
+      "id": "fn-40-fleet-review-findings-implementation",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-40-fleet-review-findings-implementation.md",
+      "status": "open",
+      "title": "Fleet Review Findings Implementation",
+      "updated_at": "2026-02-15T23:03:15.666155Z"
+    },
+    "spec": "# Fleet Review Findings Implementation\n\n## Overview\n\nThe fleet skill review (fn-29) audited all skills against an 11-dimension rubric and produced a consolidated findings report with 82 issues (20 Critical, 31 High, 31 Low). Most findings have been organically fixed through subsequent epics fn-30 through fn-36. This epic implements the remaining work: trimming the aggregate description budget below the WARN threshold and updating documentation to reflect the current state.\n\n**Depends on:** fn-37 (Skill Cleanup Sweep) which handles fn-N reference removal, .gitkeep cleanup, broken cross-refs, and other mechanical cleanup.\n\n## Current state (post fn-30 through fn-36)\n\n- **Already fixed:** All descriptions under 120 chars individually, broken cross-refs resolved, stale markers removed, Agent Gotchas gaps filled, multi-targeting skills registered, xUnit v3 IAsyncLifetime corrected, grep portability fixed\n- **Remaining:** Aggregate description budget at ~12,645 chars (WARN threshold is 12,000). The 14 new skills added by fn-30-fn-36 were never reviewed against the rubric. Documentation counts are stale.\n\n## Budget math\n\n- 113 registered skills \u00d7 120 chars max = 13,560 chars theoretical maximum\n- Current: ~12,645 chars (WARN). Need to trim ~645+ chars.\n- `validate-skills.sh` thresholds: `--warn-threshold 12000 --fail-threshold 15000`\n- Target: average ~106 chars/skill to comfortably stay below 12K\n- Alternative: evaluate whether the WARN threshold should be raised to account for 113 skills (was calibrated for ~100)\n\n## Quick commands\n\n```bash\n# Check current budget\n./scripts/validate-skills.sh 2>&1 | grep -E 'CURRENT_DESC_CHARS|BUDGET_STATUS|WARN'\n\n# Full validation\n./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh && python3 scripts/generate_dist.py --strict && python3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n\n- [ ] Aggregate description budget below 12,000 chars OR WARN threshold adjusted with documented rationale\n- [ ] All 14 skills from fn-30-fn-36 pass basic quality check (descriptions follow `[What] + [When]` formula, cross-refs use `[skill:]` syntax)\n- [ ] README.md, CLAUDE.md, AGENTS.md counts match actual registered skill count\n- [ ] CHANGELOG.md entry documents fleet review resolution\n- [ ] Fleet review docs (`docs/fleet-review-rubric.md`, `docs/review-reports/consolidated-findings.md`) annotated as historical snapshots\n- [ ] All 4 validation commands pass with zero errors and zero warnings (excluding budget WARN if threshold adjusted)\n\n## References\n\n- `docs/fleet-review-rubric.md` -- 11-dimension rubric with batch assignments\n- `docs/review-reports/consolidated-findings.md` -- 82 original findings (historical snapshot, many now resolved)\n- `scripts/_validate_skills.py` -- canonical budget measurement (L307-L363)\n- `scripts/validate-skills.sh` -- budget thresholds (L43-L47)\n- `CONTRIBUTING-SKILLS.md` -- description formula (L113), budget rules (L134)\n- `.flow/specs/fn-37-skill-cleanup-sweep.md` -- prerequisite epic covering fn-N removal\n"
+  },
+  "epic_id": "fn-40-fleet-review-findings-implementation",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T23:03:20.862166Z",
+        "depends_on": [],
+        "epic": "fn-40-fleet-review-findings-implementation",
+        "id": "fn-40-fleet-review-findings-implementation.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-40-fleet-review-findings-implementation.1.md",
+        "status": "todo",
+        "title": "Trim skill descriptions for budget compliance",
+        "updated_at": "2026-02-15T23:03:48.187297Z"
+      },
+      "id": "fn-40-fleet-review-findings-implementation.1",
+      "runtime": null,
+      "spec": "# fn-40-fleet-review-findings-implementation.1 Trim skill descriptions for budget compliance\n\n## Description\nTrim skill descriptions across all 113 registered skills to bring the aggregate description budget below the 12,000-char WARN threshold (currently ~12,645 chars). Also perform a basic quality check on the 14 skills added by fn-30 through fn-36, which were never included in the fleet review.\n\n**Size:** M\n**Files:** All 113 `skills/<category>/<skill-name>/SKILL.md` files (frontmatter only)\n\n## Approach\n\n1. Run `./scripts/validate-skills.sh` to get current baseline (CURRENT_DESC_CHARS, per-skill lengths)\n2. Sort descriptions by length descending -- trim the longest first for maximum impact\n3. For each description needing trimming:\n   - Remove filler words (\"comprehensive\", \"common\", \"best practices for\")\n   - Remove redundant WHEN NOT clauses (Claude infers negatives from positive triggers)\n   - Shorten trigger phrases while preserving domain-specific keywords\n   - Target average ~106 chars/skill (113 \u00d7 106 = 11,978, safely below 12K)\n4. If budget cannot reach below 12K without degrading triggering quality, document the case for raising `--warn-threshold` to 13,000 in `validate-skills.sh` (L43-L47) with rationale that 113 skills > the original 100-skill calibration\n5. Run `validate-skills.sh` after every 10-15 edits for incremental verification\n6. For the 14 new skills (fn-30-fn-36): verify descriptions follow `[What] + [When]` formula per `CONTRIBUTING-SKILLS.md` L113, verify all cross-refs use `[skill:]` syntax\n\n## Key context\n\n- Validator measures description length via Python `len()` after stripping YAML quotes -- use this as authoritative measurement, not `wc -c` (up to 2-char variance)\n- Descriptions must remain double-quoted in frontmatter (all 113 currently are)\n- Don't introduce block scalars (`>` or `|`) -- validator handles them but they're non-standard for this project\n- `[skill:name]` cross-refs inside descriptions are NOT common -- descriptions are short metadata, not prose. Cross-refs live in SKILL.md body.\n- The `--projected-skills 100` parameter in validate-skills.sh was calibrated for the original skill count. With 113 skills, budget pressure is structural.\n## Acceptance\n- [ ] Aggregate CURRENT_DESC_CHARS below 12,000 in `validate-skills.sh` output OR `--warn-threshold` raised with documented rationale in a commit message\n- [ ] Zero individual descriptions over 120 chars (maintained from current state)\n- [ ] All 14 skills from fn-30 through fn-36 verified: descriptions follow `[What] + [When]` formula\n- [ ] All 14 skills from fn-30 through fn-36 verified: cross-refs use `[skill:]` syntax (zero bare-text skill names)\n- [ ] `./scripts/validate-skills.sh` passes with zero errors\n- [ ] `python3 scripts/generate_dist.py --strict` passes (cross-ref validation)\n- [ ] No description trimming degrades triggering quality (reviewer judgment)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T23:03:25.817013Z",
+        "depends_on": [
+          "fn-40-fleet-review-findings-implementation.1"
+        ],
+        "epic": "fn-40-fleet-review-findings-implementation",
+        "id": "fn-40-fleet-review-findings-implementation.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-40-fleet-review-findings-implementation.2.md",
+        "status": "todo",
+        "title": "Update documentation and archive review artifacts",
+        "updated_at": "2026-02-15T23:04:03.037651Z"
+      },
+      "id": "fn-40-fleet-review-findings-implementation.2",
+      "runtime": null,
+      "spec": "# fn-40-fleet-review-findings-implementation.2 Update documentation and archive review artifacts\n\n## Description\nUpdate all project documentation to reflect the current state after fleet review findings are resolved (task 1) and fn-37 cleanup is complete. Archive the fleet review rubric and consolidated findings as historical snapshots. Add a CHANGELOG entry documenting the resolution.\n\n**Size:** M\n**Files:**\n- `README.md` -- skill counts, category table, architecture diagram\n- `CLAUDE.md` -- skill count, budget numbers\n- `AGENTS.md` -- routing index counts, category table\n- `CHANGELOG.md` -- new entry\n- `docs/fleet-review-rubric.md` -- archive annotation\n- `docs/review-reports/consolidated-findings.md` -- archive annotation\n- `scripts/validate-skills.sh` -- if WARN threshold was adjusted in task 1\n\n## Approach\n\n1. Run `./scripts/validate-skills.sh` to get final skill count and budget numbers\n2. Update counts in README.md (L11, L34, L98-119 mermaid diagram), CLAUDE.md (L3, L19, L39), AGENTS.md (L7, L9-31)\n3. Verify all three docs have identical skill/category counts\n4. Add CHANGELOG.md entry under `[Unreleased]` with:\n   - Description budget improvement (before \u2192 after chars)\n   - Number of descriptions trimmed\n   - Reference to fn-29 (audit), fn-37 (cleanup), fn-40 (this epic)\n5. Add archive header to fleet review docs:\n   ```markdown\n   > **Historical snapshot (completed YYYY-MM-DD).** Most findings resolved by fn-30 through fn-40. See CHANGELOG.md for details.\n   ```\n6. Run all 4 validation commands\n\n## Key context\n\n- README.md, CLAUDE.md, AGENTS.md all reference \"113 skills across 21 categories\" -- update all three consistently\n- Per memory conventions: count updates across multiple files must stay in sync (README L11 \u2194 CLAUDE.md L3 \u2194 AGENTS.md L7)\n- The fleet review rubric (`docs/fleet-review-rubric.md`) is reusable for future audits -- annotate as historical but don't delete\n- CHANGELOG.md uses keep-a-changelog format (Added/Changed/Fixed/Removed sections)\n## Acceptance\n- [ ] README.md, CLAUDE.md, AGENTS.md all show identical skill and category counts\n- [ ] Counts match actual `plugin.json` registered skill count (verified by grep/jq)\n- [ ] CHANGELOG.md has entry documenting fleet review resolution with budget metrics\n- [ ] `docs/fleet-review-rubric.md` has archive annotation header\n- [ ] `docs/review-reports/consolidated-findings.md` has archive annotation header\n- [ ] All 4 validation commands pass: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`\n- [ ] No regressions from fn-37 changes (zero fn-N references in skill files if fn-37 completed)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

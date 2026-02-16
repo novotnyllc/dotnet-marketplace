@@ -9,9 +9,9 @@ description: "WHEN configuring .NET build and test in GitHub Actions. setup-dotn
 
 **Version assumptions:** `actions/setup-dotnet@v4` for .NET 8/9/10 support. `dorny/test-reporter@v1` for test result visualization. Codecov and Coveralls GitHub Apps for coverage reporting.
 
-**Scope boundary:** This skill owns .NET build and test pipeline configuration for GitHub Actions. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] (fn-4). Composable workflow patterns (reusable workflows, matrix strategies, caching) are in [skill:dotnet-gha-patterns] (fn-19). Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy] (fn-7). Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking] (fn-18).
+**Scope boundary:** This skill owns .NET build and test pipeline configuration for GitHub Actions. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci]. Composable workflow patterns (reusable workflows, matrix strategies, caching) are in [skill:dotnet-gha-patterns]. Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy]. Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking].
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). Test architecture and strategy -- see [skill:dotnet-testing-strategy] (fn-7). Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking] (fn-18). Publishing and deployment -- see [skill:dotnet-gha-publish] and [skill:dotnet-gha-deploy] (fn-19). Azure DevOps build/test pipelines -- see [skill:dotnet-ado-build-test] (fn-19).
+**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci]. Test architecture and strategy -- see [skill:dotnet-testing-strategy]. Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]. Publishing and deployment -- see [skill:dotnet-gha-publish] and [skill:dotnet-gha-deploy]. Azure DevOps build/test pipelines -- see [skill:dotnet-ado-build-test].
 
 Cross-references: [skill:dotnet-add-ci] for starter build/test templates, [skill:dotnet-testing-strategy] for test architecture guidance, [skill:dotnet-ci-benchmarking] for benchmark CI integration.
 

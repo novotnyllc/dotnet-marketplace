@@ -168,7 +168,7 @@ Run: `./scripts/validate-marketplace.sh`
 
 ### CI Integration
 
-Both scripts run in CI on every push. The CI workflow (defined in fn-2.6) invokes:
+Both scripts run in CI on every push. The CI workflow invokes:
 
 ```bash
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh

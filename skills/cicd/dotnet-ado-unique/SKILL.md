@@ -9,9 +9,9 @@ Azure DevOps-exclusive features not available in GitHub Actions: Environments wi
 
 **Version assumptions:** Azure DevOps Services (cloud). YAML pipelines with multi-stage support. Classic release pipelines for legacy migration context only.
 
-**Scope boundary:** This skill owns ADO-exclusive platform features that have no direct GitHub Actions equivalent. Composable YAML pipeline patterns (templates, triggers, multi-stage) are in [skill:dotnet-ado-patterns] (fn-19). Build/test pipeline configuration is in [skill:dotnet-ado-build-test] (fn-19). Publishing pipelines are in [skill:dotnet-ado-publish] (fn-19). Starter CI templates are owned by [skill:dotnet-add-ci] (fn-4).
+**Scope boundary:** This skill owns ADO-exclusive platform features that have no direct GitHub Actions equivalent. Composable YAML pipeline patterns (templates, triggers, multi-stage) are in [skill:dotnet-ado-patterns]. Build/test pipeline configuration is in [skill:dotnet-ado-build-test]. Publishing pipelines are in [skill:dotnet-ado-publish]. Starter CI templates are owned by [skill:dotnet-add-ci].
 
-**Out of scope:** Composable pipeline patterns (templates, triggers) -- see [skill:dotnet-ado-patterns] (fn-19). Build/test pipeline configuration -- see [skill:dotnet-ado-build-test] (fn-19). Publishing pipelines -- see [skill:dotnet-ado-publish] (fn-19). Starter CI templates -- see [skill:dotnet-add-ci] (fn-4). GitHub Actions equivalents -- see [skill:dotnet-gha-patterns], [skill:dotnet-gha-build-test], [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy] (fn-19). CLI release pipelines -- see [skill:dotnet-cli-release-pipeline] (fn-17).
+**Out of scope:** Composable pipeline patterns (templates, triggers) -- see [skill:dotnet-ado-patterns]. Build/test pipeline configuration -- see [skill:dotnet-ado-build-test]. Publishing pipelines -- see [skill:dotnet-ado-publish]. Starter CI templates -- see [skill:dotnet-add-ci]. GitHub Actions equivalents -- see [skill:dotnet-gha-patterns], [skill:dotnet-gha-build-test], [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy]. CLI release pipelines -- see [skill:dotnet-cli-release-pipeline].
 
 Cross-references: [skill:dotnet-add-ci] for starter CI templates, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
 

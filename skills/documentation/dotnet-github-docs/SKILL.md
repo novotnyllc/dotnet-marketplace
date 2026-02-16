@@ -9,9 +9,9 @@ GitHub-native documentation patterns for .NET projects: README structure with Nu
 
 **Version assumptions:** .NET 8.0+ baseline for code examples. GitHub Actions for CI badges. NuGet.org for package badges.
 
-**Scope boundary:** This skill owns GitHub-native documentation structure and templates for .NET projects -- the files that live in a repository root and `.github/` directory. CI/CD deployment pipelines for GitHub Pages sites are owned by [skill:dotnet-gha-deploy] (fn-19). Changelog generation and versioning conventions are owned by [skill:dotnet-release-management] (fn-20). Documentation tooling selection (Starlight, Docusaurus, DocFX) is owned by [skill:dotnet-documentation-strategy] (fn-21). Mermaid diagram syntax and .NET-specific diagram patterns are owned by [skill:dotnet-mermaid-diagrams] (fn-21).
+**Scope boundary:** This skill owns GitHub-native documentation structure and templates for .NET projects -- the files that live in a repository root and `.github/` directory. CI/CD deployment pipelines for GitHub Pages sites are owned by [skill:dotnet-gha-deploy]. Changelog generation and versioning conventions are owned by [skill:dotnet-release-management]. Documentation tooling selection (Starlight, Docusaurus, DocFX) is owned by [skill:dotnet-documentation-strategy]. Mermaid diagram syntax and .NET-specific diagram patterns are owned by [skill:dotnet-mermaid-diagrams].
 
-**Out of scope:** CI/CD deployment workflows for GitHub Pages or doc sites -- see [skill:dotnet-gha-deploy] (fn-19). Changelog generation and release versioning -- see [skill:dotnet-release-management] (fn-20). Documentation platform selection and configuration -- see [skill:dotnet-documentation-strategy] (fn-21). Mermaid diagram syntax details -- see [skill:dotnet-mermaid-diagrams] (fn-21). Project file structure and solution organization -- see [skill:dotnet-project-structure] (fn-4).
+**Out of scope:** CI/CD deployment workflows for GitHub Pages or doc sites -- see [skill:dotnet-gha-deploy]. Changelog generation and release versioning -- see [skill:dotnet-release-management]. Documentation platform selection and configuration -- see [skill:dotnet-documentation-strategy]. Mermaid diagram syntax details -- see [skill:dotnet-mermaid-diagrams]. Project file structure and solution organization -- see [skill:dotnet-project-structure].
 
 Cross-references: [skill:dotnet-gha-deploy] for GitHub Pages deployment pipelines, [skill:dotnet-release-management] for changelog format and versioning, [skill:dotnet-mermaid-diagrams] for .NET-specific Mermaid diagrams in READMEs, [skill:dotnet-project-structure] for project metadata context, [skill:dotnet-documentation-strategy] for doc platform selection.
 
@@ -538,9 +538,9 @@ Example: "High-performance JSON serialization library for .NET 8+ with source ge
 
 5. **GitHub Pages source must be set to "GitHub Actions"** -- the legacy "Deploy from a branch" mode does not support custom build steps. The GitHub Actions source delegates build and deployment to a workflow. For the workflow YAML, see [skill:dotnet-gha-deploy].
 
-6. **Do not generate CI/CD deployment YAML in this skill** -- deployment workflows for GitHub Pages belong to [skill:dotnet-gha-deploy] (fn-19). This skill covers repository structure and template content only.
+6. **Do not generate CI/CD deployment YAML in this skill** -- deployment workflows for GitHub Pages belong to [skill:dotnet-gha-deploy]. This skill covers repository structure and template content only.
 
-7. **Do not generate changelog content** -- changelog format, versioning strategy, and release notes belong to [skill:dotnet-release-management] (fn-20). Reference CHANGELOG.md in the README but do not define its format here.
+7. **Do not generate changelog content** -- changelog format, versioning strategy, and release notes belong to [skill:dotnet-release-management]. Reference CHANGELOG.md in the README but do not define its format here.
 
 8. **PR template file must be named exactly `pull_request_template.md`** -- GitHub only recognizes this exact filename (case-insensitive). It can live in the root, `docs/`, or `.github/` directory. The `.github/` location is recommended for consistency with issue templates.
 

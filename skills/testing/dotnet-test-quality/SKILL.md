@@ -9,7 +9,7 @@ Test quality analysis for .NET projects. Covers code coverage collection with co
 
 **Version assumptions:** Coverlet 6.x+, ReportGenerator 5.x+, Stryker.NET 4.x+ (.NET 8.0+ baseline). Coverlet supports both the MSBuild integration (`coverlet.msbuild`) and the `coverlet.collector` data collector; examples use `coverlet.collector` as the recommended approach.
 
-**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration are owned by fn-19 -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
+**Out of scope:** Test project scaffolding (creating projects, package references, coverlet setup) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with coverlet packages referenced. .NET 8.0+ baseline required.
 

@@ -17,9 +17,6 @@ Before any .NET guidance, determine the project's target framework:
 
 ## Skill Catalog
 
-<!-- Budget: PROJECTED_SKILLS_COUNT=100, MAX_DESC_CHARS=120 -->
-<!-- Projected max: 100 x 120 = 12,000 chars (at 12,000 WARN threshold) -->
-
 ### 1. Foundation & Plugin Infrastructure `implemented`
 - [skill:dotnet-advisor] -- this skill (router/index)
 - [skill:dotnet-version-detection] -- TFM/SDK detection, preview features

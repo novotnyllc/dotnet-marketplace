@@ -7,7 +7,7 @@ description: "WHEN analyzing .NET code for modernization. Flags outdated TFMs, d
 
 Analyze existing .NET code for modernization opportunities. Identifies outdated target frameworks, deprecated packages, superseded API patterns, and missing modern best practices. Provides actionable recommendations for each finding.
 
-**Scope boundary:** This skill **flags opportunities** only. For actual migration paths, polyfill strategies, multi-targeting guidance, and step-by-step version upgrade procedures, see fn-10 (Version Management depth epic).
+**Scope boundary:** This skill **flags opportunities** only. For actual migration paths, polyfill strategies, multi-targeting guidance, and step-by-step version upgrade procedures, see [skill:dotnet-version-upgrade] and [skill:dotnet-multi-targeting].
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine the current SDK, TFM, and language version. Run [skill:dotnet-project-analysis] to understand solution structure and dependencies.
 
@@ -268,9 +268,9 @@ Not all modernization is equally urgent. Prioritize by impact:
 ## What's Next
 
 This skill flags modernization opportunities. For executing upgrades:
-- **TFM version upgrades and migration paths** -- fn-10 version management depth
-- **Multi-targeting strategies** -- fn-10
-- **Polyfill packages for cross-version support** -- fn-10
+- **TFM version upgrades and migration paths** -- [skill:dotnet-version-upgrade]
+- **Multi-targeting strategies** -- [skill:dotnet-multi-targeting]
+- **Polyfill packages for cross-version support** -- [skill:dotnet-multi-targeting]
 - **Adding missing build infrastructure** -- [skill:dotnet-project-structure], [skill:dotnet-scaffold-project]
 - **Configuring analyzers** -- [skill:dotnet-add-analyzers]
 - **Adding CI/CD** -- [skill:dotnet-add-ci]

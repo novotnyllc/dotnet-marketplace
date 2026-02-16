@@ -9,9 +9,9 @@ Documentation tooling recommendation for .NET projects: decision tree for select
 
 **Version assumptions:** Starlight v0.x+ (Astro 4+). Docusaurus v3.x (React 18+). DocFX v2.x (community-maintained). MarkdownSnippets as `dotnet tool` (.NET 8.0+ baseline). Mermaid v10+ (GitHub, Starlight, Docusaurus render natively).
 
-**Scope boundary:** This skill owns documentation tooling selection and configuration for .NET projects -- the decision of which doc platform to use, initial setup, and content authoring patterns. CI deployment of doc sites to GitHub Pages or other hosts is owned by [skill:dotnet-gha-deploy] (fn-19). API reference documentation generation from XML comments is owned by [skill:dotnet-api-docs] (fn-21).
+**Scope boundary:** This skill owns documentation tooling selection and configuration for .NET projects -- the decision of which doc platform to use, initial setup, and content authoring patterns. CI deployment of doc sites to GitHub Pages or other hosts is owned by [skill:dotnet-gha-deploy]. API reference documentation generation from XML comments is owned by [skill:dotnet-api-docs].
 
-**Out of scope:** CI/CD deployment pipelines for doc sites (GitHub Pages workflows, Docker-based deployment) -- see [skill:dotnet-gha-deploy] (fn-19). API documentation generation specifics (DocFX API reference setup, OpenAPI-as-docs) -- see [skill:dotnet-api-docs] (fn-21). XML documentation comment authoring -- see [skill:dotnet-xml-docs] (fn-21). Mermaid diagram syntax and .NET-specific diagram patterns -- see [skill:dotnet-mermaid-diagrams] (fn-21).
+**Out of scope:** CI/CD deployment pipelines for doc sites (GitHub Pages workflows, Docker-based deployment) -- see [skill:dotnet-gha-deploy]. API documentation generation specifics (DocFX API reference setup, OpenAPI-as-docs) -- see [skill:dotnet-api-docs]. XML documentation comment authoring -- see [skill:dotnet-xml-docs]. Mermaid diagram syntax and .NET-specific diagram patterns -- see [skill:dotnet-mermaid-diagrams].
 
 Cross-references: [skill:dotnet-gha-deploy] for doc site deployment pipelines, [skill:dotnet-api-docs] for API reference generation, [skill:dotnet-xml-docs] for XML doc comment authoring, [skill:dotnet-mermaid-diagrams] for .NET-specific Mermaid diagrams.
 

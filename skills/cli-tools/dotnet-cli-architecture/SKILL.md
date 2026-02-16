@@ -9,7 +9,7 @@ Layered CLI application architecture for .NET: command/handler/service separatio
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to CLI tools built with System.CommandLine 2.0 and generic host.
 
-**Out of scope:** System.CommandLine API details (RootCommand, Option<T>, middleware, hosting setup) -- see [skill:dotnet-system-commandline]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot] (fn-16). CLI distribution, packaging, and release automation -- see [skill:dotnet-cli-distribution] and [skill:dotnet-cli-packaging] (fn-17). General CI/CD patterns -- see fn-19. DI container internals -- see [skill:dotnet-csharp-dependency-injection] (fn-3). General testing strategies -- see [skill:dotnet-testing-strategy] (fn-7).
+**Out of scope:** System.CommandLine API details (RootCommand, Option<T>, middleware, hosting setup) -- see [skill:dotnet-system-commandline]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot]. CLI distribution, packaging, and release automation -- see [skill:dotnet-cli-distribution] and [skill:dotnet-cli-packaging]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container internals -- see [skill:dotnet-csharp-dependency-injection]. General testing strategies -- see [skill:dotnet-testing-strategy].
 
 Cross-references: [skill:dotnet-system-commandline] for System.CommandLine 2.0 API, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI patterns, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-testing-strategy] for general testing patterns.
 

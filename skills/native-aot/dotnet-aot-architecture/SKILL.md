@@ -9,7 +9,7 @@ AOT-first application design patterns for .NET 8+: preferring source generators 
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to all AOT-capable project types (console, ASP.NET Core Minimal APIs, worker services).
 
-**Out of scope:** Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]. Trim-safe library authoring and annotations -- see [skill:dotnet-trimming]. WASM AOT compilation -- see [skill:dotnet-aot-wasm]. MAUI-specific AOT -- see [skill:dotnet-maui-aot] (fn-14). Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators] (fn-3). DI container internals -- see [skill:dotnet-csharp-dependency-injection] (fn-3). Serialization depth -- see [skill:dotnet-serialization] (fn-6).
+**Out of scope:** Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]. Trim-safe library authoring and annotations -- see [skill:dotnet-trimming]. WASM AOT compilation -- see [skill:dotnet-aot-wasm]. MAUI-specific AOT -- see [skill:dotnet-maui-aot]. Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]. DI container internals -- see [skill:dotnet-csharp-dependency-injection]. Serialization depth -- see [skill:dotnet-serialization].
 
 Cross-references: [skill:dotnet-native-aot] for the AOT publish pipeline, [skill:dotnet-trimming] for trim annotations and library authoring, [skill:dotnet-serialization] for serialization patterns, [skill:dotnet-csharp-source-generators] for source gen mechanics, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-containers] for `runtime-deps` deployment.
 
