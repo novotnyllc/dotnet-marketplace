@@ -34,7 +34,7 @@ For the complete skill-level catalog with routing decision trees, see the `dotne
 
 ## Agent Delegation Patterns
 
-The plugin includes 9 specialist agents. The central router (`dotnet-architect`) analyzes project context and delegates to the appropriate specialist.
+The plugin includes 14 specialist agents. The central router (`dotnet-architect`) analyzes project context and delegates to the appropriate specialist.
 
 | Agent | Domain | Preloaded Skills | When to Delegate |
 |---|---|---|---|
@@ -47,6 +47,11 @@ The plugin includes 9 specialist agents. The central router (`dotnet-architect`)
 | **dotnet-performance-analyst** | Performance analysis | dotnet-profiling, dotnet-benchmarkdotnet, dotnet-observability | Profiling data interpretation, benchmark regressions, GC analysis |
 | **dotnet-benchmark-designer** | Benchmark design | dotnet-benchmarkdotnet, dotnet-performance-patterns | BenchmarkDotNet setup, measurement methodology, diagnoser selection |
 | **dotnet-docs-generator** | Documentation | dotnet-documentation-strategy, dotnet-mermaid-diagrams, dotnet-xml-docs | README generation, architecture diagrams, XML doc skeletons, doc tooling |
+| **dotnet-async-performance-specialist** | Async & runtime performance | dotnet-csharp-async-patterns, dotnet-performance-patterns, dotnet-benchmarkdotnet | ValueTask correctness, ConfigureAwait decisions, async overhead, ThreadPool tuning, IO.Pipelines, Channel selection |
+| **dotnet-aspnetcore-specialist** | ASP.NET Core architecture | dotnet-minimal-apis, dotnet-middleware-patterns, dotnet-csharp-dependency-injection | Middleware authoring, DI anti-patterns, minimal API design, request pipeline optimization, diagnostic scenarios |
+| **dotnet-testing-specialist** | Test architecture & strategy | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing | Test pyramid design, unit vs integration vs E2E boundaries, test data management, microservice testing |
+| **dotnet-cloud-specialist** | Cloud deployment & Aspire | dotnet-containers, dotnet-container-deployment, dotnet-observability | .NET Aspire orchestration, AKS deployment, CI/CD pipelines, distributed tracing, infrastructure-as-code |
+| **dotnet-code-review-agent** | Multi-dimensional code review | dotnet-csharp-coding-standards, dotnet-csharp-code-smells, dotnet-performance-patterns | General code review, correctness, performance, security, architecture triage, routes to specialists for deep dives |
 
 ### Delegation Flow
 
@@ -62,7 +67,12 @@ The plugin includes 9 specialist agents. The central router (`dotnet-architect`)
 Each agent owns a specific domain and explicitly delegates out-of-scope concerns:
 
 - **UI specialists** (Blazor, Uno, MAUI) delegate testing to framework-specific testing skills
-- **Performance agents** (analyst vs designer) split on interpretation vs methodology
+- **Performance agents** (analyst vs designer vs async-performance) split on profiling interpretation vs benchmarking methodology vs async/runtime performance analysis
+- **Async-performance specialist** handles async/await and runtime performance; delegates profiling interpretation to performance-analyst and thread synchronization bugs to concurrency-specialist
+- **ASP.NET Core specialist** handles middleware, pipelines, and DI patterns; delegates Blazor/Razor to blazor-specialist, security auditing to security-reviewer, and async internals to async-performance-specialist
+- **Testing specialist** handles test architecture and strategy; delegates framework-specific UI testing to Blazor/MAUI/Uno specialists and benchmarking to benchmark-designer
+- **Cloud specialist** handles deployment, Aspire, and infrastructure; delegates general architecture to dotnet-architect and container image optimization to dotnet-containers skill
+- **Code review agent** performs broad triage across correctness, performance, security, and architecture; routes to specialist agents for deep dives
 - **Security reviewer** is read-only -- produces findings, does not modify code
 - **Docs generator** is the only agent with write tools (Edit, Write) -- all others are read-only analysis
 

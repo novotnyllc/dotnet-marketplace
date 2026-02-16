@@ -277,3 +277,13 @@ Use this decision tree to load the right skills for the current task.
 ### Background Work
 - Background services, queues -> [skill:dotnet-background-services]
 - Observability/logging -> [skill:dotnet-observability]
+
+### Specialist Agent Routing
+
+For complex analysis that benefits from domain expertise, delegate to specialist agents:
+
+- Async/await performance, ValueTask, ConfigureAwait, IO.Pipelines -> **dotnet-async-performance-specialist**
+- ASP.NET Core middleware, request pipeline, DI lifetimes, diagnostic scenarios -> **dotnet-aspnetcore-specialist**
+- Test architecture, test type selection, test data management, microservice testing -> **dotnet-testing-specialist**
+- Cloud deployment, .NET Aspire, AKS, CI/CD pipelines, distributed tracing -> **dotnet-cloud-specialist**
+- General code review (correctness, performance, security, architecture) -> **dotnet-code-review-agent**

@@ -592,6 +592,16 @@ Source: [ASP.NET Core .NET 11 Preview - SignalR ConfigureConnection](https://lea
 
 ---
 
+## Knowledge Sources
+
+Blazor component patterns in this skill are grounded in guidance from:
+
+- **Damian Edwards** -- Razor and Blazor component design patterns, render mode architecture, and performance best practices. Principal architect on the ASP.NET team.
+
+> These sources inform the patterns and rationale presented above. This skill does not claim to represent or speak for any individual.
+
+---
+
 ## References
 
 - [Blazor Component Lifecycle](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/lifecycle?view=aspnetcore-10.0)

@@ -359,3 +359,15 @@ Before applying any optimization pattern, measure first. Premature optimization 
 5. **Use `StringComparison.Ordinal` for internal comparisons** -- omitting the comparison parameter defaults to culture-aware comparison, which is slower and produces surprising results for technical strings (file paths, identifiers).
 6. **Sealed classes help performance only when the JIT can see the concrete type** -- if the object is accessed through an interface variable in a non-devirtualizable call site, sealing provides no benefit. Verify with `[DisassemblyDiagnoser]`.
 7. **Do not re-teach language syntax** -- reference [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax details. This skill focuses on when and why to use these patterns for performance.
+
+---
+
+## Knowledge Sources
+
+Performance patterns in this skill are grounded in guidance from:
+
+- **Stephen Toub** -- .NET Performance blog series ([devblogs.microsoft.com/dotnet/author/toub](https://devblogs.microsoft.com/dotnet/author/toub/)). Authoritative source on Span\<T\>, ValueTask, ArrayPool, async internals, and runtime performance characteristics.
+- **Stephen Cleary** -- Async best practices and concurrent collections guidance. Author of *Concurrency in C# Cookbook*.
+- **Nick Chapsas** -- Modern .NET performance patterns and benchmarking methodology.
+
+> These sources inform the patterns and rationale presented above. This skill does not claim to represent or speak for any individual.

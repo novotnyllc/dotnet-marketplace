@@ -393,6 +393,16 @@ public record ProductQuery(
 
 ---
 
+## Knowledge Sources
+
+Minimal API patterns in this skill are grounded in guidance from:
+
+- **David Fowler** -- AspNetCoreDiagnosticScenarios ([github.com/davidfowl/AspNetCoreDiagnosticScenarios](https://github.com/davidfowl/AspNetCoreDiagnosticScenarios)). Authoritative source on ASP.NET Core request pipeline design, middleware best practices, and diagnostic anti-patterns.
+
+> These sources inform the patterns and rationale presented above. This skill does not claim to represent or speak for any individual.
+
+---
+
 ## References
 
 - [Minimal APIs Overview](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-10.0)
