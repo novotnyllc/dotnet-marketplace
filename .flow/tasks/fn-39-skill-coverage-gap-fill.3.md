@@ -31,9 +31,8 @@ Register all 8 new skills in `.claude-plugin/plugin.json`, update the dotnet-adv
 - [ ] All four validation commands pass
 - [ ] No fn-N spec references in content
 ## Done summary
-TBD
-
+Registered all 8 new skills in plugin.json, updated dotnet-advisor catalog with routing entries for all 8 skills, added AI category (section 20), synced skill/category counts to 121/22 across AGENTS.md, CLAUDE.md, and README.md (including Mermaid diagram), and added trigger corpus entries for all new skills. Budget at 13,481/15,000 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b7f86d4, 0aec1fb
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

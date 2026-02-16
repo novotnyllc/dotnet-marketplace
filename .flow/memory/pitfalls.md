@@ -297,3 +297,6 @@ Semantic Kernel agent InvokeAsync requires a thread object (ChatHistoryAgentThre
 
 ## 2026-02-16 manual [pitfall]
 When creating a skill in a new category directory, also add a trigger corpus entry for that category in tests/trigger-corpus.json -- the corpus completeness check requires every category to have at least one routing entry
+
+## 2026-02-16 manual [pitfall]
+When updating skill/category counts in prose (README, AGENTS.md, CLAUDE.md), also grep for the same counts inside Mermaid diagram blocks -- diagrams embed counts in node labels that are easy to miss
