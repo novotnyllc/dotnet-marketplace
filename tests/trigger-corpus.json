@@ -128,5 +128,10 @@
     "query": "How do I track my library's public API surface with PublicApiAnalyzers shipped and unshipped files?",
     "expected_skill": "dotnet-api-surface-validation",
     "category": "api-development"
+  },
+  {
+    "query": "How do I use Semantic Kernel to add AI chat and function calling to my .NET app?",
+    "expected_skill": "dotnet-semantic-kernel",
+    "category": "ai"
   }
 ]
