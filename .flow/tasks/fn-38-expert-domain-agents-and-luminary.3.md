@@ -41,9 +41,8 @@ Add luminary source attribution ("References" or "Knowledge Sources" sections) t
 - [ ] No fn-N spec references introduced
 - [ ] All four validation commands pass
 ## Done summary
-TBD
-
+Added Knowledge Sources sections to 3 skills (dotnet-performance-patterns, dotnet-minimal-apis, dotnet-blazor-components) with luminary attribution using "Grounded in guidance from" pattern. Updated dotnet-advisor routing catalog and AGENTS.md delegation table with all 5 new specialist agents. Updated agent count from 9 to 14 across AGENTS.md and CLAUDE.md.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 79dd69e22e17bd0343994416ffc70f97c6cbd001
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

@@ -11,8 +11,8 @@ Create two new skills covering the highest-priority messaging and IO gaps:
 
 ## Approach
 - Follow existing SKILL.md frontmatter pattern (name, description only)
-- Each description under 120 characters
-- dotnet-messaging-patterns cross-refs: `[skill:dotnet-background-services]`, `[skill:dotnet-resilience]`, `[skill:dotnet-serialization]`
+- Each description under 120 characters (target ~100 chars for budget headroom)
+- dotnet-messaging-patterns cross-refs: `[skill:dotnet-background-services]`, `[skill:dotnet-resilience]`, `[skill:dotnet-serialization]`, `[skill:dotnet-channels]`
 - dotnet-io-pipelines cross-refs: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-performance-patterns]`
 - dotnet-io-pipelines should reference Toub's IO.Pipelines blog post as a knowledge source
 - Use latest stable package versions for all NuGet references
@@ -26,6 +26,7 @@ Create two new skills covering the highest-priority messaging and IO gaps:
 - [ ] Covers PipeReader/PipeWriter, backpressure, protocol parsers
 - [ ] Cross-references to related skills use `[skill:...]` syntax
 - [ ] Both descriptions under 120 characters
+- [ ] Both SKILL.md files under 5,000 words
 - [ ] No fn-N spec references in content
 - [ ] Package versions are latest stable
 ## Done summary

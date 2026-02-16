@@ -1,0 +1,128 @@
+{
+  "created_at": "2026-02-16T19:26:26.822608Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-39-skill-coverage-gap-fill",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T22:33:43.447371Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-39-skill-coverage-gap-fill",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-39-skill-coverage-gap-fill.md",
+      "status": "open",
+      "title": "Skill Coverage Gap Fill",
+      "updated_at": "2026-02-14T23:12:59.753190Z"
+    },
+    "spec": "# Skill Coverage Gap Fill\n\n## Overview\nAdd all identified missing skills from the gap analysis. Covers messaging/event-driven, System.IO.Pipelines, middleware authoring, DDD/domain modeling, structured logging, LINQ optimization, GC/memory management, .NET Aspire patterns, and Semantic Kernel AI integration. These represent the coverage gaps not addressed by existing epics (fn-30 through fn-37).\n\n**Budget note:** Currently at 12,458/15,000 chars with 101 skills. This epic adds 9 skills (~1,080 chars). If combined with fn-31-36 additions the budget may be tight \u2014 the registration task (fn-39.3) will slim descriptions across all skills if needed to stay within 15,000 chars.\n\n## Scope\n\n### New Skills (9 total)\n1. **dotnet-messaging-patterns** (`skills/architecture/`) \u2014 Durable messaging: pub/sub, competing consumers, dead-letter queues, saga patterns, delivery guarantees. Azure Service Bus, RabbitMQ, MassTransit.\n2. **dotnet-io-pipelines** (`skills/core-csharp/`) \u2014 System.IO.Pipelines: PipeReader/PipeWriter, backpressure, protocol parsing, Kestrel integration. Toub-grounded.\n3. **dotnet-middleware-authoring** (`skills/api-development/`) \u2014 IMiddleware vs RequestDelegate, pipeline ordering/branching, endpoint routing, body buffering. Fowler/Lock-grounded.\n4. **dotnet-domain-modeling** (`skills/architecture/`) \u2014 DDD tactical patterns: aggregates, value objects, domain events, repository with EF Core/Dapper, rich vs anemic models.\n5. **dotnet-structured-logging** (`skills/architecture/`) \u2014 Serilog vs NLog vs MEL, enrichers, correlation IDs, semantic logging, sink configuration. Distinct from observability skill.\n6. **dotnet-linq-optimization** (`skills/core-csharp/`) \u2014 IQueryable vs IEnumerable, compiled queries, deferred execution pitfalls, allocation patterns, Span alternatives.\n7. **dotnet-gc-memory** (`skills/performance/`) \u2014 GC modes, LOH/POH, Gen0/1/2 tuning, Span/Memory deep patterns, ArrayPool/MemoryPool, memory profiling. Toub-grounded.\n8. **dotnet-aspire-patterns** (`skills/architecture/`) \u2014 .NET Aspire orchestration: AppHost, service discovery, component model, dashboard, health checks. Distinct from container skills.\n9. **dotnet-semantic-kernel** (`skills/architecture/`) \u2014 Semantic Kernel for AI/LLM orchestration: kernel setup, plugins, prompt templates, memory/vector stores, agents.\n\n## Design Constraints\n- Each skill description under 120 characters\n- Follow existing SKILL.md frontmatter pattern (name, description only)\n- Use `[skill:skill-name]` cross-reference syntax\n- All package version references use latest stable\n- No fn-N spec references in content\n- Skills must be self-contained\n- Register all new skills in `.claude-plugin/plugin.json`\n- If total budget exceeds 15,000 chars, slim descriptions across ALL skills (not just new ones)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\n./scripts/validate-marketplace.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] All 9 new skills created with valid SKILL.md frontmatter\n- [ ] All 9 skills registered in plugin.json\n- [ ] All cross-references valid\n- [ ] Description budget within 15,000 chars (or descriptions slimmed to fit)\n- [ ] No fn-N spec references in any content\n- [ ] All four validation commands pass\n\n## References\n- Stephen Toub IO.Pipelines: https://devblogs.microsoft.com/dotnet/system-io-pipelines-high-performance-io-in-net/\n- David Fowler AspNetCoreDiagnosticScenarios: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios\n- MassTransit: https://masstransit.io/\n- Azure Service Bus patterns: https://learn.microsoft.com/en-us/azure/service-bus-messaging/\n- Microsoft Semantic Kernel: https://learn.microsoft.com/en-us/semantic-kernel/\n- .NET Aspire: https://learn.microsoft.com/en-us/dotnet/aspire/\n"
+  },
+  "epic_id": "fn-39-skill-coverage-gap-fill",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:49.870540Z",
+        "depends_on": [],
+        "epic": "fn-39-skill-coverage-gap-fill",
+        "id": "fn-39-skill-coverage-gap-fill.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-39-skill-coverage-gap-fill.1.md",
+        "status": "todo",
+        "title": "Create dotnet-messaging-patterns and dotnet-io-pipelines skills",
+        "updated_at": "2026-02-14T22:36:10.410252Z"
+      },
+      "id": "fn-39-skill-coverage-gap-fill.1",
+      "runtime": null,
+      "spec": "# fn-39-skill-coverage-gap-fill.1 Create dotnet-messaging-patterns and dotnet-io-pipelines skills\n\n## Description\nCreate two new skills covering the highest-priority messaging and IO gaps:\n\n1. **dotnet-messaging-patterns** (`skills/architecture/dotnet-messaging-patterns/SKILL.md`) \u2014 Durable messaging patterns for .NET (pub/sub, competing consumers, dead-letter queues, saga/process manager, delivery guarantees). Covers Azure Service Bus, RabbitMQ, and MassTransit.\n2. **dotnet-io-pipelines** (`skills/core-csharp/dotnet-io-pipelines/SKILL.md`) \u2014 System.IO.Pipelines for high-performance network I/O (PipeReader, PipeWriter, backpressure, protocol parsers, Kestrel integration).\n\n**Size:** M\n**Files:** `skills/architecture/dotnet-messaging-patterns/SKILL.md`, `skills/core-csharp/dotnet-io-pipelines/SKILL.md`\n\n## Approach\n- Follow existing SKILL.md frontmatter pattern (name, description only)\n- Each description under 120 characters\n- dotnet-messaging-patterns cross-refs: `[skill:dotnet-background-services]`, `[skill:dotnet-resilience]`, `[skill:dotnet-serialization]`\n- dotnet-io-pipelines cross-refs: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-performance-patterns]`\n- dotnet-io-pipelines should reference Toub's IO.Pipelines blog post as a knowledge source\n- Use latest stable package versions for all NuGet references\n- No fn-N spec references in content\n- Both skills are self-contained \u2014 no external dependency\n## Acceptance\n- [ ] dotnet-messaging-patterns SKILL.md created with frontmatter\n- [ ] Covers pub/sub, competing consumers, DLQ, sagas, delivery guarantees\n- [ ] References Azure Service Bus, RabbitMQ, MassTransit\n- [ ] dotnet-io-pipelines SKILL.md created with frontmatter\n- [ ] Covers PipeReader/PipeWriter, backpressure, protocol parsers\n- [ ] Cross-references to related skills use `[skill:...]` syntax\n- [ ] Both descriptions under 120 characters\n- [ ] No fn-N spec references in content\n- [ ] Package versions are latest stable\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:50.905563Z",
+        "depends_on": [],
+        "epic": "fn-39-skill-coverage-gap-fill",
+        "id": "fn-39-skill-coverage-gap-fill.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-39-skill-coverage-gap-fill.2.md",
+        "status": "todo",
+        "title": "Create dotnet-middleware-authoring and dotnet-domain-modeling skills",
+        "updated_at": "2026-02-14T22:36:25.726141Z"
+      },
+      "id": "fn-39-skill-coverage-gap-fill.2",
+      "runtime": null,
+      "spec": "# fn-39-skill-coverage-gap-fill.2 Create dotnet-middleware-authoring and dotnet-domain-modeling skills\n\n## Description\nCreate two new skills covering middleware and domain modeling gaps:\n\n1. **dotnet-middleware-authoring** (`skills/api-development/dotnet-middleware-authoring/SKILL.md`) \u2014 ASP.NET Core middleware authoring patterns (IMiddleware vs RequestDelegate, pipeline ordering, branching with Map/MapWhen/UseWhen, endpoint routing integration, request/response buffering).\n2. **dotnet-domain-modeling** (`skills/architecture/dotnet-domain-modeling/SKILL.md`) \u2014 DDD tactical patterns in C# (aggregate roots, entities, value objects, domain events, integration events, repository pattern with EF Core and Dapper, rich vs anemic domain models).\n\n**Size:** M\n**Files:** `skills/api-development/dotnet-middleware-authoring/SKILL.md`, `skills/architecture/dotnet-domain-modeling/SKILL.md`\n\n## Approach\n- Follow existing SKILL.md frontmatter pattern (name, description only)\n- Each description under 120 characters\n- dotnet-middleware-authoring cross-refs: `[skill:dotnet-minimal-apis]`, `[skill:dotnet-api-security]`, `[skill:dotnet-csharp-dependency-injection]`\n- dotnet-middleware-authoring should reference Fowler's AspNetCoreDiagnosticScenarios and Lock's middleware blog as sources\n- dotnet-domain-modeling cross-refs: `[skill:dotnet-efcore-patterns]`, `[skill:dotnet-architecture-patterns]`, `[skill:dotnet-efcore-architecture]`\n- Use latest stable package versions\n- No fn-N spec references in content\n## Acceptance\n- [ ] dotnet-middleware-authoring SKILL.md created with frontmatter\n- [ ] Covers IMiddleware vs inline, pipeline ordering, branching, endpoint routing\n- [ ] dotnet-domain-modeling SKILL.md created with frontmatter\n- [ ] Covers aggregates, value objects, domain events, repository pattern\n- [ ] Cross-references to related skills use `[skill:...]` syntax\n- [ ] Both descriptions under 120 characters\n- [ ] No fn-N spec references in content\n- [ ] Package versions are latest stable\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:51.738378Z",
+        "depends_on": [
+          "fn-39-skill-coverage-gap-fill.1",
+          "fn-39-skill-coverage-gap-fill.2",
+          "fn-39-skill-coverage-gap-fill.4",
+          "fn-39-skill-coverage-gap-fill.5"
+        ],
+        "epic": "fn-39-skill-coverage-gap-fill",
+        "id": "fn-39-skill-coverage-gap-fill.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-39-skill-coverage-gap-fill.3.md",
+        "status": "todo",
+        "title": "Register skills, update advisor catalog, and validate budget",
+        "updated_at": "2026-02-14T23:12:07.573337Z"
+      },
+      "id": "fn-39-skill-coverage-gap-fill.3",
+      "runtime": null,
+      "spec": "# fn-39-skill-coverage-gap-fill.3 Register skills, update advisor catalog, and validate budget\n\n## Description\nRegister all 9 new skills in `.claude-plugin/plugin.json`, update the dotnet-advisor catalog to route to them, and verify the total description budget remains within the 15,000-character limit.\n\n**Size:** M\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `AGENTS.md`\n\n## Approach\n- Add all 9 new skill paths to the `skills` array in `.claude-plugin/plugin.json`:\n  - `skills/architecture/dotnet-messaging-patterns`\n  - `skills/core-csharp/dotnet-io-pipelines`\n  - `skills/api-development/dotnet-middleware-authoring`\n  - `skills/architecture/dotnet-domain-modeling`\n  - `skills/architecture/dotnet-structured-logging`\n  - `skills/core-csharp/dotnet-linq-optimization`\n  - `skills/performance/dotnet-gc-memory`\n  - `skills/architecture/dotnet-aspire-patterns`\n  - `skills/architecture/dotnet-semantic-kernel`\n- Update `dotnet-advisor` skill catalog with routing entries for all 9 skills\n- Run `python3 scripts/generate_dist.py --strict` to verify budget: 9 skills x ~120 chars = ~1,080 chars\n- If budget exceeds 15,000 after combining with fn-31-36 additions, slim descriptions across ALL skills to fit (target <100 chars each where possible)\n- Run all four validation commands\n- Verify all cross-references resolve\n## Approach\n- Add all 4 new skill paths to the `skills` array in `.claude-plugin/plugin.json`\n- Update `dotnet-advisor` skill catalog with routing entries for messaging, IO.Pipelines, middleware, domain modeling\n- Run `python3 scripts/generate_dist.py --strict` to verify budget: 4 new skills x ~120 chars = ~480 chars added\n- If budget exceeds 15,000, flag which skills have descriptions that can be shortened\n- Run all four validation commands\n- Verify all cross-references resolve\n## Acceptance\n- [ ] All 9 new skills registered in `.claude-plugin/plugin.json`\n- [ ] dotnet-advisor catalog updated with routing for all 9 new skills\n- [ ] Total description budget within 15,000 chars (verified by generate_dist.py)\n- [ ] If budget tight, descriptions slimmed across all skills to fit\n- [ ] All cross-references resolve (validated by validate-skills.sh)\n- [ ] All four validation commands pass\n- [ ] No fn-N spec references in content\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T23:10:16.743575Z",
+        "depends_on": [],
+        "epic": "fn-39-skill-coverage-gap-fill",
+        "id": "fn-39-skill-coverage-gap-fill.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-39-skill-coverage-gap-fill.4.md",
+        "status": "todo",
+        "title": "Create dotnet-structured-logging, dotnet-linq-optimization, and dotnet-gc-memory skills",
+        "updated_at": "2026-02-14T23:11:34.428849Z"
+      },
+      "id": "fn-39-skill-coverage-gap-fill.4",
+      "runtime": null,
+      "spec": "# fn-39-skill-coverage-gap-fill.4 Create dotnet-structured-logging, dotnet-linq-optimization, and dotnet-gc-memory skills\n\n## Description\nCreate 3 new skills covering logging, LINQ, and memory management gaps:\n\n1. **dotnet-structured-logging** (`skills/architecture/dotnet-structured-logging/SKILL.md`) \u2014 Structured logging deep dive: Serilog vs NLog vs Microsoft.Extensions.Logging, log enrichers, semantic logging, correlation IDs, log levels strategy, structured query patterns, sink configuration. Distinct from dotnet-observability (which covers OpenTelemetry/distributed tracing).\n2. **dotnet-linq-optimization** (`skills/core-csharp/dotnet-linq-optimization/SKILL.md`) \u2014 LINQ performance patterns: IQueryable vs IEnumerable materialization, compiled queries for EF Core, deferred execution pitfalls, LINQ-to-Objects allocation patterns, when to drop to manual loops, Span-based alternatives.\n3. **dotnet-gc-memory** (`skills/performance/dotnet-gc-memory/SKILL.md`) \u2014 GC and memory management: GC modes (workstation vs server), LOH/POH, Gen0/1/2 tuning, memory pressure, Span<T>/Memory<T> deep patterns beyond basics, ArrayPool/MemoryPool, weak references, finalizers vs IDisposable, memory profiling with dotMemory/PerfView.\n\n**Size:** M\n**Files:** `skills/architecture/dotnet-structured-logging/SKILL.md`, `skills/core-csharp/dotnet-linq-optimization/SKILL.md`, `skills/performance/dotnet-gc-memory/SKILL.md`\n\n## Approach\n- Follow existing SKILL.md frontmatter pattern (name, description only)\n- Each description under 120 characters\n- dotnet-structured-logging cross-refs: `[skill:dotnet-observability]`, `[skill:dotnet-csharp-configuration]`\n- dotnet-linq-optimization cross-refs: `[skill:dotnet-efcore-patterns]`, `[skill:dotnet-performance-patterns]`\n- dotnet-gc-memory cross-refs: `[skill:dotnet-performance-patterns]`, `[skill:dotnet-profiling]`\n- dotnet-gc-memory should reference Toub's GC/performance blog posts as knowledge source\n- No fn-N spec references, latest stable package versions\n## Acceptance\n- [ ] dotnet-structured-logging SKILL.md created with frontmatter\n- [ ] Covers Serilog, NLog, MEL, enrichers, correlation IDs, sinks\n- [ ] Distinct from dotnet-observability (no overlap)\n- [ ] dotnet-linq-optimization SKILL.md created with frontmatter\n- [ ] Covers IQueryable vs IEnumerable, compiled queries, allocation patterns\n- [ ] dotnet-gc-memory SKILL.md created with frontmatter\n- [ ] Covers GC modes, LOH/POH, Span/Memory deep patterns, memory profiling\n- [ ] All cross-references use `[skill:...]` syntax\n- [ ] All descriptions under 120 characters\n- [ ] No fn-N spec references\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T23:10:18.432095Z",
+        "depends_on": [],
+        "epic": "fn-39-skill-coverage-gap-fill",
+        "id": "fn-39-skill-coverage-gap-fill.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-39-skill-coverage-gap-fill.5.md",
+        "status": "todo",
+        "title": "Create dotnet-aspire-patterns and dotnet-semantic-kernel skills",
+        "updated_at": "2026-02-14T23:11:49.782566Z"
+      },
+      "id": "fn-39-skill-coverage-gap-fill.5",
+      "runtime": null,
+      "spec": "# fn-39-skill-coverage-gap-fill.5 Create dotnet-aspire-patterns and dotnet-semantic-kernel skills\n\n## Description\nCreate 2 new skills covering cloud orchestration and AI integration gaps:\n\n1. **dotnet-aspire-patterns** (`skills/architecture/dotnet-aspire-patterns/SKILL.md`) \u2014 .NET Aspire orchestration patterns: AppHost configuration, service discovery, component model, health checks, distributed tracing integration, local development with dashboard, Aspire vs manual container orchestration, when to use Aspire.\n2. **dotnet-semantic-kernel** (`skills/architecture/dotnet-semantic-kernel/SKILL.md`) \u2014 Microsoft Semantic Kernel for AI/LLM orchestration in .NET: kernel setup, plugin/function calling, prompt templates, memory/vector stores, planners, agents, integration with Azure OpenAI and local models. Covers the AI integration pattern that .NET developers need.\n\n**Size:** M\n**Files:** `skills/architecture/dotnet-aspire-patterns/SKILL.md`, `skills/architecture/dotnet-semantic-kernel/SKILL.md`\n\n## Approach\n- Follow existing SKILL.md frontmatter pattern (name, description only)\n- Each description under 120 characters\n- dotnet-aspire-patterns cross-refs: `[skill:dotnet-containers]`, `[skill:dotnet-observability]`, `[skill:dotnet-csharp-dependency-injection]`\n- dotnet-semantic-kernel cross-refs: `[skill:dotnet-csharp-async-patterns]`, `[skill:dotnet-csharp-dependency-injection]`\n- Use latest stable package versions (Aspire 9.x, Semantic Kernel 1.x)\n- No fn-N spec references\n- Aspire skill is distinct from existing container skills (those cover Docker/K8s directly, Aspire covers the orchestration abstraction)\n## Acceptance\n- [ ] dotnet-aspire-patterns SKILL.md created with frontmatter\n- [ ] Covers AppHost, service discovery, component model, dashboard, health checks\n- [ ] Distinct from dotnet-containers (orchestration abstraction vs raw Docker/K8s)\n- [ ] dotnet-semantic-kernel SKILL.md created with frontmatter\n- [ ] Covers kernel setup, plugins, prompt templates, memory stores, agents\n- [ ] All cross-references use `[skill:...]` syntax\n- [ ] All descriptions under 120 characters\n- [ ] Latest stable package versions\n- [ ] No fn-N spec references\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

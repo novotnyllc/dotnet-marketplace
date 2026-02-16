@@ -282,3 +282,6 @@ flowctl epic set-plan may silently fail to write spec file -- always verify with
 
 ## 2026-02-15 manual [pitfall]
 ApiCompatSuppressionFile is an MSBuild ItemGroup item, not a PropertyGroup property -- using PropertyGroup syntax silently does nothing; use <ItemGroup><ApiCompatSuppressionFile Include="..." /></ItemGroup>
+
+## 2026-02-16 manual [pitfall]
+Before adding a new skill, always check existing skills for content overlap — existing dotnet-middleware-patterns covered 100% of proposed dotnet-middleware-authoring content
