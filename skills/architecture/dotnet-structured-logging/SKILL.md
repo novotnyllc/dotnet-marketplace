@@ -80,19 +80,9 @@ App (Serilog) --> Seq / Elasticsearch sink
 
 For smaller systems or development environments, Serilog sinks write directly to the aggregation platform. This avoids the OTel Collector but couples the application to the backend.
 
-### .NET Application Configuration for OTLP Export
+### .NET Application OTLP Configuration
 
-```csharp
-// Program.cs -- emit logs via OTLP to the collector
-builder.Logging.AddOpenTelemetry(logging =>
-{
-    logging.IncludeScopes = true;
-    logging.IncludeFormattedMessage = true;
-    logging.AddOtlpExporter();
-});
-```
-
-The OTLP endpoint is configured via environment variables (see [skill:dotnet-observability] for `OTEL_EXPORTER_OTLP_ENDPOINT` setup). This keeps application code backend-agnostic.
+For .NET application-side OTLP log export configuration (`builder.Logging.AddOpenTelemetry()`), see [skill:dotnet-observability]. The OTLP endpoint is configured via environment variables (`OTEL_EXPORTER_OTLP_ENDPOINT`), keeping application code backend-agnostic.
 
 ---
 
@@ -182,25 +172,32 @@ High-throughput systems can generate millions of log events per minute. Without 
 | **Level-based** | Sample by severity | Always keep Warning+, sample Debug/Info |
 | **Dynamic** | Adjust rate based on volume | Handle traffic spikes without config changes |
 
-### OTel Collector Tail Sampling
+### OTel Collector Log Filtering
+
+The `filter` processor in the OTel Collector drops log records at the pipeline level before they reach exporters. Use it to exclude noisy low-severity logs and reduce storage volume.
+
+Note: The `tail_sampling` processor operates on **traces** (spans), not logs. For log volume management, use the `filter` and `transform` processors instead.
 
 ```yaml
 processors:
-  tail_sampling:
-    decision_wait: 10s
-    policies:
-      # Always keep errors
-      - name: errors-policy
-        type: status_code
-        status_code: { status_codes: [ERROR] }
-      # Always keep slow operations
-      - name: latency-policy
-        type: latency
-        latency: { threshold_ms: 5000 }
-      # Sample 10% of normal operations
-      - name: probabilistic-policy
-        type: probabilistic
-        probabilistic: { sampling_percentage: 10 }
+  filter:
+    logs:
+      exclude:
+        match_type: regexp
+        # Drop Debug and Trace logs at the collector level
+        severity_texts: ["DEBUG", "TRACE"]
+      exclude:
+        match_type: strict
+        # Exclude health check noise
+        bodies:
+          - "Health check endpoint hit"
+  transform:
+    log_statements:
+      - context: log
+        conditions:
+          # Keep all Warning+ logs unconditionally
+          - severity_number >= SEVERITY_NUMBER_WARN
+        statements: []
 ```
 
 ### Application-Level Sampling with Serilog
@@ -238,47 +235,6 @@ builder.Host.UseSerilog((context, loggerConfiguration) =>
 ## PII Scrubbing and Destructuring Policies
 
 Logs must not contain personally identifiable information (PII) in production. GDPR, HIPAA, and SOC 2 require that sensitive data is masked or excluded from log storage.
-
-### Serilog Destructuring Policies
-
-```csharp
-// Custom destructuring policy to mask sensitive properties
-public sealed class PiiDestructuringPolicy : IDestructuringPolicy
-{
-    private static readonly HashSet<string> s_sensitiveProperties = new(
-        StringComparer.OrdinalIgnoreCase)
-    {
-        "Password", "Secret", "Token", "CreditCard",
-        "SSN", "SocialSecurityNumber", "CardNumber",
-        "Authorization", "Cookie"
-    };
-
-    public bool TryDestructure(
-        object value,
-        ILogEventPropertyValueFactory propertyValueFactory,
-        [NotNullWhen(true)] out LogEventPropertyValue? result)
-    {
-        result = null;
-
-        if (value is not string)
-            return false;
-
-        // This policy is registered globally; individual log
-        // statements do not need to opt in.
-        return false;
-    }
-}
-
-// Extension method for registration
-public static class SerilogPiiExtensions
-{
-    public static LoggerConfiguration MaskSensitiveProperties(
-        this LoggerConfiguration configuration)
-    {
-        return configuration.Destructure.With<PiiDestructuringPolicy>();
-    }
-}
-```
 
 ### Property-Level Masking with Enrichers
 
@@ -414,7 +370,7 @@ processor.ProcessMessageAsync += async args =>
     });
 
     logger.LogInformation("Processing message {MessageId}", args.Message.MessageId);
-    await ProcessAsync(args.Message);
+    await ProcessAsync(args.Message, args.CancellationToken);
 };
 ```
 

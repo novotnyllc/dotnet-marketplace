@@ -571,5 +571,5 @@ PerfView.exe /ClrEvents:GC+Stack /MaxCollectSec:30 collect
 - [ArrayPool<T> class](https://learn.microsoft.com/en-us/dotnet/api/system.buffers.arraypool-1)
 - [GC.GetGCMemoryInfo](https://learn.microsoft.com/en-us/dotnet/api/system.gc.getgcmemoryinfo)
 - [PerfView GC analysis tutorial](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/debug-highcpu?tabs=windows#analyze-with-perfview)
-- [Stephen Toub -- Performance improvements in .NET](https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-8/)
+- [Stephen Toub -- Performance Improvements in .NET series](https://devblogs.microsoft.com/dotnet/author/toub/) (published annually)
 - [IDisposable pattern](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose)

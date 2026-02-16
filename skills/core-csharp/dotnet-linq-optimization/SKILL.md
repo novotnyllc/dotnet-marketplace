@@ -151,23 +151,23 @@ var count = items.Count;           // In-memory, no SQL
 ### Closure Capture in Loops
 
 ```csharp
-// BUG: All queries capture the same variable reference
+// BUG: All queries capture the same loop variable 'i' by reference
 var queries = new List<IQueryable<Order>>();
-foreach (var status in statuses)
+for (int i = 0; i < statuses.Length; i++)
 {
-    queries.Add(dbContext.Orders.Where(o => o.Status == status));
-    // 'status' is captured by reference -- all queries use final value
+    queries.Add(dbContext.Orders.Where(o => o.Status == statuses[i]));
+    // 'i' is captured by reference -- all queries use final value of i
 }
 
-// FIX: Use a local copy
-foreach (var status in statuses)
+// FIX: Copy to a local variable inside the loop body
+for (int i = 0; i < statuses.Length; i++)
 {
-    var localStatus = status;
+    var localStatus = statuses[i];
     queries.Add(dbContext.Orders.Where(o => o.Status == localStatus));
 }
 ```
 
-Note: In C# 5+ `foreach` loop variables are scoped per iteration, so this particular bug applies mainly to `for` loops with index variables. The pattern remains important when capturing any mutable variable in a LINQ closure.
+Note: C# 5+ `foreach` loop variables are scoped per iteration and do not exhibit this bug. The `for` loop index variable is shared across iterations, making this a common pitfall when building deferred LINQ queries in a loop.
 
 ### Deferred Execution in Method Returns
 
@@ -367,13 +367,13 @@ var page = await dbContext.Orders
 ### Batch Operations
 
 ```csharp
-// BAD: N+1 update (one SaveChanges per item)
+// BAD: N UPDATE statements (one per tracked entity change)
 foreach (var order in orders)
 {
     order.Status = OrderStatus.Archived;
 }
 await dbContext.SaveChangesAsync(ct);
-// Generates N UPDATE statements
+// Generates N individual UPDATE statements in a single round-trip
 
 // GOOD: EF Core 7+ ExecuteUpdateAsync (single SQL statement)
 await dbContext.Orders
