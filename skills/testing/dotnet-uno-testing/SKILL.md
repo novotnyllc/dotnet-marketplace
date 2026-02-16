@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-testing
-description: "WHEN testing Uno Platform apps. Playwright for WASM, platform-specific testing patterns, runtime head validation."
+description: "WHEN testing Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads."
 ---
 
 # dotnet-uno-testing

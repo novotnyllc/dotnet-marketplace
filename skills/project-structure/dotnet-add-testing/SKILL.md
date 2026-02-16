@@ -1,6 +1,6 @@
 ---
 name: dotnet-add-testing
-description: "WHEN adding test infrastructure to an existing .NET project. Scaffolds xUnit project, coverlet, directory layout."
+description: "WHEN adding test infrastructure to a .NET project. Scaffolds xUnit project, coverlet, layout."
 ---
 
 # dotnet-add-testing

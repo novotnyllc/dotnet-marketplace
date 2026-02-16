@@ -1,6 +1,6 @@
 ---
 name: dotnet-observability
-description: "WHEN adding observability. OpenTelemetry traces/metrics/logs, structured logging, health checks, custom metrics."
+description: "WHEN adding observability. OpenTelemetry traces/metrics/logs, health checks, custom metrics."
 ---
 
 # dotnet-observability

@@ -1,6 +1,6 @@
 ---
 name: dotnet-roslyn-analyzers
-description: "WHEN authoring custom Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoringProvider, multi-version."
+description: "WHEN authoring Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version."
 ---
 
 # dotnet-roslyn-analyzers

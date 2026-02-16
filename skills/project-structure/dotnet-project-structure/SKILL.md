@@ -1,6 +1,6 @@
 ---
 name: dotnet-project-structure
-description: "WHEN setting up or reviewing .NET solution layout. Covers .slnx, Directory.Build.props, CPM, .editorconfig, analyzers."
+description: "WHEN setting up .NET solution layout. .slnx, Directory.Build.props, CPM, .editorconfig, analyzers."
 ---
 
 # dotnet-project-structure

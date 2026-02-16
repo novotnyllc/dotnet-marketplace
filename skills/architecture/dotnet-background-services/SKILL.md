@@ -1,6 +1,6 @@
 ---
 name: dotnet-background-services
-description: "WHEN implementing background work. BackgroundService, IHostedService, hosted service lifecycle, graceful shutdown."
+description: "WHEN implementing background work. BackgroundService, IHostedService, lifecycle, graceful shutdown."
 ---
 
 # dotnet-background-services

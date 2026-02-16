@@ -1,6 +1,6 @@
 ---
 name: dotnet-localization
-description: "WHEN localizing .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL, UI frameworks."
+description: "WHEN localizing .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL."
 ---
 
 # dotnet-localization

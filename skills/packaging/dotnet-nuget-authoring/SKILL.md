@@ -1,6 +1,6 @@
 ---
 name: dotnet-nuget-authoring
-description: "WHEN creating NuGet packages. SDK-style csproj metadata, source generators, multi-TFM, symbols, signing, validation."
+description: "WHEN creating NuGet packages. SDK-style csproj, source generators, multi-TFM, symbols, signing."
 ---
 
 # dotnet-nuget-authoring

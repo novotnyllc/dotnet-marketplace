@@ -1,6 +1,6 @@
 ---
 name: dotnet-editorconfig
-description: "WHEN configuring .NET code style and quality rules. EditorConfig, IDE/CA rules, severity, AnalysisLevel, globalconfig."
+description: "WHEN configuring .NET code style/quality rules. EditorConfig, IDE/CA rules, AnalysisLevel, globalconfig."
 ---
 
 # dotnet-editorconfig

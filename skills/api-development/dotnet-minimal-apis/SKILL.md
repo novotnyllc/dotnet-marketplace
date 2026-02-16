@@ -1,6 +1,6 @@
 ---
 name: dotnet-minimal-apis
-description: "WHEN building HTTP APIs with Minimal APIs. Route groups, endpoint filters, TypedResults, OpenAPI 3.1, organization."
+description: "WHEN building Minimal APIs. Route groups, endpoint filters, TypedResults, OpenAPI 3.1, organization."
 ---
 
 # dotnet-minimal-apis

@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-testing
-description: "WHEN testing .NET MAUI apps. Appium device/emulator testing, XHarness execution, platform-specific validation."
+description: "WHEN testing .NET MAUI apps. Appium device/emulator testing, XHarness, platform validation."
 ---
 
 # dotnet-maui-testing

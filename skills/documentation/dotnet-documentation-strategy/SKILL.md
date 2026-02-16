@@ -1,6 +1,6 @@
 ---
 name: dotnet-documentation-strategy
-description: "WHEN choosing documentation tooling. Starlight, Docusaurus, DocFX decision tree, MarkdownSnippets, migration paths."
+description: "WHEN choosing documentation tooling. Starlight, Docusaurus, DocFX decision tree, migration paths."
 ---
 
 # dotnet-documentation-strategy

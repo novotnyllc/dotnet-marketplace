@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-versioning
-description: "WHEN versioning HTTP APIs. Asp.Versioning.Http/Mvc, URL segment (preferred), header, query string, sunset policies."
+description: "WHEN versioning HTTP APIs. Asp.Versioning.Http/Mvc, URL segment, header, query string, sunset."
 ---
 
 # dotnet-api-versioning

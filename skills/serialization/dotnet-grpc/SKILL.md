@@ -1,6 +1,6 @@
 ---
 name: dotnet-grpc
-description: "WHEN building gRPC services. Proto definition, code-gen, ASP.NET Core server, Grpc.Net.Client, streaming, auth."
+description: "WHEN building gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth."
 ---
 
 # dotnet-grpc

@@ -1,6 +1,6 @@
 ---
 name: dotnet-csproj-reading
-description: "WHEN reading or modifying .csproj files. SDK-style structure, PropertyGroup/ItemGroup, conditions, CPM, build props."
+description: "WHEN reading or modifying .csproj files. SDK-style structure, PropertyGroup/ItemGroup, CPM, props."
 ---
 
 # dotnet-csproj-reading

@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-platform
-description: "WHEN building Uno Platform apps. Extensions ecosystem, MVUX reactive pattern, Toolkit controls, themes, Hot Reload."
+description: "WHEN building Uno Platform apps. Extensions, MVUX reactive pattern, Toolkit controls, Hot Reload."
 ---
 
 # dotnet-uno-platform

@@ -1,6 +1,6 @@
 ---
 name: dotnet-input-validation
-description: "WHEN validating API inputs. .NET 10 AddValidation, FluentValidation, Data Annotations, endpoint filters, ProblemDetails."
+description: "WHEN validating API inputs. .NET 10 AddValidation, FluentValidation, Data Annotations, ProblemDetails."
 ---
 
 # dotnet-input-validation

@@ -1,6 +1,6 @@
 ---
 name: dotnet-playwright
-description: "WHEN automating browser tests in .NET. Playwright E2E testing, CI browser caching, trace viewer, codegen scaffolding."
+description: "WHEN automating browser tests in .NET. Playwright E2E, CI browser caching, trace viewer, codegen."
 ---
 
 # dotnet-playwright

@@ -1,6 +1,6 @@
 ---
 name: dotnet-aot-wasm
-description: "WHEN AOT-compiling for WebAssembly. Blazor/Uno WASM AOT, size vs speed tradeoffs, lazy loading, Brotli compression."
+description: "WHEN AOT-compiling for WebAssembly. Blazor/Uno WASM AOT, size vs speed, lazy loading, Brotli."
 ---
 
 # dotnet-aot-wasm

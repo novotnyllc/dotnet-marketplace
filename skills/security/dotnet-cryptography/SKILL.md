@@ -1,6 +1,6 @@
 ---
 name: dotnet-cryptography
-description: "WHEN choosing cryptographic algorithms, hashing, encryption, or key derivation in .NET. AES-GCM, RSA, ECDSA, PQC."
+description: "WHEN choosing crypto algorithms, hashing, encryption, or key derivation. AES-GCM, RSA, ECDSA, PQC."
 ---
 
 # dotnet-cryptography

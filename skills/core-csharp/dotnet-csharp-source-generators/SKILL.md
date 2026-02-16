@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-source-generators
-description: "WHEN creating or consuming source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ source-gen."
+description: "WHEN creating source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ source-gen."
 ---
 
 # dotnet-csharp-source-generators

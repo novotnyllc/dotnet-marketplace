@@ -1,6 +1,6 @@
 ---
 name: dotnet-native-aot
-description: "WHEN publishing Native AOT apps. PublishAot, ILLink descriptors, P/Invoke, size optimization, runtime-deps containers."
+description: "WHEN publishing Native AOT. PublishAot, ILLink descriptors, P/Invoke, size optimization, containers."
 ---
 
 # dotnet-native-aot

@@ -1,6 +1,6 @@
 ---
 name: dotnet-resilience
-description: "WHEN adding fault tolerance. Polly v8 + MS.Extensions.Http.Resilience, standard pipeline, retry/circuit breaker/timeout."
+description: "WHEN adding fault tolerance. Polly v8 + MS.Extensions.Http.Resilience, retry/circuit breaker/timeout."
 ---
 
 # dotnet-resilience

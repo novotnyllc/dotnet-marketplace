@@ -1,6 +1,6 @@
 ---
 name: dotnet-add-ci
-description: "WHEN adding starter CI/CD to a .NET project. Detects GitHub Actions vs Azure DevOps, provides workflow templates."
+description: "WHEN adding CI/CD to a .NET project. GitHub Actions vs Azure DevOps detection, workflow templates."
 ---
 
 # dotnet-add-ci

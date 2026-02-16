@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-distribution
-description: "WHEN shipping CLI tools. AOT vs framework-dependent vs dotnet tool, RID matrix, single-file publish, size tuning."
+description: "WHEN shipping CLI tools. AOT vs framework-dependent vs dotnet tool, RID matrix, single-file."
 ---
 
 # dotnet-cli-distribution

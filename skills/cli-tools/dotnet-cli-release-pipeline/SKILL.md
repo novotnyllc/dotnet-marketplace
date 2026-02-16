@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-release-pipeline
-description: "WHEN releasing CLI tools. GitHub Actions build matrix, artifact staging, GitHub Releases, checksums, package PRs."
+description: "WHEN releasing CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums."
 ---
 
 # dotnet-cli-release-pipeline

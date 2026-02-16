@@ -1,6 +1,6 @@
 ---
 name: dotnet-agent-gotchas
-description: "WHEN generating or modifying .NET code. Catches common agent mistakes: async, NuGet, deprecated APIs, trimming, DI."
+description: "WHEN generating or modifying .NET code. Common agent mistakes: async, NuGet, deprecated APIs, DI."
 ---
 
 # dotnet-agent-gotchas

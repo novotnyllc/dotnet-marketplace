@@ -1,6 +1,6 @@
 ---
 name: dotnet-performance-patterns
-description: "WHEN optimizing .NET allocations/throughput. Span, ArrayPool, readonly/ref struct, sealed devirtualization, stackalloc."
+description: "WHEN optimizing .NET allocations/throughput. Span, ArrayPool, ref struct, sealed, stackalloc."
 ---
 
 # dotnet-performance-patterns

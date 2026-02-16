@@ -1,6 +1,6 @@
 ---
 name: dotnet-security-owasp
-description: "WHEN writing secure .NET code or reviewing for vulnerabilities. OWASP Top 10 mitigations, deprecated pattern warnings."
+description: "WHEN securing .NET code or reviewing for vulnerabilities. OWASP Top 10 mitigations, pattern warnings."
 ---
 
 # dotnet-security-owasp

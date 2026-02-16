@@ -1,6 +1,6 @@
 ---
 name: dotnet-aot-architecture
-description: "WHEN designing AOT-first apps. Source gen over reflection, AOT-safe DI, serialization choices, factory patterns."
+description: "WHEN designing AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories."
 ---
 
 # dotnet-aot-architecture

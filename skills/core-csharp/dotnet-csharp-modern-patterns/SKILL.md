@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-modern-patterns
-description: "WHEN using records, pattern matching, primary constructors, collection expressions, or field keyword. C# 12-15 by TFM."
+description: "WHEN using records, pattern matching, primary constructors, collection expressions. C# 12-15 by TFM."
 ---
 
 # dotnet-csharp-modern-patterns

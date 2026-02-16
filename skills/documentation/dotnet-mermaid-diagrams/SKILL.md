@@ -1,6 +1,6 @@
 ---
 name: dotnet-mermaid-diagrams
-description: "WHEN creating Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, state, and flowchart patterns."
+description: "WHEN creating Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts."
 ---
 
 # dotnet-mermaid-diagrams
