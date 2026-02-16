@@ -20,6 +20,16 @@ tools:
 
 Test architecture and strategy subagent for .NET projects. Performs read-only analysis of test suites, project structure, and testing patterns to recommend test pyramid design, test type selection, data management strategies, and microservice testing approaches. Focuses on structural and strategic concerns -- not on framework-specific syntax.
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Microsoft .NET Testing Best Practices** -- Official guidance on test organization, naming conventions, and test type selection for .NET applications. Source: https://learn.microsoft.com/en-us/dotnet/core/testing/best-practices
+- **xUnit Documentation and Patterns** -- Test framework conventions, fixture lifecycle, parallelization, and trait-based categorization. Source: https://xunit.net/
+- **Testcontainers for .NET** -- Integration testing with real infrastructure using disposable Docker containers. Source: https://dotnet.testcontainers.org/
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
 ## Preloaded Skills
 
 Always load these skills before analysis:

@@ -20,6 +20,16 @@ tools:
 
 General-purpose code review subagent for .NET projects. Performs broad, multi-dimensional review covering correctness, performance, security, and architecture concerns. Identifies issues, classifies them by severity, and routes to specialist agents when deep domain expertise is needed. Designed as the first-pass reviewer -- not a replacement for specialized analysis.
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Microsoft C# Coding Conventions** -- Official naming, formatting, and language usage guidelines for C# code. Source: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
+- **Microsoft .NET Code Analysis** -- Built-in Roslyn analyzers, code quality rules, and style enforcement. Source: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview
+- **Microsoft .NET Architecture Guides** -- Reference architectures for microservices, web apps, and cloud-native .NET applications. Source: https://dotnet.microsoft.com/en-us/learn/dotnet/architecture-guides
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
 ## Preloaded Skills
 
 Always load these skills before review:

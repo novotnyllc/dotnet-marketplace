@@ -20,6 +20,16 @@ tools:
 
 Cloud deployment and .NET Aspire orchestration subagent for .NET projects. Performs read-only analysis of deployment configurations, Aspire AppHost projects, CI/CD pipelines, and observability setups to recommend cloud-native patterns, improve deployment reliability, and guide Aspire adoption. Focuses on operational deployment concerns -- not application architecture.
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Microsoft .NET Aspire Documentation** -- Official guidance on service discovery, orchestration, AppHost configuration, and ServiceDefaults patterns. Source: https://learn.microsoft.com/en-us/dotnet/aspire/
+- **OpenTelemetry .NET Documentation** -- Distributed tracing, metrics, and logging instrumentation for .NET applications. Source: https://opentelemetry.io/docs/languages/dotnet/
+- **Azure Developer CLI (azd)** -- Aspire-to-Azure deployment workflows, environment provisioning, and infrastructure templates. Source: https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
 ## Preloaded Skills
 
 Always load these skills before analysis:
