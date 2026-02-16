@@ -30,9 +30,8 @@ Create two new skills covering the highest-priority messaging and IO gaps:
 - [ ] No fn-N spec references in content
 - [ ] Package versions are latest stable
 ## Done summary
-TBD
-
+Created dotnet-messaging-patterns (pub/sub, competing consumers, DLQ, sagas, delivery guarantees with Azure Service Bus, RabbitMQ, MassTransit) and dotnet-io-pipelines (PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel integration with Toub knowledge source). Both skills pass all validation and received SHIP from RP review.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ccc91b83c1e76b33da28c3e87e516fddbed6e5a1, 70090aac947f4d151b1b1f70c0b4780e0762b064
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

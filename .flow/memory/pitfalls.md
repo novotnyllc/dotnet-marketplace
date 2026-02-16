@@ -285,3 +285,6 @@ ApiCompatSuppressionFile is an MSBuild ItemGroup item, not a PropertyGroup prope
 
 ## 2026-02-16 manual [pitfall]
 Before adding a new skill, always check existing skills for content overlap — existing dotnet-middleware-patterns covered 100% of proposed dotnet-middleware-authoring content
+
+## 2026-02-16 manual [pitfall]
+Azure.Messaging.ServiceBus 7.x uses ServiceBusReceiverOptions with SubQueue.DeadLetter to access DLQ -- do not use EntityNameHelper.FormatDeadLetterPath which belongs to the older Microsoft.Azure.ServiceBus package
