@@ -84,9 +84,8 @@ Trim skill descriptions across all registered skills to bring the aggregate desc
 - [ ] `python3 scripts/generate_dist.py --strict` passes (cross-ref validation)
 - [ ] No description trimming degrades triggering quality (reviewer judgment)
 ## Done summary
-TBD
-
+Trimmed 84 skill descriptions from 13,481 to 11,948 total chars (below 12,000 WARN threshold), updated --projected-skills from 100 to 121, and fixed 2 bare cross-refs in dotnet-library-api-compat to use [skill:] syntax. Quality-checked all 12 new skills from fn-30-fn-36: all follow [What]+[When] formula and use proper cross-ref syntax.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 4c1812431e5227d21a1a27b637d8a91ccf0a2527
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
