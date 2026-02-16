@@ -34,3 +34,10 @@ python3 scripts/generate_dist.py --strict
 - [ ] MTP2 runner flag documented in testing defaults
 - [ ] Package versions updated to latest stable where referenced
 - [ ] All four validation commands pass
+
+## Evidence
+- Commits: 5ed549d, 3050628
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
+- PRs:
+## Done summary
+Updated all testing-related skills to use xUnit v3 (xunit.v3 3.2.2) with latest package versions (xunit.runner.visualstudio 3.1.5, Microsoft.NET.Test.Sdk 18.0.1, coverlet.collector 8.0.0), replaced all xunit v2 package references, and added MTP2 runner flag (UseMicrosoftTestingPlatformRunner) to scaffolding skills.
