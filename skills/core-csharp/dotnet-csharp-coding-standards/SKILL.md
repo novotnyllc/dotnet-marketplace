@@ -7,7 +7,7 @@ description: "WHEN writing or reviewing C# for naming, style, or file organizati
 
 Modern .NET coding standards based on Microsoft Framework Design Guidelines and C# Coding Conventions. This skill covers naming, file organization, and code style rules that agents should follow when generating or reviewing C# code.
 
-Cross-references: [skill:dotnet-csharp-modern-patterns] for language feature usage, [skill:dotnet-csharp-async-patterns] for async naming conventions.
+Cross-references: [skill:dotnet-csharp-modern-patterns] for language feature usage, [skill:dotnet-csharp-async-patterns] for async naming conventions, [skill:dotnet-solid-principles] for SOLID, DRY, and SRP design principles at the class and interface level.
 
 ---
 
@@ -257,6 +257,8 @@ public sealed override string ToString() => Name;
 ---
 
 ## Type Design
+
+These conventions implement SOLID and DRY principles at the code level. For comprehensive coverage with anti-patterns and fixes, see [skill:dotnet-solid-principles].
 
 ### Seal Classes by Default
 

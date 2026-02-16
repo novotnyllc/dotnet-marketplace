@@ -9,7 +9,7 @@ Modern architecture patterns for .NET applications. Covers practical approaches 
 
 **Out of scope:** DI container mechanics and async/await patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Project scaffolding and file layout -- see [skill:dotnet-scaffold-project]. Testing strategies -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for WebApplicationFactory patterns.
 
-Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and lifetimes, [skill:dotnet-csharp-async-patterns] for async pipeline patterns, [skill:dotnet-csharp-configuration] for Options pattern in configuration.
+Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and lifetimes, [skill:dotnet-csharp-async-patterns] for async pipeline patterns, [skill:dotnet-csharp-configuration] for Options pattern in configuration, [skill:dotnet-solid-principles] for SOLID/DRY design principles governing class and interface design.
 
 ---
 
@@ -268,7 +268,27 @@ return result switch
 
 ## Validation Strategy
 
-### FluentValidation Integration
+Choose validation based on complexity. Prefer built-in mechanisms as the default; reserve FluentValidation for complex business rules that outgrow declarative attributes. For detailed framework guidance, see [skill:dotnet-input-validation]. For SOLID principles governing where validation belongs in your architecture, see [skill:dotnet-solid-principles].
+
+### Built-in: Data Annotations + MiniValidation (Default)
+
+Start with Data Annotations for simple property-level constraints. Use `MiniValidation` for lightweight validation in Minimal APIs without MVC model binding overhead. For .NET 10+ projects, prefer the built-in `AddValidation()` source-generator pipeline (see [skill:dotnet-input-validation]).
+
+```csharp
+public sealed record CreateProductRequest(
+    [Required, MaxLength(200)] string Name,
+    [Range(0.01, double.MaxValue)] decimal Price);
+
+// In endpoint
+if (!MiniValidator.TryValidate(request, out var errors))
+{
+    return Results.ValidationProblem(errors);
+}
+```
+
+### FluentValidation (Opt-in for Complex Rules)
+
+When validation rules outgrow annotations -- cross-property rules, conditional logic, database-dependent checks -- use FluentValidation. Register via assembly scanning and apply through endpoint filters or manual validation:
 
 ```csharp
 // Register validators by assembly scanning
@@ -294,22 +314,6 @@ public sealed class CreateOrderValidator : AbstractValidator<CreateOrderRequest>
                 line.RuleFor(l => l.Quantity).GreaterThan(0);
             });
     }
-}
-```
-
-### Data Annotations + MiniValidation (Lighter Alternative)
-
-For simpler scenarios, use data annotations with `MiniValidation`:
-
-```csharp
-public sealed record CreateProductRequest(
-    [Required, MaxLength(200)] string Name,
-    [Range(0.01, double.MaxValue)] decimal Price);
-
-// In endpoint
-if (!MiniValidator.TryValidate(request, out var errors))
-{
-    return Results.ValidationProblem(errors);
 }
 ```
 
@@ -610,8 +614,9 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 
 ## Key Principles
 
+- **Apply SOLID principles** -- Single Responsibility (one reason to change per class), Open/Closed (extend via new types, not modifying existing code), Dependency Inversion (depend on abstractions at module boundaries). See [skill:dotnet-solid-principles] for anti-patterns, fixes, and compliance tests.
 - **Prefer composition over inheritance** -- use endpoint filters, middleware, and pipeline composition rather than base classes
-- **Keep slices independent** -- avoid shared abstractions that couple features together
+- **Keep slices independent** -- avoid shared abstractions that couple features together; DRY applies to knowledge duplication, not code similarity across bounded contexts
 - **Validate early, fail fast** -- validate at the boundary (endpoint filters) before entering business logic
 - **Use Problem Details everywhere** -- consistent error format across all endpoints
 - **Cache at the right level** -- output cache for HTTP responses, distributed cache for shared state, HybridCache for both
