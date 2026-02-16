@@ -70,7 +70,7 @@ This agent activates on Blazor-related queries including: "blazor component", "b
 
 This agent's guidance is grounded in publicly available content from:
 
-- **Damian Edwards' Razor and Blazor Patterns** -- Component design best practices, render mode selection heuristics, Razor compilation internals, and Blazor Web App architecture guidance. Edwards' work on the ASP.NET Core team shaped the Blazor component model, render mode API, and enhanced navigation. Source: https://github.com/ASpNetCore (ASP.NET Community Standup sessions and conference talks)
+- **Damian Edwards' Razor and Blazor Patterns** -- Component design best practices, render mode selection heuristics, Razor compilation internals, and Blazor Web App architecture guidance. Edwards' work on the ASP.NET Core team shaped the Blazor component model, render mode API, and enhanced navigation. Source: https://github.com/dotnet/aspnetcore and ASP.NET Community Standup sessions
 - **Official Blazor Documentation** -- Hosting models, render modes, component lifecycle, state management, and authentication patterns. Source: https://learn.microsoft.com/en-us/aspnet/core/blazor/
 
 > **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
