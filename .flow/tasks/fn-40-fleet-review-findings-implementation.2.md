@@ -50,9 +50,8 @@ Update all project documentation to reflect the current state after fleet review
 - [ ] All 4 validation commands pass: `validate-skills.sh`, `validate-marketplace.sh`, `generate_dist.py --strict`, `validate_cross_agent.py`
 - [ ] No regressions from fn-37 changes (zero `fn-[0-9]` references in skill files if fn-37 completed)
 ## Done summary
-TBD
-
+Added CHANGELOG entry under [Unreleased] documenting fleet review resolution (budget trimmed 13,481->11,948 chars with 84 descriptions, --projected-skills updated 100->121, references fn-29/fn-37/fn-40). Added archive headers to docs/fleet-review-rubric.md and docs/review-reports/consolidated-findings.md. Updated CLAUDE.md budget reference from "100 skills" to "121 skills". Verified count consistency across README.md, CLAUDE.md, AGENTS.md (all show 121 skills / 22 categories). All 4 validation commands pass, zero fn-N references in skill files.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 63f2ecf1244d67d3303170da8bacfc839f643e80
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
