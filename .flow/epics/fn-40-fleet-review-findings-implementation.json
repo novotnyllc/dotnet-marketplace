@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-40-fleet-review-findings-implementation",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-16T21:43:25.030951Z",
   "created_at": "2026-02-15T23:02:45.252698Z",
   "default_impl": null,
   "default_review": null,
@@ -14,7 +14,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-15T23:11:00.215871Z",
   "spec_path": ".flow/specs/fn-40-fleet-review-findings-implementation.md",
-  "status": "open",
+  "status": "done",
   "title": "Fleet Review Findings Implementation",
-  "updated_at": "2026-02-15T23:11:00.216037Z"
+  "updated_at": "2026-02-16T21:43:44.488321Z"
 }
