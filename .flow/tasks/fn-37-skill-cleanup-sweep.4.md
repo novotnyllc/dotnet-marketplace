@@ -42,3 +42,6 @@ python3 scripts/validate_cross_agent.py
 - [ ] No references to older beta versions (beta1-3)
 - [ ] Architecture skills reference SOLID/DRY/SRP principles
 - [ ] All four validation commands pass
+
+## Done summary
+<!-- filled by flowctl done -->
