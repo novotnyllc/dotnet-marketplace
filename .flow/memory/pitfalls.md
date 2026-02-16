@@ -291,3 +291,9 @@ Azure.Messaging.ServiceBus 7.x uses ServiceBusReceiverOptions with SubQueue.Dead
 
 ## 2026-02-16 manual [pitfall]
 OTel Collector tail_sampling processor operates on traces (spans), not logs -- use filter/transform processors for log volume management
+
+## 2026-02-16 manual [pitfall]
+Semantic Kernel agent InvokeAsync requires a thread object (ChatHistoryAgentThread or similar) -- do not pass bare strings directly; thread-based invocation is mandatory for all SK agent types
+
+## 2026-02-16 manual [pitfall]
+When creating a skill in a new category directory, also add a trigger corpus entry for that category in tests/trigger-corpus.json -- the corpus completeness check requires every category to have at least one routing entry

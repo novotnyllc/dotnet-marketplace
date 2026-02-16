@@ -31,9 +31,8 @@ Create 2 new skills covering cloud orchestration and AI integration gaps:
 - [ ] Latest stable package versions
 - [ ] No fn-N spec references
 ## Done summary
-TBD
-
+Created dotnet-aspire-patterns skill (AppHost orchestration, service discovery, component model, dashboard, health checks) and dotnet-semantic-kernel skill under new skills/ai/ category (kernel setup, plugins, prompt templates, memory/vector stores, agents framework). Added trigger corpus entries for both skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 64908e8f90c1eab150c7d620e6ff58caa48a5a8b, f87834917cd6424bbbc57e259e2356aab2b2f06f
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
