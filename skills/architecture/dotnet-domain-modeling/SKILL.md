@@ -9,7 +9,7 @@ Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, 
 
 **Out of scope:** EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-efcore-architecture]. Tactical EF Core usage (DbContext lifecycle, migrations, interceptors) -- see [skill:dotnet-efcore-patterns]. Input validation at API boundaries -- see [skill:dotnet-validation-patterns]. Choosing between EF Core, Dapper, and ADO.NET -- see [skill:dotnet-data-access-strategy]. Vertical slice architecture and request pipeline patterns -- see [skill:dotnet-architecture-patterns]. Messaging infrastructure and saga orchestration -- see [skill:dotnet-messaging-patterns].
 
-Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, [skill:dotnet-validation-patterns] for input validation patterns.
+Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, [skill:dotnet-validation-patterns] for input validation patterns, [skill:dotnet-messaging-patterns] for integration event infrastructure.
 
 ---
 
@@ -25,6 +25,7 @@ Entities have identity that persists across state changes. Use a base class to s
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
     where TId : notnull
 {
+    // default! required for ORM hydration; Id is set immediately after construction
     public TId Id { get; protected set; } = default!;
 
     protected Entity() { } // Required for ORM hydration
@@ -141,6 +142,8 @@ public sealed class Order : AggregateRoot<Guid>
 | One aggregate per transaction | Cross-aggregate changes use domain events and eventual consistency |
 | Expose collections as `IReadOnlyList<T>` | Prevents external code from bypassing root methods to mutate children |
 
+For the EF Core persistence implications of these rules (navigation properties, owned types, cascade behavior), see [skill:dotnet-efcore-architecture].
+
 ---
 
 ## Value Objects
@@ -229,6 +232,9 @@ public sealed record Money
 
     public Money Multiply(int quantity) =>
         new(Amount * quantity, Currency);
+
+    public Money Multiply(decimal factor) =>
+        new(Amount * factor, Currency);
 
     private void EnsureSameCurrency(Money other)
     {
@@ -331,6 +337,10 @@ public sealed class DomainEventDispatcher(
         }
     }
 }
+
+// Note: The (dynamic) dispatch pattern is simple but not AOT-compatible.
+// For Native AOT scenarios, use a source-generated or dictionary-based
+// dispatcher. See [skill:dotnet-native-aot] for AOT constraints.
 
 // Handler interface
 public interface IDomainEventHandler<in TEvent>
@@ -514,12 +524,9 @@ public sealed class PricingService
         discount = tier switch
         {
             CustomerTier.Gold => discount.Add(
-                order.Total.Multiply(1).Subtract(
-                    new Money(order.Total.Amount * 0.9m,
-                              order.Total.Currency))),
+                order.Total.Multiply(0.10m)),
             CustomerTier.Platinum => discount.Add(
-                new Money(order.Total.Amount * 0.15m,
-                          order.Total.Currency)),
+                order.Total.Multiply(0.15m)),
             _ => discount
         };
 
