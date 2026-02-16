@@ -138,5 +138,35 @@
     "query": "How do I set up .NET Aspire with service discovery and an AppHost for my distributed app?",
     "expected_skill": "dotnet-aspire-patterns",
     "category": "architecture"
+  },
+  {
+    "query": "How do I implement pub/sub messaging with Azure Service Bus and dead-letter queues?",
+    "expected_skill": "dotnet-messaging-patterns",
+    "category": "architecture"
+  },
+  {
+    "query": "How do I use System.IO.Pipelines with PipeReader and PipeWriter for high-performance network protocols?",
+    "expected_skill": "dotnet-io-pipelines",
+    "category": "core-csharp"
+  },
+  {
+    "query": "How do I model aggregates and value objects using DDD tactical patterns in C#?",
+    "expected_skill": "dotnet-domain-modeling",
+    "category": "architecture"
+  },
+  {
+    "query": "How do I design a log aggregation pipeline with PII scrubbing and cross-service correlation?",
+    "expected_skill": "dotnet-structured-logging",
+    "category": "architecture"
+  },
+  {
+    "query": "How do I optimize LINQ queries to avoid IQueryable vs IEnumerable pitfalls and reduce allocations?",
+    "expected_skill": "dotnet-linq-optimization",
+    "category": "core-csharp"
+  },
+  {
+    "query": "How do I tune the .NET garbage collector and use ArrayPool to reduce GC pressure?",
+    "expected_skill": "dotnet-gc-memory",
+    "category": "performance"
   }
 ]

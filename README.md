@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 113 skills across 21 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 121 skills across 22 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -31,14 +31,14 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 113 skills into 21 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 121 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
 | **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis |
-| **Core C#** | 12 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-csharp-source-generators |
+| **Core C#** | 14 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-io-pipelines, dotnet-linq-optimization |
 | **Project Structure** | 6 | dotnet-project-structure, dotnet-scaffold-project, dotnet-modernize |
-| **Architecture** | 11 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-containers |
+| **Architecture** | 15 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-messaging-patterns, dotnet-aspire-patterns |
 | **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
 | **Testing** | 10 | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing |
 | **API Development** | 8 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi |
@@ -49,13 +49,14 @@ The plugin organizes 113 skills into 21 categories. Each skill follows the Agent
 | **CLI Tools** | 5 | dotnet-system-commandline, dotnet-cli-architecture, dotnet-cli-distribution |
 | **TUI** | 2 | dotnet-terminal-gui, dotnet-spectre-console |
 | **Agent Meta-Skills** | 4 | dotnet-agent-gotchas, dotnet-build-analysis, dotnet-csproj-reading |
-| **Performance** | 4 | dotnet-benchmarkdotnet, dotnet-performance-patterns, dotnet-profiling |
+| **Performance** | 5 | dotnet-benchmarkdotnet, dotnet-performance-patterns, dotnet-gc-memory |
 | **CI/CD** | 8 | dotnet-gha-patterns, dotnet-gha-build-test, dotnet-ado-patterns |
 | **Packaging** | 3 | dotnet-nuget-authoring, dotnet-msix, dotnet-github-releases |
 | **Release Management** | 1 | dotnet-release-management |
 | **Documentation** | 5 | dotnet-documentation-strategy, dotnet-mermaid-diagrams, dotnet-github-docs |
 | **Localization** | 1 | dotnet-localization |
 | **Build System** | 3 | dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization |
+| **AI** | 1 | dotnet-semantic-kernel |
 
 ## Agents
 

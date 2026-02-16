@@ -4,14 +4,14 @@
 
 ## Skill Routing Index
 
-The plugin organizes 113 skills into 21 categories. Use this index to identify which category covers your domain.
+The plugin organizes 121 skills into 22 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
 | **Foundation** | 4 | Project analysis, version detection, skill routing, plugin publishing |
-| **Core C#** | 12 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels |
+| **Core C#** | 14 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, IO.Pipelines, LINQ optimization |
 | **Project Structure** | 6 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization |
-| **Architecture** | 11 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID principles |
+| **Architecture** | 15 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID, messaging, domain modeling, structured logging, Aspire |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |
 | **Testing** | 10 | Test strategy, xUnit v3, integration testing, UI testing, Playwright, snapshot testing |
 | **API Development** | 8 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns, library API compat, API surface validation |
@@ -22,13 +22,14 @@ The plugin organizes 113 skills into 21 categories. Use this index to identify w
 | **CLI Tools** | 5 | System.CommandLine, CLI architecture, distribution, packaging, release pipelines |
 | **TUI** | 2 | Terminal.Gui full TUI apps, Spectre.Console rich console output and CLI framework |
 | **Agent Meta-Skills** | 4 | Agent gotchas, build analysis, csproj reading, solution navigation |
-| **Performance** | 4 | BenchmarkDotNet, performance patterns, profiling, CI benchmarking |
+| **Performance** | 5 | BenchmarkDotNet, performance patterns, profiling, CI benchmarking, GC/memory tuning |
 | **CI/CD** | 8 | GitHub Actions (patterns, build, publish, deploy), Azure DevOps (patterns, build, publish, unique) |
 | **Packaging** | 3 | NuGet authoring, MSIX, GitHub Releases |
 | **Release Management** | 1 | NBGV versioning, changelogs, SemVer strategy |
 | **Documentation** | 5 | Doc strategy, Mermaid diagrams, GitHub docs, XML docs, API docs |
 | **Localization** | 1 | i18n with .resx, IStringLocalizer, RTL, pluralization |
 | **Build System** | 3 | MSBuild authoring, custom MSBuild tasks, build optimization |
+| **AI** | 1 | Semantic Kernel for AI/LLM orchestration, plugins, agents |
 
 For the complete skill-level catalog with routing decision trees, see the `dotnet-advisor` skill at `skills/foundation/dotnet-advisor/SKILL.md`.
 

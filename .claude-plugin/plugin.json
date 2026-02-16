@@ -115,7 +115,15 @@
     "skills/build-system/dotnet-msbuild-tasks",
     "skills/build-system/dotnet-build-optimization",
     "skills/tui/dotnet-terminal-gui",
-    "skills/tui/dotnet-spectre-console"
+    "skills/tui/dotnet-spectre-console",
+    "skills/architecture/dotnet-messaging-patterns",
+    "skills/core-csharp/dotnet-io-pipelines",
+    "skills/architecture/dotnet-domain-modeling",
+    "skills/architecture/dotnet-structured-logging",
+    "skills/core-csharp/dotnet-linq-optimization",
+    "skills/performance/dotnet-gc-memory",
+    "skills/architecture/dotnet-aspire-patterns",
+    "skills/ai/dotnet-semantic-kernel"
   ],
   "agents": [
     "agents/dotnet-architect.md",

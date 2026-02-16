@@ -33,6 +33,8 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-csharp-source-generators] -- IIncrementalGenerator, emit patterns
 - [skill:dotnet-csharp-code-smells] -- code smells, anti-patterns, common pitfalls
 - [skill:dotnet-roslyn-analyzers] -- custom DiagnosticAnalyzer, CodeFixProvider, testing, NuGet packaging
+- [skill:dotnet-io-pipelines] -- System.IO.Pipelines: PipeReader/PipeWriter, backpressure, protocol parsing
+- [skill:dotnet-linq-optimization] -- IQueryable vs IEnumerable, compiled queries, deferred execution
 
 ### 3. Project Structure & Scaffolding `planned`
 - [skill:dotnet-project-structure] -- .slnx, Directory.Build.props, CPM, analyzers
@@ -53,6 +55,10 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-data-access-strategy] -- EF Core vs Dapper vs ADO.NET decision
 - [skill:dotnet-containers] -- multi-stage Dockerfiles, rootless, health checks
 - [skill:dotnet-container-deployment] -- Kubernetes, Docker Compose, registries
+- [skill:dotnet-messaging-patterns] -- pub/sub, competing consumers, DLQ, sagas, delivery guarantees
+- [skill:dotnet-domain-modeling] -- DDD aggregates, value objects, domain events, repository contracts
+- [skill:dotnet-structured-logging] -- log aggregation, structured queries, sampling, PII scrubbing
+- [skill:dotnet-aspire-patterns] -- .NET Aspire: AppHost, service discovery, components, dashboard
 
 ### 5. Serialization & Communication `planned`
 - [skill:dotnet-serialization] -- AOT source-gen: STJ, Protobuf, MessagePack
@@ -91,6 +97,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-performance-patterns] -- Span, pooling, zero-alloc, sealed
 - [skill:dotnet-profiling] -- dotnet-counters, trace, dump, memory
 - [skill:dotnet-ci-benchmarking] -- continuous benchmarking, regression detection
+- [skill:dotnet-gc-memory] -- GC modes, LOH/POH, Gen0/1/2 tuning, Span/Memory, ArrayPool, profiling
 
 ### 10. Native AOT & Trimming `planned`
 - [skill:dotnet-native-aot] -- trimming, RD.xml, reflection-free, size opt
@@ -158,6 +165,9 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-csproj-reading] -- read/modify .csproj, MSBuild properties
 - [skill:dotnet-solution-navigation] -- navigate solutions, find entry points
 
+### 20. AI & LLM Integration
+- [skill:dotnet-semantic-kernel] -- Semantic Kernel: plugins, prompt templates, memory, agents
+
 ---
 
 ## Routing Logic
@@ -180,6 +190,8 @@ Use this decision tree to load the right skills for the current task.
 - Source generators -> [skill:dotnet-csharp-source-generators]
 - Code review, code quality, anti-patterns -> [skill:dotnet-csharp-code-smells]
 - Custom analyzers/code fixes -> [skill:dotnet-roslyn-analyzers]
+- IO.Pipelines, high-perf network I/O -> [skill:dotnet-io-pipelines]
+- LINQ optimization, IQueryable pitfalls -> [skill:dotnet-linq-optimization]
 
 ### Building APIs
 - Minimal APIs (default for new) -> [skill:dotnet-minimal-apis]
@@ -195,6 +207,7 @@ Use this decision tree to load the right skills for the current task.
 - EF Core usage -> [skill:dotnet-efcore-patterns], [skill:dotnet-efcore-architecture]
 - Choosing data access approach -> [skill:dotnet-data-access-strategy]
 - Serialization (JSON, Protobuf) -> [skill:dotnet-serialization]
+- Domain modeling, DDD patterns -> [skill:dotnet-domain-modeling]
 
 ### Building UI
 - Choosing a framework -> [skill:dotnet-ui-chooser]
@@ -218,6 +231,7 @@ Use this decision tree to load the right skills for the current task.
 - Optimization patterns -> [skill:dotnet-performance-patterns]
 - Profiling -> [skill:dotnet-profiling]
 - CI benchmarks -> [skill:dotnet-ci-benchmarking]
+- GC tuning, memory management -> [skill:dotnet-gc-memory]
 
 ### Native AOT / Trimming
 - AOT compilation -> [skill:dotnet-native-aot]
@@ -243,6 +257,7 @@ Use this decision tree to load the right skills for the current task.
 - gRPC -> [skill:dotnet-grpc]
 - Real-time (SignalR, SSE) -> [skill:dotnet-realtime-communication]
 - Choosing protocol -> [skill:dotnet-service-communication]
+- Messaging, event-driven (Service Bus, RabbitMQ) -> [skill:dotnet-messaging-patterns]
 
 ### CI/CD Setup
 - GitHub Actions -> [skill:dotnet-gha-patterns], [skill:dotnet-gha-build-test], [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy]
@@ -277,6 +292,13 @@ Use this decision tree to load the right skills for the current task.
 ### Background Work
 - Background services, queues -> [skill:dotnet-background-services]
 - Observability/logging -> [skill:dotnet-observability]
+- Log pipeline design, aggregation, PII scrubbing -> [skill:dotnet-structured-logging]
+
+### Cloud & Orchestration
+- .NET Aspire, service discovery, AppHost -> [skill:dotnet-aspire-patterns]
+
+### AI & LLM Integration
+- Semantic Kernel, LLM orchestration, plugins -> [skill:dotnet-semantic-kernel]
 
 ### Specialist Agent Routing
 
