@@ -1,5 +1,7 @@
 # Fleet Skill Review Rubric
 
+> **Historical snapshot (completed 2026-02-16).** Most findings resolved by fn-30 through fn-40. See CHANGELOG.md for details.
+
 This document defines the evaluation rubric, scoring guidance, output templates, category batch assignments, and worker agent instructions for the dotnet-artisan fleet skill review sweep.
 
 ---

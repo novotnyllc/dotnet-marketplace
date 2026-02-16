@@ -1,5 +1,7 @@
 # Consolidated Findings: Fleet Skill Review and Improvement Sweep
 
+> **Historical snapshot (completed 2026-02-16).** Most findings resolved by fn-30 through fn-40. See CHANGELOG.md for details.
+
 ## Executive Summary
 
 All 101 skills (99 registered + 2 unregistered) reviewed across 6 batches against the 11-dimension rubric. The fleet is in good shape overall with strong Agent Gotchas coverage and excellent cross-reference target accuracy. The primary issues are: (1) 15 descriptions exceeding the 140-char fail threshold, (2) 2 skills on disk but unregistered in plugin.json, (3) systematic bare-text skill references in CI/CD skills, and (4) stale "may not exist yet" markers in UI framework skills.

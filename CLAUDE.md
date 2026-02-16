@@ -16,7 +16,7 @@ description: One-line summary under 120 characters
 ```
 
 - `name` (required) -- must match the directory name
-- `description` (required) -- target under 120 characters to stay within the context budget (~12,000 chars for 100 skills)
+- `description` (required) -- target under 120 characters to stay within the context budget (~12,000 chars for 121 skills)
 
 ### Cross-Reference Syntax
 

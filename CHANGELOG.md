@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Description budget trimmed** from 13,481 to 11,948 chars (84 descriptions trimmed, removed filler words and redundant phrases) -- now below the 12,000-char WARN threshold
+- Updated `--projected-skills` parameter in `validate-skills.sh` from 100 to 121 to match actual registered skill count
+- Quality-checked 12 new skills from fn-30 through fn-36 for description formula compliance and cross-reference syntax
+- Archived fleet review rubric and consolidated findings as historical snapshots (fn-29 audit, fn-37 cleanup, fn-40 resolution)
+
 ## [0.1.0] - 2026-02-14
 
 ### Added
