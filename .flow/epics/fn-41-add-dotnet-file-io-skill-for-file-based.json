@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-41-add-dotnet-file-io-skill-for-file-based",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-16T21:59:32.489543Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-41-add-dotnet-file-io-skill-for-file-based",
+  "next_task": 1,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-16T22:05:40.011717Z",
+  "spec_path": ".flow/specs/fn-41-add-dotnet-file-io-skill-for-file-based.md",
+  "status": "open",
+  "title": "Add dotnet-file-io skill for file-based app patterns",
+  "updated_at": "2026-02-16T22:05:40.011870Z"
+}
