@@ -17,7 +17,7 @@ Create domain-named specialist agents grounded in the expertise of prominent .NE
 ### Existing Agent Enrichment
 - **dotnet-blazor-specialist** ← Damian Edwards (Razor/Blazor component design patterns)
 - **dotnet-architect** ← Steve Smith/Ardalis (Clean Architecture, SOLID decision framework)
-- **dotnet-csharp-concurrency-specialist** ← Mads Torgersen (C# language design rationale)
+- **dotnet-csharp-coding-standards / dotnet-csharp-modern-patterns** skills ← Mads Torgersen (C# language design rationale)
 - **dotnet-performance-analyst** ← Stephen Cleary async patterns, Nick Chapsas modern .NET patterns
 - Architecture/domain skills ← Jimmy Bogard (DDD, vertical slices; note MediatR is commercial)
 

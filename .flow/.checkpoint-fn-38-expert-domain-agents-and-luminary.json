@@ -1,0 +1,128 @@
+{
+  "created_at": "2026-02-16T18:03:21.703494Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-38-expert-domain-agents-and-luminary",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-14T22:33:42.456537Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-38-expert-domain-agents-and-luminary",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-38-expert-domain-agents-and-luminary.md",
+      "status": "open",
+      "title": "Expert Domain Agents and Luminary Attribution",
+      "updated_at": "2026-02-14T23:12:41.400150Z"
+    },
+    "spec": "# Expert Domain Agents and Luminary Attribution\n\n## Overview\nCreate domain-named specialist agents grounded in the expertise of prominent .NET luminaries (Stephen Toub, David Fowler, Damian Edwards, Steve Smith, Mads Torgersen, Andrew Lock, Jimmy Bogard, Stephen Cleary, Nick Chapsas). Add source attribution to existing skills and agents. All agents are named by domain, not by person \u2014 following Anthropic's usage policy and community best practices.\n\n**Key principle:** Capture expertise, not persona. Agents are \"grounded in guidance from\" \u2014 they do not claim to represent or speak for any individual.\n\n## Scope\n\n### New Agents (5 total)\n1. **dotnet-async-performance-specialist** \u2014 Deep async/await and runtime performance analysis. Grounded in Stephen Toub's .NET performance blog series, ConfigureAwait FAQ, and async internals guidance. Covers: ValueTask correctness, ConfigureAwait decisions, async overhead detection, ThreadPool tuning, IO.Pipelines patterns, Channel selection.\n2. **dotnet-aspnetcore-specialist** \u2014 ASP.NET Core architecture, middleware, and backend patterns. Grounded in David Fowler's AspNetCoreDiagnosticScenarios and Andrew Lock's middleware blog series. Covers: middleware authoring, DI anti-patterns, minimal API design, request pipeline optimization, diagnostic scenarios.\n3. **dotnet-testing-specialist** \u2014 Test architecture and strategy. Covers: test pyramid design, E2E architecture, test data management, microservice testing, when to use integration vs unit vs E2E.\n4. **dotnet-cloud-specialist** \u2014 Cloud deployment and .NET Aspire orchestration. Covers: AKS/Azure deployment, GitHub Actions pipelines, Aspire service discovery, distributed tracing, infrastructure-as-code.\n5. **dotnet-code-review-agent** \u2014 General code review combining performance, security, architecture, and correctness. Routes to specialist agents for deep dives.\n\n### Existing Agent Enrichment\n- **dotnet-blazor-specialist** \u2190 Damian Edwards (Razor/Blazor component design patterns)\n- **dotnet-architect** \u2190 Steve Smith/Ardalis (Clean Architecture, SOLID decision framework)\n- **dotnet-csharp-coding-standards / dotnet-csharp-modern-patterns** skills \u2190 Mads Torgersen (C# language design rationale)\n- **dotnet-performance-analyst** \u2190 Stephen Cleary async patterns, Nick Chapsas modern .NET patterns\n- Architecture/domain skills \u2190 Jimmy Bogard (DDD, vertical slices; note MediatR is commercial)\n\n### Luminary Attribution on Skills\nAdd \"Knowledge Sources\" or \"References\" sections to 6+ existing skills citing authoritative luminary sources.\n\n### Routing Updates\n- Update `dotnet-advisor` catalog to route to all new agents\n- Update `AGENTS.md` delegation table with new agent triggers and boundaries\n\n## Design Constraints\n- Agent names are domain-based, NEVER person-based\n- Each agent includes a \"Knowledge Sources\" section listing luminaries as sources, with disclaimer\n- Agent descriptions include \"grounded in [source]\" language\n- Agents use read-only tools (Read, Grep, Glob, Bash) \u2014 analysis only\n- Each agent < 3,000 tokens for composability\n- Follow frontmatter pattern from `agents/dotnet-csharp-concurrency-specialist.md`\n- Budget impact: 0 chars for agents (agents are separate from skill description budget)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\n./scripts/validate-marketplace.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] 5 new domain-named agents created (async-performance, aspnetcore, testing, cloud, code-review)\n- [ ] All new agents follow frontmatter pattern with Knowledge Sources and disclaimer\n- [ ] 4+ existing agents enriched with luminary-sourced knowledge\n- [ ] 7 luminaries covered: Toub, Fowler, Edwards, Smith, Torgersen, Lock, Cleary (plus Bogard, Chapsas via attribution)\n- [ ] Attribution references added to 6+ existing skills\n- [ ] dotnet-advisor catalog updated with all new agent routing\n- [ ] AGENTS.md updated with all new agent entries\n- [ ] No agent named after a person\n- [ ] All agents under 3,000 tokens\n- [ ] All four validation commands pass\n- [ ] No fn-N spec references in any content\n\n## References\n- `agents/dotnet-csharp-concurrency-specialist.md` \u2014 template for agent frontmatter and structure\n- `agents/dotnet-performance-analyst.md` \u2014 template for analysis agent workflow\n- `CONTRIBUTING.md:69-104` \u2014 agent authoring conventions\n- `AGENTS.md:32-64` \u2014 agent delegation table\n- Stephen Toub's .NET Performance Blog: https://devblogs.microsoft.com/dotnet/author/toub/\n- Stephen Toub's ConfigureAwait FAQ: https://devblogs.microsoft.com/dotnet/configureawait-faq/\n- David Fowler's AspNetCoreDiagnosticScenarios: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios\n- Andrew Lock's blog: https://andrewlock.net/\n- Steve Smith/Ardalis Clean Architecture: https://github.com/ardalis/CleanArchitecture\n- Anthropic Usage Policy (impersonation prohibition): https://www.anthropic.com/legal/aup\n"
+  },
+  "epic_id": "fn-38-expert-domain-agents-and-luminary",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:42.166581Z",
+        "depends_on": [],
+        "epic": "fn-38-expert-domain-agents-and-luminary",
+        "id": "fn-38-expert-domain-agents-and-luminary.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-38-expert-domain-agents-and-luminary.1.md",
+        "status": "todo",
+        "title": "Create dotnet-async-performance-specialist agent (Toub-grounded)",
+        "updated_at": "2026-02-14T22:35:15.909706Z"
+      },
+      "id": "fn-38-expert-domain-agents-and-luminary.1",
+      "runtime": null,
+      "spec": "# fn-38-expert-domain-agents-and-luminary.1 Create dotnet-async-performance-specialist agent (Toub-grounded)\n\n## Description\nCreate `agents/dotnet-async-performance-specialist.md` \u2014 a domain-named agent for deep async/await and runtime performance analysis, grounded in Stephen Toub's expertise.\n\n**Size:** M\n**Files:** `agents/dotnet-async-performance-specialist.md`, `.claude-plugin/plugin.json`\n\n## Approach\n- Follow agent frontmatter pattern from `agents/dotnet-csharp-concurrency-specialist.md`\n- Agent name: `dotnet-async-performance-specialist` (domain name, NOT person name)\n- Include \"Knowledge Sources\" section citing Toub's .NET performance blog series, ConfigureAwait FAQ, and async internals deep-dives\n- Include disclaimer: \"This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.\"\n- Preloaded skills: `dotnet-csharp-async-patterns`, `dotnet-performance-patterns`, `dotnet-profiling`, `dotnet-channels`\n- Decision tree covering: ValueTask vs Task, ConfigureAwait decisions, async overhead detection, ThreadPool tuning, IO.Pipelines vs Streams\n- Explicit boundaries: \"Does NOT handle thread synchronization primitives (use concurrency-specialist)\" and \"Does NOT handle general profiling workflow (use performance-analyst)\"\n- Tools: Read, Grep, Glob, Bash (analysis only, read-only)\n- Model: sonnet\n- Keep under 3,000 tokens total\n- Register in `.claude-plugin/plugin.json` agents array\n\n## Key context\n- Scope boundary with existing `dotnet-csharp-concurrency-specialist`: that agent covers threading primitives, locks, Interlocked, concurrent collections. This new agent covers async/await performance, ValueTask, ConfigureAwait, IO.Pipelines.\n- Scope boundary with existing `dotnet-performance-analyst`: that agent analyzes profiling data and benchmarks. This new agent provides domain-specific async performance guidance.\n- Stephen Toub's ConfigureAwait FAQ: ConfigureAwait(false) no longer needed in ASP.NET Core app code (.NET Core+), but still recommended in library code targeting both Framework and Core.\n## Acceptance\n- [ ] Agent file created at `agents/dotnet-async-performance-specialist.md`\n- [ ] Frontmatter includes name, description, model (sonnet), capabilities, tools\n- [ ] \"Knowledge Sources\" section cites Toub's blog, ConfigureAwait FAQ, async internals\n- [ ] Disclaimer language included (\"does not represent or speak for\")\n- [ ] Decision tree covers ValueTask vs Task, ConfigureAwait, async overhead, ThreadPool\n- [ ] Explicit boundaries: no overlap with concurrency-specialist or performance-analyst\n- [ ] Preloaded skills listed with `[skill:...]` cross-references\n- [ ] Agent under 3,000 tokens\n- [ ] Registered in `.claude-plugin/plugin.json` agents array\n- [ ] All four validation commands pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:43.035921Z",
+        "depends_on": [],
+        "epic": "fn-38-expert-domain-agents-and-luminary",
+        "id": "fn-38-expert-domain-agents-and-luminary.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-38-expert-domain-agents-and-luminary.2.md",
+        "status": "todo",
+        "title": "Create dotnet-aspnetcore-specialist agent (Fowler-grounded)",
+        "updated_at": "2026-02-14T22:35:32.751282Z"
+      },
+      "id": "fn-38-expert-domain-agents-and-luminary.2",
+      "runtime": null,
+      "spec": "# fn-38-expert-domain-agents-and-luminary.2 Create dotnet-aspnetcore-specialist agent (Fowler-grounded)\n\n## Description\nCreate `agents/dotnet-aspnetcore-specialist.md` \u2014 a domain-named agent for ASP.NET Core architecture, middleware, and backend design patterns, grounded in David Fowler's expertise.\n\n**Size:** M\n**Files:** `agents/dotnet-aspnetcore-specialist.md`, `.claude-plugin/plugin.json`\n\n## Approach\n- Follow agent frontmatter pattern from `agents/dotnet-csharp-concurrency-specialist.md`\n- Agent name: `dotnet-aspnetcore-specialist` (domain name, NOT person name)\n- Include \"Knowledge Sources\" section citing Fowler's AspNetCoreDiagnosticScenarios repo, Andrew Lock's middleware blog series, and official ASP.NET Core documentation\n- Include disclaimer language\n- Preloaded skills: `dotnet-minimal-apis`, `dotnet-api-security`, `dotnet-architecture-patterns`, `dotnet-resilience`, `dotnet-http-client`, `dotnet-csharp-dependency-injection`\n- Decision tree covering: middleware vs endpoint filter, minimal APIs vs controllers, DI lifetime selection, request pipeline optimization, diagnostic scenario identification\n- Explicit boundaries: \"Does NOT handle Blazor/Razor (use blazor-specialist)\", \"Does NOT handle security auditing (use security-reviewer)\", \"Does NOT handle async performance internals (use async-performance-specialist)\"\n- Tools: Read, Grep, Glob, Bash (analysis only)\n- Model: sonnet\n- Keep under 3,000 tokens total\n- Register in `.claude-plugin/plugin.json` agents array\n\n## Key context\n- David Fowler's AspNetCoreDiagnosticScenarios covers async guidance, middleware anti-patterns, DI pitfalls. The agent should distill these into decision rules.\n- Andrew Lock's blog series \"Exploring ASP.NET Core\" provides deep middleware and configuration patterns.\n- This agent complements dotnet-architect (which is a routing/architecture agent) by providing deep ASP.NET Core-specific analysis.\n- Fowler also maintains dotnet-skillz Claude Code plugin \u2014 reference for patterns but adapt to our structure.\n## Acceptance\n- [ ] Agent file created at `agents/dotnet-aspnetcore-specialist.md`\n- [ ] Frontmatter includes name, description, model (sonnet), capabilities, tools\n- [ ] \"Knowledge Sources\" section cites Fowler's diagnostic scenarios, Lock's blog, official docs\n- [ ] Disclaimer language included\n- [ ] Decision tree covers middleware vs endpoint filter, minimal APIs vs controllers, DI lifetimes\n- [ ] Explicit boundaries: no overlap with blazor-specialist, security-reviewer, async-performance-specialist\n- [ ] Preloaded skills listed with `[skill:...]` cross-references\n- [ ] Agent under 3,000 tokens\n- [ ] Registered in `.claude-plugin/plugin.json` agents array\n- [ ] All four validation commands pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T22:34:44.963994Z",
+        "depends_on": [
+          "fn-38-expert-domain-agents-and-luminary.1",
+          "fn-38-expert-domain-agents-and-luminary.2",
+          "fn-38-expert-domain-agents-and-luminary.4",
+          "fn-38-expert-domain-agents-and-luminary.5"
+        ],
+        "epic": "fn-38-expert-domain-agents-and-luminary",
+        "id": "fn-38-expert-domain-agents-and-luminary.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-38-expert-domain-agents-and-luminary.3.md",
+        "status": "todo",
+        "title": "Add luminary attribution to existing skills and update routing",
+        "updated_at": "2026-02-14T23:10:28.360590Z"
+      },
+      "id": "fn-38-expert-domain-agents-and-luminary.3",
+      "runtime": null,
+      "spec": "# fn-38-expert-domain-agents-and-luminary.3 Add luminary attribution to existing skills and update routing\n\n## Description\nAdd luminary source attribution (\"References\" or \"Knowledge Sources\" sections) to 6+ existing skills and update routing (dotnet-advisor catalog and AGENTS.md) for all 5 new agents and 4 enriched existing agents. Update agent counts in AGENTS.md and CLAUDE.md (9\u219214).\n\n**Size:** M\n**Files:** `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`, `skills/performance/dotnet-performance-patterns/SKILL.md`, `skills/api-development/dotnet-minimal-apis/SKILL.md`, `skills/ui-frameworks/dotnet-blazor-components/SKILL.md`, `skills/architecture/dotnet-architecture-patterns/SKILL.md`, `skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md`, `skills/foundation/dotnet-advisor/SKILL.md`, `AGENTS.md`, `CLAUDE.md`\n\n## Approach\n- Add \"References\" sections to existing skills citing authoritative luminary sources:\n  - `dotnet-csharp-async-patterns`: Toub ConfigureAwait FAQ, Fowler async guidance (already partially done at line 314)\n  - `dotnet-performance-patterns`: Toub .NET Performance blog series\n  - `dotnet-minimal-apis`: Fowler AspNetCoreDiagnosticScenarios\n  - `dotnet-blazor-components`: Damian Edwards Blazor guidance\n  - `dotnet-architecture-patterns`: Andrew Lock middleware blog, Steve Smith/Ardalis Clean Architecture\n  - `dotnet-csharp-coding-standards`: Mads Torgersen C# design notes\n- Update `dotnet-advisor` catalog to include routing entries for all 5 new agents: async-performance-specialist, aspnetcore-specialist, testing-specialist, cloud-specialist, and code-review-agent\n- Update `AGENTS.md` delegation table with all 5 new agent entries, triggers, and scope boundaries\n- Update `AGENTS.md` agent count (9\u219214) and `CLAUDE.md` plugin summary count (9\u219214 agents)\n- Do NOT rename agents or change existing content beyond adding references\n- Reference sections do NOT count toward the description budget (they're body content, not frontmatter description)\n\n## Key context\n- Some skills already cite David Fowler (e.g., `dotnet-csharp-async-patterns:314`). Verify what exists before adding duplicates.\n- Attribution pattern: \"Grounded in guidance from [Name] \u2014 [Source URL]\" \u2014 not \"As recommended by\" or \"According to\"\n- Budget impact: zero (references are body content, not description field)\n## Acceptance\n- [ ] At least 6 existing skills have luminary attribution in References sections\n- [ ] Attribution uses \"Grounded in guidance from\" pattern, not impersonation language\n- [ ] dotnet-advisor catalog updated with new agent routing entries\n- [ ] AGENTS.md updated with all 5 new agent entries, triggers, and scope boundaries\n- [ ] AGENTS.md agent count updated (9\u219214)\n- [ ] CLAUDE.md plugin summary agent count updated (9\u219214)\n- [ ] No duplicate references (check existing References sections first)\n- [ ] No fn-N spec references introduced\n- [ ] All four validation commands pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T23:10:14.661754Z",
+        "depends_on": [],
+        "epic": "fn-38-expert-domain-agents-and-luminary",
+        "id": "fn-38-expert-domain-agents-and-luminary.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-38-expert-domain-agents-and-luminary.4.md",
+        "status": "todo",
+        "title": "Create testing, cloud/Aspire, and code review specialist agents",
+        "updated_at": "2026-02-14T23:10:52.182347Z"
+      },
+      "id": "fn-38-expert-domain-agents-and-luminary.4",
+      "runtime": null,
+      "spec": "# fn-38-expert-domain-agents-and-luminary.4 Create testing, cloud/Aspire, and code review specialist agents\n\n## Description\nCreate 3 additional domain-named specialist agents to cover the remaining agent gaps:\n\n1. **dotnet-testing-specialist** \u2014 Test architecture and strategy agent. Covers test pyramid design, E2E test architecture, test data management, microservice testing strategies, when to use integration vs unit vs E2E. Preloads: `dotnet-testing-strategy`, `dotnet-xunit`, `dotnet-integration-testing`, `dotnet-snapshot-testing`, `dotnet-playwright`.\n2. **dotnet-cloud-specialist** \u2014 Cloud deployment and .NET Aspire orchestration agent. Covers AKS/Azure deployment, GitHub Actions multi-stage pipelines, Aspire service discovery, distributed tracing, infrastructure-as-code for .NET apps. Preloads: `dotnet-containers`, `dotnet-container-deployment`, `dotnet-observability`, `dotnet-ado-patterns`.\n3. **dotnet-code-review-agent** \u2014 General code review agent combining performance, security, architecture, and correctness review. Routes to specialist agents for deep dives. Preloads: a broad set of core skills. Triggers on: \"review this\", \"code review\", \"PR review\", \"what's wrong with this code\".\n\n**Size:** M\n**Files:** `agents/dotnet-testing-specialist.md`, `agents/dotnet-cloud-specialist.md`, `agents/dotnet-code-review-agent.md`, `.claude-plugin/plugin.json`\n\n## Approach\n- Follow agent frontmatter pattern from `agents/dotnet-csharp-concurrency-specialist.md`\n- All agents domain-named, NOT person-named\n- Each agent < 3,000 tokens, with focused scope and explicit boundaries\n- Include \"Does NOT\" boundary sections to prevent overlap with existing agents\n- Testing specialist: does NOT handle performance benchmarking (use benchmark-designer), does NOT handle security auditing (use security-reviewer)\n- Cloud specialist: does NOT handle general architecture (use architect), does NOT handle container image optimization (covered in container skills)\n- Code review agent: triages and routes to specialists, does NOT replace specialized reviewers for deep domain analysis\n- Register all in `.claude-plugin/plugin.json` agents array\n## Acceptance\n- [ ] dotnet-testing-specialist agent created with frontmatter and decision tree\n- [ ] dotnet-cloud-specialist agent created with frontmatter and decision tree\n- [ ] dotnet-code-review-agent created with frontmatter and triage workflow\n- [ ] All 3 agents have explicit \"Does NOT\" boundary sections\n- [ ] All 3 agents under 3,000 tokens each\n- [ ] All 3 registered in `.claude-plugin/plugin.json` agents array\n- [ ] No overlap with existing agents (concurrency, performance, security, Blazor, Uno, MAUI)\n- [ ] All four validation commands pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-14T23:10:15.805423Z",
+        "depends_on": [],
+        "epic": "fn-38-expert-domain-agents-and-luminary",
+        "id": "fn-38-expert-domain-agents-and-luminary.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-38-expert-domain-agents-and-luminary.5.md",
+        "status": "todo",
+        "title": "Enrich existing agents with luminary-sourced knowledge",
+        "updated_at": "2026-02-14T23:11:13.470691Z"
+      },
+      "id": "fn-38-expert-domain-agents-and-luminary.5",
+      "runtime": null,
+      "spec": "# fn-38-expert-domain-agents-and-luminary.5 Enrich existing agents with luminary-sourced knowledge\n\n## Description\nEnrich existing agents with luminary-sourced knowledge. Rather than creating new agents for every luminary, fold their expertise into the agents that already cover their domains.\n\n**Size:** M\n**Files:** `agents/dotnet-blazor-specialist.md`, `agents/dotnet-architect.md`, `agents/dotnet-performance-analyst.md`, `skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md`, `skills/core-csharp/dotnet-csharp-modern-patterns/SKILL.md`\n\n## Approach\nLuminaries mapped to existing agents:\n- **Damian Edwards** (Razor/Blazor) \u2192 enrich `dotnet-blazor-specialist` with component design patterns, Blazor rendering guidance, Edwards' Razor patterns. Add Knowledge Sources section.\n- **Steve Smith / Ardalis** (Clean Architecture, SOLID) \u2192 enrich `dotnet-architect` with Clean Architecture guidance, SOLID decision framework. Add Knowledge Sources section.\n- **Mads Torgersen** (C# language design) \u2192 enrich `dotnet-csharp-coding-standards` and `dotnet-csharp-modern-patterns` skills with language design rationale references, NOT the concurrency specialist (Torgersen's expertise is language design broadly, not concurrency). C# Language Design Notes as source.\n- **Andrew Lock** (ASP.NET Core config, middleware) \u2192 fold into the new `dotnet-aspnetcore-specialist` and relevant middleware skills. Blog series as source.\n- **Nick Chapsas** (modern .NET patterns, clean code) \u2192 attribution in relevant skills, not a separate agent\n- **Jimmy Bogard** (MediatR, vertical slices, DDD patterns) \u2192 attribution in domain modeling and architecture skills. Note: MediatR is now commercial for commercial use.\n- **Stephen Cleary** (async best practices) \u2192 enrich async-performance-specialist and async-patterns skill with Cleary's \"Concurrency in C#\" guidance\n\nFor each enrichment:\n- Add \"Knowledge Sources\" section if not present\n- Add relevant decision tree entries grounded in luminary guidance\n- Do NOT rename agents or change their core scope\n- Do NOT impersonate \u2014 use \"grounded in guidance from\" pattern\n## Acceptance\n- [ ] dotnet-blazor-specialist enriched with Damian Edwards component design patterns\n- [ ] dotnet-architect enriched with Steve Smith/Ardalis Clean Architecture + SOLID guidance\n- [ ] Mads Torgersen C# language design rationale referenced in `dotnet-csharp-coding-standards` and/or `dotnet-csharp-modern-patterns` skills\n- [ ] Andrew Lock middleware/config guidance folded into aspnetcore-specialist and skills\n- [ ] Jimmy Bogard DDD/vertical slice guidance attributed in domain modeling content\n- [ ] Stephen Cleary async best practices referenced in async-related content\n- [ ] All enrichments use \"Knowledge Sources\" sections with proper attribution\n- [ ] No agents renamed or core scope changed\n- [ ] All four validation commands pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-15T12:37:35.704029Z",
+  "created_at": "2026-02-16T17:48:19.514496Z",
   "epic": {
     "data": {
       "branch_name": "fn-37-skill-cleanup-sweep",
@@ -9,21 +9,172 @@
       "default_impl": null,
       "default_review": null,
       "default_sync": null,
-      "depends_on_epics": [
-        "fn-31-self-contained-skills-port"
-      ],
+      "depends_on_epics": [],
       "id": "fn-37-skill-cleanup-sweep",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-15T12:56:07.377195Z",
       "spec_path": ".flow/specs/fn-37-skill-cleanup-sweep.md",
       "status": "open",
       "title": "Skill Cleanup Sweep",
-      "updated_at": "2026-02-14T22:04:47.153406Z"
+      "updated_at": "2026-02-15T12:56:07.378650Z"
     },
-    "spec": "# Skill Cleanup Sweep\n\n## Overview\nHousekeeping pass across all skills to remove internal tracking artifacts, fix stale references, update testing defaults, and enforce package version policy.\n\n## Scope\n1. **Remove fn-N references** \u2014 57 files contain fn-N spec references (e.g., \"implemented in fn-7\"). Skills should never reference internal planning IDs.\n2. **Remove .gitkeep files** \u2014 19+ unnecessary .gitkeep files in skill directories that now have content.\n3. **Fix broken cross-references** \u2014 `dotnet-advisor` references `[skill:dotnet-scaffolding-base]` which should be `[skill:dotnet-scaffold-project]` (lines 42, 171)\n4. **Update testing defaults** \u2014 All testing guidance should default to xUnit v3 with Microsoft.Testing.Platform v2 (MTP2), not xUnit v2\n5. **Minimize third-party deps** \u2014 Replace FluentValidation references with built-in alternatives (DataAnnotations, IValidateOptions, MinimalApis.Extensions)\n6. **System.CommandLine version** \u2014 Ensure any System.CommandLine references target >= 2.0.0 stable, not earlier betas\n7. **Package version updates** \u2014 Ensure all library version references use latest stable (prefer stable over prerelease)\n8. **Remove internal artifacts** \u2014 `skills/architecture/FN7-RECONCILIATION.md` should not ship\n9. **SOLID/DRY/SRP enforcement** \u2014 Ensure architecture-related skills engrain these principles (check `dotnet-clean-architecture`, `dotnet-csharp-coding-standards`, `dotnet-architecture-patterns`)\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] Zero fn-N references in any skill SKILL.md content\n- [ ] Zero unnecessary .gitkeep files\n- [ ] All cross-references valid (validate-skills.sh passes)\n- [ ] Testing defaults updated to xUnit v3 + MTP2 across all testing skills\n- [ ] Third-party dep references minimized (built-in preferred)\n- [ ] System.CommandLine references target >= 2.0.0\n- [ ] Package versions updated to latest stable\n- [ ] FN7-RECONCILIATION.md removed\n- [ ] Architecture skills reference SOLID/DRY/SRP principles\n- [ ] All four validation commands pass\n\n## References\n- Context-scout findings: 57 files with fn-N refs, 19 .gitkeep files\n- `skills/foundation/dotnet-advisor/SKILL.md:42,171` \u2014 broken cross-ref\n- `skills/architecture/FN7-RECONCILIATION.md` \u2014 internal artifact to remove\n- https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/ \u2014 SRP anti-patterns reference\n"
+    "spec": "# Skill Cleanup Sweep\n\n## Overview\nHousekeeping pass across all skills to remove internal tracking artifacts, fix stale references, update testing defaults, and enforce package version policy.\n\n## Scope\n\n### 1. Remove fn-N references\n57 files contain fn-N spec references (e.g., \"implemented in fn-7\", \"owned by fn-8\"). Skills should never reference internal planning IDs.\n\n**Replacement rule**: Remove all `fn-N` references. Where a `[skill:...]` cross-reference already exists on the same line, simply delete the `(fn-N)` suffix. Where the fn-N reference is the only pointer (e.g., \"owned by fn-8\"), replace with the appropriate `[skill:...]` reference or delete the sentence if no skill mapping exists.\n\n### 2. Remove .gitkeep files\n19+ unnecessary .gitkeep files in skill directories that now have content.\n\n**Safety rule**: Only remove `.gitkeep` if the directory contains at least one `SKILL.md` file. Leave `.gitkeep` in genuinely empty category directories (e.g., `skills/containers/`, `skills/data-access/`) \u2014 these are placeholders for future skill categories.\n\n### 3. Fix broken cross-references\n- `dotnet-advisor` references `[skill:dotnet-scaffolding-base]` which should be `[skill:dotnet-scaffold-project]` (lines 42, 171)\n- Grep for `dotnet-scaffolding-base` across ALL skill files, not just the advisor\n\n### 4. Update testing defaults to xUnit v3 + MTP2\nAll testing guidance should default to xUnit v3 with Microsoft.Testing.Platform v2 (MTP2).\n\n**Concrete package defaults for all examples:**\n- `xunit.v3` (Version 1.0.0+) \u2014 replaces `xunit` (v2 package name)\n- `xunit.runner.visualstudio` (Version 3.0.0+)\n- `Microsoft.NET.Test.Sdk` (Version 17.13.0+) with `<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>`\n- `coverlet.collector` (Version 6.0.4+)\n\nRemove references to `xunit` (v2 package name) in favor of `xunit.v3`. **Priority targets**: scaffolding skills (`dotnet-add-testing`, `dotnet-scaffold-project`, `dotnet-project-structure`) that propagate defaults to new projects.\n\n### 5. Minimize third-party deps\nEnsure FluentValidation is positioned as an opt-in for complex validation scenarios, not a default. Verify all skills that mention FluentValidation also mention built-in alternatives first (DataAnnotations, IValidateOptions, .NET 10 `AddValidation`). The current `dotnet-input-validation` decision tree is close to correct \u2014 verify it recommends built-in first.\n\n### 6. System.CommandLine version\nSystem.CommandLine 2.0 has **no stable release** \u2014 it remains at `2.0.0-beta4.*` pre-release. Verify references use the latest `2.0.0-beta4.*` version. Add a note that no stable 2.0 release exists yet. Remove any references to older beta versions (beta1, beta2, beta3).\n\n### 7. Package version updates\nEnsure all library version references use latest stable (prefer stable over prerelease). See concrete xUnit/MTP2 versions in scope item #4.\n\n### 8. Remove internal artifacts\n- `skills/architecture/FN7-RECONCILIATION.md` should not ship \u2014 delete it\n- Remove internal budget tracking comments from skill files (e.g., `<!-- Budget: PROJECTED_SKILLS_COUNT=... -->` in `dotnet-advisor`)\n\n### 9. SOLID/DRY/SRP enforcement\nEnsure architecture-related skills engrain these principles (check `dotnet-clean-architecture`, `dotnet-csharp-coding-standards`, `dotnet-architecture-patterns`). This is independent of other scope items and targets a different set of files.\n\n## Quick commands\n```bash\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n\n### Automated (validated by scripts + grep)\n- [ ] Zero fn-N references in any skill SKILL.md content (`grep -r 'fn-[0-9]' skills/ --include='*.md'` returns 0 hits, excluding FN7-RECONCILIATION.md which is deleted)\n- [ ] Zero unnecessary .gitkeep files (only remain in genuinely empty category dirs)\n- [ ] All cross-references valid (validate-skills.sh passes)\n- [ ] FN7-RECONCILIATION.md removed\n- [ ] No internal budget tracking comments in skill files\n- [ ] All four validation commands pass\n- [ ] Zero references to `xunit` v2 package name in CPM/PackageReference examples (`grep -r '\"xunit\"' skills/ --include='*.md'` returns 0 hits)\n\n### Manual review\n- [ ] Testing defaults updated to xUnit v3 + MTP2 across all testing and scaffolding skills\n- [ ] FluentValidation positioned as opt-in for complex scenarios, built-in recommended first\n- [ ] System.CommandLine references use latest beta4 and note pre-release status\n- [ ] Package versions updated to latest stable where referenced\n- [ ] Architecture skills reference SOLID/DRY/SRP principles\n\n## References\n- Context-scout findings: 57 files with fn-N refs, 19 .gitkeep files\n- `skills/foundation/dotnet-advisor/SKILL.md:42,171` \u2014 broken cross-ref\n- `skills/architecture/FN7-RECONCILIATION.md` \u2014 internal artifact to remove\n- https://stormwild.github.io/blog/post/srp-mistakes-csharp-dotnet/ \u2014 SRP anti-patterns reference\n"
   },
   "epic_id": "fn-37-skill-cleanup-sweep",
   "schema_version": 2,
-  "tasks": []
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T12:51:04.474641Z",
+        "depends_on": [],
+        "epic": "fn-37-skill-cleanup-sweep",
+        "id": "fn-37-skill-cleanup-sweep.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-37-skill-cleanup-sweep.1.md",
+        "status": "todo",
+        "title": "Remove fn-N references and internal artifacts",
+        "updated_at": "2026-02-15T12:51:49.720989Z"
+      },
+      "id": "fn-37-skill-cleanup-sweep.1",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-16T16:53:46.121008Z",
+        "evidence": {
+          "commits": [
+            "cb66c5a4db10df42d0a22c30d4866f268a255b52"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py",
+            "grep -r 'fn-[0-9]' skills/ --include='*.md' | wc -l  # returned 0",
+            "grep -r 'Budget:.*PROJECTED' skills/ --include='*.md' | wc -l  # returned 0",
+            "test ! -f skills/architecture/FN7-RECONCILIATION.md  # passed"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-16T17:05:06.533524Z"
+      },
+      "spec": "# Task 1: Remove fn-N references and internal artifacts\n\n## Scope\n- Remove all `fn-N` references from skill SKILL.md files (57 files identified)\n- Delete `skills/architecture/FN7-RECONCILIATION.md`\n- Remove internal budget tracking comments (e.g., `<!-- Budget: PROJECTED_SKILLS_COUNT=... -->`)\n\n## Replacement rule\n- Where a `[skill:...]` cross-reference already exists on the same line, delete the `(fn-N)` suffix\n- Where the fn-N reference is the only pointer (e.g., \"owned by fn-8\"), replace with the appropriate `[skill:...]` reference or delete the sentence if no skill mapping exists\n- In out-of-scope sections that list fn-N ownership, remove the entire ownership line\n\n## Verification\n```bash\ngrep -r 'fn-[0-9]' skills/ --include='*.md' | grep -v '.gitkeep' | wc -l  # Should be 0\ntest ! -f skills/architecture/FN7-RECONCILIATION.md  # Should pass\ngrep -r 'Budget:.*PROJECTED' skills/ --include='*.md' | wc -l  # Should be 0\n```\n\n## Acceptance\n- [ ] Zero fn-N references in any skill SKILL.md content\n- [ ] FN7-RECONCILIATION.md deleted\n- [ ] No internal budget tracking comments in skill files\n- [ ] All four validation commands pass\n\n## Done summary\nRemoved all fn-N planning references from 50 skill SKILL.md files, deleted FN7-RECONCILIATION.md internal artifact, removed budget tracking HTML comments from dotnet-advisor, and replaced standalone fn-N pointers with proper [skill:...] cross-references (fn-12 -> dotnet-blazor-auth, fn-19 -> appropriate CI/CD skills, fn-10 -> dotnet-version-upgrade/dotnet-multi-targeting, etc.).\n## Evidence\n- Commits: cb66c5a4db10df42d0a22c30d4866f268a255b52\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py, grep -r 'fn-[0-9]' skills/ --include='*.md' | wc -l  # returned 0, grep -r 'Budget:.*PROJECTED' skills/ --include='*.md' | wc -l  # returned 0, test ! -f skills/architecture/FN7-RECONCILIATION.md  # passed\n- PRs:"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T12:51:15.417466Z",
+        "depends_on": [],
+        "epic": "fn-37-skill-cleanup-sweep",
+        "id": "fn-37-skill-cleanup-sweep.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-37-skill-cleanup-sweep.2.md",
+        "status": "todo",
+        "title": "Fix cross-references and remove .gitkeep files",
+        "updated_at": "2026-02-15T12:52:10.139308Z"
+      },
+      "id": "fn-37-skill-cleanup-sweep.2",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-16T17:10:49.773822Z",
+        "evidence": {
+          "commits": [
+            "4fd352f3006ea03612b12fe22ed7f1bfad3d5e6c"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-16T17:16:35.252806Z"
+      },
+      "spec": "# Task 2: Fix cross-references and remove .gitkeep files\n\n## Scope\n\n### Fix broken cross-references\n- `dotnet-advisor` references `[skill:dotnet-scaffolding-base]` which should be `[skill:dotnet-scaffold-project]` (lines ~42, ~171)\n- Grep for `dotnet-scaffolding-base` across ALL skill files, not just the advisor\n- Run `validate-skills.sh` to catch any other broken cross-references\n\n### Remove .gitkeep files\n- Remove `.gitkeep` files from skill directories that contain at least one `SKILL.md` file\n- Leave `.gitkeep` in genuinely empty category directories (e.g., `skills/containers/`, `skills/data-access/`) as placeholders for future categories\n\n## Verification\n```bash\ngrep -r 'dotnet-scaffolding-base' skills/ --include='*.md' | wc -l  # Should be 0\n./scripts/validate-skills.sh  # Should pass\nfind skills/ -name '.gitkeep' -exec sh -c 'ls \"$(dirname \"$1\")\"/*.md 2>/dev/null | head -1' _ {} \\; | wc -l  # Should be 0\n```\n\n## Acceptance\n- [ ] Zero references to `dotnet-scaffolding-base` in any skill file\n- [ ] All cross-references valid (validate-skills.sh passes)\n- [ ] No .gitkeep files in directories that contain SKILL.md files\n- [ ] .gitkeep preserved in genuinely empty category directories\n\n## Done summary\nRemoved 17 unnecessary .gitkeep files from skill category directories that contain SKILL.md content, preserved .gitkeep in 2 genuinely empty category directories (containers, data-access), and fixed stale dotnet-scaffolding-base reference to dotnet-scaffold-project in docs/dotnet-artisan-spec.md.\n## Evidence\n- Commits: 4fd352f3006ea03612b12fe22ed7f1bfad3d5e6c\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T12:51:25.320621Z",
+        "depends_on": [],
+        "epic": "fn-37-skill-cleanup-sweep",
+        "id": "fn-37-skill-cleanup-sweep.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-37-skill-cleanup-sweep.3.md",
+        "status": "todo",
+        "title": "Update testing defaults to xUnit v3 + MTP2 and package versions",
+        "updated_at": "2026-02-15T12:52:47.314571Z"
+      },
+      "id": "fn-37-skill-cleanup-sweep.3",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-16T17:20:45.000818Z",
+        "evidence": {
+          "commits": [
+            "5ed549d",
+            "3050628"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-16T17:31:02.002048Z"
+      },
+      "spec": "# Task 3: Update testing defaults to xUnit v3 + MTP2 and package versions\n\n## Scope\n\n### xUnit v3 + MTP2 migration\nUpdate all testing guidance to use these concrete package defaults:\n- `xunit.v3` (Version 1.0.0+) \u2014 replaces `xunit` (v2 package name)\n- `xunit.runner.visualstudio` (Version 3.0.0+)\n- `Microsoft.NET.Test.Sdk` (Version 17.13.0+) with `<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>`\n- `coverlet.collector` (Version 6.0.4+)\n\nRemove references to `xunit` (v2 package name) in favor of `xunit.v3`.\n\n### Priority targets (scaffolding skills that propagate defaults)\n1. `skills/project-structure/dotnet-add-testing/SKILL.md` \u2014 uses `xunit` v2 in CPM examples\n2. `skills/project-structure/dotnet-scaffold-project/SKILL.md` \u2014 uses `xunit` v2 in CPM\n3. `skills/project-structure/dotnet-project-structure/SKILL.md` \u2014 uses `xunit` v2 in CPM\n4. `skills/testing/dotnet-xunit/SKILL.md` \u2014 already covers v3 but verify consistency\n\n### General package version updates\nEnsure all library version references use latest stable versions where referenced.\n\n## Verification\n```bash\ngrep -r '\"xunit\"' skills/ --include='*.md' | grep -v 'xunit.v3' | wc -l  # Should be 0\ngrep -r 'xunit.*2\\.9' skills/ --include='*.md' | wc -l  # Should be 0\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\n```\n\n## Acceptance\n- [ ] Zero references to `xunit` v2 package name in CPM/PackageReference examples\n- [ ] All scaffolding skills use `xunit.v3` version 1.0.0+\n- [ ] MTP2 runner flag documented in testing defaults\n- [ ] Package versions updated to latest stable where referenced\n- [ ] All four validation commands pass\n\n## Evidence\n- Commits: 5ed549d, 3050628\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:\n## Done summary\nUpdated all testing-related skills to use xUnit v3 (xunit.v3 3.2.2) with latest package versions (xunit.runner.visualstudio 3.1.5, Microsoft.NET.Test.Sdk 18.0.1, coverlet.collector 8.0.0), replaced all xunit v2 package references, and added MTP2 runner flag (UseMicrosoftTestingPlatformRunner) to scaffolding skills."
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-15T12:51:26.738331Z",
+        "depends_on": [],
+        "epic": "fn-37-skill-cleanup-sweep",
+        "id": "fn-37-skill-cleanup-sweep.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-37-skill-cleanup-sweep.4.md",
+        "status": "todo",
+        "title": "Minimize third-party deps, System.CommandLine version, and SOLID/DRY/SRP enforcement",
+        "updated_at": "2026-02-15T12:53:15.075807Z"
+      },
+      "id": "fn-37-skill-cleanup-sweep.4",
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-16T17:35:22.709635Z",
+        "evidence": {
+          "commits": [
+            "680fbb57cc32a1d2b8f253a4db2be107e7d4914c"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh",
+            "python3 scripts/generate_dist.py --strict",
+            "python3 scripts/validate_cross_agent.py"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-16T17:42:44.839057Z"
+      },
+      "spec": "# Task 4: Minimize third-party deps, System.CommandLine version, and SOLID/DRY/SRP enforcement\n\n## Scope\n\n### FluentValidation positioning\n- Ensure FluentValidation is positioned as opt-in for complex validation scenarios, not a default\n- Verify all skills that mention FluentValidation also mention built-in alternatives first (DataAnnotations, IValidateOptions, .NET 10 AddValidation)\n- Primary target: `skills/api-development/dotnet-input-validation/SKILL.md` \u2014 verify decision tree recommends built-in first\n- Check any other skills mentioning FluentValidation\n\n### System.CommandLine version\n- System.CommandLine 2.0 has no stable release \u2014 it remains at `2.0.0-beta4.*` pre-release\n- Verify references use latest `2.0.0-beta4.*` version\n- Add note that no stable 2.0 release exists yet\n- Remove any references to older beta versions (beta1, beta2, beta3)\n- Primary target: `skills/cli-tools/dotnet-system-commandline/SKILL.md`\n\n### SOLID/DRY/SRP enforcement\n- Ensure architecture-related skills engrain SOLID, DRY, SRP principles\n- Check: `dotnet-clean-architecture`, `dotnet-csharp-coding-standards`, `dotnet-architecture-patterns`\n- This targets a different set of files from other scope items\n\n## Verification\n```bash\n# FluentValidation should appear but not as primary recommendation\ngrep -r 'FluentValidation' skills/ --include='*.md' -l  # Review each manually\n\n# System.CommandLine beta versions \u2014 should only be beta4\ngrep -r 'beta[123]' skills/ --include='*.md' | grep -i 'commandline' | wc -l  # Should be 0\n\n# SOLID/DRY/SRP \u2014 should appear in architecture skills\ngrep -r 'SOLID\\|DRY\\|SRP\\|Single Responsibility' skills/architecture/ --include='*.md' | wc -l  # Should be > 0\n\n./scripts/validate-skills.sh\npython3 scripts/generate_dist.py --strict\npython3 scripts/validate_cross_agent.py\n```\n\n## Acceptance\n- [ ] FluentValidation positioned as opt-in, built-in recommended first\n- [ ] System.CommandLine references use latest beta4, note pre-release status\n- [ ] No references to older beta versions (beta1-3)\n- [ ] Architecture skills reference SOLID/DRY/SRP principles\n- [ ] All four validation commands pass\n\n## Evidence\n- Commits: 680fbb57cc32a1d2b8f253a4db2be107e7d4914c\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py\n- PRs:\n## Done summary\nEnforced built-in-first validation positioning in dotnet-architecture-patterns (Data Annotations/MiniValidation as default, FluentValidation as opt-in) and added SOLID/DRY/SRP cross-references to dotnet-architecture-patterns and dotnet-csharp-coding-standards skills. System.CommandLine already correctly documents 2.0.0 GA status."
+    }
+  ]
 }

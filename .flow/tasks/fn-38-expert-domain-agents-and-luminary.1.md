@@ -11,7 +11,7 @@ Create `agents/dotnet-async-performance-specialist.md` — a domain-named agent 
 - Agent name: `dotnet-async-performance-specialist` (domain name, NOT person name)
 - Include "Knowledge Sources" section citing Toub's .NET performance blog series, ConfigureAwait FAQ, and async internals deep-dives
 - Include disclaimer: "This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources."
-- Preloaded skills: `dotnet-csharp-async-patterns`, `dotnet-performance-patterns`, `dotnet-profiling`, `dotnet-channels` (when created by fn-33)
+- Preloaded skills: `dotnet-csharp-async-patterns`, `dotnet-performance-patterns`, `dotnet-profiling`, `dotnet-channels`
 - Decision tree covering: ValueTask vs Task, ConfigureAwait decisions, async overhead detection, ThreadPool tuning, IO.Pipelines vs Streams
 - Explicit boundaries: "Does NOT handle thread synchronization primitives (use concurrency-specialist)" and "Does NOT handle general profiling workflow (use performance-analyst)"
 - Tools: Read, Grep, Glob, Bash (analysis only, read-only)

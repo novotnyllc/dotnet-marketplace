@@ -44,7 +44,8 @@ python3 scripts/validate_cross_agent.py
 - [ ] All four validation commands pass
 
 ## Evidence
-<!-- filled by flowctl done -->
-
+- Commits: 680fbb57cc32a1d2b8f253a4db2be107e7d4914c
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
+- PRs:
 ## Done summary
-<!-- filled by flowctl done -->
+Enforced built-in-first validation positioning in dotnet-architecture-patterns (Data Annotations/MiniValidation as default, FluentValidation as opt-in) and added SOLID/DRY/SRP cross-references to dotnet-architecture-patterns and dotnet-csharp-coding-standards skills. System.CommandLine already correctly documents 2.0.0 GA status.

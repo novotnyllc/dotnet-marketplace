@@ -126,7 +126,8 @@
     "agents/dotnet-maui-specialist.md",
     "agents/dotnet-performance-analyst.md",
     "agents/dotnet-benchmark-designer.md",
-    "agents/dotnet-docs-generator.md"
+    "agents/dotnet-docs-generator.md",
+    "agents/dotnet-async-performance-specialist.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"
