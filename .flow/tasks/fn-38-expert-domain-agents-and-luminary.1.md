@@ -35,9 +35,8 @@ Create `agents/dotnet-async-performance-specialist.md` — a domain-named agent 
 - [ ] Registered in `.claude-plugin/plugin.json` agents array
 - [ ] All four validation commands pass
 ## Done summary
-TBD
-
+Created dotnet-async-performance-specialist agent grounded in Stephen Toub's publicly documented async/await guidance, with decision tree covering ValueTask vs Task, ConfigureAwait, async overhead, ThreadPool tuning, IO.Pipelines, and Channel selection. Registered in plugin.json agents array.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c0b0c91b1d2599f3ae61e99877558b5f93399764, 01866b757ffc2a8fb6f05b5e9eefb5e4ff1fff2b
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
