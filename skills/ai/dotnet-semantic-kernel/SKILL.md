@@ -464,9 +464,10 @@ var agent = new ChatCompletionAgent
     })
 };
 
-// Single-turn invocation
-var response = await agent.InvokeAsync("What's the status of my order ORD-12345?");
-await foreach (var message in response)
+// Invoke via a thread (required -- agents do not accept bare strings)
+var thread = new ChatHistoryAgentThread();
+await foreach (var message in agent.InvokeAsync(
+    "What's the status of my order ORD-12345?", thread))
 {
     Console.WriteLine(message.Content);
 }
@@ -495,8 +496,10 @@ var chat = new AgentGroupChat(analyst, writer)
 {
     ExecutionSettings = new AgentGroupChatSettings
     {
-        TerminationStrategy = new MaxTurnTerminationStrategy(6),
-        SelectionStrategy = new SequentialSelectionStrategy()
+        TerminationStrategy = new ApprovalTerminationStrategy
+        {
+            MaximumIterations = 6
+        }
     }
 };
 
@@ -516,7 +519,8 @@ For stateful conversations with built-in tools (code interpreter, file search):
 ```csharp
 #pragma warning disable SKEXP0110
 
-var agent = await OpenAIAssistantAgent.CreateAsync(
+// Create the assistant via the builder pattern
+OpenAIAssistantAgent agent = await OpenAIAssistantAgent.CreateAsync(
     kernel,
     new OpenAIAssistantDefinition("gpt-4o")
     {
@@ -527,13 +531,11 @@ var agent = await OpenAIAssistantAgent.CreateAsync(
 
 try
 {
-    var threadId = await agent.CreateThreadAsync();
+    // Assistant agents use threads for stateful conversations
+    var thread = await agent.CreateThreadAsync();
 
-    await agent.AddChatMessageAsync(
-        threadId,
-        new ChatMessageContent(AuthorRole.User, "Analyze the attached sales data."));
-
-    await foreach (var message in agent.InvokeAsync(threadId))
+    await foreach (var message in agent.InvokeAsync(
+        "Analyze the attached sales data.", thread))
     {
         Console.WriteLine(message.Content);
     }
@@ -543,6 +545,8 @@ finally
     await agent.DeleteAsync();
 }
 ```
+
+Note: The agents framework is experimental (`SKEXP0110`). APIs change frequently between Semantic Kernel releases. Verify method signatures against the [latest samples](https://github.com/microsoft/semantic-kernel/tree/main/dotnet/samples) when adopting.
 
 ---
 

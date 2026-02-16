@@ -45,6 +45,7 @@ The AppHost is a .NET project (`Aspire.Hosting.AppHost` SDK) that defines the di
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Aspire SDK version is independent of .NET TFM; 9.x works on net8.0+ -->
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.1.*" />
 
   <PropertyGroup>
@@ -89,7 +90,7 @@ var api = builder.AddProject<Projects.MyApi>("api")
     .WithReference(postgres)
     .WithReference(redis)
     .WithReference(rabbitmq)
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints();  // Marks endpoints as public in deployment manifests
 
 builder.AddProject<Projects.MyWorker>("worker")
     .WithReference(postgres)

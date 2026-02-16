@@ -133,5 +133,10 @@
     "query": "How do I use Semantic Kernel to add AI chat and function calling to my .NET app?",
     "expected_skill": "dotnet-semantic-kernel",
     "category": "ai"
+  },
+  {
+    "query": "How do I set up .NET Aspire with service discovery and an AppHost for my distributed app?",
+    "expected_skill": "dotnet-aspire-patterns",
+    "category": "architecture"
   }
 ]
