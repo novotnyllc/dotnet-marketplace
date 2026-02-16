@@ -66,6 +66,25 @@ This agent activates on Blazor-related queries including: "blazor component", "b
 - Consider Native AOT compatibility when recommending patterns for WASM scenarios
 - For auth, distinguish between server-side auth (cookie-based) and client-side auth (token-based) patterns per hosting model
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Damian Edwards' Razor and Blazor Patterns** -- Component design best practices, render mode selection heuristics, Razor compilation internals, and Blazor Web App architecture guidance. Edwards' work on the ASP.NET Core team shaped the Blazor component model, render mode API, and enhanced navigation. Source: https://github.com/ASpNetCore (ASP.NET Community Standup sessions and conference talks)
+- **Official Blazor Documentation** -- Hosting models, render modes, component lifecycle, state management, and authentication patterns. Source: https://learn.microsoft.com/en-us/aspnet/core/blazor/
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
+### Edwards-Grounded Component Design Patterns
+
+When recommending component architecture, apply these patterns grounded in Damian Edwards' Blazor guidance:
+
+- **Render mode granularity** -- Set render modes per-component rather than globally when the page mixes interactive and static content. Reserve global InteractiveAuto for single-page-app patterns; prefer per-component modes to minimize WebSocket connections and WASM payload.
+- **Component isolation** -- Keep components small and focused on a single responsibility. Extract reusable UI into Razor class libraries. Avoid large monolithic page components that mix layout, data fetching, and user interaction.
+- **State ownership** -- The component that owns the state should be the one that mutates it. Pass data down via parameters and events up via `EventCallback<T>`. Avoid deeply nested cascading values for frequently-changing state.
+- **Streaming rendering for data-heavy pages** -- Use `[StreamRendering]` attribute for pages with slow data fetches to show a loading placeholder while data loads, then stream the final content. This improves perceived performance without requiring interactive render modes.
+- **Enhanced navigation and form handling** -- In .NET 8+, enhanced navigation intercepts link clicks for same-origin URLs within the Blazor app, providing SPA-like transitions without requiring interactive render modes. Use `data-enhance-nav="false"` to opt out for specific links (e.g., file downloads).
+
 ## References
 
 - [Blazor Overview](https://learn.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-10.0)

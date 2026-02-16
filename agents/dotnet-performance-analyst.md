@@ -79,8 +79,19 @@ This agent activates on performance investigation queries including: "analyze th
 - "This endpoint is slow under load -- help me identify the bottleneck"
 - "Compare these two benchmark runs and explain the differences"
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Stephen Toub's .NET Performance Blog** -- Deep analysis of runtime performance across .NET releases, allocation profiling methodology, and optimization patterns (Span<T>, ValueTask, sealed class devirtualization). Source: https://devblogs.microsoft.com/dotnet/author/toub/
+- **Stephen Cleary's Async Performance Guidance** -- Async overhead analysis, SynchronizationContext cost, and correct async disposal patterns that affect GC pressure. Key insight: unnecessary state machine allocations on hot paths are detectable via allocation profiling and fixable with ValueTask or synchronous fast-path returns. Source: https://blog.stephencleary.com/
+- **Nick Chapsas' .NET Performance Content** -- Practical benchmarking and performance comparison patterns for modern .NET APIs. Source: https://www.youtube.com/@nickchapsas
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
 ## References
 
 - [.NET Diagnostic Tools](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/)
 - [BenchmarkDotNet Documentation](https://benchmarkdotnet.org/)
 - [Performance Best Practices for .NET](https://learn.microsoft.com/en-us/dotnet/framework/performance/)
+- [Stephen Cleary's Async Blog](https://blog.stephencleary.com/)

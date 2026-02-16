@@ -379,9 +379,19 @@ See [skill:dotnet-add-analyzers] for full analyzer configuration.
 
 ---
 
+## Knowledge Sources
+
+Conventions in this skill are grounded in publicly available content from:
+
+- **Microsoft Framework Design Guidelines** -- The canonical reference for .NET naming, type design, and API surface conventions. Source: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/
+- **C# Language Design Notes (Mads Torgersen et al.)** -- Design rationale behind C# language features that affect coding standards. Key decisions relevant to this skill: file-scoped namespaces (reducing nesting for readability), pattern matching over type checks (expressiveness), `required` members (compile-time initialization safety), and `var` usage guidelines (readability-first). The language design team explicitly chose these features to reduce ceremony while maintaining safety. Source: https://github.com/dotnet/csharplang/tree/main/meetings
+
+> **Note:** This skill applies publicly documented design rationale. It does not represent or speak for the named sources.
+
 ## References
 
 - [Framework Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
 - [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
 - [C# Identifier Naming Rules](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
 - [.editorconfig for .NET](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options)
+- [C# Language Design Notes](https://github.com/dotnet/csharplang/tree/main/meetings)

@@ -636,6 +636,16 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 
 ---
 
+## Knowledge Sources
+
+Architecture patterns in this skill are grounded in publicly available content from:
+
+- **Jimmy Bogard's Vertical Slice Architecture** -- Organizing code by feature instead of by technical layer. Bogard advocates that each vertical slice owns its own request, handler, validation, and data access, reducing cross-feature coupling. He originated the popular MediatR library for request/handler dispatch in .NET, though MediatR is now commercial for commercial use. When applying vertical slice guidance, prefer the built-in IEndpointFilter and handler pattern shown above rather than introducing a third-party mediator dependency for simple scenarios. Source: https://www.jimmybogard.com/vertical-slice-architecture/
+- **Jimmy Bogard's Domain-Driven Design Patterns** -- Rich domain model guidance including entity design, value objects, domain events, and aggregate boundaries. Key insight: domain events should be dispatched after the aggregate state change is persisted (not before), to avoid inconsistency if persistence fails. Source: https://www.jimmybogard.com/
+- **Nick Chapsas' Modern .NET Patterns** -- Practical patterns for modern .NET including result types for error handling, structured validation pipelines, and modern C# feature adoption in production codebases. Source: https://www.youtube.com/@nickchapsas
+
+> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources. MediatR is a commercial product for commercial use; the patterns here are demonstrated with built-in .NET mechanisms.
+
 ## References
 
 - [ASP.NET Core Best Practices](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0)
@@ -644,3 +654,4 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 - [HybridCache library](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/hybrid)
 - [Problem Details (RFC 9457)](https://www.rfc-editor.org/rfc/rfc9457)
 - [Endpoint filters in minimal APIs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/min-api-filters)
+- [Vertical Slice Architecture (Jimmy Bogard)](https://www.jimmybogard.com/vertical-slice-architecture/)

@@ -628,11 +628,21 @@ For each class, answer these questions:
 
 ---
 
+## Knowledge Sources
+
+SOLID and DRY guidance in this skill is grounded in publicly available content from:
+
+- **Steve Smith (Ardalis) SOLID Principles** -- Practical SOLID application in .NET with guard clause patterns, specification pattern for OCP compliance, and clean architecture layering that enforces DIP at project boundaries. Source: https://ardalis.com/
+- **Jimmy Bogard's Domain-Driven Design Patterns** -- Rich domain model guidance that applies SRP to aggregate design (one aggregate root per bounded context) and OCP to domain event handling (new handlers without modifying existing ones). Note: MediatR is commercial for commercial use; apply the patterns with built-in mechanisms where possible. Source: https://www.jimmybogard.com/
+
+> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources.
+
 ## References
 
 - [SOLID Principles in C#](https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/may/csharp-best-practices-dangers-of-violating-solid-principles-in-csharp)
 - [Dependency Injection in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
 - [Covariance and Contravariance in Generics](https://learn.microsoft.com/en-us/dotnet/standard/generics/covariance-and-contravariance)
+- [Clean Architecture (Ardalis)](https://github.com/ardalis/CleanArchitecture)
 
 ## Attribution
 

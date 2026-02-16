@@ -38,6 +38,26 @@ Always load these foundation skills before analysis:
 
 4. **Explain trade-offs** -- For each recommendation, explain why it fits the project context and what alternatives were considered. Include version-specific considerations (e.g., features available in net10.0 but not net8.0).
 
+## Knowledge Sources
+
+This agent's guidance is grounded in publicly available content from:
+
+- **Steve Smith (Ardalis) Clean Architecture Template** -- Layered solution structure with Domain, Application, Infrastructure, and Web projects. Enforces dependency rules where inner layers never reference outer layers. Includes specification pattern for queries and guard clauses for defensive coding. Source: https://github.com/ardalis/CleanArchitecture
+- **Ardalis SOLID Principles and Design Patterns** -- Practical SOLID application in .NET with emphasis on testability, guard clauses (Ardalis.GuardClauses), and specification pattern (Ardalis.Specification). Source: https://ardalis.com/
+- **Official .NET Architecture Guidance** -- Microsoft's architecture e-books and reference applications. Source: https://learn.microsoft.com/en-us/dotnet/architecture/
+
+> **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
+
+### Clean Architecture Decision Framework
+
+When recommending project architecture, apply this decision framework grounded in Steve Smith/Ardalis' Clean Architecture guidance:
+
+- **Dependency rule** -- Dependencies point inward only. Domain has no project references. Application references only Domain. Infrastructure references Application. Web references Application (never Infrastructure directly for business logic).
+- **When to use Clean Architecture** -- Applications with significant business logic, multiple external dependencies (databases, APIs, file systems), and long expected lifespan. For simple CRUD services or prototypes, vertical slices or minimal-layer approaches are more appropriate.
+- **Specification pattern for queries** -- Encapsulate query criteria, includes, ordering, and paging in specification objects rather than scattering query logic across repositories. This keeps repositories generic and query logic testable.
+- **Guard clauses at boundaries** -- Validate inputs at method entry points using guard clauses (throw early). Do not use exceptions for control flow in business logic -- use result types instead.
+- **SOLID application** -- Apply SRP at the class level (one reason to change), OCP via strategy and specification patterns (not switch statements), and DIP at layer boundaries (Infrastructure implements interfaces defined in Application). See [skill:dotnet-solid-principles] for detailed patterns.
+
 ## Analysis Guidelines
 
 - Always ground recommendations in the detected project version -- do not assume latest .NET

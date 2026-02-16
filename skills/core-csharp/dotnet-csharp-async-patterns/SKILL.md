@@ -309,9 +309,20 @@ public async Task ProcessAsync_WhenCancelled_ThrowsOperationCanceled()
 
 ---
 
+## Knowledge Sources
+
+Async patterns in this skill are grounded in publicly available content from:
+
+- **Stephen Cleary's "Concurrency in C#" and Blog** -- Definitive async best practices for .NET. Key guidance applied in this skill: "async all the way" (never block on async), "there is no thread" (async I/O does not consume a thread while waiting), correct CancellationToken propagation, async disposal via IAsyncDisposable, and BackgroundService patterns for long-running work. Source: https://blog.stephencleary.com/
+- **David Fowler's Async Guidance** -- Practical async anti-patterns and diagnostic scenarios for ASP.NET Core. Source: https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md
+- **Stephen Toub's ConfigureAwait FAQ** -- Canonical reference for ConfigureAwait behavior across application types. Source: https://devblogs.microsoft.com/dotnet/configureawait-faq/
+
+> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources.
+
 ## References
 
 - [Async/await best practices (David Fowler)](https://github.com/davidfowl/AspNetCoreDiagnosticScenarios/blob/master/AsyncGuidance.md)
+- [Stephen Cleary's Async Blog](https://blog.stephencleary.com/)
 - [Asynchronous programming patterns](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/)
 - [Task-based asynchronous pattern (TAP)](https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap)
 - [ConfigureAwait FAQ](https://devblogs.microsoft.com/dotnet/configureawait-faq/)

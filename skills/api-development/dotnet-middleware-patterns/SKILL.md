@@ -547,6 +547,15 @@ else
 
 ---
 
+## Knowledge Sources
+
+Middleware patterns in this skill are grounded in publicly available content from:
+
+- **Andrew Lock's "Exploring ASP.NET Core" Blog Series** -- Deep coverage of middleware authoring patterns, including IMiddleware vs convention-based trade-offs, pipeline ordering pitfalls, endpoint routing internals, and IExceptionHandler composition. Source: https://andrewlock.net/
+- **Official ASP.NET Core Middleware Documentation** -- Middleware fundamentals, factory-based activation, and error handling patterns. Source: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/
+
+> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources.
+
 ## References
 
 - [ASP.NET Core middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/)
@@ -554,6 +563,7 @@ else
 - [Factory-based middleware activation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/extensibility)
 - [Handle errors in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling)
 - [IExceptionHandler in .NET 8](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling#iexceptionhandler)
+- [Exploring ASP.NET Core (Andrew Lock)](https://andrewlock.net/)
 
 ---
 

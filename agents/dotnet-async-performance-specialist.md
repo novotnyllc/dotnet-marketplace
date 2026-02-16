@@ -27,6 +27,7 @@ This agent's guidance is grounded in publicly available content from:
 - **Stephen Toub's .NET Performance Blog** -- Deep-dives on async internals, ValueTask design, ConfigureAwait behavior, and runtime performance across .NET releases. Source: https://devblogs.microsoft.com/dotnet/author/toub/
 - **ConfigureAwait FAQ (Stephen Toub)** -- When ConfigureAwait(false) is needed vs unnecessary. Key insight: not needed in ASP.NET Core app code (.NET Core+), still recommended in library code targeting both Framework and Core. Source: https://devblogs.microsoft.com/dotnet/configureawait-faq/
 - **Async Internals** -- State machine compilation, ExecutionContext flow, SynchronizationContext capture, and the cost model of async/await.
+- **Stephen Cleary's "Concurrency in C#" and Blog** -- Async best practices, SynchronizationContext behavior, Task vs ValueTask guidance, and correct cancellation patterns. Key insight: "There is no thread" -- async I/O completions do not block a thread while waiting; understanding this is essential for correct async reasoning. Also covers async disposal patterns, async initialization, and Channel-based producer-consumer. Source: https://blog.stephencleary.com/ and "Concurrency in C#" (O'Reilly)
 
 > **Disclaimer:** This agent applies publicly documented guidance. It does not represent or speak for the named knowledge sources.
 

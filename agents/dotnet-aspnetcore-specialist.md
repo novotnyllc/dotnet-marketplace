@@ -86,6 +86,23 @@ Is the question about request pipeline optimization?
   HTTPS redirection in production behind reverse proxy?
     -> Configure ForwardedHeaders; HTTPS redirect may loop without X-Forwarded-Proto
 
+Is the question about configuration and host builder patterns?
+  Migrating from WebHost to WebApplication (minimal hosting)?
+    -> Use WebApplication.CreateBuilder(); it combines Host, WebHost, and DI config
+  Need to configure Kestrel server options?
+    -> builder.WebHost.ConfigureKestrel() BEFORE builder.Build() (post-Build is ignored)
+  Configuration binding for Options pattern?
+    -> Use builder.Services.Configure<T>(builder.Configuration.GetSection("Name"))
+    -> Options classes must use { get; set; } not { get; init; } (binder must mutate)
+  Need environment-specific config layering?
+    -> appsettings.json < appsettings.{Environment}.json < env vars < command line
+    -> Use builder.Configuration.AddJsonFile() for custom config sources BEFORE Build()
+  IOptionsMonitor vs IOptionsSnapshot vs IOptions?
+    -> IOptions: singleton, never changes after startup
+    -> IOptionsSnapshot: scoped, reloads per-request
+    -> IOptionsMonitor: singleton, notifies on change via OnChange callback
+    -> Read CurrentValue at call site, not constructor (or changes are missed)
+
 Is this a diagnostic scenario?
   Sync-over-async in middleware (.Result, .Wait())?
     -> Thread pool starvation risk; use async all the way

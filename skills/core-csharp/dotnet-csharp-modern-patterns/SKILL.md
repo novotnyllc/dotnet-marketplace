@@ -365,10 +365,20 @@ See [skill:dotnet-multi-targeting] for comprehensive polyfill guidance.
 
 ---
 
+## Knowledge Sources
+
+Feature guidance in this skill is grounded in publicly available language design rationale from:
+
+- **C# Language Design Notes (Mads Torgersen et al.)** -- Design decisions behind each C# version's features. Key rationale relevant to this skill: primary constructors (reducing boilerplate for DI-heavy services), collection expressions (unifying collection initialization syntax), `field` keyword (eliminating backing field ceremony), and extension blocks (grouping extensions by target type). Each feature balances expressiveness with safety -- e.g., primary constructor parameters are intentionally mutable captures (not readonly) to keep the feature simple; use explicit readonly fields when immutability is needed. Source: https://github.com/dotnet/csharplang/tree/main/meetings
+- **C# Language Proposals Repository** -- Detailed specifications and design rationale for accepted and proposed features. Source: https://github.com/dotnet/csharplang/tree/main/proposals
+
+> **Note:** This skill applies publicly documented design rationale. It does not represent or speak for the named sources.
+
 ## References
 
 - [C# Language Reference](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/)
 - [What's new in C# 12](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-12)
 - [What's new in C# 13](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-13)
 - [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
+- [C# Language Design Notes](https://github.com/dotnet/csharplang/tree/main/meetings)
 - [.NET Framework Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
