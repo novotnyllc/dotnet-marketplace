@@ -36,9 +36,8 @@ Create `agents/dotnet-aspnetcore-specialist.md` — a domain-named agent for ASP
 - [ ] Registered in `.claude-plugin/plugin.json` agents array
 - [ ] All four validation commands pass
 ## Done summary
-TBD
-
+Created dotnet-aspnetcore-specialist agent grounded in David Fowler's AspNetCoreDiagnosticScenarios and Andrew Lock's blog series, with decision trees covering middleware vs endpoint filters, minimal APIs vs controllers, DI lifetime selection, request pipeline optimization, and diagnostic scenarios. Registered in plugin.json.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: eaa02fc715f5a7bebbf04b0532c507fdc8bcad2e
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
