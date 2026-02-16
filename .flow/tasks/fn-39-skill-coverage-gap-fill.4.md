@@ -33,9 +33,8 @@ Create 3 new skills covering logging pipeline, LINQ, and memory management gaps:
 - [ ] All SKILL.md files under 5,000 words
 - [ ] No fn-N spec references
 ## Done summary
-TBD
-
+Created three new skills: dotnet-structured-logging (log pipeline design covering aggregation architecture, structured queries, sampling, PII scrubbing, cross-service correlation), dotnet-linq-optimization (LINQ performance patterns covering IQueryable vs IEnumerable, compiled queries, deferred execution, allocation patterns), and dotnet-gc-memory (GC and memory management covering GC modes, LOH/POH, generational tuning, Span/Memory ownership, ArrayPool/MemoryPool, memory profiling).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 3fee63dfee3e8e5e2e62f6ee5a2e6fe94fa3e399, 963bb2d97bae3b395a69921a79ca1d708a2c8144
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:

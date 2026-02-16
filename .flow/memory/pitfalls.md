@@ -288,3 +288,6 @@ Before adding a new skill, always check existing skills for content overlap — 
 
 ## 2026-02-16 manual [pitfall]
 Azure.Messaging.ServiceBus 7.x uses ServiceBusReceiverOptions with SubQueue.DeadLetter to access DLQ -- do not use EntityNameHelper.FormatDeadLetterPath which belongs to the older Microsoft.Azure.ServiceBus package
+
+## 2026-02-16 manual [pitfall]
+OTel Collector tail_sampling processor operates on traces (spans), not logs -- use filter/transform processors for log volume management
