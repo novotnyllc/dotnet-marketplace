@@ -128,7 +128,10 @@
     "agents/dotnet-benchmark-designer.md",
     "agents/dotnet-docs-generator.md",
     "agents/dotnet-async-performance-specialist.md",
-    "agents/dotnet-aspnetcore-specialist.md"
+    "agents/dotnet-aspnetcore-specialist.md",
+    "agents/dotnet-testing-specialist.md",
+    "agents/dotnet-cloud-specialist.md",
+    "agents/dotnet-code-review-agent.md"
   ],
   "hooks": "hooks/hooks.json",
   "mcpServers": ".mcp.json"
