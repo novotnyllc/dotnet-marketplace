@@ -96,11 +96,11 @@ graph TB
             DG[docs-generator]
         end
 
-        subgraph Skills["21 Skill Categories / 113 Skills"]
+        subgraph Skills["22 Skill Categories / 121 Skills"]
             F[Foundation<br/>4 skills]
-            CC[Core C#<br/>12 skills]
+            CC[Core C#<br/>14 skills]
             PS[Project Structure<br/>6 skills]
-            AR[Architecture<br/>11 skills]
+            AR[Architecture<br/>15 skills]
             SE[Serialization<br/>4 skills]
             TE[Testing<br/>10 skills]
             AD[API Development<br/>8 skills]
@@ -111,13 +111,14 @@ graph TB
             CL[CLI Tools<br/>5 skills]
             TU[TUI<br/>2 skills]
             AM[Agent Meta-Skills<br/>4 skills]
-            PE[Performance<br/>4 skills]
+            PE[Performance<br/>5 skills]
             CI[CI/CD<br/>8 skills]
             PK[Packaging<br/>3 skills]
             RM[Release Mgmt<br/>1 skill]
             DO[Documentation<br/>5 skills]
             LO[Localization<br/>1 skill]
             BSys[Build System<br/>3 skills]
+            AI[AI<br/>1 skill]
         end
 
         subgraph Infra["Infrastructure"]
