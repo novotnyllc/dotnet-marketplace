@@ -25,7 +25,7 @@ Coverlet is the standard open-source code coverage library for .NET. It instrume
 
 ```xml
 <!-- Data collector approach (recommended) -->
-<PackageReference Include="coverlet.collector" Version="8.*">
+<PackageReference Include="coverlet.collector" Version="8.0.0">
   <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
   <PrivateAssets>all</PrivateAssets>
 </PackageReference>

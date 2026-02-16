@@ -23,8 +23,8 @@ Cross-references: [skill:dotnet-ui-testing-core] for page object model, test sel
 
 ```xml
 <PackageReference Include="Appium.WebDriver" Version="5.*" />
-<PackageReference Include="xunit.v3" Version="3.*" />
-<PackageReference Include="xunit.runner.visualstudio" Version="3.*" />
+<PackageReference Include="xunit.v3" Version="3.2.2" />
+<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
 ```
 
 ### Driver Initialization
