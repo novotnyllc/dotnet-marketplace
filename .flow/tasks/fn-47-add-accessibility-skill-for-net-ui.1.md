@@ -1,11 +1,27 @@
 # fn-47-add-accessibility-skill-for-net-ui.1 Author dotnet-accessibility SKILL.md
 
 ## Description
-Author `skills/ui-frameworks/dotnet-accessibility/SKILL.md` covering accessibility patterns across all .NET UI frameworks. Single cross-cutting skill with framework-specific sections.
+Author `skills/ui-frameworks/dotnet-accessibility/SKILL.md` covering accessibility patterns across .NET UI frameworks. Blazor, MAUI, WinUI in depth; WPF, Uno, TUI brief.
 
-**Size:** M
+**Visibility:** Implicit (agent-loaded, not user-invocable)
+**Size:** L (accepted — covers 6 frameworks but scoped down: 3 in-depth + 3 brief)
 **Files:** `skills/ui-frameworks/dotnet-accessibility/SKILL.md`
 
+## Approach
+
+- Cross-platform principles section: semantic markup, keyboard navigation, focus management, color contrast
+- In-depth sections: Blazor (ARIA, keyboard events, roles), MAUI (SemanticProperties), WinUI (AutomationProperties, AutomationPeer)
+- Brief sections: WPF (follows WinUI patterns, cross-ref), Uno (follows UWP patterns, cross-ref), TUI (limitations noted)
+- Testing tools section: Accessibility Insights, axe-core, VoiceOver, TalkBack
+- Reference standards: WCAG 2.1/2.2 (but no legal advice)
+- Target description ~90 chars
+
+## Key context
+
+- MAUI uses `SemanticProperties` (preferred) over legacy `AutomationProperties`
+- Blazor uses standard HTML accessibility (ARIA, keyboard events, roles)
+- WinUI uses `AutomationProperties.Name`, UI Automation framework
+- TUI screen reader support is limited — be honest about constraints
 ## Approach
 
 - Follow existing skill pattern at `skills/ui-frameworks/dotnet-blazor/SKILL.md` for style
@@ -24,11 +40,12 @@ Author `skills/ui-frameworks/dotnet-accessibility/SKILL.md` covering accessibili
 - TUI screen reader support is limited — be honest about platform constraints
 ## Acceptance
 - [ ] SKILL.md exists at `skills/ui-frameworks/dotnet-accessibility/`
-- [ ] Valid frontmatter with `name` and `description` (under 120 chars)
+- [ ] Valid frontmatter with `name` and `description` (under 120 chars, ~90 target)
 - [ ] Covers cross-platform accessibility principles
-- [ ] Has framework-specific sections for Blazor, MAUI, Uno, WPF/WinUI, TUI
+- [ ] In-depth sections for Blazor, MAUI, WinUI
+- [ ] Brief sections with cross-references for WPF, Uno, TUI
 - [ ] Covers accessibility testing tools per platform
-- [ ] References WCAG standards without providing legal advice
+- [ ] References WCAG standards without legal advice
 - [ ] Cross-reference syntax used for all related UI framework skills
 ## Done summary
 TBD

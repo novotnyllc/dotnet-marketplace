@@ -3,9 +3,26 @@
 ## Description
 Author `skills/core-csharp/dotnet-native-interop/SKILL.md` covering P/Invoke and native interop across Windows, macOS, Linux, iOS, Android, and WASM.
 
+**Visibility:** Implicit (agent-loaded, not user-invocable)
 **Size:** M
 **Files:** `skills/core-csharp/dotnet-native-interop/SKILL.md`
 
+## Approach
+
+- Follow existing skill pattern at `skills/native-aot/dotnet-native-aot/SKILL.md` for style
+- Cover `[LibraryImport]` (.NET 7+, preferred) vs `[DllImport]` (legacy)
+- Platform sections: Windows DLL, macOS/Linux .so/.dylib, iOS static linking
+- WASM: single line noting P/Invoke not supported, cross-ref `[skill:dotnet-aot-wasm]` for JS interop — do NOT cover JSImport/JSExport in detail
+- Cover marshalling: structs, strings, function pointers, `NativeLibrary.SetDllImportResolver`
+- Target description ~90 chars
+- Reference: https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke
+
+## Key context
+
+- iOS does not allow dynamic library loading — must use static linking
+- `dotnet-native-aot` keeps AOT-specific P/Invoke; this skill owns general guidance
+- `CsWin32` stays in `dotnet-winui` — just add a cross-reference
+- WASM JSImport/JSExport is JavaScript interop, not native interop — out of scope
 ## Approach
 
 - Follow existing skill pattern at `skills/native-aot/dotnet-native-aot/SKILL.md` for style
@@ -22,9 +39,10 @@ Author `skills/core-csharp/dotnet-native-interop/SKILL.md` covering P/Invoke and
 - `CsWin32` stays in `dotnet-winui` — just add a cross-reference
 ## Acceptance
 - [ ] SKILL.md exists at `skills/core-csharp/dotnet-native-interop/`
-- [ ] Valid frontmatter with `name` and `description` (under 120 chars)
+- [ ] Valid frontmatter with `name` and `description` (under 120 chars, ~90 target)
 - [ ] Covers LibraryImport vs DllImport with decision guidance
-- [ ] Platform-specific sections for Windows, macOS/Linux, iOS, Android, WASM
+- [ ] Platform-specific sections for Windows, macOS/Linux, iOS, Android
+- [ ] WASM: single-line limitation note with cross-ref to dotnet-aot-wasm
 - [ ] Covers marshalling patterns (structs, strings, callbacks)
 - [ ] Covers NativeLibrary.SetDllImportResolver
 - [ ] Cross-reference syntax used for related skills

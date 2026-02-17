@@ -1,11 +1,16 @@
 # fn-48-plugin-documentation-and-readme-overhaul.2 Rewrite README.md with installation, overview, and complete skill catalog
 
 ## Description
-Rewrite README.md with clear installation instructions, a complete skill category overview (all 22 categories), agent overview, and quick start guide.
+Verify all documentation changes from fn-48.1 pass validation and cross-check counts are consistent.
 
-**Size:** M
-**Files:** `README.md`, `CONTRIBUTING.md`, `CONTRIBUTING-SKILLS.md`
+**Size:** S (verification only)
+**Files:** None (read-only verification)
 
+## Approach
+
+- Run all four validation scripts
+- Spot-check 3-4 skill categories in README against plugin.json
+- Verify no stale counts remain
 ## Approach
 
 - Add installation section with clear instructions
@@ -20,13 +25,8 @@ Rewrite README.md with clear installation instructions, a complete skill categor
 - Current install: Claude Desktop → Plugin tab → search or `/plugin add novotnyllc/dotnet-marketplace`
 - README should serve both discovery (what does this plugin do?) and setup (how do I start?)
 ## Acceptance
-- [ ] README has clear installation instructions
-- [ ] README has skill category overview covering all 22 categories
-- [ ] README has agent overview with all 14 agents
-- [ ] README has quick start section
-- [ ] CONTRIBUTING.md reviewed and paths correct
-- [ ] CONTRIBUTING-SKILLS.md reviewed and paths correct
-- [ ] All validation scripts pass
+- [ ] All four validation scripts pass
+- [ ] Spot-check confirms README matches plugin.json
 ## Done summary
 TBD
 

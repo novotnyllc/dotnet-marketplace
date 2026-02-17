@@ -2,7 +2,9 @@
 
 ## Overview
 
-Add a new `dotnet-accessibility` skill covering accessibility patterns across .NET UI frameworks. One cross-cutting skill with framework-specific sections rather than per-framework additions (avoids budget bloat and touching 6+ completed epics).
+Add a new `dotnet-accessibility` skill covering accessibility patterns across .NET UI frameworks. One cross-cutting skill with framework-specific sections. Covers Blazor, MAUI, and WinUI in depth; WPF, Uno, and TUI with brief guidance and cross-references.
+
+**Visibility:** Implicit — auto-loaded by agents via advisor routing when accessibility context is detected. Not user-invocable (but may be loaded when users explicitly ask about accessibility).
 
 ## Scope
 
@@ -10,17 +12,22 @@ Add a new `dotnet-accessibility` skill covering accessibility patterns across .N
 
 **Out:** Modifying existing UI framework skills with inline accessibility content (they get cross-references only). Legal compliance advice (mention standards, do not provide legal guidance).
 
-**Frameworks covered:** Blazor (ARIA, keyboard nav), MAUI (SemanticProperties), Uno Platform (AutomationProperties), WPF/WinUI (AutomationPeer, UI Automation), Terminal UI (screen reader considerations for Terminal.Gui/Spectre.Console).
+**Primary frameworks (in-depth):** Blazor (ARIA, keyboard nav), MAUI (SemanticProperties), WinUI (AutomationProperties, UI Automation).
+
+**Secondary frameworks (brief + cross-ref):** WPF (AutomationPeer), Uno Platform (follows UWP patterns), TUI (screen reader limitations noted).
+
+**Note:** This task is sized L due to covering 6 frameworks. Accept that it's larger than ideal M; scoping down to 3 in-depth + 3 brief keeps it manageable.
 
 ## Key Context
 
 - MAUI: `SemanticProperties.Description`, `SemanticProperties.Hint`, `SemanticProperties.HeadingLevel` (preferred over legacy AutomationProperties)
 - Blazor: Standard HTML ARIA attributes, `role`, `aria-label`, keyboard event handling
-- WPF/WinUI: `AutomationPeer`, `AutomationProperties.Name`, UI Automation framework
-- Uno: Follows UWP `AutomationProperties` pattern
-- TUI: Terminal screen reader support varies by platform; Terminal.Gui has some support
-- Standards to reference: WCAG 2.1/2.2, but no legal compliance advice
+- WinUI: `AutomationProperties.Name`, UI Automation framework
+- Uno: Follows UWP `AutomationProperties` pattern — brief section, cross-ref to WinUI
+- TUI: Terminal screen reader support varies — be honest about platform constraints
+- Standards to reference: WCAG 2.1/2.2 (no legal advice)
 - Testing: Accessibility Insights (Windows), axe-core (web), VoiceOver (macOS/iOS), TalkBack (Android)
+- Budget: target description ~90 chars. Total projected: 132 skills after batch.
 
 ## Quick commands
 
@@ -32,21 +39,23 @@ Add a new `dotnet-accessibility` skill covering accessibility patterns across .N
 
 - [ ] `skills/ui-frameworks/dotnet-accessibility/SKILL.md` exists with valid frontmatter
 - [ ] Covers cross-platform accessibility principles (semantic markup, keyboard nav, focus management, contrast)
-- [ ] Has framework-specific sections for Blazor, MAUI, Uno, WPF/WinUI, TUI
+- [ ] In-depth sections for Blazor, MAUI, WinUI
+- [ ] Brief sections with cross-references for WPF, Uno, TUI
 - [ ] Covers accessibility testing tools per platform
 - [ ] Description under 120 characters
 - [ ] Registered in plugin.json
 - [ ] `dotnet-advisor` routing updated
-- [ ] Cross-references to/from `dotnet-blazor`, `dotnet-maui`, `dotnet-uno-platform`, `dotnet-winui`, `dotnet-wpf`, `dotnet-tui-apps`
+- [ ] Cross-references to/from all 6 UI framework skills
+- [ ] Integration task notes file contention with plugin.json/advisor shared files
 - [ ] All validation scripts pass
 
 ## References
 
 - https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/accessibility
 - https://learn.microsoft.com/en-us/windows/apps/design/accessibility/accessibility-overview
-- `skills/ui-frameworks/dotnet-blazor/SKILL.md` (Blazor cross-ref)
-- `skills/ui-frameworks/dotnet-maui/SKILL.md` (MAUI cross-ref)
-- `skills/ui-frameworks/dotnet-uno-platform/SKILL.md` (Uno cross-ref)
-- `skills/ui-frameworks/dotnet-winui/SKILL.md` (WinUI cross-ref)
-- `skills/ui-frameworks/dotnet-wpf/SKILL.md` (WPF cross-ref)
-- `skills/ui-frameworks/dotnet-tui-apps/SKILL.md` (TUI cross-ref)
+- `skills/ui-frameworks/dotnet-blazor/SKILL.md`
+- `skills/ui-frameworks/dotnet-maui/SKILL.md`
+- `skills/ui-frameworks/dotnet-winui/SKILL.md`
+- `skills/ui-frameworks/dotnet-wpf/SKILL.md`
+- `skills/ui-frameworks/dotnet-uno-platform/SKILL.md`
+- `skills/ui-frameworks/dotnet-tui-apps/SKILL.md`

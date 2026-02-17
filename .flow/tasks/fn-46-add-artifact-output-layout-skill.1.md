@@ -1,11 +1,27 @@
 # fn-46-add-artifact-output-layout-skill.1 Author dotnet-artifacts-output SKILL.md
 
 ## Description
-Author `skills/project-structure/dotnet-artifacts-output/SKILL.md` covering the .NET SDK artifacts output layout (`UseArtifactsOutput`). Recommend as default for new projects.
+Author `skills/project-structure/dotnet-artifacts-output/SKILL.md` covering the .NET SDK artifacts output layout.
 
+**Visibility:** Implicit (agent-loaded, not user-invocable)
 **Size:** M
 **Files:** `skills/project-structure/dotnet-artifacts-output/SKILL.md`
 
+## Approach
+
+- Follow existing skill pattern at `skills/project-structure/dotnet-project-structure/SKILL.md`
+- Cover enabling via `<UseArtifactsOutput>true</UseArtifactsOutput>` in `Directory.Build.props`
+- Cover new path structure: `artifacts/bin/`, `artifacts/obj/`, `artifacts/publish/`, `artifacts/package/`
+- Cover impact: `.gitignore`, Dockerfiles, CI artifact upload paths
+- Present as recommended option with clear tradeoffs, not universal default
+- Cover `ArtifactsPath` customization
+- Target description ~90 chars
+
+## Key context
+
+- Available since .NET 8, opt-in (NOT the default in .NET 10)
+- Output paths change: `bin/Debug/net10.0/` → `artifacts/bin/MyProject/debug/`
+- Tradeoffs: simpler output structure vs breaking existing CI/Docker/tool path assumptions
 ## Approach
 
 - Follow existing skill pattern at `skills/project-structure/dotnet-project-structure/SKILL.md`
@@ -23,10 +39,11 @@ Author `skills/project-structure/dotnet-artifacts-output/SKILL.md` covering the 
 - Scope boundary: `dotnet-project-structure` = source tree organization; this skill = build output organization
 ## Acceptance
 - [ ] SKILL.md exists at `skills/project-structure/dotnet-artifacts-output/`
-- [ ] Valid frontmatter with `name` and `description` (under 120 chars)
+- [ ] Valid frontmatter with `name` and `description` (under 120 chars, ~90 target)
 - [ ] Covers enabling UseArtifactsOutput in Directory.Build.props
 - [ ] Covers new path structure with all subdirectories
 - [ ] Covers impact on Dockerfiles, CI, .gitignore
+- [ ] Presents as recommended option with tradeoffs
 - [ ] Covers ArtifactsPath customization
 - [ ] Cross-reference syntax used for related skills
 ## Done summary

@@ -6,7 +6,9 @@
   "default_impl": null,
   "default_review": null,
   "default_sync": null,
-  "depends_on_epics": [],
+  "depends_on_epics": [
+    "fn-48-plugin-documentation-and-readme-overhaul"
+  ],
   "id": "fn-49-skill-guide-compliance-review",
   "next_task": 1,
   "plan_review_status": "unknown",
@@ -14,5 +16,5 @@
   "spec_path": ".flow/specs/fn-49-skill-guide-compliance-review.md",
   "status": "open",
   "title": "Skill Guide Compliance Review",
-  "updated_at": "2026-02-17T03:40:58.703922Z"
+  "updated_at": "2026-02-17T03:52:39.742763Z"
 }

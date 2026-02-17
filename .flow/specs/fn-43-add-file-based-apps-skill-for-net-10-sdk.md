@@ -4,15 +4,17 @@
 
 Add a new `dotnet-file-based-apps` skill covering the .NET 10 SDK feature that allows running C# files directly without a project file (`dotnet run app.cs`). Covers `#:package`, `#:sdk`, `#:property`, and `#:project` directives.
 
+**Visibility:** Implicit — auto-loaded by agents via advisor routing when a .NET 10 file-based app context is detected. Not user-invocable.
+
 ## Scope
 
 **In:** SKILL.md for `dotnet-file-based-apps` under `skills/foundation/`, plugin.json registration, advisor routing, cross-references from `dotnet-version-detection` and `dotnet-project-analysis`.
 
-**Out:** Modifying version detection logic itself (separate concern). File I/O (`dotnet-file-io` is a different skill).
+**Out:** Modifying version detection logic itself (separate concern). File I/O (`dotnet-file-io` is a different skill — covers FileStream/RandomAccess, not file-based apps).
 
-**Scope boundary with `dotnet-project-analysis`**: Project analysis detects `.csproj`/`.sln`. File-based apps have NO project file — the `.cs` file IS the project. Add a cross-reference note, not full detection logic.
+**Scope boundary with `dotnet-project-analysis`**: Project analysis detects `.csproj`/`.sln`. File-based apps have NO project file. Add a cross-reference note, not detection logic.
 
-**Scope boundary with `dotnet-scaffold-project`**: Scaffold stays focused on csproj-based projects. File-based apps need no scaffolding (the whole point is no project file).
+**Scope boundary with `dotnet-scaffold-project`**: Scaffold stays focused on csproj-based projects.
 
 ## Key Context
 
@@ -20,6 +22,8 @@ Add a new `dotnet-file-based-apps` skill covering the .NET 10 SDK feature that a
 - Directives: `#:package <name>[@version]`, `#:sdk <name>`, `#:property <name>=<value>`, `#:project <path>`
 - No `.csproj` means `dotnet build`/`dotnet test` do not apply in the traditional sense
 - Agent must recognize `#:` directives as SDK-level, not C# syntax
+- Description should explicitly differentiate from `dotnet-file-io` — avoid the word "file I/O"
+- Budget: plugin.json currently has 127 skill entries. Adding this skill → 128. Target description ~90 chars.
 
 ## Quick commands
 
@@ -32,15 +36,16 @@ Add a new `dotnet-file-based-apps` skill covering the .NET 10 SDK feature that a
 - [ ] `skills/foundation/dotnet-file-based-apps/SKILL.md` exists with valid frontmatter
 - [ ] Covers all four directive types with usage guidance
 - [ ] Covers migration path from file-based to project-based
-- [ ] Description under 120 characters
+- [ ] Description under 120 characters, explicitly differentiates from dotnet-file-io
 - [ ] Registered in plugin.json
-- [ ] `dotnet-advisor` routing updated with file-based apps entry
+- [ ] `dotnet-advisor` routing updated (Routing Logic section)
 - [ ] Cross-references added to/from `dotnet-version-detection` and `dotnet-project-analysis`
 - [ ] All validation scripts pass
+- [ ] Integration task notes file contention with plugin.json/advisor shared files
 
 ## References
 
 - https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps
 - `skills/foundation/dotnet-version-detection/SKILL.md` (version gating: .NET 10+ only)
 - `skills/foundation/dotnet-project-analysis/SKILL.md` (scope boundary)
-- `skills/foundation/dotnet-advisor/SKILL.md:176-304` (routing table)
+- `skills/foundation/dotnet-advisor/SKILL.md` — Routing Logic section

@@ -1,11 +1,18 @@
 # fn-48-plugin-documentation-and-readme-overhaul.1 Reconcile skill and agent counts across plugin.json, README, CLAUDE.md, AGENTS.md
 
 ## Description
-Audit the actual skill count in plugin.json vs what README.md, CLAUDE.md, and AGENTS.md report. Fix all discrepancies to reflect the true count.
+Reconcile skill and agent counts across all documents, then rewrite README.md with installation instructions, skill category overview, and complete agent list. Review CONTRIBUTING.md and CONTRIBUTING-SKILLS.md for accuracy.
 
-**Size:** S
-**Files:** `.claude-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`
+**Size:** M (merged from original two tasks — count reconciliation is inseparable from README rewrite)
+**Files:** `.claude-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `CONTRIBUTING-SKILLS.md`, `scripts/validate-skills.sh`
 
+## Approach
+
+- Count entries in plugin.json `skills` and `agents` arrays (expected: 132 skills, 14 agents post-batch)
+- Fix all documents to show accurate counts
+- Rewrite README with: what the plugin does, installation instructions, 22-category skill overview, all 14 agents, quick start
+- Review CONTRIBUTING.md and CONTRIBUTING-SKILLS.md for path accuracy
+- Update `--projected-skills` in validate-skills.sh to 132
 ## Approach
 
 - Count entries in plugin.json `skills` array and `agents` array
@@ -13,9 +20,13 @@ Audit the actual skill count in plugin.json vs what README.md, CLAUDE.md, and AG
 - Fix all documents to show accurate counts
 - Fix agent table in README to list all 14 agents
 ## Acceptance
-- [ ] Skill count matches across plugin.json, README, CLAUDE.md, AGENTS.md
-- [ ] Agent count = 14 across all documents
-- [ ] README agent table lists all 14 agents
+- [ ] Skill count = 132 across plugin.json, README, CLAUDE.md, AGENTS.md
+- [ ] Agent count = 14 across all documents with complete agent table
+- [ ] README has installation instructions
+- [ ] README has skill category overview covering all 22 categories
+- [ ] CONTRIBUTING.md reviewed for accuracy
+- [ ] CONTRIBUTING-SKILLS.md reviewed for accuracy
+- [ ] `--projected-skills` set to 132 in validate-skills.sh
 - [ ] All validation scripts pass
 ## Done summary
 TBD
