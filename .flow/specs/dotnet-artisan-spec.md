@@ -7,7 +7,7 @@
 **Format:** Single Claude Code plugin (primary) with cross-agent compatibility for GitHub Copilot and OpenAI Codex
 **Audience:** Agent-first (optimized for AI agent comprehension)
 **Style:** Opinionated (prescribe the modern best practice by default)
-**Versioning:** SemVer + CHANGELOG.md + GitHub Releases, with NBGV stamping in generated artifacts
+**Versioning:** SemVer + CHANGELOG.md + GitHub Releases
 
 ---
 
@@ -18,9 +18,8 @@
 3. **Modern .NET first**: Default to .NET 10 (current LTS, released Nov 2025) and C# 14. Be aware of .NET 11 Preview 1 (released Feb 10, 2026) with C# 15 preview and `net11.0` TFM
 4. **Polyfill-forward**: Use PolySharp and SimonCropp/Polyfill to bring latest language features to older target frameworks
 5. **AOT-friendly**: Prefer source-generator-based approaches over reflection throughout
-6. **Cross-agent**: Use Agent Skills open standard (SKILL.md) as canonical format; generate per-agent outputs via build pipeline for Claude Code plugin, Copilot instructions, and Codex AGENTS.md
-7. **No deprecated patterns**: Skills must never suggest deprecated approaches (e.g., Microsoft.Extensions.Http.Polly, Swashbuckle for new projects)
-8. **Context-aware loading**: Minimize context bloat by loading skills progressively based on actual task needs
+6. **No deprecated patterns**: Skills must never suggest deprecated approaches (e.g., Microsoft.Extensions.Http.Polly, Swashbuckle for new projects)
+7. **Context-aware loading**: Minimize context bloat by loading skills progressively based on actual task needs
 
 ---
 
@@ -47,45 +46,6 @@
 - Skills adapt output based on detected TFM (net8.0 vs net10.0 vs net11.0)
 - Preview features are used when project allows them (detected from LangVersion, TFM)
 - Agents never suggest deprecated patterns
-- Cross-agent routing: equivalent routing instructions generated for Copilot and Codex
-
----
-
-## Migration from Existing dotnet-skills
-
-**Approach:** Start fresh with our own structure and style. Selectively use high-quality content from [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) as a starting reference where applicable. No Akka content (too domain-specific). Acknowledge in README acknowledgements section.
-
-**What to reference (selectively):**
-- Performance patterns and benchmark design
-- Testing patterns (Testcontainers, Playwright, snapshot testing)
-- C# coding standards foundations
-- Project structure conventions
-
-**What to skip entirely:**
-- Akka.NET content (5 skills, 1 agent) - too domain-specific
-- Aspire-specific content - we'll maintain awareness but not deep coverage
-- DocFX specialist agent - we'll cover modern doc tooling instead
-
-**What to rewrite completely:**
-- Serialization (needs AOT/source-gen focus)
-- Package management (needs modern CPM focus)
-- All architecture patterns (needs to be practical, not academic)
-
----
-
-## Build Pipeline
-
-### Inner Loop (dotnet tool)
-- `dotnet tool` for local development that generates per-agent outputs
-- Validates skill format, frontmatter, cross-references
-- Generates dist/ outputs for testing locally
-
-### Publishing (GitHub Action)
-- Runs on push/release
-- Generates dist/claude/, dist/copilot/, dist/codex/
-- Publishes to Claude Code marketplace
-- Creates GitHub Release with all artifacts
-
 ---
 
 ## Planning-Stage Requirements
@@ -138,35 +98,14 @@ During implementation of each sub-epic/task, use these additional skills:
 - **`/dotnet-skills:marketplace-publishing`** - Reference for marketplace publishing workflow
 - **`/dotnet-skills:skills-index-snippets`** - Reference for AGENTS.md/CLAUDE.md index generation
 
-### Existing dotnet-skills Reference Material
-
-The existing [dotnet-skills](https://github.com/Aaronontheweb/dotnet-skills) plugin provides useful reference material. Key skills to reference (not copy directly):
-
-| dotnet-skills Skill | Use As Reference For |
-|---------------------|---------------------|
-| `csharp-coding-standards` | Foundation for our modernized coding standards skill |
-| `csharp-type-design-performance` | Performance-oriented type design patterns |
-| `csharp-api-design` | Extend-only API design principles |
-| `project-structure` | .slnx, Directory.Build.props patterns |
-| `serialization` | Schema-based serialization approach (we'll expand for AOT) |
-| `snapshot-testing` | Verify-based snapshot patterns |
-| `playwright-blazor` | Blazor-specific Playwright patterns |
-| `testcontainers` | Integration test infrastructure patterns |
-| `crap-analysis` | Code coverage and risk analysis |
-| `package-management` | Central Package Management patterns |
-| `microsoft-extensions-dependency-injection` | DI registration patterns |
-| `microsoft-extensions-configuration` | Options pattern foundations |
 
 ### Planning Workflow Per Sub-Epic
 
 1. Reference this spec (`docs/dotnet-artisan-spec.md`) for authoritative requirements
 2. Use relevant plugin-dev skills above to validate planned structure
-3. Ensure cross-agent compatibility is addressed (build pipeline generates Copilot/Codex formats)
-4. Skills should cross-reference related skills in their descriptions
-5. Plan the router/advisor skill early (it needs to know the full catalog)
-6. Reference the Microsoft .NET Design Guidelines table (above) for authoritative standards each skill must follow
-7. Use existing dotnet-skills reference material (above) as starting points where applicable
-
+3. Skills should cross-reference related skills in their descriptions
+4. Plan the router/advisor skill early (it needs to know the full catalog)
+5. Reference the Microsoft .NET Design Guidelines table (above) for authoritative standards each skill must follow
 ---
 
 ## Microsoft .NET Design Guidelines Reference
@@ -362,14 +301,7 @@ Skills must be aware of these .NET 11 changes and adapt guidance when `net11.0` 
 ### Cross-Agent Compatibility
 - **Build pipeline**: Canonical source in `skills/` generates Claude Code plugin, Copilot instructions, Codex AGENTS.md
 - Leverage full feature sets of each agent (hooks, swarms, fleets, subagents)
-- Agent Skills open standard (SKILL.md) as shared base format
-
-### Epic Structure
-- **24 sub-epics (fn-2 through fn-25)** maximizing parallelism for swarm execution
-- **Foundation + parallel**: One foundation epic (plugin structure, shared patterns) blocks everything, then all others parallelize
-- **Ralph loop swarm** will handle dependency resolution and parallel development
-- Each epic should be minimal in tasks, fleshed out during implementation via plan syncs
-
+- Agent Skills open standard (SKILL.md) as shared base formats
 ---
 
 ## Skill Categories & Coverage

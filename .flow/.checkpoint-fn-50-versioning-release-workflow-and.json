@@ -1,0 +1,89 @@
+{
+  "created_at": "2026-02-17T15:20:57.435269Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-50-versioning-release-workflow-and",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T15:18:37.376040Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-50-versioning-release-workflow-and",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-50-versioning-release-workflow-and.md",
+      "status": "open",
+      "title": "Versioning, Release Workflow, and Metadata Optimization",
+      "updated_at": "2026-02-17T15:19:11.028322Z"
+    },
+    "spec": "# Versioning, Release Workflow, and Metadata Optimization\n\n## Overview\n\nAlign the dotnet-marketplace repo with the official Claude Code plugin marketplace schema and community best practices (modeled on gmickel-claude-marketplace). Three areas of work:\n\n1. **Metadata optimization** \u2014 Restructure root `marketplace.json` to match the official Anthropic schema (`name`, `owner`, `metadata`, `$schema`). Enrich `plugin.json` with missing discoverability fields (`author`, `homepage`, `repository`, `license`, `keywords`). Use singular `category` (string) per the official pattern instead of `categories` (array).\n\n2. **Version bump automation** \u2014 Create a `scripts/bump.sh` script that accepts `patch|minor|major` and propagates the new version to all version-bearing files: `plugin.json` (canonical source of truth), per-plugin `marketplace.json`, root marketplace.json plugin entry, `README.md` badge, and `CHANGELOG.md` footer links. The bump script prints next-step instructions for tagging.\n\n3. **Release workflow improvements** \u2014 Update `release.yml` to extract release notes from `CHANGELOG.md` dynamically (awk-based extraction like gmickel) instead of the current static body. Add version consistency validation to CI. Extract duplicated root marketplace.json validation into a shared script. Fix CHANGELOG footer links to use the `dotnet-artisan/v*` tag format.\n\n## Key Decisions\n\n- **Version source of truth**: `plugins/dotnet-artisan/.claude-plugin/plugin.json` \u2192 `version` field (per Claude Code docs: plugin.json takes priority)\n- **Tag format**: Keep existing `dotnet-artisan/v*` pattern (already in release.yml)\n- **Per-plugin marketplace.json**: Keep it (removing would break validate-marketplace.sh and CI). Treat it as metadata file; root marketplace.json is discovery file.\n- **Category**: Use singular `category: \"development\"` in root marketplace.json plugin entries (official pattern). Keep `keywords` array for searchability.\n- **No retroactive v0.1.0 tag**: Start fresh; fix CHANGELOG footer to note no release tag exists for 0.1.0.\n- **`$schema` field**: Include `\"$schema\": \"https://anthropic.com/claude-code/marketplace.schema.json\"` (used by official repo).\n\n## Quick commands\n\n```bash\n# Validate after changes\ncd plugins/dotnet-artisan && ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh\n\n# Test bump script (dry run if implemented)\n./scripts/bump.sh patch\n\n# Validate root marketplace.json (after extracting to shared script)\n./scripts/validate-root-marketplace.sh\n```\n\n## Acceptance\n\n- [ ] Root marketplace.json has `$schema`, `name`, `owner`, `metadata` fields matching official pattern\n- [ ] Root marketplace.json plugin entries have `version`, `category`, `homepage`, `keywords`\n- [ ] plugin.json has `author`, `homepage`, `repository`, `license`, `keywords`\n- [ ] `scripts/bump.sh` propagates version to all 5 locations (plugin.json, per-plugin marketplace.json, root marketplace.json, README badge, CHANGELOG footer)\n- [ ] `release.yml` extracts version-specific section from CHANGELOG.md for release body\n- [ ] CI validates version consistency across plugin.json and marketplace.json files\n- [ ] Root marketplace.json validation extracted to shared script (used by validate.yml and release.yml)\n- [ ] CHANGELOG.md footer links use `dotnet-artisan/v*` tag format\n- [ ] `validate-marketplace.sh` updated for schema changes (`category` string instead of `categories` array)\n- [ ] CONTRIBUTING.md documents release process and tag convention\n- [ ] All existing validation commands pass: `validate-skills.sh && validate-marketplace.sh`\n\n## References\n\n- gmickel marketplace.json: uses `name`, `owner`, `metadata.version`, per-plugin `tags`/`homepage`\n- gmickel `scripts/bump.sh`: jq-based version propagation, prints tagging instructions\n- gmickel `release.yml`: awk-based CHANGELOG extraction into GitHub Release body\n- Official Anthropic marketplace: `$schema`, `owner`, singular `category`, `homepage`\n- Official docs: plugin.json version takes priority over marketplace entry version\n- Jeffallan/claude-skills: validation gate before release, per-plugin `repository`/`license`/`keywords`\n"
+  },
+  "epic_id": "fn-50-versioning-release-workflow-and",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:19:18.622459Z",
+        "depends_on": [],
+        "epic": "fn-50-versioning-release-workflow-and",
+        "id": "fn-50-versioning-release-workflow-and.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-50-versioning-release-workflow-and.1.md",
+        "status": "todo",
+        "title": "Optimize marketplace.json and plugin.json metadata",
+        "updated_at": "2026-02-17T15:19:35.367412Z"
+      },
+      "id": "fn-50-versioning-release-workflow-and.1",
+      "runtime": null,
+      "spec": "# fn-50-versioning-release-workflow-and.1 Optimize marketplace.json and plugin.json metadata\n\n## Description\nRestructure root marketplace.json and per-plugin marketplace.json to match the official Anthropic schema. Enrich plugin.json with missing discoverability fields.\n\n**Size:** M\n**Files:**\n- `.claude-plugin/marketplace.json` (root)\n- `plugins/dotnet-artisan/.claude-plugin/marketplace.json` (per-plugin)\n- `plugins/dotnet-artisan/.claude-plugin/plugin.json`\n\n## Approach\n\n**Root marketplace.json** \u2014 Replace current structure with official pattern:\n- Add `$schema: \"https://anthropic.com/claude-code/marketplace.schema.json\"`\n- Replace `schema_version` with top-level `name: \"dotnet-marketplace\"`\n- Add `owner: { name: \"Claire Novotny LLC\", url: \"...\" }`\n- Add `metadata: { description: \"...\", version: \"0.1.0\" }`\n- Per plugin entry: add `version`, `homepage`, singular `category: \"development\"`, keep `keywords`\n- Remove `categories` array, replace with `category` string\n- Follow pattern at `anthropics/claude-plugins-official/.claude-plugin/marketplace.json`\n\n**Per-plugin marketplace.json** \u2014 Add `homepage` field. Keep existing structure.\n\n**plugin.json** \u2014 Add fields: `author` (object with name/url), `homepage`, `repository`, `license`, `keywords`. Follow gmickel pattern at `plugins/flow-next/.claude-plugin/plugin.json`.\n\n## Key context\n\n- Official schema uses `owner` at root level, `author` at plugin entry level\n- `category` is singular string (not array) in official schema \u2014 observed values: `development`, `productivity`, `security`, `learning`\n- plugin.json version takes priority over marketplace entry version per Claude Code docs\n- Keep per-plugin marketplace.json (removing breaks validate-marketplace.sh lines 248-281 and validate.yml line 52)\n## Acceptance\n- [ ] Root marketplace.json has `$schema`, `name`, `owner`, `metadata.description`, `metadata.version`\n- [ ] Root marketplace.json plugin entry has `version`, `category` (string), `homepage`, `keywords`\n- [ ] Root marketplace.json no longer has `schema_version` or `categories` (array)\n- [ ] plugin.json has `author`, `homepage`, `repository`, `license`, `keywords`\n- [ ] Per-plugin marketplace.json has `homepage` field\n- [ ] All three JSON files are valid JSON (no syntax errors)\n- [ ] Existing `validate-marketplace.sh` still passes (may need updates in task 3)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:19:18.723679Z",
+        "depends_on": [
+          "fn-50-versioning-release-workflow-and.1"
+        ],
+        "epic": "fn-50-versioning-release-workflow-and",
+        "id": "fn-50-versioning-release-workflow-and.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-50-versioning-release-workflow-and.2.md",
+        "status": "todo",
+        "title": "Add bump script, improve release workflow, and version validation",
+        "updated_at": "2026-02-17T15:19:57.895431Z"
+      },
+      "id": "fn-50-versioning-release-workflow-and.2",
+      "runtime": null,
+      "spec": "# fn-50-versioning-release-workflow-and.2 Add bump script, improve release workflow, and version validation\n\n## Description\nCreate a version bump script and improve the release workflow. Add version consistency validation to CI.\n\n**Size:** M\n**Files:**\n- `scripts/bump.sh` (NEW)\n- `.github/workflows/release.yml`\n- `scripts/validate-root-marketplace.sh` (NEW \u2014 extracted from inline CI)\n- `.github/workflows/validate.yml` (update to use shared script)\n\n## Approach\n\n**Bump script** (`scripts/bump.sh`):\n- Accept args: `<patch|minor|major> [plugin-name]` (default plugin: `dotnet-artisan`)\n- Use `jq` to read current version from `plugins/<plugin>/.claude-plugin/plugin.json`\n- Compute new semver (pure bash arithmetic or jq)\n- Propagate new version to:\n  1. `plugins/<plugin>/.claude-plugin/plugin.json` (canonical)\n  2. `plugins/<plugin>/.claude-plugin/marketplace.json`\n  3. `.claude-plugin/marketplace.json` (root, matching plugin entry by name)\n  4. `plugins/<plugin>/README.md` (badge regex replacement)\n  5. `.claude-plugin/marketplace.json` `metadata.version` (marketplace-level version)\n- Update CHANGELOG.md: promote `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD`, add new `[Unreleased]` section, update footer comparison links using `dotnet-artisan/v*` tag format\n- Print next-step instructions: commit, push, `git tag dotnet-artisan/vX.Y.Z && git push origin dotnet-artisan/vX.Y.Z`\n- Follow pattern from gmickel `scripts/bump.sh`\n\n**Release workflow** \u2014 update `release.yml`:\n- Replace static release body with awk-based CHANGELOG extraction (extract section between `## [VERSION]` and next `## [`)\n- Use shared validation script instead of inline bash\n- Add version-tag consistency check: verify tag version matches plugin.json version\n\n**Shared validation script** (`scripts/validate-root-marketplace.sh`):\n- Extract the duplicated root marketplace.json validation from `validate.yml` (lines 22-45) and `release.yml` (lines 32-45)\n- Validate required fields: `name`, `owner.name`, `plugins` array, per-plugin `name`/`source`\n- Check recommended fields: `$schema`, `metadata`, per-plugin `version`/`category`/`keywords`\n\n**CI version check** \u2014 add step to `validate.yml`:\n- Compare version in plugin.json vs per-plugin marketplace.json vs root marketplace.json plugin entry\n- Fail if versions diverge\n\n## Key context\n\n- gmickel uses awk to extract CHANGELOG sections: `awk '/^## \\['\"$VERSION\"'\\]/{flag=1;next}/^## \\[/{flag=0}flag'`\n- Current release.yml already triggers on `dotnet-artisan/v*` tags \u2014 keep that pattern\n- Bump script must handle the case where no tags exist yet (first release)\n- Root marketplace.json validation is currently duplicated in validate.yml and release.yml \u2014 consolidate\n## Acceptance\n- [ ] `scripts/bump.sh` exists, is executable, and accepts `patch|minor|major`\n- [ ] Bump script updates all 5 version locations consistently\n- [ ] Bump script promotes CHANGELOG `[Unreleased]` to versioned section with date\n- [ ] Bump script updates CHANGELOG footer links with `dotnet-artisan/v*` format\n- [ ] Bump script prints tagging instructions after completion\n- [ ] `release.yml` extracts version-specific CHANGELOG section for release body\n- [ ] `release.yml` verifies tag version matches plugin.json version\n- [ ] `scripts/validate-root-marketplace.sh` exists and validates root marketplace.json\n- [ ] `validate.yml` and `release.yml` both use the shared validation script\n- [ ] `validate.yml` includes version consistency check across JSON files\n- [ ] Bump script handles first-release scenario (no prior tags)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:19:18.824291Z",
+        "depends_on": [
+          "fn-50-versioning-release-workflow-and.1"
+        ],
+        "epic": "fn-50-versioning-release-workflow-and",
+        "id": "fn-50-versioning-release-workflow-and.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-50-versioning-release-workflow-and.3.md",
+        "status": "todo",
+        "title": "Update validation scripts, docs, and CHANGELOG references",
+        "updated_at": "2026-02-17T15:20:18.182112Z"
+      },
+      "id": "fn-50-versioning-release-workflow-and.3",
+      "runtime": null,
+      "spec": "# fn-50-versioning-release-workflow-and.3 Update validation scripts, docs, and CHANGELOG references\n\n## Description\nUpdate validation scripts, documentation, and CHANGELOG to reflect the new schema and release process.\n\n**Size:** M\n**Files:**\n- `plugins/dotnet-artisan/scripts/validate-marketplace.sh`\n- `CONTRIBUTING.md`\n- `CLAUDE.md` (root)\n- `CHANGELOG.md`\n- `plugins/dotnet-artisan/README.md` (if badge/release notes section needed)\n\n## Approach\n\n**validate-marketplace.sh** updates:\n- Update recommended field checks: `categories` (array) \u2192 `category` (string) for root marketplace.json\n- Add check for new required fields in root marketplace.json: `$schema`, `name`, `owner`\n- Add check for new plugin.json fields: `author`, `homepage`, `repository`, `license`, `keywords`\n- Ensure stable output keys are maintained for CI parsing\n\n**CONTRIBUTING.md** \u2014 Expand \"Release\" section:\n- Document tag naming convention (`dotnet-artisan/vX.Y.Z`)\n- Document bump script usage (`./scripts/bump.sh patch|minor|major`)\n- Document release workflow behavior (tag \u2192 validate \u2192 extract CHANGELOG \u2192 GitHub Release)\n- Add \"Version Management\" subsection explaining version source of truth and sync\n\n**CLAUDE.md** (root) \u2014 Update \"File Structure\" and \"Validation\" sections:\n- Document the new marketplace.json schema fields\n- Document the new plugin.json fields\n- Add `scripts/bump.sh` and `scripts/validate-root-marketplace.sh` to file structure\n- Update validation commands section to include root marketplace validation\n\n**CHANGELOG.md** \u2014 Fix footer links:\n- Change `[unreleased]: .../compare/v0.1.0...HEAD` to `.../compare/dotnet-artisan/v0.1.0...HEAD`\n- Change `[0.1.0]: .../releases/tag/v0.1.0` to note that no release tag exists for 0.1.0 (or remove)\n- Add entry in `[Unreleased]` section for this epic's changes\n\n## Key context\n\n- validate-marketplace.sh uses stable output keys (CURRENT_DESC_CHARS, PROJECTED_DESC_CHARS, BUDGET_STATUS) that CI parses \u2014 preserve these\n- CONTRIBUTING.md currently has a minimal \"Release\" section at lines 143-145\n- CLAUDE.md references `plugin.json` schema at lines 45-50\n- Per memory: \"When updating counts in prose (README, AGENTS.md, CLAUDE.md), also grep for counts inside Mermaid diagram blocks\"\n## Acceptance\n- [ ] `validate-marketplace.sh` validates `category` (string) instead of `categories` (array)\n- [ ] `validate-marketplace.sh` checks for new plugin.json fields (author, homepage, repository, license, keywords)\n- [ ] `validate-marketplace.sh` passes with the updated JSON files from task 1\n- [ ] CONTRIBUTING.md \"Release\" section documents bump script, tag convention, and workflow\n- [ ] CLAUDE.md file structure section includes new scripts and updated schema\n- [ ] CHANGELOG.md footer links use `dotnet-artisan/v*` tag format (or note no tag for 0.1.0)\n- [ ] CHANGELOG.md `[Unreleased]` section documents this epic's changes\n- [ ] `validate-skills.sh && validate-marketplace.sh` both pass end-to-end\n- [ ] Stable CI output keys preserved in validate-marketplace.sh\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
