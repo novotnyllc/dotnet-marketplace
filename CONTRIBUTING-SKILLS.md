@@ -42,10 +42,7 @@ Open `.claude-plugin/plugin.json` and add your skill path to the `skills` array:
 **Step 4 -- Validate:**
 
 ```bash
-./scripts/validate-skills.sh && \
-./scripts/validate-marketplace.sh && \
-python3 scripts/generate_dist.py --strict && \
-python3 scripts/validate_cross_agent.py
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
 **Step 5 -- Commit and PR.**
@@ -172,8 +169,7 @@ See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 Rules:
 - Always use `[skill:skill-name]` -- bare text skill names are not machine-parseable
 - The skill name must match an existing `name` field in another SKILL.md
-- The cross-agent build pipeline resolves these to platform-appropriate links (Claude, Copilot, Codex)
-- Unresolved references produce validation warnings (or errors with `STRICT_REFS=1`)
+- Unresolved references produce validation warnings
 
 ### Content Patterns
 
@@ -201,7 +197,7 @@ Before validating, manually test that your skill activates correctly:
 
 ### Validation Commands
 
-All four commands must pass before merging. Run them from the repo root:
+Both commands must pass before merging. Run them from the repo root:
 
 **1. Skill validation** -- Checks frontmatter structure, required fields, directory naming, description length, cross-references, and budget:
 
@@ -215,28 +211,13 @@ All four commands must pass before merging. Run them from the repo root:
 ./scripts/validate-marketplace.sh
 ```
 
-**3. Cross-agent distribution** -- Generates platform-specific outputs (Claude, Copilot, Codex) in `dist/` and validates that all cross-references resolve:
+**Run both in sequence:**
 
 ```bash
-python3 scripts/generate_dist.py --strict
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-**4. Cross-agent conformance** -- Validates generated outputs conform to each target platform's structural requirements:
-
-```bash
-python3 scripts/validate_cross_agent.py
-```
-
-**Run all four in sequence:**
-
-```bash
-./scripts/validate-skills.sh && \
-./scripts/validate-marketplace.sh && \
-python3 scripts/generate_dist.py --strict && \
-python3 scripts/validate_cross_agent.py
-```
-
-If any command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
 
 ---
 
@@ -340,12 +321,11 @@ If validation reports `BUDGET_STATUS=WARN` or `BUDGET_STATUS=FAIL`:
 
 ### Cross-Reference Resolution
 
-If `generate_dist.py --strict` or `validate_cross_agent.py` reports unresolved cross-references:
+If validation reports unresolved cross-references:
 
 1. Verify the target skill name matches an existing `name` frontmatter field
 2. Check for typos in `[skill:exact-name-here]`
-3. If the target skill does not exist yet, the reference will produce a warning (or error with `STRICT_REFS=1`)
-4. During early development, `--allow-planned-refs` (the default) downgrades these to warnings
+3. If the target skill does not exist yet, the reference will produce a warning
 
 ---
 
@@ -360,12 +340,9 @@ Before committing a new or modified skill:
 - [ ] **Description under 120 characters** (check budget math)
 - [ ] **Cross-references** use `[skill:skill-name]` syntax
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
-- [ ] **Validation passes** -- all four commands run clean:
+- [ ] **Validation passes** -- both commands run clean:
   ```bash
-  ./scripts/validate-skills.sh && \
-  ./scripts/validate-marketplace.sh && \
-  python3 scripts/generate_dist.py --strict && \
-  python3 scripts/validate_cross_agent.py
+  ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
   ```
 - [ ] **Commit message** follows conventional commits (`feat(<scope>): ...`)
 

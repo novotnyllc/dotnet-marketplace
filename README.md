@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 122 skills across 22 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 122 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -60,19 +60,24 @@ The plugin organizes 122 skills into 22 categories. Each skill follows the Agent
 
 ## Agents
 
-The plugin includes 9 specialist agents that provide focused expertise in specific domains. The central routing agent, `dotnet-architect`, analyzes your query context and delegates to the appropriate specialist.
+The plugin includes 14 specialist agents that provide focused expertise in specific domains. The central routing agent, `dotnet-architect`, analyzes your query context and delegates to the appropriate specialist.
 
 | Agent | Description |
 |---|---|
 | **dotnet-architect** | Analyzes project context, requirements, and constraints to recommend architecture approaches, framework choices, and design patterns |
-| **dotnet-csharp-concurrency-specialist** | Debugs race conditions, deadlocks, thread safety issues, and synchronization problems in .NET code |
-| **dotnet-security-reviewer** | Reviews .NET code for security vulnerabilities, OWASP compliance, secrets exposure, and cryptographic misuse |
+| **dotnet-aspnetcore-specialist** | ASP.NET Core web API development, middleware, and hosting patterns |
+| **dotnet-async-performance-specialist** | Async/await performance analysis, task scheduling, and concurrency optimization |
+| **dotnet-benchmark-designer** | Designs BenchmarkDotNet benchmarks, prevents measurement bias, and validates benchmark methodology |
 | **dotnet-blazor-specialist** | Guides Blazor development across all hosting models (Server, WASM, Hybrid, Auto) including components, state, and auth |
-| **dotnet-uno-specialist** | Builds cross-platform Uno Platform apps with Extensions ecosystem, MVUX patterns, Toolkit controls, and MCP integration |
+| **dotnet-cloud-specialist** | Cloud-native .NET patterns for Azure, AWS, and containerized deployments |
+| **dotnet-code-review-agent** | Automated code review for .NET projects with focus on quality, patterns, and best practices |
+| **dotnet-csharp-concurrency-specialist** | Debugs race conditions, deadlocks, thread safety issues, and synchronization problems in .NET code |
+| **dotnet-docs-generator** | Generates documentation including Mermaid diagrams, XML doc skeletons, and GitHub-native docs |
 | **dotnet-maui-specialist** | Builds .NET MAUI apps with platform-specific development, Xamarin migration, and Native AOT on iOS/Catalyst |
 | **dotnet-performance-analyst** | Analyzes profiling data, benchmark results, GC behavior, and diagnoses performance bottlenecks |
-| **dotnet-benchmark-designer** | Designs BenchmarkDotNet benchmarks, prevents measurement bias, and validates benchmark methodology |
-| **dotnet-docs-generator** | Generates documentation including Mermaid diagrams, XML doc skeletons, and GitHub-native docs |
+| **dotnet-security-reviewer** | Reviews .NET code for security vulnerabilities, OWASP compliance, secrets exposure, and cryptographic misuse |
+| **dotnet-testing-specialist** | Testing strategy, test architecture, and quality patterns for .NET projects |
+| **dotnet-uno-specialist** | Builds cross-platform Uno Platform apps with Extensions ecosystem, MVUX patterns, Toolkit controls, and MCP integration |
 
 ## Architecture
 
@@ -84,16 +89,21 @@ graph TB
         direction TB
         PJ[plugin.json]
 
-        subgraph Agents["Specialist Agents"]
+        subgraph Agents["14 Specialist Agents"]
             DA[dotnet-architect<br/>Central Router]
+            ASP[aspnetcore-specialist]
+            APF[async-performance-specialist]
             CSC[concurrency-specialist]
             SR[security-reviewer]
             BS[blazor-specialist]
             US[uno-specialist]
             MS[maui-specialist]
+            CS[cloud-specialist]
+            CR[code-review-agent]
             PA[performance-analyst]
             BD[benchmark-designer]
             DG[docs-generator]
+            TS[testing-specialist]
         end
 
         subgraph Skills["22 Skill Categories / 122 Skills"]
@@ -127,15 +137,21 @@ graph TB
         end
     end
 
+    DA --> ASP
+    DA --> APF
     DA --> BS
     DA --> US
     DA --> MS
+    DA --> CS
     DA --> CSC
+    DA --> CR
     DA --> SR
     DA --> PA
     DA --> BD
     DA --> DG
+    DA --> TS
 
+    ASP --> AD
     BS --> UI
     US --> UI
     MS --> UI
@@ -144,6 +160,7 @@ graph TB
     PA --> PE
     BD --> PE
     DG --> DO
+    TS --> TE
     DA --> AR
     DA --> F
 ```
@@ -167,76 +184,6 @@ sequenceDiagram
     Specialist-->>Claude: Structured guidance
     Claude-->>User: Blazor auth recommendation<br/>with code examples
 ```
-
-## Cross-Agent Support
-
-dotnet-artisan supports multiple AI coding assistants through a cross-agent build pipeline. The canonical skill definitions in `skills/` are authored once using the Agent Skills open standard and then transformed into platform-specific formats. Generated outputs are deployed to GitHub Pages for stable, auto-updatable distribution.
-
-### Distribution URLs
-
-On each tagged release, the `dist/` directory is deployed to GitHub Pages:
-
-| Resource | URL |
-|---|---|
-| **Manifest** | `https://novotnyllc.github.io/dotnet-marketplace/manifest.json` |
-| **Claude Code** | `https://novotnyllc.github.io/dotnet-marketplace/claude/` |
-| **GitHub Copilot** | `https://novotnyllc.github.io/dotnet-marketplace/copilot/` |
-| **OpenAI Codex** | `https://novotnyllc.github.io/dotnet-marketplace/codex/` |
-
-### Auto-Update Polling
-
-Consumers can poll `manifest.json` to detect new releases and auto-update their local copies. The manifest includes version, timestamp, and per-target SHA256 checksums:
-
-```json
-{
-  "version": "1.2.3",
-  "generated_at": "2026-02-14T12:00:00Z",
-  "targets": {
-    "claude": { "path": "claude/", "sha256": "<checksum>" },
-    "copilot": { "path": "copilot/", "sha256": "<checksum>" },
-    "codex": { "path": "codex/", "sha256": "<checksum>" }
-  }
-}
-```
-
-**Polling contract:**
-- Poll `manifest.json` no more than every **15 minutes**
-- GitHub Pages CDN has an approximate **10-minute TTL** -- content may take up to 10 minutes to propagate after a release
-- Compare `version` or `sha256` fields to detect updates; download only changed targets
-
-### One-Time Repository Setup
-
-To enable GitHub Pages deployment for a fork or new instance:
-
-1. Go to **Settings** > **Pages** in your GitHub repository
-2. Under **Source**, select **Deploy from GitHub Actions** (not "Deploy from a branch")
-3. No further configuration is needed -- the `release.yml` workflow handles deployment automatically on tag push
-
-### Private Repository Considerations
-
-GitHub Pages requires the repository to be **public** (or requires GitHub Pro/Enterprise for private repositories). For private repositories, consumers can use the GitHub API to fetch release assets directly as a fallback. The GitHub Release is still created on each tag push for changelog notes.
-
-### Pipeline Overview
-
-The `scripts/generate_dist.py` script reads canonical `SKILL.md` files and produces output in the `dist/` directory:
-
-| Target | Directory | Description |
-|---|---|---|
-| **Claude Code** | `dist/claude/` | Native plugin format with `plugin.json`, agents, and hooks |
-| **GitHub Copilot** | `dist/copilot/` | Copilot-compatible skill format |
-| **OpenAI Codex** | `dist/codex/` | Codex-compatible skill format with `AGENTS.md` |
-
-### Transformation Rules
-
-During generation, the pipeline applies several transformations to ensure compatibility:
-
-- **Cross-references** (`[skill:skill-name]`) are resolved to platform-appropriate links or inline text
-- **Agent-specific directives** are omitted for platforms that do not support agent delegation
-- **Hook and MCP references** are omitted for platforms that do not support these features
-- **Manifest generation** produces `dist/manifest.json` with version, timestamp, and per-target SHA256 checksums
-- **Validation** via `scripts/validate_cross_agent.py` ensures all generated outputs conform to their target platform's requirements (including manifest schema and checksum correctness)
-
-The CI workflow (`validate.yml`) runs both generation and conformance validation on every push and pull request. The release workflow (`release.yml`) deploys validated outputs to GitHub Pages on tag push.
 
 ## Usage Examples
 

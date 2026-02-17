@@ -41,21 +41,21 @@ agents/<agent-name>.md                     # 14 specialist agents
 hooks/hooks.json                           # Session hooks (start context, post-edit)
 .mcp.json                                  # MCP server integrations
 .claude-plugin/plugin.json                 # Plugin manifest
-scripts/                                   # Validation and build scripts
-dist/                                      # Generated cross-agent outputs (not checked in)
+.claude-plugin/marketplace.json            # Marketplace discovery (lists available plugins)
+.agents/openai.yaml                        # Codex discovery metadata
+scripts/                                   # Validation scripts
 ```
 
 Key directories:
 - **`skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
 - **`hooks/`** -- Session lifecycle hooks
-- **`scripts/`** -- Validation scripts and cross-agent distribution generator
-- **`.claude-plugin/`** -- Plugin metadata (plugin.json, marketplace.json)
-- **`dist/`** -- Generated output for Claude, Copilot, and Codex (produced by `generate_dist.py`)
+- **`scripts/`** -- Validation scripts
+- **`.claude-plugin/`** -- Plugin manifest and marketplace metadata
 
 ## Validation Commands
 
-All four commands must pass before committing changes:
+Both commands must pass before committing changes:
 
 ```bash
 # 1. Validate skill frontmatter, required fields, directory conventions
@@ -63,30 +63,21 @@ All four commands must pass before committing changes:
 
 # 2. Validate plugin.json and marketplace.json consistency
 ./scripts/validate-marketplace.sh
-
-# 3. Generate cross-agent distribution and validate cross-references
-python3 scripts/generate_dist.py --strict
-
-# 4. Validate generated outputs conform to target platform requirements
-python3 scripts/validate_cross_agent.py
 ```
 
-Run all four in sequence:
+Run both in sequence:
 
 ```bash
-./scripts/validate-skills.sh && \
-./scripts/validate-marketplace.sh && \
-python3 scripts/generate_dist.py --strict && \
-python3 scripts/validate_cross_agent.py
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
 ## Development Workflow
 
 1. **Edit skills** -- Modify or create `SKILL.md` files under `skills/<category>/<skill-name>/`
 2. **Register in plugin.json** -- Add new skill paths to the `skills` array in `.claude-plugin/plugin.json`
-3. **Validate locally** -- Run all four validation commands above
+3. **Validate locally** -- Run both validation commands above
 4. **Commit** -- Use conventional commit messages with appropriate scope
-5. **CI validates** -- The `validate.yml` workflow runs the same validation commands on push and PR
+5. **CI validates** -- The `validate.yml` workflow runs the same validation commands plus root marketplace.json validation on push and PR
 
 ## References
 

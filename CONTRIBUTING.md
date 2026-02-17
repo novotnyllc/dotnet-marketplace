@@ -8,7 +8,6 @@ Contributions are welcome across all areas: new skills, skill improvements, agen
 
 You need the following to contribute:
 
-- **Python 3** -- Required for validation scripts (`generate_dist.py`, `validate_cross_agent.py`)
 - **jq** -- Required for marketplace validation (`validate-marketplace.sh`)
 - **Git** -- Standard version control
 
@@ -115,7 +114,7 @@ Required frontmatter fields: `name`, `description`, `capabilities`, and `tools`.
 
 ## Validation Requirements
 
-All four validation commands must pass before a PR can be merged:
+Both validation commands must pass before a PR can be merged:
 
 ### 1. Skill Validation
 
@@ -133,36 +132,15 @@ Validates skill frontmatter structure, required fields (`name`, `description`), 
 
 Validates `plugin.json` and `marketplace.json` consistency, skill registration, and agent registration.
 
-### 3. Cross-Agent Distribution
+Run both before submitting:
 
 ```bash
-python3 scripts/generate_dist.py --strict
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-Generates platform-specific outputs in `dist/` (Claude, Copilot, Codex) and validates cross-references are resolvable.
+### Release
 
-### 4. Cross-Agent Conformance
-
-```bash
-python3 scripts/validate_cross_agent.py
-```
-
-Validates that generated distribution outputs conform to each target platform's requirements, including manifest schema and SHA256 checksum correctness.
-
-Run all four before submitting:
-
-```bash
-./scripts/validate-skills.sh && \
-./scripts/validate-marketplace.sh && \
-python3 scripts/generate_dist.py --strict && \
-python3 scripts/validate_cross_agent.py
-```
-
-### Release and Deployment
-
-On tag push (`v*`), the `release.yml` workflow validates the plugin, generates cross-agent outputs, deploys `dist/` to GitHub Pages, and creates a GitHub Release for changelog notes. The deployed content is available at `https://novotnyllc.github.io/dotnet-marketplace/` with a `manifest.json` at the root for auto-update polling.
-
-See the [Cross-Agent Support](README.md#cross-agent-support) section of the README for Pages URLs, polling contract, and one-time repository setup instructions.
+On tag push (`dotnet-artisan/v*`), the `release.yml` workflow validates the plugin and creates a GitHub Release.
 
 ## Hooks and MCP Contributions
 
