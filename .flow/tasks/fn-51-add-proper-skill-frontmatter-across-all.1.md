@@ -46,9 +46,8 @@ Update the validation script and all documentation to support the expanded set o
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass clean (now 126 skills)
 
 ## Done summary
-
-_To be filled on completion._
-
+Expanded ALLOWED_FRONTMATTER_FIELDS to accept user-invocable, disable-model-invocation, context, and model with FIELD_TYPES boolean/string type validation. Removed plugin-self-publish skill, moved publishing guidance to CONTRIBUTING.md, and updated skill counts from 127 to 126 across all documentation.
 ## Evidence
-
-_To be filled on completion._
+- Commits: 6529802fa020b4f41accd2a477ba270ab407adb0
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
