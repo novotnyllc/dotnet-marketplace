@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-47-add-accessibility-skill-for-net-ui",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-17T03:56:28.262970Z",
   "spec_path": ".flow/specs/fn-47-add-accessibility-skill-for-net-ui.md",
   "status": "open",
   "title": "Add Accessibility Skill for .NET UI Frameworks",
-  "updated_at": "2026-02-17T03:52:14.175446Z"
+  "updated_at": "2026-02-17T03:56:28.263175Z"
 }
