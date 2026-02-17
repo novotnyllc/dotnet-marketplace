@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-02-17
+
 ### Added
 
 - **dotnet-file-io** skill (Core C#) -- FileStream async patterns, RandomAccess API, FileSystemWatcher debouncing, MemoryMappedFile, path traversal prevention, secure temp files, cross-platform considerations
@@ -68,5 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/main...HEAD  <!-- update to dotnet-artisan/vX.Y.Z...HEAD after first release tag -->
+[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/dotnet-artisan/v0.1.1...HEAD
+[0.1.1]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/dotnet-artisan/v0.1.1
 [0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->
