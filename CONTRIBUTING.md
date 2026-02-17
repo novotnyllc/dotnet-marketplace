@@ -53,7 +53,7 @@ user-invocable: false
 
 See the [CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 126 skills).
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 130 skills).
 
 ### Cross-Reference Syntax
 
