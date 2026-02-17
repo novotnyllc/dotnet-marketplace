@@ -29,9 +29,8 @@ Register `dotnet-tool-management` in plugin.json, add routing entry in `dotnet-a
 - [ ] `--projected-skills` incremented in validate-skills.sh
 - [ ] All four validation scripts pass
 ## Done summary
-TBD
-
+Registered dotnet-tool-management in plugin.json, added catalog entry and routing rule in dotnet-advisor, added [skill:dotnet-tool-management] cross-references in dotnet-cli-packaging and dotnet-cli-distribution, incremented --projected-skills to 125, and fixed projected budget boundary check to use strict > for pessimistic estimates.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 2bee08a4699d07e044f2c7258603100fabc863b1
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
