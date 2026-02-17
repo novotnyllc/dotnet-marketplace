@@ -161,6 +161,7 @@ graph TB
     DA --> AR
     DA --> F
 ```
+```
 /
 +-- .claude-plugin/
 |   +-- marketplace.json          # Root marketplace listing
