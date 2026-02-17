@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# validate-marketplace.sh -- Validate plugin.json for dotnet-artisan.
+# validate-marketplace.sh -- Validate plugin.json and marketplace.json for dotnet-artisan.
 #
 # Checks:
 #   1. plugin.json exists and is valid JSON
@@ -11,6 +11,7 @@
 #   6. hooks/hooks.json has "hooks" key
 #   7. .mcp.json has "mcpServers" key
 #   8. scripts/hooks/*.sh are executable
+#   9. Root marketplace.json exists and has valid schema (name, owner, plugins, metadata)
 #
 # Design constraints:
 #   - Single-pass validation (no subprocess spawning per entry, no network)
@@ -240,6 +241,73 @@ fi
 
 echo ""
 
+# --- root marketplace.json validation ---
+
+MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
+
+echo "--- root marketplace.json ---"
+
+if [ ! -f "$MARKETPLACE_JSON" ]; then
+    echo "ERROR: marketplace.json not found at $MARKETPLACE_JSON"
+    errors=$((errors + 1))
+else
+    # Validate JSON is well-formed
+    if ! jq empty "$MARKETPLACE_JSON" 2>/dev/null; then
+        echo "ERROR: marketplace.json is not valid JSON"
+        errors=$((errors + 1))
+    else
+        echo "OK: marketplace.json is valid JSON"
+
+        # Root marketplace.json schema: name, owner, metadata, plugins array
+        # Check required top-level fields
+        for field in name description; do
+            if ! jq -e ".$field | type == \"string\" and length > 0" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+                echo "ERROR: marketplace.json.$field must be a non-empty string"
+                errors=$((errors + 1))
+            else
+                value=$(jq -r ".$field" "$MARKETPLACE_JSON")
+                echo "OK: marketplace.json.$field = \"$value\""
+            fi
+        done
+
+        # Check owner.name
+        if ! jq -e '.owner.name | type == "string" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "ERROR: marketplace.json.owner.name must be a non-empty string"
+            errors=$((errors + 1))
+        else
+            value=$(jq -r '.owner.name' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.owner.name = \"$value\""
+        fi
+
+        # Check plugins array exists and has entries
+        if ! jq -e '.plugins | type == "array" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "ERROR: marketplace.json.plugins must be a non-empty array"
+            errors=$((errors + 1))
+        else
+            pcount=$(jq '.plugins | length' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.plugins has $pcount plugin(s)"
+        fi
+
+        # Check recommended fields
+        for field in metadata; do
+            if ! jq -e ".$field" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+                echo "WARN: marketplace.json.$field is missing"
+                warnings=$((warnings + 1))
+            else
+                echo "OK: marketplace.json.$field present"
+            fi
+        done
+
+        if ! jq -e '."$schema"' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "WARN: marketplace.json.\$schema is missing"
+            warnings=$((warnings + 1))
+        else
+            echo "OK: marketplace.json.\$schema present"
+        fi
+    fi
+fi
+
+echo ""
 echo "=== Summary ==="
 echo "Errors: $errors"
 echo "Warnings: $warnings"

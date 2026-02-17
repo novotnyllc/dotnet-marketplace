@@ -136,8 +136,8 @@ echo "  OK: root marketplace.json metadata.version -> $NEW_VERSION"
 if [ -f "$README" ]; then
     # Match shields.io badge pattern: version-X.Y.Z-color
     if grep -q "version-${CURRENT_VERSION}-" "$README"; then
-        sed -i.bak "s/version-${CURRENT_VERSION}-/version-${NEW_VERSION}-/g" "$README"
-        rm -f "$README.bak"
+        TMP_FILE=$(mktemp)
+        sed "s/version-${CURRENT_VERSION}-/version-${NEW_VERSION}-/g" "$README" > "$TMP_FILE" && mv "$TMP_FILE" "$README"
         echo "  OK: README.md badge version -> $NEW_VERSION"
     else
         echo "  WARN: No version badge found in README.md (looked for 'version-${CURRENT_VERSION}-')"
@@ -173,8 +173,8 @@ if [ -f "$CHANGELOG" ]; then
     TAG_PREFIX="${PLUGIN_NAME}/v"
 
     # Update the [unreleased] comparison link
-    sed -i.bak "s|\[unreleased\]:.*|[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/${TAG_PREFIX}${NEW_VERSION}...HEAD|" "$CHANGELOG"
-    rm -f "$CHANGELOG.bak"
+    TMP_FILE=$(mktemp)
+    sed "s|\[unreleased\]:.*|[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/${TAG_PREFIX}${NEW_VERSION}...HEAD|" "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
 
     # Check if a version link for the new version already exists
     if ! grep -q "^\[${NEW_VERSION}\]:" "$CHANGELOG"; then
@@ -187,18 +187,16 @@ if [ -f "$CHANGELOG" ]; then
             VERSION_LINK="[${NEW_VERSION}]: https://github.com/novotnyllc/dotnet-marketplace/compare/${TAG_PREFIX}${CURRENT_VERSION}...${TAG_PREFIX}${NEW_VERSION}"
         fi
 
-        # Insert the new version link before the previous version's link
-        # (after [unreleased] link)
-        sed -i.bak "/^\[unreleased\]:/a\\
-${VERSION_LINK}" "$CHANGELOG"
-        rm -f "$CHANGELOG.bak"
+        # Insert the new version link after the [unreleased] link
+        TMP_FILE=$(mktemp)
+        awk -v link="$VERSION_LINK" '/^\[unreleased\]:/{print; print link; next}{print}' "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
     fi
 
     # Fix old footer links that use wrong tag format (e.g., v0.1.0 instead of dotnet-artisan/v0.1.0)
-    sed -i.bak "s|compare/v${CURRENT_VERSION}\.\.\.|compare/${TAG_PREFIX}${CURRENT_VERSION}...|g" "$CHANGELOG"
-    rm -f "$CHANGELOG.bak"
-    sed -i.bak "s|/tag/v${CURRENT_VERSION}$|/tag/${TAG_PREFIX}${CURRENT_VERSION}|" "$CHANGELOG"
-    rm -f "$CHANGELOG.bak"
+    TMP_FILE=$(mktemp)
+    sed "s|compare/v${CURRENT_VERSION}\.\.\.|compare/${TAG_PREFIX}${CURRENT_VERSION}...|g" "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
+    TMP_FILE=$(mktemp)
+    sed "s|/tag/v${CURRENT_VERSION}$|/tag/${TAG_PREFIX}${CURRENT_VERSION}|" "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
 
     echo "  OK: CHANGELOG.md [Unreleased] promoted to [$NEW_VERSION] - $TODAY"
     echo "  OK: CHANGELOG.md footer links updated to ${TAG_PREFIX}* format"
