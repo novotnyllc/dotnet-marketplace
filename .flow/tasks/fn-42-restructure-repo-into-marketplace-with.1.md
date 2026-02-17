@@ -1,7 +1,7 @@
 # fn-42-restructure-repo-into-marketplace-with.1 Clean up stale files and remove dist pipeline
 
 ## Description
-Delete stale artifacts from completed work and remove the dist generation pipeline entirely.
+Delete stale artifacts from completed work and remove the dist generation pipeline entirely. This task focuses only on removing genuinely stale files — the root plugin.json deletion happens in Task 2 where its replacement is created atomically.
 
 **Size:** S
 **Files:** Various deletions, `.gitignore`
@@ -9,24 +9,26 @@ Delete stale artifacts from completed work and remove the dist generation pipeli
 ## Approach
 
 - **Fleet review artifacts**: Delete `docs/fleet-review-rubric.md` and `docs/review-reports/` (historical snapshots from completed fn-29/fn-40 epics)
-- **Ralph execution logs**: Delete `scripts/ralph/runs/` (~107 MB of completed execution logs). Keep `scripts/ralph/` itself if it contains config/scripts, just the runs.
-- **Dist pipeline**: Delete `scripts/generate_dist.py` and `scripts/validate_cross_agent.py`. These produced `dist/` output for Claude/Copilot/Codex — no longer needed since source files ARE the plugin.
-- **Dist output**: Delete any committed files under `dist/` (should already be gitignored, verify). Remove the `dist/` entry from `.gitignore` since there's no dist anymore.
-- **Completed flow epics**: Optionally clean up `.flow/` files for completed epics fn-29 and fn-40 (both marked "done"). These are small metadata files — low priority.
+- **Ralph execution logs**: Keep `scripts/ralph/` itself (config.env, ralph.sh, etc.) at repo root — it is repo-level dev tooling, not plugin content.
+- **Dist pipeline scripts**: Delete `scripts/generate_dist.py` and `scripts/validate_cross_agent.py`
+- **Dist output**: Delete the `dist/` directory entirely. Remove the `dist/` entry from `.gitignore`. No new `.gitignore` entries are needed — existing root patterns (`__pycache__/`, etc.) cover build artifacts globally.
 - **Python cache**: Delete `scripts/__pycache__/` if present.
+
+**Note**: Root `.claude-plugin/plugin.json` is NOT deleted here. It is deleted atomically in Task 2 when the replacement marketplace.json and per-plugin plugin.json are created, preventing any state where the repo has no discoverable manifest.
 
 ## Key Context
 
-- `generate_dist.py` (21 KB) generated dist/claude/, dist/copilot/, dist/codex/ from source
-- `validate_cross_agent.py` (42 KB) validated the generated outputs
-- Both are referenced in CI workflows — those references will be updated in Task .3
-- Cross-ref `[skill:name]` validation was embedded in generate_dist.py — will be extracted in Task .2
+- `generate_dist.py` generated dist/claude/, dist/copilot/, dist/codex/ from source
+- `validate_cross_agent.py` validated the generated outputs
+- Both are referenced in CI workflows — those references are updated in Task 3
+- Cross-ref `[skill:name]` validation already exists in `_validate_skills.py` (lines 130-131, 293-305) — no extraction needed
+- All tasks happen on a feature branch; intermediate CI breakage is acceptable
 
 ## Acceptance
 - [ ] `docs/fleet-review-rubric.md` and `docs/review-reports/` deleted
-- [ ] `scripts/ralph/runs/` deleted
+- [ ] `scripts/ralph/runs/` deleted; `scripts/ralph/` (config, scripts) preserved
 - [ ] `scripts/generate_dist.py` and `scripts/validate_cross_agent.py` deleted
-- [ ] `dist/` entry removed from `.gitignore`
+- [ ] `dist/` directory deleted; `dist/` entry removed from `.gitignore`
 - [ ] `scripts/__pycache__/` cleaned if present
 - [ ] No broken imports or references to deleted files in remaining code
 ## Done summary
