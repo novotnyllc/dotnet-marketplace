@@ -39,10 +39,13 @@ using System.Runtime.InteropServices;
 
 public static partial class NativeApi
 {
-    [LibraryImport("mylib", StringMarshalling = StringMarshalling.Utf8)]
+    [LibraryImport("mylib")]
     internal static partial int ProcessData(
         ReadOnlySpan<byte> input,
         int length);
+
+    [LibraryImport("mylib", StringMarshalling = StringMarshalling.Utf8)]
+    internal static partial int OpenByName(string name);
 
     [LibraryImport("mylib", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -52,8 +55,9 @@ public static partial class NativeApi
 
 Key requirements for `[LibraryImport]`:
 - Method must be `static partial` in a `partial` class
-- String marshalling must be explicitly specified via `StringMarshalling` or `[MarshalAs]` on each string parameter
+- String marshalling must be explicitly specified via `StringMarshalling` or `[MarshalAs]` on each string parameter (only needed when strings are present)
 - Boolean return types require explicit `[return: MarshalAs(UnmanagedType.Bool)]`
+- `Span<T>` and `ReadOnlySpan<T>` parameters are supported directly -- `[DllImport]` does not support them (use arrays instead)
 
 ### DllImport Declaration (Legacy)
 
@@ -470,7 +474,7 @@ Do not use C# `long` for C/C++ `long` -- they have different sizes on Unix 64-bi
 1. **Do not use `[DllImport]` in new .NET 7+ code without justification.** Use `[LibraryImport]` which generates marshalling at compile time. Only fall back to `[DllImport]` when SYSLIB1054 analyzer indicates incompatibility.
 2. **Do not assume `bool` marshals as 1 byte.** .NET marshals `bool` as a 4-byte Windows `BOOL` by default. Use `[MarshalAs(UnmanagedType.U1)]` for C `_Bool`/`bool`, or `[MarshalAs(UnmanagedType.Bool)]` for Windows `BOOL` explicitly.
 3. **Do not use C# `long` to interop with C/C++ `long`.** C `long` is 4 bytes on Windows but 8 bytes on 64-bit Unix. Use `CLong`/`CULong` (.NET 6+) for cross-platform correctness.
-4. **Do not use `StringBuilder` for output string buffers.** It allocates multiple intermediate copies. Use `char[]` or `byte[]` from `ArrayPool` for better performance.
+4. **Do not use `StringBuilder` for output string buffers.** `[LibraryImport]` does not support `StringBuilder` at all, and with `[DllImport]` it allocates multiple intermediate copies. Use `char[]` or `byte[]` from `ArrayPool` instead.
 5. **Do not use `[LibraryImport]` or `[DllImport]` for WASM.** WebAssembly does not support traditional P/Invoke. For JavaScript interop in WASM, see [skill:dotnet-aot-wasm].
 6. **Do not use dynamic library loading on iOS.** iOS prohibits loading dynamic libraries at runtime. Use `"__Internal"` as the library name for statically linked native code.
 7. **Do not use `System.Delegate` fields in interop structs.** Use typed delegates or unmanaged function pointers (`delegate* unmanaged`). Untyped delegates can destabilize the runtime during marshalling.
