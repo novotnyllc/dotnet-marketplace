@@ -112,6 +112,7 @@
     "./skills/agent-meta-skills/dotnet-build-analysis",
     "./skills/agent-meta-skills/dotnet-csproj-reading",
     "./skills/agent-meta-skills/dotnet-solution-navigation",
+    "./skills/agent-meta-skills/dotnet-slopwatch",
     "./skills/performance/dotnet-benchmarkdotnet",
     "./skills/performance/dotnet-performance-patterns",
     "./skills/performance/dotnet-profiling",
