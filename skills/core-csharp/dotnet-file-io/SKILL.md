@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-io
-description: "WHEN doing file I/O. FileStream async, RandomAccess, FileSystemWatcher, MemoryMappedFile, path safety."
+description: "WHEN doing file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
 ---
 
 # dotnet-file-io
@@ -8,6 +8,8 @@ description: "WHEN doing file I/O. FileStream async, RandomAccess, FileSystemWat
 File I/O patterns for .NET applications. Covers FileStream construction with async flags, RandomAccess API for thread-safe offset-based I/O, File convenience methods, FileSystemWatcher event handling and debouncing, MemoryMappedFile for large files and IPC, path handling security (Combine vs Join), secure temp file creation, cross-platform considerations, IOException hierarchy, and buffer sizing guidance.
 
 **Out of scope:** PipeReader/PipeWriter and network I/O -- see [skill:dotnet-io-pipelines]. Async/await fundamentals -- see [skill:dotnet-csharp-async-patterns]. Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-performance-patterns]. JSON and Protobuf serialization -- see [skill:dotnet-serialization]. BackgroundService lifecycle -- see [skill:dotnet-background-services]. Channel<T> producer/consumer -- see [skill:dotnet-channels]. GC implications of pinned/memory-mapped backing arrays -- see [skill:dotnet-gc-memory]. File upload validation (IFormFile) -- see [skill:dotnet-input-validation].
+
+For testable file system access, consider `System.IO.Abstractions` -- see [skill:dotnet-testing-strategy] for test isolation patterns.
 
 Cross-references: [skill:dotnet-io-pipelines] for PipeReader/PipeWriter network I/O, [skill:dotnet-gc-memory] for POH and memory-mapped backing array GC implications, [skill:dotnet-performance-patterns] for Span/Memory basics and ArrayPool usage, [skill:dotnet-csharp-async-patterns] for async/await patterns used with file streams.
 
@@ -194,6 +196,7 @@ public sealed class DebouncedFileWatcher : IDisposable
             _channel.Writer.TryWrite(e.FullPath);
     }
 
+    // requires: using System.Runtime.CompilerServices;
     public async IAsyncEnumerable<string> WatchAsync(
         TimeSpan debounce,
         [EnumeratorCancellation] CancellationToken ct = default)
@@ -318,7 +321,7 @@ string userInput = "/etc/passwd";
 string result = Path.Combine(basePath, userInput);
 // result = "/etc/passwd"  -- basePath is silently ignored
 
-// SAFER: Path.Join does not discard on rooted paths (.NET 8+)
+// SAFER: Path.Join does not discard on rooted paths (.NET Core 2.1+)
 string result2 = Path.Join(basePath, userInput);
 // result2 = "/app/uploads//etc/passwd"  -- preserves basePath
 ```
@@ -333,7 +336,8 @@ public static string SafeResolvePath(string basePath, string userPath)
     string fullPath = Path.GetFullPath(
         Path.Join(fullBase, userPath));
 
-    // Verify resolved path is still under base
+    // OrdinalIgnoreCase: safe cross-platform default.
+    // On Linux-only deployments, Ordinal is more precise.
     if (!fullPath.StartsWith(fullBase + Path.DirectorySeparatorChar,
             StringComparison.OrdinalIgnoreCase)
         && !fullPath.Equals(fullBase, StringComparison.OrdinalIgnoreCase))
@@ -377,7 +381,7 @@ await using var fs = new FileStream(
 await fs.WriteAsync(data, cancellationToken);
 ```
 
-`FileOptions.DeleteOnClose` ensures the temp file is removed when the stream is closed, even on unhandled exceptions.
+`FileOptions.DeleteOnClose` ensures the temp file is removed when the stream is closed. On Windows, the OS guarantees deletion when the last handle closes. On Linux/macOS, deletion happens during `Dispose` and may not occur if the process is killed abruptly (SIGKILL).
 
 ---
 
@@ -496,7 +500,7 @@ Guidance based on dotnet/runtime benchmarks and internal FileStream implementati
 ## Agent Gotchas
 
 1. **Do not use FileStream async methods without `useAsync: true`** -- without the async flag, `ReadAsync`/`WriteAsync` dispatch synchronous I/O to the thread pool, blocking a thread and adding overhead. Always pass `useAsync: true` or `FileOptions.Asynchronous`.
-2. **Do not use `Path.Combine` with untrusted input** -- `Path.Combine` silently discards the base path when the second argument is rooted, enabling path traversal. Use `Path.Join` (.NET 8+) and validate the resolved path is under the intended base directory.
+2. **Do not use `Path.Combine` with untrusted input** -- `Path.Combine` silently discards the base path when the second argument is rooted, enabling path traversal. Use `Path.Join` (.NET Core 2.1+) and validate the resolved path is under the intended base directory.
 3. **Do not use `Path.GetTempFileName()`** -- it creates predictable filenames and throws at 65,535 files. Use `Path.GetRandomFileName()` with `FileMode.CreateNew` for secure, atomic temp file creation.
 4. **Do not ignore FileSystemWatcher duplicate events** -- editors and tools trigger multiple events for a single logical change. Implement debouncing with a timer or Channel<T> throttle.
 5. **Do not rely on FileSystemWatcher alone for reliable change detection** -- buffer overflows lose events silently. Handle the `Error` event and implement periodic rescan as a fallback.
