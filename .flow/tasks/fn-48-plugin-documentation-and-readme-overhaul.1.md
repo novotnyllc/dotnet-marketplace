@@ -29,9 +29,8 @@ Reconcile skill and agent counts across all documents, then rewrite README.md wi
 - [ ] `--projected-skills` set to 132 in validate-skills.sh
 - [ ] All validation scripts pass
 ## Done summary
-TBD
-
+Reconciled skill and agent counts across all documentation files (README.md, CLAUDE.md, AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md) at both root and plugin levels. Updated total skill count from 122 to 127, fixed per-category counts in tables and Mermaid diagrams for Foundation (4->5), Core C# (15->16), Project Structure (6->7), CLI Tools (5->6), and UI Frameworks (13->14), and updated budget math in CONTRIBUTING-SKILLS.md. All validation scripts pass.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: decb291ed3da92e8d793983eb8f1919de2ed86cb
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
