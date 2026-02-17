@@ -42,7 +42,7 @@ Adds a NuGet package reference. Specify the package name, optionally followed by
 
 Version behavior:
 - **`@version`** -- pins to a specific version
-- **`@*`** -- uses the latest available version
+- **`@*`** -- uses the latest stable version (NuGet floating version)
 - **No version** -- only works when Central Package Management (CPM) is configured with a `Directory.Packages.props` file; otherwise, specify a version explicitly or use `@*`
 
 ---
@@ -56,7 +56,7 @@ Specifies which SDK to use. Defaults to `Microsoft.NET.Sdk` if omitted.
 ```
 
 ```csharp
-#:sdk Aspire.AppHost.Sdk@13.0.2
+#:sdk Aspire.AppHost.Sdk@9.2.0
 ```
 
 Use this directive to access SDK-specific features. For example, `Microsoft.NET.Sdk.Web` enables ASP.NET Core features and automatically includes `*.json` configuration files in the build.
@@ -138,7 +138,7 @@ The `-` argument reads C# code from standard input. Useful for quick testing and
 dotnet build app.cs
 ```
 
-Build output goes to `<temp>/dotnet/runfile/<appname>-<sha>/bin/<configuration>/` by default. Override with `--output` or `#:property OutputPath=./output`.
+Build output goes to a cached location under the system temp directory by default. Override with `--output` or `#:property OutputPath=./output`.
 
 ### Clean
 
