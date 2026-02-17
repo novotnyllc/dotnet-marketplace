@@ -306,3 +306,9 @@ Path.Join was introduced in .NET Core 2.1, not .NET 8 -- its rooted-path safety 
 
 ## 2026-02-17 manual [pitfall]
 FileOptions.DeleteOnClose behavior differs across platforms -- Windows guarantees OS-level deletion on handle close; Linux/macOS delete during Dispose and may leave orphans on SIGKILL
+
+## 2026-02-17 manual [pitfall]
+When plan-syncing task specs from epic changes, always deduplicate — flowctl appends new sections without removing old ones, creating contradictory duplicate Approach/Key Context sections that reviewers flag as Major issues
+
+## 2026-02-17 manual [pitfall]
+When splitting destructive operations across tasks (e.g., deleting a file in T1, creating replacement in T2), ensure atomicity — either delete and replace in the same task, or explicitly document that feature-branch workflow makes intermediate breakage acceptable in BOTH the epic AND the task spec
