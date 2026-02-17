@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 121 skills across 22 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 122 skills across 22 categories and 9 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -31,12 +31,12 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 121 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 122 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
 | **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis |
-| **Core C#** | 14 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-io-pipelines, dotnet-linq-optimization |
+| **Core C#** | 15 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-file-io, dotnet-io-pipelines, dotnet-linq-optimization |
 | **Project Structure** | 6 | dotnet-project-structure, dotnet-scaffold-project, dotnet-modernize |
 | **Architecture** | 15 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-messaging-patterns, dotnet-aspire-patterns |
 | **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
@@ -96,9 +96,9 @@ graph TB
             DG[docs-generator]
         end
 
-        subgraph Skills["22 Skill Categories / 121 Skills"]
+        subgraph Skills["22 Skill Categories / 122 Skills"]
             F[Foundation<br/>4 skills]
-            CC[Core C#<br/>14 skills]
+            CC[Core C#<br/>15 skills]
             PS[Project Structure<br/>6 skills]
             AR[Architecture<br/>15 skills]
             SE[Serialization<br/>4 skills]

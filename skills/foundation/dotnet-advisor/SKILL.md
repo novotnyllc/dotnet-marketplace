@@ -33,6 +33,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-csharp-source-generators] -- IIncrementalGenerator, emit patterns
 - [skill:dotnet-csharp-code-smells] -- code smells, anti-patterns, common pitfalls
 - [skill:dotnet-roslyn-analyzers] -- custom DiagnosticAnalyzer, CodeFixProvider, testing, NuGet packaging
+- [skill:dotnet-file-io] -- FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, path handling
 - [skill:dotnet-io-pipelines] -- System.IO.Pipelines: PipeReader/PipeWriter, backpressure, protocol parsing
 - [skill:dotnet-linq-optimization] -- IQueryable vs IEnumerable, compiled queries, deferred execution
 
@@ -190,6 +191,7 @@ Use this decision tree to load the right skills for the current task.
 - Source generators -> [skill:dotnet-csharp-source-generators]
 - Code review, code quality, anti-patterns -> [skill:dotnet-csharp-code-smells]
 - Custom analyzers/code fixes -> [skill:dotnet-roslyn-analyzers]
+- File I/O, FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, path handling -> [skill:dotnet-file-io]
 - IO.Pipelines, high-perf network I/O -> [skill:dotnet-io-pipelines]
 - LINQ optimization, IQueryable pitfalls -> [skill:dotnet-linq-optimization]
 

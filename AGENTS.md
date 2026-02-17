@@ -4,12 +4,12 @@
 
 ## Skill Routing Index
 
-The plugin organizes 121 skills into 22 categories. Use this index to identify which category covers your domain.
+The plugin organizes 122 skills into 22 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
 | **Foundation** | 4 | Project analysis, version detection, skill routing, plugin publishing |
-| **Core C#** | 14 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, IO.Pipelines, LINQ optimization |
+| **Core C#** | 15 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, file I/O, IO.Pipelines, LINQ optimization |
 | **Project Structure** | 6 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization |
 | **Architecture** | 15 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID, messaging, domain modeling, structured logging, Aspire |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |

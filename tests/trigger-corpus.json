@@ -168,5 +168,10 @@
     "query": "How do I tune the .NET garbage collector and use ArrayPool to reduce GC pressure?",
     "expected_skill": "dotnet-gc-memory",
     "category": "performance"
+  },
+  {
+    "query": "How do I read and write files asynchronously with FileStream and use RandomAccess for thread-safe file I/O?",
+    "expected_skill": "dotnet-file-io",
+    "category": "core-csharp"
   }
 ]

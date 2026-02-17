@@ -7,9 +7,9 @@ description: "WHEN building high-perf network I/O. PipeReader/PipeWriter, backpr
 
 High-performance I/O patterns using `System.IO.Pipelines`. Covers `PipeReader`, `PipeWriter`, backpressure management, protocol parser implementation, and Kestrel integration. Pipelines solve the classic problems of buffer management, incomplete reads, and memory copying that plague traditional stream-based network code.
 
-**Out of scope:** Async/await fundamentals and `ValueTask` patterns -- see [skill:dotnet-csharp-async-patterns]. Benchmarking methodology and `Span<T>` micro-optimization -- see [skill:dotnet-performance-patterns].
+**Out of scope:** Async/await fundamentals and `ValueTask` patterns -- see [skill:dotnet-csharp-async-patterns]. Benchmarking methodology and `Span<T>` micro-optimization -- see [skill:dotnet-performance-patterns]. File-based I/O (FileStream, RandomAccess, MemoryMappedFile) -- see [skill:dotnet-file-io].
 
-Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns used in pipeline loops, [skill:dotnet-performance-patterns] for Span/Memory optimization techniques.
+Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns used in pipeline loops, [skill:dotnet-performance-patterns] for Span/Memory optimization techniques, [skill:dotnet-file-io] for file-based I/O patterns (FileStream, RandomAccess, MemoryMappedFile).
 
 ---
 

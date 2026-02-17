@@ -9,7 +9,7 @@ Garbage collection and memory management for .NET applications. Covers GC modes 
 
 **Out of scope:** Span<T>/Memory<T> syntax introduction and basic usage -- see [skill:dotnet-performance-patterns]. Microbenchmarking setup -- see [skill:dotnet-benchmarkdotnet]. CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]. Channel<T> producer/consumer patterns -- see [skill:dotnet-channels].
 
-Cross-references: [skill:dotnet-performance-patterns] for Span<T>/Memory<T> basics and sealed devirtualization, [skill:dotnet-profiling] for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-channels] for backpressure patterns that interact with memory management.
+Cross-references: [skill:dotnet-performance-patterns] for Span<T>/Memory<T> basics and sealed devirtualization, [skill:dotnet-profiling] for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-channels] for backpressure patterns that interact with memory management, [skill:dotnet-file-io] for MemoryMappedFile usage and POH buffer patterns in file I/O.
 
 ---
 
