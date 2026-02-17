@@ -48,9 +48,8 @@ Author `skills/ui-frameworks/dotnet-accessibility/SKILL.md` covering accessibili
 - [ ] References WCAG standards without legal advice
 - [ ] Cross-reference syntax used for all related UI framework skills
 ## Done summary
-TBD
-
+Authored dotnet-accessibility SKILL.md covering cross-platform accessibility patterns: Blazor (ARIA, keyboard events, live regions, forms), MAUI (SemanticProperties, programmatic focus, announcements), WinUI (AutomationProperties, custom AutomationPeer), with brief WPF/Uno/TUI sections, testing tools per platform, and WCAG reference.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 800b37f, 5adcd67
+- Tests: ./scripts/validate-skills.sh
 - PRs:
