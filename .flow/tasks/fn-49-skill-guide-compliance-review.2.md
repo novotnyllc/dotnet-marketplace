@@ -1,41 +1,51 @@
-# fn-49-skill-guide-compliance-review.2 Fix non-compliant skills identified in audit
+# fn-49-skill-guide-compliance-review.2 Optimize skill descriptions for routing quality and budget compliance
 
 ## Description
-Fix all critical and warning findings from the audit in fn-49.1. Batch fixes by category.
+Apply fixes to all non-compliant skill front matter identified in Task 1's audit. Optimize descriptions for maximum routing effectiveness while reducing total budget below the WARN threshold.
 
-**Size:** M (scope depends on audit findings — may need splitting)
-**Files:** Multiple `SKILL.md` files, agent `.md` files, `CONTRIBUTING-SKILLS.md`
+**Size:** M
+**Files:** All non-compliant `skills/**/SKILL.md` files (count depends on Task 1 findings)
 
 ## Approach
 
-- Fix critical findings first (structural issues, missing sections)
-- Fix warning findings (depth gaps, cross-reference gaps, trigger pattern gaps)
-- Update `CONTRIBUTING-SKILLS.md` if skill guide introduces conventions not yet documented
-- Batch by category to stay efficient
-- If >30 skills need fixes: split into fn-49.2a (critical) and fn-49.2b (warnings) with separate PRs
+1. Read Task 1 findings report
+2. Fix critical issues first (budget violations, name-directory mismatches, extra fields)
+3. Optimize major issues (trigger specificity, keyword density, disambiguation)
+4. Address minor issues (third-person voice, WHEN prefix evaluation)
+5. Run `./scripts/validate-skills.sh` after each batch to track budget progress
+6. Target total budget ≤11,800 chars (below 12K WARN with headroom for future skills)
 
-## Key context
+### Optimization Strategies
 
-- Preserve existing content; restructure, do not rewrite from scratch
-- Stay within description budget (~12,000 char warn threshold)
-## Approach
+- **Remove filler**: "WHEN writing" → context already implies when; "Helps with" → remove entirely
+- **Sharpen triggers**: Replace vague verbs with specific ones ("Configure X" vs "Work with X")
+- **Add keywords**: Include framework/technology names that Claude needs for routing
+- **Disambiguate**: Where two skills overlap, make each description reference its unique differentiator
+- **Trim redundancy**: If the skill name already conveys the domain, don't repeat it in description
+- **Evaluate WHEN prefix**: Keep only where it adds routing value; drop where the technology trigger alone suffices
 
-- Fix critical findings first (structural issues, missing sections)
-- Fix warning findings (depth gaps, cross-reference gaps, trigger pattern gaps)
-- Update `CONTRIBUTING-SKILLS.md` if the skill guide introduces conventions not yet documented
-- Batch by category to stay efficient
+### Key context
 
-## Key context
-
-- This task scope is determined by fn-49.1 findings — may be split further if findings are extensive
-- Preserve existing content; restructure, do not rewrite from scratch
-- Stay within description budget (~12,000 char warn threshold)
+- Edit only the `name` and `description` fields in SKILL.md front matter — do not modify body content
+- The `name` field must match the skill directory name (e.g., `skills/core-csharp/dotnet-csharp-records/` → `name: dotnet-csharp-records`)
+- Remove any extra frontmatter fields beyond `name` and `description`
+- Description max: 120 chars per skill; total budget target: ≤11,800 chars
+- Run `./scripts/validate-skills.sh` to verify — must show BUDGET_STATUS=OK
+- Pattern reference: `CONTRIBUTING-SKILLS.md:107-148` for description formula
+- `plugin-self-publish` has `disable-model-invocation: true` — excluded from budget calculation
 ## Acceptance
-- [ ] All critical findings fixed
-- [ ] All warning findings fixed (or split into fn-49.2b if >30 skills)
-- [ ] CONTRIBUTING-SKILLS.md updated if new conventions discovered
-- [ ] No skill descriptions exceed 120 characters
-- [ ] All validation scripts pass
+- [ ] All critical findings from Task 1 audit fixed
+- [ ] All major findings from Task 1 audit fixed
+- [ ] Minor findings addressed where practical
+- [ ] Total description budget ≤11,800 chars
+- [ ] Zero skills with descriptions >120 chars
+- [ ] All `name` fields match their directory path
+- [ ] No extra frontmatter fields (only `name` and `description`)
+- [ ] Third-person voice used consistently
+- [ ] Overlapping skill pairs have clearly disambiguated descriptions
+- [ ] `./scripts/validate-skills.sh` passes with BUDGET_STATUS=OK
+- [ ] `./scripts/validate-marketplace.sh` passes
+- [ ] No SKILL.md body content changed (front matter only)
 ## Done summary
 TBD
 

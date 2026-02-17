@@ -1,45 +1,51 @@
-# fn-49-skill-guide-compliance-review.1 Build compliance checklist from Anthropic skill guide and audit all skills
+# fn-49-skill-guide-compliance-review.1 Build compliance rubric and audit all 122 skill front matter
 
 ## Description
-Download the Anthropic skill guide PDF, extract a compliance checklist, and audit all 132 skills and 14 agents against it. Store checklist and findings in version-controlled files.
+Build a quality rubric for skill front matter and audit all 122 skills against it. Produce a categorized findings report that Task 2 will use as the fix list.
 
 **Size:** M
-**Files:** `docs/skill-compliance-checklist.md` (new), `.flow/memory/compliance-findings.md` (new)
+**Files:** All `skills/**/SKILL.md` (122 files, read-only), output report in task spec
 
 ## Approach
 
-- Fetch https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf
-- If URL fails: search for the guide on anthropic.com, use cached/local copy, or extract from CONTRIBUTING-SKILLS.md which already references it
-- Extract key structural requirements into `docs/skill-compliance-checklist.md` (version-controlled, reusable)
-- Audit by category (batch the 22 categories, spot-check 2-3 skills per category, full audit for outliers)
-- Store findings in `.flow/memory/compliance-findings.md` with severity: critical/warning/info
-- If more than 30 skills need fixes, note split recommendation for fn-49.2
+1. Read every `skills/**/SKILL.md` front matter block (name, description fields)
+2. Score each skill against the rubric dimensions (see below)
+3. Categorize findings by severity: critical (budget/structural), major (routing quality), minor (style)
+4. Record findings as a structured table in the task completion notes
 
-## Key context
+### Rubric Dimensions
 
-- Guide published Jan 2026, after fn-29 fleet review completed
-- Key recommendations: progressive disclosure, 1500-2000 word body target (max 5000), trigger patterns, cross-references
-- Existing validation checks frontmatter but not content structure
-## Approach
+| # | Dimension | Check | Severity |
+|---|-----------|-------|----------|
+| 1 | Budget compliance | Description ≤120 chars | Critical |
+| 2 | Name-directory match | `name` field matches directory path under `skills/` | Critical |
+| 3 | Extra frontmatter fields | Only `name` and `description` present (no stale fields) | Major |
+| 4 | Trigger specificity | Description contains clear activation trigger (technology + action) | Major |
+| 5 | Keyword density | No filler words ("helps with", "guide to", "complete guide") | Major |
+| 6 | Disambiguation | Description distinct from all sibling skills in same category | Major |
+| 7 | Third-person voice | No "I", "you", "your" — uses third-person ("Detects...", "Configures...") | Minor |
+| 8 | WHEN prefix evaluation | If present, does "WHEN" add routing value or just waste 5 chars? | Minor |
 
-- Fetch https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf
-- Extract key structural requirements: frontmatter, progressive disclosure, word count targets, trigger patterns, cross-references
-- Compare against existing `CONTRIBUTING-SKILLS.md` conventions — note gaps
-- Audit by category (batch the 22 categories, spot-check 2-3 skills per category, full audit for outliers)
-- Classify findings: critical (blocking), warning (should fix), info (nice to have)
+### Key context
 
-## Key context
-
-- Guide published Jan 2026, after fn-29 fleet review completed
-- Existing validation (`validate-skills.sh`) checks frontmatter but not content structure
-- Body target: 1500-2000 words, max 5000
-- Progressive disclosure: metadata (frontmatter) → body (structured sections) → references
+- Current budget: 12,038 chars (WARN threshold 12,000, FAIL at 15,000)
+- All 122 skills currently use the "WHEN" prefix pattern — evaluate whether each benefits from it
+- `disable-model-invocation: true` removes a skill from budget; only `plugin-self-publish` uses it currently
+- Description is the **sole routing signal** — Claude reads all descriptions at startup and uses language understanding to pick which to invoke
+- Validator at `scripts/_validate_skills.py` already checks: frontmatter exists, name+description present, desc length >120 warning, cross-refs, budget tracking
+- Validator does NOT check: name-directory match, extra fields, WHEN pattern, body structure
+- Skill directories are organized by category under `skills/` (24 categories, 122 skills)
+- `CONTRIBUTING-SKILLS.md:107-148` documents the description formula
 ## Acceptance
-- [ ] Compliance checklist committed to `docs/skill-compliance-checklist.md`
-- [ ] All 22 skill categories audited (spot-check + outlier review)
-- [ ] All 14 agents audited for trigger patterns and preloaded skills
-- [ ] Findings stored in `.flow/memory/compliance-findings.md` with severity tags
-- [ ] Split recommendation noted if >30 skills need fixes
+- [ ] Quality rubric covers all 8 dimensions listed in the approach
+- [ ] All 122 skills audited (every `skills/**/SKILL.md` read and scored)
+- [ ] Findings categorized by severity (critical / major / minor)
+- [ ] Each finding includes: skill name, category, dimension violated, current value, suggested fix
+- [ ] Budget impact estimated (current 12,038 → target after fixes)
+- [ ] Overlapping skill pairs identified with disambiguation recommendations
+- [ ] Skills with extra frontmatter fields flagged
+- [ ] Skills with name-directory mismatches flagged
+- [ ] Report written as structured markdown in task completion notes
 ## Done summary
 TBD
 

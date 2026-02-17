@@ -6,15 +6,13 @@
   "default_impl": null,
   "default_review": null,
   "default_sync": null,
-  "depends_on_epics": [
-    "fn-48-plugin-documentation-and-readme-overhaul"
-  ],
+  "depends_on_epics": [],
   "id": "fn-49-skill-guide-compliance-review",
   "next_task": 1,
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-17T03:56:28.524721Z",
   "spec_path": ".flow/specs/fn-49-skill-guide-compliance-review.md",
   "status": "open",
-  "title": "Skill Guide Compliance Review",
-  "updated_at": "2026-02-17T03:56:28.524947Z"
+  "title": "Skill Guide Compliance Review and Front Matter Optimization",
+  "updated_at": "2026-02-17T04:13:57.744237Z"
 }

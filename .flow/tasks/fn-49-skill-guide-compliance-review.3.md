@@ -1,26 +1,47 @@
-# fn-49-skill-guide-compliance-review.3 Update validation scripts and verify all fixes pass
+# fn-49-skill-guide-compliance-review.3 Enhance validation scripts for ongoing quality enforcement
 
 ## Description
-Add any new structural checks to `validate-skills.sh` that were identified in the audit. Verify all fixes from fn-49.2 pass validation.
+Enhance `scripts/_validate_skills.py` to enforce the quality standards established in Tasks 1-2, preventing regression on front matter quality.
 
-**Size:** S
-**Files:** `scripts/validate-skills.sh`, `scripts/_validate_skills.py`
+**Size:** M
+**Files:** `scripts/_validate_skills.py`, `scripts/validate-skills.sh`
 
 ## Approach
 
-- Review audit findings for checkable patterns (e.g., section headers, word count ranges)
-- Add validation checks that are automatable and deterministic
-- Run full validation suite to confirm all fixes pass
-- Update `--projected-skills` count if skills were added/removed
+1. Add name-directory consistency check: verify `name` field matches the skill's directory name
+2. Add extra-frontmatter detection: warn on any fields beyond `name` and `description`
+3. Add description quality heuristics: detect common filler phrases, missing technology keywords
+4. Keep all checks as warnings (not errors) to avoid breaking CI for edge cases
+5. Update `validate-skills.sh` thresholds if needed
+6. Ensure no existing validation behavior changes (backward compatible)
 
-## Key context
+### New Checks to Add
 
-- Validation must be: single-pass, no subprocesses, no network, same locally and in CI
-- Do not add checks that are subjective or require content understanding
+| Check | Type | Implementation |
+|-------|------|----------------|
+| Name-directory match | Warning | Compare `name` value to last path segment of skill directory |
+| Extra frontmatter fields | Warning | Flag any field not in `{name, description}` |
+| Filler phrase detection | Warning | Check for common filler patterns: "helps with", "guide to", "complete guide" |
+| Description starts with verb | Info | Heuristic: third-person descriptions typically start with a verb |
+
+### Key context
+
+- Validator uses a strict YAML subset parser (no PyYAML) at `scripts/_validate_skills.py`
+- Single-pass, no subprocesses, no network — must stay environment-independent
+- Same commands run locally and in CI
+- Current stable output keys: `CURRENT_DESC_CHARS`, `PROJECTED_DESC_CHARS`, `BUDGET_STATUS` — do not change these
+- Add new output keys for new checks (e.g., `NAME_DIR_MISMATCHES=0`)
+- Follow existing code patterns in `_validate_skills.py` for warning/error reporting
 ## Acceptance
-- [ ] New structural checks added to validation scripts (if applicable)
-- [ ] All four validation scripts pass with all fn-49.2 fixes
-- [ ] `--projected-skills` count accurate
+- [ ] Name-directory mismatch detection added (warning level)
+- [ ] Extra frontmatter field detection added (warning level)
+- [ ] Filler phrase detection added (warning level)
+- [ ] All new checks produce warnings, not errors
+- [ ] Existing output keys unchanged (`CURRENT_DESC_CHARS`, `PROJECTED_DESC_CHARS`, `BUDGET_STATUS`)
+- [ ] New output keys added for new checks
+- [ ] `./scripts/validate-skills.sh` passes on current codebase
+- [ ] No external dependencies added (no PyYAML, no network, no subprocesses)
+- [ ] Validator remains single-pass
 ## Done summary
 TBD
 

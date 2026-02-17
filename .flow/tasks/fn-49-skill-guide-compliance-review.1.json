@@ -2,13 +2,13 @@
   "assignee": null,
   "claim_note": "",
   "claimed_at": null,
-  "created_at": "2026-02-17T03:41:35.669434Z",
+  "created_at": "2026-02-17T04:14:02.061093Z",
   "depends_on": [],
   "epic": "fn-49-skill-guide-compliance-review",
   "id": "fn-49-skill-guide-compliance-review.1",
   "priority": null,
   "spec_path": ".flow/tasks/fn-49-skill-guide-compliance-review.1.md",
   "status": "todo",
-  "title": "Build compliance checklist from Anthropic skill guide and audit all skills",
-  "updated_at": "2026-02-17T03:54:35.874094Z"
+  "title": "Build compliance rubric and audit all 122 skill front matter",
+  "updated_at": "2026-02-17T04:15:09.584189Z"
 }
