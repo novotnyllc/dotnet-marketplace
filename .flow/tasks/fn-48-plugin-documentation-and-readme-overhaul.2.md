@@ -18,9 +18,8 @@ Verify all documentation changes from fn-48.1 pass validation and cross-check co
 - [ ] All four validation scripts pass
 - [ ] Spot-check confirms README matches plugin.json (127 skills, 14 agents)
 ## Done summary
-TBD
-
+Verified all documentation changes from fn-48.1: all four CI validation steps pass (validate-skills.sh, validate-marketplace.sh, JSON validity, root marketplace resolution), and spot-checked that 127 skills / 14 agents / 22 categories are consistent across plugin.json, README.md, CLAUDE.md, and AGENTS.md. No stale counts (122 or 132) remain in published documentation.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 79268ff0b54c9aa9182f5e2bc7b8cbab93c9b3b6
+- Tests: validate-skills.sh (PASSED, 127 skills, 0 errors), validate-marketplace.sh (PASSED, 0 errors), jq empty on all 5 JSON files (PASSED), root marketplace plugin resolution (PASSED)
 - PRs:
