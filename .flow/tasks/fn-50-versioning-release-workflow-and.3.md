@@ -71,9 +71,8 @@ Update validation scripts, documentation, and CHANGELOG to reflect the new schem
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` both pass end-to-end from repo root
 - [ ] Stable CI output keys preserved in validate-marketplace.sh
 ## Done summary
-TBD
-
+Reconciled validate-marketplace.sh to delegate root marketplace checks to validate-root-marketplace.sh, added plugin.json enrichment field validation (author, homepage, repository, license, keywords), expanded CONTRIBUTING.md with release/version management documentation, updated CLAUDE.md file structure and schema sections, and fixed CHANGELOG.md footer links to use dotnet-artisan/v* tag format.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: e86333f7b196deec9c714ccaea94844dbf2ddf46
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh, ./scripts/validate-root-marketplace.sh
 - PRs:
