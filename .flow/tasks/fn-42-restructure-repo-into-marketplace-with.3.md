@@ -49,9 +49,8 @@ Update GitHub Actions workflows for the new marketplace structure. Remove dist g
 - [ ] release.yml creates GitHub Release with plugin install instructions in body
 - [ ] Both workflows pass on the restructured branch
 ## Done summary
-TBD
-
+Updated CI workflows for marketplace structure: validate.yml now validates root marketplace.json (JSON valid + source paths resolve) and runs plugin validation from plugins/dotnet-artisan/; release.yml triggers on dotnet-artisan/v* tags with per-plugin versioning and plugin install instructions in release body, with all Pages deployment and dist generation steps removed.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 462a1465fc518ab2692ed83bd48656dede2d4f6f
+- Tests: cd plugins/dotnet-artisan && ./scripts/validate-skills.sh, cd plugins/dotnet-artisan && ./scripts/validate-marketplace.sh, jq empty .claude-plugin/marketplace.json
 - PRs:

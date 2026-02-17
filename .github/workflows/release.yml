@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  validate-and-release:
     name: Validate and release
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -25,7 +25,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          # Tag format: dotnet-artisan/v0.1.0 -> version: 0.1.0
+          # Strip plugin prefix and leading 'v' for semver
           VERSION="${TAG#dotnet-artisan/v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -51,9 +51,7 @@ jobs:
           ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
       - name: Validate marketplace
-        run: |
-          cd plugins/dotnet-artisan
-          ./scripts/validate-marketplace.sh
+        run: ./scripts/validate-marketplace.sh
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -67,13 +65,11 @@ jobs:
 
             ### Install
 
-            ```
-            /plugin marketplace add novotnyllc/dotnet-marketplace
-            /plugin install dotnet-artisan
+            ```bash
+            claude plugin add novotnyllc/dotnet-marketplace
             ```
 
             ### Validation
             All validation checks passed before release:
-            - Root marketplace.json validation
             - Plugin structure and skill validation
             - Marketplace metadata validation

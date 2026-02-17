@@ -10,21 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **dotnet-file-io** skill (Core C#) -- FileStream async patterns, RandomAccess API, FileSystemWatcher debouncing, MemoryMappedFile, path traversal prevention, secure temp files, cross-platform considerations
+- `.agents/openai.yaml` at repo root for Codex skill discovery
 
 ### Changed
 
-- **Marketplace restructure** -- Reorganized repository from flat single-plugin layout into marketplace structure following the `anthropics/claude-plugins-official` pattern
-  - Moved all dotnet-artisan plugin content into `plugins/dotnet-artisan/` (skills, agents, hooks, scripts, tests, docs, .mcp.json)
-  - Created root `.claude-plugin/marketplace.json` listing available plugins with `"source": "./plugins/dotnet-artisan"`
-  - Per-plugin `plugin.json` and `marketplace.json` now live at `plugins/dotnet-artisan/.claude-plugin/`
-  - Root README.md is now a marketplace-level overview; plugin README.md has the full skill catalog
-  - Root CLAUDE.md is now minimal marketplace instructions; plugin CLAUDE.md has plugin-specific instructions
-  - Validation scripts moved into plugin directory (`plugins/dotnet-artisan/scripts/`)
-  - Plugin-specific docs moved to `plugins/dotnet-artisan/docs/`
-  - Per-plugin versioning with tag format `dotnet-artisan/v*`
+- **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "."`)
+- **Removed dist pipeline** -- Deleted `scripts/generate_dist.py`, `scripts/validate_cross_agent.py`, and all `dist/` generation. Source files ARE the plugin; no build step needed
+- **Per-plugin versioning** -- Release workflow now uses `dotnet-artisan/v*` tag format instead of `v*`
+- **CI updated** -- `validate.yml` no longer runs dist generation or cross-agent conformance; added root marketplace.json validation. `release.yml` removed Pages deployment
+- **Agent count corrected** -- README now lists all 14 specialist agents (was 9)
 - **Description budget trimmed** from 13,481 to 11,948 chars (84 descriptions trimmed, removed filler words and redundant phrases) -- now below the 12,000-char WARN threshold
 - Updated `--projected-skills` parameter in `validate-skills.sh` from 100 to 121 to match actual registered skill count
 - Quality-checked 12 new skills from fn-30 through fn-36 for description formula compliance and cross-reference syntax
+
+### Removed
+
+- Stale files: `docs/fleet-review-rubric.md`, `docs/review-reports/`, `scripts/ralph/runs/`, dist pipeline scripts
+- Cross-agent build pipeline (generate_dist.py, validate_cross_agent.py) -- source files serve as the plugin directly
+- GitHub Pages deployment from release workflow
 - Archived fleet review rubric and consolidated findings as historical snapshots (fn-29 audit, fn-37 cleanup, fn-40 resolution)
 
 ### Removed

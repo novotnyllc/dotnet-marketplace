@@ -256,47 +256,50 @@ else
     else
         echo "OK: marketplace.json is valid JSON"
 
-        # Check required string fields (must be non-empty strings)
-        for field in name version description license; do
-            if ! jq -e ".$field | type == \"string\" and length > 0" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
-                echo "ERROR: marketplace.json.$field must be a non-empty string"
-                errors=$((errors + 1))
-            else
-                value=$(jq -r ".$field" "$MARKETPLACE_JSON")
-                echo "OK: marketplace.json.$field = \"$value\""
-            fi
-        done
-
-        # Check author.name (object with string name field)
-        if ! jq -e '.author.name | type == "string" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
-            echo "ERROR: marketplace.json.author.name must be a non-empty string"
+        # Check plugins array exists and is non-empty
+        plugins_valid=$(jq -e '.plugins | type == "array" and length > 0' "$MARKETPLACE_JSON" 2>/dev/null) || plugins_valid="false"
+        if [ "$plugins_valid" != "true" ]; then
+            echo "ERROR: marketplace.json.plugins must be a non-empty array"
             errors=$((errors + 1))
         else
-            author_name=$(jq -r '.author.name' "$MARKETPLACE_JSON")
-            echo "OK: marketplace.json.author.name = \"$author_name\""
-        fi
+            plugin_count=$(jq -r '.plugins | length' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.plugins has $plugin_count entries"
 
-        # Check optional but recommended fields
-        for field in repository keywords categories; do
-            value=$(jq -r ".$field // empty" "$MARKETPLACE_JSON")
-            if [ -z "$value" ] || [ "$value" = "null" ]; then
-                echo "WARN: marketplace.json missing recommended field: $field"
-                warnings=$((warnings + 1))
-            fi
-        done
+            # Validate each plugin entry
+            for i in $(seq 0 $((plugin_count - 1))); do
+                plugin_name=$(jq -r ".plugins[$i].name // empty" "$MARKETPLACE_JSON")
+                plugin_source=$(jq -r ".plugins[$i].source // empty" "$MARKETPLACE_JSON")
 
-        # Verify version consistency between plugin.json and marketplace.json
-        if [ -f "$PLUGIN_JSON" ] && jq empty "$PLUGIN_JSON" 2>/dev/null; then
-            plugin_version=$(jq -r '.version // empty' "$PLUGIN_JSON")
-            marketplace_version=$(jq -r '.version // empty' "$MARKETPLACE_JSON")
-            if [ -n "$plugin_version" ] && [ -n "$marketplace_version" ]; then
-                if [ "$plugin_version" != "$marketplace_version" ]; then
-                    echo "ERROR: version mismatch -- plugin.json=$plugin_version, marketplace.json=$marketplace_version"
+                if [ -z "$plugin_name" ]; then
+                    echo "ERROR: marketplace.json.plugins[$i].name is missing"
                     errors=$((errors + 1))
                 else
-                    echo "OK: versions match ($plugin_version)"
+                    echo "OK: marketplace.json.plugins[$i].name = \"$plugin_name\""
                 fi
-            fi
+
+                if [ -z "$plugin_source" ]; then
+                    echo "ERROR: marketplace.json.plugins[$i].source is missing"
+                    errors=$((errors + 1))
+                else
+                    # Verify source path resolves to a directory with plugin.json
+                    source_dir="$REPO_ROOT/$plugin_source"
+                    if [ ! -f "$source_dir/.claude-plugin/plugin.json" ]; then
+                        echo "ERROR: marketplace.json.plugins[$i].source=$plugin_source does not contain .claude-plugin/plugin.json"
+                        errors=$((errors + 1))
+                    else
+                        echo "OK: marketplace.json.plugins[$i].source=$plugin_source resolves to plugin"
+                    fi
+                fi
+
+                # Check recommended fields
+                for field in description license; do
+                    value=$(jq -r ".plugins[$i].$field // empty" "$MARKETPLACE_JSON")
+                    if [ -z "$value" ]; then
+                        echo "WARN: marketplace.json.plugins[$i].$field is missing"
+                        warnings=$((warnings + 1))
+                    fi
+                done
+            done
         fi
     fi
 fi

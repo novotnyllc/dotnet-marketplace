@@ -8,7 +8,6 @@ Contributions are welcome across all areas: new skills, skill improvements, agen
 
 You need the following to contribute:
 
-- **Python 3** -- Required for validation scripts (`_validate_skills.py`)
 - **jq** -- Required for marketplace validation (`validate-marketplace.sh`)
 - **Git** -- Standard version control
 
@@ -115,7 +114,7 @@ Required frontmatter fields: `name`, `description`, `capabilities`, and `tools`.
 
 ## Validation Requirements
 
-Both validation commands must pass before a PR can be merged. Run them from the plugin directory:
+Both validation commands must pass before a PR can be merged:
 
 ### 1. Skill Validation
 
@@ -138,11 +137,12 @@ Validates `plugin.json` and `marketplace.json` consistency, skill registration, 
 Run both before submitting:
 
 ```bash
-cd plugins/dotnet-artisan
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-If any command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+### Release
+
+On tag push (`dotnet-artisan/v*`), the `release.yml` workflow validates the plugin and creates a GitHub Release.
 
 ## Hooks and MCP Contributions
 

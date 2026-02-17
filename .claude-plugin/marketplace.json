@@ -1,22 +1,33 @@
 {
-  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "dotnet-marketplace",
-  "description": "Marketplace for .NET development plugins providing skills, agents, and tooling for Claude Code",
-  "owner": {
-    "name": "Claire Novotny LLC",
-    "email": "oss@novotny.org"
-  },
+  "schema_version": "1.0",
   "plugins": [
     {
       "name": "dotnet-artisan",
+      "source": ".",
       "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
       "author": {
         "name": "Claire Novotny LLC",
-        "email": "oss@novotny.org"
+        "url": "https://github.com/novotnyllc"
       },
-      "source": "./plugins/dotnet-artisan",
-      "category": "development",
-      "homepage": "https://github.com/novotnyllc/dotnet-marketplace/tree/main/plugins/dotnet-artisan"
+      "license": "MIT",
+      "keywords": [
+        "dotnet",
+        "csharp",
+        "aspnet",
+        "blazor",
+        "maui",
+        "uno-platform",
+        "efcore",
+        "native-aot",
+        "cloud-native",
+        "testing"
+      ],
+      "categories": [
+        "languages",
+        "frameworks",
+        "testing",
+        "devops"
+      ]
     }
   ]
 }

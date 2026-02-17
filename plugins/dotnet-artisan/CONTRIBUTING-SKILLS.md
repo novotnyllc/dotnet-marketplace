@@ -169,7 +169,7 @@ See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 Rules:
 - Always use `[skill:skill-name]` -- bare text skill names are not machine-parseable
 - The skill name must match an existing `name` field in another SKILL.md
-- Unresolved references produce validation warnings (or errors with `STRICT_REFS=1`)
+- Unresolved references produce validation warnings
 
 ### Content Patterns
 
@@ -197,7 +197,7 @@ Before validating, manually test that your skill activates correctly:
 
 ### Validation Commands
 
-Both commands must pass before merging. Run them from the plugin directory:
+Both commands must pass before merging. Run them from the repo root:
 
 **1. Skill validation** -- Checks frontmatter structure, required fields, directory naming, description length, cross-references, and budget:
 
@@ -217,7 +217,7 @@ Both commands must pass before merging. Run them from the plugin directory:
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-If any command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
 
 ---
 
@@ -321,12 +321,11 @@ If validation reports `BUDGET_STATUS=WARN` or `BUDGET_STATUS=FAIL`:
 
 ### Cross-Reference Resolution
 
-If `validate-skills.sh` reports unresolved cross-references:
+If validation reports unresolved cross-references:
 
 1. Verify the target skill name matches an existing `name` frontmatter field
 2. Check for typos in `[skill:exact-name-here]`
-3. If the target skill does not exist yet, the reference will produce a warning (or error with `STRICT_REFS=1`)
-4. During early development, `--allow-planned-refs` (the default) downgrades these to warnings
+3. If the target skill does not exist yet, the reference will produce a warning
 
 ---
 
