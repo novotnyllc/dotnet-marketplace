@@ -40,22 +40,34 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 ## File Structure
 
 ```
-skills/<category>/<skill-name>/SKILL.md   # 127 skills across 22 categories
-agents/<agent-name>.md                     # 14 specialist agents
-hooks/hooks.json                           # Session hooks (start context, post-edit)
-.mcp.json                                  # MCP server integrations
-.claude-plugin/plugin.json                 # Plugin manifest
-.claude-plugin/marketplace.json            # Marketplace discovery (lists available plugins)
+plugins/dotnet-artisan/                    # Plugin directory
+  skills/<category>/<skill-name>/SKILL.md  # 127 skills across 22 categories
+  agents/<agent-name>.md                   # 14 specialist agents
+  hooks/hooks.json                         # Session hooks (start context, post-edit)
+  .mcp.json                                # MCP server integrations
+  .claude-plugin/plugin.json               # Plugin manifest (version source of truth)
+.claude-plugin/marketplace.json            # Root marketplace discovery (lists available plugins)
 .agents/openai.yaml                        # Codex discovery metadata
-scripts/                                   # Validation scripts
+scripts/validate-skills.sh                 # Skill frontmatter and budget validation
+scripts/validate-marketplace.sh            # Plugin.json and marketplace.json validation
+scripts/validate-root-marketplace.sh       # Root marketplace.json shared validation (used by CI)
+scripts/bump.sh                            # Version bump and propagation script
 ```
 
 Key directories:
-- **`skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
-- **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
-- **`hooks/`** -- Session lifecycle hooks
-- **`scripts/`** -- Validation scripts
-- **`.claude-plugin/`** -- Plugin manifest and marketplace metadata
+- **`plugins/dotnet-artisan/skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
+- **`plugins/dotnet-artisan/agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
+- **`plugins/dotnet-artisan/hooks/`** -- Session lifecycle hooks
+- **`scripts/`** -- Repo-level validation scripts and dev tooling
+- **`.claude-plugin/`** -- Root marketplace metadata
+
+### Marketplace Schema
+
+Root `.claude-plugin/marketplace.json` fields: `$schema`, `name`, `description`, `owner` (object with `name`, `url`), `metadata` (object with `description`, `version`), `plugins` (array with per-plugin `name`, `source`, `description`, `version`, `author`, `license`, `category`, `homepage`, `keywords`).
+
+### Plugin Schema
+
+`plugins/dotnet-artisan/.claude-plugin/plugin.json` fields: `name`, `version` (canonical source of truth), `description`, `author` (object with `name`, `url`), `homepage`, `repository`, `license`, `keywords`, `skills` (array of dir paths), `agents` (array of file paths), `hooks` (string path), `mcpServers` (string path).
 
 ## Validation Commands
 
@@ -78,7 +90,7 @@ Run both in sequence:
 2. **Register in plugin.json** -- Add new skill paths to the `skills` array in `.claude-plugin/plugin.json`
 3. **Validate locally** -- Run both validation commands above
 4. **Commit** -- Use conventional commit messages with appropriate scope
-5. **CI validates** -- The `validate.yml` workflow runs the same validation commands plus root marketplace.json validation on push and PR
+5. **CI validates** -- The `validate.yml` workflow runs the same validation commands plus `scripts/validate-root-marketplace.sh` and a 3-way version consistency check on push and PR
 
 ## References
 

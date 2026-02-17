@@ -11,13 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **dotnet-file-io** skill (Core C#) -- FileStream async patterns, RandomAccess API, FileSystemWatcher debouncing, MemoryMappedFile, path traversal prevention, secure temp files, cross-platform considerations
 - `.agents/openai.yaml` at repo root for Codex skill discovery
+- **Version bump automation** -- `scripts/bump.sh` propagates version to plugin.json, marketplace.json (plugin entry + metadata), README badge, and CHANGELOG footer links
+- **Root marketplace validation** -- `scripts/validate-root-marketplace.sh` as shared validation (used by both `validate-marketplace.sh` and CI workflows directly)
+- **Plugin.json enrichment fields** -- `author`, `homepage`, `repository`, `license`, `keywords` validated by `validate-marketplace.sh`
 
 ### Changed
 
 - **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "./plugins/dotnet-artisan"`)
 - **Removed dist pipeline** -- Deleted `scripts/generate_dist.py`, `scripts/validate_cross_agent.py`, and all `dist/` generation. Source files ARE the plugin; no build step needed
 - **Per-plugin versioning** -- Release workflow now uses `dotnet-artisan/v*` tag format instead of `v*`
-- **CI updated** -- `validate.yml` no longer runs dist generation or cross-agent conformance; added root marketplace.json validation. `release.yml` removed Pages deployment
+- **CI updated** -- `validate.yml` no longer runs dist generation or cross-agent conformance; added root marketplace.json validation and 3-way version consistency check. `release.yml` removed Pages deployment, now extracts release notes from CHANGELOG.md dynamically
+- **Marketplace metadata** -- Root marketplace.json restructured to official Anthropic schema (`$schema`, `name`, `owner`, `metadata`, per-plugin `category`/`homepage`/`keywords`). Plugin.json enriched with `author`, `homepage`, `repository`, `license`, `keywords`
+- **Validation deduplication** -- `validate-marketplace.sh` root marketplace section now delegates to `scripts/validate-root-marketplace.sh` instead of duplicating checks
+- **Release documentation** -- CONTRIBUTING.md expanded with version management, bump script usage, tag convention (`dotnet-artisan/vX.Y.Z`), and release workflow documentation
 - **Agent count corrected** -- README now lists all 14 specialist agents (was 9)
 - **Description budget trimmed** from 13,481 to 11,948 chars (84 descriptions trimmed, removed filler words and redundant phrases) -- now below the 12,000-char WARN threshold
 - Updated `--projected-skills` parameter in `validate-skills.sh` from 100 to 121 to match actual registered skill count
@@ -62,5 +68,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/v0.1.0
+[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/dotnet-artisan/v0.1.0...HEAD
+[0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/dotnet-artisan/v0.1.0

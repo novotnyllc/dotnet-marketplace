@@ -138,9 +138,61 @@ Run both before submitting (from repo root):
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
+### Root Marketplace Validation
+
+A separate shared script validates the root `.claude-plugin/marketplace.json` schema. It is called by both `validate-marketplace.sh` and directly by CI workflows:
+
+```bash
+./scripts/validate-root-marketplace.sh
+```
+
 ### Release
 
-On tag push (`dotnet-artisan/v*`), the `release.yml` workflow validates the plugin and creates a GitHub Release.
+#### Version Management
+
+The canonical version source of truth is `plugins/dotnet-artisan/.claude-plugin/plugin.json`. The version field is propagated to five locations by the bump script:
+
+1. `plugins/dotnet-artisan/.claude-plugin/plugin.json` -- canonical source
+2. `.claude-plugin/marketplace.json` -- root marketplace plugin entry `.plugins[].version`
+3. `.claude-plugin/marketplace.json` -- root marketplace `metadata.version`
+4. `plugins/dotnet-artisan/README.md` -- version badge
+5. `CHANGELOG.md` -- promote `[Unreleased]` section and update footer links
+
+CI validates version consistency across the first three locations (3-way check in `validate.yml`).
+
+#### Bump Script
+
+Use `scripts/bump.sh` to increment the version and propagate to all locations:
+
+```bash
+./scripts/bump.sh <patch|minor|major> [plugin-name]
+```
+
+- The second argument defaults to `dotnet-artisan`
+- The script prints next-step instructions for committing, tagging, and pushing
+
+Example:
+
+```bash
+./scripts/bump.sh patch
+# Review: git diff
+# Commit: git add -A && git commit -m "chore(release): bump dotnet-artisan to v0.1.1"
+# Tag:    git tag dotnet-artisan/v0.1.1 && git push origin main && git push origin dotnet-artisan/v0.1.1
+```
+
+#### Tag Convention
+
+Tags follow the format `dotnet-artisan/vX.Y.Z` (plugin-scoped, not bare `vX.Y.Z`). This allows multiple plugins to coexist in the same repo with independent version histories.
+
+#### Release Workflow
+
+On tag push matching `dotnet-artisan/v*`, the `release.yml` workflow:
+
+1. Verifies the tag version matches `plugin.json`
+2. Runs `scripts/validate-root-marketplace.sh` (shared root marketplace validation)
+3. Runs `scripts/validate-skills.sh` and `scripts/validate-marketplace.sh`
+4. Extracts the version-specific section from `CHANGELOG.md` using awk
+5. Creates a GitHub Release with the extracted notes and install instructions
 
 ## Hooks and MCP Contributions
 
