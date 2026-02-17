@@ -13,7 +13,7 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 **Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser]. WPF patterns -- see [skill:dotnet-wpf-modern].
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-native-interop] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations).
+Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-native-interop] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations), [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
 
 ---
 

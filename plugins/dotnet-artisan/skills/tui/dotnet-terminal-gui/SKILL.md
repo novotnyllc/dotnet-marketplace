@@ -11,7 +11,7 @@ Terminal.Gui v2 for building full terminal user interfaces with windows, menus, 
 
 **Scope boundary:** This skill owns full TUI application development with Terminal.Gui -- application lifecycle, layout, views, menus, dialogs, event handling, themes. Rich console output (tables, progress bars, prompts, markup) is owned by [skill:dotnet-spectre-console]. CLI command-line parsing is owned by [skill:dotnet-system-commandline]. CLI application architecture and distribution are owned by [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution].
 
-Cross-references: [skill:dotnet-spectre-console] for rich console output alternative, [skill:dotnet-csharp-async-patterns] for async TUI patterns, [skill:dotnet-native-aot] for AOT compilation considerations, [skill:dotnet-system-commandline] for CLI parsing, [skill:dotnet-csharp-dependency-injection] for DI in TUI apps.
+Cross-references: [skill:dotnet-spectre-console] for rich console output alternative, [skill:dotnet-csharp-async-patterns] for async TUI patterns, [skill:dotnet-native-aot] for AOT compilation considerations, [skill:dotnet-system-commandline] for CLI parsing, [skill:dotnet-csharp-dependency-injection] for DI in TUI apps, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
 
 ---
 

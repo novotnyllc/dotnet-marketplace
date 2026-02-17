@@ -130,6 +130,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-wpf-modern] -- WPF on .NET 8+, Host builder, MVVM Toolkit, Fluent theme
 - [skill:dotnet-wpf-migration] -- WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP migration
 - [skill:dotnet-winforms-basics] -- WinForms on .NET 8+, high-DPI, dark mode, DI
+- [skill:dotnet-accessibility] -- cross-platform accessibility: SemanticProperties, ARIA, AutomationPeer, testing tools
 - [skill:dotnet-ui-chooser] -- decision tree for UI framework selection
 
 ### 13. Multi-Targeting & Polyfills `planned`
@@ -220,6 +221,7 @@ Use this decision tree to load the right skills for the current task.
 
 ### Building UI
 - Choosing a framework -> [skill:dotnet-ui-chooser]
+- Accessibility (any UI framework) -> [skill:dotnet-accessibility]
 - Blazor -> [skill:dotnet-blazor-patterns], [skill:dotnet-blazor-components], [skill:dotnet-blazor-auth]
 - Uno Platform -> [skill:dotnet-uno-platform], [skill:dotnet-uno-targets], [skill:dotnet-uno-mcp]
 - MAUI -> [skill:dotnet-maui-development], [skill:dotnet-maui-aot]

@@ -11,7 +11,7 @@ Uno Platform core development: Extensions ecosystem (Navigation, DI, Configurati
 
 **Out of scope:** Uno Platform testing (Playwright for WASM, platform-specific tests) -- see [skill:dotnet-uno-testing]. General serialization patterns -- see [skill:dotnet-serialization]. AOT/trimming for WASM -- see [skill:dotnet-aot-wasm]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
 
-Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, ARIA mapping on WASM).
 
 ---
 

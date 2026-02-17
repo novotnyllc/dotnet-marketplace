@@ -11,7 +11,7 @@ Spectre.Console for building rich console output (tables, trees, progress bars, 
 
 **Scope boundary:** This skill owns rich console output and Spectre.Console.Cli command parsing. Full TUI applications (windows, menus, dialogs, views) are owned by [skill:dotnet-terminal-gui]. System.CommandLine parsing is owned by [skill:dotnet-system-commandline]. CLI application architecture and distribution are owned by [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution].
 
-Cross-references: [skill:dotnet-terminal-gui] for full TUI alternative, [skill:dotnet-system-commandline] for System.CommandLine scope boundary, [skill:dotnet-cli-architecture] for CLI structure, [skill:dotnet-csharp-async-patterns] for async patterns, [skill:dotnet-csharp-dependency-injection] for DI with Spectre.Console.Cli.
+Cross-references: [skill:dotnet-terminal-gui] for full TUI alternative, [skill:dotnet-system-commandline] for System.CommandLine scope boundary, [skill:dotnet-cli-architecture] for CLI structure, [skill:dotnet-csharp-async-patterns] for async patterns, [skill:dotnet-csharp-dependency-injection] for DI with Spectre.Console.Cli, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
 
 ---
 
