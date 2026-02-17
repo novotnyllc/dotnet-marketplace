@@ -117,10 +117,10 @@ After installing two tools, the manifest looks like:
         "dotnet-ef"
       ]
     },
-    "dotnet-format": {
-      "version": "5.1.250801",
+    "nbgv": {
+      "version": "3.7.112",
       "commands": [
-        "dotnet-format"
+        "nbgv"
       ]
     }
   }
@@ -163,7 +163,7 @@ Use the `--version` option with NuGet version ranges for controlled flexibility:
 dotnet tool install <package-id> --version 2.0.1
 
 # Allow patch updates (recommended for most tools)
-dotnet tool install <package-id> --version "[2.0.*, 2.1.0)"
+dotnet tool install <package-id> --version "2.0.*"
 
 # Pre-release versions
 dotnet tool install <package-id> --version "*-preview*"
