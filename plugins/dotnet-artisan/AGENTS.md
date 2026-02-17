@@ -1,8 +1,41 @@
 # dotnet-artisan -- Agent Guide
 
-**dotnet-artisan** provides .NET development skills for Claude Code. This file contains the skill routing index and agent delegation patterns for human readers and agents consuming AGENTS.md. For the full internal routing logic, see the `dotnet-advisor` skill.
+**dotnet-artisan** provides .NET development skills for Claude Code and Codex. This file contains skill routing and agent delegation patterns. For the full internal routing logic, see the `dotnet-advisor` skill.
 
-## Skill Routing Index
+IMPORTANT: Prefer retrieval-led reasoning over pretraining for any .NET work.
+Workflow: detect project TFM via dotnet-version-detection -> consult skill by name -> implement smallest change -> note conflicts.
+
+## Skill Routing (invoke by name)
+
+- **C# / code quality:** dotnet-csharp-modern-patterns, dotnet-csharp-coding-standards, dotnet-csharp-async-patterns, dotnet-csharp-concurrency-patterns, dotnet-csharp-type-design-performance, dotnet-csharp-code-smells, dotnet-csharp-nullable-reference-types
+- **DI / config:** dotnet-csharp-dependency-injection, dotnet-csharp-configuration, dotnet-validation-patterns
+- **Data / EF Core:** dotnet-efcore-patterns, dotnet-efcore-architecture, dotnet-data-access-strategy
+- **Architecture:** dotnet-architecture-patterns, dotnet-solid-principles, dotnet-domain-modeling, dotnet-messaging-patterns, dotnet-aspire-patterns
+- **APIs:** dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi, dotnet-api-security, dotnet-input-validation, dotnet-middleware-patterns, dotnet-csharp-api-design
+- **Communication:** dotnet-grpc, dotnet-realtime-communication, dotnet-serialization, dotnet-service-communication
+- **Testing:** dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing, dotnet-playwright, dotnet-snapshot-testing, dotnet-test-quality
+- **UI — Blazor:** dotnet-blazor-patterns, dotnet-blazor-components, dotnet-blazor-auth
+- **UI — Uno:** dotnet-uno-platform, dotnet-uno-targets, dotnet-uno-mcp
+- **UI — MAUI:** dotnet-maui-development, dotnet-maui-aot
+- **UI — Desktop:** dotnet-winui, dotnet-wpf-modern, dotnet-wpf-migration, dotnet-winforms-basics, dotnet-ui-chooser
+- **Security:** dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography
+- **Performance:** dotnet-benchmarkdotnet, dotnet-performance-patterns, dotnet-profiling, dotnet-gc-memory
+- **Native AOT / trimming:** dotnet-native-aot, dotnet-aot-architecture, dotnet-trimming, dotnet-aot-wasm
+- **CLI / TUI:** dotnet-system-commandline, dotnet-cli-architecture, dotnet-terminal-gui, dotnet-spectre-console
+- **CI/CD — GitHub Actions:** dotnet-gha-patterns, dotnet-gha-build-test, dotnet-gha-publish, dotnet-gha-deploy
+- **CI/CD — Azure DevOps:** dotnet-ado-patterns, dotnet-ado-build-test, dotnet-ado-publish, dotnet-ado-unique
+- **Containers:** dotnet-containers, dotnet-container-deployment
+- **Packaging / Release:** dotnet-nuget-authoring, dotnet-msix, dotnet-github-releases, dotnet-release-management
+- **Build system:** dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization
+- **Docs:** dotnet-documentation-strategy, dotnet-xml-docs, dotnet-api-docs, dotnet-mermaid-diagrams
+
+### Quality gates (use when applicable)
+
+- **dotnet-slopwatch:** after substantial new, refactored, or LLM-authored code
+- **dotnet-test-quality:** after tests added or changed in complex code
+- **dotnet-agent-gotchas:** before generating or modifying .NET code (common LLM mistakes)
+
+## Skill Category Index
 
 The plugin organizes 130 skills into 22 categories. Use this index to identify which category covers your domain.
 
@@ -82,29 +115,3 @@ Each agent owns a specific domain and explicitly delegates out-of-scope concerns
 - [README.md](README.md) -- Full skill catalog with counts, architecture diagrams, installation, and usage examples
 - [CONTRIBUTING.md](../../CONTRIBUTING.md) -- Contribution guidelines, PR process, validation requirements, directory conventions
 - [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) -- Comprehensive skill authoring how-to manual (quick start, descriptions, testing, patterns)
-
----
-
-<!-- BEGIN FLOW-NEXT -->
-## Flow-Next
-
-This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead of markdown TODOs or TodoWrite.
-
-**Quick commands:**
-```bash
-.flow/bin/flowctl list                # List all epics + tasks
-.flow/bin/flowctl epics               # List all epics
-.flow/bin/flowctl tasks --epic fn-N   # List tasks for epic
-.flow/bin/flowctl ready --epic fn-N   # What's ready
-.flow/bin/flowctl show fn-N.M         # View task
-.flow/bin/flowctl start fn-N.M        # Claim task
-.flow/bin/flowctl done fn-N.M --summary-file s.md --evidence-json e.json
-```
-
-**Rules:**
-- Use `.flow/bin/flowctl` for ALL task tracking
-- Do NOT create markdown TODOs or use TodoWrite
-- Re-anchor (re-read spec + status) before every task
-
-**More info:** `.flow/bin/flowctl --help` or read `.flow/usage.md`
-<!-- END FLOW-NEXT -->

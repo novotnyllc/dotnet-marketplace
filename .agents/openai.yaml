@@ -1,10 +1,26 @@
 # Codex discovery metadata for the dotnet-artisan plugin.
-# Schema follows the community convention for .agents/openai.yaml;
-# see https://developers.openai.com/codex/skills/ for reference.
+# Read by $skill-installer when installing from novotnyllc/dotnet-marketplace.
 
 interface:
   display_name: "dotnet-artisan"
-  short_description: "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications"
+  short_description: "130 .NET skills for modern C# and cloud apps"
+  default_prompt: >
+    $skill-installer novotnyllc/dotnet-marketplace — install .NET development
+    skills. All 130 skills are under plugins/dotnet-artisan/skills/<category>/<skill-name>/,
+    each containing a SKILL.md file.
 
 policy:
   allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "context7"
+      description: "Library documentation lookup for .NET frameworks"
+      transport: "streamable_http"
+      url: "https://mcp.context7.com/mcp"
+    - type: "mcp"
+      value: "microsoftdocs"
+      description: "Official Microsoft Learn documentation search"
+      transport: "streamable_http"
+      url: "https://learn.microsoft.com/api/mcp"

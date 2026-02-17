@@ -2,10 +2,13 @@
 
 This repository is a Claude Code plugin marketplace hosting .NET development plugins. It follows the [marketplace pattern](https://github.com/anthropics/claude-plugins-official) with plugins in `plugins/<name>/`.
 
+For skill routing, discovery, and agent delegation, see [AGENTS.md](AGENTS.md).
+
 ## Repository Layout
 
 - **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (130 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
 - **`.claude-plugin/marketplace.json`** -- Root marketplace listing (lists available plugins)
+- **`.agents/openai.yaml`** -- Codex discovery metadata (for `$skill-installer`)
 - **`.github/workflows/`** -- CI/CD workflows
 - **`scripts/`** -- Validation scripts and dev tooling (repo-level)
 - **`.flow/`** -- Task planning (repo-level)
@@ -64,13 +67,6 @@ scripts/validate-root-marketplace.sh       # Root marketplace.json shared valida
 scripts/bump.sh                            # Version bump and propagation script
 ```
 
-Key directories:
-- **`plugins/dotnet-artisan/skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
-- **`plugins/dotnet-artisan/agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
-- **`plugins/dotnet-artisan/hooks/`** -- Session lifecycle hooks
-- **`scripts/`** -- Repo-level validation scripts and dev tooling
-- **`.claude-plugin/`** -- Root marketplace metadata
-
 ### Marketplace Schema
 
 Root `.claude-plugin/marketplace.json` fields: `$schema`, `name`, `description`, `owner` (object with `name`, `url`), `metadata` (object with `description`, `version`), `plugins` (array with per-plugin `name`, `source`, `description`, `version`, `author`, `license`, `category`, `homepage`, `keywords`).
@@ -108,3 +104,29 @@ Run both in sequence:
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, and skill authoring quick reference
 - See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the comprehensive skill authoring how-to manual
 - See [README.md](README.md) for the full skill catalog, architecture diagrams, and installation instructions
+
+---
+
+<!-- BEGIN FLOW-NEXT -->
+## Flow-Next
+
+This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead of markdown TODOs or TodoWrite.
+
+**Quick commands:**
+```bash
+.flow/bin/flowctl list                # List all epics + tasks
+.flow/bin/flowctl epics               # List all epics
+.flow/bin/flowctl tasks --epic fn-N   # List tasks for epic
+.flow/bin/flowctl ready --epic fn-N   # What's ready
+.flow/bin/flowctl show fn-N.M         # View task
+.flow/bin/flowctl start fn-N.M        # Claim task
+.flow/bin/flowctl done fn-N.M --summary-file s.md --evidence-json e.json
+```
+
+**Rules:**
+- Use `.flow/bin/flowctl` for ALL task tracking
+- Do NOT create markdown TODOs or use TodoWrite
+- Re-anchor (re-read spec + status) before every task
+
+**More info:** `.flow/bin/flowctl --help` or read `.flow/usage.md`
+<!-- END FLOW-NEXT -->
