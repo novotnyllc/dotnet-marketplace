@@ -32,9 +32,8 @@ Delete stale artifacts from completed work and remove the dist generation pipeli
 - [ ] `scripts/__pycache__/` cleaned if present
 - [ ] No broken imports or references to deleted files in remaining code
 ## Done summary
-TBD
-
+Deleted stale fleet review artifacts (docs/fleet-review-rubric.md, docs/review-reports/), dist pipeline scripts (generate_dist.py, validate_cross_agent.py), dist/ output directory, scripts/ralph/runs/ execution logs, and scripts/__pycache__/. Removed dist/ entry from .gitignore. scripts/ralph/ dev tooling preserved intact.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f3e92e1e8fde45a001eb68b5663c40a32c4ac1e5, eb92b0965e528c79248147766ff76578d8c312c4
+- Tests: ./scripts/validate-skills.sh
 - PRs:
