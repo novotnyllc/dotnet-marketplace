@@ -47,9 +47,8 @@ Enhance `scripts/_validate_skills.py` to enforce the quality standards establish
 - [ ] No external dependencies added (no PyYAML, no network, no subprocesses)
 - [ ] Validator remains single-pass
 ## Done summary
-TBD
-
+Added 4 quality enforcement checks to _validate_skills.py: name-directory consistency, extra frontmatter field detection, filler phrase detection ("Covers", "helps with", "guide to", "complete guide"), and WHEN prefix regression detection. All checks produce warnings (not errors) with new stable CI-parseable output keys (NAME_DIR_MISMATCHES, EXTRA_FIELD_COUNT, FILLER_PHRASE_COUNT, WHEN_PREFIX_COUNT). Existing output keys and behavior unchanged.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5bfbcb9a02bb94c1b647cb870b3333432130a47d
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
