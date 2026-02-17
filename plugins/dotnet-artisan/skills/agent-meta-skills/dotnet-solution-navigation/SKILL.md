@@ -555,7 +555,7 @@ grep -rn "Module\|AddModule\|RegisterModule" --include="*.cs" . | grep -v "obj/"
 
 ## Slopwatch Anti-Patterns
 
-These patterns in test project discovery indicate an agent is hiding testing gaps rather than addressing them.
+These patterns in test project discovery indicate an agent is hiding testing gaps rather than addressing them. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
 
 ### Disabled or Skipped Tests in Test Project Discovery
 

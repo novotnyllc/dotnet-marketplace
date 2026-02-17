@@ -4,7 +4,7 @@ This repository is a Claude Code plugin marketplace hosting .NET development plu
 
 ## Repository Layout
 
-- **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (126 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
+- **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (130 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
 - **`.claude-plugin/marketplace.json`** -- Root marketplace listing (lists available plugins)
 - **`.github/workflows/`** -- CI/CD workflows
 - **`scripts/`** -- Validation scripts and dev tooling (repo-level)
@@ -24,7 +24,7 @@ user-invocable: false
 
 **Required fields:**
 - `name` (string) -- must match the directory name
-- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 126 skills)
+- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 130 skills)
 
 **Optional fields ([frontmatter reference](https://code.claude.com/docs/en/skills#frontmatter-reference)):**
 - `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
@@ -51,7 +51,7 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 
 ```
 plugins/dotnet-artisan/                    # Plugin directory
-  skills/<category>/<skill-name>/SKILL.md  # 126 skills across 22 categories
+  skills/<category>/<skill-name>/SKILL.md  # 130 skills across 22 categories
   agents/<agent-name>.md                   # 14 specialist agents
   hooks/hooks.json                         # Session hooks (start context, post-edit)
   .mcp.json                                # MCP server integrations

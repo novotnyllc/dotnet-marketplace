@@ -27,6 +27,7 @@ This agent's guidance is grounded in publicly available content from:
 Always load these skills before analysis:
 
 - [skill:dotnet-csharp-async-patterns] -- async/await correctness, `Task` patterns, cancellation, `ConfigureAwait`
+- [skill:dotnet-csharp-concurrency-patterns] -- concurrency primitives: lock, SemaphoreSlim, Interlocked, ConcurrentDictionary, decision framework
 - [skill:dotnet-csharp-modern-patterns] -- language features used in concurrent code (pattern matching, records for immutable state)
 
 ## Decision Tree

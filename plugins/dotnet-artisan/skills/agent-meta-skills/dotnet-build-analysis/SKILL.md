@@ -477,7 +477,7 @@ CI:    error CS8602: Dereference of a possibly null reference.
 
 ## Slopwatch Anti-Patterns
 
-These patterns indicate an agent is hiding build problems rather than fixing them. Flag these during code review.
+These patterns indicate an agent is hiding build problems rather than fixing them. Flag these during code review. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
 
 ### Warning Suppressions
 

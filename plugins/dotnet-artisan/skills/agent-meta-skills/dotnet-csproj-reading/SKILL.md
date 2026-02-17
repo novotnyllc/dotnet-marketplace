@@ -491,7 +491,7 @@ dotnet list src/MyApp.sln package --format json
 
 ## Slopwatch Anti-Patterns
 
-These patterns in project files indicate an agent is hiding problems rather than fixing them.
+These patterns in project files indicate an agent is hiding problems rather than fixing them. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
 
 ### NoWarn in .csproj
 

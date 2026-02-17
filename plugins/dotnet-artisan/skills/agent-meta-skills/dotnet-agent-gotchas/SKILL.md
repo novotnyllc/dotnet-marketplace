@@ -430,7 +430,7 @@ See [skill:dotnet-csharp-dependency-injection] for lifetime rules, registration 
 
 ## Slopwatch Anti-Patterns
 
-These are patterns that indicate an agent is hiding problems rather than fixing them. Every code review should check for these:
+These are patterns that indicate an agent is hiding problems rather than fixing them. Every code review should check for these. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
 
 ### 1. Disabled or Skipped Tests
 

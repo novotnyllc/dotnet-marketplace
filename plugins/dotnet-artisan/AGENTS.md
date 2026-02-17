@@ -4,24 +4,24 @@
 
 ## Skill Routing Index
 
-The plugin organizes 126 skills into 22 categories. Use this index to identify which category covers your domain.
+The plugin organizes 130 skills into 22 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
 | **Foundation** | 4 | Project analysis, version detection, skill routing, file-based apps |
-| **Core C#** | 16 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, file I/O, IO.Pipelines, LINQ optimization, native interop |
+| **Core C#** | 18 | Modern C# patterns, async/await, concurrency patterns, type design for performance, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, file I/O, IO.Pipelines, LINQ optimization, native interop |
 | **Project Structure** | 7 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization, artifacts output |
 | **Architecture** | 15 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID, messaging, domain modeling, structured logging, Aspire |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |
 | **Testing** | 10 | Test strategy, xUnit v3, integration testing, UI testing, Playwright, snapshot testing |
-| **API Development** | 8 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns, library API compat, API surface validation |
+| **API Development** | 9 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns, library API compat, API surface validation, API design |
 | **Security** | 3 | OWASP compliance, secrets management, cryptography |
 | **Multi-Targeting** | 2 | TFM multi-targeting with polyfills, .NET version upgrade paths and migration |
 | **UI Frameworks** | 14 | Blazor, Uno Platform, MAUI, WinUI, WPF, WinForms, UI framework selection, accessibility |
 | **Native AOT** | 4 | Native AOT compilation, trimming, AOT architecture, WASM AOT |
 | **CLI Tools** | 6 | System.CommandLine, CLI architecture, distribution, packaging, release pipelines, tool management |
 | **TUI** | 2 | Terminal.Gui full TUI apps, Spectre.Console rich console output and CLI framework |
-| **Agent Meta-Skills** | 4 | Agent gotchas, build analysis, csproj reading, solution navigation |
+| **Agent Meta-Skills** | 5 | Agent gotchas, build analysis, csproj reading, solution navigation, slopwatch |
 | **Performance** | 5 | BenchmarkDotNet, performance patterns, profiling, CI benchmarking, GC/memory tuning |
 | **CI/CD** | 8 | GitHub Actions (patterns, build, publish, deploy), Azure DevOps (patterns, build, publish, unique) |
 | **Packaging** | 3 | NuGet authoring, MSIX, GitHub Releases |
@@ -40,7 +40,7 @@ The plugin includes 14 specialist agents. The central router (`dotnet-architect`
 | Agent | Domain | Preloaded Skills | When to Delegate |
 |---|---|---|---|
 | **dotnet-architect** | Architecture & routing | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis | Framework selection, architecture review, project structure decisions |
-| **dotnet-csharp-concurrency-specialist** | Concurrency & threading | dotnet-csharp-async-patterns, dotnet-csharp-modern-patterns | Race conditions, deadlocks, thread safety, synchronization bugs |
+| **dotnet-csharp-concurrency-specialist** | Concurrency & threading | dotnet-csharp-async-patterns, dotnet-csharp-concurrency-patterns, dotnet-csharp-modern-patterns | Race conditions, deadlocks, thread safety, synchronization bugs |
 | **dotnet-security-reviewer** | Security review | dotnet-advisor, dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography | OWASP compliance, secrets exposure, cryptographic misuse, security audit |
 | **dotnet-blazor-specialist** | Blazor development | dotnet-version-detection, dotnet-project-analysis, dotnet-blazor-patterns, dotnet-blazor-components, dotnet-blazor-auth | Render modes, component design, Blazor auth, state management |
 | **dotnet-uno-specialist** | Uno Platform | dotnet-version-detection, dotnet-project-analysis, dotnet-uno-platform, dotnet-uno-targets, dotnet-uno-mcp | Cross-platform Uno apps, Extensions ecosystem, MVUX, MCP integration |

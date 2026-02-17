@@ -1,6 +1,6 @@
 # dotnet-artisan -- Plugin Instructions
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 126 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 130 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
@@ -18,7 +18,7 @@ user-invocable: false
 
 **Required fields:**
 - `name` (string) -- must match the directory name
-- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 126 skills)
+- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 130 skills)
 
 **Optional fields:**
 - `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
@@ -45,7 +45,7 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 
 ```
 plugins/dotnet-artisan/
-  skills/<category>/<skill-name>/SKILL.md   # 126 skills across 22 categories
+  skills/<category>/<skill-name>/SKILL.md   # 130 skills across 22 categories
   agents/<agent-name>.md                     # 14 specialist agents
   hooks/hooks.json                           # Session hooks (start context, post-edit)
   .mcp.json                                  # MCP server integrations

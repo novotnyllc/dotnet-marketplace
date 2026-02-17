@@ -46,8 +46,8 @@ fi
 
 exec python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
-    --projected-skills 126 \
+    --projected-skills 130 \
     --max-desc-chars 120 \
     --warn-threshold 12000 \
-    --fail-threshold 15360 \
+    --fail-threshold 15600 \
     $ALLOW_PLANNED_FLAG
