@@ -1,0 +1,89 @@
+{
+  "created_at": "2026-02-17T15:53:09.815481Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-51-add-proper-skill-frontmatter-across-all",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T15:49:53.016500Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-51-add-proper-skill-frontmatter-across-all",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-51-add-proper-skill-frontmatter-across-all.md",
+      "status": "open",
+      "title": "Add proper skill frontmatter across all 127 skills",
+      "updated_at": "2026-02-17T15:50:58.437590Z"
+    },
+    "spec": "# Add Proper Skill Frontmatter Across All 127 Skills\n\n## Overview\n\nfn-49 was instructed to optimize UX and mark implicit skills appropriately, but `user-invocable: false` was never actually set on any skill. Currently all 127 skills have only `name` + `description` frontmatter (except `plugin-self-publish` which has `disable-model-invocation: true`). This epic adds proper frontmatter to every skill:\n\n1. **`user-invocable: false`** on ~117 implicit/reference skills (hides from `/` menu)\n2. **`context: fork` + `model: haiku`** on 4-5 detection/analysis skills (isolated execution, cheaper model)\n3. **Dynamic context (`!` syntax)** on detection skills that benefit from runtime project data\n4. **Validation + documentation** updated to accept and describe the expanded frontmatter\n\n## Scope\n\n### In scope\n- Add `user-invocable: false` to ~117 skills that are reference/convention content\n- Keep ~10 skills user-invocable (actionable commands users would type as `/` commands)\n- Add `context: fork` + `model: haiku` to detection skills that produce structured output and don't need conversation history\n- Add dynamic context (`!` shell commands) to detection skills that benefit from runtime data\n- Update `_validate_skills.py` `ALLOWED_FRONTMATTER_FIELDS` to accept new fields\n- Update `CONTRIBUTING-SKILLS.md`, plugin `CLAUDE.md`, and root `CLAUDE.md` with expanded frontmatter spec\n\n### Out of scope\n- Changing skill descriptions or content (covered by fn-49)\n- Adding `allowed-tools` restrictions (agent-level concern, defer)\n- Adding `agent` field to skills (requires agent system changes)\n- Adding `hooks` field to skills (no current need)\n\n## User-invocable classification\n\n**Keep user-invocable (default true) \u2014 ~10 actionable command skills:**\n- `dotnet-advisor` \u2014 Router skill, always loaded, entry point for users\n- `dotnet-scaffold-project` \u2014 Scaffolds new projects\n- `dotnet-add-ci` \u2014 Adds CI/CD pipelines\n- `dotnet-add-testing` \u2014 Adds test infrastructure\n- `dotnet-add-analyzers` \u2014 Adds static analysis\n- `dotnet-modernize` \u2014 Audits/upgrades projects\n- `dotnet-ui-chooser` \u2014 UI framework selection wizard\n- `dotnet-data-access-strategy` \u2014 Data access selection wizard\n- `dotnet-version-upgrade` \u2014 Version migration tool\n- `plugin-self-publish` \u2014 Already has `disable-model-invocation: true`; leave as-is\n\n**Set `user-invocable: false` \u2014 ~117 reference/convention/pattern skills:**\nAll other skills are reference material, coding standards, pattern guides, or technical knowledge. Claude invokes them implicitly based on context. They should not clutter the `/` slash menu.\n\n## Detection skills for `context: fork`\n\nThese skills run as self-contained detection/analysis producing structured output. They don't need conversation history and benefit from isolated execution with a cheaper model:\n\n| Skill | `context: fork` | `model` | Dynamic context (`!`) |\n|-------|-----------------|---------|----------------------|\n| `dotnet-version-detection` | yes | haiku | `! dotnet --version 2>/dev/null` |\n| `dotnet-project-analysis` | yes | haiku | `! find . -maxdepth 3 -name \"*.csproj\" -o -name \"*.sln\" -o -name \"*.slnx\" 2>/dev/null \\| head -20` |\n| `dotnet-solution-navigation` | yes | haiku | `! find . -maxdepth 2 -name \"*.sln\" -o -name \"*.slnx\" 2>/dev/null \\| head -5` |\n| `dotnet-build-analysis` | yes | haiku | none |\n\n## Key constraints\n\n- **Validation first**: `_validate_skills.py` line 30 `ALLOWED_FRONTMATTER_FIELDS = {\"name\", \"description\"}` must be expanded BEFORE or WITH skill changes, otherwise CI fails\n- **Budget unchanged**: `user-invocable: false` does NOT remove descriptions from context budget \u2014 only `disable-model-invocation: true` does. This is purely UX decluttering.\n- **`plugin-self-publish` left as-is**: Already has `disable-model-invocation: true`. Adding `user-invocable: false` would make it unreachable. Keep current behavior.\n- **`context: fork` caution**: NOT appropriate for reference/convention skills \u2014 they need conversation context to be useful. Only use on self-contained detection tasks.\n\n## Quick commands\n\n```bash\ncd plugins/dotnet-artisan\n./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh\n```\n\n## Acceptance\n\n- [ ] All ~117 implicit skills have `user-invocable: false` in frontmatter\n- [ ] ~10 user-invocable skills do NOT have `user-invocable: false`\n- [ ] `plugin-self-publish` unchanged (`disable-model-invocation: true` only)\n- [ ] 4 detection skills have `context: fork` + `model: haiku`\n- [ ] Detection skills with dynamic context have working `!` commands\n- [ ] `_validate_skills.py` accepts all new frontmatter fields without errors\n- [ ] `validate-skills.sh && validate-marketplace.sh` pass clean\n- [ ] `CONTRIBUTING-SKILLS.md` documents expanded frontmatter spec\n- [ ] Plugin `CLAUDE.md` updated with new frontmatter fields\n- [ ] Root `CLAUDE.md` updated with new frontmatter fields\n\n## References\n\n- Official frontmatter spec: https://code.claude.com/docs/en/skills#frontmatter-reference\n- `_validate_skills.py:30` \u2014 `ALLOWED_FRONTMATTER_FIELDS`\n- `CONTRIBUTING-SKILLS.md:82-90` \u2014 Current frontmatter docs (\"No other frontmatter fields are recognized\")\n- `plugins/dotnet-artisan/CLAUDE.md:7-20` \u2014 \"Every skill requires exactly two frontmatter fields\"\n- fn-49 (completed) \u2014 Optimized descriptions but missed `user-invocable` field\n"
+  },
+  "epic_id": "fn-51-add-proper-skill-frontmatter-across-all",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:51:04.458806Z",
+        "depends_on": [],
+        "epic": "fn-51-add-proper-skill-frontmatter-across-all",
+        "id": "fn-51-add-proper-skill-frontmatter-across-all.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-51-add-proper-skill-frontmatter-across-all.1.md",
+        "status": "todo",
+        "title": "Update validation and docs to support expanded frontmatter",
+        "updated_at": "2026-02-17T15:51:34.275047Z"
+      },
+      "id": "fn-51-add-proper-skill-frontmatter-across-all.1",
+      "runtime": null,
+      "spec": "## Description\n\nUpdate the validation script and all documentation to support the expanded set of SKILL.md frontmatter fields before any skills are modified.\n\n**Size:** M\n**Files:**\n- `plugins/dotnet-artisan/scripts/_validate_skills.py` (~line 30)\n- `plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md` (~lines 82-90)\n- `plugins/dotnet-artisan/CLAUDE.md` (~lines 7-20)\n- `CLAUDE.md` (root, validation section)\n\n## Approach\n\n- Expand `ALLOWED_FRONTMATTER_FIELDS` at `_validate_skills.py:30` to include: `user-invocable`, `disable-model-invocation`, `context`, `model`, `agent`, `allowed-tools`, `argument-hint`, `hooks`\n- Update `CONTRIBUTING-SKILLS.md` frontmatter spec section (currently says \"No other frontmatter fields are recognized\") with a table of all recognized fields, required vs optional, and when to use each\n- Update plugin `CLAUDE.md` which says \"Every skill requires exactly two frontmatter fields\" to reflect expanded spec\n- Update root `CLAUDE.md` validation section to list all recognized fields\n- Maintain backwards compatibility \u2014 `name` and `description` remain the only REQUIRED fields\n\n## Key context\n\n- Official frontmatter reference: https://code.claude.com/docs/en/skills#frontmatter-reference\n- Current allowed set: `{\"name\", \"description\"}` \u2014 anything else causes validation failure\n- `validate-skills.sh` calls `_validate_skills.py`; the shell wrapper should not need changes\n- Must pass: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh`\n\n## Acceptance\n\n- [ ] `_validate_skills.py` `ALLOWED_FRONTMATTER_FIELDS` includes all Claude Code frontmatter fields\n- [ ] `CONTRIBUTING-SKILLS.md` documents each frontmatter field with description and usage guidance\n- [ ] Plugin `CLAUDE.md` no longer says \"exactly two frontmatter fields\"\n- [ ] Root `CLAUDE.md` lists recognized frontmatter fields\n- [ ] `validate-skills.sh && validate-marketplace.sh` pass clean with existing skills (no regressions)\n\n## Done summary\n\n_To be filled on completion._\n\n## Evidence\n\n_To be filled on completion._\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:51:11.086686Z",
+        "depends_on": [
+          "fn-51-add-proper-skill-frontmatter-across-all.1"
+        ],
+        "epic": "fn-51-add-proper-skill-frontmatter-across-all",
+        "id": "fn-51-add-proper-skill-frontmatter-across-all.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-51-add-proper-skill-frontmatter-across-all.2.md",
+        "status": "todo",
+        "title": "Add user-invocable: false to ~117 implicit skills",
+        "updated_at": "2026-02-17T15:51:49.336447Z"
+      },
+      "id": "fn-51-add-proper-skill-frontmatter-across-all.2",
+      "runtime": null,
+      "spec": "## Description\n\nAdd `user-invocable: false` to the frontmatter of ~117 skills that are implicit reference/convention/pattern content. Keep ~10 actionable command skills as user-invocable (default). Leave `plugin-self-publish` unchanged.\n\n**Size:** M (117 files, but repetitive single-line addition)\n**Files:** All `skills/<category>/<skill-name>/SKILL.md` except the ~10 user-invocable ones listed below.\n\n## Approach\n\n- For each of the ~117 implicit skills, add `user-invocable: false` as a third frontmatter field after `description`\n- **DO NOT modify** these skills (they remain user-invocable by default):\n  - `dotnet-advisor` (router, entry point)\n  - `dotnet-scaffold-project` (scaffolds new projects)\n  - `dotnet-add-ci` (adds CI pipelines)\n  - `dotnet-add-testing` (adds test infrastructure)\n  - `dotnet-add-analyzers` (adds static analysis)\n  - `dotnet-modernize` (project audit/upgrade)\n  - `dotnet-ui-chooser` (UI framework wizard)\n  - `dotnet-data-access-strategy` (data access wizard)\n  - `dotnet-version-upgrade` (version migration)\n  - `plugin-self-publish` (already has `disable-model-invocation: true`)\n- Follow existing frontmatter pattern \u2014 fields go between `---` fences, one per line\n- Do not change `name`, `description`, or any skill content\n\n## Key context\n\n- The user-invocable list above covers skills that are actionable commands (scaffold, add, audit). All other skills are reference material Claude loads implicitly.\n- `user-invocable: false` hides from `/` slash menu but Claude CAN still invoke them and descriptions remain in context budget.\n- Validation (T1) must be updated first \u2014 otherwise `_validate_skills.py` rejects the new field.\n\n## Acceptance\n\n- [ ] ~117 implicit skills have `user-invocable: false` in frontmatter\n- [ ] ~10 user-invocable skills listed above do NOT have `user-invocable: false`\n- [ ] `plugin-self-publish` is unchanged\n- [ ] No skill content (below frontmatter) is modified\n- [ ] `validate-skills.sh && validate-marketplace.sh` pass clean\n\n## Done summary\n\n_To be filled on completion._\n\n## Evidence\n\n_To be filled on completion._\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T15:51:17.635820Z",
+        "depends_on": [
+          "fn-51-add-proper-skill-frontmatter-across-all.1"
+        ],
+        "epic": "fn-51-add-proper-skill-frontmatter-across-all",
+        "id": "fn-51-add-proper-skill-frontmatter-across-all.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-51-add-proper-skill-frontmatter-across-all.3.md",
+        "status": "todo",
+        "title": "Add context: fork + model + dynamic context to detection skills",
+        "updated_at": "2026-02-17T15:52:07.722760Z"
+      },
+      "id": "fn-51-add-proper-skill-frontmatter-across-all.3",
+      "runtime": null,
+      "spec": "## Description\n\nAdd `context: fork` + `model: haiku` to 4 detection/analysis skills, plus dynamic context (`!` shell preprocessing) where runtime project data improves results. These skills produce structured output, don't need conversation history, and run cheaper with haiku.\n\n**Size:** S\n**Files:**\n- `skills/foundation/dotnet-version-detection/SKILL.md`\n- `skills/foundation/dotnet-project-analysis/SKILL.md`\n- `skills/foundation/dotnet-solution-navigation/SKILL.md`\n- `skills/foundation/dotnet-build-analysis/SKILL.md`\n\n## Approach\n\n- Add `context: fork` and `model: haiku` to frontmatter of each detection skill (these already get `user-invocable: false` from T2)\n- Add dynamic context (`!` command) preprocessing where beneficial:\n  - `dotnet-version-detection`: inject `! dotnet --version 2>/dev/null` output so skill sees current SDK version\n  - `dotnet-project-analysis`: inject `! find . -maxdepth 3 \\( -name \"*.csproj\" -o -name \"*.sln\" -o -name \"*.slnx\" \\) 2>/dev/null | head -20` for project listing\n  - `dotnet-solution-navigation`: inject `! find . -maxdepth 2 \\( -name \"*.sln\" -o -name \"*.slnx\" \\) 2>/dev/null | head -5` for solution discovery\n  - `dotnet-build-analysis`: no dynamic context needed (analyzes build output provided in conversation)\n- Dynamic context goes in the skill body (below frontmatter), wrapped in code fences with `!` prefix\n- `context: fork` means these run in isolated subagent \u2014 no conversation history, fresh context window\n\n## Key context\n\n- `model: haiku` only takes effect with `context: fork` \u2014 this is required\n- Dynamic context `!` syntax: preprocessor runs shell command, output replaces the block before Claude sees it\n- `context: fork` skills get their own context window \u2014 conversation history is NOT passed\n- These 4 skills are the only ones where fork makes sense \u2014 reference/convention skills NEED conversation context\n\n## Acceptance\n\n- [ ] 4 detection skills have `context: fork` + `model: haiku` in frontmatter\n- [ ] `dotnet-version-detection` has dynamic context injecting SDK version\n- [ ] `dotnet-project-analysis` has dynamic context listing project files\n- [ ] `dotnet-solution-navigation` has dynamic context listing solution files\n- [ ] `dotnet-build-analysis` has `context: fork` + `model: haiku` (no dynamic context)\n- [ ] Dynamic context commands run without errors when no .NET project is present (graceful `2>/dev/null`)\n- [ ] `validate-skills.sh && validate-marketplace.sh` pass clean\n\n## Done summary\n\n_To be filled on completion._\n\n## Evidence\n\n_To be filled on completion._\n"
+    }
+  ]
+}
