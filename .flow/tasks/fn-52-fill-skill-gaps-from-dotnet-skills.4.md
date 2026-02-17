@@ -63,9 +63,8 @@ Register all 4 new skills in plugin.json, update documentation counts, update va
 - [ ] BUDGET_STATUS is OK or WARN (not FAIL)
 - [ ] Actual `CURRENT_DESC_CHARS` recorded in done summary
 ## Done summary
-TBD
-
+Registered 4 new skills in plugin.json (total: 130), updated skill counts across 14 files (README.md, AGENTS.md, CLAUDE.md root+plugin, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, Mermaid diagrams), added [skill:dotnet-slopwatch] cross-refs to 4 agent-meta-skills, updated concurrency-specialist preloaded skills, bumped validation thresholds (--projected-skills 130, --fail-threshold 15600). CURRENT_DESC_CHARS=12115, BUDGET_STATUS=WARN.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6c96b9c, a880179
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
