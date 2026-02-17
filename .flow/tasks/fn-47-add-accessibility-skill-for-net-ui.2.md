@@ -28,9 +28,8 @@ The completed SKILL.md cross-references these skills: `[skill:dotnet-blazor-patt
 - [ ] `--projected-skills` incremented in validate-skills.sh
 - [ ] All four validation scripts pass
 ## Done summary
-TBD
-
+Registered dotnet-accessibility in plugin.json (127 skills), added routing entry in dotnet-advisor (catalog + Building UI section), added reciprocal [skill:dotnet-accessibility] cross-references in all 8 framework/TUI skills, and updated validate-skills.sh projected count to 127 with fail threshold bumped to 15360.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 043ef872113b39221ddf2c76d54f5413e93c0099
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
