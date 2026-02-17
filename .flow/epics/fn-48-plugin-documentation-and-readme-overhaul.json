@@ -14,7 +14,7 @@
     "fn-47-add-accessibility-skill-for-net-ui"
   ],
   "id": "fn-48-plugin-documentation-and-readme-overhaul",
-  "next_task": 1,
+  "next_task": 3,
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-17T03:56:28.381877Z",
   "spec_path": ".flow/specs/fn-48-plugin-documentation-and-readme-overhaul.md",
