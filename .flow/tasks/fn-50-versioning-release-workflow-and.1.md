@@ -39,9 +39,8 @@ Restructure root marketplace.json and per-plugin marketplace.json to match the o
 - [ ] All three JSON files are valid JSON (no syntax errors)
 - [ ] Existing `validate-marketplace.sh` still passes (may need updates in task 3)
 ## Done summary
-TBD
-
+Restructured root marketplace.json to match official Anthropic schema ($schema, name, owner, metadata fields; singular category instead of categories array). Added homepage to per-plugin marketplace.json. Enriched plugin.json with author, homepage, repository, license, and keywords fields.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 530c7ed93894cfe22d1e0f64f3a0ef014a3999fc
+- Tests: cd plugins/dotnet-artisan && ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 - PRs:

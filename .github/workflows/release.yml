@@ -47,7 +47,6 @@ jobs:
       - name: Validate plugin structure
         run: |
           set -o pipefail
-          cd plugins/dotnet-artisan
           ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
       - name: Validate marketplace

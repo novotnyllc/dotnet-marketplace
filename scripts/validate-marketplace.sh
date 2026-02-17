@@ -23,14 +23,15 @@ set -euo pipefail
 
 # Navigate to repository root (parent of scripts/), canonicalized for symlink safety
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
+PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
 
-PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
-MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
+PLUGIN_JSON="$PLUGIN_DIR/.claude-plugin/plugin.json"
+MARKETPLACE_JSON="$PLUGIN_DIR/.claude-plugin/marketplace.json"
 
 errors=0
 warnings=0
 
-# Reject paths that escape the repository root (traversal, absolute, symlink escape)
+# Reject paths that escape the plugin directory (traversal, absolute, symlink escape)
 validate_path_safe() {
     local path="$1"
     local label="$2"
@@ -47,16 +48,16 @@ validate_path_safe() {
         return 1
     fi
 
-    # Resolve canonical path (following symlinks) and verify it stays under REPO_ROOT
-    local full_path="$REPO_ROOT/$path"
+    # Resolve canonical path (following symlinks) and verify it stays under PLUGIN_DIR
+    local full_path="$PLUGIN_DIR/$path"
     if [ -e "$full_path" ]; then
         local resolved
         # Use python3 for portable symlink-resolving realpath (macOS lacks GNU realpath)
         resolved="$(python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))" "$full_path")"
         case "$resolved" in
-            "$REPO_ROOT"/*) ;;  # OK - under repo root
+            "$PLUGIN_DIR"/*) ;;  # OK - under plugin dir
             *)
-                echo "ERROR: $label resolves outside repository: $path -> $resolved"
+                echo "ERROR: $label resolves outside plugin directory: $path -> $resolved"
                 return 1
                 ;;
         esac
@@ -109,7 +110,7 @@ else
                     errors=$((errors + 1))
                     continue
                 fi
-                full_path="$REPO_ROOT/$skill_path"
+                full_path="$PLUGIN_DIR/$skill_path"
                 if [ ! -d "$full_path" ]; then
                     echo "ERROR: skill directory not found: $skill_path"
                     errors=$((errors + 1))
@@ -137,7 +138,7 @@ else
                     errors=$((errors + 1))
                     continue
                 fi
-                full_path="$REPO_ROOT/$agent_path"
+                full_path="$PLUGIN_DIR/$agent_path"
                 if [ ! -f "$full_path" ]; then
                     echo "ERROR: agent file not found: $agent_path"
                     errors=$((errors + 1))
@@ -157,7 +158,7 @@ else
             if ! validate_path_safe "$hooks_path" "hooks"; then
                 errors=$((errors + 1))
             else
-                full_path="$REPO_ROOT/$hooks_path"
+                full_path="$PLUGIN_DIR/$hooks_path"
                 if [ ! -f "$full_path" ]; then
                     echo "ERROR: hooks file not found: $hooks_path"
                     errors=$((errors + 1))
@@ -177,7 +178,7 @@ else
             if ! validate_path_safe "$mcp_path" "mcpServers"; then
                 errors=$((errors + 1))
             else
-                full_path="$REPO_ROOT/$mcp_path"
+                full_path="$PLUGIN_DIR/$mcp_path"
                 if [ ! -f "$full_path" ]; then
                     echo "ERROR: mcpServers file not found: $mcp_path"
                     errors=$((errors + 1))
@@ -196,7 +197,7 @@ echo ""
 echo "--- hooks/MCP content ---"
 
 # 1. Validate hooks/hooks.json has a "hooks" key
-HOOKS_FILE="$REPO_ROOT/hooks/hooks.json"
+HOOKS_FILE="$PLUGIN_DIR/hooks/hooks.json"
 if [ -f "$HOOKS_FILE" ]; then
     if ! jq -e '.hooks' "$HOOKS_FILE" >/dev/null 2>&1; then
         echo "ERROR: hooks/hooks.json missing 'hooks' key"
@@ -210,7 +211,7 @@ else
 fi
 
 # 2. Validate .mcp.json has "mcpServers" key
-MCP_FILE="$REPO_ROOT/.mcp.json"
+MCP_FILE="$PLUGIN_DIR/.mcp.json"
 if [ -f "$MCP_FILE" ]; then
     if ! jq -e '.mcpServers' "$MCP_FILE" >/dev/null 2>&1; then
         echo "ERROR: .mcp.json missing 'mcpServers' key"
@@ -224,7 +225,7 @@ else
 fi
 
 # 3. Check all scripts/hooks/*.sh are executable
-HOOKS_SCRIPT_DIR="$REPO_ROOT/scripts/hooks"
+HOOKS_SCRIPT_DIR="$PLUGIN_DIR/scripts/hooks"
 if ls "$HOOKS_SCRIPT_DIR"/*.sh 1>/dev/null 2>&1; then
     for script in "$HOOKS_SCRIPT_DIR"/*.sh; do
         if [ ! -x "$script" ]; then

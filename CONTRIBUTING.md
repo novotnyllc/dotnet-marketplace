@@ -119,7 +119,6 @@ Both validation commands must pass before a PR can be merged:
 ### 1. Skill Validation
 
 ```bash
-cd plugins/dotnet-artisan
 ./scripts/validate-skills.sh
 ```
 
@@ -128,13 +127,12 @@ Validates skill frontmatter structure, required fields (`name`, `description`), 
 ### 2. Marketplace Validation
 
 ```bash
-cd plugins/dotnet-artisan
 ./scripts/validate-marketplace.sh
 ```
 
 Validates `plugin.json` and `marketplace.json` consistency, skill registration, and agent registration.
 
-Run both before submitting:
+Run both before submitting (from repo root):
 
 ```bash
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh

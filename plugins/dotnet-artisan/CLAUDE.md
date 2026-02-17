@@ -43,7 +43,7 @@ plugins/dotnet-artisan/
   .mcp.json                                  # MCP server integrations
   .claude-plugin/plugin.json                 # Plugin manifest
   .claude-plugin/marketplace.json            # Per-plugin metadata
-  scripts/                                   # Validation and hook scripts
+  scripts/                                   # Hook shell scripts
   tests/                                     # Test data
   docs/                                      # Plugin-specific documentation
 ```
@@ -52,12 +52,12 @@ Key directories:
 - **`skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
 - **`hooks/`** -- Session lifecycle hooks
-- **`scripts/`** -- Validation scripts and hook shell scripts
+- **`scripts/`** -- Hook shell scripts
 - **`.claude-plugin/`** -- Plugin manifest (plugin.json) and metadata (marketplace.json)
 
 ## Validation Commands
 
-Both commands must pass before committing changes:
+Both commands must pass before committing changes (run from repo root):
 
 ```bash
 # 1. Validate skill frontmatter, required fields, directory conventions
@@ -67,10 +67,9 @@ Both commands must pass before committing changes:
 ./scripts/validate-marketplace.sh
 ```
 
-Run both in sequence (from the plugin directory):
+Run both in sequence:
 
 ```bash
-cd plugins/dotnet-artisan
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
