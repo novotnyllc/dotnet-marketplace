@@ -37,9 +37,8 @@ Create a standalone `dotnet-slopwatch` skill that instructs agents to **run** th
 - [ ] Has ## Prerequisites section
 - [ ] Has ## References section
 ## Done summary
-TBD
-
+Created standalone dotnet-slopwatch skill under skills/agent-meta-skills/dotnet-slopwatch/SKILL.md. Covers Slopwatch.Cmd installation (local+global), slopwatch analyze usage, .slopwatch/slopwatch.json configuration, all 6 detection rules (SW001-SW006), Claude Code PostToolUse hook integration, CI/CD integration (GHA+ADO), agent gotchas, prerequisites, and references. Cross-references dotnet-tool-management and dotnet-agent-gotchas. Registered in plugin.json (127 skills).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 983cae2fb8d204d8b848087b0ec10a4d99ee80e5
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

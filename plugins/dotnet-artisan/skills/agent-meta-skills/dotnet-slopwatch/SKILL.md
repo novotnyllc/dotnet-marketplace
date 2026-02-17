@@ -17,7 +17,7 @@ Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modi
 ## Prerequisites
 
 - .NET 8.0+ SDK
-- `Slopwatch.Cmd` NuGet package (v0.2.0+)
+- `Slopwatch.Cmd` NuGet package (v0.3.3+)
 
 Cross-references: [skill:dotnet-tool-management] for general dotnet tool installation mechanics.
 
@@ -35,7 +35,7 @@ Add to `.config/dotnet-tools.json`:
   "isRoot": true,
   "tools": {
     "slopwatch.cmd": {
-      "version": "0.2.0",
+      "version": "0.3.3",
       "commands": ["slopwatch"],
       "rollForward": false
     }
@@ -82,7 +82,7 @@ slopwatch analyze --stats
 
 ### First-Time Setup: Establish a Baseline
 
-For existing projects with pre-existing issues, create a baseline so slopwatch only catches **new** slop:
+For existing projects with pre-existing issues, create a baseline so slopwatch only catches **new** slop. The `init` command scans all files and records current findings as the accepted baseline:
 
 ```bash
 slopwatch init
@@ -220,7 +220,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '8.0.x'  # any .NET 8+ SDK works
 
       - name: Install Slopwatch
         run: dotnet tool install --global Slopwatch.Cmd
