@@ -22,6 +22,7 @@
     "skills/core-csharp/dotnet-validation-patterns",
     "skills/core-csharp/dotnet-channels",
     "skills/project-structure/dotnet-project-structure",
+    "skills/project-structure/dotnet-artifacts-output",
     "skills/project-structure/dotnet-scaffold-project",
     "skills/project-structure/dotnet-add-analyzers",
     "skills/project-structure/dotnet-add-ci",

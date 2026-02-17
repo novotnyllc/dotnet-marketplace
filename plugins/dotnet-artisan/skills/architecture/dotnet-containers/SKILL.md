@@ -9,7 +9,7 @@ Best practices for containerizing .NET applications. Covers multi-stage Dockerfi
 
 **Out of scope:** DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Kubernetes deployment manifests and Docker Compose orchestration are covered in [skill:dotnet-container-deployment]. CI/CD pipeline integration for building and pushing images -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]. Testing containerized applications -- see [skill:dotnet-integration-testing] for Testcontainers patterns.
 
-Cross-references: [skill:dotnet-observability] for health check patterns, [skill:dotnet-container-deployment] for deploying containers to Kubernetes and local dev with Compose.
+Cross-references: [skill:dotnet-observability] for health check patterns, [skill:dotnet-container-deployment] for deploying containers to Kubernetes and local dev with Compose, [skill:dotnet-artifacts-output] for Dockerfile path adjustments when using centralized build output layout.
 
 ---
 

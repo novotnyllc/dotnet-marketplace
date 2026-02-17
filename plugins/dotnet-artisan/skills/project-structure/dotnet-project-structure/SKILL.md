@@ -9,7 +9,7 @@ Reference guide for modern .NET project structure and solution layout. Use when 
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 9+ SDK).
 
-Cross-references: [skill:dotnet-project-analysis] for analyzing existing projects, [skill:dotnet-scaffold-project] for generating a new project from scratch.
+Cross-references: [skill:dotnet-project-analysis] for analyzing existing projects, [skill:dotnet-scaffold-project] for generating a new project from scratch, [skill:dotnet-artifacts-output] for centralized build output layout (`UseArtifactsOutput`).
 
 ---
 

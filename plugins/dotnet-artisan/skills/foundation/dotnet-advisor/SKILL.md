@@ -41,6 +41,7 @@ Before any .NET guidance, determine the project's target framework:
 
 ### 3. Project Structure & Scaffolding `planned`
 - [skill:dotnet-project-structure] -- .slnx, Directory.Build.props, CPM, analyzers
+- [skill:dotnet-artifacts-output] -- UseArtifactsOutput, ArtifactsPath, impact on CI and Docker
 - [skill:dotnet-scaffold-project] -- project scaffolding with best practices
 - [skill:dotnet-add-analyzers] -- Roslyn analyzers, nullable, trimming, AOT compat
 - [skill:dotnet-add-ci] -- add CI/CD to existing project
@@ -184,6 +185,7 @@ Use this decision tree to load the right skills for the current task.
 3. [skill:dotnet-project-structure], [skill:dotnet-scaffold-project] -- scaffold project
 4. [skill:dotnet-architecture-patterns] -- design decisions
 - File-based app (no .csproj, .NET 10+) -> [skill:dotnet-file-based-apps]
+- Build output layout (UseArtifactsOutput, .NET 8+) -> [skill:dotnet-artifacts-output]
 
 ### Writing or Modifying C# Code
 - Modern C# patterns -> [skill:dotnet-csharp-modern-patterns]

@@ -47,9 +47,8 @@ Author `skills/project-structure/dotnet-artifacts-output/SKILL.md` covering the 
 - [ ] Covers ArtifactsPath customization
 - [ ] Cross-reference syntax used for related skills
 ## Done summary
-TBD
-
+Authored dotnet-artifacts-output SKILL.md covering .NET SDK artifacts output layout: enabling via UseArtifactsOutput, path structure (bin/obj/publish/package), ArtifactsPath customization, impact on .gitignore/Dockerfiles/CI, migration checklist, and agent gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 34974febd2cfd682dfe48f06e2f5e0e28db2649e
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
