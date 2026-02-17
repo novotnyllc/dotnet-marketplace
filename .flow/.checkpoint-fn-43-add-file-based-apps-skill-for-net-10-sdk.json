@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-02-17T03:43:58.439658Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-43-add-file-based-apps-skill-for-net-10-sdk",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T03:38:50.345843Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-43-add-file-based-apps-skill-for-net-10-sdk",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-43-add-file-based-apps-skill-for-net-10-sdk.md",
+      "status": "open",
+      "title": "Add File-Based Apps Skill for .NET 10 SDK",
+      "updated_at": "2026-02-17T03:39:35.418642Z"
+    },
+    "spec": "# fn-43 Add File-Based Apps Skill for .NET 10 SDK\n\n## Overview\n\nAdd a new `dotnet-file-based-apps` skill covering the .NET 10 SDK feature that allows running C# files directly without a project file (`dotnet run app.cs`). Covers `#:package`, `#:sdk`, `#:property`, and `#:project` directives.\n\n## Scope\n\n**In:** SKILL.md for `dotnet-file-based-apps` under `skills/foundation/`, plugin.json registration, advisor routing, cross-references from `dotnet-version-detection` and `dotnet-project-analysis`.\n\n**Out:** Modifying version detection logic itself (separate concern). File I/O (`dotnet-file-io` is a different skill).\n\n**Scope boundary with `dotnet-project-analysis`**: Project analysis detects `.csproj`/`.sln`. File-based apps have NO project file \u2014 the `.cs` file IS the project. Add a cross-reference note, not full detection logic.\n\n**Scope boundary with `dotnet-scaffold-project`**: Scaffold stays focused on csproj-based projects. File-based apps need no scaffolding (the whole point is no project file).\n\n## Key Context\n\n- .NET 10 SDK feature: https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps\n- Directives: `#:package <name>[@version]`, `#:sdk <name>`, `#:property <name>=<value>`, `#:project <path>`\n- No `.csproj` means `dotnet build`/`dotnet test` do not apply in the traditional sense\n- Agent must recognize `#:` directives as SDK-level, not C# syntax\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] `skills/foundation/dotnet-file-based-apps/SKILL.md` exists with valid frontmatter\n- [ ] Covers all four directive types with usage guidance\n- [ ] Covers migration path from file-based to project-based\n- [ ] Description under 120 characters\n- [ ] Registered in plugin.json\n- [ ] `dotnet-advisor` routing updated with file-based apps entry\n- [ ] Cross-references added to/from `dotnet-version-detection` and `dotnet-project-analysis`\n- [ ] All validation scripts pass\n\n## References\n\n- https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps\n- `skills/foundation/dotnet-version-detection/SKILL.md` (version gating: .NET 10+ only)\n- `skills/foundation/dotnet-project-analysis/SKILL.md` (scope boundary)\n- `skills/foundation/dotnet-advisor/SKILL.md:176-304` (routing table)\n"
+  },
+  "epic_id": "fn-43-add-file-based-apps-skill-for-net-10-sdk",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:23.594925Z",
+        "depends_on": [],
+        "epic": "fn-43-add-file-based-apps-skill-for-net-10-sdk",
+        "id": "fn-43-add-file-based-apps-skill-for-net-10-sdk.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-43-add-file-based-apps-skill-for-net-10-sdk.1.md",
+        "status": "todo",
+        "title": "Author dotnet-file-based-apps SKILL.md",
+        "updated_at": "2026-02-17T03:41:49.882261Z"
+      },
+      "id": "fn-43-add-file-based-apps-skill-for-net-10-sdk.1",
+      "runtime": null,
+      "spec": "# fn-43-add-file-based-apps-skill-for-net-10-sdk.1 Author dotnet-file-based-apps SKILL.md\n\n## Description\nAuthor `skills/foundation/dotnet-file-based-apps/SKILL.md` covering .NET 10 SDK file-based apps (`dotnet run app.cs` without a project file).\n\n**Size:** M\n**Files:** `skills/foundation/dotnet-file-based-apps/SKILL.md`\n\n## Approach\n\n- Follow existing skill pattern at `skills/core-csharp/dotnet-file-io/SKILL.md` for structure\n- Cover all four directive types: `#:package`, `#:sdk`, `#:property`, `#:project`\n- Include migration path from file-based to project-based apps\n- Note .NET 10+ SDK requirement\n- Reference: https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps\n\n## Key context\n\n- `#:` directives are SDK-level, not C# syntax \u2014 must appear before any C# code\n- `dotnet build` and `dotnet test` do not apply in traditional sense for file-based apps\n- `dotnet-file-io` (FileStream/RandomAccess) is a DIFFERENT skill \u2014 naming overlap risk\n## Acceptance\n- [ ] SKILL.md exists at `skills/foundation/dotnet-file-based-apps/`\n- [ ] Valid frontmatter with `name` and `description` (under 120 chars)\n- [ ] Covers `#:package`, `#:sdk`, `#:property`, `#:project` directives\n- [ ] Covers migration from file-based to project-based\n- [ ] Notes .NET 10+ SDK requirement\n- [ ] Cross-reference syntax used for related skills\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:23.708799Z",
+        "depends_on": [
+          "fn-43-add-file-based-apps-skill-for-net-10-sdk.1"
+        ],
+        "epic": "fn-43-add-file-based-apps-skill-for-net-10-sdk",
+        "id": "fn-43-add-file-based-apps-skill-for-net-10-sdk.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-43-add-file-based-apps-skill-for-net-10-sdk.2.md",
+        "status": "todo",
+        "title": "Integrate dotnet-file-based-apps into plugin registry and routing",
+        "updated_at": "2026-02-17T03:41:56.047532Z"
+      },
+      "id": "fn-43-add-file-based-apps-skill-for-net-10-sdk.2",
+      "runtime": null,
+      "spec": "# fn-43-add-file-based-apps-skill-for-net-10-sdk.2 Integrate dotnet-file-based-apps into plugin registry and routing\n\n## Description\nRegister `dotnet-file-based-apps` in plugin.json, add routing entry in `dotnet-advisor`, and add cross-references to/from `dotnet-version-detection` and `dotnet-project-analysis`.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `skills/foundation/dotnet-version-detection/SKILL.md`, `skills/foundation/dotnet-project-analysis/SKILL.md`\n\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry at `skills/foundation/dotnet-advisor/SKILL.md:176-304`\n- Add `[skill:dotnet-file-based-apps]` cross-references in version-detection and project-analysis\n- Update `--projected-skills` count in `scripts/validate-skills.sh`\n## Acceptance\n- [ ] plugin.json includes `skills/foundation/dotnet-file-based-apps`\n- [ ] `dotnet-advisor` has routing entry for file-based apps\n- [ ] Cross-references added in `dotnet-version-detection` and `dotnet-project-analysis`\n- [ ] All four validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

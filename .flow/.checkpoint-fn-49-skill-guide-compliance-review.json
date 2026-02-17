@@ -1,0 +1,89 @@
+{
+  "created_at": "2026-02-17T03:43:59.216150Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-49-skill-guide-compliance-review",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T03:38:59.627172Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-49-skill-guide-compliance-review",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-49-skill-guide-compliance-review.md",
+      "status": "open",
+      "title": "Skill Guide Compliance Review",
+      "updated_at": "2026-02-17T03:40:58.703922Z"
+    },
+    "spec": "# fn-49 Skill Guide Compliance Review\n\n## Overview\n\nAudit all skills and agents against Anthropic's published \"Complete Guide to Building Skills for Claude\" (Jan 2026). Identify gaps in structure, content depth, progressive disclosure, and cross-referencing. Produce a remediation plan and fix non-compliant skills.\n\nThis is distinct from fn-29 (Fleet Skill Review, done) which was a quality sweep. This epic specifically targets compliance with the Anthropic skill guide's recommendations.\n\n## Scope\n\n**In:** Audit all 122+ skills against the Anthropic skill guide checklist. Audit all 14 agents. Fix structural/content issues found. Update validation scripts if new checks are needed.\n\n**Out:** Adding new skills (other epics handle that). Changing plugin architecture.\n\n**Scope boundary with fn-29**: fn-29 was a general quality review (done). This epic is a targeted compliance check against the published Anthropic guide, which was released after fn-29 completed.\n\n## Key Context\n\n- Guide: https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf\n- Key guide recommendations: progressive disclosure (metadata\u2192body\u2192references), 1500-2000 word body target (max 5000), clear trigger patterns, cross-references, structured sections\n- Existing validation (`validate-skills.sh`) checks frontmatter and naming but not content structure or depth\n- This is a review+fix epic, not just a report \u2014 remediations are implemented\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] Compliance audit checklist created from the Anthropic skill guide\n- [ ] All skills audited against checklist (batch by category)\n- [ ] Non-compliant skills fixed (structure, descriptions, cross-refs)\n- [ ] Agents audited for trigger patterns and preloaded skill lists\n- [ ] Validation scripts updated with any new structural checks\n- [ ] All validation scripts pass after fixes\n\n## References\n\n- https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf\n- `scripts/validate-skills.sh` (existing validation)\n- `CONTRIBUTING-SKILLS.md` (current authoring guide)\n- fn-29 spec (prior fleet review, for context on what was already fixed)\n"
+  },
+  "epic_id": "fn-49-skill-guide-compliance-review",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:35.669434Z",
+        "depends_on": [],
+        "epic": "fn-49-skill-guide-compliance-review",
+        "id": "fn-49-skill-guide-compliance-review.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-49-skill-guide-compliance-review.1.md",
+        "status": "todo",
+        "title": "Build compliance checklist from Anthropic skill guide and audit all skills",
+        "updated_at": "2026-02-17T03:43:11.423791Z"
+      },
+      "id": "fn-49-skill-guide-compliance-review.1",
+      "runtime": null,
+      "spec": "# fn-49-skill-guide-compliance-review.1 Build compliance checklist from Anthropic skill guide and audit all skills\n\n## Description\nDownload and read the Anthropic skill guide PDF. Extract a concrete compliance checklist. Audit all 122+ skills and 14 agents against it. Produce a categorized findings report.\n\n**Size:** M\n**Files:** None created \u2014 output is a findings list stored in this task spec as comments\n\n## Approach\n\n- Fetch https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf\n- Extract key structural requirements: frontmatter, progressive disclosure, word count targets, trigger patterns, cross-references\n- Compare against existing `CONTRIBUTING-SKILLS.md` conventions \u2014 note gaps\n- Audit by category (batch the 22 categories, spot-check 2-3 skills per category, full audit for outliers)\n- Classify findings: critical (blocking), warning (should fix), info (nice to have)\n\n## Key context\n\n- Guide published Jan 2026, after fn-29 fleet review completed\n- Existing validation (`validate-skills.sh`) checks frontmatter but not content structure\n- Body target: 1500-2000 words, max 5000\n- Progressive disclosure: metadata (frontmatter) \u2192 body (structured sections) \u2192 references\n## Acceptance\n- [ ] Compliance checklist extracted from Anthropic skill guide\n- [ ] All skill categories audited (spot-check + outlier review)\n- [ ] All 14 agents audited for trigger patterns and preloaded skills\n- [ ] Findings categorized as critical/warning/info\n- [ ] Findings recorded in task spec for fn-49.2 consumption\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:35.775190Z",
+        "depends_on": [
+          "fn-49-skill-guide-compliance-review.1"
+        ],
+        "epic": "fn-49-skill-guide-compliance-review",
+        "id": "fn-49-skill-guide-compliance-review.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-49-skill-guide-compliance-review.2.md",
+        "status": "todo",
+        "title": "Fix non-compliant skills identified in audit",
+        "updated_at": "2026-02-17T03:43:18.351405Z"
+      },
+      "id": "fn-49-skill-guide-compliance-review.2",
+      "runtime": null,
+      "spec": "# fn-49-skill-guide-compliance-review.2 Fix non-compliant skills identified in audit\n\n## Description\nFix all critical and warning findings from the audit in fn-49.1. Batch fixes by category to minimize context switches.\n\n**Size:** M (scope depends on audit findings)\n**Files:** Multiple `SKILL.md` files, agent `.md` files, `CONTRIBUTING-SKILLS.md`\n\n## Approach\n\n- Fix critical findings first (structural issues, missing sections)\n- Fix warning findings (depth gaps, cross-reference gaps, trigger pattern gaps)\n- Update `CONTRIBUTING-SKILLS.md` if the skill guide introduces conventions not yet documented\n- Batch by category to stay efficient\n\n## Key context\n\n- This task scope is determined by fn-49.1 findings \u2014 may be split further if findings are extensive\n- Preserve existing content; restructure, do not rewrite from scratch\n- Stay within description budget (~12,000 char warn threshold)\n## Acceptance\n- [ ] All critical findings fixed\n- [ ] All warning findings fixed\n- [ ] CONTRIBUTING-SKILLS.md updated if new conventions discovered\n- [ ] No skill descriptions exceed 120 characters\n- [ ] All validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:35.881496Z",
+        "depends_on": [
+          "fn-49-skill-guide-compliance-review.2"
+        ],
+        "epic": "fn-49-skill-guide-compliance-review",
+        "id": "fn-49-skill-guide-compliance-review.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-49-skill-guide-compliance-review.3.md",
+        "status": "todo",
+        "title": "Update validation scripts and verify all fixes pass",
+        "updated_at": "2026-02-17T03:43:24.921498Z"
+      },
+      "id": "fn-49-skill-guide-compliance-review.3",
+      "runtime": null,
+      "spec": "# fn-49-skill-guide-compliance-review.3 Update validation scripts and verify all fixes pass\n\n## Description\nAdd any new structural checks to `validate-skills.sh` that were identified in the audit. Verify all fixes from fn-49.2 pass validation.\n\n**Size:** S\n**Files:** `scripts/validate-skills.sh`, `scripts/_validate_skills.py`\n\n## Approach\n\n- Review audit findings for checkable patterns (e.g., section headers, word count ranges)\n- Add validation checks that are automatable and deterministic\n- Run full validation suite to confirm all fixes pass\n- Update `--projected-skills` count if skills were added/removed\n\n## Key context\n\n- Validation must be: single-pass, no subprocesses, no network, same locally and in CI\n- Do not add checks that are subjective or require content understanding\n## Acceptance\n- [ ] New structural checks added to validation scripts (if applicable)\n- [ ] All four validation scripts pass with all fn-49.2 fixes\n- [ ] `--projected-skills` count accurate\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

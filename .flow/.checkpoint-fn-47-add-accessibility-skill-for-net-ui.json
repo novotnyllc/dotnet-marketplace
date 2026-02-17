@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-02-17T03:43:58.960486Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-47-add-accessibility-skill-for-net-ui",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T03:38:57.150396Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-47-add-accessibility-skill-for-net-ui",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-47-add-accessibility-skill-for-net-ui.md",
+      "status": "open",
+      "title": "Add Accessibility Skill for .NET UI Frameworks",
+      "updated_at": "2026-02-17T03:40:31.420377Z"
+    },
+    "spec": "# fn-47 Add Accessibility Skill for .NET UI Frameworks\n\n## Overview\n\nAdd a new `dotnet-accessibility` skill covering accessibility patterns across .NET UI frameworks. One cross-cutting skill with framework-specific sections rather than per-framework additions (avoids budget bloat and touching 6+ completed epics).\n\n## Scope\n\n**In:** SKILL.md for `dotnet-accessibility` under `skills/ui-frameworks/`, plugin.json registration, advisor routing, cross-references to each UI framework skill.\n\n**Out:** Modifying existing UI framework skills with inline accessibility content (they get cross-references only). Legal compliance advice (mention standards, do not provide legal guidance).\n\n**Frameworks covered:** Blazor (ARIA, keyboard nav), MAUI (SemanticProperties), Uno Platform (AutomationProperties), WPF/WinUI (AutomationPeer, UI Automation), Terminal UI (screen reader considerations for Terminal.Gui/Spectre.Console).\n\n## Key Context\n\n- MAUI: `SemanticProperties.Description`, `SemanticProperties.Hint`, `SemanticProperties.HeadingLevel` (preferred over legacy AutomationProperties)\n- Blazor: Standard HTML ARIA attributes, `role`, `aria-label`, keyboard event handling\n- WPF/WinUI: `AutomationPeer`, `AutomationProperties.Name`, UI Automation framework\n- Uno: Follows UWP `AutomationProperties` pattern\n- TUI: Terminal screen reader support varies by platform; Terminal.Gui has some support\n- Standards to reference: WCAG 2.1/2.2, but no legal compliance advice\n- Testing: Accessibility Insights (Windows), axe-core (web), VoiceOver (macOS/iOS), TalkBack (Android)\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] `skills/ui-frameworks/dotnet-accessibility/SKILL.md` exists with valid frontmatter\n- [ ] Covers cross-platform accessibility principles (semantic markup, keyboard nav, focus management, contrast)\n- [ ] Has framework-specific sections for Blazor, MAUI, Uno, WPF/WinUI, TUI\n- [ ] Covers accessibility testing tools per platform\n- [ ] Description under 120 characters\n- [ ] Registered in plugin.json\n- [ ] `dotnet-advisor` routing updated\n- [ ] Cross-references to/from `dotnet-blazor`, `dotnet-maui`, `dotnet-uno-platform`, `dotnet-winui`, `dotnet-wpf`, `dotnet-tui-apps`\n- [ ] All validation scripts pass\n\n## References\n\n- https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/accessibility\n- https://learn.microsoft.com/en-us/windows/apps/design/accessibility/accessibility-overview\n- `skills/ui-frameworks/dotnet-blazor/SKILL.md` (Blazor cross-ref)\n- `skills/ui-frameworks/dotnet-maui/SKILL.md` (MAUI cross-ref)\n- `skills/ui-frameworks/dotnet-uno-platform/SKILL.md` (Uno cross-ref)\n- `skills/ui-frameworks/dotnet-winui/SKILL.md` (WinUI cross-ref)\n- `skills/ui-frameworks/dotnet-wpf/SKILL.md` (WPF cross-ref)\n- `skills/ui-frameworks/dotnet-tui-apps/SKILL.md` (TUI cross-ref)\n"
+  },
+  "epic_id": "fn-47-add-accessibility-skill-for-net-ui",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:29.895599Z",
+        "depends_on": [],
+        "epic": "fn-47-add-accessibility-skill-for-net-ui",
+        "id": "fn-47-add-accessibility-skill-for-net-ui.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-47-add-accessibility-skill-for-net-ui.1.md",
+        "status": "todo",
+        "title": "Author dotnet-accessibility SKILL.md",
+        "updated_at": "2026-02-17T03:42:44.246392Z"
+      },
+      "id": "fn-47-add-accessibility-skill-for-net-ui.1",
+      "runtime": null,
+      "spec": "# fn-47-add-accessibility-skill-for-net-ui.1 Author dotnet-accessibility SKILL.md\n\n## Description\nAuthor `skills/ui-frameworks/dotnet-accessibility/SKILL.md` covering accessibility patterns across all .NET UI frameworks. Single cross-cutting skill with framework-specific sections.\n\n**Size:** M\n**Files:** `skills/ui-frameworks/dotnet-accessibility/SKILL.md`\n\n## Approach\n\n- Follow existing skill pattern at `skills/ui-frameworks/dotnet-blazor/SKILL.md` for style\n- Cross-platform principles section: semantic markup, keyboard navigation, focus management, color contrast\n- Framework sections: Blazor (ARIA), MAUI (SemanticProperties), Uno (AutomationProperties), WPF/WinUI (AutomationPeer), TUI (screen reader notes)\n- Testing tools section: Accessibility Insights, axe-core, VoiceOver, TalkBack\n- Reference standards: WCAG 2.1/2.2 (but no legal advice)\n- Reference: https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/accessibility\n\n## Key context\n\n- MAUI uses `SemanticProperties` (preferred) over legacy `AutomationProperties`\n- Blazor uses standard HTML accessibility (ARIA, keyboard events, roles)\n- WPF/WinUI use `AutomationPeer` and `AutomationProperties.Name`\n- iOS/Android: VoiceOver and TalkBack integration via MAUI SemanticProperties\n- TUI screen reader support is limited \u2014 be honest about platform constraints\n## Acceptance\n- [ ] SKILL.md exists at `skills/ui-frameworks/dotnet-accessibility/`\n- [ ] Valid frontmatter with `name` and `description` (under 120 chars)\n- [ ] Covers cross-platform accessibility principles\n- [ ] Has framework-specific sections for Blazor, MAUI, Uno, WPF/WinUI, TUI\n- [ ] Covers accessibility testing tools per platform\n- [ ] References WCAG standards without providing legal advice\n- [ ] Cross-reference syntax used for all related UI framework skills\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:30.004949Z",
+        "depends_on": [
+          "fn-47-add-accessibility-skill-for-net-ui.1"
+        ],
+        "epic": "fn-47-add-accessibility-skill-for-net-ui",
+        "id": "fn-47-add-accessibility-skill-for-net-ui.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-47-add-accessibility-skill-for-net-ui.2.md",
+        "status": "todo",
+        "title": "Integrate dotnet-accessibility into plugin registry and routing",
+        "updated_at": "2026-02-17T03:42:48.062230Z"
+      },
+      "id": "fn-47-add-accessibility-skill-for-net-ui.2",
+      "runtime": null,
+      "spec": "# fn-47-add-accessibility-skill-for-net-ui.2 Integrate dotnet-accessibility into plugin registry and routing\n\n## Description\nRegister `dotnet-accessibility` in plugin.json, add routing entry in `dotnet-advisor`, and add cross-references to/from all UI framework skills.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `skills/ui-frameworks/dotnet-blazor/SKILL.md`, `skills/ui-frameworks/dotnet-maui/SKILL.md`, `skills/ui-frameworks/dotnet-uno-platform/SKILL.md`, `skills/ui-frameworks/dotnet-winui/SKILL.md`, `skills/ui-frameworks/dotnet-wpf/SKILL.md`, `skills/ui-frameworks/dotnet-tui-apps/SKILL.md`\n\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry in `dotnet-advisor`\n- Add `[skill:dotnet-accessibility]` cross-references in each UI framework skill\n- Update `--projected-skills` count in validation\n## Acceptance\n- [ ] plugin.json includes `skills/ui-frameworks/dotnet-accessibility`\n- [ ] `dotnet-advisor` has routing entry for accessibility\n- [ ] Cross-references added in all 6 UI framework skills\n- [ ] All four validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

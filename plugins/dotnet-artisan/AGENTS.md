@@ -80,7 +80,7 @@ Each agent owns a specific domain and explicitly delegates out-of-scope concerns
 ## Cross-References
 
 - [README.md](README.md) -- Full skill catalog with counts, architecture diagrams, installation, and usage examples
-- [CONTRIBUTING.md](CONTRIBUTING.md) -- Contribution guidelines, PR process, validation requirements, directory conventions
+- [CONTRIBUTING.md](../../CONTRIBUTING.md) -- Contribution guidelines, PR process, validation requirements, directory conventions
 - [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) -- Comprehensive skill authoring how-to manual (quick start, descriptions, testing, patterns)
 
 ---

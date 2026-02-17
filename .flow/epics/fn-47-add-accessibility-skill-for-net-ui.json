@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-47-add-accessibility-skill-for-net-ui",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-17T03:38:57.150396Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-47-add-accessibility-skill-for-net-ui",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-47-add-accessibility-skill-for-net-ui.md",
+  "status": "open",
+  "title": "Add Accessibility Skill for .NET UI Frameworks",
+  "updated_at": "2026-02-17T03:40:31.420377Z"
+}

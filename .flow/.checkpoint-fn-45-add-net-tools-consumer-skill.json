@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-02-17T03:43:58.699812Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-45-add-net-tools-consumer-skill",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T03:38:55.070354Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-45-add-net-tools-consumer-skill",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-45-add-net-tools-consumer-skill.md",
+      "status": "open",
+      "title": "Add .NET Tools Consumer Skill",
+      "updated_at": "2026-02-17T03:40:03.439930Z"
+    },
+    "spec": "# fn-45 Add .NET Tools Consumer Skill\n\n## Overview\n\nAdd a new `dotnet-tool-management` skill covering the consumer/user perspective of .NET tools: installing, managing, and configuring global tools, local tool manifests (`.config/dotnet-tools.json`), RID-specific tools, and AOT-published tool binaries. Complements the existing producer-focused `dotnet-cli-packaging` skill.\n\n## Scope\n\n**In:** SKILL.md for `dotnet-tool-management` under `skills/cli-tools/`, plugin.json registration, advisor routing, cross-references.\n\n**Out:** Tool authoring/packaging (covered by `dotnet-cli-packaging`). Tool distribution pipeline (covered by `dotnet-cli-distribution`).\n\n**Scope boundary with `dotnet-cli-packaging`**: Packaging skill covers `PackAsTool`, NuGet packaging, RID-specific tool manifests from the PRODUCER side. This skill covers `dotnet tool install`, `dotnet tool restore`, manifest management from the CONSUMER side.\n\n**Scope boundary with `dotnet-cli-distribution`**: Distribution covers publishing native binaries. This skill covers consuming pre-built tools regardless of how they were distributed.\n\n## Key Context\n\n- RID-specific tools: https://learn.microsoft.com/en-us/dotnet/core/tools/rid-specific-tools\n- `dotnet-tools.json` manifest for reproducible tool versions in team/CI environments\n- `dotnet tool restore` in CI pipelines \u2014 should run before build\n- AOT-published tools distributed as native binaries (not via `dotnet tool install`)\n- Tool manifest does not support RID constraints \u2014 RID-specific tools use `ToolPackageRuntimeIdentifiers` on the packaging side\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] `skills/cli-tools/dotnet-tool-management/SKILL.md` exists with valid frontmatter\n- [ ] Covers global vs local tool installation\n- [ ] Covers `.config/dotnet-tools.json` manifest creation and management\n- [ ] Covers `dotnet tool restore` in CI scenarios\n- [ ] Covers RID-specific tool consumption\n- [ ] Description under 120 characters\n- [ ] Registered in plugin.json\n- [ ] `dotnet-advisor` routing updated\n- [ ] Cross-references to/from `dotnet-cli-packaging`, `dotnet-cli-distribution`\n- [ ] All validation scripts pass\n\n## References\n\n- https://learn.microsoft.com/en-us/dotnet/core/tools/rid-specific-tools\n- https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools\n- https://learn.microsoft.com/en-us/dotnet/core/tools/local-tools\n- `skills/cli-tools/dotnet-cli-packaging/SKILL.md:381-451` (producer perspective)\n- `skills/cli-tools/dotnet-cli-distribution/SKILL.md` (distribution perspective)\n- `skills/foundation/dotnet-project-analysis/SKILL.md:244-251` (tool manifest detection)\n"
+  },
+  "epic_id": "fn-45-add-net-tools-consumer-skill",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:26.548935Z",
+        "depends_on": [],
+        "epic": "fn-45-add-net-tools-consumer-skill",
+        "id": "fn-45-add-net-tools-consumer-skill.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-45-add-net-tools-consumer-skill.1.md",
+        "status": "todo",
+        "title": "Author dotnet-tool-management SKILL.md",
+        "updated_at": "2026-02-17T03:42:18.745734Z"
+      },
+      "id": "fn-45-add-net-tools-consumer-skill.1",
+      "runtime": null,
+      "spec": "# fn-45-add-net-tools-consumer-skill.1 Author dotnet-tool-management SKILL.md\n\n## Description\nAuthor `skills/cli-tools/dotnet-tool-management/SKILL.md` covering the consumer perspective of .NET tools: installing, managing manifests, restoring in CI, and consuming RID-specific tools.\n\n**Size:** M\n**Files:** `skills/cli-tools/dotnet-tool-management/SKILL.md`\n\n## Approach\n\n- Follow existing skill pattern at `skills/cli-tools/dotnet-cli-packaging/SKILL.md` for style\n- Cover: `dotnet tool install -g`, `dotnet tool install` (local), `dotnet tool restore`\n- Cover `.config/dotnet-tools.json` manifest creation, version pinning, team workflows\n- Cover RID-specific tool consumption per https://learn.microsoft.com/en-us/dotnet/core/tools/rid-specific-tools\n- Cover CI integration: tool restore before build\n- Reference: https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools\n\n## Key context\n\n- `dotnet-cli-packaging` (lines 381-451) covers the PRODUCER side \u2014 this skill covers CONSUMER\n- `dotnet-project-analysis` (lines 244-251) already detects `.config/dotnet-tools.json` but does not guide creation\n- Dotnet tools are framework-dependent by default; RID-specific tools use `ToolPackageRuntimeIdentifiers` on packaging side\n## Acceptance\n- [ ] SKILL.md exists at `skills/cli-tools/dotnet-tool-management/`\n- [ ] Valid frontmatter with `name` and `description` (under 120 chars)\n- [ ] Covers global vs local tool installation\n- [ ] Covers `.config/dotnet-tools.json` manifest management\n- [ ] Covers `dotnet tool restore` in CI\n- [ ] Covers RID-specific tool consumption\n- [ ] Cross-reference syntax used for related skills\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:26.656180Z",
+        "depends_on": [
+          "fn-45-add-net-tools-consumer-skill.1"
+        ],
+        "epic": "fn-45-add-net-tools-consumer-skill",
+        "id": "fn-45-add-net-tools-consumer-skill.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-45-add-net-tools-consumer-skill.2.md",
+        "status": "todo",
+        "title": "Integrate dotnet-tool-management into plugin registry and routing",
+        "updated_at": "2026-02-17T03:42:21.973171Z"
+      },
+      "id": "fn-45-add-net-tools-consumer-skill.2",
+      "runtime": null,
+      "spec": "# fn-45-add-net-tools-consumer-skill.2 Integrate dotnet-tool-management into plugin registry and routing\n\n## Description\nRegister `dotnet-tool-management` in plugin.json, add routing entry in `dotnet-advisor`, and add cross-references to/from `dotnet-cli-packaging` and `dotnet-cli-distribution`.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `skills/cli-tools/dotnet-cli-packaging/SKILL.md`, `skills/cli-tools/dotnet-cli-distribution/SKILL.md`\n\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry in `dotnet-advisor`\n- Add `[skill:dotnet-tool-management]` cross-references in packaging and distribution skills\n- Update `--projected-skills` count in validation\n## Acceptance\n- [ ] plugin.json includes `skills/cli-tools/dotnet-tool-management`\n- [ ] `dotnet-advisor` has routing entry for tool management\n- [ ] Cross-references added in `dotnet-cli-packaging`, `dotnet-cli-distribution`\n- [ ] All four validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-44-add-native-interop-and-pinvoke-skill",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-17T03:38:54.119516Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-44-add-native-interop-and-pinvoke-skill",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-44-add-native-interop-and-pinvoke-skill.md",
+  "status": "open",
+  "title": "Add Native Interop and P/Invoke Skill",
+  "updated_at": "2026-02-17T03:39:50.638274Z"
+}

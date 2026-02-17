@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-02-17T03:43:59.089567Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-48-plugin-documentation-and-readme-overhaul",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-17T03:38:58.466412Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-48-plugin-documentation-and-readme-overhaul",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-48-plugin-documentation-and-readme-overhaul.md",
+      "status": "open",
+      "title": "Plugin Documentation and README Overhaul",
+      "updated_at": "2026-02-17T03:41:16.712115Z"
+    },
+    "spec": "# fn-48 Plugin Documentation and README Overhaul\n\n## Overview\n\nOverhaul the plugin documentation. The README.md needs accurate installation instructions, correct skill/agent counts, and a complete overview of what the plugin provides. CONTRIBUTING.md and CONTRIBUTING-SKILLS.md should be reviewed for accuracy.\n\n## Scope\n\n**In:** README.md rewrite with installation instructions, accurate counts, skill category overview, agent list. Review CONTRIBUTING.md and CONTRIBUTING-SKILLS.md for accuracy.\n\n**Out:** Skill content changes (no SKILL.md edits). Plugin manifest changes.\n\n## Key Context\n\n- Current README says \"9 specialist agents\" but there are 14\n- Current README says \"122 skills\" but plugin.json has 127 entries \u2014 needs reconciliation\n- README should cover: what the plugin does, how to install, skill categories overview, agent overview, quick start\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh\n```\n\n## Acceptance\n\n- [ ] README.md has correct installation instructions\n- [ ] Skill count reconciled and accurate\n- [ ] Agent count accurate (14)\n- [ ] Skill category overview covers all 22 categories\n- [ ] CONTRIBUTING.md reviewed for accuracy\n- [ ] CONTRIBUTING-SKILLS.md reviewed for accuracy\n- [ ] All validation scripts pass\n\n## References\n\n- `README.md` (current state)\n- `CONTRIBUTING.md`, `CONTRIBUTING-SKILLS.md`\n- `.claude-plugin/plugin.json` (authoritative skill/agent counts)\n"
+  },
+  "epic_id": "fn-48-plugin-documentation-and-readme-overhaul",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:32.422423Z",
+        "depends_on": [],
+        "epic": "fn-48-plugin-documentation-and-readme-overhaul",
+        "id": "fn-48-plugin-documentation-and-readme-overhaul.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-48-plugin-documentation-and-readme-overhaul.1.md",
+        "status": "todo",
+        "title": "Reconcile skill and agent counts across plugin.json, README, CLAUDE.md, AGENTS.md",
+        "updated_at": "2026-02-17T03:42:53.778273Z"
+      },
+      "id": "fn-48-plugin-documentation-and-readme-overhaul.1",
+      "runtime": null,
+      "spec": "# fn-48-plugin-documentation-and-readme-overhaul.1 Reconcile skill and agent counts across plugin.json, README, CLAUDE.md, AGENTS.md\n\n## Description\nAudit the actual skill count in plugin.json vs what README.md, CLAUDE.md, and AGENTS.md report. Fix all discrepancies to reflect the true count.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `README.md`, `CLAUDE.md`, `AGENTS.md`\n\n## Approach\n\n- Count entries in plugin.json `skills` array and `agents` array\n- Compare against README.md (line 12: \"122 skills\", \"9 agents\"), CLAUDE.md, AGENTS.md\n- Fix all documents to show accurate counts\n- Fix agent table in README to list all 14 agents\n## Acceptance\n- [ ] Skill count matches across plugin.json, README, CLAUDE.md, AGENTS.md\n- [ ] Agent count = 14 across all documents\n- [ ] README agent table lists all 14 agents\n- [ ] All validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-17T03:41:32.526552Z",
+        "depends_on": [
+          "fn-48-plugin-documentation-and-readme-overhaul.1"
+        ],
+        "epic": "fn-48-plugin-documentation-and-readme-overhaul",
+        "id": "fn-48-plugin-documentation-and-readme-overhaul.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-48-plugin-documentation-and-readme-overhaul.2.md",
+        "status": "todo",
+        "title": "Rewrite README.md with installation, overview, and complete skill catalog",
+        "updated_at": "2026-02-17T03:43:01.140075Z"
+      },
+      "id": "fn-48-plugin-documentation-and-readme-overhaul.2",
+      "runtime": null,
+      "spec": "# fn-48-plugin-documentation-and-readme-overhaul.2 Rewrite README.md with installation, overview, and complete skill catalog\n\n## Description\nRewrite README.md with clear installation instructions, a complete skill category overview (all 22 categories), agent overview, and quick start guide.\n\n**Size:** M\n**Files:** `README.md`, `CONTRIBUTING.md`, `CONTRIBUTING-SKILLS.md`\n\n## Approach\n\n- Add installation section with clear instructions\n- Add skill category overview table (22 categories with skill counts per category)\n- Add complete agent table (all 14 agents)\n- Add quick start / getting started section\n- Review CONTRIBUTING.md and CONTRIBUTING-SKILLS.md for accuracy\n- Keep prose concise \u2014 README is a reference, not a tutorial\n\n## Key context\n\n- Current install: Claude Desktop \u2192 Plugin tab \u2192 search or `/plugin add novotnyllc/dotnet-marketplace`\n- README should serve both discovery (what does this plugin do?) and setup (how do I start?)\n## Acceptance\n- [ ] README has clear installation instructions\n- [ ] README has skill category overview covering all 22 categories\n- [ ] README has agent overview with all 14 agents\n- [ ] README has quick start section\n- [ ] CONTRIBUTING.md reviewed and paths correct\n- [ ] CONTRIBUTING-SKILLS.md reviewed and paths correct\n- [ ] All validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

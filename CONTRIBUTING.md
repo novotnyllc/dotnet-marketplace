@@ -1,6 +1,6 @@
-# Contributing to dotnet-artisan
+# Contributing to dotnet-marketplace
 
-Welcome to **dotnet-artisan**, a Claude Code plugin for .NET development. This plugin follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+Welcome to **dotnet-marketplace**, a Claude Code plugin marketplace for .NET development. This marketplace hosts the **dotnet-artisan** plugin, which follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 Contributions are welcome across all areas: new skills, skill improvements, agent refinements, documentation, and tooling.
 
@@ -8,7 +8,7 @@ Contributions are welcome across all areas: new skills, skill improvements, agen
 
 You need the following to contribute:
 
-- **Python 3** -- Required for validation scripts (`generate_dist.py`, `validate_cross_agent.py`)
+- **Python 3** -- Required for validation scripts (`_validate_skills.py`)
 - **jq** -- Required for marketplace validation (`validate-marketplace.sh`)
 - **Git** -- Standard version control
 
@@ -16,19 +16,19 @@ No .NET SDK is required for the plugin repo itself. The plugin provides guidance
 
 ## Skill Authoring Guide
 
-> **Comprehensive guide available:** For the full skill authoring how-to manual -- including quick start, writing effective descriptions, testing, common patterns, and troubleshooting -- see [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md).
+> **Comprehensive guide available:** For the full skill authoring how-to manual -- including quick start, writing effective descriptions, testing, common patterns, and troubleshooting -- see [plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md).
 
 The section below provides a quick reference. Skills are the primary content unit. Each skill is a `SKILL.md` file with structured frontmatter and rich guidance content.
 
 ### Directory Convention
 
-All skills follow this directory structure:
+All skills follow this directory structure within the plugin:
 
 ```
-skills/<category>/<skill-name>/SKILL.md
+plugins/dotnet-artisan/skills/<category>/<skill-name>/SKILL.md
 ```
 
-For example: `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`
+For example: `plugins/dotnet-artisan/skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`
 
 ### SKILL.md Frontmatter
 
@@ -44,7 +44,7 @@ description: Async/await patterns, cancellation, and parallel execution in moder
 - **`name`** (required) -- Unique skill identifier, must match the directory name
 - **`description`** (required) -- One-line summary; target under 120 characters
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 100 skills).
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 122 skills).
 
 ### Cross-Reference Syntax
 
@@ -54,7 +54,7 @@ Reference other skills using the cross-reference syntax:
 See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 ```
 
-This syntax enables machine-parseable skill references. The cross-agent build pipeline resolves these to platform-appropriate links or inline text.
+This syntax enables machine-parseable skill references.
 
 ### Content Guidelines
 
@@ -77,7 +77,7 @@ Agents are specialist personas that combine multiple skills with domain expertis
 Place agent files at:
 
 ```
-agents/<agent-name>.md
+plugins/dotnet-artisan/agents/<agent-name>.md
 ```
 
 ### Agent Frontmatter
@@ -115,60 +115,40 @@ Required frontmatter fields: `name`, `description`, `capabilities`, and `tools`.
 
 ## Validation Requirements
 
-All four validation commands must pass before a PR can be merged:
+Both validation commands must pass before a PR can be merged. Run them from the plugin directory:
 
 ### 1. Skill Validation
 
 ```bash
+cd plugins/dotnet-artisan
 ./scripts/validate-skills.sh
 ```
 
-Validates skill frontmatter structure, required fields (`name`, `description`), and directory conventions.
+Validates skill frontmatter structure, required fields (`name`, `description`), directory conventions, and cross-references.
 
 ### 2. Marketplace Validation
 
 ```bash
+cd plugins/dotnet-artisan
 ./scripts/validate-marketplace.sh
 ```
 
 Validates `plugin.json` and `marketplace.json` consistency, skill registration, and agent registration.
 
-### 3. Cross-Agent Distribution
+Run both before submitting:
 
 ```bash
-python3 scripts/generate_dist.py --strict
+cd plugins/dotnet-artisan
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-Generates platform-specific outputs in `dist/` (Claude, Copilot, Codex) and validates cross-references are resolvable.
-
-### 4. Cross-Agent Conformance
-
-```bash
-python3 scripts/validate_cross_agent.py
-```
-
-Validates that generated distribution outputs conform to each target platform's requirements, including manifest schema and SHA256 checksum correctness.
-
-Run all four before submitting:
-
-```bash
-./scripts/validate-skills.sh && \
-./scripts/validate-marketplace.sh && \
-python3 scripts/generate_dist.py --strict && \
-python3 scripts/validate_cross_agent.py
-```
-
-### Release and Deployment
-
-On tag push (`v*`), the `release.yml` workflow validates the plugin, generates cross-agent outputs, deploys `dist/` to GitHub Pages, and creates a GitHub Release for changelog notes. The deployed content is available at `https://novotnyllc.github.io/dotnet-marketplace/` with a `manifest.json` at the root for auto-update polling.
-
-See the [Cross-Agent Support](README.md#cross-agent-support) section of the README for Pages URLs, polling contract, and one-time repository setup instructions.
+If any command fails, fix the issue before committing. The same commands run in CI on every push and PR.
 
 ## Hooks and MCP Contributions
 
-The plugin includes session hooks (session start context, post-edit validation) and MCP server integrations (Context7, Uno Platform, Microsoft Learn).
+The plugin includes session hooks (session start context, post-edit validation) and MCP server integrations (Context7).
 
-For guidance on contributing to hooks or MCP integrations, see [docs/hooks-and-mcp-guide.md](docs/hooks-and-mcp-guide.md).
+For guidance on contributing to hooks or MCP integrations, see [plugins/dotnet-artisan/docs/hooks-and-mcp-guide.md](plugins/dotnet-artisan/docs/hooks-and-mcp-guide.md).
 
 ## Code of Conduct
 
@@ -178,4 +158,4 @@ We are committed to providing a welcoming and inclusive experience for everyone.
 - Focus on technical merit and improving the plugin
 - Welcome newcomers and help them get started
 
-Thank you for contributing to dotnet-artisan.
+Thank you for contributing to dotnet-marketplace.

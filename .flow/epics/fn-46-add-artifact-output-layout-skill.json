@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-46-add-artifact-output-layout-skill",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-17T03:38:56.156570Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-46-add-artifact-output-layout-skill",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-46-add-artifact-output-layout-skill.md",
+  "status": "open",
+  "title": "Add Artifact Output Layout Skill",
+  "updated_at": "2026-02-17T03:40:17.575100Z"
+}
