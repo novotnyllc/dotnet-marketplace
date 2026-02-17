@@ -43,9 +43,8 @@ Author `skills/cli-tools/dotnet-tool-management/SKILL.md` covering the consumer 
 - [ ] RID-specific is brief note with cross-ref to packaging skill
 - [ ] Cross-reference syntax used for related skills
 ## Done summary
-TBD
-
+Authored dotnet-tool-management SKILL.md covering consumer-side .NET tool workflows: global/local installation, .config/dotnet-tools.json manifest management, version pinning, CI restore (GitHub Actions and Azure DevOps), RID-specific consumer note with cross-ref to packaging skill, and agent gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: a922b7c, 1204e1a
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
