@@ -312,3 +312,6 @@ When plan-syncing task specs from epic changes, always deduplicate — flowctl a
 
 ## 2026-02-17 manual [pitfall]
 When splitting destructive operations across tasks (e.g., deleting a file in T1, creating replacement in T2), ensure atomicity — either delete and replace in the same task, or explicitly document that feature-branch workflow makes intermediate breakage acceptable in BOTH the epic AND the task spec
+
+## 2026-02-17 manual [pitfall]
+Specification reviews for exploratory features (e.g., community conventions like .agents/openai.yaml) must verify schema authenticity with authoritative sources before task approval; fallback patterns mitigate risk but should be explicitly documented

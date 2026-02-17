@@ -1,0 +1,10 @@
+# Codex discovery metadata for the dotnet-artisan plugin.
+# Schema follows the community convention for .agents/openai.yaml;
+# see https://developers.openai.com/codex/skills/ for reference.
+
+interface:
+  display_name: "dotnet-artisan"
+  short_description: "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications"
+
+policy:
+  allow_implicit_invocation: true

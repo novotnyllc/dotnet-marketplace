@@ -72,3 +72,6 @@ Task specs for skills must require Agent Gotchas, Prerequisites, and References 
 
 ## 2026-02-15 manual [convention]
 Always add a dedicated integration task (task .N) that owns plugin.json registration, README/CLAUDE.md/AGENTS.md count updates, and trigger-corpus entries -- prevents merge conflicts when multiple skill tasks touch plugin.json
+
+## 2026-02-17 manual [convention]
+When creating metadata files for repo-level discovery, clarify in spec whether they're marketplace-level or per-component; single-component repos can use repo root, but document scalability path for multi-component architectures
