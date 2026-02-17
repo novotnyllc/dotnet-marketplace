@@ -29,9 +29,8 @@ Register `dotnet-native-interop` in plugin.json, add routing entry in `dotnet-ad
 - [ ] `--projected-skills` incremented in validate-skills.sh
 - [ ] All four validation scripts pass
 ## Done summary
-TBD
-
+Integrated dotnet-native-interop into plugin registry and routing: added skill path to plugin.json, routing entry in dotnet-advisor (catalog + routing logic), cross-references in dotnet-native-aot, dotnet-aot-architecture, and dotnet-winui, incremented --projected-skills to 124.
 ## Evidence
 - Commits:
-- Tests:
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

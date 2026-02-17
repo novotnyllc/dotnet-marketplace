@@ -37,6 +37,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-file-io] -- FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, path handling
 - [skill:dotnet-io-pipelines] -- System.IO.Pipelines: PipeReader/PipeWriter, backpressure, protocol parsing
 - [skill:dotnet-linq-optimization] -- IQueryable vs IEnumerable, compiled queries, deferred execution
+- [skill:dotnet-native-interop] -- P/Invoke, LibraryImport, marshalling, cross-platform native calls
 
 ### 3. Project Structure & Scaffolding `planned`
 - [skill:dotnet-project-structure] -- .slnx, Directory.Build.props, CPM, analyzers
@@ -196,6 +197,7 @@ Use this decision tree to load the right skills for the current task.
 - File I/O, FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, path handling -> [skill:dotnet-file-io]
 - IO.Pipelines, high-perf network I/O -> [skill:dotnet-io-pipelines]
 - LINQ optimization, IQueryable pitfalls -> [skill:dotnet-linq-optimization]
+- P/Invoke, native interop, LibraryImport, marshalling -> [skill:dotnet-native-interop]
 
 ### Building APIs
 - Minimal APIs (default for new) -> [skill:dotnet-minimal-apis]

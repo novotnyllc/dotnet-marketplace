@@ -13,7 +13,7 @@ Full Native AOT compilation pipeline for .NET 8+ applications: `PublishAot` conf
 
 **Out of scope:** MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-maui-aot]. Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]. DI container patterns -- see [skill:dotnet-csharp-dependency-injection]. Serialization depth -- see [skill:dotnet-serialization]. Container deployment orchestration -- see [skill:dotnet-containers].
 
-Cross-references: [skill:dotnet-aot-architecture] for AOT-first design patterns, [skill:dotnet-trimming] for trim-safe library authoring, [skill:dotnet-aot-wasm] for WebAssembly AOT, [skill:dotnet-maui-aot] for MAUI-specific AOT, [skill:dotnet-containers] for `runtime-deps` base images, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-csharp-dependency-injection] for AOT-safe DI.
+Cross-references: [skill:dotnet-aot-architecture] for AOT-first design patterns, [skill:dotnet-trimming] for trim-safe library authoring, [skill:dotnet-aot-wasm] for WebAssembly AOT, [skill:dotnet-maui-aot] for MAUI-specific AOT, [skill:dotnet-containers] for `runtime-deps` base images, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-csharp-dependency-injection] for AOT-safe DI, [skill:dotnet-native-interop] for general P/Invoke patterns and cross-platform library resolution.
 
 ---
 

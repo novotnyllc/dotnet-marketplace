@@ -47,9 +47,8 @@ Author `skills/core-csharp/dotnet-native-interop/SKILL.md` covering P/Invoke and
 - [ ] Covers NativeLibrary.SetDllImportResolver
 - [ ] Cross-reference syntax used for related skills
 ## Done summary
-TBD
-
+Authored dotnet-native-interop SKILL.md covering P/Invoke patterns: LibraryImport vs DllImport decision guidance, platform-specific sections (Windows/macOS/Linux/iOS/Android/WASM), NativeLibrary.SetDllImportResolver for cross-platform resolution, marshalling patterns (structs, strings, callbacks, SafeHandle), cross-platform data type mapping, and 8 Agent Gotchas.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6e46a80, 6d6dc3f
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

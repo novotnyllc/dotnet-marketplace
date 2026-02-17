@@ -120,6 +120,7 @@
     "skills/tui/dotnet-spectre-console",
     "skills/architecture/dotnet-messaging-patterns",
     "skills/core-csharp/dotnet-io-pipelines",
+    "skills/core-csharp/dotnet-native-interop",
     "skills/architecture/dotnet-domain-modeling",
     "skills/architecture/dotnet-structured-logging",
     "skills/core-csharp/dotnet-linq-optimization",
