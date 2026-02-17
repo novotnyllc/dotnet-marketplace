@@ -300,3 +300,9 @@ When creating a skill in a new category directory, also add a trigger corpus ent
 
 ## 2026-02-16 manual [pitfall]
 When updating skill/category counts in prose (README, AGENTS.md, CLAUDE.md), also grep for the same counts inside Mermaid diagram blocks -- diagrams embed counts in node labels that are easy to miss
+
+## 2026-02-17 manual [pitfall]
+Path.Join was introduced in .NET Core 2.1, not .NET 8 -- its rooted-path safety behavior is original; only newer Span overloads were added in .NET 6/8
+
+## 2026-02-17 manual [pitfall]
+FileOptions.DeleteOnClose behavior differs across platforms -- Windows guarantees OS-level deletion on handle close; Linux/macOS delete during Dispose and may leave orphans on SIGKILL

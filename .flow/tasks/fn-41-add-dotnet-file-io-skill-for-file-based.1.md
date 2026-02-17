@@ -59,9 +59,8 @@ Author `skills/core-csharp/dotnet-file-io/SKILL.md` covering .NET file I/O patte
 - [ ] SKILL.md under 5,000 words
 - [ ] No implementation code — patterns and guidance only
 ## Done summary
-TBD
-
+Created dotnet-file-io SKILL.md covering 10 .NET file I/O topics: FileStream async, RandomAccess API, File convenience methods, FileSystemWatcher with debouncing, MemoryMappedFile, path handling security, secure temp files, cross-platform considerations, error handling, and buffer sizing guidance. All cross-references resolve, description is 91 chars, and word count is 2,235.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: e3e774603e1faba1b3f4de30e3befe63e7f7fddd, 1ac4b215158ddcf415b8c38bdd54bc382e5c9314
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
