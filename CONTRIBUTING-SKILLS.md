@@ -2,7 +2,7 @@
 
 This guide covers everything you need to create, test, and ship a skill for **dotnet-artisan**. It merges the patterns from the [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) with dotnet-artisan conventions.
 
-For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
@@ -357,6 +357,6 @@ Before committing a new or modified skill:
 
 - [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) -- the complete six-chapter guide this manual adapts
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
-- [CONTRIBUTING.md](../../CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
+- [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
 - [CLAUDE.md](CLAUDE.md) -- plugin conventions and validation commands
 - Example skill: [`skills/core-csharp/dotnet-csharp-code-smells/SKILL.md`](skills/core-csharp/dotnet-csharp-code-smells/SKILL.md) -- well-structured skill with companion `details.md`

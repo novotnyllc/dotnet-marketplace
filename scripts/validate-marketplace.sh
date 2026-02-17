@@ -24,7 +24,7 @@ set -euo pipefail
 
 # Navigate to repository root (parent of scripts/), canonicalized for symlink safety
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
-PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
+PLUGIN_DIR="$REPO_ROOT"
 
 PLUGIN_JSON="$PLUGIN_DIR/.claude-plugin/plugin.json"
 

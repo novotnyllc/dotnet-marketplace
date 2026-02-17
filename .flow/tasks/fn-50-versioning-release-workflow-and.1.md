@@ -13,7 +13,7 @@ Restructure root marketplace.json and per-plugin marketplace.json to match the o
 
 **Root marketplace.json** — Replace current structure with official pattern:
 - Add `$schema: "https://anthropic.com/claude-code/marketplace.schema.json"`
-- Replace `schema_version` with top-level `name: "dotnet-marketplace"`
+- Replace `schema_version` with top-level `name: "dotnet-artisan"`
 - Add `owner: { name: "Claire Novotny LLC", url: "..." }`
 - Add `metadata: { description: "...", version: "0.1.0" }`
 - Per plugin entry: add `version`, `homepage`, singular `category: "development"`, keep `keywords`

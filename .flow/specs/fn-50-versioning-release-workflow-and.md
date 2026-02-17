@@ -2,7 +2,7 @@
 
 ## Overview
 
-Align the dotnet-marketplace repo with the official Claude Code plugin marketplace schema and community best practices (modeled on gmickel-claude-marketplace). Four areas of work:
+Align the dotnet-artisan repo with the official Claude Code plugin marketplace schema and community best practices (modeled on gmickel-claude-marketplace). Four areas of work:
 
 1. **Metadata optimization** — Restructure root `marketplace.json` to match the official Anthropic schema (`name`, `owner`, `metadata`, `$schema`). Enrich `plugin.json` with missing discoverability fields (`author`, `homepage`, `repository`, `license`, `keywords`). Use singular `category` (string) per the official pattern instead of `categories` (array).
 

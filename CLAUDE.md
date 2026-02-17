@@ -1,21 +1,12 @@
-# dotnet-marketplace -- Marketplace Instructions
+# dotnet-artisan -- Plugin Instructions
 
-This repository is a Claude Code plugin marketplace hosting .NET development plugins. It follows the [marketplace pattern](https://github.com/anthropics/claude-plugins-official) with plugins in `plugins/<name>/`.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 130 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
-For skill routing, discovery, and agent delegation, see [AGENTS.md](AGENTS.md).
-
-## Repository Layout
-
-- **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (130 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
-- **`.claude-plugin/marketplace.json`** -- Root marketplace listing (lists available plugins)
-- **`.agents/openai.yaml`** -- Codex discovery metadata (for `$skill-installer`)
-- **`.github/workflows/`** -- CI/CD workflows
-- **`scripts/`** -- Validation scripts and dev tooling (repo-level)
-- **`.flow/`** -- Task planning (repo-level)
-
-## Validation
+## Key Conventions
 
 ### SKILL.md Frontmatter
+
+Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
@@ -29,7 +20,7 @@ user-invocable: false
 - `name` (string) -- must match the directory name
 - `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 130 skills)
 
-**Optional fields ([frontmatter reference](https://code.claude.com/docs/en/skills#frontmatter-reference)):**
+**Optional fields:**
 - `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
 - `disable-model-invocation` (boolean) -- set to `true` to prevent Claude from loading the skill
 - `context` (string) -- set to `fork` for isolated execution without conversation history
@@ -53,34 +44,33 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 ## File Structure
 
 ```
-plugins/dotnet-artisan/                    # Plugin directory
-  skills/<category>/<skill-name>/SKILL.md  # 130 skills across 22 categories
-  agents/<agent-name>.md                   # 14 specialist agents
-  hooks/hooks.json                         # Session hooks (start context, post-edit)
-  .mcp.json                                # MCP server integrations
-  .claude-plugin/plugin.json               # Plugin manifest (version source of truth)
-.claude-plugin/marketplace.json            # Root marketplace discovery (lists available plugins)
-.agents/openai.yaml                        # Codex discovery metadata
-scripts/validate-skills.sh                 # Skill frontmatter and budget validation
-scripts/validate-marketplace.sh            # Plugin.json and marketplace.json validation
-scripts/validate-root-marketplace.sh       # Root marketplace.json shared validation (used by CI)
-scripts/bump.sh                            # Version bump and propagation script
+skills/<category>/<skill-name>/SKILL.md   # 130 skills across 22 categories
+agents/<agent-name>.md                     # 14 specialist agents
+hooks/hooks.json                           # Session hooks (start context, post-edit)
+.mcp.json                                  # MCP server integrations
+.claude-plugin/plugin.json                 # Plugin manifest
+.claude-plugin/marketplace.json            # Marketplace metadata
+scripts/                                   # Hook shell scripts
+tests/                                     # Test data
+docs/                                      # Plugin-specific documentation
 ```
 
-### Marketplace Schema
-
-Root `.claude-plugin/marketplace.json` fields: `$schema`, `name`, `description`, `owner` (object with `name`, `url`), `metadata` (object with `description`, `version`), `plugins` (array with per-plugin `name`, `source`, `description`, `version`, `author`, `license`, `category`, `homepage`, `keywords`).
-
-### Plugin Schema
-
-`plugins/dotnet-artisan/.claude-plugin/plugin.json` fields: `name`, `version` (canonical source of truth), `description`, `author` (object with `name`, `url`), `homepage`, `repository`, `license`, `keywords`, `skills` (array of dir paths), `agents` (array of file paths), `hooks` (string path), `mcpServers` (string path).
+Key directories:
+- **`skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
+- **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
+- **`hooks/`** -- Session lifecycle hooks
+- **`scripts/`** -- Hook shell scripts
+- **`.claude-plugin/`** -- Plugin manifest (plugin.json) and metadata (marketplace.json)
 
 ## Validation Commands
 
 Both commands must pass before committing changes (run from repo root):
 
 ```bash
+# 1. Validate skill frontmatter, required fields, directory conventions
 ./scripts/validate-skills.sh
+
+# 2. Validate plugin.json and marketplace.json consistency
 ./scripts/validate-marketplace.sh
 ```
 
@@ -90,43 +80,17 @@ Run both in sequence:
 ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 ```
 
-## Contributing
+## Development Workflow
 
 1. **Edit skills** -- Modify or create `SKILL.md` files under `skills/<category>/<skill-name>/`
 2. **Register in plugin.json** -- Add new skill paths to the `skills` array in `.claude-plugin/plugin.json`
 3. **Validate locally** -- Run both validation commands above
 4. **Commit** -- Use conventional commit messages with appropriate scope
-5. **CI validates** -- The `validate.yml` workflow runs the same validation commands plus `scripts/validate-root-marketplace.sh` and a 3-way version consistency check on push and PR
+5. **CI validates** -- The `validate.yml` workflow runs the same validation commands on push and PR
 
 ## References
 
 - See [AGENTS.md](AGENTS.md) for skill routing index and agent delegation patterns
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, PR process, and skill authoring quick reference
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR process
 - See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the comprehensive skill authoring how-to manual
 - See [README.md](README.md) for the full skill catalog, architecture diagrams, and installation instructions
-
----
-
-<!-- BEGIN FLOW-NEXT -->
-## Flow-Next
-
-This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead of markdown TODOs or TodoWrite.
-
-**Quick commands:**
-```bash
-.flow/bin/flowctl list                # List all epics + tasks
-.flow/bin/flowctl epics               # List all epics
-.flow/bin/flowctl tasks --epic fn-N   # List tasks for epic
-.flow/bin/flowctl ready --epic fn-N   # What's ready
-.flow/bin/flowctl show fn-N.M         # View task
-.flow/bin/flowctl start fn-N.M        # Claim task
-.flow/bin/flowctl done fn-N.M --summary-file s.md --evidence-json e.json
-```
-
-**Rules:**
-- Use `.flow/bin/flowctl` for ALL task tracking
-- Do NOT create markdown TODOs or use TodoWrite
-- Re-anchor (re-read spec + status) before every task
-
-**More info:** `.flow/bin/flowctl --help` or read `.flow/usage.md`
-<!-- END FLOW-NEXT -->

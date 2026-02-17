@@ -27,11 +27,11 @@ jobs:
       - name: Validate plugin JSON files
         run: |
           echo "=== Plugin JSON Validation ==="
-          jq empty plugins/dotnet-artisan/.claude-plugin/plugin.json
+          jq empty .claude-plugin/plugin.json
           echo "OK: plugin.json"
-          jq empty plugins/dotnet-artisan/hooks/hooks.json
+          jq empty hooks/hooks.json
           echo "OK: hooks.json"
-          jq empty plugins/dotnet-artisan/.mcp.json
+          jq empty .mcp.json
           echo "OK: .mcp.json"
 
       - name: Validate skills
@@ -58,7 +58,7 @@ jobs:
           echo "=== Version Consistency Check ==="
 
           # Read version from plugin.json (canonical source of truth)
-          PLUGIN_VERSION=$(jq -r '.version' plugins/dotnet-artisan/.claude-plugin/plugin.json)
+          PLUGIN_VERSION=$(jq -r '.version' .claude-plugin/plugin.json)
           echo "plugin.json version: $PLUGIN_VERSION"
 
           # Read version from root marketplace.json plugin entry

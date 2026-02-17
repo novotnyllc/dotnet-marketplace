@@ -1,32 +1,36 @@
-# dotnet-marketplace
+# dotnet-artisan
 
-> A Claude Code plugin marketplace for .NET development
+> Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications
 
-[![CI](https://github.com/novotnyllc/dotnet-marketplace/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-marketplace/actions/workflows/validate.yml)
+[![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
 **dotnet-artisan** is a Claude Code plugin that provides 130 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
-## Available Plugins
-
-| Plugin | Description | Skills | Agents |
-|---|---|---|---|
-| [**dotnet-artisan**](plugins/dotnet-artisan/) | Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications | 130 | 14 |
+The plugin covers the full breadth of the .NET ecosystem:
+- Modern C# patterns, async/await, dependency injection, and source generators
+- ASP.NET Core APIs, Blazor, MAUI, Uno Platform, WinUI, and WPF
+- Entity Framework Core, data access strategies, and serialization
+- Testing with xUnit, integration testing, Playwright, and snapshot testing
+- CI/CD for GitHub Actions and Azure DevOps
+- Native AOT, trimming, performance profiling, and benchmarking
+- Security, packaging, documentation, and release management
 
 ## Installation
 
-Install a plugin from this marketplace using the Claude Code CLI:
+Install the plugin using the Claude Code CLI:
 
 ```bash
-claude plugin add novotnyllc/dotnet-marketplace
+claude plugin add novotnyllc/dotnet-artisan
 claude plugin install dotnet-artisan
 ```
 
-Installation syntax may change as the Claude Code plugin system evolves.
+Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development. Installation syntax may change as the Claude Code plugin system evolves.
 
-## Repository Structure
+## Skill Catalog
 
 The plugin organizes 130 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
@@ -62,19 +66,19 @@ The plugin includes 14 specialist agents that provide focused expertise in speci
 | Agent | Description |
 |---|---|
 | **dotnet-architect** | Analyzes project context, requirements, and constraints to recommend architecture approaches, framework choices, and design patterns |
-| **dotnet-aspnetcore-specialist** | ASP.NET Core web API development, middleware, and hosting patterns |
-| **dotnet-async-performance-specialist** | Async/await performance analysis, task scheduling, and concurrency optimization |
-| **dotnet-benchmark-designer** | Designs BenchmarkDotNet benchmarks, prevents measurement bias, and validates benchmark methodology |
-| **dotnet-blazor-specialist** | Guides Blazor development across all hosting models (Server, WASM, Hybrid, Auto) including components, state, and auth |
-| **dotnet-cloud-specialist** | Cloud-native .NET patterns for Azure, AWS, and containerized deployments |
-| **dotnet-code-review-agent** | Automated code review for .NET projects with focus on quality, patterns, and best practices |
 | **dotnet-csharp-concurrency-specialist** | Debugs race conditions, deadlocks, thread safety issues, and synchronization problems in .NET code |
-| **dotnet-docs-generator** | Generates documentation including Mermaid diagrams, XML doc skeletons, and GitHub-native docs |
+| **dotnet-security-reviewer** | Reviews .NET code for security vulnerabilities, OWASP compliance, secrets exposure, and cryptographic misuse |
+| **dotnet-blazor-specialist** | Guides Blazor development across all hosting models (Server, WASM, Hybrid, Auto) including components, state, and auth |
+| **dotnet-uno-specialist** | Builds cross-platform Uno Platform apps with Extensions ecosystem, MVUX patterns, Toolkit controls, and MCP integration |
 | **dotnet-maui-specialist** | Builds .NET MAUI apps with platform-specific development, Xamarin migration, and Native AOT on iOS/Catalyst |
 | **dotnet-performance-analyst** | Analyzes profiling data, benchmark results, GC behavior, and diagnoses performance bottlenecks |
-| **dotnet-security-reviewer** | Reviews .NET code for security vulnerabilities, OWASP compliance, secrets exposure, and cryptographic misuse |
-| **dotnet-testing-specialist** | Testing strategy, test architecture, and quality patterns for .NET projects |
-| **dotnet-uno-specialist** | Builds cross-platform Uno Platform apps with Extensions ecosystem, MVUX patterns, Toolkit controls, and MCP integration |
+| **dotnet-benchmark-designer** | Designs BenchmarkDotNet benchmarks, prevents measurement bias, and validates benchmark methodology |
+| **dotnet-docs-generator** | Generates documentation including Mermaid diagrams, XML doc skeletons, and GitHub-native docs |
+| **dotnet-async-performance-specialist** | Analyzes ValueTask correctness, ConfigureAwait decisions, async overhead, ThreadPool tuning |
+| **dotnet-aspnetcore-specialist** | Guides middleware authoring, DI patterns, minimal API design, and request pipeline optimization |
+| **dotnet-testing-specialist** | Designs test pyramids, unit vs integration vs E2E boundaries, test data management |
+| **dotnet-cloud-specialist** | Guides .NET Aspire orchestration, AKS deployment, distributed tracing, infrastructure-as-code |
+| **dotnet-code-review-agent** | Performs multi-dimensional code review across correctness, performance, security, and architecture |
 
 ## Architecture
 
@@ -88,19 +92,19 @@ graph TB
 
         subgraph Agents["14 Specialist Agents"]
             DA[dotnet-architect<br/>Central Router]
-            ASP[aspnetcore-specialist]
-            APF[async-performance-specialist]
             CSC[concurrency-specialist]
             SR[security-reviewer]
-            BS[blazor-specialist]
+            BSA[blazor-specialist]
             US[uno-specialist]
             MS[maui-specialist]
-            CS[cloud-specialist]
-            CR[code-review-agent]
             PA[performance-analyst]
             BD[benchmark-designer]
             DG[docs-generator]
+            ASP[async-performance-specialist]
+            ASN[aspnetcore-specialist]
             TS[testing-specialist]
+            CS[cloud-specialist]
+            CR[code-review-agent]
         end
 
         subgraph Skills["22 Skill Categories / 130 Skills"]
@@ -134,22 +138,21 @@ graph TB
         end
     end
 
-    DA --> ASP
-    DA --> APF
-    DA --> BS
+    DA --> BSA
     DA --> US
     DA --> MS
-    DA --> CS
     DA --> CSC
-    DA --> CR
     DA --> SR
     DA --> PA
     DA --> BD
     DA --> DG
+    DA --> ASP
+    DA --> ASN
     DA --> TS
+    DA --> CS
+    DA --> CR
 
-    ASP --> AD
-    BS --> UI
+    BSA --> UI
     US --> UI
     MS --> UI
     CSC --> CC
@@ -157,26 +160,28 @@ graph TB
     PA --> PE
     BD --> PE
     DG --> DO
-    TS --> TE
     DA --> AR
     DA --> F
 ```
-```
-/
-+-- .claude-plugin/
-|   +-- marketplace.json          # Root marketplace listing
-+-- plugins/
-|   +-- dotnet-artisan/           # Self-contained plugin
-|       +-- .claude-plugin/       # Plugin manifest and metadata
-|       +-- skills/               # 130 skills (22 categories)
-|       +-- agents/               # 14 specialist agents
-|       +-- hooks/                # Session hooks
-|       +-- scripts/              # Validation scripts
-|       +-- ...
-+-- .github/workflows/            # CI/CD
-+-- CONTRIBUTING.md               # Contribution guide
-+-- CHANGELOG.md                  # Release history
-+-- LICENSE                       # MIT
+
+### Agent Delegation Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Claude as Claude Code
+    participant Router as dotnet-architect<br/>(Routing Agent)
+    participant Specialist as Specialist Agent
+    participant Skills as Skill Files
+
+    User->>Claude: "How do I set up Blazor auth?"
+    Claude->>Router: Route query
+    Router->>Router: Load dotnet-advisor catalog<br/>+ analyze query context
+    Router->>Specialist: Delegate to blazor-specialist
+    Specialist->>Skills: Load dotnet-blazor-auth<br/>+ dotnet-blazor-patterns
+    Skills-->>Specialist: Skill content
+    Specialist-->>Claude: Structured guidance
+    Claude-->>User: Blazor auth recommendation<br/>with code examples
 ```
 
 ## Usage Examples
@@ -198,9 +203,13 @@ Claude Code loads `dotnet-gha-build-test` and `dotnet-gha-publish` to generate a
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution guide, PR process, and validation requirements.
+See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the skill authoring guide, or [CONTRIBUTING.md](CONTRIBUTING.md) for the general contribution workflow.
 
-For plugin-specific skill authoring guidance, see [plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md).
+## Acknowledgements
+
+- The [Claude Code plugin system](https://docs.anthropic.com/en/docs/claude-code/plugins) and [Agent Skills](https://github.com/anthropics/agent-skills) open standard for enabling structured, discoverable development skills
+- The [.NET community and ecosystem](https://dotnet.microsoft.com/) for the frameworks, libraries, and patterns documented in these skills
+- All [contributors](https://github.com/novotnyllc/dotnet-artisan/graphs/contributors) who help improve and expand the plugin
 
 ## License
 

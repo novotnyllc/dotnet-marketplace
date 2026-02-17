@@ -96,7 +96,7 @@ Moves with the plugin to `plugins/dotnet-artisan/tests/`. Its only consumer (`va
 - [ ] Empty `docs/` directory at root removed (if no files remain)
 - [ ] CHANGELOG.md updated with [Unreleased] entry for marketplace restructure
 ## Done summary
-Restructured the dotnet-marketplace repo from a flat single-plugin layout into a marketplace pattern. Moved all dotnet-artisan plugin content (122 skills, 14 agents, hooks, scripts, tests, docs) into plugins/dotnet-artisan/ via git mv. Created root marketplace.json following anthropics/claude-plugins-official canonical schema. Rewrote root README.md and CLAUDE.md as marketplace-level docs, created plugin-specific README.md and CLAUDE.md. Updated CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, AGENTS.md with correct paths. Updated CHANGELOG.md. Validation scripts pass from plugin directory.
+Restructured the dotnet-artisan repo from a flat single-plugin layout into a marketplace pattern. Moved all dotnet-artisan plugin content (122 skills, 14 agents, hooks, scripts, tests, docs) into plugins/dotnet-artisan/ via git mv. Created root marketplace.json following anthropics/claude-plugins-official canonical schema. Rewrote root README.md and CLAUDE.md as marketplace-level docs, created plugin-specific README.md and CLAUDE.md. Updated CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, AGENTS.md with correct paths. Updated CHANGELOG.md. Validation scripts pass from plugin directory.
 ## Evidence
 - Commits: d0f4113e13f54210a80cbacd193cbd6c24e29cf2
 - Tests: cd plugins/dotnet-artisan && ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh

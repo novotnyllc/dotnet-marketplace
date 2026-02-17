@@ -33,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           TAG_VERSION="${{ steps.version.outputs.version }}"
-          PLUGIN_VERSION=$(jq -r '.version' plugins/dotnet-artisan/.claude-plugin/plugin.json)
+          PLUGIN_VERSION=$(jq -r '.version' .claude-plugin/plugin.json)
 
           echo "Tag version:        $TAG_VERSION"
           echo "plugin.json version: $PLUGIN_VERSION"
@@ -87,7 +87,7 @@ jobs:
             echo "### Install"
             echo ""
             echo '```bash'
-            echo "claude plugin add novotnyllc/dotnet-marketplace"
+            echo "claude plugin add novotnyllc/dotnet-artisan"
             echo '```'
             echo ""
             echo "### Validation"

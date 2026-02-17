@@ -110,7 +110,7 @@ grep -qi "flow-next" AGENTS.md && echo "OK: Flow-Next preserved" || echo "MISSIN
 
 ## Key Context
 - Plugin has 97 skills across 18 categories and 9 specialist agents
-- `marketplace.json` author: Claire Novotny LLC, repo: novotnyllc/dotnet-marketplace, license: MIT
+- `marketplace.json` author: Claire Novotny LLC, repo: novotnyllc/dotnet-artisan, license: MIT
 - `dotnet-advisor` is the central routing agent; AGENTS.md skill index should complement (not duplicate) its internal catalog
 - fn-21's `dotnet-github-docs` skill teaches README/CONTRIBUTING patterns — fn-25 applies them to this specific repo
 - fn-24's cross-agent pipeline generates dist/claude, dist/copilot, dist/codex from canonical SKILL.md sources

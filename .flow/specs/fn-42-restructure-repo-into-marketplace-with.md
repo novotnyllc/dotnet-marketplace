@@ -2,11 +2,11 @@
 
 ## Overview
 
-Restructure `novotnyllc/dotnet-marketplace` from a flat single-plugin repo into a **marketplace** that hosts plugins in subdirectories, following the `anthropics/claude-plugins-official` pattern. Move the entire dotnet-artisan plugin into `plugins/dotnet-artisan/`. Clean up stale artifacts from completed epics. Remove the dist generation pipeline entirely — source files ARE the plugin.
+Restructure `novotnyllc/dotnet-artisan` from a flat single-plugin repo into a **marketplace** that hosts plugins in subdirectories, following the `anthropics/claude-plugins-official` pattern. Move the entire dotnet-artisan plugin into `plugins/dotnet-artisan/`. Clean up stale artifacts from completed epics. Remove the dist generation pipeline entirely — source files ARE the plugin.
 
 Users install via:
 ```
-/plugin marketplace add novotnyllc/dotnet-marketplace
+/plugin marketplace add novotnyllc/dotnet-artisan
 /plugin install dotnet-artisan
 ```
 

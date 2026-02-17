@@ -1,6 +1,6 @@
-# Contributing to dotnet-marketplace
+# Contributing to dotnet-artisan
 
-Welcome to **dotnet-marketplace**, a Claude Code plugin marketplace for .NET development. This marketplace hosts the **dotnet-artisan** plugin, which follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+Welcome to **dotnet-artisan**, a Claude Code plugin for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 Contributions are welcome across all areas: new skills, skill improvements, agent refinements, documentation, and tooling.
 
@@ -15,7 +15,7 @@ No .NET SDK is required for the plugin repo itself. The plugin provides guidance
 
 ## Skill Authoring Guide
 
-> **Comprehensive guide available:** For the full skill authoring how-to manual -- including quick start, writing effective descriptions, testing, common patterns, and troubleshooting -- see [plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md).
+> **Comprehensive guide available:** For the full skill authoring how-to manual -- including quick start, writing effective descriptions, testing, common patterns, and troubleshooting -- see [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md).
 
 The section below provides a quick reference. Skills are the primary content unit. Each skill is a `SKILL.md` file with structured frontmatter and rich guidance content.
 
@@ -24,10 +24,10 @@ The section below provides a quick reference. Skills are the primary content uni
 All skills follow this directory structure within the plugin:
 
 ```
-plugins/dotnet-artisan/skills/<category>/<skill-name>/SKILL.md
+skills/<category>/<skill-name>/SKILL.md
 ```
 
-For example: `plugins/dotnet-artisan/skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`
+For example: `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`
 
 ### SKILL.md Frontmatter
 
@@ -51,7 +51,7 @@ user-invocable: false
 - **`context`** (string) -- Set to `fork` for isolated execution without conversation history
 - **`model`** (string) -- Model override, e.g. `haiku` for lightweight detection tasks
 
-See the [CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md) for the full field reference table.
+See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
 The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 130 skills).
 
@@ -86,7 +86,7 @@ Agents are specialist personas that combine multiple skills with domain expertis
 Place agent files at:
 
 ```
-plugins/dotnet-artisan/agents/<agent-name>.md
+agents/<agent-name>.md
 ```
 
 ### Agent Frontmatter
@@ -160,12 +160,12 @@ A separate shared script validates the root `.claude-plugin/marketplace.json` sc
 
 #### Version Management
 
-The canonical version source of truth is `plugins/dotnet-artisan/.claude-plugin/plugin.json`. The version field is propagated to five locations by the bump script:
+The canonical version source of truth is `.claude-plugin/plugin.json`. The version field is propagated to five locations by the bump script:
 
-1. `plugins/dotnet-artisan/.claude-plugin/plugin.json` -- canonical source
+1. `.claude-plugin/plugin.json` -- canonical source
 2. `.claude-plugin/marketplace.json` -- root marketplace plugin entry `.plugins[].version`
 3. `.claude-plugin/marketplace.json` -- root marketplace `metadata.version`
-4. `plugins/dotnet-artisan/README.md` -- version badge
+4. `README.md` -- version badge
 5. `CHANGELOG.md` -- promote `[Unreleased]` section and update footer links
 
 CI validates version consistency across the first three locations (3-way check in `validate.yml`).
@@ -243,7 +243,7 @@ Before every release, verify:
 
 The plugin includes session hooks (session start context, post-edit validation) and MCP server integrations (Context7).
 
-For guidance on contributing to hooks or MCP integrations, see [plugins/dotnet-artisan/docs/hooks-and-mcp-guide.md](plugins/dotnet-artisan/docs/hooks-and-mcp-guide.md).
+For guidance on contributing to hooks or MCP integrations, see [docs/hooks-and-mcp-guide.md](docs/hooks-and-mcp-guide.md).
 
 ## Code of Conduct
 
@@ -253,4 +253,4 @@ We are committed to providing a welcoming and inclusive experience for everyone.
 - Focus on technical merit and improving the plugin
 - Welcome newcomers and help them get started
 
-Thank you for contributing to dotnet-marketplace.
+Thank you for contributing to dotnet-artisan.

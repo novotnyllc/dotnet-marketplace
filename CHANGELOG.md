@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "./plugins/dotnet-artisan"`)
+- **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "."`)
 - **Removed dist pipeline** -- Deleted `scripts/generate_dist.py`, `scripts/validate_cross_agent.py`, and all `dist/` generation. Source files ARE the plugin; no build step needed
 - **Per-plugin versioning** -- Release workflow now uses `dotnet-artisan/v*` tag format instead of `v*`
 - **CI updated** -- `validate.yml` no longer runs dist generation or cross-agent conformance; added root marketplace.json validation and 3-way version consistency check. `release.yml` removed Pages deployment, now extracts release notes from CHANGELOG.md dynamically
@@ -70,6 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/dotnet-artisan/v0.1.1...HEAD
-[0.1.1]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/dotnet-artisan/v0.1.1
-[0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...HEAD
+[0.1.1]: https://github.com/novotnyllc/dotnet-artisan/releases/tag/dotnet-artisan/v0.1.1
+[0.1.0]: https://github.com/novotnyllc/dotnet-artisan/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->

@@ -174,7 +174,7 @@ if [ -f "$CHANGELOG" ]; then
 
     # Update the [unreleased] comparison link
     TMP_FILE=$(mktemp)
-    sed "s|\[unreleased\]:.*|[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/${TAG_PREFIX}${NEW_VERSION}...HEAD|" "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
+    sed "s|\[unreleased\]:.*|[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/${TAG_PREFIX}${NEW_VERSION}...HEAD|" "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
 
     # Check if a version link for the new version already exists
     if ! grep -q "^\[${NEW_VERSION}\]:" "$CHANGELOG"; then
@@ -182,9 +182,9 @@ if [ -f "$CHANGELOG" ]; then
         # If current version had a tag, link from that; otherwise link to first commit
         if [ "$CURRENT_VERSION" = "0.1.0" ]; then
             # First release scenario: no prior tag exists, link to the tag directly
-            VERSION_LINK="[${NEW_VERSION}]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/${TAG_PREFIX}${NEW_VERSION}"
+            VERSION_LINK="[${NEW_VERSION}]: https://github.com/novotnyllc/dotnet-artisan/releases/tag/${TAG_PREFIX}${NEW_VERSION}"
         else
-            VERSION_LINK="[${NEW_VERSION}]: https://github.com/novotnyllc/dotnet-marketplace/compare/${TAG_PREFIX}${CURRENT_VERSION}...${TAG_PREFIX}${NEW_VERSION}"
+            VERSION_LINK="[${NEW_VERSION}]: https://github.com/novotnyllc/dotnet-artisan/compare/${TAG_PREFIX}${CURRENT_VERSION}...${TAG_PREFIX}${NEW_VERSION}"
         fi
 
         # Insert the new version link after the [unreleased] link

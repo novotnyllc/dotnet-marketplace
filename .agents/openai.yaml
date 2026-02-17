@@ -1,12 +1,12 @@
 # Codex discovery metadata for the dotnet-artisan plugin.
-# Read by $skill-installer when installing from novotnyllc/dotnet-marketplace.
+# Read by $skill-installer when installing from novotnyllc/dotnet-artisan.
 
 interface:
   display_name: "dotnet-artisan"
   short_description: "130 .NET skills for modern C# and cloud apps"
   default_prompt: >
-    $skill-installer novotnyllc/dotnet-marketplace — install .NET development
-    skills. All 130 skills are under plugins/dotnet-artisan/skills/<category>/<skill-name>/,
+    $skill-installer novotnyllc/dotnet-artisan — install .NET development
+    skills. All 130 skills are under skills/<category>/<skill-name>/,
     each containing a SKILL.md file.
 
 policy:
