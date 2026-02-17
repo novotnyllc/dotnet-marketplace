@@ -59,9 +59,8 @@ model: haiku
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass clean
 
 ## Done summary
-
-_To be filled on completion._
-
+Added user-invocable: false, context: fork, and model: haiku frontmatter to 4 detection/analysis skills. Added dynamic context shell preprocessing (! commands) to dotnet-version-detection, dotnet-project-analysis, and dotnet-solution-navigation; dotnet-build-analysis gets no dynamic context as it analyzes conversation input.
 ## Evidence
-
-_To be filled on completion._
+- Commits: 0606eb42c0b6ca4a13798a5abbf5ec6b29ed069f
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
