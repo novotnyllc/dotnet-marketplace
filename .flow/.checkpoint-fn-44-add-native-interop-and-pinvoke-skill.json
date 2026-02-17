@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-02-17T03:43:58.571236Z",
+  "created_at": "2026-02-17T05:52:12.178592Z",
   "epic": {
     "data": {
       "branch_name": "fn-44-add-native-interop-and-pinvoke-skill",
@@ -12,14 +12,14 @@
       "depends_on_epics": [],
       "id": "fn-44-add-native-interop-and-pinvoke-skill",
       "next_task": 1,
-      "plan_review_status": "unknown",
-      "plan_reviewed_at": null,
+      "plan_review_status": "ship",
+      "plan_reviewed_at": "2026-02-17T03:56:27.930941Z",
       "spec_path": ".flow/specs/fn-44-add-native-interop-and-pinvoke-skill.md",
       "status": "open",
       "title": "Add Native Interop and P/Invoke Skill",
-      "updated_at": "2026-02-17T03:39:50.638274Z"
+      "updated_at": "2026-02-17T03:56:27.931117Z"
     },
-    "spec": "# fn-44 Add Native Interop and P/Invoke Skill\n\n## Overview\n\nAdd a new `dotnet-native-interop` skill covering P/Invoke patterns across all major .NET platforms (Windows, macOS, Linux, iOS, Android, WASM). Covers `[LibraryImport]` (preferred, .NET 7+) vs `[DllImport]` (legacy), cross-platform library loading, marshalling, and platform-specific considerations.\n\n## Scope\n\n**In:** SKILL.md for `dotnet-native-interop` under `skills/core-csharp/`, plugin.json registration, advisor routing, cross-references to `dotnet-native-aot`.\n\n**Out:** COM interop (Windows legacy, future epic if needed). CsWin32 stays in `dotnet-winui`. JNI bridge for Android Java interop (different from P/Invoke).\n\n**Scope boundary with `dotnet-native-aot`**: AOT skill keeps its P/Invoke section (lines 181-226) focused on AOT-specific concerns (trimming, direct pinvoke). New skill owns the general P/Invoke guidance and cross-references AOT skill for publish scenarios.\n\n## Key Context\n\n- `[LibraryImport]` is source-generated, AOT-compatible, preferred for new code (.NET 7+)\n- `[DllImport]` still works but not AOT-compatible without manual work\n- iOS requires static linking (no dynamic library loading)\n- WASM has no traditional P/Invoke \u2014 uses `[JSImport]`/`[JSExport]` instead\n- `NativeLibrary.SetDllImportResolver` for cross-platform library name resolution\n- Struct layout (`[StructLayout]`, blittability) critical for correct marshalling\n- Function pointer callbacks (`delegate* unmanaged`) vs managed delegates\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] `skills/core-csharp/dotnet-native-interop/SKILL.md` exists with valid frontmatter\n- [ ] Covers LibraryImport vs DllImport decision guidance\n- [ ] Covers platform-specific concerns: Windows DLL, macOS/Linux .so/.dylib, iOS static linking, WASM limitations\n- [ ] Covers marshalling patterns (structs, strings, callbacks)\n- [ ] Covers NativeLibrary.SetDllImportResolver for cross-platform resolution\n- [ ] Description under 120 characters\n- [ ] Registered in plugin.json\n- [ ] `dotnet-advisor` routing updated\n- [ ] Cross-references to/from `dotnet-native-aot`, `dotnet-aot-architecture`\n- [ ] All validation scripts pass\n\n## References\n\n- https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke\n- https://learn.microsoft.com/en-us/dotnet/standard/native-interop/best-practices\n- `skills/native-aot/dotnet-native-aot/SKILL.md:181-226` (AOT P/Invoke section)\n- `skills/native-aot/dotnet-aot-architecture/SKILL.md:32` (LibraryImport mention)\n- `skills/ui-frameworks/dotnet-winui/SKILL.md:451` (CsWin32 reference)\n"
+    "spec": "# fn-44 Add Native Interop and P/Invoke Skill\n\n## Overview\n\nAdd a new `dotnet-native-interop` skill covering P/Invoke patterns across all major .NET platforms (Windows, macOS, Linux, iOS, Android, WASM). Covers `[LibraryImport]` (preferred, .NET 7+) vs `[DllImport]` (legacy), cross-platform library loading, marshalling, and platform-specific considerations.\n\n**Visibility:** Implicit \u2014 auto-loaded by agents via advisor routing when P/Invoke or native interop patterns are detected. Not user-invocable.\n\n## Scope\n\n**In:** SKILL.md for `dotnet-native-interop` under `skills/core-csharp/`, plugin.json registration, advisor routing, cross-references to `dotnet-native-aot`.\n\n**Out:** COM interop (Windows legacy). CsWin32 stays in `dotnet-winui`. JNI bridge for Android Java interop (different from P/Invoke). JSImport/JSExport for WASM (JavaScript interop, not native interop \u2014 covered by `dotnet-aot-wasm`).\n\n**Scope boundary with `dotnet-native-aot`**: AOT skill keeps its P/Invoke section focused on AOT-specific concerns (trimming, direct pinvoke). New skill owns the general P/Invoke guidance and cross-references AOT skill for publish scenarios.\n\n## Key Context\n\n- `[LibraryImport]` is source-generated, AOT-compatible, preferred for new code (.NET 7+)\n- `[DllImport]` still works but not AOT-compatible without manual work\n- iOS requires static linking (no dynamic library loading)\n- WASM: no traditional P/Invoke. Mention limitation only, cross-ref `[skill:dotnet-aot-wasm]` for JS interop\n- `NativeLibrary.SetDllImportResolver` for cross-platform library name resolution\n- Struct layout (`[StructLayout]`, blittability) critical for correct marshalling\n- Function pointer callbacks (`delegate* unmanaged`) vs managed delegates\n- Budget: target description ~90 chars. Total projected: 132 skills after batch.\n\n## Quick commands\n\n```bash\n./scripts/validate-skills.sh\n```\n\n## Acceptance\n\n- [ ] `skills/core-csharp/dotnet-native-interop/SKILL.md` exists with valid frontmatter\n- [ ] Covers LibraryImport vs DllImport decision guidance\n- [ ] Covers platform-specific concerns: Windows DLL, macOS/Linux .so/.dylib, iOS static linking, WASM limitation note\n- [ ] Covers marshalling patterns (structs, strings, callbacks)\n- [ ] Covers NativeLibrary.SetDllImportResolver for cross-platform resolution\n- [ ] WASM section limited to \"not supported, see [skill:dotnet-aot-wasm]\"\n- [ ] Description under 120 characters\n- [ ] Registered in plugin.json\n- [ ] `dotnet-advisor` routing updated\n- [ ] Cross-references to/from `dotnet-native-aot`, `dotnet-aot-architecture`\n- [ ] Integration task notes file contention with plugin.json/advisor shared files\n- [ ] All validation scripts pass\n\n## References\n\n- https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke\n- https://learn.microsoft.com/en-us/dotnet/standard/native-interop/best-practices\n- `skills/native-aot/dotnet-native-aot/SKILL.md` (AOT P/Invoke section)\n- `skills/native-aot/dotnet-aot-architecture/SKILL.md` (LibraryImport mention)\n- `skills/ui-frameworks/dotnet-winui/SKILL.md` (CsWin32 reference)\n"
   },
   "epic_id": "fn-44-add-native-interop-and-pinvoke-skill",
   "schema_version": 2,
@@ -37,11 +37,28 @@
         "spec_path": ".flow/tasks/fn-44-add-native-interop-and-pinvoke-skill.1.md",
         "status": "todo",
         "title": "Author dotnet-native-interop SKILL.md",
-        "updated_at": "2026-02-17T03:42:05.736102Z"
+        "updated_at": "2026-02-17T03:53:18.406039Z"
       },
       "id": "fn-44-add-native-interop-and-pinvoke-skill.1",
-      "runtime": null,
-      "spec": "# fn-44-add-native-interop-and-pinvoke-skill.1 Author dotnet-native-interop SKILL.md\n\n## Description\nAuthor `skills/core-csharp/dotnet-native-interop/SKILL.md` covering P/Invoke and native interop across Windows, macOS, Linux, iOS, Android, and WASM.\n\n**Size:** M\n**Files:** `skills/core-csharp/dotnet-native-interop/SKILL.md`\n\n## Approach\n\n- Follow existing skill pattern at `skills/native-aot/dotnet-native-aot/SKILL.md` for style\n- Cover `[LibraryImport]` (.NET 7+, preferred) vs `[DllImport]` (legacy)\n- Platform sections: Windows DLL, macOS/Linux .so/.dylib, iOS static linking, WASM `[JSImport]` note\n- Cover marshalling: structs, strings, function pointers, `NativeLibrary.SetDllImportResolver`\n- Reference: https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke\n\n## Key context\n\n- iOS does not allow dynamic library loading \u2014 must use static linking\n- WASM has no traditional P/Invoke \u2014 uses `[JSImport]`/`[JSExport]` instead (mention, cross-ref)\n- `dotnet-native-aot` lines 181-226 keep AOT-specific P/Invoke; this skill owns general guidance\n- `CsWin32` stays in `dotnet-winui` \u2014 just add a cross-reference\n## Acceptance\n- [ ] SKILL.md exists at `skills/core-csharp/dotnet-native-interop/`\n- [ ] Valid frontmatter with `name` and `description` (under 120 chars)\n- [ ] Covers LibraryImport vs DllImport with decision guidance\n- [ ] Platform-specific sections for Windows, macOS/Linux, iOS, Android, WASM\n- [ ] Covers marshalling patterns (structs, strings, callbacks)\n- [ ] Covers NativeLibrary.SetDllImportResolver\n- [ ] Cross-reference syntax used for related skills\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-17T05:34:53.006194Z",
+        "evidence": {
+          "commits": [
+            "6e46a80",
+            "6d6dc3f"
+          ],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-17T05:43:19.610180Z"
+      },
+      "spec": "# fn-44-add-native-interop-and-pinvoke-skill.1 Author dotnet-native-interop SKILL.md\n\n## Description\nAuthor `skills/core-csharp/dotnet-native-interop/SKILL.md` covering P/Invoke and native interop across Windows, macOS, Linux, iOS, Android, and WASM.\n\n**Visibility:** Implicit (agent-loaded, not user-invocable)\n**Size:** M\n**Files:** `skills/core-csharp/dotnet-native-interop/SKILL.md`\n\n## Approach\n\n- Follow existing skill pattern at `skills/native-aot/dotnet-native-aot/SKILL.md` for style\n- Cover `[LibraryImport]` (.NET 7+, preferred) vs `[DllImport]` (legacy)\n- Platform sections: Windows DLL, macOS/Linux .so/.dylib, iOS static linking\n- WASM: single line noting P/Invoke not supported, cross-ref `[skill:dotnet-aot-wasm]` for JS interop \u2014 do NOT cover JSImport/JSExport in detail\n- Cover marshalling: structs, strings, function pointers, `NativeLibrary.SetDllImportResolver`\n- Target description ~90 chars\n- Reference: https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke\n\n## Key context\n\n- iOS does not allow dynamic library loading \u2014 must use static linking\n- `dotnet-native-aot` keeps AOT-specific P/Invoke; this skill owns general guidance\n- `CsWin32` stays in `dotnet-winui` \u2014 just add a cross-reference\n- WASM JSImport/JSExport is JavaScript interop, not native interop \u2014 out of scope\n## Approach\n\n- Follow existing skill pattern at `skills/native-aot/dotnet-native-aot/SKILL.md` for style\n- Cover `[LibraryImport]` (.NET 7+, preferred) vs `[DllImport]` (legacy)\n- Platform sections: Windows DLL, macOS/Linux .so/.dylib, iOS static linking, WASM `[JSImport]` note\n- Cover marshalling: structs, strings, function pointers, `NativeLibrary.SetDllImportResolver`\n- Reference: https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke\n\n## Key context\n\n- iOS does not allow dynamic library loading \u2014 must use static linking\n- WASM has no traditional P/Invoke \u2014 uses `[JSImport]`/`[JSExport]` instead (mention, cross-ref)\n- `dotnet-native-aot` lines 181-226 keep AOT-specific P/Invoke; this skill owns general guidance\n- `CsWin32` stays in `dotnet-winui` \u2014 just add a cross-reference\n## Acceptance\n- [ ] SKILL.md exists at `skills/core-csharp/dotnet-native-interop/`\n- [ ] Valid frontmatter with `name` and `description` (under 120 chars, ~90 target)\n- [ ] Covers LibraryImport vs DllImport with decision guidance\n- [ ] Platform-specific sections for Windows, macOS/Linux, iOS, Android\n- [ ] WASM: single-line limitation note with cross-ref to dotnet-aot-wasm\n- [ ] Covers marshalling patterns (structs, strings, callbacks)\n- [ ] Covers NativeLibrary.SetDllImportResolver\n- [ ] Cross-reference syntax used for related skills\n## Done summary\nAuthored dotnet-native-interop SKILL.md covering P/Invoke patterns: LibraryImport vs DllImport decision guidance, platform-specific sections (Windows/macOS/Linux/iOS/Android/WASM), NativeLibrary.SetDllImportResolver for cross-platform resolution, marshalling patterns (structs, strings, callbacks, SafeHandle), cross-platform data type mapping, and 8 Agent Gotchas.\n## Evidence\n- Commits: 6e46a80, 6d6dc3f\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh\n- PRs:"
     },
     {
       "data": {
@@ -58,11 +75,25 @@
         "spec_path": ".flow/tasks/fn-44-add-native-interop-and-pinvoke-skill.2.md",
         "status": "todo",
         "title": "Integrate dotnet-native-interop into plugin registry and routing",
-        "updated_at": "2026-02-17T03:42:10.114448Z"
+        "updated_at": "2026-02-17T03:53:23.518700Z"
       },
       "id": "fn-44-add-native-interop-and-pinvoke-skill.2",
-      "runtime": null,
-      "spec": "# fn-44-add-native-interop-and-pinvoke-skill.2 Integrate dotnet-native-interop into plugin registry and routing\n\n## Description\nRegister `dotnet-native-interop` in plugin.json, add routing entry in `dotnet-advisor`, and add cross-references to/from `dotnet-native-aot`, `dotnet-aot-architecture`, and `dotnet-winui`.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `skills/native-aot/dotnet-native-aot/SKILL.md`, `skills/native-aot/dotnet-aot-architecture/SKILL.md`, `skills/ui-frameworks/dotnet-winui/SKILL.md`\n\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry in `dotnet-advisor`\n- Add `[skill:dotnet-native-interop]` cross-references in AOT skills and WinUI (CsWin32 reference)\n- Update `--projected-skills` count in validation\n## Acceptance\n- [ ] plugin.json includes `skills/core-csharp/dotnet-native-interop`\n- [ ] `dotnet-advisor` has routing entry for native interop\n- [ ] Cross-references added in `dotnet-native-aot`, `dotnet-aot-architecture`, `dotnet-winui`\n- [ ] All four validation scripts pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+      "runtime": {
+        "assignee": "claire@novotny.org",
+        "claim_note": "",
+        "claimed_at": "2026-02-17T05:48:01.034557Z",
+        "evidence": {
+          "commits": [],
+          "prs": [],
+          "tests": [
+            "./scripts/validate-skills.sh",
+            "./scripts/validate-marketplace.sh"
+          ]
+        },
+        "status": "done",
+        "updated_at": "2026-02-17T05:49:28.467815Z"
+      },
+      "spec": "# fn-44-add-native-interop-and-pinvoke-skill.2 Integrate dotnet-native-interop into plugin registry and routing\n\n## Description\nRegister `dotnet-native-interop` in plugin.json, add routing entry in `dotnet-advisor`, and add cross-references to/from `dotnet-native-aot`, `dotnet-aot-architecture`, and `dotnet-winui`.\n\n**Size:** S\n**Files:** `.claude-plugin/plugin.json`, `skills/foundation/dotnet-advisor/SKILL.md`, `skills/native-aot/dotnet-native-aot/SKILL.md`, `skills/native-aot/dotnet-aot-architecture/SKILL.md`, `skills/ui-frameworks/dotnet-winui/SKILL.md`, `scripts/validate-skills.sh`\n\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry in `dotnet-advisor`\n- Add `[skill:dotnet-native-interop]` cross-references in AOT skills and WinUI (CsWin32 reference)\n- Update `--projected-skills` in validate-skills.sh\n\n## File contention warning\n\n**plugin.json and dotnet-advisor SKILL.md are shared files** modified by all 5 integration tasks (fn-43.2 through fn-47.2). These tasks must NOT run in parallel. Run sequentially.\n## Approach\n\n- Add skill path to plugin.json `skills` array\n- Add routing entry in `dotnet-advisor`\n- Add `[skill:dotnet-native-interop]` cross-references in AOT skills and WinUI (CsWin32 reference)\n- Update `--projected-skills` count in validation\n## Acceptance\n- [ ] plugin.json includes `skills/core-csharp/dotnet-native-interop`\n- [ ] `dotnet-advisor` has routing entry for native interop\n- [ ] Cross-references added in `dotnet-native-aot`, `dotnet-aot-architecture`, `dotnet-winui`\n- [ ] `--projected-skills` incremented in validate-skills.sh\n- [ ] All four validation scripts pass\n## Done summary\nIntegrated dotnet-native-interop into plugin registry and routing: added skill path to plugin.json, routing entry in dotnet-advisor (catalog + routing logic), cross-references in dotnet-native-aot, dotnet-aot-architecture, and dotnet-winui, incremented --projected-skills to 124.\n## Evidence\n- Commits:\n- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh\n- PRs:"
     }
   ]
 }
