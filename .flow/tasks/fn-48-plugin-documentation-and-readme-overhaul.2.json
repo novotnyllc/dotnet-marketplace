@@ -11,7 +11,7 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-48-plugin-documentation-and-readme-overhaul.2.md",
   "status": "done",
-  "title": "Rewrite README.md with installation, overview, and complete skill catalog",
+  "title": "Verify documentation counts and validation after fn-48.1 reconciliation",
   "updated_at": "2026-02-17T08:08:39.270657Z",
   "evidence": {
     "commits": [
