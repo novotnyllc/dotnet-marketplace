@@ -68,5 +68,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/dotnet-artisan/v0.1.0...HEAD
-[0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/releases/tag/dotnet-artisan/v0.1.0
+[unreleased]: https://github.com/novotnyllc/dotnet-marketplace/compare/main...HEAD  <!-- update to dotnet-artisan/vX.Y.Z...HEAD after first release tag -->
+[0.1.0]: https://github.com/novotnyllc/dotnet-marketplace/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->
