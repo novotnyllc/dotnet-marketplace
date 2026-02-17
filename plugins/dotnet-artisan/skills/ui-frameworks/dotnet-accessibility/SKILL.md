@@ -103,7 +103,8 @@ Blazor renders HTML, so standard web accessibility patterns apply. Use native HT
      tabindex="0"
      aria-label="Product list"
      aria-activedescendant="@_activeId"
-     @onkeydown="HandleKeyDown">
+     @onkeydown="HandleKeyDown"
+     @onkeydown:preventDefault>
     @foreach (var product in Products)
     {
         <div id="@($"product-{product.Id}")"
@@ -327,7 +328,7 @@ public sealed class StarRating : Control
         => new StarRatingAutomationPeer(this);
 }
 
-// Automation peer
+// Automation peer (using Microsoft.UI.Xaml.Automation.Provider)
 public sealed class StarRatingAutomationPeer
     : FrameworkElementAutomationPeer, IRangeValueProvider
 {
@@ -452,11 +453,13 @@ For Terminal.Gui patterns, see [skill:dotnet-terminal-gui]. For Spectre.Console 
 
 ```csharp
 // Blazor: integrate axe-core with Playwright for automated accessibility testing
-// Requires: Microsoft.Playwright NuGet package + @axe-core/playwright npm package
-var accessibilityResults = await page.EvaluateAsync<JsonElement>("""
-    const axe = await import('/node_modules/axe-core/axe.min.js');
-    return await axe.run();
-    """);
+// Requires: Deque.AxeCore.Playwright NuGet package
+// Install: dotnet add package Deque.AxeCore.Playwright
+var axeResults = await new Deque.AxeCore.Playwright.AxeBuilder(page)
+    .AnalyzeAsync();
+
+// Check for violations
+Assert.Empty(axeResults.Violations);
 
 // WinUI/WPF: use Accessibility Insights for Windows CLI in CI pipelines
 // Requires: AccessibilityInsights.CLI (available via Microsoft Store or direct download)
@@ -492,7 +495,7 @@ This skill references the [Web Content Accessibility Guidelines (WCAG)](https://
 
 1. **Do not set `SemanticProperties.Description` on MAUI `Label` controls.** It overrides the `Text` property for screen readers, causing a mismatch between visual and spoken content. Labels are already accessible via their `Text` property.
 2. **Do not set `SemanticProperties.Description` on MAUI `Entry`/`Editor` on Android.** Use `Placeholder` or `SemanticProperties.Hint` instead -- `Description` conflicts with TalkBack actions on these controls.
-3. **Do not use `AutomationProperties` for new MAUI code.** Use `SemanticProperties` (the MAUI-native API). `AutomationProperties` is the legacy Xamarin.Forms approach, superseded in MAUI.
+3. **Do not use `AutomationProperties.Name` or `AutomationProperties.HelpText` for new MAUI code.** Use `SemanticProperties` instead (the MAUI-native API). `AutomationProperties.IsInAccessibleTree` and `ExcludedWithChildren` remain valid for controlling accessibility tree inclusion.
 4. **Do not omit `aria-label` on icon-only Blazor buttons.** Buttons without visible text content are invisible to screen readers unless `aria-label` or `aria-labelledby` is set.
 5. **Do not use `aria-live="assertive"` for routine status updates.** Assertive interrupts the screen reader immediately. Use `aria-live="polite"` for non-critical updates; reserve assertive for errors and time-critical alerts.
 6. **Do not assume TUI apps are accessible by default.** Terminal screen reader support varies dramatically by emulator and OS. Always provide alternative output formats for critical accessibility scenarios.
