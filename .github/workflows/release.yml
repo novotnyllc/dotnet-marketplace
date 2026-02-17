@@ -29,20 +29,28 @@ jobs:
           VERSION="${TAG#dotnet-artisan/v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Validate root marketplace.json
+      - name: Verify tag version matches plugin.json
         run: |
           set -euo pipefail
-          jq empty .claude-plugin/marketplace.json
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          PLUGIN_VERSION=$(jq -r '.version' plugins/dotnet-artisan/.claude-plugin/plugin.json)
 
-          PLUGIN_COUNT=$(jq '.plugins | length' .claude-plugin/marketplace.json)
-          for i in $(seq 0 $(( PLUGIN_COUNT - 1 ))); do
-            SOURCE=$(jq -r ".plugins[$i].source" .claude-plugin/marketplace.json)
-            if [ ! -d "$SOURCE" ] || [ ! -f "$SOURCE/.claude-plugin/plugin.json" ]; then
-              echo "FAIL: plugin source '$SOURCE' invalid"
-              exit 1
-            fi
-          done
-          echo "OK: root marketplace.json"
+          echo "Tag version:        $TAG_VERSION"
+          echo "plugin.json version: $PLUGIN_VERSION"
+
+          if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
+            echo ""
+            echo "FAIL: Tag version ($TAG_VERSION) does not match plugin.json version ($PLUGIN_VERSION)"
+            echo "Run ./scripts/bump.sh and commit before tagging."
+            exit 1
+          fi
+
+          echo "OK: Tag version matches plugin.json"
+
+      - name: Validate root marketplace.json
+        run: |
+          set -o pipefail
+          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
 
       - name: Validate plugin structure
         run: |
@@ -52,23 +60,46 @@ jobs:
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
 
+      - name: Extract release notes from CHANGELOG
+        id: changelog
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Extract the section for this version from CHANGELOG.md
+          # Matches content between ## [VERSION] and the next ## [ header
+          NOTES=$(awk '/^## \['"$VERSION"'\]/{flag=1;next}/^## \[/{flag=0}flag' CHANGELOG.md)
+
+          if [ -z "$NOTES" ]; then
+            echo "WARN: No CHANGELOG section found for version $VERSION"
+            NOTES="No changelog entry found for v${VERSION}."
+          fi
+
+          # Write to file for multi-line GHA output
+          echo "$NOTES" > /tmp/release-notes.md
+
+          # Also write the full body with install instructions
+          {
+            echo "## dotnet-artisan v${VERSION}"
+            echo ""
+            cat /tmp/release-notes.md
+            echo ""
+            echo "### Install"
+            echo ""
+            echo '```bash'
+            echo "claude plugin add novotnyllc/dotnet-marketplace"
+            echo '```'
+            echo ""
+            echo "### Validation"
+            echo "All validation checks passed before release:"
+            echo "- Plugin structure and skill validation"
+            echo "- Marketplace metadata validation"
+            echo "- Version consistency verification"
+          } > /tmp/release-body.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: dotnet-artisan v${{ steps.version.outputs.version }}
-          body: |
-            ## dotnet-artisan v${{ steps.version.outputs.version }}
-
-            .NET development skills plugin for Claude Code.
-
-            ### Install
-
-            ```bash
-            claude plugin add novotnyllc/dotnet-marketplace
-            ```
-
-            ### Validation
-            All validation checks passed before release:
-            - Plugin structure and skill validation
-            - Marketplace metadata validation
+          body_path: /tmp/release-body.md

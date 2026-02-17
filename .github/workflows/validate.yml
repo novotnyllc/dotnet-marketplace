@@ -21,28 +21,8 @@ jobs:
 
       - name: Validate root marketplace.json
         run: |
-          set -euo pipefail
-          echo "=== Root Marketplace Validation ==="
-          jq empty .claude-plugin/marketplace.json
-          echo "OK: marketplace.json is valid JSON"
-
-          # Verify each plugin source path resolves to a directory with plugin.json
-          PLUGIN_COUNT=$(jq '.plugins | length' .claude-plugin/marketplace.json)
-          echo "Found $PLUGIN_COUNT plugin(s) in marketplace"
-
-          for i in $(seq 0 $(( PLUGIN_COUNT - 1 ))); do
-            SOURCE=$(jq -r ".plugins[$i].source" .claude-plugin/marketplace.json)
-            NAME=$(jq -r ".plugins[$i].name" .claude-plugin/marketplace.json)
-            if [ ! -d "$SOURCE" ]; then
-              echo "FAIL: plugin '$NAME' source path '$SOURCE' is not a directory"
-              exit 1
-            fi
-            if [ ! -f "$SOURCE/.claude-plugin/plugin.json" ]; then
-              echo "FAIL: plugin '$NAME' missing .claude-plugin/plugin.json at '$SOURCE'"
-              exit 1
-            fi
-            echo "OK: plugin '$NAME' source '$SOURCE' resolves with plugin.json"
-          done
+          set -o pipefail
+          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
 
       - name: Validate plugin JSON files
         run: |
@@ -71,6 +51,42 @@ jobs:
 
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
+
+      - name: Validate version consistency
+        run: |
+          set -euo pipefail
+          echo "=== Version Consistency Check ==="
+
+          # Read version from plugin.json (canonical source of truth)
+          PLUGIN_VERSION=$(jq -r '.version' plugins/dotnet-artisan/.claude-plugin/plugin.json)
+          echo "plugin.json version: $PLUGIN_VERSION"
+
+          # Read version from root marketplace.json plugin entry
+          MARKETPLACE_PLUGIN_VERSION=$(jq -r '.plugins[] | select(.name == "dotnet-artisan") | .version' .claude-plugin/marketplace.json)
+          echo "root marketplace.json plugin version: $MARKETPLACE_PLUGIN_VERSION"
+
+          # Read version from root marketplace.json metadata
+          MARKETPLACE_META_VERSION=$(jq -r '.metadata.version' .claude-plugin/marketplace.json)
+          echo "root marketplace.json metadata.version: $MARKETPLACE_META_VERSION"
+
+          # Compare all three
+          FAIL=0
+          if [ "$PLUGIN_VERSION" != "$MARKETPLACE_PLUGIN_VERSION" ]; then
+            echo "FAIL: plugin.json version ($PLUGIN_VERSION) != root marketplace plugin version ($MARKETPLACE_PLUGIN_VERSION)"
+            FAIL=1
+          fi
+          if [ "$PLUGIN_VERSION" != "$MARKETPLACE_META_VERSION" ]; then
+            echo "FAIL: plugin.json version ($PLUGIN_VERSION) != root marketplace metadata.version ($MARKETPLACE_META_VERSION)"
+            FAIL=1
+          fi
+
+          if [ "$FAIL" -eq 1 ]; then
+            echo ""
+            echo "Version mismatch detected. Run ./scripts/bump.sh to update all version locations."
+            exit 1
+          fi
+
+          echo "OK: All version locations are consistent ($PLUGIN_VERSION)"
 
       - name: Write job summary
         if: always()

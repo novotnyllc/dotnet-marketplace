@@ -40,9 +40,8 @@ Move validation scripts from `plugins/dotnet-artisan/scripts/` to repo top-level
 - [ ] `CONTRIBUTING.md` validation commands use new paths
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` passes from repo root
 ## Done summary
-TBD
-
+Moved validation scripts (validate-skills.sh, _validate_skills.py, validate-marketplace.sh) from plugins/dotnet-artisan/scripts/ to repo-root scripts/. Updated internal path resolution to use PLUGIN_DIR for plugin-relative paths. Updated CI workflows (validate.yml, release.yml) to run scripts from repo root. Updated documentation (CLAUDE.md, CONTRIBUTING.md, plugins/dotnet-artisan/CLAUDE.md) with new script locations.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 6978ceaf2743544b7ea921cfb96542f5d0781c28
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 - PRs:

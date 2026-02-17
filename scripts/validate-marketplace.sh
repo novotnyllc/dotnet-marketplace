@@ -242,9 +242,9 @@ fi
 
 echo ""
 
-# --- marketplace.json validation ---
+# --- root marketplace.json validation ---
 
-echo "--- marketplace.json ---"
+echo "--- root marketplace.json ---"
 
 if [ ! -f "$MARKETPLACE_JSON" ]; then
     echo "ERROR: marketplace.json not found at $MARKETPLACE_JSON"
@@ -257,9 +257,9 @@ else
     else
         echo "OK: marketplace.json is valid JSON"
 
-        # Per-plugin marketplace.json has plugin metadata (not a plugins array)
-        # Check required metadata fields
-        for field in name version description; do
+        # Root marketplace.json schema: name, owner, metadata, plugins array
+        # Check required top-level fields
+        for field in name description; do
             if ! jq -e ".$field | type == \"string\" and length > 0" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
                 echo "ERROR: marketplace.json.$field must be a non-empty string"
                 errors=$((errors + 1))
@@ -269,8 +269,26 @@ else
             fi
         done
 
+        # Check owner.name
+        if ! jq -e '.owner.name | type == "string" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "ERROR: marketplace.json.owner.name must be a non-empty string"
+            errors=$((errors + 1))
+        else
+            value=$(jq -r '.owner.name' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.owner.name = \"$value\""
+        fi
+
+        # Check plugins array exists and has entries
+        if ! jq -e '.plugins | type == "array" and length > 0' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "ERROR: marketplace.json.plugins must be a non-empty array"
+            errors=$((errors + 1))
+        else
+            pcount=$(jq '.plugins | length' "$MARKETPLACE_JSON")
+            echo "OK: marketplace.json.plugins has $pcount plugin(s)"
+        fi
+
         # Check recommended fields
-        for field in author license keywords categories; do
+        for field in metadata; do
             if ! jq -e ".$field" "$MARKETPLACE_JSON" >/dev/null 2>&1; then
                 echo "WARN: marketplace.json.$field is missing"
                 warnings=$((warnings + 1))
@@ -278,6 +296,13 @@ else
                 echo "OK: marketplace.json.$field present"
             fi
         done
+
+        if ! jq -e '."$schema"' "$MARKETPLACE_JSON" >/dev/null 2>&1; then
+            echo "WARN: marketplace.json.\$schema is missing"
+            warnings=$((warnings + 1))
+        else
+            echo "OK: marketplace.json.\$schema present"
+        fi
     fi
 fi
 
