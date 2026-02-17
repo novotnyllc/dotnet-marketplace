@@ -4,7 +4,7 @@
 #
 # Checks:
 #   1. plugin.json exists and is valid JSON
-#   2. plugin.json has canonical schema: skills (array), agents (array), hooks (string), mcpServers (string)
+#   2. plugin.json has canonical schema: skills (array), agents (array), hooks (optional string), mcpServers (optional string)
 #   3. All skill directories referenced in plugin.json contain SKILL.md
 #   4. All agent files referenced in plugin.json exist
 #   5. hooks and mcpServers paths exist
@@ -148,44 +148,52 @@ else
             done < <(jq -r '.agents[]' "$PLUGIN_JSON" 2>/dev/null)
         fi
 
-        # Validate hooks is a string path
-        hooks_type=$(jq -r '.hooks | type' "$PLUGIN_JSON" 2>/dev/null)
-        if [ "$hooks_type" != "string" ]; then
-            echo "ERROR: plugin.json.hooks must be a string path (got: $hooks_type)"
-            errors=$((errors + 1))
-        else
-            hooks_path=$(jq -r '.hooks' "$PLUGIN_JSON")
-            if ! validate_path_safe "$hooks_path" "hooks"; then
+        # Validate hooks (optional in plugin.json; auto-discovered from hooks/hooks.json)
+        if jq -e '.hooks' "$PLUGIN_JSON" >/dev/null 2>&1; then
+            hooks_type=$(jq -r '.hooks | type' "$PLUGIN_JSON" 2>/dev/null)
+            if [ "$hooks_type" != "string" ]; then
+                echo "ERROR: plugin.json.hooks must be a string path (got: $hooks_type)"
                 errors=$((errors + 1))
             else
-                full_path="$PLUGIN_DIR/$hooks_path"
-                if [ ! -f "$full_path" ]; then
-                    echo "ERROR: hooks file not found: $hooks_path"
+                hooks_path=$(jq -r '.hooks' "$PLUGIN_JSON")
+                if ! validate_path_safe "$hooks_path" "hooks"; then
                     errors=$((errors + 1))
                 else
-                    echo "OK: $hooks_path exists"
+                    full_path="$PLUGIN_DIR/$hooks_path"
+                    if [ ! -f "$full_path" ]; then
+                        echo "ERROR: hooks file not found: $hooks_path"
+                        errors=$((errors + 1))
+                    else
+                        echo "OK: $hooks_path exists"
+                    fi
                 fi
             fi
+        else
+            echo "OK: hooks omitted (auto-discovered from hooks/hooks.json)"
         fi
 
-        # Validate mcpServers is a string path
-        mcp_type=$(jq -r '.mcpServers | type' "$PLUGIN_JSON" 2>/dev/null)
-        if [ "$mcp_type" != "string" ]; then
-            echo "ERROR: plugin.json.mcpServers must be a string path (got: $mcp_type)"
-            errors=$((errors + 1))
-        else
-            mcp_path=$(jq -r '.mcpServers' "$PLUGIN_JSON")
-            if ! validate_path_safe "$mcp_path" "mcpServers"; then
+        # Validate mcpServers (optional in plugin.json; auto-discovered from .mcp.json)
+        if jq -e '.mcpServers' "$PLUGIN_JSON" >/dev/null 2>&1; then
+            mcp_type=$(jq -r '.mcpServers | type' "$PLUGIN_JSON" 2>/dev/null)
+            if [ "$mcp_type" != "string" ]; then
+                echo "ERROR: plugin.json.mcpServers must be a string path (got: $mcp_type)"
                 errors=$((errors + 1))
             else
-                full_path="$PLUGIN_DIR/$mcp_path"
-                if [ ! -f "$full_path" ]; then
-                    echo "ERROR: mcpServers file not found: $mcp_path"
+                mcp_path=$(jq -r '.mcpServers' "$PLUGIN_JSON")
+                if ! validate_path_safe "$mcp_path" "mcpServers"; then
                     errors=$((errors + 1))
                 else
-                    echo "OK: $mcp_path exists"
+                    full_path="$PLUGIN_DIR/$mcp_path"
+                    if [ ! -f "$full_path" ]; then
+                        echo "ERROR: mcpServers file not found: $mcp_path"
+                        errors=$((errors + 1))
+                    else
+                        echo "OK: $mcp_path exists"
+                    fi
                 fi
             fi
+        else
+            echo "OK: mcpServers omitted (auto-discovered from .mcp.json)"
         fi
 
         # --- plugin.json enrichment fields (recommended for discoverability) ---

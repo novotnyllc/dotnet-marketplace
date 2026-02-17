@@ -164,7 +164,5 @@
     "./agents/dotnet-testing-specialist.md",
     "./agents/dotnet-cloud-specialist.md",
     "./agents/dotnet-code-review-agent.md"
-  ],
-  "hooks": "./hooks/hooks.json",
-  "mcpServers": "./.mcp.json"
+  ]
 }
