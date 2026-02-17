@@ -7,6 +7,10 @@ Checks:
   2. YAML frontmatter is well-formed (strict subset parser for flat key:value)
   3. [skill:name] cross-references point to existing skill directories
   4. Context budget tracking with stable output keys
+  5. Name-directory consistency (name field must match skill directory name)
+  6. Extra frontmatter field detection (only name and description allowed)
+  7. Description filler phrase detection (routing quality enforcement)
+  8. WHEN prefix regression detection (descriptions must not start with WHEN)
 
 Invoked by validate-skills.sh. All validation logic lives here to avoid
 per-file subprocess spawning and ensure deterministic YAML parsing.
@@ -19,6 +23,21 @@ import argparse
 import re
 import sys
 from pathlib import Path
+
+# --- Quality Constants ---
+
+# Canonical frontmatter fields. Any field beyond these triggers a warning.
+ALLOWED_FRONTMATTER_FIELDS = {"name", "description"}
+
+# Filler phrases that reduce description routing quality.
+# Case-insensitive patterns matched against the description text.
+# "Covers" was the only instance found by the fn-49.1 audit; others are preventive.
+FILLER_PHRASES = [
+    re.compile(r"\bCovers\b", re.IGNORECASE),
+    re.compile(r"\bhelps with\b", re.IGNORECASE),
+    re.compile(r"\bguide to\b", re.IGNORECASE),
+    re.compile(r"\bcomplete guide\b", re.IGNORECASE),
+]
 
 # --- YAML Parsing ---
 
@@ -201,6 +220,7 @@ def process_file(path: str) -> dict:
         "desc_len": len(description),
         "refs": refs,
         "field_errors": field_errors,
+        "all_fields": set(parsed.keys()),
     }
 
 
@@ -251,6 +271,12 @@ def main():
     total_desc_chars = 0
     skill_count = 0
 
+    # Quality check counters (reported as stable output keys)
+    name_dir_mismatches = 0
+    extra_field_count = 0
+    filler_phrase_count = 0
+    when_prefix_count = 0
+
     print("=== SKILL.md Validation (parser: strict-subset) ===")
     print()
 
@@ -270,14 +296,56 @@ def main():
             errors += 1
             continue
 
+        name = result["name"]
         description = result["description"]
         desc_len = result["desc_len"]
         refs = result["refs"]
+        all_fields = result["all_fields"]
 
         # Report field-level errors (type or missing)
         for fe in result.get("field_errors", []):
             print(f"ERROR: {rel_path} -- {fe}")
             errors += 1
+
+        # --- Quality checks (all warnings, not errors) ---
+
+        # Check 5: Name-directory consistency
+        dir_name = skill_file.parent.name
+        if name and name != dir_name:
+            print(
+                f"WARN:  {rel_path} -- name '{name}' does not match directory '{dir_name}'"
+            )
+            warnings += 1
+            name_dir_mismatches += 1
+
+        # Check 6: Extra frontmatter fields beyond {name, description}
+        extra_fields = all_fields - ALLOWED_FRONTMATTER_FIELDS
+        if extra_fields:
+            extras = ", ".join(sorted(extra_fields))
+            print(
+                f"WARN:  {rel_path} -- extra frontmatter fields: {extras}"
+            )
+            warnings += 1
+            extra_field_count += len(extra_fields)
+
+        # Check 7: Filler phrase detection in description
+        if description:
+            for pattern in FILLER_PHRASES:
+                match = pattern.search(description)
+                if match:
+                    print(
+                        f"WARN:  {rel_path} -- description contains filler phrase '{match.group()}'"
+                    )
+                    warnings += 1
+                    filler_phrase_count += 1
+
+        # Check 8: WHEN prefix regression detection
+        if description and description.startswith("WHEN "):
+            print(
+                f"WARN:  {rel_path} -- description starts with 'WHEN ' prefix (removed in fn-49.2)"
+            )
+            warnings += 1
+            when_prefix_count += 1
 
         # Track budget only for valid descriptions
         if description:
@@ -327,6 +395,10 @@ def main():
     print(f"CURRENT_DESC_CHARS={total_desc_chars}")
     print(f"PROJECTED_DESC_CHARS={projected_desc_chars}")
     print(f"BUDGET_STATUS={budget_status}")
+    print(f"NAME_DIR_MISMATCHES={name_dir_mismatches}")
+    print(f"EXTRA_FIELD_COUNT={extra_field_count}")
+    print(f"FILLER_PHRASE_COUNT={filler_phrase_count}")
+    print(f"WHEN_PREFIX_COUNT={when_prefix_count}")
 
     print()
     print(f"Skills validated: {skill_count}")

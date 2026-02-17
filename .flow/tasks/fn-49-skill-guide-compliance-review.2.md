@@ -48,9 +48,8 @@ Apply fixes to all non-compliant skill front matter identified in Task 1's audit
 - [ ] `./scripts/validate-marketplace.sh` passes
 - [ ] No SKILL.md body content changed (front matter only)
 ## Done summary
-TBD
-
+Optimized all 127 skill descriptions: removed WHEN prefix systemically, disambiguated 8 overlapping pairs (M-1 through M-7, M-9), removed filler word (M-8), and trimmed 12 longest descriptions. Budget reduced from 12,515 to 11,774 chars (below 11,800 target).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f19dbd48ebcfdff2b75fb015a25dcddfb4635bdf
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
