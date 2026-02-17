@@ -1,7 +1,13 @@
 ---
 name: dotnet-solution-navigation
 description: "Orienting in a .NET solution. Entry points, .sln/.slnx files, dependency graphs, config."
+user-invocable: false
+context: fork
+model: haiku
 ---
+
+```! find . -maxdepth 2 \( -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -5
+```
 
 # dotnet-solution-navigation
 

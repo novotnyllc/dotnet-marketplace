@@ -1,7 +1,13 @@
 ---
 name: dotnet-project-analysis
 description: "Navigating .NET solution structure or build configuration. Analyzes .sln, .csproj, CPM."
+user-invocable: false
+context: fork
+model: haiku
 ---
+
+```! find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -20
+```
 
 # dotnet-project-analysis
 

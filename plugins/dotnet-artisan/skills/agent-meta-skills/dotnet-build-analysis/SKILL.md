@@ -1,6 +1,9 @@
 ---
 name: dotnet-build-analysis
 description: "Interpreting MSBuild output, NuGet errors, or analyzer warnings. Error codes, CI drift fixes."
+user-invocable: false
+context: fork
+model: haiku
 ---
 
 # dotnet-build-analysis

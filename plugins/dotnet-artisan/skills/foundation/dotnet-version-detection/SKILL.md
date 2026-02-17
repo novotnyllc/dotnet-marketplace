@@ -1,7 +1,13 @@
 ---
 name: dotnet-version-detection
 description: "Project has .csproj, global.json, or Directory.Build.props. Detects TFMs and SDK versions."
+user-invocable: false
+context: fork
+model: haiku
 ---
+
+```! dotnet --version 2>/dev/null
+```
 
 # dotnet-version-detection
 
