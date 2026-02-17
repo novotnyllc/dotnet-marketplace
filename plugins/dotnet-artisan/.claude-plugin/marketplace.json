@@ -6,6 +6,7 @@
     "name": "Claire Novotny LLC",
     "url": "https://github.com/novotnyllc"
   },
+  "homepage": "https://github.com/novotnyllc/dotnet-marketplace/tree/main/plugins/dotnet-artisan",
   "repository": "https://github.com/novotnyllc/dotnet-marketplace",
   "license": "MIT",
   "keywords": [
