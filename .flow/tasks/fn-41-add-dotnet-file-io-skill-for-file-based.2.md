@@ -39,9 +39,8 @@ Register `dotnet-file-io` in the plugin manifest, update routing, counts, and ad
 - [ ] CHANGELOG.md has entry for new skill
 - [ ] All four validation commands pass: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh && python3 scripts/generate_dist.py --strict && python3 scripts/validate_cross_agent.py`
 ## Done summary
-TBD
-
+Integrated dotnet-file-io into plugin registry and routing: registered in plugin.json, bumped projected-skills to 122, added catalog and routing entries in dotnet-advisor, updated counts in README/AGENTS/CLAUDE, added bidirectional cross-refs to dotnet-io-pipelines and dotnet-gc-memory, added trigger corpus entry, and added CHANGELOG entry. All four validation commands pass.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 54a2d9a8390923a7e7c43bb9d3f32a98e4e774e5
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/generate_dist.py --strict, python3 scripts/validate_cross_agent.py
 - PRs:
