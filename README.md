@@ -17,14 +17,25 @@
 
 ## Installation
 
-Install a plugin from this marketplace using the Claude Code CLI:
+### From within Claude Code (recommended)
 
-```bash
-claude plugin add novotnyllc/dotnet-marketplace
-claude plugin install dotnet-artisan
+Run the `/plugin` slash command inside a Claude Code session:
+
+```
+/plugin marketplace add novotnyllc/dotnet-marketplace
 ```
 
-Installation syntax may change as the Claude Code plugin system evolves.
+This adds the marketplace and makes all dotnet-artisan skills and agents available immediately. You can also run `/plugin` to browse an interactive UI for discovering and installing plugins.
+
+### From the terminal CLI
+
+```bash
+claude plugin install dotnet-artisan@dotnet-marketplace
+```
+
+> **Note:** Close the Claude desktop app before installing. Running both Claude Code (terminal) and the desktop app simultaneously can cause `EBUSY: resource busy or locked` errors.
+
+Installation syntax may change as the Claude Code plugin system evolves. Requires Claude Code v1.0.33+.
 
 ## Repository Structure
 
