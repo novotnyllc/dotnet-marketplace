@@ -3,7 +3,7 @@
   "plugins": [
     {
       "name": "dotnet-artisan",
-      "source": ".",
+      "source": "./plugins/dotnet-artisan",
       "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
       "author": {
         "name": "Claire Novotny LLC",

@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "."`)
+- **Marketplace restructure** -- Converted repo to flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file listing dotnet-artisan as the available plugin (`"source": "./plugins/dotnet-artisan"`)
 - **Removed dist pipeline** -- Deleted `scripts/generate_dist.py`, `scripts/validate_cross_agent.py`, and all `dist/` generation. Source files ARE the plugin; no build step needed
 - **Per-plugin versioning** -- Release workflow now uses `dotnet-artisan/v*` tag format instead of `v*`
 - **CI updated** -- `validate.yml` no longer runs dist generation or cross-agent conformance; added root marketplace.json validation. `release.yml` removed Pages deployment
@@ -25,16 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Stale files: `docs/fleet-review-rubric.md`, `docs/review-reports/`, `scripts/ralph/runs/`, dist pipeline scripts
-- Cross-agent build pipeline (generate_dist.py, validate_cross_agent.py) -- source files serve as the plugin directly
+- Root-level `plugin.json` (replaced by marketplace.json + per-plugin plugin.json)
+- Cross-agent dist generation pipeline (`generate_dist.py`, `validate_cross_agent.py`) -- source files are the plugin, no transformation needed
 - GitHub Pages deployment from release workflow
+- Stale files: `docs/fleet-review-rubric.md`, `docs/review-reports/`, `scripts/ralph/runs/`, dist pipeline scripts
 - Archived fleet review rubric and consolidated findings as historical snapshots (fn-29 audit, fn-37 cleanup, fn-40 resolution)
-
-### Removed
-
-- Removed cross-agent dist generation pipeline (`generate_dist.py`, `validate_cross_agent.py`) -- source files are the plugin, no transformation needed
-- Removed root-level `plugin.json` (replaced by marketplace.json + per-plugin plugin.json)
-- Removed stale artifacts: fleet review docs, review reports, ralph run logs
 
 ## [0.1.0] - 2026-02-14
 
