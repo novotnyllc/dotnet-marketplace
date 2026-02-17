@@ -19,22 +19,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate JSON files
+      - name: Validate root marketplace.json
         run: |
-          echo "=== JSON Validation ==="
-          jq empty .claude-plugin/plugin.json
-          echo "OK: plugin.json"
+          set -euo pipefail
+          echo "=== Root Marketplace Validation ==="
           jq empty .claude-plugin/marketplace.json
+          echo "OK: marketplace.json is valid JSON"
+
+          # Verify each plugin source path resolves to a directory with plugin.json
+          PLUGIN_COUNT=$(jq '.plugins | length' .claude-plugin/marketplace.json)
+          echo "Found $PLUGIN_COUNT plugin(s) in marketplace"
+
+          for i in $(seq 0 $(( PLUGIN_COUNT - 1 ))); do
+            SOURCE=$(jq -r ".plugins[$i].source" .claude-plugin/marketplace.json)
+            NAME=$(jq -r ".plugins[$i].name" .claude-plugin/marketplace.json)
+            if [ ! -d "$SOURCE" ]; then
+              echo "FAIL: plugin '$NAME' source path '$SOURCE' is not a directory"
+              exit 1
+            fi
+            if [ ! -f "$SOURCE/.claude-plugin/plugin.json" ]; then
+              echo "FAIL: plugin '$NAME' missing .claude-plugin/plugin.json at '$SOURCE'"
+              exit 1
+            fi
+            echo "OK: plugin '$NAME' source '$SOURCE' resolves with plugin.json"
+          done
+
+      - name: Validate plugin JSON files
+        run: |
+          echo "=== Plugin JSON Validation ==="
+          jq empty plugins/dotnet-artisan/.claude-plugin/plugin.json
+          echo "OK: plugin.json"
+          jq empty plugins/dotnet-artisan/.claude-plugin/marketplace.json
           echo "OK: marketplace.json"
-          jq empty hooks/hooks.json
+          jq empty plugins/dotnet-artisan/hooks/hooks.json
           echo "OK: hooks.json"
-          jq empty .mcp.json
+          jq empty plugins/dotnet-artisan/.mcp.json
           echo "OK: .mcp.json"
 
       - name: Validate skills
         id: validate-skills
         run: |
           set -o pipefail
+          cd plugins/dotnet-artisan
           ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
           # Parse stable output keys for summary
@@ -47,17 +73,9 @@ jobs:
           echo "budget_status=$STATUS" >> "$GITHUB_OUTPUT"
 
       - name: Validate marketplace
-        run: ./scripts/validate-marketplace.sh
-
-      - name: Generate dist/ outputs
         run: |
-          set -o pipefail
-          python3 scripts/generate_dist.py --strict 2>&1 | tee /tmp/generate-output.txt
-
-      - name: Validate cross-agent conformance
-        run: |
-          set -o pipefail
-          python3 scripts/validate_cross_agent.py 2>&1 | tee /tmp/conformance-output.txt
+          cd plugins/dotnet-artisan
+          ./scripts/validate-marketplace.sh
 
       - name: Write job summary
         if: always()

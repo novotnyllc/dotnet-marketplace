@@ -3,27 +3,16 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'dotnet-artisan/v*'
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
-# Only allow one Pages deployment at a time
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
-  validate-and-deploy:
-    name: Validate, release, and deploy to Pages
+  release:
+    name: Validate and release
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -36,61 +25,55 @@ jobs:
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          # Strip leading 'v' for semver
-          VERSION="${TAG#v}"
+          # Tag format: dotnet-artisan/v0.1.0 -> version: 0.1.0
+          VERSION="${TAG#dotnet-artisan/v}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate root marketplace.json
+        run: |
+          set -euo pipefail
+          jq empty .claude-plugin/marketplace.json
+
+          PLUGIN_COUNT=$(jq '.plugins | length' .claude-plugin/marketplace.json)
+          for i in $(seq 0 $(( PLUGIN_COUNT - 1 ))); do
+            SOURCE=$(jq -r ".plugins[$i].source" .claude-plugin/marketplace.json)
+            if [ ! -d "$SOURCE" ] || [ ! -f "$SOURCE/.claude-plugin/plugin.json" ]; then
+              echo "FAIL: plugin source '$SOURCE' invalid"
+              exit 1
+            fi
+          done
+          echo "OK: root marketplace.json"
 
       - name: Validate plugin structure
         run: |
           set -o pipefail
+          cd plugins/dotnet-artisan
           ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
       - name: Validate marketplace
-        run: ./scripts/validate-marketplace.sh
-
-      - name: Generate dist/ outputs
         run: |
-          set -o pipefail
-          python3 scripts/generate_dist.py --strict 2>&1 | tee /tmp/generate-output.txt
-
-      - name: Validate cross-agent conformance
-        run: |
-          set -o pipefail
-          python3 scripts/validate_cross_agent.py 2>&1 | tee /tmp/conformance-output.txt
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          cd plugins/dotnet-artisan
+          ./scripts/validate-marketplace.sh
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
+          name: dotnet-artisan v${{ steps.version.outputs.version }}
           body: |
-            ## dotnet-artisan ${{ steps.version.outputs.tag }}
+            ## dotnet-artisan v${{ steps.version.outputs.version }}
 
-            Cross-agent distribution for .NET development skills.
+            .NET development skills plugin for Claude Code.
 
-            ### Distribution
+            ### Install
 
-            Deployed to GitHub Pages:
-            - **Manifest**: `https://<user>.github.io/<repo>/manifest.json`
-            - **Claude**: `https://<user>.github.io/<repo>/claude/`
-            - **Copilot**: `https://<user>.github.io/<repo>/copilot/`
-            - **Codex**: `https://<user>.github.io/<repo>/codex/`
+            ```
+            /plugin marketplace add novotnyllc/dotnet-marketplace
+            /plugin install dotnet-artisan
+            ```
 
             ### Validation
-            All validation checks passed before deployment:
+            All validation checks passed before release:
+            - Root marketplace.json validation
             - Plugin structure and skill validation
             - Marketplace metadata validation
-            - Cross-agent generation (--strict mode)
-            - Cross-agent conformance (7 checks including manifest validation)
