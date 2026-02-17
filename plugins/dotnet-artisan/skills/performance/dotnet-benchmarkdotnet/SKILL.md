@@ -1,6 +1,7 @@
 ---
 name: dotnet-benchmarkdotnet
 description: "Writing benchmarks. BenchmarkDotNet setup, memory diagnosers, baselines, result analysis."
+user-invocable: false
 ---
 
 # dotnet-benchmarkdotnet

@@ -1,6 +1,7 @@
 ---
 name: dotnet-multi-targeting
 description: "Targeting multiple TFMs or using newer C# on older TFMs. Polyfill strategy, API compat."
+user-invocable: false
 ---
 
 # dotnet-multi-targeting

@@ -1,6 +1,7 @@
 ---
 name: dotnet-grpc
 description: "Building gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth."
+user-invocable: false
 ---
 
 # dotnet-grpc

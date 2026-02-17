@@ -1,6 +1,7 @@
 ---
 name: dotnet-terminal-gui
 description: "Building full TUI apps. Terminal.Gui v2: views, layout (Pos/Dim), menus, dialogs, bindings, themes."
+user-invocable: false
 ---
 
 # dotnet-terminal-gui

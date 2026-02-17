@@ -1,6 +1,7 @@
 ---
 name: dotnet-project-structure
 description: "Setting up .NET solution layout. .slnx, Directory.Build.props, CPM, .editorconfig, analyzers."
+user-invocable: false
 ---
 
 # dotnet-project-structure

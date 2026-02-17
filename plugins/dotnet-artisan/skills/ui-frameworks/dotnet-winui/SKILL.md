@@ -1,6 +1,7 @@
 ---
 name: dotnet-winui
 description: "Building WinUI 3 apps. Windows App SDK setup, XAML patterns, MSIX/unpackaged deploy, UWP migration."
+user-invocable: false
 ---
 
 # dotnet-winui

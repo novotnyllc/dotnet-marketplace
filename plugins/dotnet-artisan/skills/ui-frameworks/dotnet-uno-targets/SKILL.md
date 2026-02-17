@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-targets
 description: "Deploying Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux."
+user-invocable: false
 ---
 
 # dotnet-uno-targets

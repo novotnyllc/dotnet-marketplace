@@ -1,6 +1,7 @@
 ---
 name: dotnet-xml-docs
 description: "Writing XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
+user-invocable: false
 ---
 
 # dotnet-xml-docs

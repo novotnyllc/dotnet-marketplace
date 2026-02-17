@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-configuration
 description: "Using Options pattern, user secrets, or feature flags. IOptions<T> and FeatureManagement."
+user-invocable: false
 ---
 
 # dotnet-csharp-configuration

@@ -1,6 +1,7 @@
 ---
 name: dotnet-msbuild-authoring
 description: "Authoring MSBuild targets, props, or conditions. Custom targets, incrementality, Build patterns."
+user-invocable: false
 ---
 
 # dotnet-msbuild-authoring

@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-build-test
 description: "Configuring .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
+user-invocable: false
 ---
 
 # dotnet-ado-build-test

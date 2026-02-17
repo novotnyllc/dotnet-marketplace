@@ -1,6 +1,7 @@
 ---
 name: dotnet-system-commandline
 description: "Using System.CommandLine 2.0. Commands, options, SetAction, custom parsing, middleware, testing."
+user-invocable: false
 ---
 
 # dotnet-system-commandline

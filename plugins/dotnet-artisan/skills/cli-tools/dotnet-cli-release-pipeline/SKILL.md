@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-release-pipeline
 description: "Releasing CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums."
+user-invocable: false
 ---
 
 # dotnet-cli-release-pipeline

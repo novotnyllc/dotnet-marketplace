@@ -1,6 +1,7 @@
 ---
 name: dotnet-aspire-patterns
 description: "Using .NET Aspire. AppHost orchestration, service discovery, components, dashboard, health checks."
+user-invocable: false
 ---
 
 # dotnet-aspire-patterns

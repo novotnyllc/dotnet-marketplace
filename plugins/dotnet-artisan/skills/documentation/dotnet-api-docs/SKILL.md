@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-docs
 description: "Generating API documentation. DocFX setup, OpenAPI-as-docs, doc-code sync, versioned docs."
+user-invocable: false
 ---
 
 # dotnet-api-docs

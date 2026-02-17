@@ -1,6 +1,7 @@
 ---
 name: dotnet-integration-testing
 description: "Testing with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
+user-invocable: false
 ---
 
 # dotnet-integration-testing

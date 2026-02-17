@@ -1,6 +1,7 @@
 ---
 name: dotnet-artifacts-output
 description: "Using artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
+user-invocable: false
 ---
 
 # dotnet-artifacts-output

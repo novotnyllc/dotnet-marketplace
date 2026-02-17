@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-coding-standards
 description: "Enforcing C# naming, style, and file layout conventions. Framework Design Guidelines."
+user-invocable: false
 ---
 
 # dotnet-csharp-coding-standards

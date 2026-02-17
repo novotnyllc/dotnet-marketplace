@@ -1,6 +1,7 @@
 ---
 name: dotnet-openapi
 description: "Generating OpenAPI docs. MS.AspNetCore.OpenApi (.NET 9+), Swashbuckle migration, NSwag."
+user-invocable: false
 ---
 
 # dotnet-openapi

@@ -1,6 +1,7 @@
 ---
 name: dotnet-http-client
 description: "Consuming HTTP APIs. IHttpClientFactory, typed/named clients, resilience, DelegatingHandlers."
+user-invocable: false
 ---
 
 # dotnet-http-client

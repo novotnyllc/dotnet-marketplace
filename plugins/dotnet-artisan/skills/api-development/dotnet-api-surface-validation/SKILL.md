@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-surface-validation
 description: "Detecting API changes in CI. PublicApiAnalyzers, Verify snapshots, breaking change enforcement."
+user-invocable: false
 ---
 
 # dotnet-api-surface-validation

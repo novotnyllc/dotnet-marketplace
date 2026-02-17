@@ -1,6 +1,7 @@
 ---
 name: dotnet-tool-management
 description: "Installing or managing .NET tools. Global, local, manifests, restore, version pinning."
+user-invocable: false
 ---
 
 # dotnet-tool-management

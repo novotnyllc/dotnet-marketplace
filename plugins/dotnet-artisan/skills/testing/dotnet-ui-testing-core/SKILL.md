@@ -1,6 +1,7 @@
 ---
 name: dotnet-ui-testing-core
 description: "Testing UI across frameworks. Page objects, test selectors, async waits, accessibility."
+user-invocable: false
 ---
 
 # dotnet-ui-testing-core

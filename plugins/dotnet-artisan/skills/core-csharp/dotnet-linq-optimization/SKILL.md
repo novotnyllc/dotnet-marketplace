@@ -1,6 +1,7 @@
 ---
 name: dotnet-linq-optimization
 description: "Optimizing LINQ queries. IQueryable vs IEnumerable, compiled queries, deferred exec, allocations."
+user-invocable: false
 ---
 
 # dotnet-linq-optimization

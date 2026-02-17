@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-security
 description: "Implementing API auth. Identity, OAuth/OIDC, JWT bearer, passkeys (WebAuthn), CORS, rate limiting."
+user-invocable: false
 ---
 
 # dotnet-api-security

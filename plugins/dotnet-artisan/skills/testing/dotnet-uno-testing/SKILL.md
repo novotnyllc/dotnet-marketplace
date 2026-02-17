@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-testing
 description: "Testing Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads."
+user-invocable: false
 ---
 
 # dotnet-uno-testing

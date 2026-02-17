@@ -1,6 +1,7 @@
 ---
 name: dotnet-localization
 description: "Localizing .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL."
+user-invocable: false
 ---
 
 # dotnet-localization

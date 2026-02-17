@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-publish
 description: "Publishing .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts."
+user-invocable: false
 ---
 
 # dotnet-ado-publish

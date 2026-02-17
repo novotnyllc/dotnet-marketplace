@@ -1,6 +1,7 @@
 ---
 name: dotnet-ci-benchmarking
 description: "Gating CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports."
+user-invocable: false
 ---
 
 # dotnet-ci-benchmarking

@@ -1,6 +1,7 @@
 ---
 name: dotnet-realtime-communication
 description: "Building real-time features. SignalR hubs, SSE (.NET 10), JSON-RPC 2.0, gRPC streaming, scaling."
+user-invocable: false
 ---
 
 # dotnet-realtime-communication

@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-unique
 description: "Using ADO-exclusive features. Environments, approvals, service connections, classic releases."
+user-invocable: false
 ---
 
 # dotnet-ado-unique

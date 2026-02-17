@@ -1,6 +1,7 @@
 ---
 name: dotnet-mermaid-diagrams
 description: "Creating Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts."
+user-invocable: false
 ---
 
 # dotnet-mermaid-diagrams

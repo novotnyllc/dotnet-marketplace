@@ -1,6 +1,7 @@
 ---
 name: dotnet-domain-modeling
 description: "Modeling business domains. Aggregates, value objects, domain events, rich models, repositories."
+user-invocable: false
 ---
 
 # dotnet-domain-modeling

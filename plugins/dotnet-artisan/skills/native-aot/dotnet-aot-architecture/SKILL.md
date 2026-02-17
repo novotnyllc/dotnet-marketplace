@@ -1,6 +1,7 @@
 ---
 name: dotnet-aot-architecture
 description: "Designing AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories."
+user-invocable: false
 ---
 
 # dotnet-aot-architecture

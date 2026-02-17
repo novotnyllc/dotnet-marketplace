@@ -1,6 +1,7 @@
 ---
 name: dotnet-resilience
 description: "Adding fault tolerance. Polly v8 + MS.Extensions.Http.Resilience, retry/circuit breaker/timeout."
+user-invocable: false
 ---
 
 # dotnet-resilience

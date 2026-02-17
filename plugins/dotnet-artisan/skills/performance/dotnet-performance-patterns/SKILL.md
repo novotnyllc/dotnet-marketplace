@@ -1,6 +1,7 @@
 ---
 name: dotnet-performance-patterns
 description: "Optimizing .NET allocations/throughput. Span, ArrayPool, ref struct, sealed, stackalloc."
+user-invocable: false
 ---
 
 # dotnet-performance-patterns

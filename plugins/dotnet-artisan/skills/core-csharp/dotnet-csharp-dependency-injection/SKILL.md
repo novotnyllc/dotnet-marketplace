@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-dependency-injection
 description: "Registering or resolving services with MS DI. Keyed services, scopes, decoration, hosted services."
+user-invocable: false
 ---
 
 # dotnet-csharp-dependency-injection

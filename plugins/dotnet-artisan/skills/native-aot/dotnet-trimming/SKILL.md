@@ -1,6 +1,7 @@
 ---
 name: dotnet-trimming
 description: "Making apps/libraries trim-safe. Annotations, ILLink descriptors, IL2xxx warnings, IsTrimmable."
+user-invocable: false
 ---
 
 # dotnet-trimming

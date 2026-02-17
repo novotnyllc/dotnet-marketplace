@@ -1,6 +1,7 @@
 ---
 name: dotnet-maui-testing
 description: "Testing .NET MAUI apps. Appium device/emulator testing, XHarness, platform validation."
+user-invocable: false
 ---
 
 # dotnet-maui-testing

@@ -1,6 +1,7 @@
 ---
 name: dotnet-file-based-apps
 description: "Running C# without a project file (.NET 10 SDK). Directives, CLI commands, migration."
+user-invocable: false
 ---
 
 # dotnet-file-based-apps

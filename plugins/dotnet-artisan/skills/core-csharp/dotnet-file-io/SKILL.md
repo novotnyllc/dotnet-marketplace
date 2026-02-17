@@ -1,6 +1,7 @@
 ---
 name: dotnet-file-io
 description: "Doing file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
+user-invocable: false
 ---
 
 # dotnet-file-io

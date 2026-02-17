@@ -1,6 +1,7 @@
 ---
 name: dotnet-container-deployment
 description: "Deploying .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
+user-invocable: false
 ---
 
 # dotnet-container-deployment

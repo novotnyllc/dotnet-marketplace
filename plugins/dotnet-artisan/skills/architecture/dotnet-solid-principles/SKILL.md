@@ -1,6 +1,7 @@
 ---
 name: dotnet-solid-principles
 description: "Designing classes or refactoring. SOLID, DRY, SRP with C# anti-patterns, fixes, compliance."
+user-invocable: false
 ---
 
 # dotnet-solid-principles

@@ -1,6 +1,7 @@
 ---
 name: dotnet-native-aot
 description: "Publishing Native AOT. PublishAot, ILLink descriptors, P/Invoke, size optimization, containers."
+user-invocable: false
 ---
 
 # dotnet-native-aot

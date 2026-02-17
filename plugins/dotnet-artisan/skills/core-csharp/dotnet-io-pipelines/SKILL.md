@@ -1,6 +1,7 @@
 ---
 name: dotnet-io-pipelines
 description: "Building high-perf network I/O. PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel."
+user-invocable: false
 ---
 
 # dotnet-io-pipelines

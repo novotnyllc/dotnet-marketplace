@@ -1,6 +1,7 @@
 ---
 name: dotnet-agent-gotchas
 description: "Generating or modifying .NET code. Common agent mistakes: async, NuGet, deprecated APIs, DI."
+user-invocable: false
 ---
 
 # dotnet-agent-gotchas

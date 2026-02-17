@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-testing
 description: "Testing Blazor components. bUnit rendering, events, cascading params, JS interop mocking."
+user-invocable: false
 ---
 
 # dotnet-blazor-testing

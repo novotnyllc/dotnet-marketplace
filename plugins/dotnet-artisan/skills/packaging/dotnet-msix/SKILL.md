@@ -1,6 +1,7 @@
 ---
 name: dotnet-msix
 description: "Packaging MSIX apps. Creation, signing, Store submission, App Installer sideload, auto-update."
+user-invocable: false
 ---
 
 # dotnet-msix

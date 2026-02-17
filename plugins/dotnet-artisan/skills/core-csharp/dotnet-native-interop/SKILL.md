@@ -1,6 +1,7 @@
 ---
 name: dotnet-native-interop
 description: "Calling native libraries via P/Invoke. LibraryImport, marshalling, cross-platform resolution."
+user-invocable: false
 ---
 
 # dotnet-native-interop

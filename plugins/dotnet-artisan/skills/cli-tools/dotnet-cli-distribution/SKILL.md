@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-distribution
 description: "Choosing CLI output format. AOT vs framework-dependent, RID matrix, single-file, dotnet tool."
+user-invocable: false
 ---
 
 # dotnet-cli-distribution

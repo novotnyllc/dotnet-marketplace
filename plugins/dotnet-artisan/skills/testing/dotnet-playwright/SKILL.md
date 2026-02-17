@@ -1,6 +1,7 @@
 ---
 name: dotnet-playwright
 description: "Automating browser tests in .NET. Playwright E2E, CI browser caching, trace viewer, codegen."
+user-invocable: false
 ---
 
 # dotnet-playwright

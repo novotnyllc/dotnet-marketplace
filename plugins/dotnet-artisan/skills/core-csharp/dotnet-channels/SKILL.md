@@ -1,6 +1,7 @@
 ---
 name: dotnet-channels
 description: "Using producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain patterns"
+user-invocable: false
 ---
 
 # dotnet-channels

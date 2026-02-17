@@ -1,6 +1,7 @@
 ---
 name: dotnet-documentation-strategy
 description: "Choosing documentation tooling. Starlight, Docusaurus, DocFX decision tree, migration paths."
+user-invocable: false
 ---
 
 # dotnet-documentation-strategy

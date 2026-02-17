@@ -1,6 +1,7 @@
 ---
 name: dotnet-containers
 description: "Containerizing .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
+user-invocable: false
 ---
 
 # dotnet-containers

@@ -1,6 +1,7 @@
 ---
 name: dotnet-testing-strategy
 description: "Deciding how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
+user-invocable: false
 ---
 
 # dotnet-testing-strategy

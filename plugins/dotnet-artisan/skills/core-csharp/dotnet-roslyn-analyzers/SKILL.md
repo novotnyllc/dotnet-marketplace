@@ -1,6 +1,7 @@
 ---
 name: dotnet-roslyn-analyzers
 description: "Authoring Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version."
+user-invocable: false
 ---
 
 # dotnet-roslyn-analyzers

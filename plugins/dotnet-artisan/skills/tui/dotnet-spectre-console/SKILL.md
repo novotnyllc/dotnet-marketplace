@@ -1,6 +1,7 @@
 ---
 name: dotnet-spectre-console
 description: "Building rich console output. Spectre.Console: tables, trees, progress, prompts, live displays."
+user-invocable: false
 ---
 
 # dotnet-spectre-console

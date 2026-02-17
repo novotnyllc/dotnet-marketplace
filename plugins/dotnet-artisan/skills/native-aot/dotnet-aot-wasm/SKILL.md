@@ -1,6 +1,7 @@
 ---
 name: dotnet-aot-wasm
 description: "AOT-compiling for WebAssembly. Blazor/Uno WASM AOT, size vs speed, lazy loading, Brotli."
+user-invocable: false
 ---
 
 # dotnet-aot-wasm

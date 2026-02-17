@@ -1,6 +1,7 @@
 ---
 name: dotnet-csproj-reading
 description: "Reading or modifying .csproj files. SDK-style structure, PropertyGroup/ItemGroup, CPM, props."
+user-invocable: false
 ---
 
 # dotnet-csproj-reading

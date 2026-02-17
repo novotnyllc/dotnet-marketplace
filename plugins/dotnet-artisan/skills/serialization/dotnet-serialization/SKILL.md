@@ -1,6 +1,7 @@
 ---
 name: dotnet-serialization
 description: "Serializing data. System.Text.Json source generators, Protobuf, MessagePack, AOT-safe anti-patterns."
+user-invocable: false
 ---
 
 # dotnet-serialization

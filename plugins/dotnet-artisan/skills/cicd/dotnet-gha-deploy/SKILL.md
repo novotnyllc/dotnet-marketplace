@@ -1,6 +1,7 @@
 ---
 name: dotnet-gha-deploy
 description: "Deploying .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
+user-invocable: false
 ---
 
 # dotnet-gha-deploy

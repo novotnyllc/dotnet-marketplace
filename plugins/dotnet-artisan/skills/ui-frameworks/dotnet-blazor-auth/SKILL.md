@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-auth
 description: "Adding auth to Blazor. AuthorizeView, CascadingAuthenticationState, Identity UI, per-model flows."
+user-invocable: false
 ---
 
 # dotnet-blazor-auth

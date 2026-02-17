@@ -1,6 +1,7 @@
 ---
 name: dotnet-github-docs
 description: "Creating GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
+user-invocable: false
 ---
 
 # dotnet-github-docs

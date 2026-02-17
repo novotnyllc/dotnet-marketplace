@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-patterns
 description: "Building Blazor apps. Hosting models, render modes, routing, streaming rendering, prerender."
+user-invocable: false
 ---
 
 # dotnet-blazor-patterns

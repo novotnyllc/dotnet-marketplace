@@ -1,6 +1,7 @@
 ---
 name: dotnet-input-validation
 description: "Validating HTTP request inputs. .NET 10 AddValidation, FluentValidation, ProblemDetails."
+user-invocable: false
 ---
 
 # dotnet-input-validation

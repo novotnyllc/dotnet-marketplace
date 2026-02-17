@@ -1,6 +1,7 @@
 ---
 name: dotnet-github-releases
 description: "Creating GitHub Releases for .NET. Release creation, assets, notes, pre-release management."
+user-invocable: false
 ---
 
 # dotnet-github-releases

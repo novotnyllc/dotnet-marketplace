@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-platform
 description: "Building Uno Platform apps. Extensions, MVUX reactive pattern, Toolkit controls, Hot Reload."
+user-invocable: false
 ---
 
 # dotnet-uno-platform

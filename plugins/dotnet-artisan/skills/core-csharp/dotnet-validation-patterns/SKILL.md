@@ -1,6 +1,7 @@
 ---
 name: dotnet-validation-patterns
 description: "Validating models or IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>."
+user-invocable: false
 ---
 
 # dotnet-validation-patterns

@@ -1,6 +1,7 @@
 ---
 name: dotnet-secrets-management
 description: "Handling secrets or sensitive configuration. User secrets, environment variables, rotation."
+user-invocable: false
 ---
 
 # dotnet-secrets-management

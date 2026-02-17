@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-code-smells
 description: "Reviewing C# for logic issues. Anti-patterns, common pitfalls, async misuse, DI mistakes."
+user-invocable: false
 ---
 
 # dotnet-csharp-code-smells

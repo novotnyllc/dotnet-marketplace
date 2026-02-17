@@ -1,6 +1,7 @@
 ---
 name: dotnet-winforms-basics
 description: "Building WinForms on .NET 8+. High-DPI, dark mode (experimental), DI patterns, modernization tips."
+user-invocable: false
 ---
 
 # dotnet-winforms-basics

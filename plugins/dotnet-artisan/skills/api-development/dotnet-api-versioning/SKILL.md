@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-versioning
 description: "Versioning HTTP APIs. Asp.Versioning.Http/Mvc, URL segment, header, query string, sunset."
+user-invocable: false
 ---
 
 # dotnet-api-versioning

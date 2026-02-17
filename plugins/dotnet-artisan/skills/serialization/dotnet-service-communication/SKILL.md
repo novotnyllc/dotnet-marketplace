@@ -1,6 +1,7 @@
 ---
 name: dotnet-service-communication
 description: "Choosing inter-service protocols. REST vs gRPC vs SignalR vs SSE decision matrix, tradeoffs."
+user-invocable: false
 ---
 
 # dotnet-service-communication

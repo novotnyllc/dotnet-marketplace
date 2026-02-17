@@ -1,6 +1,7 @@
 ---
 name: dotnet-nuget-authoring
 description: "Creating NuGet packages. SDK-style csproj, source generators, multi-TFM, symbols, signing."
+user-invocable: false
 ---
 
 # dotnet-nuget-authoring

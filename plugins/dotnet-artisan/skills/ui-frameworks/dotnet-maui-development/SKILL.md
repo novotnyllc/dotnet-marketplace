@@ -1,6 +1,7 @@
 ---
 name: dotnet-maui-development
 description: "Building .NET MAUI apps. Project structure, XAML/MVVM, platform services, current caveats."
+user-invocable: false
 ---
 
 # dotnet-maui-development

@@ -1,6 +1,7 @@
 ---
 name: dotnet-background-services
 description: "Implementing background work. BackgroundService, IHostedService, lifecycle, graceful shutdown."
+user-invocable: false
 ---
 
 # dotnet-background-services

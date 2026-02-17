@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-packaging
 description: "Publishing to package managers. Homebrew, apt/deb, winget, Scoop, Chocolatey manifests."
+user-invocable: false
 ---
 
 # dotnet-cli-packaging

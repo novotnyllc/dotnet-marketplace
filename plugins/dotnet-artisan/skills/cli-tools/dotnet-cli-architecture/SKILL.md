@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-architecture
 description: "Structuring CLI app layers. Command/handler/service separation, clig.dev principles, exit codes."
+user-invocable: false
 ---
 
 # dotnet-cli-architecture

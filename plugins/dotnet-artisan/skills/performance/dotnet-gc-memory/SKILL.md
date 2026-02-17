@@ -1,6 +1,7 @@
 ---
 name: dotnet-gc-memory
 description: "Tuning GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool, profiling."
+user-invocable: false
 ---
 
 # dotnet-gc-memory

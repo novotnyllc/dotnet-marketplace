@@ -1,6 +1,7 @@
 ---
 name: dotnet-accessibility
 description: "Building accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing tools per platform."
+user-invocable: false
 ---
 
 # dotnet-accessibility

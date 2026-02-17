@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-source-generators
 description: "Creating source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ source-gen."
+user-invocable: false
 ---
 
 # dotnet-csharp-source-generators

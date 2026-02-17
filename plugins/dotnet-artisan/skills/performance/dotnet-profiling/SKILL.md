@@ -1,6 +1,7 @@
 ---
 name: dotnet-profiling
 description: "Diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs."
+user-invocable: false
 ---
 
 # dotnet-profiling

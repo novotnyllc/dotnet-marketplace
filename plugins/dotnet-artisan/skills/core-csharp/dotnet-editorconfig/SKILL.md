@@ -1,6 +1,7 @@
 ---
 name: dotnet-editorconfig
 description: "Authoring .editorconfig rules. IDE/CA severity, AnalysisLevel, globalconfig, code style enforcement."
+user-invocable: false
 ---
 
 # dotnet-editorconfig

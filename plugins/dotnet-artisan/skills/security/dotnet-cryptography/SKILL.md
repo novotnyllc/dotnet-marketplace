@@ -1,6 +1,7 @@
 ---
 name: dotnet-cryptography
 description: "Choosing crypto algorithms, hashing, encryption, or key derivation. AES-GCM, RSA, ECDSA, PQC."
+user-invocable: false
 ---
 
 # dotnet-cryptography

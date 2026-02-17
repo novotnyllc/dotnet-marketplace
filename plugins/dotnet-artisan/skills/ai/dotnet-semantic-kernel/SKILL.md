@@ -1,6 +1,7 @@
 ---
 name: dotnet-semantic-kernel
 description: "Building AI/LLM features. Semantic Kernel setup, plugins, prompt templates, memory stores, agents."
+user-invocable: false
 ---
 
 # dotnet-semantic-kernel

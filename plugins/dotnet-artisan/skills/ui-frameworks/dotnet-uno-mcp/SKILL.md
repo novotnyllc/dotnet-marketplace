@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-mcp
 description: "Using Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback, citation."
+user-invocable: false
 ---
 
 # dotnet-uno-mcp

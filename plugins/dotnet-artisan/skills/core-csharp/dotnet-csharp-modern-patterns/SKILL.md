@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-modern-patterns
 description: "Using records, pattern matching, primary constructors, collection expressions. C# 12-15 by TFM."
+user-invocable: false
 ---
 
 # dotnet-csharp-modern-patterns

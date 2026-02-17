@@ -1,6 +1,7 @@
 ---
 name: dotnet-gha-publish
 description: "Publishing .NET artifacts from GitHub Actions. NuGet push, container images, signing, SBOM."
+user-invocable: false
 ---
 
 # dotnet-gha-publish
