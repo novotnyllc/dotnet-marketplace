@@ -26,7 +26,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
 PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
 
 PLUGIN_JSON="$PLUGIN_DIR/.claude-plugin/plugin.json"
-MARKETPLACE_JSON="$PLUGIN_DIR/.claude-plugin/marketplace.json"
+MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
 
 errors=0
 warnings=0
