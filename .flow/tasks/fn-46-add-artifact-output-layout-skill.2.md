@@ -29,9 +29,8 @@ Register `dotnet-artifacts-output` in plugin.json, add routing entry in `dotnet-
 - [ ] `--projected-skills` incremented in validate-skills.sh
 - [ ] All four validation scripts pass
 ## Done summary
-TBD
-
+Integrated dotnet-artifacts-output skill into plugin registry and routing: registered in plugin.json, added catalog entry and routing rule in dotnet-advisor, added bidirectional cross-references in dotnet-project-structure, dotnet-containers, and dotnet-gha-build-test, and incremented --projected-skills to 126 with --fail-threshold adjusted to 15200.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b28f48e93d416a730fa7e5bcce8c8c6ea3d6de86
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
