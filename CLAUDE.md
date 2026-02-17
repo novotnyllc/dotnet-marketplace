@@ -4,7 +4,7 @@ This repository is a Claude Code plugin marketplace hosting .NET development plu
 
 ## Repository Layout
 
-- **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (122 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
+- **`plugins/dotnet-artisan/`** -- The dotnet-artisan plugin (127 skills, 14 agents). See [plugins/dotnet-artisan/CLAUDE.md](plugins/dotnet-artisan/CLAUDE.md) for plugin-specific instructions.
 - **`.claude-plugin/marketplace.json`** -- Root marketplace listing (lists available plugins)
 - **`.github/workflows/`** -- CI/CD workflows
 - **`scripts/ralph/`** -- Dev tooling (repo-level)
@@ -20,7 +20,7 @@ description: One-line summary under 120 characters
 ```
 
 - `name` (required) -- must match the directory name
-- `description` (required) -- target under 120 characters to stay within the context budget (~12,000 chars for 122 skills)
+- `description` (required) -- target under 120 characters to stay within the context budget (~12,000 chars for 127 skills)
 
 ### Cross-Reference Syntax
 
@@ -40,7 +40,7 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 ## File Structure
 
 ```
-skills/<category>/<skill-name>/SKILL.md   # 122 skills across 22 categories
+skills/<category>/<skill-name>/SKILL.md   # 127 skills across 22 categories
 agents/<agent-name>.md                     # 14 specialist agents
 hooks/hooks.json                           # Session hooks (start context, post-edit)
 .mcp.json                                  # MCP server integrations

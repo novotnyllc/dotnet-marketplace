@@ -130,7 +130,7 @@ description: "Helps with code quality stuff"
 
 Each description must target **under 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 100 skills at 120 characters each, the catalog consumes ~12,000 characters (the warning threshold). The hard fail threshold is 15,000 characters.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 127 skills at an average of ~99 characters each, the catalog currently consumes ~12,500 characters (above the warning threshold of 12,000). The hard fail threshold is 15,000 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 

@@ -43,7 +43,7 @@ description: Async/await patterns, cancellation, and parallel execution in moder
 - **`name`** (required) -- Unique skill identifier, must match the directory name
 - **`description`** (required) -- One-line summary; target under 120 characters
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 122 skills).
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 127 skills).
 
 ### Cross-Reference Syntax
 

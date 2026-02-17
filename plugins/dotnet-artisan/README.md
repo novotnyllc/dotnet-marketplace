@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 122 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 127 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -32,22 +32,22 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ## Skill Catalog
 
-The plugin organizes 122 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 127 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
-| **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis |
-| **Core C#** | 15 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-file-io, dotnet-io-pipelines, dotnet-linq-optimization |
-| **Project Structure** | 6 | dotnet-project-structure, dotnet-scaffold-project, dotnet-modernize |
+| **Foundation** | 5 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis, dotnet-file-based-apps |
+| **Core C#** | 16 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-native-interop, dotnet-file-io, dotnet-io-pipelines, dotnet-linq-optimization |
+| **Project Structure** | 7 | dotnet-project-structure, dotnet-scaffold-project, dotnet-artifacts-output, dotnet-modernize |
 | **Architecture** | 15 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-messaging-patterns, dotnet-aspire-patterns |
 | **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
 | **Testing** | 10 | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing |
 | **API Development** | 8 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi |
 | **Security** | 3 | dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography |
 | **Multi-Targeting** | 2 | dotnet-multi-targeting, dotnet-version-upgrade |
-| **UI Frameworks** | 13 | dotnet-blazor-patterns, dotnet-maui-development, dotnet-uno-platform |
+| **UI Frameworks** | 14 | dotnet-blazor-patterns, dotnet-maui-development, dotnet-uno-platform, dotnet-accessibility |
 | **Native AOT** | 4 | dotnet-native-aot, dotnet-trimming, dotnet-aot-wasm |
-| **CLI Tools** | 5 | dotnet-system-commandline, dotnet-cli-architecture, dotnet-cli-distribution |
+| **CLI Tools** | 6 | dotnet-system-commandline, dotnet-cli-architecture, dotnet-cli-distribution, dotnet-tool-management |
 | **TUI** | 2 | dotnet-terminal-gui, dotnet-spectre-console |
 | **Agent Meta-Skills** | 4 | dotnet-agent-gotchas, dotnet-build-analysis, dotnet-csproj-reading |
 | **Performance** | 5 | dotnet-benchmarkdotnet, dotnet-performance-patterns, dotnet-gc-memory |
@@ -107,19 +107,19 @@ graph TB
             CR[code-review-agent]
         end
 
-        subgraph Skills["22 Skill Categories / 122 Skills"]
-            F[Foundation<br/>4 skills]
-            CC[Core C#<br/>15 skills]
-            PS[Project Structure<br/>6 skills]
+        subgraph Skills["22 Skill Categories / 127 Skills"]
+            F[Foundation<br/>5 skills]
+            CC[Core C#<br/>16 skills]
+            PS[Project Structure<br/>7 skills]
             AR[Architecture<br/>15 skills]
             SE[Serialization<br/>4 skills]
             TE[Testing<br/>10 skills]
             AD[API Development<br/>8 skills]
             SC[Security<br/>3 skills]
             MT[Multi-Targeting<br/>2 skills]
-            UI[UI Frameworks<br/>13 skills]
+            UI[UI Frameworks<br/>14 skills]
             NA[Native AOT<br/>4 skills]
-            CL[CLI Tools<br/>5 skills]
+            CL[CLI Tools<br/>6 skills]
             TU[TUI<br/>2 skills]
             AM[Agent Meta-Skills<br/>4 skills]
             PE[Performance<br/>5 skills]

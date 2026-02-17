@@ -4,22 +4,22 @@
 
 ## Skill Routing Index
 
-The plugin organizes 122 skills into 22 categories. Use this index to identify which category covers your domain.
+The plugin organizes 127 skills into 22 categories. Use this index to identify which category covers your domain.
 
 | Category | Count | When to Use |
 |---|---|---|
-| **Foundation** | 4 | Project analysis, version detection, skill routing, plugin publishing |
-| **Core C#** | 15 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, file I/O, IO.Pipelines, LINQ optimization |
-| **Project Structure** | 6 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization |
+| **Foundation** | 5 | Project analysis, version detection, skill routing, plugin publishing, file-based apps |
+| **Core C#** | 16 | Modern C# patterns, async/await, DI, configuration, NRTs, source generators, code smells, Roslyn analyzers, EditorConfig, validation, channels, file I/O, IO.Pipelines, LINQ optimization, native interop |
+| **Project Structure** | 7 | Solution layout, scaffolding, analyzers, CI setup, testing setup, modernization, artifacts output |
 | **Architecture** | 15 | Architecture patterns, EF Core, background services, resilience, HTTP clients, containers, SOLID, messaging, domain modeling, structured logging, Aspire |
 | **Serialization** | 4 | gRPC, SignalR/real-time, JSON/Protobuf serialization, service communication |
 | **Testing** | 10 | Test strategy, xUnit v3, integration testing, UI testing, Playwright, snapshot testing |
 | **API Development** | 8 | Minimal APIs, versioning, OpenAPI, API security, input validation, middleware patterns, library API compat, API surface validation |
 | **Security** | 3 | OWASP compliance, secrets management, cryptography |
 | **Multi-Targeting** | 2 | TFM multi-targeting with polyfills, .NET version upgrade paths and migration |
-| **UI Frameworks** | 13 | Blazor, Uno Platform, MAUI, WinUI, WPF, WinForms, UI framework selection |
+| **UI Frameworks** | 14 | Blazor, Uno Platform, MAUI, WinUI, WPF, WinForms, UI framework selection, accessibility |
 | **Native AOT** | 4 | Native AOT compilation, trimming, AOT architecture, WASM AOT |
-| **CLI Tools** | 5 | System.CommandLine, CLI architecture, distribution, packaging, release pipelines |
+| **CLI Tools** | 6 | System.CommandLine, CLI architecture, distribution, packaging, release pipelines, tool management |
 | **TUI** | 2 | Terminal.Gui full TUI apps, Spectre.Console rich console output and CLI framework |
 | **Agent Meta-Skills** | 4 | Agent gotchas, build analysis, csproj reading, solution navigation |
 | **Performance** | 5 | BenchmarkDotNet, performance patterns, profiling, CI benchmarking, GC/memory tuning |
