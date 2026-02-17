@@ -13,7 +13,7 @@
   "plugins": [
     {
       "name": "dotnet-artisan",
-      "source": ".",
+      "source": "./",
       "description": "Comprehensive .NET development skills for modern C# and .NET",
       "version": "0.1.1",
       "author": {
