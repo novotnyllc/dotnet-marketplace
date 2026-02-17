@@ -31,19 +31,29 @@ For example: `plugins/dotnet-artisan/skills/core-csharp/dotnet-csharp-async-patt
 
 ### SKILL.md Frontmatter
 
-Every skill requires frontmatter with exactly two required fields:
+Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
 name: dotnet-csharp-async-patterns
 description: Async/await patterns, cancellation, and parallel execution in modern C#
+user-invocable: false
 ---
 ```
 
-- **`name`** (required) -- Unique skill identifier, must match the directory name
-- **`description`** (required) -- One-line summary; target under 120 characters
+**Required fields:**
+- **`name`** (string) -- Unique skill identifier, must match the directory name
+- **`description`** (string) -- One-line summary; target under 120 characters
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 127 skills).
+**Optional fields:**
+- **`user-invocable`** (boolean) -- Set to `false` to hide from the `/` menu; default `true`
+- **`disable-model-invocation`** (boolean) -- Set to `true` to prevent Claude from loading the skill
+- **`context`** (string) -- Set to `fork` for isolated execution without conversation history
+- **`model`** (string) -- Model override, e.g. `haiku` for lightweight detection tasks
+
+See the [CONTRIBUTING-SKILLS.md](plugins/dotnet-artisan/CONTRIBUTING-SKILLS.md) for the full field reference table.
+
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 126 skills).
 
 ### Cross-Reference Syntax
 
@@ -193,6 +203,41 @@ On tag push matching `dotnet-artisan/v*`, the `release.yml` workflow:
 3. Runs `scripts/validate-skills.sh` and `scripts/validate-marketplace.sh`
 4. Extracts the version-specific section from `CHANGELOG.md` using awk
 5. Creates a GitHub Release with the extracted notes and install instructions
+
+## Publishing to Marketplace
+
+### Prerequisites
+
+- GitHub repository is public (or accessible to the marketplace)
+- `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` are valid
+- A GitHub Release exists with the target version tag
+
+### Publishing Steps
+
+1. Ensure the latest release tag is pushed to the repository
+2. The marketplace indexes plugins from GitHub Releases automatically
+3. Verify the plugin appears in the marketplace after indexing
+
+### Post-Publish Verification
+
+After publishing, confirm:
+
+- Plugin is discoverable by name (`dotnet-artisan`)
+- Plugin metadata (description, keywords, categories) renders correctly
+- All skills are listed and accessible
+
+### Release Checklist
+
+Before every release, verify:
+
+- [ ] `plugin.json` version matches the tag
+- [ ] `marketplace.json` version matches the tag
+- [ ] `CHANGELOG.md` has entries for this version with correct date
+- [ ] `validate-skills.sh` passes (exit code 0)
+- [ ] `validate-marketplace.sh` passes (exit code 0)
+- [ ] All SKILL.md files have required frontmatter (`name`, `description`)
+- [ ] Budget status is OK or WARN (not FAIL)
+- [ ] No broken cross-references (all `[skill:<name>]` refs resolve)
 
 ## Hooks and MCP Contributions
 

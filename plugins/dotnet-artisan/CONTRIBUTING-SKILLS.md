@@ -82,12 +82,16 @@ Body content starts here...
 
 **Frontmatter fields** (YAML between `---` fences):
 
-| Field | Required | Rules |
-|-------|----------|-------|
-| `name` | Yes | Must match directory name exactly |
-| `description` | Yes | Target under 120 characters (see section 3) |
+| Field | Required | Type | Rules |
+|-------|----------|------|-------|
+| `name` | Yes | string | Must match directory name exactly |
+| `description` | Yes | string | Target under 120 characters (see section 3) |
+| `user-invocable` | No | boolean | Set to `false` to hide from the `/` menu. Default: `true` (visible). Use for reference/convention skills that should not be directly invoked by users. |
+| `disable-model-invocation` | No | boolean | Set to `true` to prevent Claude from loading the skill. The description is excluded from the context budget. Use only for non-guidance meta-skills. |
+| `context` | No | string | Execution context. Set to `fork` for self-contained detection/analysis skills that do not need conversation history. |
+| `model` | No | string | Model override. Set to `haiku` for lightweight detection tasks that do not require full reasoning. Only meaningful with `context: fork`. |
 
-No other frontmatter fields are recognized. Keep it minimal.
+Only `name` and `description` are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
 
 ### Companion Files
 
@@ -130,7 +134,7 @@ description: "Helps with code quality stuff"
 
 Each description must target **under 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 127 skills at an average of ~99 characters each, the catalog currently consumes ~12,500 characters (above the warning threshold of 12,000). The hard fail threshold is 15,000 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 126 skills at an average of ~93 characters each, the catalog currently consumes ~11,800 characters (near the warning threshold of 12,000). The hard fail threshold is 15,360 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 
@@ -300,7 +304,8 @@ The file must be named exactly `SKILL.md` (uppercase). The validation script loo
 - Frontmatter must be enclosed between two `---` lines
 - The `name` value must match the directory name exactly
 - Quote descriptions that contain colons, commas, or special YAML characters
-- Do not add extra frontmatter fields beyond `name` and `description`
+- Only use recognized frontmatter fields: `name`, `description`, `user-invocable`, `disable-model-invocation`, `context`, `model`
+- Boolean fields (`user-invocable`, `disable-model-invocation`) must use bare `true`/`false`, not quoted strings
 
 ### Skill Not Triggering
 

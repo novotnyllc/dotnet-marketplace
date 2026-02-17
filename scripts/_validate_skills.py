@@ -8,7 +8,9 @@ Checks:
   3. [skill:name] cross-references point to existing skill directories
   4. Context budget tracking with stable output keys
   5. Name-directory consistency (name field must match skill directory name)
-  6. Extra frontmatter field detection (only name and description allowed)
+  6. Extra frontmatter field detection (allowed: name, description, user-invocable,
+     disable-model-invocation, context, model)
+  6b. Type validation for optional fields (boolean/string type checking)
   7. Description filler phrase detection (routing quality enforcement)
   8. WHEN prefix regression detection (descriptions must not start with WHEN)
 
@@ -27,7 +29,27 @@ from pathlib import Path
 # --- Quality Constants ---
 
 # Canonical frontmatter fields. Any field beyond these triggers a warning.
-ALLOWED_FRONTMATTER_FIELDS = {"name", "description"}
+# Reference: https://code.claude.com/docs/en/skills#frontmatter-reference
+ALLOWED_FRONTMATTER_FIELDS = {
+    "name",
+    "description",
+    "user-invocable",
+    "disable-model-invocation",
+    "context",
+    "model",
+}
+
+# Type validation for optional frontmatter fields.
+# Boolean fields must be true/false (not quoted strings like "false").
+# String fields must be actual strings.
+FIELD_TYPES = {
+    "name": str,
+    "description": str,
+    "user-invocable": bool,
+    "disable-model-invocation": bool,
+    "context": str,
+    "model": str,
+}
 
 # Filler phrases that reduce description routing quality.
 # Case-insensitive patterns matched against the description text.
@@ -212,6 +234,17 @@ def process_file(path: str) -> dict:
     body_text = "\n".join(lines[body_start:])
     refs = extract_refs(body_text)
 
+    # Type-validate optional fields (warnings, not errors)
+    type_warnings = []
+    for field_name, expected_type in FIELD_TYPES.items():
+        if field_name in parsed and field_name not in ("name", "description"):
+            value = parsed[field_name]
+            if value is not None and not isinstance(value, expected_type):
+                type_warnings.append(
+                    f"frontmatter field '{field_name}' should be {expected_type.__name__} "
+                    f"(got {type(value).__name__}: {value!r})"
+                )
+
     return {
         "path": path,
         "valid": True,
@@ -220,6 +253,7 @@ def process_file(path: str) -> dict:
         "desc_len": len(description),
         "refs": refs,
         "field_errors": field_errors,
+        "type_warnings": type_warnings,
         "all_fields": set(parsed.keys()),
     }
 
@@ -274,6 +308,7 @@ def main():
     # Quality check counters (reported as stable output keys)
     name_dir_mismatches = 0
     extra_field_count = 0
+    type_warning_count = 0
     filler_phrase_count = 0
     when_prefix_count = 0
 
@@ -327,6 +362,12 @@ def main():
             )
             warnings += 1
             extra_field_count += len(extra_fields)
+
+        # Check 6b: Type validation for optional fields
+        for tw in result.get("type_warnings", []):
+            print(f"WARN:  {rel_path} -- {tw}")
+            warnings += 1
+            type_warning_count += 1
 
         # Check 7: Filler phrase detection in description
         if description:
@@ -397,6 +438,7 @@ def main():
     print(f"BUDGET_STATUS={budget_status}")
     print(f"NAME_DIR_MISMATCHES={name_dir_mismatches}")
     print(f"EXTRA_FIELD_COUNT={extra_field_count}")
+    print(f"TYPE_WARNING_COUNT={type_warning_count}")
     print(f"FILLER_PHRASE_COUNT={filler_phrase_count}")
     print(f"WHEN_PREFIX_COUNT={when_prefix_count}")
 

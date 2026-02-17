@@ -23,6 +23,7 @@
 #   BUDGET_STATUS=OK|WARN|FAIL
 #   NAME_DIR_MISMATCHES=<N>
 #   EXTRA_FIELD_COUNT=<N>
+#   TYPE_WARNING_COUNT=<N>
 #   FILLER_PHRASE_COUNT=<N>
 #   WHEN_PREFIX_COUNT=<N>
 
@@ -45,7 +46,7 @@ fi
 
 exec python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
-    --projected-skills 127 \
+    --projected-skills 126 \
     --max-desc-chars 120 \
     --warn-threshold 12000 \
     --fail-threshold 15360 \

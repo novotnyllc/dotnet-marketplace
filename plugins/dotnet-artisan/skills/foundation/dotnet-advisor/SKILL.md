@@ -22,7 +22,6 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-version-detection] -- TFM/SDK detection, preview features
 - [skill:dotnet-project-analysis] -- solution structure, project refs, CPM
 - [skill:dotnet-file-based-apps] -- .NET 10 file-based apps, `#:` directives, no .csproj
-- [skill:plugin-self-publish] -- plugin versioning, changelog, CI/CD
 
 ### 2. Core C# & Language Patterns `planned`
 - [skill:dotnet-csharp-modern-patterns] -- C# 14/15 features, records, pattern matching

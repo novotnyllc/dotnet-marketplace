@@ -1,22 +1,30 @@
 # dotnet-artisan -- Plugin Instructions
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 127 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 126 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
 ### SKILL.md Frontmatter
 
-Every skill requires exactly two frontmatter fields:
+Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
 name: dotnet-example-skill
 description: One-line summary under 120 characters
+user-invocable: false
 ---
 ```
 
-- `name` (required) -- must match the directory name
-- `description` (required) -- target under 120 characters to stay within the context budget (~12,000 chars for 127 skills)
+**Required fields:**
+- `name` (string) -- must match the directory name
+- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 126 skills)
+
+**Optional fields:**
+- `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
+- `disable-model-invocation` (boolean) -- set to `true` to prevent Claude from loading the skill
+- `context` (string) -- set to `fork` for isolated execution without conversation history
+- `model` (string) -- model override, e.g. `haiku` for lightweight detection tasks
 
 ### Cross-Reference Syntax
 
@@ -37,7 +45,7 @@ Use `[skill:skill-name]` for ALL skill references -- bare text skill names are n
 
 ```
 plugins/dotnet-artisan/
-  skills/<category>/<skill-name>/SKILL.md   # 127 skills across 22 categories
+  skills/<category>/<skill-name>/SKILL.md   # 126 skills across 22 categories
   agents/<agent-name>.md                     # 14 specialist agents
   hooks/hooks.json                           # Session hooks (start context, post-edit)
   .mcp.json                                  # MCP server integrations

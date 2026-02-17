@@ -7,13 +7,13 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 127 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 126 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 ## Available Plugins
 
 | Plugin | Description | Skills | Agents |
 |---|---|---|---|
-| [**dotnet-artisan**](plugins/dotnet-artisan/) | Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications | 127 | 14 |
+| [**dotnet-artisan**](plugins/dotnet-artisan/) | Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications | 126 | 14 |
 
 ## Installation
 
@@ -28,11 +28,11 @@ Installation syntax may change as the Claude Code plugin system evolves.
 
 ## Repository Structure
 
-The plugin organizes 127 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 126 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
-| **Foundation** | 5 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis, dotnet-file-based-apps |
+| **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis, dotnet-file-based-apps |
 | **Core C#** | 16 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-native-interop, dotnet-file-io, dotnet-io-pipelines, dotnet-linq-optimization |
 | **Project Structure** | 7 | dotnet-project-structure, dotnet-scaffold-project, dotnet-artifacts-output, dotnet-modernize |
 | **Architecture** | 15 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-messaging-patterns, dotnet-aspire-patterns |
@@ -103,8 +103,8 @@ graph TB
             TS[testing-specialist]
         end
 
-        subgraph Skills["22 Skill Categories / 127 Skills"]
-            F[Foundation<br/>5 skills]
+        subgraph Skills["22 Skill Categories / 126 Skills"]
+            F[Foundation<br/>4 skills]
             CC[Core C#<br/>16 skills]
             PS[Project Structure<br/>7 skills]
             AR[Architecture<br/>15 skills]
@@ -168,7 +168,7 @@ graph TB
 +-- plugins/
 |   +-- dotnet-artisan/           # Self-contained plugin
 |       +-- .claude-plugin/       # Plugin manifest and metadata
-|       +-- skills/               # 127 skills (22 categories)
+|       +-- skills/               # 126 skills (22 categories)
 |       +-- agents/               # 14 specialist agents
 |       +-- hooks/                # Session hooks
 |       +-- scripts/              # Validation scripts
