@@ -48,9 +48,8 @@ Create 3 C# design skills: `dotnet-csharp-api-design`, `dotnet-csharp-concurrenc
 - [ ] All 3 skills have ## Agent Gotchas, ## Prerequisites, ## References sections
 - [ ] Appropriate cross-references to existing related skills
 ## Done summary
-TBD
-
+Created 3 C# design skills: dotnet-csharp-api-design (API naming, parameter ordering, return types, error patterns, extension points, wire compatibility), dotnet-csharp-concurrency-patterns (lock, SemaphoreSlim, Interlocked, ConcurrentDictionary, ReaderWriterLockSlim, SpinLock with decision framework), and dotnet-csharp-type-design-performance (struct vs class matrix, sealed by default, readonly struct, Span/Memory selection, FrozenDictionary collection selection).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f50563a1441685d47ed557c53632ea0ab2a980bb
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
