@@ -7,7 +7,7 @@ description: "WHEN project has .csproj, global.json, or Directory.Build.props. D
 
 Detects .NET version information from project files and provides version-specific guidance. This skill runs **first** before any .NET development work. All other skills depend on the detected version to adapt their guidance.
 
-Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills.
+Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-file-based-apps] for .NET 10+ file-based apps that run without a `.csproj`.
 
 ---
 

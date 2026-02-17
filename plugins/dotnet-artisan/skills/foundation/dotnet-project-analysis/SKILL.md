@@ -7,7 +7,7 @@ description: "WHEN navigating .NET solution structure or build configuration. An
 
 Analyzes .NET solution structure, project references, and build configuration. This skill is foundational -- agents need to understand project layout before doing any meaningful .NET development work.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version.
+**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-file-based-apps] instead.
 
 ---
 

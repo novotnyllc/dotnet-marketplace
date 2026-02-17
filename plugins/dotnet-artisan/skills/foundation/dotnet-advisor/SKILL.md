@@ -21,6 +21,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-advisor] -- this skill (router/index)
 - [skill:dotnet-version-detection] -- TFM/SDK detection, preview features
 - [skill:dotnet-project-analysis] -- solution structure, project refs, CPM
+- [skill:dotnet-file-based-apps] -- .NET 10 file-based apps, `#:` directives, no .csproj
 - [skill:plugin-self-publish] -- plugin versioning, changelog, CI/CD
 
 ### 2. Core C# & Language Patterns `planned`
@@ -180,6 +181,7 @@ Use this decision tree to load the right skills for the current task.
 2. [skill:dotnet-project-analysis] -- understand existing solution (if any)
 3. [skill:dotnet-project-structure], [skill:dotnet-scaffold-project] -- scaffold project
 4. [skill:dotnet-architecture-patterns] -- design decisions
+- File-based app (no .csproj, .NET 10+) -> [skill:dotnet-file-based-apps]
 
 ### Writing or Modifying C# Code
 - Modern C# patterns -> [skill:dotnet-csharp-modern-patterns]

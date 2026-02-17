@@ -44,9 +44,8 @@ Author `skills/foundation/dotnet-file-based-apps/SKILL.md` covering .NET 10 SDK 
 - [ ] Notes .NET 10+ SDK requirement
 - [ ] Cross-reference syntax used for related skills
 ## Done summary
-TBD
-
+Authored dotnet-file-based-apps SKILL.md covering .NET 10 SDK file-based apps with all four #: directives (package, sdk, property, project), CLI commands, shell execution, launch profiles, user secrets, build caching, migration path, and 8 Agent Gotchas. Description at 90 chars explicitly differentiates from dotnet-file-io.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b09fe9d, 0235153
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

@@ -29,8 +29,7 @@ Register `dotnet-file-based-apps` in plugin.json, add routing entry in `dotnet-a
 - [ ] `--projected-skills` incremented in validate-skills.sh
 - [ ] All four validation scripts pass
 ## Done summary
-TBD
-
+Integrated dotnet-file-based-apps into plugin registry: added to plugin.json skills array, added catalog entry and routing rule in dotnet-advisor, added cross-references in dotnet-version-detection and dotnet-project-analysis, incremented projected-skills to 123. Both validate-skills.sh and validate-marketplace.sh pass.
 ## Evidence
 - Commits:
 - Tests:
