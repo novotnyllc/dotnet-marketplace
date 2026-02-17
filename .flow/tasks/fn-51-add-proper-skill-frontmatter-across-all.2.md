@@ -44,9 +44,8 @@ Add `user-invocable: false` to the frontmatter of 113 implicit reference/convent
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass clean
 
 ## Done summary
-
-_To be filled on completion._
-
+Added `user-invocable: false` frontmatter to 113 implicit reference/convention skills, keeping 9 actionable command skills user-invocable (default) and 4 detection skills untouched (T3-owned). All validation passes clean.
 ## Evidence
-
-_To be filled on completion._
+- Commits: 64da379878d0cb54a4705b1ea5115850dca46ace
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
+- PRs:
