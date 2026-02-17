@@ -10,7 +10,8 @@ Enhance `scripts/_validate_skills.py` to enforce the quality standards establish
 
 1. Add name-directory consistency check: verify `name` field matches the skill's directory name
 2. Add extra-frontmatter detection: warn on any fields beyond `name` and `description`
-3. Add description quality heuristics: detect common filler phrases, missing technology keywords
+3. Add description quality heuristics: detect common filler phrases (especially "Covers", "helps with", "guide to"), missing technology keywords
+3b. Add WHEN prefix regression check: warn if any description starts with "WHEN " (Task 2 removes all; this prevents reintroduction)
 4. Keep all checks as warnings (not errors) to avoid breaking CI for edge cases
 5. Update `validate-skills.sh` thresholds if needed
 6. Ensure no existing validation behavior changes (backward compatible)
@@ -21,8 +22,9 @@ Enhance `scripts/_validate_skills.py` to enforce the quality standards establish
 |-------|------|----------------|
 | Name-directory match | Warning | Compare `name` value to last path segment of skill directory |
 | Extra frontmatter fields | Warning | Flag any field not in `{name, description}` |
-| Filler phrase detection | Warning | Check for common filler patterns: "helps with", "guide to", "complete guide" |
-| Description starts with verb | Info | Heuristic: third-person descriptions typically start with a verb |
+| Filler phrase detection | Warning | Check for common filler patterns: "Covers", "helps with", "guide to", "complete guide" (audit found "Covers" as the only instance; others are preventive) |
+| WHEN prefix detection | Warning | Flag descriptions starting with "WHEN " — Task 2 removes all WHEN prefixes; this prevents regression |
+| Description starts with verb or noun phrase | Info | Heuristic: after WHEN removal, descriptions start with varied patterns (verbs like "Writing...", noun phrases like "Async/await patterns.") — both are acceptable |
 
 ### Key context
 
@@ -30,15 +32,17 @@ Enhance `scripts/_validate_skills.py` to enforce the quality standards establish
 - Single-pass, no subprocesses, no network — must stay environment-independent
 - Same commands run locally and in CI
 - Current stable output keys: `CURRENT_DESC_CHARS`, `PROJECTED_DESC_CHARS`, `BUDGET_STATUS` — do not change these
-- Add new output keys for new checks (e.g., `NAME_DIR_MISMATCHES=0`)
+- Add new output keys for new checks (e.g., `NAME_DIR_MISMATCHES=0`, `WHEN_PREFIX_COUNT=0`)
 - Follow existing code patterns in `_validate_skills.py` for warning/error reporting
 ## Acceptance
 - [ ] Name-directory mismatch detection added (warning level)
 - [ ] Extra frontmatter field detection added (warning level)
-- [ ] Filler phrase detection added (warning level)
+<!-- Updated by plan-sync: fn-49.1 found "Covers" as only filler instance; Task 2 removes all WHEN prefixes so Task 3 needs WHEN regression check; audit report at .flow/reports/fn-49.1-compliance-audit.md -->
+- [ ] Filler phrase detection added (warning level, includes "Covers" pattern found by audit)
 - [ ] All new checks produce warnings, not errors
 - [ ] Existing output keys unchanged (`CURRENT_DESC_CHARS`, `PROJECTED_DESC_CHARS`, `BUDGET_STATUS`)
-- [ ] New output keys added for new checks
+- [ ] WHEN prefix regression detection added (warning level)
+- [ ] New output keys added for new checks (including `WHEN_PREFIX_COUNT`)
 - [ ] `./scripts/validate-skills.sh` passes on current codebase
 - [ ] No external dependencies added (no PyYAML, no network, no subprocesses)
 - [ ] Validator remains single-pass

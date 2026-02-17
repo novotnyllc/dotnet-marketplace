@@ -4,25 +4,25 @@
 Apply fixes to all non-compliant skill front matter identified in Task 1's audit. Optimize descriptions for maximum routing effectiveness while reducing total budget below the WARN threshold.
 
 **Size:** M
-**Files:** All non-compliant `skills/**/SKILL.md` files (count depends on Task 1 findings)
+**Files:** All 127 `skills/**/SKILL.md` files (WHEN removal is systemic; 16 skills also need disambiguation rewording)
 
 ## Approach
 
-1. Read Task 1 findings report
-2. Fix critical issues first (budget violations, name-directory mismatches, extra fields)
-3. Optimize major issues (trigger specificity, keyword density, disambiguation)
-4. Address minor issues (third-person voice, WHEN prefix evaluation)
+1. Read Task 1 findings report at `.flow/reports/fn-49.1-compliance-audit.md`
+2. **Priority 1 — Remove WHEN prefix from all 127 skills** (systemic, saves 630 budget chars; audit concluded NONE add routing value). Capitalize the new first word after removal. Include `plugin-self-publish` for consistency even though it is budget-excluded.
+3. **Priority 2 — Disambiguate 8 overlapping pairs** (16 skills, findings M-1 through M-7 and M-9). Apply suggested rewording from the audit report, then apply WHEN removal on top (audit suggestions still show WHEN for readability).
+4. **Priority 3 — Remove filler word** from `dotnet-csharp-async-patterns` (finding M-8: remove "Covers", saves 7 chars)
 5. Run `./scripts/validate-skills.sh` after each batch to track budget progress
-6. Target total budget ≤11,800 chars (below 12K WARN with headroom for future skills)
+6. Target total budget ≤11,800 chars (current baseline is 12,417; projected after all fixes ~11,730)
 
 ### Optimization Strategies
 
-- **Remove filler**: "WHEN writing" → context already implies when; "Helps with" → remove entirely
-- **Sharpen triggers**: Replace vague verbs with specific ones ("Configure X" vs "Work with X")
-- **Add keywords**: Include framework/technology names that Claude needs for routing
-- **Disambiguate**: Where two skills overlap, make each description reference its unique differentiator
+- **Remove WHEN prefix unconditionally**: Strip `WHEN ` (5 chars) from all 127 descriptions and capitalize the next word. The audit confirmed WHEN provides zero disambiguation signal since every skill uses it uniformly.
+- **Disambiguate overlapping pairs**: Apply the audit's suggested descriptions for findings M-1 through M-7 and M-9 (8 pairs, 16 skills). Each suggestion sharpens the unique differentiator between the pair.
+- **Remove filler verbs**: Drop "Covers" from `dotnet-csharp-async-patterns` (M-8). Check for other filler during editing but the audit found only this one instance.
+- **Sharpen triggers**: Replace vague verbs with specific ones ("Configure X" vs "Work with X") where encountered
+- **Add keywords**: Include framework/technology names that Claude needs for routing where missing
 - **Trim redundancy**: If the skill name already conveys the domain, don't repeat it in description
-- **Evaluate WHEN prefix**: Keep only where it adds routing value; drop where the technology trigger alone suffices
 
 ### Key context
 
@@ -34,7 +34,8 @@ Apply fixes to all non-compliant skill front matter identified in Task 1's audit
 - Pattern reference: `CONTRIBUTING-SKILLS.md:107-148` for description formula
 - `plugin-self-publish` has `disable-model-invocation: true` — excluded from budget calculation
 ## Acceptance
-- [ ] All critical findings from Task 1 audit fixed
+<!-- Updated by plan-sync: fn-49.1 produced 0 critical findings, 9 major, 1 systemic minor; audit report at .flow/reports/fn-49.1-compliance-audit.md; baseline budget is 12,417 not 12,038; all 127 skills need WHEN removal -->
+- [ ] All critical findings from Task 1 audit fixed (Task 1 found 0 critical — this is a no-op confirmation)
 - [ ] All major findings from Task 1 audit fixed
 - [ ] Minor findings addressed where practical
 - [ ] Total description budget ≤11,800 chars

@@ -315,3 +315,9 @@ When splitting destructive operations across tasks (e.g., deleting a file in T1,
 
 ## 2026-02-17 manual [pitfall]
 Specification reviews for exploratory features (e.g., community conventions like .agents/openai.yaml) must verify schema authenticity with authoritative sources before task approval; fallback patterns mitigate risk but should be explicitly documented
+
+## 2026-02-17 manual [pitfall]
+When computing budget savings for items excluded via disable flags, only count active items in the savings math -- inactive items do not affect the budget even if they share the same pattern being optimized
+
+## 2026-02-17 manual [pitfall]
+When counting findings in a severity summary table, ensure the count matches the actual numbered findings in the body -- off-by-one from late additions (e.g. M-9 added after M-1..M-8) is a common reviewer catch
