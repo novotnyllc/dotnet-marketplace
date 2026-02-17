@@ -321,3 +321,6 @@ When computing budget savings for items excluded via disable flags, only count a
 
 ## 2026-02-17 manual [pitfall]
 When counting findings in a severity summary table, ensure the count matches the actual numbered findings in the body -- off-by-one from late additions (e.g. M-9 added after M-1..M-8) is a common reviewer catch
+
+## 2026-02-17 manual [pitfall]
+BSD sed on macOS requires sed -i '' (space + empty string) syntax; GNU uses sed -i.bak (no space). Use portable sed > tmpfile && mv tmpfile pattern instead of sed -i in cross-platform scripts

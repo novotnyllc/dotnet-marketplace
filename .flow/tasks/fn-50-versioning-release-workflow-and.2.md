@@ -95,9 +95,8 @@ Create a version bump script and improve the release workflow. Add version consi
 - [ ] `validate.yml` includes version consistency check across JSON files
 - [ ] Bump script handles first-release scenario (no prior tags)
 ## Done summary
-TBD
-
+Added scripts/bump.sh for semver version bumping across all version-bearing files, created scripts/validate-root-marketplace.sh as shared root marketplace validation, updated release.yml with CHANGELOG-based release notes and tag-version consistency check, updated validate.yml with shared validation and 3-way version consistency check, and fixed validate-marketplace.sh to correctly validate root marketplace.json schema.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 97a214d, c882835
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, ./scripts/validate-root-marketplace.sh, ./scripts/bump.sh patch
 - PRs:
