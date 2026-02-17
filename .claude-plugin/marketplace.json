@@ -3,21 +3,21 @@
   "name": "dotnet-marketplace",
   "description": "Directory of .NET development plugins for Claude Code",
   "owner": {
-    "name": "Claire Novotny LLC",
+    "name": "Claire Novotny",
     "url": "https://github.com/novotnyllc"
   },
   "metadata": {
-    "description": "Marketplace hosting .NET development plugins for Claude Code, including comprehensive skills, specialist agents, and MCP integrations",
+    "description": "Marketplace hosting .NET development plugins",
     "version": "0.1.0"
   },
   "plugins": [
     {
       "name": "dotnet-artisan",
       "source": "./plugins/dotnet-artisan",
-      "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
+      "description": "Comprehensive .NET development skills for modern C# and .NET",
       "version": "0.1.0",
       "author": {
-        "name": "Claire Novotny LLC",
+        "name": "Claire Novotny",
         "url": "https://github.com/novotnyllc"
       },
       "license": "MIT",
