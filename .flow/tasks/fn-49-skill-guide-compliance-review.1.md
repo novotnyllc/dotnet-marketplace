@@ -47,9 +47,10 @@ Build a quality rubric for skill front matter and audit all 122 skills against i
 - [ ] Skills with name-directory mismatches flagged
 - [ ] Report written as structured markdown in task completion notes
 ## Done summary
-TBD
+
+Audited all 127 SKILL.md front matter files against an 8-dimension quality rubric. Produced a comprehensive compliance report at `.flow/reports/fn-49.1-compliance-audit.md` with findings categorized by severity (0 critical, 9 major, 1 minor systemic). Key findings: (1) all 127 skills use the WHEN prefix uniformly, consuming 635 chars that provide zero disambiguation signal -- removing it brings the budget from 12,417 to 11,782 chars, below WARN; (2) 8 overlapping skill pairs need disambiguation rewording; (3) 1 skill has a filler word ("Covers"). No name-directory mismatches, no extra frontmatter fields (except legitimate `disable-model-invocation`), no budget overruns (max 109 chars), no voice violations. Projected budget after all Task 2 fixes: ~11,725 chars.
 
 ## Evidence
 - Commits:
-- Tests:
+- Tests: validate-skills.sh, validate-marketplace.sh (baseline verified green)
 - PRs:
