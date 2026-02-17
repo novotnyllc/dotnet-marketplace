@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing-strategy
-description: "WHEN deciding how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
+description: "Deciding how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
 ---
 
 # dotnet-testing-strategy

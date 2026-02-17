@@ -1,6 +1,6 @@
 ---
 name: dotnet-modernize
-description: "WHEN analyzing .NET code for modernization. Flags outdated TFMs, deprecated packages, superseded patterns."
+description: "Analyzing .NET code for modernization. Outdated TFMs, deprecated packages, superseded patterns."
 ---
 
 # dotnet-modernize

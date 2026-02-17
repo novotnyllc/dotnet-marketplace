@@ -1,6 +1,6 @@
 ---
 name: dotnet-benchmarkdotnet
-description: "WHEN microbenchmarking .NET code. BenchmarkDotNet setup, memory diagnosers, baselines, CI."
+description: "Writing benchmarks. BenchmarkDotNet setup, memory diagnosers, baselines, result analysis."
 ---
 
 # dotnet-benchmarkdotnet

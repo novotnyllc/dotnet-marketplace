@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-patterns
-description: "WHEN building Blazor apps. Hosting models, render modes, routing, streaming rendering, prerender."
+description: "Building Blazor apps. Hosting models, render modes, routing, streaming rendering, prerender."
 ---
 
 # dotnet-blazor-patterns

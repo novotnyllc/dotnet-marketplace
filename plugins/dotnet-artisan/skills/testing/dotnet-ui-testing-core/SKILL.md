@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui-testing-core
-description: "WHEN testing UI across frameworks. Page object model, test selectors, async waits, accessibility patterns."
+description: "Testing UI across frameworks. Page objects, test selectors, async waits, accessibility."
 ---
 
 # dotnet-ui-testing-core

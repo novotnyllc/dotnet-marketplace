@@ -1,6 +1,6 @@
 ---
 name: dotnet-tool-management
-description: "WHEN installing or managing .NET tools. Global, local, manifests, restore, version pinning."
+description: "Installing or managing .NET tools. Global, local, manifests, restore, version pinning."
 ---
 
 # dotnet-tool-management

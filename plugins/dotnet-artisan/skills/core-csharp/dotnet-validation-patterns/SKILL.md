@@ -1,6 +1,6 @@
 ---
 name: dotnet-validation-patterns
-description: "WHEN validating models or options. DataAnnotations, IValidatableObject, IValidateOptions<T>."
+description: "Validating models or IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>."
 ---
 
 # dotnet-validation-patterns

@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-aot
-description: "WHEN optimizing MAUI for iOS/Mac Catalyst. Native AOT pipeline, size/startup gains, library gaps, trimming."
+description: "Optimizing MAUI for iOS/Catalyst. Native AOT pipeline, size/startup gains, library gaps, trimming."
 ---
 
 # dotnet-maui-aot

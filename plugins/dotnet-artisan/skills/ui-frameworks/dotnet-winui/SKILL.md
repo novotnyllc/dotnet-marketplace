@@ -1,6 +1,6 @@
 ---
 name: dotnet-winui
-description: "WHEN building WinUI 3 apps. Windows App SDK setup, XAML patterns, MSIX/unpackaged deploy, UWP migration."
+description: "Building WinUI 3 apps. Windows App SDK setup, XAML patterns, MSIX/unpackaged deploy, UWP migration."
 ---
 
 # dotnet-winui

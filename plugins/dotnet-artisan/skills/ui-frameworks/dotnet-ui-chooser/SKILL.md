@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui-chooser
-description: "WHEN selecting a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms."
+description: "Selecting a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms."
 ---
 
 # dotnet-ui-chooser

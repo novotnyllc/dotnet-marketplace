@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-architecture
-description: "WHEN designing CLI apps. Command/handler/service layers, clig.dev principles, exit codes, testing."
+description: "Structuring CLI app layers. Command/handler/service separation, clig.dev principles, exit codes."
 ---
 
 # dotnet-cli-architecture

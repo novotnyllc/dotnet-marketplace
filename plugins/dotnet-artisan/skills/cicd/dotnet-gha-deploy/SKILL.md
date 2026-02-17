@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-deploy
-description: "WHEN deploying .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
+description: "Deploying .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
 ---
 
 # dotnet-gha-deploy

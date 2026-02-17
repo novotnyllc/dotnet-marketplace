@@ -1,6 +1,6 @@
 ---
 name: dotnet-github-releases
-description: "WHEN creating GitHub Releases for .NET. Release creation, assets, notes, pre-release management."
+description: "Creating GitHub Releases for .NET. Release creation, assets, notes, pre-release management."
 ---
 
 # dotnet-github-releases

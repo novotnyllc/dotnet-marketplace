@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-patterns
-description: "WHEN designing composable Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers."
+description: "Designing composable Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers."
 ---
 
 # dotnet-ado-patterns

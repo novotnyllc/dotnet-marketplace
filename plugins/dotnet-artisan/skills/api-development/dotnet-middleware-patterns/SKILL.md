@@ -1,6 +1,6 @@
 ---
 name: dotnet-middleware-patterns
-description: "WHEN building ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling."
+description: "Building ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling."
 ---
 
 # dotnet-middleware-patterns

@@ -1,6 +1,6 @@
 ---
 name: dotnet-msbuild-tasks
-description: "WHEN writing custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask."
+description: "Writing custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask."
 ---
 
 # dotnet-msbuild-tasks

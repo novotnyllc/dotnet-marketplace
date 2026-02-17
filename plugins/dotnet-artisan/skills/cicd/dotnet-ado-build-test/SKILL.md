@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-build-test
-description: "WHEN configuring .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
+description: "Configuring .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
 ---
 
 # dotnet-ado-build-test

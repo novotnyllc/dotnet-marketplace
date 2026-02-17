@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-code-smells
-description: "WHEN writing, reviewing, or planning C# code. Catches code smells, anti-patterns, and common pitfalls."
+description: "Reviewing C# for logic issues. Anti-patterns, common pitfalls, async misuse, DI mistakes."
 ---
 
 # dotnet-csharp-code-smells

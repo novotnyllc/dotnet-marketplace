@@ -1,6 +1,6 @@
 ---
 name: dotnet-version-upgrade
-description: "WHEN upgrading .NET to a newer TFM. LTS-to-LTS, staged through STS, preview, upgrade paths."
+description: "Upgrading .NET to a newer TFM. LTS-to-LTS, staged through STS, preview, upgrade paths."
 ---
 
 # dotnet-version-upgrade

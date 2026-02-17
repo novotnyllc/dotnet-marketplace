@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-security
-description: "WHEN implementing API auth. Identity, OAuth/OIDC, JWT bearer, passkeys (WebAuthn), CORS, CSP, rate limiting."
+description: "Implementing API auth. Identity, OAuth/OIDC, JWT bearer, passkeys (WebAuthn), CORS, rate limiting."
 ---
 
 # dotnet-api-security

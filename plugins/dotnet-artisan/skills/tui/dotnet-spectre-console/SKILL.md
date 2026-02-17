@@ -1,6 +1,6 @@
 ---
 name: dotnet-spectre-console
-description: "WHEN building rich console output. Spectre.Console: tables, trees, progress, prompts, live displays."
+description: "Building rich console output. Spectre.Console: tables, trees, progress, prompts, live displays."
 ---
 
 # dotnet-spectre-console

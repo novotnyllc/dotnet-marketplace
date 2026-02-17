@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-testing
-description: "WHEN testing Blazor components. bUnit rendering, events, cascading params, JS interop mocking."
+description: "Testing Blazor components. bUnit rendering, events, cascading params, JS interop mocking."
 ---
 
 # dotnet-blazor-testing

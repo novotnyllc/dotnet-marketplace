@@ -1,6 +1,6 @@
 ---
 name: dotnet-release-management
-description: "WHEN managing .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching."
+description: "Managing .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching."
 ---
 
 # dotnet-release-management

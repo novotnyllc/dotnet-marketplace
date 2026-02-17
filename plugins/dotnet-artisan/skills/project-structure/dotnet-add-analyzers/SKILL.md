@@ -1,6 +1,6 @@
 ---
 name: dotnet-add-analyzers
-description: "WHEN adding or configuring .NET analyzers. CA rules, nullable, trimming, AOT compat, EditorConfig severity."
+description: "Adding analyzer packages to a project. Nullable, trimming, AOT compat analyzers, severity config."
 ---
 
 # dotnet-add-analyzers

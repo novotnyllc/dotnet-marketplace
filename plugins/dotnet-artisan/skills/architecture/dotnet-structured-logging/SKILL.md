@@ -1,6 +1,6 @@
 ---
 name: dotnet-structured-logging
-description: "WHEN designing log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation."
+description: "Designing log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation."
 ---
 
 # dotnet-structured-logging

@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-packaging
-description: "WHEN packaging CLI tools. Homebrew, apt/deb, winget, Scoop, Chocolatey, dotnet tool, NuGet."
+description: "Publishing to package managers. Homebrew, apt/deb, winget, Scoop, Chocolatey manifests."
 ---
 
 # dotnet-cli-packaging

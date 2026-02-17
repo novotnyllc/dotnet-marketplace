@@ -1,6 +1,6 @@
 ---
 name: dotnet-service-communication
-description: "WHEN choosing a communication protocol. Decision matrix for gRPC, SignalR, SSE, JSON-RPC, REST."
+description: "Choosing inter-service protocols. REST vs gRPC vs SignalR vs SSE decision matrix, tradeoffs."
 ---
 
 # dotnet-service-communication

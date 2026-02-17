@@ -1,6 +1,6 @@
 ---
 name: dotnet-test-quality
-description: "WHEN measuring test effectiveness. Coverlet code coverage, Stryker.NET mutation testing, flaky detection."
+description: "Measuring test effectiveness. Coverlet code coverage, Stryker.NET mutation testing, flaky detection."
 ---
 
 # dotnet-test-quality

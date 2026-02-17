@@ -1,6 +1,6 @@
 ---
 name: dotnet-wpf-migration
-description: "WHEN migrating desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI, decision matrix."
+description: "Migrating desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI, decision matrix."
 ---
 
 # dotnet-wpf-migration

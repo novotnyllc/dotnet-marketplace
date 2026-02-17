@@ -1,6 +1,6 @@
 ---
 name: dotnet-artifacts-output
-description: "WHEN using artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
+description: "Using artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
 ---
 
 # dotnet-artifacts-output

@@ -1,6 +1,6 @@
 ---
 name: plugin-self-publish
-description: "WHEN maintaining dotnet-artisan itself. Versioning, changelog, CI/CD. WHEN NOT user .NET projects."
+description: "Maintaining dotnet-artisan itself. Versioning, changelog, CI/CD. WHEN NOT user .NET projects."
 disable-model-invocation: true
 ---
 

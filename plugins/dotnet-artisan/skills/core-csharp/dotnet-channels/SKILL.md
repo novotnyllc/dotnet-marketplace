@@ -1,6 +1,6 @@
 ---
 name: dotnet-channels
-description: "WHEN using producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain patterns"
+description: "Using producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain patterns"
 ---
 
 # dotnet-channels

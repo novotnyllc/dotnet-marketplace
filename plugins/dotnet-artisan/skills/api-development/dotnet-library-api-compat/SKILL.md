@@ -1,6 +1,6 @@
 ---
 name: dotnet-library-api-compat
-description: "WHEN authoring .NET libraries. Binary/source compatibility rules, type forwarders, SemVer impact."
+description: "Maintaining library compatibility. Binary/source compat rules, type forwarders, SemVer impact."
 ---
 
 # dotnet-library-api-compat

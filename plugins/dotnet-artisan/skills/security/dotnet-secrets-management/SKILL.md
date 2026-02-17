@@ -1,6 +1,6 @@
 ---
 name: dotnet-secrets-management
-description: "WHEN handling secrets or sensitive configuration. User secrets, environment variables, rotation."
+description: "Handling secrets or sensitive configuration. User secrets, environment variables, rotation."
 ---
 
 # dotnet-secrets-management

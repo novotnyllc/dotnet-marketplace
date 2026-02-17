@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-async-patterns
-description: "WHEN writing async/await code. Covers task patterns, ConfigureAwait, cancellation, and common agent pitfalls."
+description: "Writing async/await code. Task patterns, ConfigureAwait, cancellation, and common agent pitfalls."
 ---
 
 # dotnet-csharp-async-patterns

@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-io
-description: "WHEN doing file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
+description: "Doing file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
 ---
 
 # dotnet-file-io

@@ -1,6 +1,6 @@
 ---
 name: dotnet-solid-principles
-description: "WHEN designing classes or refactoring. SOLID, DRY, SRP with C# anti-patterns, fixes, and compliance tests."
+description: "Designing classes or refactoring. SOLID, DRY, SRP with C# anti-patterns, fixes, compliance."
 ---
 
 # dotnet-solid-principles

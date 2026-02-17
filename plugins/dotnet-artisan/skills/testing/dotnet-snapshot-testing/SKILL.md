@@ -1,6 +1,6 @@
 ---
 name: dotnet-snapshot-testing
-description: "WHEN verifying complex outputs with Verify. API responses, scrubbing non-deterministic values."
+description: "Verifying complex outputs with Verify. API responses, scrubbing non-deterministic values."
 ---
 
 # dotnet-snapshot-testing

@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-patterns
-description: "WHEN designing GitHub Actions workflows. Reusable workflows, composite actions, matrix builds, caching."
+description: "Designing GitHub Actions workflows. Reusable workflows, composite actions, matrix builds, caching."
 ---
 
 # dotnet-gha-patterns

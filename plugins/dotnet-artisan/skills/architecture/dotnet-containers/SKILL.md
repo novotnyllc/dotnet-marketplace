@@ -1,6 +1,6 @@
 ---
 name: dotnet-containers
-description: "WHEN containerizing .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
+description: "Containerizing .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
 ---
 
 # dotnet-containers

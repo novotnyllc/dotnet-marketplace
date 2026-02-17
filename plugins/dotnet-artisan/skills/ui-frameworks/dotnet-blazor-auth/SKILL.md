@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-auth
-description: "WHEN adding auth to Blazor. AuthorizeView, CascadingAuthenticationState, Identity UI, per-model flows."
+description: "Adding auth to Blazor. AuthorizeView, CascadingAuthenticationState, Identity UI, per-model flows."
 ---
 
 # dotnet-blazor-auth

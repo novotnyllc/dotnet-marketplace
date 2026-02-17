@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-mcp
-description: "WHEN using Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback, citation."
+description: "Using Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback, citation."
 ---
 
 # dotnet-uno-mcp

@@ -1,6 +1,6 @@
 ---
 name: dotnet-accessibility
-description: "WHEN building accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing tools per platform."
+description: "Building accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing tools per platform."
 ---
 
 # dotnet-accessibility

@@ -1,6 +1,6 @@
 ---
 name: dotnet-realtime-communication
-description: "WHEN choosing real-time protocols. SignalR, SSE (.NET 10), JSON-RPC 2.0, gRPC streaming -- decision guidance."
+description: "Building real-time features. SignalR hubs, SSE (.NET 10), JSON-RPC 2.0, gRPC streaming, scaling."
 ---
 
 # dotnet-realtime-communication

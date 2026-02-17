@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-docs
-description: "WHEN generating API documentation. DocFX setup, OpenAPI-as-docs, doc-code sync, versioned docs."
+description: "Generating API documentation. DocFX setup, OpenAPI-as-docs, doc-code sync, versioned docs."
 ---
 
 # dotnet-api-docs

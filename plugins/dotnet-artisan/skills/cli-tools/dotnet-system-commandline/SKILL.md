@@ -1,6 +1,6 @@
 ---
 name: dotnet-system-commandline
-description: "WHEN building CLI apps. System.CommandLine 2.0: commands, options, SetAction, custom parsing, testing."
+description: "Using System.CommandLine 2.0. Commands, options, SetAction, custom parsing, middleware, testing."
 ---
 
 # dotnet-system-commandline

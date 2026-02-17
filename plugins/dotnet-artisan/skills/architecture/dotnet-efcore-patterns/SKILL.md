@@ -1,6 +1,6 @@
 ---
 name: dotnet-efcore-patterns
-description: "WHEN using EF Core. DbContext lifecycle, AsNoTracking, query splitting, migrations, interceptors."
+description: "Using EF Core. DbContext lifecycle, AsNoTracking, query splitting, migrations, interceptors."
 ---
 
 # dotnet-efcore-patterns

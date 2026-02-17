@@ -1,6 +1,6 @@
 ---
 name: dotnet-efcore-architecture
-description: "WHEN designing data layer architecture. Read/write split, aggregate boundaries, N+1 governance."
+description: "Designing data layer architecture. Read/write split, aggregate boundaries, N+1 governance."
 ---
 
 # dotnet-efcore-architecture

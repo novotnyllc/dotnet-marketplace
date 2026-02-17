@@ -1,6 +1,6 @@
 ---
 name: dotnet-aspire-patterns
-description: "WHEN using .NET Aspire. AppHost orchestration, service discovery, components, dashboard, health checks."
+description: "Using .NET Aspire. AppHost orchestration, service discovery, components, dashboard, health checks."
 ---
 
 # dotnet-aspire-patterns

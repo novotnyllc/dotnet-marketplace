@@ -1,6 +1,6 @@
 ---
 name: dotnet-domain-modeling
-description: "WHEN modeling business domains. Aggregates, value objects, domain events, rich models, repository contracts."
+description: "Modeling business domains. Aggregates, value objects, domain events, rich models, repositories."
 ---
 
 # dotnet-domain-modeling

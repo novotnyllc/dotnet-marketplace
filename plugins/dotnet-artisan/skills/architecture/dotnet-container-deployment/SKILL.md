@@ -1,6 +1,6 @@
 ---
 name: dotnet-container-deployment
-description: "WHEN deploying .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
+description: "Deploying .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
 ---
 
 # dotnet-container-deployment

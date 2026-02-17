@@ -1,6 +1,6 @@
 ---
 name: dotnet-messaging-patterns
-description: "WHEN building event-driven systems. Pub/sub, competing consumers, DLQ, sagas, delivery guarantees."
+description: "Building event-driven systems. Pub/sub, competing consumers, DLQ, sagas, delivery guarantees."
 ---
 
 # dotnet-messaging-patterns

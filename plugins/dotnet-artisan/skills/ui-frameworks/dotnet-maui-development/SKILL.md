@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-development
-description: "WHEN building .NET MAUI apps. Project structure, XAML/MVVM, platform services, current caveats."
+description: "Building .NET MAUI apps. Project structure, XAML/MVVM, platform services, current caveats."
 ---
 
 # dotnet-maui-development

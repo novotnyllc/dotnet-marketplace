@@ -1,6 +1,6 @@
 ---
 name: dotnet-openapi
-description: "WHEN generating OpenAPI docs. MS.AspNetCore.OpenApi (.NET 9+), Swashbuckle migration, NSwag."
+description: "Generating OpenAPI docs. MS.AspNetCore.OpenApi (.NET 9+), Swashbuckle migration, NSwag."
 ---
 
 # dotnet-openapi

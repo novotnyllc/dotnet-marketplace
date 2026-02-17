@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-configuration
-description: "WHEN using Options pattern, user secrets, or feature flags. IOptions<T> and FeatureManagement."
+description: "Using Options pattern, user secrets, or feature flags. IOptions<T> and FeatureManagement."
 ---
 
 # dotnet-csharp-configuration

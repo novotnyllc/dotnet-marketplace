@@ -1,6 +1,6 @@
 ---
 name: dotnet-msix
-description: "WHEN packaging MSIX apps. Creation, signing, Store submission, App Installer sideload, auto-update."
+description: "Packaging MSIX apps. Creation, signing, Store submission, App Installer sideload, auto-update."
 ---
 
 # dotnet-msix

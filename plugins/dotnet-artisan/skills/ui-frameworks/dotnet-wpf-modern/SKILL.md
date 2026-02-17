@@ -1,6 +1,6 @@
 ---
 name: dotnet-wpf-modern
-description: "WHEN building WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns."
+description: "Building WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns."
 ---
 
 # dotnet-wpf-modern

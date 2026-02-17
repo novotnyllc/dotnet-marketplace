@@ -1,6 +1,6 @@
 ---
 name: dotnet-ci-benchmarking
-description: "WHEN automating benchmark regression detection. Baselines, threshold alerts, BenchmarkDotNet CI."
+description: "Gating CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports."
 ---
 
 # dotnet-ci-benchmarking

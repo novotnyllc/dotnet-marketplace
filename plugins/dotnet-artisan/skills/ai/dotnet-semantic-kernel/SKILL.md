@@ -1,6 +1,6 @@
 ---
 name: dotnet-semantic-kernel
-description: "WHEN building AI/LLM features. Semantic Kernel setup, plugins, prompt templates, memory stores, agents."
+description: "Building AI/LLM features. Semantic Kernel setup, plugins, prompt templates, memory stores, agents."
 ---
 
 # dotnet-semantic-kernel

@@ -1,6 +1,6 @@
 ---
 name: dotnet-integration-testing
-description: "WHEN testing with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
+description: "Testing with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
 ---
 
 # dotnet-integration-testing

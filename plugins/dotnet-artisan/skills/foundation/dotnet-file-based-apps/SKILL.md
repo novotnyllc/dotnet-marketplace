@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-based-apps
-description: "WHEN running C# without a project file (.NET 10 SDK). Directives, CLI commands, migration."
+description: "Running C# without a project file (.NET 10 SDK). Directives, CLI commands, migration."
 ---
 
 # dotnet-file-based-apps

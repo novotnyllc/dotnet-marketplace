@@ -1,6 +1,6 @@
 ---
 name: dotnet-gc-memory
-description: "WHEN tuning GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool, profiling."
+description: "Tuning GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool, profiling."
 ---
 
 # dotnet-gc-memory

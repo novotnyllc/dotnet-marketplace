@@ -1,6 +1,6 @@
 ---
 name: dotnet-msbuild-authoring
-description: "WHEN authoring MSBuild targets, props, or conditions. Custom targets, incrementality, Build patterns."
+description: "Authoring MSBuild targets, props, or conditions. Custom targets, incrementality, Build patterns."
 ---
 
 # dotnet-msbuild-authoring

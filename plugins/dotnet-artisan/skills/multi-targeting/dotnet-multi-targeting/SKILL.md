@@ -1,6 +1,6 @@
 ---
 name: dotnet-multi-targeting
-description: "WHEN project targets multiple TFMs or needs newer C# features on older TFMs. Polyfill strategy, API compat."
+description: "Targeting multiple TFMs or using newer C# on older TFMs. Polyfill strategy, API compat."
 ---
 
 # dotnet-multi-targeting

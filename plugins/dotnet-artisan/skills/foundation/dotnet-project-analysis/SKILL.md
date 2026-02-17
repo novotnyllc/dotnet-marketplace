@@ -1,6 +1,6 @@
 ---
 name: dotnet-project-analysis
-description: "WHEN navigating .NET solution structure or build configuration. Analyzes .sln, .csproj, CPM."
+description: "Navigating .NET solution structure or build configuration. Analyzes .sln, .csproj, CPM."
 ---
 
 # dotnet-project-analysis

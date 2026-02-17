@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-publish
-description: "WHEN publishing .NET artifacts from Azure DevOps. NuGet push, container images to ACR, pipeline artifacts."
+description: "Publishing .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts."
 ---
 
 # dotnet-ado-publish

@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-unique
-description: "WHEN using ADO-exclusive features. Environments, approvals, service connections, classic releases."
+description: "Using ADO-exclusive features. Environments, approvals, service connections, classic releases."
 ---
 
 # dotnet-ado-unique

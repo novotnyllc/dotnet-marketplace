@@ -1,6 +1,6 @@
 ---
 name: dotnet-advisor
-description: "WHEN working with .NET, C#, ASP.NET Core, or related frameworks. Routes to specialist skills."
+description: "Working with .NET, C#, ASP.NET Core, or related frameworks. Routes to specialist skills."
 ---
 
 # dotnet-advisor

@@ -1,6 +1,6 @@
 ---
 name: dotnet-build-optimization
-description: "WHEN diagnosing slow builds or incremental failures. Binary logs, parallel builds, restore."
+description: "Diagnosing slow builds or incremental failures. Binary logs, parallel builds, restore."
 ---
 
 # dotnet-build-optimization

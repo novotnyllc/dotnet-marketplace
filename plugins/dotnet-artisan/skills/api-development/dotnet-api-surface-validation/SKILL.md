@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-surface-validation
-description: "WHEN tracking public API surface. PublicApiAnalyzers, Verify snapshot pattern, ApiCompat CI enforcement."
+description: "Detecting API changes in CI. PublicApiAnalyzers, Verify snapshots, breaking change enforcement."
 ---
 
 # dotnet-api-surface-validation

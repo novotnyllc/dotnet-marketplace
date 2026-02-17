@@ -1,6 +1,6 @@
 ---
 name: dotnet-xml-docs
-description: "WHEN writing XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
+description: "Writing XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
 ---
 
 # dotnet-xml-docs

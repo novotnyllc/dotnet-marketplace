@@ -1,6 +1,6 @@
 ---
 name: dotnet-github-docs
-description: "WHEN creating GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
+description: "Creating GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
 ---
 
 # dotnet-github-docs

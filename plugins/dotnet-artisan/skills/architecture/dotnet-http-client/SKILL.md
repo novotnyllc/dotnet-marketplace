@@ -1,6 +1,6 @@
 ---
 name: dotnet-http-client
-description: "WHEN consuming HTTP APIs. IHttpClientFactory, typed/named clients, resilience, DelegatingHandlers."
+description: "Consuming HTTP APIs. IHttpClientFactory, typed/named clients, resilience, DelegatingHandlers."
 ---
 
 # dotnet-http-client

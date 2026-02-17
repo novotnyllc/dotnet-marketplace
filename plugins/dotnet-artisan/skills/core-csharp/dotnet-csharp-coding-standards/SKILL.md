@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-coding-standards
-description: "WHEN writing or reviewing C# for naming, style, or file layout. Framework Design Guidelines."
+description: "Enforcing C# naming, style, and file layout conventions. Framework Design Guidelines."
 ---
 
 # dotnet-csharp-coding-standards

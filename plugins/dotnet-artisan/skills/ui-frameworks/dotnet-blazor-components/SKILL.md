@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-components
-description: "WHEN building Blazor components. Lifecycle, state management, JS interop, EditForm validation, QuickGrid."
+description: "Building Blazor components. Lifecycle, state management, JS interop, EditForm validation, QuickGrid."
 ---
 
 # dotnet-blazor-components

@@ -1,6 +1,6 @@
 ---
 name: dotnet-io-pipelines
-description: "WHEN building high-perf network I/O. PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel."
+description: "Building high-perf network I/O. PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel."
 ---
 
 # dotnet-io-pipelines
