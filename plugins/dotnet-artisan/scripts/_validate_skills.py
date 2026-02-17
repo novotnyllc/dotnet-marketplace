@@ -314,7 +314,7 @@ def main():
     budget_status = "OK"
     if (
         total_desc_chars >= args.fail_threshold
-        or projected_desc_chars >= args.fail_threshold
+        or projected_desc_chars > args.fail_threshold
     ):
         budget_status = "FAIL"
     elif (

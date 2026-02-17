@@ -11,7 +11,7 @@ CLI distribution strategy for .NET tools: choosing between Native AOT single-fil
 
 **Out of scope:** Native AOT MSBuild configuration (PublishAot, ILLink descriptors, EnableAotAnalyzer, trimming) -- see [skill:dotnet-native-aot]. AOT-first application design patterns (source gen over reflection, DI choices) -- see [skill:dotnet-aot-architecture]. Multi-platform packaging formats (Homebrew, apt/deb, winget, Scoop) -- see [skill:dotnet-cli-packaging]. Release CI/CD pipeline -- see [skill:dotnet-cli-release-pipeline]. Container-based distribution -- see [skill:dotnet-containers]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns].
 
-Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-cli-architecture] for CLI layered architecture, [skill:dotnet-cli-packaging] for platform-specific package formats, [skill:dotnet-cli-release-pipeline] for automated release workflows, [skill:dotnet-containers] for container-based distribution.
+Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-cli-architecture] for CLI layered architecture, [skill:dotnet-cli-packaging] for platform-specific package formats, [skill:dotnet-cli-release-pipeline] for automated release workflows, [skill:dotnet-containers] for container-based distribution, [skill:dotnet-tool-management] for consumer-side tool installation and manifest management.
 
 ---
 

@@ -114,6 +114,7 @@ Before any .NET guidance, determine the project's target framework:
 - [skill:dotnet-cli-distribution] -- Native AOT + cross-platform distribution strategy
 - [skill:dotnet-cli-packaging] -- Homebrew, apt/deb, winget, Scoop, Chocolatey, dotnet tool
 - [skill:dotnet-cli-release-pipeline] -- unified multi-platform CI/CD release workflow
+- [skill:dotnet-tool-management] -- install, manage, restore global/local .NET tools
 
 ### 12. UI Frameworks `planned`
 - [skill:dotnet-blazor-patterns] -- Server, WASM, Hybrid, auto/streaming
@@ -249,6 +250,7 @@ Use this decision tree to load the right skills for the current task.
 - System.CommandLine -> [skill:dotnet-system-commandline]
 - CLI design -> [skill:dotnet-cli-architecture]
 - Distribution -> [skill:dotnet-cli-distribution], [skill:dotnet-cli-packaging], [skill:dotnet-cli-release-pipeline]
+- Tool install, manifest, restore -> [skill:dotnet-tool-management]
 
 ### Containers & Deployment
 - Dockerfiles -> [skill:dotnet-containers]
