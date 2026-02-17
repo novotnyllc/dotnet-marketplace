@@ -49,8 +49,6 @@ jobs:
           echo "=== Plugin JSON Validation ==="
           jq empty plugins/dotnet-artisan/.claude-plugin/plugin.json
           echo "OK: plugin.json"
-          jq empty plugins/dotnet-artisan/.claude-plugin/marketplace.json
-          echo "OK: marketplace.json"
           jq empty plugins/dotnet-artisan/hooks/hooks.json
           echo "OK: hooks.json"
           jq empty plugins/dotnet-artisan/.mcp.json
