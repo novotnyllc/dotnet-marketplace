@@ -78,3 +78,6 @@ Always add a dedicated integration task (task .N) that owns plugin.json registra
 
 ## 2026-02-17 manual [convention]
 When creating metadata files for repo-level discovery, clarify in spec whether they're marketplace-level or per-component; single-component repos can use repo root, but document scalability path for multi-component architectures
+
+## 2026-02-19 manual [convention]
+Task specs that reference audit data should say 'per the baseline report' instead of hardcoding counts -- counts change as detection logic improves

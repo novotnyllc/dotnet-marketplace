@@ -1,7 +1,7 @@
 # fn-53-skill-routing-language-hardening.10 Agent File Normalization
 
 ## Description
-Normalize all 14 agent files (`agents/*.md`) to use canonical `[skill:]` cross-reference syntax. Currently 8 of 14 agents use bare-text references (~50 total). Also normalize agent description conventions per T2 style guide.
+Normalize all 14 agent files (`agents/*.md`) to use canonical `[skill:]` cross-reference syntax. Baseline bare-ref counts per agent are documented in `docs/skill-routing-audit-baseline.md`. Also normalize agent description conventions per T2 style guide.
 
 **Size:** M
 **Files:**
@@ -11,8 +11,8 @@ Normalize all 14 agent files (`agents/*.md`) to use canonical `[skill:]` cross-r
 ## Approach
 
 - Convert all bare-text skill/agent references (backtick-wrapped, bold-wrapped) to `[skill:]` syntax
-- Agents confirmed to have bare refs: `dotnet-testing-specialist` (7), `dotnet-code-review-agent` (9), `dotnet-performance-analyst` (11), and 5 others
-- Agents already clean: `dotnet-architect`, `dotnet-blazor-specialist`, `dotnet-uno-specialist`, `dotnet-docs-generator`, `dotnet-security-reviewer`, `dotnet-maui-specialist`
+- Use `docs/skill-routing-audit-baseline.md` per-agent bare-ref counts to prioritize work (do not rely on hardcoded counts here)
+- All 14 agents have bare refs per the baseline audit; none are pre-clean
 - Even "clean" agents must be scanned for edge-case bare refs (e.g., in Trigger Lexicon text, code comments, or reference URLs that happen to contain skill names)
 - Normalize agent description fields per style guide: no-WHEN-prefix, third-person declarative style ("Analyzes X for Y" not "WHEN analyzing X")
 - Verify all `[skill:]` references in agent files resolve to existing skill directories

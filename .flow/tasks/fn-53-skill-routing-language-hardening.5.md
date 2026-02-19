@@ -1,14 +1,12 @@
 # fn-53-skill-routing-language-hardening.5 Normalize Foundation and High-Traffic Skills
 
 ## Description
-Apply canonical routing language (from T2 style guide) to the foundation skills and all high-traffic skills listed in `tests/agent-routing/cases.json`. Normalize `AGENTS.md` cross-references. These are the most-routed skills and set the pattern for subsequent sweeps.
+Apply canonical routing language (from T2 style guide) to the skills assigned to **T5** by `docs/skill-routing-ownership-manifest.md` (no overlap with T6-T9). Prioritize any routing-test hotspots that fall inside the T5 batch. Normalize `AGENTS.md` cross-references. These are the most-routed skills and set the pattern for subsequent sweeps.
 
-**Size:** M (heavy — ~16 skills plus AGENTS.md, but templated per-skill work)
+**Size:** M (heavy -- 16 skills plus AGENTS.md, but templated per-skill work)
 **Files:**
-- `skills/foundation/dotnet-advisor/SKILL.md` (edit)
-- `skills/foundation/dotnet-version-detection/SKILL.md` (edit)
+- Subset from `docs/skill-routing-ownership-manifest.md` where `Assigned Task == T5` (16 skills)
 - `AGENTS.md` (edit -- normalize existing cross-references to `[skill:]` syntax)
-- ~14 additional skills referenced in `tests/agent-routing/cases.json` (edit)
 - Read-only: `docs/skill-routing-ownership-manifest.md` (task list), `docs/skill-routing-style-guide.md` (rules)
 
 ## Approach
@@ -33,7 +31,7 @@ Do not change catalog status markers (`implemented`/`planned`) in `dotnet-adviso
 
 - `dotnet-advisor` is the central router. Its SKILL.md has specialist references using `**name**` bold format (lines 334-338). Convert to `[skill:]`.
 - `AGENTS.md` is a concise plugin instructions file (121 lines). Cross-Reference Syntax section (lines 54-62) already documents `[skill:]` convention. Scan for any bare-text violations in the rest of the file.
-- The 14 cases.json skills are the highest-traffic paths. Getting these right first ensures routing test reliability.
+- Several cases.json routing-test hotspots fall within the T5 batch. Getting these right first ensures routing test reliability. Other hotspots are handled by their respective sweep tasks (T6-T9).
 - Memory pitfall: "Cross-reference IDs must be canonical" -- verify each ref against actual `SKILL.md` name: fields.
 - T13's similarity report highlights the top overlap pairs. Use this data to prioritize which descriptions to differentiate most aggressively.
 
@@ -41,7 +39,7 @@ Do not change catalog status markers (`implemented`/`planned`) in `dotnet-adviso
 - [ ] Foundation skills (`dotnet-advisor`, `dotnet-version-detection`) have scope/out-of-scope sections and canonical descriptions
 - [ ] `dotnet-advisor` specialist routing uses `[skill:]` syntax (no bold-text agent names)
 - [ ] `AGENTS.md` cross-references normalized to `[skill:]` syntax where applicable
-- [ ] All ~14 high-traffic skills from `cases.json` normalized per style guide
+- [ ] All 16 T5-assigned skills normalized per style guide (including routing-test hotspots in this batch)
 - [ ] All cross-references use canonical `[skill:]` syntax (unified for skills and agents)
 - [ ] Budget delta documented: net reduction of ≥350 chars from this batch. Total chars before vs after recorded. Target: `CURRENT_DESC_CHARS < 12,000`.
 - [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.

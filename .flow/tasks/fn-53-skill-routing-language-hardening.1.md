@@ -13,9 +13,9 @@ Build a baseline inventory covering all 130 skills: description length, overlap 
 
 - Script-driven audit: iterate all SKILL.md files, extract frontmatter descriptions, count `[skill:]` refs, check for `## Scope`, `## Out of scope`, `## Trigger` sections
 - Compute preliminary pairwise textual overlap using simple word-set Jaccard (Jaccard on token sets with domain stopwords removed). This is a PRELIMINARY measure — T13 builds the production-quality multi-signal similarity script. T1 uses simple Jaccard to identify the top-N overlap hotspots for the audit report.
-- Identify the exact set of skills with zero routing markers via automated scan (known to be ~16 based on prior analysis)
-- Count bare-text references in `agents/*.md` files (currently ~50 across 8 agents)
-- Ownership assignment: divide 130 skills into T5 (foundation + high-traffic ~16), T6 (~30), T7 (~25), T8 (~25), T9 (~30 long tail), T10 (14 agent files). Each skill path appears in exactly one task.
+- Identify the exact set of skills with zero routing markers via automated scan (measured by the generated baseline report)
+- Count bare-text references in `agents/*.md` files (measured by the generated baseline report)
+- Ownership assignment: divide 130 skills into T5 (foundation + high-traffic), T6, T7, T8, T9, T10 (14 agent files). Exact counts per task documented in the manifest. Each skill path appears in exactly one task.
 
 ## Key context
 
