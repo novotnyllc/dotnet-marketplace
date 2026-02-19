@@ -1,6 +1,6 @@
 ---
 name: dotnet-xunit
-description: "Writing xUnit tests. v3 Fact/Theory, fixtures, parallelism, IAsyncLifetime, v2 compatibility."
+description: "xUnit v3 authoring for .NET tests with scaffolding: Facts/Theories, fixtures, parallelism, IAsyncLifetime."
 user-invocable: false
 ---
 

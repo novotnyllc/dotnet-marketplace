@@ -1,6 +1,6 @@
 ---
 name: dotnet-advisor
-description: "Working with .NET, C#, ASP.NET Core, or related frameworks. Routes to specialist skills and loads coding-standards by default for code work."
+description: "Routes .NET/C# work to specialist skills and loads coding-standards first for code paths."
 ---
 
 # dotnet-advisor

@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-components
-description: "Building Blazor components. Lifecycle, state management, JS interop, EditForm validation, QuickGrid."
+description: "Blazor component implementation for .NET 8+/9+: lifecycle, state management, JS interop, EditForm, QuickGrid."
 user-invocable: false
 ---
 

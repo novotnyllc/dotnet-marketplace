@@ -1,6 +1,6 @@
 ---
 name: dotnet-version-detection
-description: "Project has .csproj, global.json, or Directory.Build.props. Detects TFMs and SDK versions."
+description: "Runs first in .NET/C# tasks to detect TFM/SDK from .csproj, global.json, and Directory.Build.props."
 user-invocable: false
 context: fork
 model: haiku

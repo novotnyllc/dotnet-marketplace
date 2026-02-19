@@ -1,6 +1,6 @@
 ---
 name: dotnet-security-owasp
-description: "Securing .NET code or reviewing for vulnerabilities. OWASP Top 10 mitigations, pattern warnings."
+description: "Canonical OWASP Top 10 guidance for .NET applications, including mitigations and deprecated security pattern warnings."
 user-invocable: false
 ---
 

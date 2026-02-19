@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-build-test
-description: "Configuring .NET build/test in GitHub Actions. setup-dotnet, NuGet caching, test reporting."
+description: "GitHub Actions .NET build/test workflows: setup-dotnet, NuGet cache, test reporting/sharding; publish/deploy elsewhere."
 user-invocable: false
 ---
 

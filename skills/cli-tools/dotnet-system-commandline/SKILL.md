@@ -1,6 +1,6 @@
 ---
 name: dotnet-system-commandline
-description: "Using System.CommandLine 2.0. Commands, options, SetAction, custom parsing, middleware, testing."
+description: "System.CommandLine 2.0 for .NET CLI apps: commands, options, SetAction, custom parsing, middleware, and testing."
 user-invocable: false
 ---
 

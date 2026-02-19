@@ -1,6 +1,6 @@
 ---
 name: dotnet-architecture-patterns
-description: "Organizing APIs at scale. Vertical slices, request pipelines, caching, error handling, idempotency."
+description: "ASP.NET Core API architecture at scale: vertical slices, pipelines, caching, error handling, idempotency."
 user-invocable: false
 ---
 
