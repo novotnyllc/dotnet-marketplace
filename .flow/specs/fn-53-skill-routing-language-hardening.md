@@ -26,8 +26,8 @@ Standardize routing language across all 130 SKILL.md files and 14 agent files so
 
 - Budget is at WARN threshold: ~12,345 chars current vs 12,000 warn / 15,600 fail (thresholds from `validate-skills.sh --warn-threshold 12000 --fail-threshold 15600`). All description changes must be budget-neutral or budget-negative.
 - Research shows assertive cues in descriptions create 7x selection bias; position bias gives 80.2% selection rate to first-listed tools. Descriptions must be factual, not promotional.
-- 16 skills have zero routing markers (no trigger, scope, or out-of-scope). These need markers added from scratch.
-- 8 of 14 agent files use bare-text references (~50 total) instead of `[skill:]` syntax.
+- 58 skills have zero routing markers (no trigger, scope, or out-of-scope) per T1 baseline audit (`docs/skill-routing-audit-baseline.md`). These need markers added from scratch.
+- All 14 agent files have bare-text references (64 total) per T1 baseline audit. These need normalization to `[skill:]` syntax.
 - CI currently runs without `STRICT_REFS=1`, so cross-ref validation is lenient. Must enable strict mode.
 - Prior art: fn-29 (fleet review), fn-37 (cleanup sweep), fn-49 (compliance review), fn-51 (frontmatter).
 - **Historical reference**: `.flow/specs/skill-routing-language-hardening-plan.md` is the prior plan snapshot. The authoritative plan is THIS spec (`.flow/specs/fn-53-skill-routing-language-hardening.md`).
