@@ -339,3 +339,6 @@ When validating artifacts with both a user-facing name field and a filesystem-ca
 
 ## 2026-02-19 manual [pitfall]
 JSON config parsers must validate root type (list vs dict) before calling .get() or iterating -- wrong root type causes AttributeError that bypasses intended exit-code handling
+
+## 2026-02-19 manual [pitfall]
+When loading JSON config files, always validate field types (isinstance checks) and fail loudly (exit 2) on schema violations — truthy checks alone miss non-string types and whitespace-only strings
