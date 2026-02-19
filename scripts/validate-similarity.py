@@ -172,8 +172,11 @@ def collect_agent_descriptions(repo_root: Path) -> list[dict]:
 
 def load_suppressions(path: Path | None) -> set[tuple[str, str]]:
     """Load suppression list and return set of canonical pairs."""
-    if path is None or not path.is_file():
+    if path is None:
         return set()
+    if not path.is_file():
+        print(f"ERROR: Suppressions file not found: {path}", file=sys.stderr)
+        sys.exit(2)
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except Exception as e:
@@ -192,8 +195,16 @@ def load_suppressions(path: Path | None) -> set[tuple[str, str]]:
                 file=sys.stderr,
             )
             sys.exit(2)
-        id_a = entry.get("id_a", "")
-        id_b = entry.get("id_b", "")
+        id_a = entry.get("id_a", None)
+        id_b = entry.get("id_b", None)
+        if not isinstance(id_a, str) or not isinstance(id_b, str):
+            print(
+                f"ERROR: Suppression entry {idx} id_a/id_b must be strings",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        id_a = id_a.strip()
+        id_b = id_b.strip()
         if not id_a or not id_b:
             print(
                 f"ERROR: Suppression entry {idx} has empty id_a or id_b",
@@ -235,8 +246,13 @@ def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
         )
         sys.exit(2)
 
+    pairs_raw = data.get("pairs", [])
+    if not isinstance(pairs_raw, list):
+        print("ERROR: Baseline 'pairs' must be a JSON array", file=sys.stderr)
+        sys.exit(2)
+
     pairs = set()
-    for idx, pair in enumerate(data.get("pairs", [])):
+    for idx, pair in enumerate(pairs_raw):
         if not isinstance(pair, list) or len(pair) != 2:
             print(
                 f"ERROR: Baseline entry {idx} is not a 2-element array",
@@ -244,6 +260,14 @@ def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
             )
             sys.exit(2)
         a, b = pair[0], pair[1]
+        if not isinstance(a, str) or not isinstance(b, str):
+            print(
+                f"ERROR: Baseline entry {idx} IDs must be strings: {pair}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        a = a.strip()
+        b = b.strip()
         if not a or not b:
             print(
                 f"ERROR: Baseline entry {idx} has empty ID(s): {pair}",
@@ -346,6 +370,11 @@ def build_summary(
 ) -> dict:
     """Build summary statistics from computed pairs."""
     max_score = max((p["composite"] for p in pairs), default=0.0)
+    max_unsuppressed_score = max(
+        (p["composite"] for p in pairs
+         if (p["id_a"], p["id_b"]) not in suppressions),
+        default=0.0,
+    )
     pairs_above_warn = sum(
         1 for p in pairs if p["level"] in ("WARN", "ERROR")
     )
@@ -369,6 +398,7 @@ def build_summary(
         "total_items": total_items,
         "total_pairs": total_pairs,
         "max_score": round(max_score, 6),
+        "max_unsuppressed_score": round(max_unsuppressed_score, 6),
         "pairs_above_warn": pairs_above_warn,
         "pairs_above_error": pairs_above_error,
         "suppressed_count": suppressed_count,
