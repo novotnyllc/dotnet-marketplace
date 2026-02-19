@@ -81,24 +81,48 @@ prepare_codex_skills() {
         return 1
     fi
 
-    log "Syncing repo skills into Codex skill home: $CODEX_SKILLS_DIR"
-    mkdir -p "$CODEX_SKILLS_DIR"
-
     if ! have_cmd rsync; then
         log "ERROR: rsync is required to sync Codex skills."
         return 1
     fi
 
+    local -a skill_dirs=()
     while IFS= read -r skill_dir; do
+        skill_dirs+=("$skill_dir")
+    done < <(find "$REPO_ROOT/skills" -mindepth 2 -maxdepth 2 -type d | sort)
+
+    local total_skills="${#skill_dirs[@]}"
+    if (( total_skills == 0 )); then
+        log "ERROR: No skill directories found under $REPO_ROOT/skills"
+        return 1
+    fi
+
+    log "Syncing $total_skills repo skills into Codex skill home: $CODEX_SKILLS_DIR"
+    mkdir -p "$CODEX_SKILLS_DIR"
+
+    local sync_started_at
+    sync_started_at="$(date +%s)"
+
+    local synced_count=0
+    for skill_dir in "${skill_dirs[@]}"; do
+        synced_count=$((synced_count + 1))
         skill_name="$(basename "$skill_dir")"
         skill_dest="$CODEX_SKILLS_DIR/$skill_name"
         mkdir -p "$skill_dest"
         rsync -a --delete "$skill_dir"/ "$skill_dest"/
-    done < <(find "$REPO_ROOT/skills" -mindepth 2 -maxdepth 2 -type d | sort)
+
+        if (( synced_count % 25 == 0 || synced_count == total_skills )); then
+            log "Codex skill sync progress: $synced_count/$total_skills"
+        fi
+    done
 
     local repo_sha
     repo_sha="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
     printf '%s\n' "$REPO_ROOT@$repo_sha" > "$CODEX_SKILLS_DIR/.dotnet-artisan-source"
+
+    local sync_finished_at
+    sync_finished_at="$(date +%s)"
+    log "Codex skill sync finished in $((sync_finished_at - sync_started_at))s."
 }
 
 prepare_agent_sources() {
