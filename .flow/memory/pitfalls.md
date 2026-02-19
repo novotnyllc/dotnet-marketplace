@@ -333,3 +333,6 @@ When ownership manifests repartition work across tasks, update ALL downstream ta
 
 ## 2026-02-19 manual [pitfall]
 Style guide docs that describe future validator behavior must clearly separate 'current behavior' from 'canonical policy' with distinct subsections -- mixing them causes repeated reviewer churn even after adding qualifying notes
+
+## 2026-02-19 manual [pitfall]
+When validating artifacts with both a user-facing name field and a filesystem-canonical ID (directory name, file stem), always use the canonical ID for graph operations (self-ref detection, cycle graphs, cross-ref resolution) -- frontmatter names may diverge from canonical IDs

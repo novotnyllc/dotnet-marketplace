@@ -40,9 +40,8 @@ import re
 import sys
 from pathlib import Path
 
-# Import shared agent frontmatter parser
+# Ensure scripts directory is on path for shared modules
 sys.path.insert(0, str(Path(__file__).parent))
-from _agent_frontmatter import parse_agent_frontmatter
 
 # --- Quality Constants ---
 

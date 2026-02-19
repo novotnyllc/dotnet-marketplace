@@ -34,7 +34,7 @@ def parse_agent_frontmatter(file_path: str) -> dict:
         Returns {'name': None, 'description': None} if frontmatter is missing
         or cannot be parsed.
     """
-    result = {"name": None, "description": None}
+    result: dict[str, str | None] = {"name": None, "description": None}
 
     try:
         text = Path(file_path).read_text(encoding="utf-8")

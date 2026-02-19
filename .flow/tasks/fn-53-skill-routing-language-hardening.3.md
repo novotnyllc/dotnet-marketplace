@@ -75,9 +75,8 @@ Agent bare-ref counts (`AGENT_BARE_REF_COUNT`, `AGENTSMD_BARE_REF_COUNT`) are **
 - [ ] `.github/workflows/validate.yml` parses all new output keys (validator + similarity) and fails on similarity exit code non-zero
 - [ ] `./scripts/validate-skills.sh` passes
 ## Done summary
-TBD
-
+Extended _validate_skills.py with 7 new routing-language quality checks (scope/out-of-scope presence, attribution, self-referential cross-links, cycle detection, agent bare-ref detection, AGENTS.md bare-ref detection), created shared _agent_frontmatter.py parser module, skill-routing-report.py compliance tool, per-key routing-warnings-baseline.json, updated validate-skills.sh to remove exec and wire similarity detection with file-existence guard, and set STRICT_REFS=1 in CI with all new output keys parsed.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 0905970, b5b6b23
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, STRICT_REFS=1 ./scripts/validate-skills.sh, python3 scripts/skill-routing-report.py --repo-root .
 - PRs:
