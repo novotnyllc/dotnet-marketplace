@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-based-apps
-description: ".NET 10 file-based C# apps. #: directives, CLI commands, migration from .csproj."
+description: "Builds .NET 10 file-based C# apps: #: directives, CLI commands, csproj migration."
 user-invocable: false
 ---
 

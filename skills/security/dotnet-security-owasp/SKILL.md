@@ -1,6 +1,6 @@
 ---
 name: dotnet-security-owasp
-description: "OWASP Top 10 for .NET: injection, auth, XSS mitigations, deprecated API warnings."
+description: "Covers OWASP Top 10 for .NET: injection, auth, XSS, deprecated API warnings."
 user-invocable: false
 ---
 

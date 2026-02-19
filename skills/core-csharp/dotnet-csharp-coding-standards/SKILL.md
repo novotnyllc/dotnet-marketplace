@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-coding-standards
-description: "Baseline C# conventions loaded first for code work: naming, file layout, style."
+description: "Defines baseline C# conventions loaded first: naming, file layout, style rules."
 user-invocable: false
 ---
 

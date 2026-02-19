@@ -1,6 +1,6 @@
 ---
 name: dotnet-architecture-patterns
-description: "ASP.NET Core architecture at scale: vertical slices, pipelines, caching, error handling."
+description: "Designs ASP.NET Core architecture: vertical slices, pipelines, caching, errors."
 user-invocable: false
 ---
 

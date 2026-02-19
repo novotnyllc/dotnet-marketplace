@@ -53,13 +53,14 @@ user-invocable: false
 
 ### Cross-Reference Syntax
 
-Reference other skills using machine-parseable syntax:
+Reference skills and agents using machine-parseable syntax:
 
 ```markdown
 See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+Route to [skill:dotnet-security-reviewer] for security audit.
 ```
 
-Use `[skill:skill-name]` for ALL skill references -- bare text skill names are not machine-parseable.
+Use `[skill:name]` for ALL routable references (skills and agents) -- bare text names are not machine-parseable.
 
 ### Description Budget
 
