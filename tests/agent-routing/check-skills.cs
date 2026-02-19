@@ -76,6 +76,7 @@ internal sealed class AgentRoutingRunner
     private static readonly Regex ClaudeLaunchingSkillRegex = new("Launching skill:\\s*([A-Za-z0-9._:-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private readonly RunnerOptions _options;
+    private readonly object _progressLock = new();
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -124,15 +125,22 @@ internal sealed class AgentRoutingRunner
             ? _options.Agents.Select(a => a.Trim().ToLowerInvariant()).Where(a => a.Length > 0).Distinct().ToArray()
             : DefaultAgents;
 
-        var results = new List<AgentResult>(cases.Count * agents.Length);
-
+        var work = new List<(int Index, string Agent, CaseDefinition TestCase)>(cases.Count * agents.Length);
+        var runIndex = 0;
         foreach (var testCase in cases)
         {
             foreach (var agent in agents)
             {
-                results.Add(await RunCaseAsync(agent, testCase));
+                work.Add((runIndex, agent, testCase));
+                runIndex++;
             }
         }
+
+        var totalRuns = work.Count;
+        var maxParallel = Math.Min(_options.MaxParallel, totalRuns);
+        LogProgress($"Starting {totalRuns} runs ({cases.Count} cases x {agents.Length} agents), max_parallel={maxParallel}.");
+        var results = await ExecuteWorkAsync(work, totalRuns, maxParallel);
+        LogProgress("Run matrix completed.");
 
         var summary = new Summary
         {
@@ -154,8 +162,10 @@ internal sealed class AgentRoutingRunner
                 Categories = _options.Categories.OrderBy(x => x).ToArray(),
                 CaseIds = _options.CaseIds.OrderBy(x => x).ToArray(),
                 TimeoutSeconds = _options.TimeoutSeconds,
+                MaxParallel = maxParallel,
                 LogMaxFiles = _options.LogMaxFiles,
-                LogMaxBytes = _options.LogMaxBytes
+                LogMaxBytes = _options.LogMaxBytes,
+                Progress = _options.Progress
             }
         };
 
@@ -191,6 +201,72 @@ internal sealed class AgentRoutingRunner
         }
 
         return 0;
+    }
+
+    private async Task<List<AgentResult>> ExecuteWorkAsync(
+        List<(int Index, string Agent, CaseDefinition TestCase)> work,
+        int totalRuns,
+        int maxParallel)
+    {
+        var semaphore = new SemaphoreSlim(maxParallel, maxParallel);
+        var results = new AgentResult[totalRuns];
+        var started = 0;
+        var completed = 0;
+        var pass = 0;
+        var fail = 0;
+        var infra = 0;
+
+        var tasks = work.Select(async item =>
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                var startedOrdinal = Interlocked.Increment(ref started);
+                LogProgress($"[{startedOrdinal}/{totalRuns}] starting agent={item.Agent} case_id={item.TestCase.CaseId}");
+
+                var result = await RunCaseAsync(item.Agent, item.TestCase);
+                results[item.Index] = result;
+
+                switch (result.Status)
+                {
+                    case ResultStatus.Pass:
+                        Interlocked.Increment(ref pass);
+                        break;
+                    case ResultStatus.Fail:
+                        Interlocked.Increment(ref fail);
+                        break;
+                    default:
+                        Interlocked.Increment(ref infra);
+                        break;
+                }
+
+                var completedOrdinal = Interlocked.Increment(ref completed);
+                LogProgress(
+                    $"[{completedOrdinal}/{totalRuns}] completed agent={item.Agent} case_id={item.TestCase.CaseId} " +
+                    $"status={result.Status} duration_ms={result.DurationMs} timed_out={result.TimedOut} " +
+                    $"summary(pass={pass}, fail={fail}, infra={infra})");
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        });
+
+        await Task.WhenAll(tasks);
+        return [.. results];
+    }
+
+    private void LogProgress(string message)
+    {
+        if (!_options.Progress)
+        {
+            return;
+        }
+
+        lock (_progressLock)
+        {
+            Console.Error.WriteLine($"[check-skills] {DateTimeOffset.UtcNow:HH:mm:ss} {message}");
+        }
     }
 
     private async Task<AgentResult> RunCaseAsync(string agent, CaseDefinition testCase)
@@ -1093,8 +1169,10 @@ internal sealed class RunnerOptions
     public string? OutputPath { get; init; }
     public string? ProofLogPath { get; init; }
     public int TimeoutSeconds { get; init; } = 90;
+    public int MaxParallel { get; init; } = int.MaxValue;
     public int LogMaxFiles { get; init; } = 60;
     public int LogMaxBytes { get; init; } = 300_000;
+    public bool Progress { get; init; } = true;
     public bool FailOnInfra { get; init; }
     public bool ShowHelp { get; init; }
     public HashSet<string> Agents { get; init; } = new(StringComparer.OrdinalIgnoreCase);
@@ -1107,8 +1185,10 @@ internal sealed class RunnerOptions
         string? output = null;
         string? proofLog = null;
         int timeoutSeconds = 90;
+        int maxParallel = int.MaxValue;
         int logMaxFiles = 60;
         int logMaxBytes = 300_000;
+        bool progress = true;
         bool failOnInfra = false;
         bool showHelp = false;
         var agents = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -1136,11 +1216,17 @@ internal sealed class RunnerOptions
                 case "--timeout-seconds":
                     timeoutSeconds = ParsePositiveInt(ReadValue(args, ref i, "--timeout-seconds"), "--timeout-seconds");
                     break;
+                case "--max-parallel":
+                    maxParallel = ParsePositiveInt(ReadValue(args, ref i, "--max-parallel"), "--max-parallel");
+                    break;
                 case "--log-max-files":
                     logMaxFiles = ParsePositiveInt(ReadValue(args, ref i, "--log-max-files"), "--log-max-files");
                     break;
                 case "--log-max-bytes":
                     logMaxBytes = ParsePositiveInt(ReadValue(args, ref i, "--log-max-bytes"), "--log-max-bytes");
+                    break;
+                case "--no-progress":
+                    progress = false;
                     break;
                 case "--agents":
                     AddCsv(ReadValue(args, ref i, "--agents"), agents);
@@ -1169,8 +1255,10 @@ internal sealed class RunnerOptions
             OutputPath = output,
             ProofLogPath = proofLog,
             TimeoutSeconds = timeoutSeconds,
+            MaxParallel = maxParallel,
             LogMaxFiles = logMaxFiles,
             LogMaxBytes = logMaxBytes,
+            Progress = progress,
             FailOnInfra = failOnInfra,
             ShowHelp = showHelp,
             Agents = agents,
@@ -1223,8 +1311,10 @@ internal sealed class RunnerOptions
               --category <csv>          Category filter
               --case-id <csv>           Case-id filter
               --timeout-seconds <int>   Per-invocation timeout (default: 90)
+              --max-parallel <int>      Max concurrent case/agent runs (default: all)
               --log-max-files <int>     Max recent log files scanned (default: 60)
               --log-max-bytes <int>     Max bytes read from each log file tail (default: 300000)
+              --no-progress             Disable stderr progress output
               --output <path>           Optional JSON output path
               --proof-log <path>        Optional plain-text proof log path
               --fail-on-infra           Exit non-zero when infra_error exists
@@ -1403,11 +1493,17 @@ internal sealed class ResultOptions
     [JsonPropertyName("timeout_seconds")]
     public int TimeoutSeconds { get; init; }
 
+    [JsonPropertyName("max_parallel")]
+    public int MaxParallel { get; init; }
+
     [JsonPropertyName("log_max_files")]
     public int LogMaxFiles { get; init; }
 
     [JsonPropertyName("log_max_bytes")]
     public int LogMaxBytes { get; init; }
+
+    [JsonPropertyName("progress")]
+    public bool Progress { get; init; }
 }
 
 internal sealed class Summary
