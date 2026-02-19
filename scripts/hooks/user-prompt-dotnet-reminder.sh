@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-# UserPromptSubmit hook: inject concise XML reminder on every prompt.
-
+# UserPromptSubmit hook: silently inject XML reminder via additionalContext.
 set -euo pipefail
 
-MSG=$(cat <<'EOF'
+read -r -d '' MSG <<'EOF' || true
 <system-reminder>
 <dotnet-artisan-routing>
 1. Mandatory first action: invoke [skill:dotnet-advisor].
@@ -13,9 +12,18 @@ MSG=$(cat <<'EOF'
 </dotnet-artisan-routing>
 </system-reminder>
 EOF
-)
 
-echo "$MSG"
-
+if command -v jq &>/dev/null; then
+  jq -n --arg ctx "$MSG" '{
+    hookSpecificOutput: {
+      hookEventName: "UserPromptSubmit",
+      additionalContext: $ctx
+    }
+  }'
+else
+  # Fallback: manual JSON with printf escaping newlines
+  ESCAPED=$(printf '%s' "$MSG" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ' | sed 's/ /\\n/g')
+  printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}\n' "$ESCAPED"
+fi
 
 exit 0
