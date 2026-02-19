@@ -19,7 +19,9 @@ Core UI testing patterns applicable across .NET UI frameworks (Blazor, MAUI, Uno
 
 ## Out of scope
 
-- Framework-specific testing APIs: [skill:dotnet-blazor-testing] for bUnit, [skill:dotnet-maui-testing] for Appium/XHarness, [skill:dotnet-uno-testing] for Uno WASM testing
+- Blazor component testing (bUnit) -- see [skill:dotnet-blazor-testing]
+- MAUI UI testing (Appium/XHarness) -- see [skill:dotnet-maui-testing]
+- Uno Platform WASM testing -- see [skill:dotnet-uno-testing]
 - Browser automation specifics -- see [skill:dotnet-playwright]
 - Test project scaffolding -- see [skill:dotnet-add-testing]
 
