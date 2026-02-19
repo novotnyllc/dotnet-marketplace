@@ -26,17 +26,17 @@ Mandatory verification that all intended content remains represented after norma
 - T13's similarity baseline file (`scripts/similarity-baseline.json`) is used for regression gating; T11 updates it to the post-sweep baseline after verification. Pre-sweep metrics are recorded in the migration map.
 
 ## Acceptance
-- [ ] `docs/skill-content-migration-map.md` covers all 130 skills with section-level before/after mapping
-- [ ] Zero dropped sections without documented migration target
-- [ ] Zero broken cross-references across skills and agents
-- [ ] Zero self-referential cross-links
-- [ ] `dotnet-advisor` catalog status markers are current
-- [ ] Total description budget: `CURRENT_DESC_CHARS < 12,000` (strictly less than WARN threshold)
-- [ ] Similarity improvement verified: WARN pair count <= pre-sweep baseline count. No new unsuppressed ERROR pairs.
-- [ ] Updated `scripts/similarity-baseline.json` with post-sweep pair data
-- [ ] Similarity runs in full skills+agents mode (144 items) — verifies T3+T13 integration (shared `_agent_frontmatter.py` + wiring)
-- [ ] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline
-- [ ] `./scripts/validate-marketplace.sh` passes
+- [x] `docs/skill-content-migration-map.md` covers all 130 skills with section-level before/after mapping
+- [x] Zero dropped sections without documented migration target
+- [x] Zero broken cross-references across skills and agents
+- [x] Zero self-referential cross-links
+- [x] `dotnet-advisor` catalog status markers are current
+- [x] Total description budget: `CURRENT_DESC_CHARS < 12,000` (strictly less than WARN threshold)
+- [x] Similarity improvement verified: WARN pair count <= pre-sweep baseline count. No new unsuppressed ERROR pairs.
+- [x] Updated `scripts/similarity-baseline.json` with post-sweep pair data
+- [x] Similarity runs in full skills+agents mode (144 items) — verifies T3+T13 integration (shared `_agent_frontmatter.py` + wiring)
+- [x] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline
+- [x] `./scripts/validate-marketplace.sh` passes
 ## Done summary
 Created content migration map covering all 130 skills with section-level before/after mapping; updated 14 dotnet-advisor catalog markers (12 planned→implemented, 2 (none)→implemented); verified zero broken cross-references, zero self-referential links, description budget 11,595 < 12,000, and no similarity regression.
 ## Evidence
