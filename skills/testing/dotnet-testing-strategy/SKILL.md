@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing-strategy
-description: "Deciding how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
+description: "Decides how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
 user-invocable: false
 ---
 
@@ -8,7 +8,18 @@ user-invocable: false
 
 Decision framework for choosing the right test type, organizing test projects, and selecting test doubles in .NET applications. Covers unit vs integration vs E2E trade-offs with concrete criteria, naming conventions, and when to use mocks vs fakes vs stubs.
 
-**Out of scope:** Test project scaffolding (directory layout, xUnit project creation, coverlet setup, editorconfig overrides) is owned by [skill:dotnet-add-testing]. Code coverage tooling and mutation testing are covered by [skill:dotnet-test-quality]. CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
+## Scope
+
+- Unit vs integration vs E2E test type decision criteria
+- Test project organization and naming conventions
+- Test doubles selection (mocks, fakes, stubs, spies)
+- Test arrangement patterns and fixture design
+
+## Out of scope
+
+- Test project scaffolding (directory layout, xUnit project creation, coverlet setup) -- see [skill:dotnet-add-testing]
+- Code coverage tooling and mutation testing -- see [skill:dotnet-test-quality]
+- CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test]
 
 **Prerequisites:** Run [skill:dotnet-project-analysis] to understand the solution structure before designing a test strategy.
 

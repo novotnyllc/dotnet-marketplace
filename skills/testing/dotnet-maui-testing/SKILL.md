@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-testing
-description: "Testing .NET MAUI apps. Appium device/emulator testing, XHarness, platform validation."
+description: "Tests .NET MAUI apps. Appium device/emulator automation, XHarness, platform validation."
 user-invocable: false
 ---
 
@@ -10,7 +10,19 @@ Testing .NET MAUI applications using Appium for UI automation and XHarness for c
 
 **Version assumptions:** .NET 8.0+ baseline, Appium 2.x with UIAutomator2 (Android) and XCUITest (iOS) drivers, XHarness 1.x. Examples use the latest Appium .NET client (5.x+).
 
-**Out of scope:** Shared UI testing patterns (page object model, wait strategies) are in [skill:dotnet-ui-testing-core]. Browser-based testing is covered by [skill:dotnet-playwright]. Test project scaffolding is owned by [skill:dotnet-add-testing].
+## Scope
+
+- Appium 2.x UI automation for Android, iOS, and Windows
+- XHarness cross-platform test execution
+- Platform-specific behavior validation
+- Element location strategies for MAUI controls
+- Test infrastructure for mobile/desktop apps
+
+## Out of scope
+
+- Shared UI testing patterns (page object model, wait strategies) -- see [skill:dotnet-ui-testing-core]
+- Browser-based testing -- see [skill:dotnet-playwright]
+- Test project scaffolding -- see [skill:dotnet-add-testing]
 
 **Prerequisites:** MAUI test project scaffolded via [skill:dotnet-add-testing]. Appium server installed (`npm install -g appium`). For Android: Android SDK with emulator configured. For iOS: Xcode with simulator (macOS only). For Windows: WinAppDriver installed.
 

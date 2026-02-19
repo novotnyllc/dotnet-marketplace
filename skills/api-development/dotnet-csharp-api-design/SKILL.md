@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-api-design
-description: "Designing public .NET APIs. Naming, parameter ordering, return types, error patterns, extension points."
+description: "Designs public .NET APIs. Naming, parameter ordering, return types, error patterns, extensions."
 user-invocable: false
 ---
 
@@ -10,7 +10,22 @@ Design-time principles for creating public .NET APIs that are intuitive, consist
 
 **Version assumptions:** .NET 8.0+ baseline. Examples use modern C# features (primary constructors, collection expressions) where appropriate.
 
-**Out of scope:** Binary/source compatibility enforcement and tooling -- see [skill:dotnet-library-api-compat]. PublicApiAnalyzers, Verify snapshots, and CI validation of API surface -- see [skill:dotnet-api-surface-validation]. General C# naming conventions and file layout -- see [skill:dotnet-csharp-coding-standards]. HTTP API versioning and URL design -- see [skill:dotnet-api-versioning]. NuGet packaging and SemVer mechanics -- see [skill:dotnet-nuget-authoring].
+## Scope
+
+- Naming conventions for public API types, methods, and parameters
+- Parameter ordering and overload progression
+- Return type selection (nullable, IReadOnlyList, IAsyncEnumerable, ValueTask)
+- Error reporting strategies (exceptions, Try pattern, result objects)
+- Extension points (interfaces, delegates, builder patterns)
+- Wire compatibility for serialized types
+
+## Out of scope
+
+- Binary/source compatibility enforcement and tooling -- see [skill:dotnet-library-api-compat]
+- PublicApiAnalyzers, Verify snapshots, and CI validation of API surface -- see [skill:dotnet-api-surface-validation]
+- General C# naming conventions and file layout -- see [skill:dotnet-csharp-coding-standards]
+- HTTP API versioning and URL design -- see [skill:dotnet-api-versioning]
+- NuGet packaging and SemVer mechanics -- see [skill:dotnet-nuget-authoring]
 
 Cross-references: [skill:dotnet-library-api-compat] for compatibility enforcement, [skill:dotnet-api-surface-validation] for CI detection, [skill:dotnet-csharp-coding-standards] for general naming rules, [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for SemVer and packaging.
 

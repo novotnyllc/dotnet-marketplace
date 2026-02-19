@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui-testing-core
-description: "Testing UI across frameworks. Page objects, test selectors, async waits, accessibility."
+description: "Tests UI across frameworks. Page objects, test selectors, async waits, accessibility."
 user-invocable: false
 ---
 
@@ -10,7 +10,18 @@ Core UI testing patterns applicable across .NET UI frameworks (Blazor, MAUI, Uno
 
 **Version assumptions:** .NET 8.0+ baseline. Framework-specific details are delegated to dedicated skills.
 
-**Out of scope:** Framework-specific testing APIs are owned by their respective skills: [skill:dotnet-blazor-testing] for bUnit, [skill:dotnet-maui-testing] for Appium/XHarness, [skill:dotnet-uno-testing] for Uno WASM testing. Browser automation specifics are covered by [skill:dotnet-playwright]. Test project scaffolding is owned by [skill:dotnet-add-testing].
+## Scope
+
+- Page object model for maintainable test structure
+- Test selector strategies for reliable element identification
+- Async wait patterns for non-deterministic UI
+- Accessibility testing approaches
+
+## Out of scope
+
+- Framework-specific testing APIs: [skill:dotnet-blazor-testing] for bUnit, [skill:dotnet-maui-testing] for Appium/XHarness, [skill:dotnet-uno-testing] for Uno WASM testing
+- Browser automation specifics -- see [skill:dotnet-playwright]
+- Test project scaffolding -- see [skill:dotnet-add-testing]
 
 **Prerequisites:** A test project scaffolded via [skill:dotnet-add-testing]. Familiarity with test strategy decisions from [skill:dotnet-testing-strategy].
 

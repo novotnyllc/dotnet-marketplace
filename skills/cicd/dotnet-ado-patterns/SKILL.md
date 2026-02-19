@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-patterns
-description: "Designing composable Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers."
+description: "Composes Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers."
 user-invocable: false
 ---
 
@@ -10,9 +10,23 @@ Composable Azure DevOps YAML pipeline patterns for .NET projects: template refer
 
 **Version assumptions:** Azure Pipelines YAML schema. `DotNetCoreCLI@2` task for .NET 8/9/10 builds. Template expressions syntax v2.
 
-**Scope boundary:** This skill owns composable pipeline design patterns for Azure DevOps YAML. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] -- this skill extends those templates with advanced composition. CLI-specific release pipelines (build-package-release for CLI binaries) are owned by [skill:dotnet-cli-release-pipeline] -- this skill covers general pipeline patterns that CLI pipelines consume. ADO-unique features (environments with approvals, service connections, classic releases) are in [skill:dotnet-ado-unique].
+## Scope
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci]. CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline]. ADO-unique features (environments, service connections, classic releases) -- see [skill:dotnet-ado-unique]. Build/test specifics -- see [skill:dotnet-ado-build-test]. Publishing pipelines -- see [skill:dotnet-ado-publish]. GitHub Actions workflow patterns -- see [skill:dotnet-gha-patterns].
+- Template references with extends, stages, jobs, and steps keywords
+- Variable groups and variable templates for centralized configuration
+- Pipeline decorators for organization-wide policy injection
+- Conditional insertion with ${{ if }} and ${{ each }} expressions
+- Multi-stage pipelines (build, test, deploy)
+- Pipeline triggers for CI, PR, and scheduled runs
+
+## Out of scope
+
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline]
+- ADO-unique features (environments, service connections, classic releases) -- see [skill:dotnet-ado-unique]
+- Build/test specifics -- see [skill:dotnet-ado-build-test]
+- Publishing pipelines -- see [skill:dotnet-ado-publish]
+- GitHub Actions workflow patterns -- see [skill:dotnet-gha-patterns]
 
 Cross-references: [skill:dotnet-add-ci] for starter templates that these patterns extend, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
 

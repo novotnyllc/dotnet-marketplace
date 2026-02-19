@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-testing
-description: "Testing Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads."
+description: "Tests Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads."
 user-invocable: false
 ---
 
@@ -10,7 +10,17 @@ Testing Uno Platform applications across target heads (WASM, Desktop, Mobile). C
 
 **Version assumptions:** .NET 8.0+ baseline, Uno Platform 5.x+, Playwright 1.40+ for WASM testing. Uno Platform uses single-project structure with multiple target frameworks.
 
-**Out of scope:** Shared UI testing patterns (page object model, selectors, wait strategies) are in [skill:dotnet-ui-testing-core]. Playwright fundamentals (installation, CI caching, trace viewer) are covered by [skill:dotnet-playwright]. Test project scaffolding is owned by [skill:dotnet-add-testing].
+## Scope
+
+- Playwright-based browser automation for Uno WASM apps
+- Platform-specific testing patterns for different runtime heads
+- Test infrastructure for cross-platform Uno projects
+
+## Out of scope
+
+- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-ui-testing-core]
+- Playwright fundamentals (installation, CI caching, trace viewer) -- see [skill:dotnet-playwright]
+- Test project scaffolding -- see [skill:dotnet-add-testing]
 
 **Prerequisites:** Uno Platform application with WASM head configured. For WASM testing: Playwright browsers installed (see [skill:dotnet-playwright]). For mobile testing: platform SDKs configured (Android SDK, Xcode).
 

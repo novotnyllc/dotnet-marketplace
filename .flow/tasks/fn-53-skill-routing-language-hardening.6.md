@@ -29,9 +29,8 @@ Apply canonical routing language to skills assigned to this batch by the T1 owne
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T7/T8/T9/T10 batches were edited
 ## Done summary
-TBD
-
+Normalized 30 T6 skills (13 architecture, 17 core-csharp) to canonical routing language: verb-led descriptions, explicit ## Scope and ## Out of scope sections, budget-negative delta of -71 chars (11,918 total). Emitted docs/skill-routing-sweep-core-arch.md with before/after stats.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 9f7e6a9e494207bbae1409a84e0872eb2af6c4c1
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root .
 - PRs:

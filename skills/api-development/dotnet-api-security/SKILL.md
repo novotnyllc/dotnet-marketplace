@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-security
-description: "Implementing API auth. Identity, OAuth/OIDC, JWT bearer, passkeys (WebAuthn), CORS, rate limiting."
+description: "Secures ASP.NET Core APIs. Identity, OAuth/OIDC, JWT bearer, passkeys, CORS, rate limiting."
 user-invocable: false
 ---
 
@@ -8,9 +8,21 @@ user-invocable: false
 
 API-level authentication, authorization, and security patterns for ASP.NET Core. This skill owns API auth implementation: ASP.NET Core Identity configuration, OAuth 2.0/OIDC integration, JWT bearer token handling, passkey (WebAuthn) authentication, CORS policies, Content Security Policy headers, and rate limiting.
 
-**Auth ownership:** This skill owns API-level auth patterns. Blazor-specific auth UI (AuthorizeView, CascadingAuthenticationState, client-side token handling) -- see [skill:dotnet-blazor-auth] when it lands. OWASP security principles (cross-cutting vulnerability mitigations) -- see [skill:dotnet-security-owasp].
+## Scope
 
-**Out of scope:** OWASP Top 10 mitigations and deprecated security patterns -- see [skill:dotnet-security-owasp]. Secrets management and secure configuration -- see [skill:dotnet-secrets-management]. Cryptographic algorithm selection -- see [skill:dotnet-cryptography]. Blazor auth UI components -- see [skill:dotnet-blazor-auth].
+- ASP.NET Core Identity configuration and Identity API endpoints
+- OAuth 2.0 / OpenID Connect integration with external providers
+- JWT bearer token authentication and policy-based authorization
+- Passkey / WebAuthn authentication (.NET 10)
+- CORS policies and Content Security Policy headers
+- Rate limiting middleware (fixed window, sliding window, token bucket, concurrency)
+
+## Out of scope
+
+- OWASP Top 10 mitigations and deprecated security patterns -- see [skill:dotnet-security-owasp]
+- Secrets management and secure configuration -- see [skill:dotnet-secrets-management]
+- Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
+- Blazor auth UI components -- see [skill:dotnet-blazor-auth]
 
 Cross-references: [skill:dotnet-security-owasp] for OWASP security principles, [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices.
 

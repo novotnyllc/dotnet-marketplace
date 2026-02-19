@@ -1,6 +1,6 @@
 ---
 name: dotnet-api-surface-validation
-description: "Detecting API changes in CI. PublicApiAnalyzers, Verify snapshots, breaking change enforcement."
+description: "Detects API surface changes in CI. PublicApiAnalyzers, Verify snapshots, ApiCompat gating."
 user-invocable: false
 ---
 
@@ -10,7 +10,21 @@ Tools and workflows for validating and tracking the public API surface of .NET l
 
 **Version assumptions:** .NET 8.0+ baseline. PublicApiAnalyzers 3.3+ (ships with `Microsoft.CodeAnalysis.Analyzers` or standalone `Microsoft.CodeAnalysis.PublicApiAnalyzers`). ApiCompat tooling included in .NET 8+ SDK.
 
-**Out of scope:** Binary vs source compatibility rules, type forwarders, SemVer impact -- see [skill:dotnet-library-api-compat]. NuGet packaging, `EnablePackageValidation` basics, and suppression file mechanics -- see [skill:dotnet-nuget-authoring] and [skill:dotnet-multi-targeting]. Verify library fundamentals (setup, scrubbing, converters) -- see [skill:dotnet-snapshot-testing]. General Roslyn analyzer configuration (EditorConfig, severity levels) -- see [skill:dotnet-roslyn-analyzers]. HTTP API versioning -- see [skill:dotnet-api-versioning].
+## Scope
+
+- PublicApiAnalyzers text-file tracking of shipped/unshipped APIs
+- Verify snapshot pattern for reflection-based API surface testing
+- ApiCompat CI enforcement for gating PRs on breaking changes
+- Multi-TFM and monorepo API tracking strategies
+- PR labeling and suppression file workflows
+
+## Out of scope
+
+- Binary vs source compatibility rules, type forwarders, SemVer impact -- see [skill:dotnet-library-api-compat]
+- NuGet packaging, `EnablePackageValidation` basics, and suppression file mechanics -- see [skill:dotnet-nuget-authoring] and [skill:dotnet-multi-targeting]
+- Verify library fundamentals (setup, scrubbing, converters) -- see [skill:dotnet-snapshot-testing]
+- General Roslyn analyzer configuration (EditorConfig, severity levels) -- see [skill:dotnet-roslyn-analyzers]
+- HTTP API versioning -- see [skill:dotnet-api-versioning]
 
 Cross-references: [skill:dotnet-library-api-compat] for binary/source compatibility rules, [skill:dotnet-nuget-authoring] for `EnablePackageValidation` and NuGet SemVer, [skill:dotnet-multi-targeting] for multi-TFM ApiCompat tool mechanics, [skill:dotnet-snapshot-testing] for Verify fundamentals, [skill:dotnet-roslyn-analyzers] for general analyzer configuration, [skill:dotnet-api-versioning] for HTTP API versioning.
 

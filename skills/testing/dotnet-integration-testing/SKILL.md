@@ -1,6 +1,6 @@
 ---
 name: dotnet-integration-testing
-description: "Testing with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
+description: "Tests with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
 user-invocable: false
 ---
 
@@ -10,7 +10,19 @@ Integration testing patterns for .NET applications using WebApplicationFactory, 
 
 **Version assumptions:** .NET 8.0+ baseline, Testcontainers 3.x+, .NET Aspire 9.0+. Package versions for `Microsoft.AspNetCore.Mvc.Testing` must match the project's target framework major version (e.g., 8.x for net8.0, 9.x for net9.0, 10.x for net10.0). Examples below use Testcontainers 4.x APIs; the patterns apply equally to 3.x with minor namespace differences.
 
-**Out of scope:** Test project scaffolding (creating projects, package references) is owned by [skill:dotnet-add-testing]. Testing strategy and test type selection are covered by [skill:dotnet-testing-strategy]. Snapshot testing for verifying API response structures is covered by [skill:dotnet-snapshot-testing].
+## Scope
+
+- In-process API testing with WebApplicationFactory
+- Disposable infrastructure via Testcontainers
+- .NET Aspire distributed application testing
+- Database fixture management and test isolation
+- Authentication and authorization test setup
+
+## Out of scope
+
+- Test project scaffolding (creating projects, package references) -- see [skill:dotnet-add-testing]
+- Testing strategy and test type selection -- see [skill:dotnet-testing-strategy]
+- Snapshot testing for verifying API response structures -- see [skill:dotnet-snapshot-testing]
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with integration test packages referenced. Docker daemon running (required by Testcontainers). Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline.
 

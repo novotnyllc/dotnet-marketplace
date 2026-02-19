@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-deploy
-description: "Deploying .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
+description: "Deploys .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ Deployment patterns for .NET applications in GitHub Actions: GitHub Pages deploy
 
 **Version assumptions:** GitHub Actions workflow syntax v2. `azure/webapps-deploy@v3` for Azure App Service. `azure/login@v2` for Azure credential management. GitHub Environments for deployment gates.
 
-**Scope boundary:** This skill owns deployment pipeline patterns for GitHub Actions. Container orchestration and runtime configuration are owned by [skill:dotnet-container-deployment]. Container image authoring is owned by [skill:dotnet-containers]. Publishing (NuGet push, container build) is in [skill:dotnet-gha-publish]. Composable workflow patterns are in [skill:dotnet-gha-patterns]. Starter CI templates are owned by [skill:dotnet-add-ci].
+## Scope
 
-**Out of scope:** Container orchestration (Kubernetes, Docker Compose) -- see [skill:dotnet-container-deployment]. Container image authoring -- see [skill:dotnet-containers]. NuGet publishing and container builds -- see [skill:dotnet-gha-publish]. Starter CI templates -- see [skill:dotnet-add-ci]. Azure DevOps deployment -- see [skill:dotnet-ado-patterns]. CLI release pipelines -- see [skill:dotnet-cli-release-pipeline].
+- Azure Web Apps deployment via azure/webapps-deploy
+- GitHub Pages deployment for documentation sites
+- Container registry push patterns for GHCR and ACR
+- GitHub Environments with protection rules
+- Rollback strategies for failed deployments
+
+## Out of scope
+
+- Container orchestration (Kubernetes, Docker Compose) -- see [skill:dotnet-container-deployment]
+- Container image authoring -- see [skill:dotnet-containers]
+- NuGet publishing and container builds -- see [skill:dotnet-gha-publish]
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- Azure DevOps deployment -- see [skill:dotnet-ado-patterns]
+- CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
 
 Cross-references: [skill:dotnet-container-deployment] for container orchestration patterns, [skill:dotnet-containers] for container image authoring, [skill:dotnet-add-ci] for starter CI templates, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
 
