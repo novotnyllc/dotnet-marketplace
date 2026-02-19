@@ -1,11 +1,24 @@
 ---
 name: dotnet-advisor
-description: "Routes .NET/C# work to specialist skills and loads coding-standards first for code paths."
+description: "Routes .NET/C# work to domain skills. Loads coding-standards for code paths."
 ---
 
 # dotnet-advisor
 
 Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET development queries to the appropriate specialist skills based on context.
+
+## Scope
+
+- Routing .NET/C# requests to the correct domain skill or specialist agent
+- Loading [skill:dotnet-csharp-coding-standards] as baseline for all code paths
+- Maintaining the skill catalog and routing precedence
+- Delegating complex analysis to specialist agents
+
+## Out of scope
+
+- Domain-specific implementation guidance -- see [skill:dotnet-architecture-patterns], [skill:dotnet-csharp-async-patterns], and other domain skills in the catalog below
+- Project scaffolding -- see [skill:dotnet-scaffold-project]
+- Version detection -- see [skill:dotnet-version-detection]
 
 ## Immediate Routing Actions (Do First)
 
@@ -331,8 +344,8 @@ Use this decision tree to load the right skills for the current task.
 
 For complex analysis that benefits from domain expertise, delegate to specialist agents:
 
-- Async/await performance, ValueTask, ConfigureAwait, IO.Pipelines -> **dotnet-async-performance-specialist**
-- ASP.NET Core middleware, request pipeline, DI lifetimes, diagnostic scenarios -> **dotnet-aspnetcore-specialist**
-- Test architecture, test type selection, test data management, microservice testing -> **dotnet-testing-specialist**
-- Cloud deployment, .NET Aspire, AKS, CI/CD pipelines, distributed tracing -> **dotnet-cloud-specialist**
-- General code review (correctness, performance, security, architecture) -> **dotnet-code-review-agent**
+- Async/await performance, ValueTask, ConfigureAwait, IO.Pipelines -> [skill:dotnet-async-performance-specialist]
+- ASP.NET Core middleware, request pipeline, DI lifetimes, diagnostic scenarios -> [skill:dotnet-aspnetcore-specialist]
+- Test architecture, test type selection, test data management, microservice testing -> [skill:dotnet-testing-specialist]
+- Cloud deployment, .NET Aspire, AKS, CI/CD pipelines, distributed tracing -> [skill:dotnet-cloud-specialist]
+- General code review (correctness, performance, security, architecture) -> [skill:dotnet-code-review-agent]

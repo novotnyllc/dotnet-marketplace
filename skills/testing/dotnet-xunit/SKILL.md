@@ -1,6 +1,6 @@
 ---
 name: dotnet-xunit
-description: "xUnit v3 authoring for .NET tests with scaffolding: Facts/Theories, fixtures, parallelism, IAsyncLifetime."
+description: "xUnit v3 test authoring: Facts, Theories, fixtures, parallelism, IAsyncLifetime."
 user-invocable: false
 ---
 
@@ -10,7 +10,19 @@ xUnit v3 testing framework features for .NET. Covers `[Fact]` and `[Theory]` att
 
 **Version assumptions:** xUnit v3 primary (.NET 8.0+ baseline). Where v3 behavior differs from v2, compatibility notes are provided inline. xUnit v2 remains widely used; many projects will encounter both versions during migration.
 
-**Out of scope:** Test project scaffolding (creating xUnit projects, package references, Directory.Build.props) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration testing patterns (WebApplicationFactory, Testcontainers) are covered by [skill:dotnet-integration-testing].
+## Scope
+
+- [Fact] and [Theory] test attributes and data sources
+- Test fixtures (IClassFixture, ICollectionFixture) and shared context
+- Parallel execution configuration and collection ordering
+- IAsyncLifetime for async setup/teardown
+- xUnit analyzers and custom assertions
+
+## Out of scope
+
+- Test project scaffolding -- see [skill:dotnet-add-testing]
+- Testing strategy and test type decisions -- see [skill:dotnet-testing-strategy]
+- Integration testing patterns (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-integration-testing]
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with xUnit packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline for xUnit v3 support.
 

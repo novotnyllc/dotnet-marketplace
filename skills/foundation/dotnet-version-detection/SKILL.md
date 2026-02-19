@@ -1,6 +1,6 @@
 ---
 name: dotnet-version-detection
-description: "Runs first in .NET/C# tasks to detect TFM/SDK from .csproj, global.json, and Directory.Build.props."
+description: "Detects TFM/SDK from .csproj, global.json, Directory.Build.props. Runs first."
 user-invocable: false
 context: fork
 model: haiku
@@ -14,6 +14,19 @@ model: haiku
 Detects .NET version information from project files and provides version-specific guidance. This skill runs **first** before any .NET development work. All other skills depend on the detected version to adapt their guidance.
 
 Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-file-based-apps] for .NET 10+ file-based apps that run without a `.csproj`.
+
+## Scope
+
+- Reading TFM from .csproj, Directory.Build.props, and global.json
+- Multi-targeting detection and highest-TFM selection
+- SDK version detection and preview feature gating
+- Version-specific API availability guidance
+
+## Out of scope
+
+- Project structure analysis beyond TFM -- see [skill:dotnet-project-analysis]
+- .NET 10 file-based apps without .csproj -- see [skill:dotnet-file-based-apps]
+- Framework upgrade migration steps -- see [skill:dotnet-version-upgrade]
 
 ---
 

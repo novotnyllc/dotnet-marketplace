@@ -1,6 +1,6 @@
 ---
 name: dotnet-project-analysis
-description: "Navigating .NET solution structure or build configuration. Analyzes .sln, .csproj, CPM."
+description: "Analyzes .NET solution layout and build config: .sln, .csproj, CPM."
 user-invocable: false
 context: fork
 model: haiku
@@ -14,6 +14,19 @@ model: haiku
 Analyzes .NET solution structure, project references, and build configuration. This skill is foundational -- agents need to understand project layout before doing any meaningful .NET development work.
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-file-based-apps] instead.
+
+## Scope
+
+- Finding solution root (.sln, .slnx)
+- Parsing project references and dependency graphs
+- Detecting Central Package Management (CPM) configuration
+- Identifying build configuration files (Directory.Build.props, Directory.Build.targets)
+
+## Out of scope
+
+- Reading and modifying individual .csproj files -- see [skill:dotnet-csproj-reading]
+- Project organization and SDK selection decisions -- see [skill:dotnet-project-structure]
+- TFM/SDK version detection -- see [skill:dotnet-version-detection]
 
 ---
 

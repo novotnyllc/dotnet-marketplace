@@ -1,6 +1,6 @@
 ---
 name: dotnet-efcore-patterns
-description: "Tactical EF Core patterns for .NET apps: DbContext lifecycle, AsNoTracking, query splitting, migrations, interceptors."
+description: "EF Core patterns: DbContext lifecycle, AsNoTracking, query splitting, migrations."
 user-invocable: false
 ---
 
@@ -8,7 +8,20 @@ user-invocable: false
 
 Tactical patterns for Entity Framework Core in .NET applications. Covers DbContext lifetime management, read-only query optimization, query splitting, migration workflows, interceptors, compiled queries, and connection resiliency. These patterns apply to EF Core 8+ and are compatible with SQL Server, PostgreSQL, and SQLite providers.
 
-**Out of scope:** Strategic data architecture decisions (read/write split, aggregate boundaries, repository policy, N+1 governance) are covered in [skill:dotnet-efcore-architecture]. Choosing between EF Core, Dapper, and ADO.NET is covered in [skill:dotnet-data-access-strategy]. DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns -- see [skill:dotnet-csharp-async-patterns]. Testing EF Core with in-memory providers and fixtures -- see [skill:dotnet-integration-testing] for database fixture and Testcontainers patterns. CI/CD pipeline integration for database migrations -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test].
+## Scope
+
+- DbContext lifecycle and scoped registration
+- AsNoTracking and read-only query optimization
+- Query splitting and compiled queries
+- Migration workflows and interceptors
+- Connection resiliency configuration
+
+## Out of scope
+
+- Strategic data architecture (read/write split, aggregate boundaries) -- see [skill:dotnet-efcore-architecture]
+- Data access technology selection (EF Core vs Dapper vs ADO.NET) -- see [skill:dotnet-data-access-strategy]
+- DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
+- Testing EF Core with fixtures -- see [skill:dotnet-integration-testing]
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and DbContext lifetime, [skill:dotnet-csharp-async-patterns] for cancellation token propagation in queries, [skill:dotnet-efcore-architecture] for strategic data patterns, [skill:dotnet-data-access-strategy] for data access technology selection.
 

@@ -1,18 +1,23 @@
 ---
 name: dotnet-slopwatch
-description: Run Slopwatch CLI to detect LLM reward hacking. Quality gate for disabled tests, suppressed warnings, empty catches.
+description: "Runs Slopwatch CLI to detect LLM reward hacking: disabled tests, suppressed warnings."
 user-invocable: true
 ---
 
 # Slopwatch: LLM Anti-Cheat Quality Gate for .NET
 
-## Overview / Scope Boundary
-
 Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modifications to detect "slop" -- shortcuts that make builds/tests pass without fixing real problems.
 
-**In scope:** Tool installation, CLI usage, configuration, hook integration, CI/CD pipelines, detection rule reference.
+## Scope
 
-**Out of scope:** Pattern recognition and manual code review for slop (owned by [skill:dotnet-agent-gotchas] Slopwatch Anti-Patterns section). This skill teaches **tool execution**; the gotchas skill teaches **visual detection**.
+- Slopwatch CLI installation and configuration
+- Running quality gate checks (disabled tests, suppressed warnings, empty catches)
+- Hook integration and CI/CD pipeline usage
+- Detection rule reference
+
+## Out of scope
+
+- Pattern recognition and manual code review for slop -- see [skill:dotnet-agent-gotchas] Slopwatch Anti-Patterns section
 
 ## Prerequisites
 

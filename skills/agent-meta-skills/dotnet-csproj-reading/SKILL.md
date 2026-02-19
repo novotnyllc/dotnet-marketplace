@@ -1,16 +1,25 @@
 ---
 name: dotnet-csproj-reading
-description: "Reading or modifying .csproj files. SDK-style structure, PropertyGroup/ItemGroup, CPM, props."
+description: "Reads and modifies SDK-style .csproj files. PropertyGroup, ItemGroup, CPM, props."
 user-invocable: false
 ---
 
 # dotnet-csproj-reading
 
-## Overview / Scope Boundary
-
 Teaches agents to read and safely modify SDK-style .csproj files. Covers project structure, PropertyGroup conventions, ItemGroup patterns, conditional expressions, Directory.Build.props/.targets, and central package management (Directory.Packages.props). Each subsection provides annotated XML examples and common modification patterns.
 
-**Out of scope:** Project organization and SDK selection (owned by [skill:dotnet-project-structure]). Build error interpretation (owned by [skill:dotnet-build-analysis]). Common agent coding mistakes (owned by [skill:dotnet-agent-gotchas]).
+## Scope
+
+- SDK-style .csproj structure and SDK attribute conventions
+- PropertyGroup and ItemGroup reading and modification
+- Conditional expressions and TFM-based conditions
+- Directory.Build.props/.targets and Central Package Management
+
+## Out of scope
+
+- Project organization and SDK selection -- see [skill:dotnet-project-structure]
+- Build error interpretation -- see [skill:dotnet-build-analysis]
+- Common agent coding mistakes -- see [skill:dotnet-agent-gotchas]
 
 ## Prerequisites
 

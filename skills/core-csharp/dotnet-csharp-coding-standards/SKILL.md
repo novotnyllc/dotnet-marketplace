@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-coding-standards
-description: "Baseline C# conventions for any .NET code work. Use whenever generating, modifying, or reviewing C# code."
+description: "Baseline C# conventions loaded first for code work: naming, file layout, style."
 user-invocable: false
 ---
 
@@ -16,6 +16,20 @@ If code will be produced, this skill should be active before implementation star
 This skill is a baseline dependency that should be loaded before domain-specific C#/.NET skills.
 
 Cross-references: [skill:dotnet-csharp-modern-patterns] for language feature usage, [skill:dotnet-csharp-async-patterns] for async naming conventions, [skill:dotnet-solid-principles] for SOLID, DRY, and SRP design principles at the class and interface level.
+
+## Scope
+
+- Naming conventions (PascalCase, camelCase, I-prefix for interfaces)
+- File organization and namespace conventions
+- Code style rules (expression bodies, using directives, var usage)
+- EditorConfig integration for style enforcement
+
+## Out of scope
+
+- Language feature patterns (records, pattern matching) -- see [skill:dotnet-csharp-modern-patterns]
+- Async naming and await conventions -- see [skill:dotnet-csharp-async-patterns]
+- SOLID/DRY design principles -- see [skill:dotnet-solid-principles]
+- Code smells and anti-patterns -- see [skill:dotnet-csharp-code-smells]
 
 ---
 

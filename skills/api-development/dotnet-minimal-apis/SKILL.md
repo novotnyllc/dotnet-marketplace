@@ -1,6 +1,6 @@
 ---
 name: dotnet-minimal-apis
-description: "Minimal API implementation for ASP.NET Core HTTP services: route groups, endpoint filters, TypedResults, OpenAPI."
+description: "ASP.NET Core Minimal APIs: route groups, endpoint filters, TypedResults, OpenAPI."
 user-invocable: false
 ---
 
@@ -8,7 +8,20 @@ user-invocable: false
 
 Minimal APIs are Microsoft's recommended approach for new ASP.NET Core HTTP API projects. They provide a lightweight, lambda-based programming model with first-class OpenAPI support, endpoint filters for cross-cutting concerns, and route groups for organization at scale.
 
-**Out of scope:** API versioning strategies -- see [skill:dotnet-api-versioning]. Input validation frameworks and patterns -- see [skill:dotnet-input-validation]. Architectural patterns (vertical slices, CQRS, clean architecture) -- see [skill:dotnet-architecture-patterns]. Authentication and authorization implementation -- see [skill:dotnet-api-security]. OpenAPI document generation and customization -- see [skill:dotnet-openapi].
+## Scope
+
+- Route groups and endpoint organization
+- Endpoint filters for cross-cutting concerns
+- TypedResults for compile-time response type safety
+- Parameter binding (route, query, body, services)
+
+## Out of scope
+
+- API versioning strategies -- see [skill:dotnet-api-versioning]
+- Input validation frameworks -- see [skill:dotnet-input-validation]
+- Architectural patterns (vertical slices, CQRS) -- see [skill:dotnet-architecture-patterns]
+- Authentication and authorization -- see [skill:dotnet-api-security]
+- OpenAPI document generation -- see [skill:dotnet-openapi]
 
 Cross-references: [skill:dotnet-architecture-patterns] for organizing large APIs, [skill:dotnet-input-validation] for request validation, [skill:dotnet-api-versioning] for versioning strategies, [skill:dotnet-openapi] for OpenAPI customization.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-build-analysis
-description: "Interpreting MSBuild output, NuGet errors, or analyzer warnings. Error codes, CI drift fixes."
+description: "Interprets MSBuild output, NuGet errors, analyzer warnings. Error codes, CI drift."
 user-invocable: false
 context: fork
 model: haiku
@@ -8,11 +8,20 @@ model: haiku
 
 # dotnet-build-analysis
 
-## Overview / Scope Boundary
-
 Help agents interpret and act on MSBuild build output. Covers error code prefixes, NuGet restore failures, analyzer warning interpretation, multi-targeting build differences, and "works locally, fails in CI" diagnosis patterns. Each subsection includes example output, diagnosis steps, and a fix pattern.
 
-**Out of scope:** Writing or modifying .csproj files (owned by [skill:dotnet-csproj-reading]). Project structure decisions (owned by [skill:dotnet-project-structure]). Common agent code mistakes (owned by [skill:dotnet-agent-gotchas]).
+## Scope
+
+- MSBuild error code prefix interpretation (CS, MSB, NU, CA, IDE, NETSDK)
+- NuGet restore failure diagnosis and resolution
+- Analyzer warning triage and suppression guidance
+- CI vs local build drift diagnosis
+
+## Out of scope
+
+- Writing or modifying .csproj files -- see [skill:dotnet-csproj-reading]
+- Project structure decisions -- see [skill:dotnet-project-structure]
+- Common agent code mistakes -- see [skill:dotnet-agent-gotchas]
 
 ## Prerequisites
 
