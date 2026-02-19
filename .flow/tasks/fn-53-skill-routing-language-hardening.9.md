@@ -4,7 +4,7 @@
 Normalize all remaining skills not covered by T5-T8. This is the long-tail batch with a concrete, closed-form list from the ownership manifest.
 
 **Size:** M
-**Files:** Residual skill list from `docs/skill-routing-ownership-manifest.md` (~30 skills across remaining categories: serialization, documentation, localization, packaging, data-access, messaging, observability, domain-modeling, etc.)
+**Files:** Residual skill list from `docs/skill-routing-ownership-manifest.md` (~34 skills across build-system, cli-tools, documentation, packaging, performance, project-structure, release-management, serialization)
 
 ## Approach
 

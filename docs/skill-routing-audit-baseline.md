@@ -6,18 +6,18 @@ Generated for fn-53-skill-routing-language-hardening.1 (T1).
 
 - **Total skills**: 130
 - **Total agents**: 14
-- **Total description chars**: 12345
-- **Total cross-references ([skill:] syntax)**: 1735
+- **Total description chars**: 12,345
+- **Total cross-references ([skill:] syntax)**: 1,735 occurrences (not deduplicated; counts every `[skill:...]` match in skill bodies)
 - **Skills without ANY routing markers**: 77
 - **Agent bare-text references**: 64 across 14 agents
 - **Routing test cases**: 14
 
 ## Budget Status
 
-- Current description chars: 12345
+- Current description chars: 12,345
 - WARN threshold: 12,000
 - FAIL threshold: 15,600
-- Status: **WARN** (at 12345 chars, above 12,000 WARN threshold)
+- Status: **WARN** (at 12,345 chars, above 12,000 WARN threshold)
 
 ## Routing Marker Coverage
 
@@ -115,8 +115,8 @@ Routing markers are headings that help the model determine when to use a skill:
 
 ## Per-Skill Audit
 
-| Skill | Category | Desc Len | Refs | Scope | OOS | Trigger | Top-3 Overlap (Jaccard) |
-|-------|----------|----------|------|-------|-----|---------|------------------------|
+| Skill | Category | Desc Len | Refs (occurrences) | Scope | OOS | Trigger | Top-3 Overlap (Jaccard) |
+|-------|----------|----------|--------------------|-------|-----|---------|------------------------|
 | dotnet-agent-gotchas | agent-meta-skills | 92 | 28 | - | - | Y | dotnet-csharp-async-patterns (0.222); dotnet-csharp-code-smells (0.210); dotnet-csharp-coding-standards (0.200) |
 | dotnet-build-analysis | agent-meta-skills | 93 | 10 | - | - | Y | dotnet-artifacts-output (0.095); dotnet-solid-principles (0.091); dotnet-agent-gotchas (0.087) |
 | dotnet-csproj-reading | agent-meta-skills | 93 | 10 | - | - | Y | dotnet-project-analysis (0.222); dotnet-nuget-authoring (0.150); dotnet-msbuild-authoring (0.136) |
