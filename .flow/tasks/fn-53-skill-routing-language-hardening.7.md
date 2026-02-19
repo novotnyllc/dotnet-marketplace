@@ -1,10 +1,10 @@
 # fn-53-skill-routing-language-hardening.7 Category Sweep - API, Security, Testing, CI
 
 ## Description
-Apply canonical routing language to skills assigned to this batch: api-development, security, testing, ci-cd categories. No overlap with T6/T8/T9.
+Apply canonical routing language to skills assigned to this batch: api-development, security, testing, cicd categories. No overlap with T6/T8/T9.
 
 **Size:** M
-**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~25 skills)
+**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~26 skills)
 
 ## Approach
 

@@ -8,7 +8,7 @@ Generated for fn-53-skill-routing-language-hardening.1 (T1).
 - **Total agents**: 14
 - **Total description chars**: 12,345
 - **Total cross-references ([skill:] syntax)**: 1,735 occurrences (not deduplicated; counts every `[skill:...]` match in skill bodies)
-- **Skills without ANY routing markers**: 77
+- **Skills without ANY routing markers**: 58
 - **Agent bare-text references**: 64 across 14 agents
 - **Routing test cases**: 14
 
@@ -28,35 +28,43 @@ Routing markers are headings that help the model determine when to use a skill:
 
 | Marker | Count | Coverage |
 |--------|-------|----------|
-| Scope section | 19 | 14% |
+| Scope section | 24 | 18% |
 | Out-of-scope section | 0 | 0% |
-| Trigger/Prerequisites | 39 | 30% |
-| Zero markers | 77 | 59% |
+| Trigger/Prerequisites | 58 | 44% |
+| Zero markers | 58 | 44% |
 
 ### Skills with Zero Routing Markers
 
-- `project-structure/dotnet-add-analyzers`
-- `project-structure/dotnet-add-ci`
-- `project-structure/dotnet-add-testing`
+- `api-development/dotnet-middleware-patterns`
+- `architecture/dotnet-architecture-patterns`
+- `architecture/dotnet-background-services`
+- `architecture/dotnet-container-deployment`
+- `architecture/dotnet-data-access-strategy`
+- `architecture/dotnet-efcore-architecture`
+- `architecture/dotnet-efcore-patterns`
+- `architecture/dotnet-http-client`
+- `architecture/dotnet-messaging-patterns`
+- `architecture/dotnet-observability`
+- `architecture/dotnet-resilience`
+- `architecture/dotnet-solid-principles`
+- `architecture/dotnet-structured-logging`
+- `build-system/dotnet-build-optimization`
+- `build-system/dotnet-msbuild-authoring`
+- `build-system/dotnet-msbuild-tasks`
 - `cicd/dotnet-ado-build-test`
 - `cicd/dotnet-ado-patterns`
 - `cicd/dotnet-ado-publish`
-- `foundation/dotnet-advisor`
-- `native-aot/dotnet-aot-architecture`
-- `documentation/dotnet-api-docs`
-- `architecture/dotnet-architecture-patterns`
-- `project-structure/dotnet-artifacts-output`
-- `architecture/dotnet-background-services`
-- `performance/dotnet-benchmarkdotnet`
-- `testing/dotnet-blazor-testing`
-- `build-system/dotnet-build-optimization`
-- `core-csharp/dotnet-channels`
-- `performance/dotnet-ci-benchmarking`
+- `cicd/dotnet-gha-build-test`
+- `cicd/dotnet-gha-deploy`
+- `cicd/dotnet-gha-patterns`
+- `cicd/dotnet-gha-publish`
 - `cli-tools/dotnet-cli-architecture`
 - `cli-tools/dotnet-cli-distribution`
 - `cli-tools/dotnet-cli-packaging`
 - `cli-tools/dotnet-cli-release-pipeline`
-- `architecture/dotnet-container-deployment`
+- `cli-tools/dotnet-system-commandline`
+- `cli-tools/dotnet-tool-management`
+- `core-csharp/dotnet-channels`
 - `core-csharp/dotnet-csharp-async-patterns`
 - `core-csharp/dotnet-csharp-code-smells`
 - `core-csharp/dotnet-csharp-coding-standards`
@@ -64,189 +72,162 @@ Routing markers are headings that help the model determine when to use a skill:
 - `core-csharp/dotnet-csharp-dependency-injection`
 - `core-csharp/dotnet-csharp-nullable-reference-types`
 - `core-csharp/dotnet-csharp-source-generators`
-- `architecture/dotnet-data-access-strategy`
-- `documentation/dotnet-documentation-strategy`
-- `architecture/dotnet-efcore-architecture`
-- `architecture/dotnet-efcore-patterns`
-- `foundation/dotnet-file-based-apps`
-- `cicd/dotnet-gha-build-test`
-- `cicd/dotnet-gha-deploy`
-- `cicd/dotnet-gha-patterns`
-- `cicd/dotnet-gha-publish`
-- `packaging/dotnet-github-releases`
-- `serialization/dotnet-grpc`
-- `architecture/dotnet-http-client`
-- `testing/dotnet-integration-testing`
 - `core-csharp/dotnet-io-pipelines`
-- `testing/dotnet-maui-testing`
+- `documentation/dotnet-api-docs`
+- `documentation/dotnet-documentation-strategy`
 - `documentation/dotnet-mermaid-diagrams`
-- `architecture/dotnet-messaging-patterns`
-- `api-development/dotnet-middleware-patterns`
-- `project-structure/dotnet-modernize`
-- `build-system/dotnet-msbuild-authoring`
-- `build-system/dotnet-msbuild-tasks`
+- `documentation/dotnet-xml-docs`
+- `foundation/dotnet-advisor`
+- `foundation/dotnet-version-detection`
+- `native-aot/dotnet-aot-architecture`
+- `native-aot/dotnet-trimming`
+- `packaging/dotnet-github-releases`
 - `packaging/dotnet-msix`
 - `packaging/dotnet-nuget-authoring`
-- `architecture/dotnet-observability`
-- `testing/dotnet-playwright`
+- `performance/dotnet-benchmarkdotnet`
+- `performance/dotnet-ci-benchmarking`
 - `performance/dotnet-profiling`
-- `foundation/dotnet-project-analysis`
-- `project-structure/dotnet-project-structure`
 - `release-management/dotnet-release-management`
-- `architecture/dotnet-resilience`
-- `project-structure/dotnet-scaffold-project`
+- `serialization/dotnet-grpc`
 - `serialization/dotnet-serialization`
 - `serialization/dotnet-service-communication`
-- `testing/dotnet-snapshot-testing`
-- `architecture/dotnet-solid-principles`
-- `architecture/dotnet-structured-logging`
-- `cli-tools/dotnet-system-commandline`
-- `testing/dotnet-test-quality`
-- `testing/dotnet-testing-strategy`
-- `cli-tools/dotnet-tool-management`
-- `native-aot/dotnet-trimming`
 - `ui-frameworks/dotnet-ui-chooser`
-- `testing/dotnet-ui-testing-core`
-- `testing/dotnet-uno-testing`
-- `foundation/dotnet-version-detection`
 - `ui-frameworks/dotnet-wpf-migration`
-- `documentation/dotnet-xml-docs`
-- `testing/dotnet-xunit`
 
 ## Per-Skill Audit
 
 | Skill | Category | Desc Len | Refs (occurrences) | Scope | OOS | Trigger | Top-3 Overlap (Jaccard) |
 |-------|----------|----------|--------------------|-------|-----|---------|------------------------|
-| dotnet-agent-gotchas | agent-meta-skills | 92 | 28 | - | - | Y | dotnet-csharp-async-patterns (0.222); dotnet-csharp-code-smells (0.210); dotnet-csharp-coding-standards (0.200) |
-| dotnet-build-analysis | agent-meta-skills | 93 | 10 | - | - | Y | dotnet-artifacts-output (0.095); dotnet-solid-principles (0.091); dotnet-agent-gotchas (0.087) |
-| dotnet-csproj-reading | agent-meta-skills | 93 | 10 | - | - | Y | dotnet-project-analysis (0.222); dotnet-nuget-authoring (0.150); dotnet-msbuild-authoring (0.136) |
-| dotnet-slopwatch | agent-meta-skills | 116 | 6 | - | - | Y | dotnet-version-detection (0.065); dotnet-add-testing (0.042); dotnet-blazor-auth (0.040) |
-| dotnet-solution-navigation | agent-meta-skills | 88 | 11 | - | - | Y | dotnet-project-analysis (0.100); dotnet-scaffold-project (0.100); dotnet-project-structure (0.095) |
-| dotnet-semantic-kernel | ai | 98 | 9 | - | - | Y | dotnet-benchmarkdotnet (0.100); dotnet-ado-unique (0.050); dotnet-ado-patterns (0.045) |
-| dotnet-api-security | api-development | 98 | 11 | - | - | Y | dotnet-blazor-auth (0.100); dotnet-api-surface-validation (0.045); dotnet-grpc (0.045) |
-| dotnet-api-surface-validation | api-development | 95 | 18 | - | - | Y | dotnet-playwright (0.100); dotnet-snapshot-testing (0.100); dotnet-ado-build-test (0.053) |
-| dotnet-api-versioning | api-development | 89 | 5 | - | - | Y | dotnet-http-client (0.111); dotnet-minimal-apis (0.091); dotnet-input-validation (0.059) |
-| dotnet-csharp-api-design | api-development | 103 | 14 | Y | - | Y | dotnet-http-client (0.056); dotnet-middleware-patterns (0.056); dotnet-csharp-nullable-reference-types (0.053) |
-| dotnet-input-validation | api-development | 88 | 17 | - | - | Y | dotnet-validation-patterns (0.071); dotnet-http-client (0.067); dotnet-api-versioning (0.059) |
-| dotnet-library-api-compat | api-development | 94 | 14 | Y | - | Y | dotnet-csharp-source-generators (0.059); dotnet-localization (0.056); dotnet-release-management (0.056) |
-| dotnet-middleware-patterns | api-development | 87 | 6 | - | - | - | dotnet-architecture-patterns (0.158); dotnet-grpc (0.111); dotnet-minimal-apis (0.100) |
-| dotnet-minimal-apis | api-development | 113 | 12 | - | - | Y | dotnet-grpc (0.143); dotnet-architecture-patterns (0.130); dotnet-middleware-patterns (0.100) |
-| dotnet-openapi | api-development | 87 | 5 | - | - | Y | dotnet-api-docs (0.176); dotnet-documentation-strategy (0.062); dotnet-csharp-dependency-injection (0.056) |
-| dotnet-architecture-patterns | architecture | 105 | 14 | - | - | - | dotnet-middleware-patterns (0.158); dotnet-minimal-apis (0.130); dotnet-grpc (0.091) |
-| dotnet-aspire-patterns | architecture | 98 | 12 | Y | - | Y | dotnet-observability (0.133); dotnet-integration-testing (0.062); dotnet-ado-unique (0.059) |
-| dotnet-background-services | architecture | 94 | 10 | - | - | - | dotnet-release-management (0.071); dotnet-blazor-components (0.062); dotnet-efcore-patterns (0.062) |
-| dotnet-container-deployment | architecture | 94 | 16 | - | - | - | dotnet-artifacts-output (0.105); dotnet-add-ci (0.091); dotnet-gha-deploy (0.053) |
-| dotnet-containers | architecture | 93 | 12 | Y | - | - | dotnet-ado-patterns (0.118); dotnet-nuget-authoring (0.118); dotnet-roslyn-analyzers (0.067) |
-| dotnet-data-access-strategy | architecture | 101 | 11 | - | - | - | dotnet-service-communication (0.200); dotnet-efcore-patterns (0.095); dotnet-csharp-type-design-performance (0.091) |
-| dotnet-domain-modeling | architecture | 95 | 17 | Y | - | - | dotnet-validation-patterns (0.056); dotnet-blazor-patterns (0.053); dotnet-spectre-console (0.050) |
-| dotnet-efcore-architecture | architecture | 90 | 12 | - | - | - | dotnet-mermaid-diagrams (0.059); dotnet-serialization (0.048); dotnet-architecture-patterns (0.045) |
-| dotnet-efcore-patterns | architecture | 118 | 11 | - | - | - | dotnet-data-access-strategy (0.095); dotnet-background-services (0.062); dotnet-release-management (0.059) |
-| dotnet-http-client | architecture | 93 | 11 | - | - | - | dotnet-api-versioning (0.111); dotnet-resilience (0.105); dotnet-input-validation (0.067) |
-| dotnet-messaging-patterns | architecture | 93 | 8 | - | - | - |  |
-| dotnet-observability | architecture | 87 | 10 | - | - | - | dotnet-aspire-patterns (0.133); dotnet-msbuild-tasks (0.067); dotnet-build-optimization (0.059) |
-| dotnet-resilience | architecture | 96 | 9 | - | - | - | dotnet-http-client (0.105); dotnet-input-validation (0.056); dotnet-openapi (0.053) |
-| dotnet-solid-principles | architecture | 91 | 8 | - | - | - | dotnet-csharp-code-smells (0.100); dotnet-csharp-dependency-injection (0.100); dotnet-csharp-coding-standards (0.095) |
-| dotnet-structured-logging | architecture | 95 | 8 | - | - | - | dotnet-linq-optimization (0.056); dotnet-ado-patterns (0.053); dotnet-snapshot-testing (0.053) |
-| dotnet-build-optimization | build-system | 86 | 12 | - | - | - | dotnet-tool-management (0.118); dotnet-msbuild-authoring (0.095); dotnet-gha-patterns (0.059) |
-| dotnet-msbuild-authoring | build-system | 116 | 5 | - | - | - | dotnet-version-detection (0.200); dotnet-project-structure (0.143); dotnet-csproj-reading (0.136) |
-| dotnet-msbuild-tasks | build-system | 89 | 3 | - | - | - | dotnet-msbuild-authoring (0.105); dotnet-observability (0.067); dotnet-system-commandline (0.056) |
-| dotnet-ado-build-test | cicd | 89 | 13 | - | - | - | dotnet-ado-publish (0.176); dotnet-ado-patterns (0.111); dotnet-add-ci (0.100) |
-| dotnet-ado-patterns | cicd | 100 | 12 | - | - | - | dotnet-add-ci (0.143); dotnet-containers (0.118); dotnet-ado-build-test (0.111) |
-| dotnet-ado-publish | cicd | 95 | 19 | - | - | - | dotnet-gha-publish (0.294); dotnet-ado-build-test (0.176); dotnet-add-ci (0.143) |
-| dotnet-ado-unique | cicd | 93 | 15 | Y | - | - | dotnet-github-releases (0.062); dotnet-aspire-patterns (0.059); dotnet-cli-release-pipeline (0.053) |
-| dotnet-gha-build-test | cicd | 119 | 14 | - | - | - | dotnet-gha-patterns (0.167); dotnet-cli-release-pipeline (0.143); dotnet-gha-publish (0.143) |
-| dotnet-gha-deploy | cicd | 87 | 15 | - | - | - | dotnet-gha-publish (0.250); dotnet-add-ci (0.158); dotnet-gha-patterns (0.133) |
-| dotnet-gha-patterns | cicd | 98 | 13 | - | - | - | dotnet-cli-release-pipeline (0.188); dotnet-gha-build-test (0.167); dotnet-gha-deploy (0.133) |
-| dotnet-gha-publish | cicd | 91 | 19 | - | - | - | dotnet-ado-publish (0.294); dotnet-gha-deploy (0.250); dotnet-gha-build-test (0.143) |
-| dotnet-cli-architecture | cli-tools | 96 | 13 | - | - | - | dotnet-ado-unique (0.048); dotnet-aspire-patterns (0.048); dotnet-cli-release-pipeline (0.043) |
-| dotnet-cli-distribution | cli-tools | 93 | 22 | - | - | - | dotnet-cli-release-pipeline (0.095); dotnet-file-based-apps (0.095); dotnet-service-communication (0.095) |
-| dotnet-cli-packaging | cli-tools | 87 | 12 | - | - | - | dotnet-ado-publish (0.100); dotnet-add-testing (0.053); dotnet-tool-management (0.053) |
-| dotnet-cli-release-pipeline | cli-tools | 88 | 13 | - | - | - | dotnet-gha-patterns (0.188); dotnet-gha-build-test (0.143); dotnet-github-releases (0.118) |
-| dotnet-system-commandline | cli-tools | 112 | 12 | - | - | - | dotnet-csharp-configuration (0.100); dotnet-file-based-apps (0.100); dotnet-msbuild-authoring (0.091) |
-| dotnet-tool-management | cli-tools | 86 | 8 | - | - | - | dotnet-build-optimization (0.118); dotnet-roslyn-analyzers (0.062); dotnet-validation-patterns (0.062) |
-| dotnet-channels | core-csharp | 91 | 4 | - | - | - | dotnet-validation-patterns (0.062); dotnet-csharp-configuration (0.053); dotnet-io-pipelines (0.053) |
-| dotnet-csharp-async-patterns | core-csharp | 97 | 4 | - | - | - | dotnet-agent-gotchas (0.222); dotnet-csharp-code-smells (0.167); dotnet-csharp-nullable-reference-types (0.111) |
-| dotnet-csharp-code-smells | core-csharp | 89 | 8 | - | - | - | dotnet-agent-gotchas (0.210); dotnet-csharp-async-patterns (0.167); dotnet-csharp-nullable-reference-types (0.105) |
-| dotnet-csharp-coding-standards | core-csharp | 105 | 5 | - | - | - | dotnet-agent-gotchas (0.200); dotnet-advisor (0.136); dotnet-csharp-code-smells (0.095) |
-| dotnet-csharp-concurrency-patterns | core-csharp | 106 | 8 | - | - | Y | dotnet-artifacts-output (0.056); dotnet-benchmarkdotnet (0.056); dotnet-csharp-async-patterns (0.056) |
-| dotnet-csharp-configuration | core-csharp | 89 | 2 | - | - | - | dotnet-validation-patterns (0.188); dotnet-secrets-management (0.176); dotnet-system-commandline (0.100) |
-| dotnet-csharp-dependency-injection | core-csharp | 98 | 3 | - | - | - | dotnet-solid-principles (0.100); dotnet-agent-gotchas (0.095); dotnet-integration-testing (0.056) |
-| dotnet-csharp-modern-patterns | core-csharp | 95 | 5 | Y | - | - | dotnet-version-detection (0.080); dotnet-uno-platform (0.053); dotnet-csharp-code-smells (0.050) |
-| dotnet-csharp-nullable-reference-types | core-csharp | 92 | 2 | - | - | - | dotnet-agent-gotchas (0.158); dotnet-csharp-async-patterns (0.111); dotnet-csharp-code-smells (0.105) |
-| dotnet-csharp-source-generators | core-csharp | 97 | 3 | - | - | - | dotnet-localization (0.154); dotnet-aot-architecture (0.133); dotnet-nuget-authoring (0.125) |
-| dotnet-csharp-type-design-performance | core-csharp | 109 | 9 | - | - | Y | dotnet-performance-patterns (0.176); dotnet-gc-memory (0.095); dotnet-data-access-strategy (0.091) |
-| dotnet-editorconfig | core-csharp | 100 | 11 | Y | - | - | dotnet-msbuild-authoring (0.091); dotnet-modernize (0.059); dotnet-roslyn-analyzers (0.056) |
-| dotnet-file-io | core-csharp | 85 | 14 | Y | - | - | dotnet-io-pipelines (0.111); dotnet-documentation-strategy (0.059); dotnet-file-based-apps (0.053) |
-| dotnet-io-pipelines | core-csharp | 95 | 6 | - | - | - | dotnet-file-io (0.111); dotnet-channels (0.053); dotnet-winforms-basics (0.050) |
-| dotnet-linq-optimization | core-csharp | 97 | 9 | Y | - | - | dotnet-performance-patterns (0.118); dotnet-structured-logging (0.056); dotnet-csharp-type-design-performance (0.050) |
-| dotnet-native-interop | core-csharp | 93 | 11 | - | - | Y | dotnet-native-aot (0.158); dotnet-maui-testing (0.056); dotnet-uno-testing (0.056) |
-| dotnet-roslyn-analyzers | core-csharp | 96 | 7 | Y | - | - | dotnet-containers (0.067); dotnet-tool-management (0.062); dotnet-scaffold-project (0.059) |
-| dotnet-validation-patterns | core-csharp | 88 | 11 | - | - | Y | dotnet-csharp-configuration (0.188); dotnet-input-validation (0.071); dotnet-blazor-patterns (0.062) |
-| dotnet-api-docs | documentation | 90 | 25 | - | - | - | dotnet-openapi (0.176); dotnet-documentation-strategy (0.105); dotnet-agent-gotchas (0.091) |
-| dotnet-documentation-strategy | documentation | 92 | 15 | - | - | - | dotnet-api-docs (0.105); dotnet-testing-strategy (0.105); dotnet-ui-chooser (0.100) |
-| dotnet-github-docs | documentation | 92 | 25 | - | - | Y | dotnet-add-ci (0.091); dotnet-gha-patterns (0.056); dotnet-github-releases (0.056) |
-| dotnet-mermaid-diagrams | documentation | 94 | 9 | - | - | - | dotnet-efcore-architecture (0.059); dotnet-csharp-type-design-performance (0.056); dotnet-architecture-patterns (0.050) |
-| dotnet-xml-docs | documentation | 91 | 9 | - | - | - | dotnet-api-docs (0.053) |
-| dotnet-advisor | foundation | 89 | 226 | - | - | - | dotnet-version-detection (0.154); dotnet-csharp-coding-standards (0.136); dotnet-csharp-async-patterns (0.095) |
-| dotnet-file-based-apps | foundation | 85 | 6 | - | - | - | dotnet-add-testing (0.111); dotnet-scaffold-project (0.105); dotnet-system-commandline (0.100) |
-| dotnet-project-analysis | foundation | 87 | 5 | - | - | - | dotnet-csproj-reading (0.222); dotnet-project-structure (0.167); dotnet-secrets-management (0.118) |
-| dotnet-version-detection | foundation | 99 | 6 | - | - | - | dotnet-msbuild-authoring (0.200); dotnet-advisor (0.154); dotnet-nuget-authoring (0.120) |
-| dotnet-localization | localization | 95 | 17 | Y | - | - | dotnet-csharp-source-generators (0.154); dotnet-nuget-authoring (0.118); dotnet-serialization (0.111) |
-| dotnet-multi-targeting | multi-targeting | 87 | 7 | - | - | Y | dotnet-solid-principles (0.095); dotnet-wpf-modern (0.095); dotnet-csharp-coding-standards (0.091) |
-| dotnet-version-upgrade | multi-targeting | 86 | 8 | - | - | Y | dotnet-add-testing (0.105); dotnet-add-analyzers (0.091); dotnet-add-ci (0.087) |
-| dotnet-aot-architecture | native-aot | 92 | 17 | - | - | - | dotnet-serialization (0.158); dotnet-csharp-source-generators (0.133); dotnet-localization (0.059) |
-| dotnet-aot-wasm | native-aot | 88 | 14 | Y | - | - | dotnet-uno-testing (0.111); dotnet-native-aot (0.095); dotnet-cli-distribution (0.091) |
-| dotnet-native-aot | native-aot | 95 | 21 | Y | - | - | dotnet-native-interop (0.158); dotnet-maui-aot (0.143); dotnet-ado-publish (0.100) |
-| dotnet-trimming | native-aot | 109 | 11 | - | - | - | dotnet-security-owasp (0.143); dotnet-native-aot (0.095); dotnet-csharp-concurrency-patterns (0.050) |
-| dotnet-github-releases | packaging | 91 | 16 | - | - | - | dotnet-release-management (0.143); dotnet-cli-release-pipeline (0.118); dotnet-gha-patterns (0.067) |
-| dotnet-msix | packaging | 94 | 18 | - | - | - | dotnet-winui (0.100); dotnet-github-releases (0.056); dotnet-gha-publish (0.048) |
-| dotnet-nuget-authoring | packaging | 90 | 20 | - | - | - | dotnet-csproj-reading (0.150); dotnet-csharp-source-generators (0.125); dotnet-version-detection (0.120) |
-| dotnet-benchmarkdotnet | performance | 117 | 18 | - | - | - | dotnet-gc-memory (0.100); dotnet-security-owasp (0.100); dotnet-semantic-kernel (0.100) |
-| dotnet-ci-benchmarking | performance | 92 | 12 | - | - | - | dotnet-artifacts-output (0.100); dotnet-winforms-basics (0.048); dotnet-api-surface-validation (0.045) |
-| dotnet-gc-memory | performance | 99 | 12 | Y | - | - | dotnet-performance-patterns (0.105); dotnet-benchmarkdotnet (0.100); dotnet-csharp-type-design-performance (0.095) |
-| dotnet-performance-patterns | performance | 88 | 19 | Y | - | - | dotnet-csharp-type-design-performance (0.176); dotnet-linq-optimization (0.118); dotnet-gc-memory (0.105) |
-| dotnet-profiling | performance | 93 | 14 | - | - | - | dotnet-build-optimization (0.059); dotnet-csharp-code-smells (0.056); dotnet-csharp-type-design-performance (0.056) |
-| dotnet-add-analyzers | project-structure | 97 | 6 | - | - | - | dotnet-add-testing (0.167); dotnet-scaffold-project (0.158); dotnet-add-ci (0.136) |
-| dotnet-add-ci | project-structure | 93 | 6 | - | - | - | dotnet-add-testing (0.158); dotnet-gha-deploy (0.158); dotnet-ado-patterns (0.143) |
-| dotnet-add-testing | project-structure | 88 | 17 | - | - | - | dotnet-add-analyzers (0.167); dotnet-add-ci (0.158); dotnet-scaffold-project (0.118) |
-| dotnet-artifacts-output | project-structure | 90 | 8 | - | - | - | dotnet-container-deployment (0.105); dotnet-ci-benchmarking (0.100); dotnet-build-analysis (0.095) |
-| dotnet-modernize | project-structure | 95 | 17 | - | - | - | dotnet-agent-gotchas (0.118); dotnet-csharp-async-patterns (0.062); dotnet-winforms-basics (0.062) |
-| dotnet-project-structure | project-structure | 93 | 5 | - | - | - | dotnet-scaffold-project (0.235); dotnet-project-analysis (0.167); dotnet-msbuild-authoring (0.143) |
-| dotnet-scaffold-project | project-structure | 94 | 6 | - | - | - | dotnet-project-structure (0.235); dotnet-add-analyzers (0.158); dotnet-add-testing (0.118) |
-| dotnet-release-management | release-management | 93 | 13 | - | - | - | dotnet-github-releases (0.143); dotnet-background-services (0.071); dotnet-blazor-components (0.059) |
-| dotnet-cryptography | security | 93 | 9 | Y | - | Y | dotnet-validation-patterns (0.053); dotnet-secrets-management (0.050); dotnet-tool-management (0.050) |
-| dotnet-secrets-management | security | 91 | 6 | - | - | Y | dotnet-csharp-configuration (0.176); dotnet-project-analysis (0.118); dotnet-validation-patterns (0.062) |
-| dotnet-security-owasp | security | 118 | 11 | - | - | Y | dotnet-trimming (0.143); dotnet-benchmarkdotnet (0.100); dotnet-csharp-configuration (0.095) |
-| dotnet-grpc | serialization | 87 | 14 | - | - | - | dotnet-minimal-apis (0.143); dotnet-middleware-patterns (0.111); dotnet-realtime-communication (0.100) |
-| dotnet-realtime-communication | serialization | 96 | 13 | Y | - | - | dotnet-service-communication (0.158); dotnet-grpc (0.100); dotnet-integration-testing (0.056) |
-| dotnet-serialization | serialization | 100 | 12 | - | - | - | dotnet-aot-architecture (0.158); dotnet-csharp-source-generators (0.118); dotnet-localization (0.111) |
-| dotnet-service-communication | serialization | 92 | 24 | - | - | - | dotnet-data-access-strategy (0.200); dotnet-realtime-communication (0.158); dotnet-wpf-migration (0.100) |
-| dotnet-blazor-testing | testing | 89 | 9 | - | - | - | dotnet-blazor-components (0.167); dotnet-blazor-patterns (0.111); dotnet-integration-testing (0.056) |
-| dotnet-integration-testing | testing | 90 | 9 | - | - | - | dotnet-xunit (0.118); dotnet-maui-testing (0.067); dotnet-uno-testing (0.067) |
-| dotnet-maui-testing | testing | 86 | 9 | - | - | - | dotnet-uno-testing (0.143); dotnet-accessibility (0.133); dotnet-maui-development (0.133) |
-| dotnet-playwright | testing | 92 | 7 | - | - | - | dotnet-api-surface-validation (0.100); dotnet-gha-patterns (0.056); dotnet-profiling (0.056) |
-| dotnet-snapshot-testing | testing | 89 | 6 | - | - | - | dotnet-api-surface-validation (0.100); dotnet-integration-testing (0.056); dotnet-structured-logging (0.053) |
-| dotnet-test-quality | testing | 100 | 9 | - | - | - | dotnet-add-testing (0.111); dotnet-ui-testing-core (0.100); dotnet-testing-strategy (0.095) |
-| dotnet-testing-strategy | testing | 87 | 15 | - | - | - | dotnet-add-testing (0.105); dotnet-documentation-strategy (0.105); dotnet-service-communication (0.095) |
-| dotnet-ui-testing-core | testing | 87 | 12 | - | - | - | dotnet-accessibility (0.111); dotnet-test-quality (0.100); dotnet-ui-chooser (0.091) |
-| dotnet-uno-testing | testing | 90 | 8 | - | - | - | dotnet-uno-targets (0.176); dotnet-maui-testing (0.143); dotnet-accessibility (0.133) |
-| dotnet-xunit | testing | 106 | 7 | - | - | - | dotnet-integration-testing (0.118); dotnet-roslyn-analyzers (0.056); dotnet-add-testing (0.053) |
-| dotnet-spectre-console | tui | 95 | 12 | - | - | Y | dotnet-artifacts-output (0.053); dotnet-domain-modeling (0.050); dotnet-cli-distribution (0.048) |
-| dotnet-terminal-gui | tui | 99 | 11 | - | - | Y | dotnet-add-testing (0.048); dotnet-artifacts-output (0.045); dotnet-project-structure (0.043) |
-| dotnet-accessibility | ui-frameworks | 98 | 19 | - | - | Y | dotnet-maui-testing (0.133); dotnet-uno-testing (0.133); dotnet-blazor-auth (0.118) |
-| dotnet-blazor-auth | ui-frameworks | 97 | 13 | - | - | Y | dotnet-accessibility (0.118); dotnet-api-security (0.100); dotnet-ui-chooser (0.095) |
-| dotnet-blazor-components | ui-frameworks | 109 | 13 | - | - | Y | dotnet-blazor-testing (0.167); dotnet-background-services (0.062); dotnet-github-releases (0.059) |
-| dotnet-blazor-patterns | ui-frameworks | 92 | 13 | - | - | Y | dotnet-blazor-testing (0.111); dotnet-validation-patterns (0.062); dotnet-blazor-auth (0.056) |
-| dotnet-maui-aot | ui-frameworks | 98 | 12 | - | - | Y | dotnet-native-aot (0.143); dotnet-add-analyzers (0.087); dotnet-aot-wasm (0.087) |
-| dotnet-maui-development | ui-frameworks | 90 | 14 | - | - | Y | dotnet-maui-testing (0.133); dotnet-uno-testing (0.062); dotnet-accessibility (0.059) |
-| dotnet-ui-chooser | ui-frameworks | 92 | 15 | - | - | - | dotnet-wpf-migration (0.263); dotnet-documentation-strategy (0.100); dotnet-blazor-auth (0.095) |
-| dotnet-uno-mcp | ui-frameworks | 97 | 30 | - | - | Y | dotnet-add-ci (0.083); dotnet-uno-testing (0.050); dotnet-uno-platform (0.045) |
-| dotnet-uno-platform | ui-frameworks | 92 | 14 | - | - | Y | dotnet-uno-testing (0.125); dotnet-uno-targets (0.100); dotnet-maui-testing (0.059) |
-| dotnet-uno-targets | ui-frameworks | 95 | 11 | - | - | Y | dotnet-uno-testing (0.176); dotnet-accessibility (0.105); dotnet-uno-platform (0.100) |
-| dotnet-winforms-basics | ui-frameworks | 98 | 13 | Y | - | Y | dotnet-modernize (0.062); dotnet-aot-architecture (0.053); dotnet-artifacts-output (0.053) |
-| dotnet-winui | ui-frameworks | 99 | 14 | - | - | Y | dotnet-file-based-apps (0.100); dotnet-msix (0.100); dotnet-wpf-migration (0.100) |
-| dotnet-wpf-migration | ui-frameworks | 100 | 24 | - | - | - | dotnet-ui-chooser (0.263); dotnet-service-communication (0.100); dotnet-winui (0.100) |
-| dotnet-wpf-modern | ui-frameworks | 99 | 12 | - | - | Y | dotnet-multi-targeting (0.095); dotnet-profiling (0.056); dotnet-maui-development (0.053) |
+| dotnet-agent-gotchas | agent-meta-skills | 92 | 28 | Y | - | Y | dotnet-csharp-async-patterns (0.2222); dotnet-csharp-code-smells (0.2105); dotnet-csharp-coding-standards (0.2000) |
+| dotnet-build-analysis | agent-meta-skills | 93 | 10 | Y | - | Y | dotnet-artifacts-output (0.0952); dotnet-solid-principles (0.0909); dotnet-agent-gotchas (0.0870) |
+| dotnet-csproj-reading | agent-meta-skills | 93 | 10 | Y | - | Y | dotnet-project-analysis (0.2222); dotnet-nuget-authoring (0.1500); dotnet-msbuild-authoring (0.1364) |
+| dotnet-slopwatch | agent-meta-skills | 116 | 6 | Y | - | Y | dotnet-version-detection (0.0645); dotnet-add-testing (0.0417); dotnet-blazor-auth (0.0400) |
+| dotnet-solution-navigation | agent-meta-skills | 88 | 11 | Y | - | Y | dotnet-project-analysis (0.1000); dotnet-scaffold-project (0.1000); dotnet-project-structure (0.0952) |
+| dotnet-semantic-kernel | ai | 98 | 9 | - | - | Y | dotnet-benchmarkdotnet (0.1000); dotnet-ado-unique (0.0500); dotnet-ado-patterns (0.0455) |
+| dotnet-api-security | api-development | 98 | 11 | - | - | Y | dotnet-blazor-auth (0.1000); dotnet-api-surface-validation (0.0455); dotnet-grpc (0.0455) |
+| dotnet-api-surface-validation | api-development | 95 | 18 | - | - | Y | dotnet-playwright (0.1000); dotnet-snapshot-testing (0.1000); dotnet-ado-build-test (0.0526) |
+| dotnet-api-versioning | api-development | 89 | 5 | - | - | Y | dotnet-http-client (0.1111); dotnet-minimal-apis (0.0909); dotnet-input-validation (0.0588) |
+| dotnet-csharp-api-design | api-development | 103 | 14 | Y | - | Y | dotnet-http-client (0.0556); dotnet-middleware-patterns (0.0556); dotnet-csharp-nullable-reference-types (0.0526) |
+| dotnet-input-validation | api-development | 88 | 17 | - | - | Y | dotnet-validation-patterns (0.0714); dotnet-http-client (0.0667); dotnet-api-versioning (0.0588) |
+| dotnet-library-api-compat | api-development | 94 | 14 | Y | - | Y | dotnet-csharp-source-generators (0.0588); dotnet-localization (0.0556); dotnet-release-management (0.0556) |
+| dotnet-middleware-patterns | api-development | 87 | 6 | - | - | - | dotnet-architecture-patterns (0.1579); dotnet-grpc (0.1111); dotnet-minimal-apis (0.1000) |
+| dotnet-minimal-apis | api-development | 113 | 12 | - | - | Y | dotnet-grpc (0.1429); dotnet-architecture-patterns (0.1304); dotnet-middleware-patterns (0.1000) |
+| dotnet-openapi | api-development | 87 | 5 | - | - | Y | dotnet-api-docs (0.1765); dotnet-documentation-strategy (0.0625); dotnet-csharp-dependency-injection (0.0556) |
+| dotnet-architecture-patterns | architecture | 105 | 14 | - | - | - | dotnet-middleware-patterns (0.1579); dotnet-minimal-apis (0.1304); dotnet-grpc (0.0909) |
+| dotnet-aspire-patterns | architecture | 98 | 12 | Y | - | Y | dotnet-observability (0.1333); dotnet-integration-testing (0.0625); dotnet-ado-unique (0.0588) |
+| dotnet-background-services | architecture | 94 | 10 | - | - | - | dotnet-release-management (0.0714); dotnet-blazor-components (0.0625); dotnet-efcore-patterns (0.0625) |
+| dotnet-container-deployment | architecture | 94 | 16 | - | - | - | dotnet-artifacts-output (0.1053); dotnet-add-ci (0.0909); dotnet-gha-deploy (0.0526) |
+| dotnet-containers | architecture | 93 | 12 | Y | - | - | dotnet-ado-patterns (0.1176); dotnet-nuget-authoring (0.1176); dotnet-roslyn-analyzers (0.0667) |
+| dotnet-data-access-strategy | architecture | 101 | 11 | - | - | - | dotnet-service-communication (0.2000); dotnet-efcore-patterns (0.0952); dotnet-csharp-type-design-performance (0.0909) |
+| dotnet-domain-modeling | architecture | 95 | 17 | Y | - | - | dotnet-validation-patterns (0.0556); dotnet-blazor-patterns (0.0526); dotnet-spectre-console (0.0500) |
+| dotnet-efcore-architecture | architecture | 90 | 12 | - | - | - | dotnet-mermaid-diagrams (0.0588); dotnet-serialization (0.0476); dotnet-architecture-patterns (0.0455) |
+| dotnet-efcore-patterns | architecture | 118 | 11 | - | - | - | dotnet-data-access-strategy (0.0952); dotnet-background-services (0.0625); dotnet-release-management (0.0588) |
+| dotnet-http-client | architecture | 93 | 11 | - | - | - | dotnet-api-versioning (0.1111); dotnet-resilience (0.1053); dotnet-input-validation (0.0667) |
+| dotnet-messaging-patterns | architecture | 93 | 8 | - | - | - | dotnet-accessibility (0.0000); dotnet-add-analyzers (0.0000); dotnet-add-ci (0.0000) |
+| dotnet-observability | architecture | 87 | 10 | - | - | - | dotnet-aspire-patterns (0.1333); dotnet-msbuild-tasks (0.0667); dotnet-build-optimization (0.0588) |
+| dotnet-resilience | architecture | 96 | 9 | - | - | - | dotnet-http-client (0.1053); dotnet-input-validation (0.0556); dotnet-openapi (0.0526) |
+| dotnet-solid-principles | architecture | 91 | 8 | - | - | - | dotnet-csharp-code-smells (0.1000); dotnet-csharp-dependency-injection (0.1000); dotnet-csharp-coding-standards (0.0952) |
+| dotnet-structured-logging | architecture | 95 | 8 | - | - | - | dotnet-linq-optimization (0.0556); dotnet-ado-patterns (0.0526); dotnet-snapshot-testing (0.0526) |
+| dotnet-build-optimization | build-system | 86 | 12 | - | - | - | dotnet-tool-management (0.1176); dotnet-msbuild-authoring (0.0952); dotnet-gha-patterns (0.0588) |
+| dotnet-msbuild-authoring | build-system | 116 | 5 | - | - | - | dotnet-version-detection (0.2000); dotnet-project-structure (0.1429); dotnet-csproj-reading (0.1364) |
+| dotnet-msbuild-tasks | build-system | 89 | 3 | - | - | - | dotnet-msbuild-authoring (0.1053); dotnet-observability (0.0667); dotnet-system-commandline (0.0556) |
+| dotnet-ado-build-test | cicd | 89 | 13 | - | - | - | dotnet-ado-publish (0.1765); dotnet-ado-patterns (0.1111); dotnet-add-ci (0.1000) |
+| dotnet-ado-patterns | cicd | 100 | 12 | - | - | - | dotnet-add-ci (0.1429); dotnet-containers (0.1176); dotnet-ado-build-test (0.1111) |
+| dotnet-ado-publish | cicd | 95 | 19 | - | - | - | dotnet-gha-publish (0.2941); dotnet-ado-build-test (0.1765); dotnet-add-ci (0.1429) |
+| dotnet-ado-unique | cicd | 93 | 15 | Y | - | - | dotnet-github-releases (0.0625); dotnet-aspire-patterns (0.0588); dotnet-cli-release-pipeline (0.0526) |
+| dotnet-gha-build-test | cicd | 119 | 14 | - | - | - | dotnet-gha-patterns (0.1667); dotnet-cli-release-pipeline (0.1429); dotnet-gha-publish (0.1429) |
+| dotnet-gha-deploy | cicd | 87 | 15 | - | - | - | dotnet-gha-publish (0.2500); dotnet-add-ci (0.1579); dotnet-gha-patterns (0.1333) |
+| dotnet-gha-patterns | cicd | 98 | 13 | - | - | - | dotnet-cli-release-pipeline (0.1875); dotnet-gha-build-test (0.1667); dotnet-gha-deploy (0.1333) |
+| dotnet-gha-publish | cicd | 91 | 19 | - | - | - | dotnet-ado-publish (0.2941); dotnet-gha-deploy (0.2500); dotnet-gha-build-test (0.1429) |
+| dotnet-cli-architecture | cli-tools | 96 | 13 | - | - | - | dotnet-ado-unique (0.0476); dotnet-aspire-patterns (0.0476); dotnet-cli-release-pipeline (0.0435) |
+| dotnet-cli-distribution | cli-tools | 93 | 22 | - | - | - | dotnet-cli-release-pipeline (0.0952); dotnet-file-based-apps (0.0952); dotnet-service-communication (0.0952) |
+| dotnet-cli-packaging | cli-tools | 87 | 12 | - | - | - | dotnet-ado-publish (0.1000); dotnet-add-testing (0.0526); dotnet-tool-management (0.0526) |
+| dotnet-cli-release-pipeline | cli-tools | 88 | 13 | - | - | - | dotnet-gha-patterns (0.1875); dotnet-gha-build-test (0.1429); dotnet-github-releases (0.1176) |
+| dotnet-system-commandline | cli-tools | 112 | 12 | - | - | - | dotnet-csharp-configuration (0.1000); dotnet-file-based-apps (0.1000); dotnet-msbuild-authoring (0.0909) |
+| dotnet-tool-management | cli-tools | 86 | 8 | - | - | - | dotnet-build-optimization (0.1176); dotnet-roslyn-analyzers (0.0625); dotnet-validation-patterns (0.0625) |
+| dotnet-channels | core-csharp | 91 | 4 | - | - | - | dotnet-validation-patterns (0.0625); dotnet-csharp-configuration (0.0526); dotnet-io-pipelines (0.0526) |
+| dotnet-csharp-async-patterns | core-csharp | 97 | 4 | - | - | - | dotnet-agent-gotchas (0.2222); dotnet-csharp-code-smells (0.1667); dotnet-csharp-nullable-reference-types (0.1111) |
+| dotnet-csharp-code-smells | core-csharp | 89 | 8 | - | - | - | dotnet-agent-gotchas (0.2105); dotnet-csharp-async-patterns (0.1667); dotnet-csharp-nullable-reference-types (0.1053) |
+| dotnet-csharp-coding-standards | core-csharp | 105 | 5 | - | - | - | dotnet-agent-gotchas (0.2000); dotnet-advisor (0.1364); dotnet-csharp-code-smells (0.0952) |
+| dotnet-csharp-concurrency-patterns | core-csharp | 106 | 8 | - | - | Y | dotnet-artifacts-output (0.0556); dotnet-benchmarkdotnet (0.0556); dotnet-csharp-async-patterns (0.0556) |
+| dotnet-csharp-configuration | core-csharp | 89 | 2 | - | - | - | dotnet-validation-patterns (0.1875); dotnet-secrets-management (0.1765); dotnet-system-commandline (0.1000) |
+| dotnet-csharp-dependency-injection | core-csharp | 98 | 3 | - | - | - | dotnet-solid-principles (0.1000); dotnet-agent-gotchas (0.0952); dotnet-integration-testing (0.0556) |
+| dotnet-csharp-modern-patterns | core-csharp | 95 | 5 | Y | - | - | dotnet-version-detection (0.0800); dotnet-uno-platform (0.0526); dotnet-csharp-code-smells (0.0500) |
+| dotnet-csharp-nullable-reference-types | core-csharp | 92 | 2 | - | - | - | dotnet-agent-gotchas (0.1579); dotnet-csharp-async-patterns (0.1111); dotnet-csharp-code-smells (0.1053) |
+| dotnet-csharp-source-generators | core-csharp | 97 | 3 | - | - | - | dotnet-localization (0.1538); dotnet-aot-architecture (0.1333); dotnet-nuget-authoring (0.1250) |
+| dotnet-csharp-type-design-performance | core-csharp | 109 | 9 | - | - | Y | dotnet-performance-patterns (0.1765); dotnet-gc-memory (0.0952); dotnet-data-access-strategy (0.0909) |
+| dotnet-editorconfig | core-csharp | 100 | 11 | Y | - | - | dotnet-msbuild-authoring (0.0909); dotnet-modernize (0.0588); dotnet-roslyn-analyzers (0.0556) |
+| dotnet-file-io | core-csharp | 85 | 14 | Y | - | - | dotnet-io-pipelines (0.1111); dotnet-documentation-strategy (0.0588); dotnet-file-based-apps (0.0526) |
+| dotnet-io-pipelines | core-csharp | 95 | 6 | - | - | - | dotnet-file-io (0.1111); dotnet-channels (0.0526); dotnet-winforms-basics (0.0500) |
+| dotnet-linq-optimization | core-csharp | 97 | 9 | Y | - | - | dotnet-performance-patterns (0.1176); dotnet-structured-logging (0.0556); dotnet-csharp-type-design-performance (0.0500) |
+| dotnet-native-interop | core-csharp | 93 | 11 | - | - | Y | dotnet-native-aot (0.1579); dotnet-maui-testing (0.0556); dotnet-uno-testing (0.0556) |
+| dotnet-roslyn-analyzers | core-csharp | 96 | 7 | Y | - | - | dotnet-containers (0.0667); dotnet-tool-management (0.0625); dotnet-scaffold-project (0.0588) |
+| dotnet-validation-patterns | core-csharp | 88 | 11 | - | - | Y | dotnet-csharp-configuration (0.1875); dotnet-input-validation (0.0714); dotnet-blazor-patterns (0.0625) |
+| dotnet-api-docs | documentation | 90 | 25 | - | - | - | dotnet-openapi (0.1765); dotnet-documentation-strategy (0.1053); dotnet-agent-gotchas (0.0909) |
+| dotnet-documentation-strategy | documentation | 92 | 15 | - | - | - | dotnet-api-docs (0.1053); dotnet-testing-strategy (0.1053); dotnet-ui-chooser (0.1000) |
+| dotnet-github-docs | documentation | 92 | 25 | - | - | Y | dotnet-add-ci (0.0909); dotnet-gha-patterns (0.0556); dotnet-github-releases (0.0556) |
+| dotnet-mermaid-diagrams | documentation | 94 | 9 | - | - | - | dotnet-efcore-architecture (0.0588); dotnet-csharp-type-design-performance (0.0556); dotnet-architecture-patterns (0.0500) |
+| dotnet-xml-docs | documentation | 91 | 9 | - | - | - | dotnet-api-docs (0.0526); dotnet-accessibility (0.0000); dotnet-add-analyzers (0.0000) |
+| dotnet-advisor | foundation | 89 | 226 | - | - | - | dotnet-version-detection (0.1538); dotnet-csharp-coding-standards (0.1364); dotnet-csharp-async-patterns (0.0952) |
+| dotnet-file-based-apps | foundation | 85 | 6 | - | - | Y | dotnet-add-testing (0.1111); dotnet-scaffold-project (0.1053); dotnet-system-commandline (0.1000) |
+| dotnet-project-analysis | foundation | 87 | 5 | - | - | Y | dotnet-csproj-reading (0.2222); dotnet-project-structure (0.1667); dotnet-secrets-management (0.1176) |
+| dotnet-version-detection | foundation | 99 | 6 | - | - | - | dotnet-msbuild-authoring (0.2000); dotnet-advisor (0.1538); dotnet-nuget-authoring (0.1200) |
+| dotnet-localization | localization | 95 | 17 | Y | - | - | dotnet-csharp-source-generators (0.1538); dotnet-nuget-authoring (0.1176); dotnet-serialization (0.1111) |
+| dotnet-multi-targeting | multi-targeting | 87 | 7 | - | - | Y | dotnet-solid-principles (0.0952); dotnet-wpf-modern (0.0952); dotnet-csharp-coding-standards (0.0909) |
+| dotnet-version-upgrade | multi-targeting | 86 | 8 | - | - | Y | dotnet-add-testing (0.1053); dotnet-add-analyzers (0.0909); dotnet-add-ci (0.0870) |
+| dotnet-aot-architecture | native-aot | 92 | 17 | - | - | - | dotnet-serialization (0.1579); dotnet-csharp-source-generators (0.1333); dotnet-localization (0.0588) |
+| dotnet-aot-wasm | native-aot | 88 | 14 | Y | - | - | dotnet-uno-testing (0.1111); dotnet-native-aot (0.0952); dotnet-cli-distribution (0.0909) |
+| dotnet-native-aot | native-aot | 95 | 21 | Y | - | - | dotnet-native-interop (0.1579); dotnet-maui-aot (0.1429); dotnet-ado-publish (0.1000) |
+| dotnet-trimming | native-aot | 109 | 11 | - | - | - | dotnet-security-owasp (0.1429); dotnet-native-aot (0.0952); dotnet-csharp-concurrency-patterns (0.0500) |
+| dotnet-github-releases | packaging | 91 | 16 | - | - | - | dotnet-release-management (0.1429); dotnet-cli-release-pipeline (0.1176); dotnet-gha-patterns (0.0667) |
+| dotnet-msix | packaging | 94 | 18 | - | - | - | dotnet-winui (0.1000); dotnet-github-releases (0.0556); dotnet-gha-publish (0.0476) |
+| dotnet-nuget-authoring | packaging | 90 | 20 | - | - | - | dotnet-csproj-reading (0.1500); dotnet-csharp-source-generators (0.1250); dotnet-version-detection (0.1200) |
+| dotnet-benchmarkdotnet | performance | 117 | 18 | - | - | - | dotnet-gc-memory (0.1000); dotnet-security-owasp (0.1000); dotnet-semantic-kernel (0.1000) |
+| dotnet-ci-benchmarking | performance | 92 | 12 | - | - | - | dotnet-artifacts-output (0.1000); dotnet-winforms-basics (0.0476); dotnet-api-surface-validation (0.0455) |
+| dotnet-gc-memory | performance | 99 | 12 | Y | - | - | dotnet-performance-patterns (0.1053); dotnet-benchmarkdotnet (0.1000); dotnet-csharp-type-design-performance (0.0952) |
+| dotnet-performance-patterns | performance | 88 | 19 | Y | - | - | dotnet-csharp-type-design-performance (0.1765); dotnet-linq-optimization (0.1176); dotnet-gc-memory (0.1053) |
+| dotnet-profiling | performance | 93 | 14 | - | - | - | dotnet-build-optimization (0.0588); dotnet-csharp-code-smells (0.0556); dotnet-csharp-type-design-performance (0.0556) |
+| dotnet-add-analyzers | project-structure | 97 | 6 | - | - | Y | dotnet-add-testing (0.1667); dotnet-scaffold-project (0.1579); dotnet-add-ci (0.1364) |
+| dotnet-add-ci | project-structure | 93 | 6 | - | - | Y | dotnet-add-testing (0.1579); dotnet-gha-deploy (0.1579); dotnet-ado-patterns (0.1429) |
+| dotnet-add-testing | project-structure | 88 | 17 | - | - | Y | dotnet-add-analyzers (0.1667); dotnet-add-ci (0.1579); dotnet-scaffold-project (0.1176) |
+| dotnet-artifacts-output | project-structure | 90 | 8 | - | - | Y | dotnet-container-deployment (0.1053); dotnet-ci-benchmarking (0.1000); dotnet-build-analysis (0.0952) |
+| dotnet-modernize | project-structure | 95 | 17 | - | - | Y | dotnet-agent-gotchas (0.1176); dotnet-csharp-async-patterns (0.0625); dotnet-winforms-basics (0.0625) |
+| dotnet-project-structure | project-structure | 93 | 5 | - | - | Y | dotnet-scaffold-project (0.2353); dotnet-project-analysis (0.1667); dotnet-msbuild-authoring (0.1429) |
+| dotnet-scaffold-project | project-structure | 94 | 6 | - | - | Y | dotnet-project-structure (0.2353); dotnet-add-analyzers (0.1579); dotnet-add-testing (0.1176) |
+| dotnet-release-management | release-management | 93 | 13 | - | - | - | dotnet-github-releases (0.1429); dotnet-background-services (0.0714); dotnet-blazor-components (0.0588) |
+| dotnet-cryptography | security | 93 | 9 | Y | - | Y | dotnet-validation-patterns (0.0526); dotnet-secrets-management (0.0500); dotnet-tool-management (0.0500) |
+| dotnet-secrets-management | security | 91 | 6 | - | - | Y | dotnet-csharp-configuration (0.1765); dotnet-project-analysis (0.1176); dotnet-validation-patterns (0.0625) |
+| dotnet-security-owasp | security | 118 | 11 | - | - | Y | dotnet-trimming (0.1429); dotnet-benchmarkdotnet (0.1000); dotnet-csharp-configuration (0.0952) |
+| dotnet-grpc | serialization | 87 | 14 | - | - | - | dotnet-minimal-apis (0.1429); dotnet-middleware-patterns (0.1111); dotnet-realtime-communication (0.1000) |
+| dotnet-realtime-communication | serialization | 96 | 13 | Y | - | - | dotnet-service-communication (0.1579); dotnet-grpc (0.1000); dotnet-integration-testing (0.0556) |
+| dotnet-serialization | serialization | 100 | 12 | - | - | - | dotnet-aot-architecture (0.1579); dotnet-csharp-source-generators (0.1176); dotnet-localization (0.1111) |
+| dotnet-service-communication | serialization | 92 | 24 | - | - | - | dotnet-data-access-strategy (0.2000); dotnet-realtime-communication (0.1579); dotnet-wpf-migration (0.1000) |
+| dotnet-blazor-testing | testing | 89 | 9 | - | - | Y | dotnet-blazor-components (0.1667); dotnet-blazor-patterns (0.1111); dotnet-integration-testing (0.0556) |
+| dotnet-integration-testing | testing | 90 | 9 | - | - | Y | dotnet-xunit (0.1176); dotnet-maui-testing (0.0667); dotnet-uno-testing (0.0667) |
+| dotnet-maui-testing | testing | 86 | 9 | - | - | Y | dotnet-uno-testing (0.1429); dotnet-accessibility (0.1333); dotnet-maui-development (0.1333) |
+| dotnet-playwright | testing | 92 | 7 | - | - | Y | dotnet-api-surface-validation (0.1000); dotnet-gha-patterns (0.0556); dotnet-profiling (0.0556) |
+| dotnet-snapshot-testing | testing | 89 | 6 | - | - | Y | dotnet-api-surface-validation (0.1000); dotnet-integration-testing (0.0556); dotnet-structured-logging (0.0526) |
+| dotnet-test-quality | testing | 100 | 9 | - | - | Y | dotnet-add-testing (0.1111); dotnet-ui-testing-core (0.1000); dotnet-testing-strategy (0.0952) |
+| dotnet-testing-strategy | testing | 87 | 15 | - | - | Y | dotnet-add-testing (0.1053); dotnet-documentation-strategy (0.1053); dotnet-service-communication (0.0952) |
+| dotnet-ui-testing-core | testing | 87 | 12 | - | - | Y | dotnet-accessibility (0.1111); dotnet-test-quality (0.1000); dotnet-ui-chooser (0.0909) |
+| dotnet-uno-testing | testing | 90 | 8 | - | - | Y | dotnet-uno-targets (0.1765); dotnet-maui-testing (0.1429); dotnet-accessibility (0.1333) |
+| dotnet-xunit | testing | 106 | 7 | - | - | Y | dotnet-integration-testing (0.1176); dotnet-roslyn-analyzers (0.0556); dotnet-add-testing (0.0526) |
+| dotnet-spectre-console | tui | 95 | 12 | - | - | Y | dotnet-artifacts-output (0.0526); dotnet-domain-modeling (0.0500); dotnet-cli-distribution (0.0476) |
+| dotnet-terminal-gui | tui | 99 | 11 | - | - | Y | dotnet-add-testing (0.0476); dotnet-artifacts-output (0.0455); dotnet-project-structure (0.0435) |
+| dotnet-accessibility | ui-frameworks | 98 | 19 | - | - | Y | dotnet-maui-testing (0.1333); dotnet-uno-testing (0.1333); dotnet-blazor-auth (0.1176) |
+| dotnet-blazor-auth | ui-frameworks | 97 | 13 | - | - | Y | dotnet-accessibility (0.1176); dotnet-api-security (0.1000); dotnet-ui-chooser (0.0952) |
+| dotnet-blazor-components | ui-frameworks | 109 | 13 | - | - | Y | dotnet-blazor-testing (0.1667); dotnet-background-services (0.0625); dotnet-github-releases (0.0588) |
+| dotnet-blazor-patterns | ui-frameworks | 92 | 13 | - | - | Y | dotnet-blazor-testing (0.1111); dotnet-validation-patterns (0.0625); dotnet-blazor-auth (0.0556) |
+| dotnet-maui-aot | ui-frameworks | 98 | 12 | - | - | Y | dotnet-native-aot (0.1429); dotnet-add-analyzers (0.0870); dotnet-aot-wasm (0.0870) |
+| dotnet-maui-development | ui-frameworks | 90 | 14 | - | - | Y | dotnet-maui-testing (0.1333); dotnet-uno-testing (0.0625); dotnet-accessibility (0.0588) |
+| dotnet-ui-chooser | ui-frameworks | 92 | 15 | - | - | - | dotnet-wpf-migration (0.2632); dotnet-documentation-strategy (0.1000); dotnet-blazor-auth (0.0952) |
+| dotnet-uno-mcp | ui-frameworks | 97 | 30 | - | - | Y | dotnet-add-ci (0.0833); dotnet-uno-testing (0.0500); dotnet-uno-platform (0.0455) |
+| dotnet-uno-platform | ui-frameworks | 92 | 14 | - | - | Y | dotnet-uno-testing (0.1250); dotnet-uno-targets (0.1000); dotnet-maui-testing (0.0588) |
+| dotnet-uno-targets | ui-frameworks | 95 | 11 | - | - | Y | dotnet-uno-testing (0.1765); dotnet-accessibility (0.1053); dotnet-uno-platform (0.1000) |
+| dotnet-winforms-basics | ui-frameworks | 98 | 13 | Y | - | Y | dotnet-modernize (0.0625); dotnet-aot-architecture (0.0526); dotnet-artifacts-output (0.0526) |
+| dotnet-winui | ui-frameworks | 99 | 14 | - | - | Y | dotnet-file-based-apps (0.1000); dotnet-msix (0.1000); dotnet-wpf-migration (0.1000) |
+| dotnet-wpf-migration | ui-frameworks | 100 | 24 | - | - | - | dotnet-ui-chooser (0.2632); dotnet-service-communication (0.1000); dotnet-winui (0.1000) |
+| dotnet-wpf-modern | ui-frameworks | 99 | 12 | - | - | Y | dotnet-multi-targeting (0.0952); dotnet-profiling (0.0556); dotnet-maui-development (0.0526) |
 
 ## Top Overlap Hotspots (by Jaccard)
 

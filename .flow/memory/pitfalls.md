@@ -327,3 +327,6 @@ BSD sed on macOS requires sed -i '' (space + empty string) syntax; GNU uses sed 
 
 ## 2026-02-19 manual [pitfall]
 Parallel tasks sharing a created file must have explicit sole-owner assignment; the other task imports only. Otherwise merge conflicts are guaranteed.
+
+## 2026-02-19 manual [pitfall]
+When ownership manifests repartition work across tasks, update ALL downstream task specs (titles, descriptions, category lists, filenames) to match -- not just the ones flagged in the first review round

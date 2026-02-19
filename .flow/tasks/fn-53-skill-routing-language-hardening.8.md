@@ -1,16 +1,16 @@
-# fn-53-skill-routing-language-hardening.8 Category Sweep - UI, NativeAOT, CLI, TUI
+# fn-53-skill-routing-language-hardening.8 Category Sweep - UI, NativeAOT, TUI, MultiTarget
 
 ## Description
-Apply canonical routing language to skills assigned to this batch: blazor, uno-platform, maui, desktop-frameworks, native-aot-trimming, cli-tools, tui categories. No overlap with T6/T7/T9.
+Apply canonical routing language to skills assigned to this batch: ai, localization, multi-targeting, native-aot, tui, ui-frameworks categories. No overlap with T6/T7/T9.
 
 **Size:** M
-**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~25 skills)
+**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~24 skills)
 
 ## Approach
 
-- Same workflow as T6 but for UI/NativeAOT/CLI/TUI categories
+- Same workflow as T6 but for UI/NativeAOT/TUI/MultiTarget categories
 - Align platform classifier wording across frameworks (Blazor vs MAUI vs Uno vs WinUI)
-- Emit `docs/skill-routing-sweep-ui-nativeaot-cli-tui.md`
+- Emit `docs/skill-routing-sweep-ui-nativeaot-tui-multitarget.md`
 
 ## Key context
 
@@ -20,7 +20,7 @@ Apply canonical routing language to skills assigned to this batch: blazor, uno-p
 - [ ] All assigned skills have scope/out-of-scope sections
 - [ ] All descriptions follow canonical style
 - [ ] Platform classifier wording is consistent across framework families
-- [ ] `docs/skill-routing-sweep-ui-nativeaot-cli-tui.md` emitted
+- [ ] `docs/skill-routing-sweep-ui-nativeaot-tui-multitarget.md` emitted
 - [ ] Budget delta documented: no net increase
 - [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.
 - [ ] `./scripts/validate-skills.sh` passes

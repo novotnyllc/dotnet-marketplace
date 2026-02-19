@@ -16,6 +16,8 @@ Zero overlaps: no skill path appears in two tasks.
 | T10 (fn-53.10) | Agent File Normalization | 14 | agents |
 | **Total** | | **130 skills + 14 agents** | |
 
+**Distribution rationale**: T9 (34) exceeds the ~30 target because it collects 8 distinct low-coupling categories (build-system, cli-tools, documentation, packaging, performance, project-structure, release-management, serialization). Moving skills to other tasks would break the natural category grouping and introduce cross-category ownership splits. The skills in T9 are lower-traffic and simpler to normalize, so the higher count does not increase sweep difficulty proportionally.
+
 ## Full Manifest
 
 | Skill Path | Category | Assigned Task | Notes |
@@ -31,11 +33,11 @@ Zero overlaps: no skill path appears in two tasks.
 | skills/cicd/dotnet-gha-build-test/SKILL.md | cicd | T5 | routing-test hotspot; desc 119ch (over-budget risk); zero routing markers |
 | skills/core-csharp/dotnet-csharp-coding-standards/SKILL.md | core-csharp | T5 | zero routing markers |
 | skills/foundation/dotnet-advisor/SKILL.md | foundation | T5 | routing-test hotspot; hub skill (226 refs); zero routing markers |
-| skills/foundation/dotnet-file-based-apps/SKILL.md | foundation | T5 | zero routing markers |
-| skills/foundation/dotnet-project-analysis/SKILL.md | foundation | T5 | zero routing markers |
+| skills/foundation/dotnet-file-based-apps/SKILL.md | foundation | T5 |  |
+| skills/foundation/dotnet-project-analysis/SKILL.md | foundation | T5 |  |
 | skills/foundation/dotnet-version-detection/SKILL.md | foundation | T5 | routing-test hotspot; zero routing markers |
 | skills/security/dotnet-security-owasp/SKILL.md | security | T5 | routing-test hotspot; desc 118ch (over-budget risk) |
-| skills/testing/dotnet-xunit/SKILL.md | testing | T5 | routing-test hotspot; zero routing markers |
+| skills/testing/dotnet-xunit/SKILL.md | testing | T5 | routing-test hotspot |
 | skills/architecture/dotnet-aspire-patterns/SKILL.md | architecture | T6 |  |
 | skills/architecture/dotnet-background-services/SKILL.md | architecture | T6 | zero routing markers |
 | skills/architecture/dotnet-container-deployment/SKILL.md | architecture | T6 | zero routing markers |
@@ -83,15 +85,15 @@ Zero overlaps: no skill path appears in two tasks.
 | skills/cicd/dotnet-gha-publish/SKILL.md | cicd | T7 | zero routing markers |
 | skills/security/dotnet-cryptography/SKILL.md | security | T7 |  |
 | skills/security/dotnet-secrets-management/SKILL.md | security | T7 |  |
-| skills/testing/dotnet-blazor-testing/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-integration-testing/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-maui-testing/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-playwright/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-snapshot-testing/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-test-quality/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-testing-strategy/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-ui-testing-core/SKILL.md | testing | T7 | zero routing markers |
-| skills/testing/dotnet-uno-testing/SKILL.md | testing | T7 | zero routing markers |
+| skills/testing/dotnet-blazor-testing/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-integration-testing/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-maui-testing/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-playwright/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-snapshot-testing/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-test-quality/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-testing-strategy/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-ui-testing-core/SKILL.md | testing | T7 |  |
+| skills/testing/dotnet-uno-testing/SKILL.md | testing | T7 |  |
 | skills/ai/dotnet-semantic-kernel/SKILL.md | ai | T8 |  |
 | skills/localization/dotnet-localization/SKILL.md | localization | T8 |  |
 | skills/multi-targeting/dotnet-multi-targeting/SKILL.md | multi-targeting | T8 |  |
@@ -138,13 +140,13 @@ Zero overlaps: no skill path appears in two tasks.
 | skills/performance/dotnet-gc-memory/SKILL.md | performance | T9 |  |
 | skills/performance/dotnet-performance-patterns/SKILL.md | performance | T9 |  |
 | skills/performance/dotnet-profiling/SKILL.md | performance | T9 | zero routing markers |
-| skills/project-structure/dotnet-add-analyzers/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-add-ci/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-add-testing/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-artifacts-output/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-modernize/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-project-structure/SKILL.md | project-structure | T9 | zero routing markers |
-| skills/project-structure/dotnet-scaffold-project/SKILL.md | project-structure | T9 | zero routing markers |
+| skills/project-structure/dotnet-add-analyzers/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-add-ci/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-add-testing/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-artifacts-output/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-modernize/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-project-structure/SKILL.md | project-structure | T9 |  |
+| skills/project-structure/dotnet-scaffold-project/SKILL.md | project-structure | T9 |  |
 | skills/release-management/dotnet-release-management/SKILL.md | release-management | T9 | zero routing markers |
 | skills/serialization/dotnet-grpc/SKILL.md | serialization | T9 | zero routing markers |
 | skills/serialization/dotnet-realtime-communication/SKILL.md | serialization | T9 |  |
