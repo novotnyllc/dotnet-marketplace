@@ -72,7 +72,7 @@ All 20 category status markers in the `dotnet-advisor` skill catalog were verifi
 
 ## Agent Modifications
 
-12 of 14 agent files were modified. 2 agents (dotnet-architect, dotnet-blazor-specialist) had no bare references to normalize.
+12 of 14 agent files were modified. 2 agents (dotnet-architect, dotnet-blazor-specialist) were unchanged.
 
 | Agent | Description | Bare Refs | [skill:] Refs | Sections |
 |-------|-------------|-----------|---------------|----------|
