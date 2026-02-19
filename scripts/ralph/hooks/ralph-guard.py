@@ -17,7 +17,7 @@ Supports both review backends:
 """
 
 # Version for drift detection (bump when making changes)
-RALPH_GUARD_VERSION = "0.12.0"
+RALPH_GUARD_VERSION = "0.13.0"
 
 import json
 import os
@@ -119,6 +119,31 @@ def output_json(data: dict) -> None:
     """Output JSON response."""
     print(json.dumps(data))
     sys.exit(0)
+
+
+# Files that Ralph must never modify during a run
+PROTECTED_FILE_PATTERNS = [
+    "ralph-guard.py",
+    "ralph-guard",
+    "flowctl.py",
+    "flowctl",
+    "/hooks/hooks.json",
+]
+
+
+def handle_protected_file_check(data: dict) -> None:
+    """Block Edit/Write to protected workflow files (prevent self-modification)."""
+    tool_input = data.get("tool_input", {})
+    file_path = tool_input.get("file_path", "")
+    if not file_path:
+        return
+    for pattern in PROTECTED_FILE_PATTERNS:
+        if file_path.endswith(pattern):
+            output_block(
+                f"BLOCKED: Cannot modify protected file '{os.path.basename(file_path)}'. "
+                "Ralph must not edit its own workflow tooling (ralph-guard, flowctl, hooks). "
+                "If the guard is blocking incorrectly, report the bug instead of bypassing it."
+            )
 
 
 def handle_pre_tool_use(data: dict) -> None:
@@ -385,11 +410,20 @@ def handle_post_tool_use(data: dict) -> None:
                     )
 
     # Track receipt writes - reset review state after write
+    # Must match actual shell redirects (cat > file, echo > file), not commands
+    # that merely contain the receipt path as an argument (e.g. --receipt flag)
     receipt_path = os.environ.get("REVIEW_RECEIPT_PATH", "")
-    if receipt_path and receipt_path in command and ">" in command:
-        state["chat_send_succeeded"] = False  # Reset for next review
-        state["codex_review_succeeded"] = False  # Reset codex state too
-        save_state(session_id, state)
+    if receipt_path:
+        receipt_dir = os.path.dirname(receipt_path)
+        is_receipt_write = receipt_dir and (
+            re.search(rf">\s*['\"]?{re.escape(receipt_dir)}", command)
+            or re.search(r">\s*['\"]?.*receipts/.*\.json", command)
+            or re.search(r"cat\s*>\s*.*receipt", command, re.I)
+        )
+        if is_receipt_write:
+            state["chat_send_succeeded"] = False  # Reset for next review
+            state["codex_review_succeeded"] = False  # Reset codex state too
+            save_state(session_id, state)
 
     # Track setup-review output (W= T=)
     if "setup-review" in command:
@@ -572,6 +606,11 @@ def main():
 
     with debug_file.open("a") as f:
         f.write(f"  -> Event: {event}, Tool: {tool_name}\n")
+
+    # Block Edit/Write to protected files (prevent self-modification)
+    if event == "PreToolUse" and tool_name in ("Edit", "Write"):
+        handle_protected_file_check(data)
+        sys.exit(0)
 
     # Only process Bash tool calls for Pre/Post
     if event in ("PreToolUse", "PostToolUse") and tool_name != "Bash":
