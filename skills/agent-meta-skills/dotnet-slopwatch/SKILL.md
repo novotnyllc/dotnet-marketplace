@@ -4,7 +4,9 @@ description: "Runs Slopwatch CLI to detect LLM reward hacking: disabled tests, s
 user-invocable: true
 ---
 
-# Slopwatch: LLM Anti-Cheat Quality Gate for .NET
+# dotnet-slopwatch
+
+Slopwatch: LLM Anti-Cheat Quality Gate for .NET
 
 Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modifications to detect "slop" -- shortcuts that make builds/tests pass without fixing real problems.
 

@@ -46,9 +46,8 @@ Do not change catalog status markers (`implemented`/`planned`) in `dotnet-adviso
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] Existing routing test cases still pass
 ## Done summary
-TBD
-
+Normalized all 16 T5-assigned skills per routing style guide: verb-led descriptions (budget 12,345->11,983 chars, under 12,000 target), added ## Scope / ## Out of scope sections, converted dotnet-advisor specialist routing to [skill:] syntax, and updated AGENTS.md cross-reference documentation to cover agents.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ec79d32, b7068c1, 0c47243
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root .
 - PRs:

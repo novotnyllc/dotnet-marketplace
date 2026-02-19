@@ -342,3 +342,6 @@ JSON config parsers must validate root type (list vs dict) before calling .get()
 
 ## 2026-02-19 manual [pitfall]
 When loading JSON config files, always validate field types (isinstance checks) and fail loudly (exit 2) on schema violations — truthy checks alone miss non-string types and whitespace-only strings
+
+## 2026-02-19 manual [pitfall]
+Style guide 'Action + Domain + Differentiator' formula requires a verb-led description (present-tense verb or participle first) -- noun-phrase leads violate the formula even if they contain domain keywords

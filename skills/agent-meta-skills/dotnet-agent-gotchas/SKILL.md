@@ -1,6 +1,6 @@
 ---
 name: dotnet-agent-gotchas
-description: "Common agent mistakes in .NET code: async misuse, NuGet errors, deprecated APIs, DI."
+description: "Flags agent mistakes in .NET code: async misuse, NuGet errors, deprecated APIs, DI."
 user-invocable: false
 ---
 
