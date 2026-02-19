@@ -66,12 +66,14 @@ Each description must target **under 120 characters**. This is a budget constrai
 ### Budget Threshold Semantics
 
 - **Acceptance criterion:** `CURRENT_DESC_CHARS < 12,000` (strictly less than)
-- **BUDGET_STATUS:** Derived from `CURRENT_DESC_CHARS` only, not projected chars
+- **BUDGET_STATUS:** Should be derived from `CURRENT_DESC_CHARS` only, not projected chars. The canonical thresholds are:
   - `OK`: `CURRENT_DESC_CHARS < 12,000`
   - `WARN`: `CURRENT_DESC_CHARS >= 12,000`
   - `FAIL`: `CURRENT_DESC_CHARS >= 15,600`
-- **PROJECTED_DESC_CHARS:** Informational metric only (130 * 120 = 15,600). Not part of BUDGET_STATUS determination.
+- **PROJECTED_DESC_CHARS:** Informational metric only (130 * 120 = 15,600). Should not be part of BUDGET_STATUS determination.
 - Reaching exactly 12,000 counts as WARN. Acceptance requires being strictly below.
+
+> **Note:** The current validator (`_validate_skills.py`) also factors `PROJECTED_DESC_CHARS` into `BUDGET_STATUS`. T3 will update the validator to decouple projected from status, matching this canonical policy.
 
 All description changes during sweeps must be **budget-neutral or budget-negative** (same or fewer total characters).
 
@@ -109,7 +111,9 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ### Unified `[skill:]` Syntax
 
-`[skill:name]` refers to any routable artifact -- **both skills and agents**. The validator resolves references against the union of skill directory names and agent file stems (without `.md`).
+`[skill:name]` refers to any routable artifact -- **both skills and agents**. The validator should resolve references against the union of skill directory names and agent file stems (without `.md`).
+
+> **Note:** The current validator (`_validate_skills.py`) resolves `[skill:]` references against skill directory names only. T3 will extend validation to include agent file stems in the known-IDs set.
 
 ```markdown
 # Referencing a skill
@@ -128,7 +132,7 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 
 ### Self-References and Cycles
 
-- **Self-references** (a skill referencing itself via `[skill:]`) are **always an error**. The validator rejects these.
+- **Self-references** (a skill referencing itself via `[skill:]`) are **always an error**. T3 will add a validator check that rejects self-references.
 - **Bidirectional references** (e.g., `[skill:dotnet-advisor]` in dotnet-version-detection and `[skill:dotnet-version-detection]` in dotnet-advisor) are **legitimate** and expected for hub skills. Cycle detection produces an **informational report**, not validation errors.
 
 ### Examples

@@ -147,8 +147,8 @@ PROJECTED_DESC_CHARS=15600
 BUDGET_STATUS=WARN
 ```
 
-- **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
-- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600) and is not part of the status determination.
+- **BUDGET_STATUS** should be determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above. (The current validator also factors in projected chars; T3 will align the validator with this canonical policy.)
+- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600) and should not be part of the status determination.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
 
