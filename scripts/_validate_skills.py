@@ -659,7 +659,21 @@ def main():
             ref_graph[agent_stem] = [r for r in agent_refs if r != agent_stem]
 
         # Bare-ref detection in agent files (informational, not error)
-        bare_refs = find_bare_refs(agent_content, known_ids)
+        # Strip YAML frontmatter (name/description fields) and markdown title
+        # heading before scanning -- these are structural, not cross-references.
+        agent_body_for_bare = agent_content
+        # Remove frontmatter block (between --- delimiters)
+        fm_match = re.match(r"^---\n.*?\n---\n", agent_body_for_bare, re.DOTALL)
+        if fm_match:
+            agent_body_for_bare = agent_body_for_bare[fm_match.end():]
+        # Remove markdown heading lines that are the agent's own title
+        agent_body_for_bare = re.sub(
+            r"^#+ +" + re.escape(agent_stem) + r"\s*$",
+            "",
+            agent_body_for_bare,
+            flags=re.MULTILINE,
+        )
+        bare_refs = find_bare_refs(agent_body_for_bare, known_ids)
         if bare_refs:
             for bare_id in bare_refs:
                 print(

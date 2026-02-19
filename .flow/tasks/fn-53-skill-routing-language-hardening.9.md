@@ -27,9 +27,8 @@ Normalize all remaining skills not covered by T5-T8. This is the long-tail batch
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T7/T8/T10 batches were edited
 ## Done summary
-TBD
-
+Normalized 34 long-tail skills across 8 categories (build-system, cli-tools, documentation, packaging, performance, project-structure, release-management, serialization) to follow the T2 style guide. Converted gerund/participle description leads to third-person declarative verbs, added explicit ## Scope and ## Out of scope sections with [skill:] cross-references, and emitted sweep report. Budget delta: -108 characters (11,703 -> 11,595). Similarity check unchanged.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: e5da478, 531be9d
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root . --baseline scripts/similarity-baseline.json --suppressions scripts/similarity-suppressions.json
 - PRs:

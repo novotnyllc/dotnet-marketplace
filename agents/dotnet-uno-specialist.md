@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-specialist
-description: "WHEN building cross-platform Uno Platform apps. Project setup, target configuration, Extensions ecosystem, MVUX patterns, Toolkit controls, theming, MCP integration. Triggers on: uno platform, uno app, uno wasm, uno mobile, uno desktop, uno extensions, mvux, uno toolkit, uno themes, cross-platform uno, uno embedded."
+description: "Builds cross-platform Uno Platform apps. Project setup, target configuration, Extensions ecosystem, MVUX patterns, Toolkit controls, theming, MCP integration. Triggers on: uno platform, uno app, uno wasm, uno mobile, uno desktop, uno extensions, mvux, uno toolkit, uno themes, cross-platform uno, uno embedded."
 model: sonnet
 capabilities:
   - Analyze Uno Platform project structure and target configuration

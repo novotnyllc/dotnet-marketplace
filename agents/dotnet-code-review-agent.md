@@ -1,6 +1,6 @@
 ---
 name: dotnet-code-review-agent
-description: "WHEN reviewing code for correctness, performance, security, and architecture concerns. Triages findings and routes to specialist agents for deep analysis. Triggers on: review this, code review, PR review, what's wrong with this code."
+description: "Reviews .NET code for correctness, performance, security, and architecture concerns. Triages findings and routes to specialist agents for deep analysis. Triggers on: review this, code review, PR review, what's wrong with this code."
 model: sonnet
 capabilities:
   - Perform multi-dimensional code review (correctness, performance, security, architecture)
@@ -64,14 +64,14 @@ When findings require deeper analysis, route to the appropriate specialist:
 
 | Finding Domain | Route To | When |
 |---|---|---|
-| Async/await internals, ValueTask, IO.Pipelines | `dotnet-async-performance-specialist` | Complex async patterns, performance-sensitive async code |
-| Race conditions, deadlocks, thread safety | `dotnet-csharp-concurrency-specialist` | Shared mutable state, synchronization issues |
-| Middleware, DI, request pipeline | `dotnet-aspnetcore-specialist` | ASP.NET Core architectural concerns |
-| Profiling, benchmarks, GC analysis | `dotnet-performance-analyst` | Performance regression investigation |
-| OWASP, cryptography, secrets | `dotnet-security-reviewer` | Security vulnerabilities requiring audit |
-| Blazor components, render modes | `dotnet-blazor-specialist` | Blazor-specific rendering or state concerns |
-| Test strategy, test architecture | `dotnet-testing-specialist` | Test pyramid gaps, microservice testing |
-| Cloud deployment, Aspire | `dotnet-cloud-specialist` | Deployment and orchestration concerns |
+| Async/await internals, ValueTask, IO.Pipelines | [skill:dotnet-async-performance-specialist] | Complex async patterns, performance-sensitive async code |
+| Race conditions, deadlocks, thread safety | [skill:dotnet-csharp-concurrency-specialist] | Shared mutable state, synchronization issues |
+| Middleware, DI, request pipeline | [skill:dotnet-aspnetcore-specialist] | ASP.NET Core architectural concerns |
+| Profiling, benchmarks, GC analysis | [skill:dotnet-performance-analyst] | Performance regression investigation |
+| OWASP, cryptography, secrets | [skill:dotnet-security-reviewer] | Security vulnerabilities requiring audit |
+| Blazor components, render modes | [skill:dotnet-blazor-specialist] | Blazor-specific rendering or state concerns |
+| Test strategy, test architecture | [skill:dotnet-testing-specialist] | Test pyramid gaps, microservice testing |
+| Cloud deployment, Aspire | [skill:dotnet-cloud-specialist] | Deployment and orchestration concerns |
 
 ## Review Output Format
 
@@ -88,7 +88,7 @@ For each finding, report:
 
 - **Does NOT replace specialized reviewers** -- Routes to domain specialists for deep analysis rather than attempting expert-level assessment in concurrency, security, or performance
 - **Does NOT handle UI framework specifics** -- Blazor, MAUI, Uno, and WPF component patterns are delegated to their respective specialists
-- **Does NOT handle benchmark methodology** -- Benchmark design and measurement validity belong to `dotnet-benchmark-designer`
+- **Does NOT handle benchmark methodology** -- Benchmark design and measurement validity belong to [skill:dotnet-benchmark-designer]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations
 - **Does NOT run tests or builds** -- Analyzes code statically; does not execute test suites or compile projects
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-benchmark-designer
-description: "WHEN designing .NET benchmarks, reviewing benchmark methodology, or validating measurement correctness. Avoids dead code elimination, measurement bias, and common BenchmarkDotNet pitfalls. Triggers on: design a benchmark, review benchmark, benchmark pitfalls, how to measure, memory diagnoser setup."
+description: "Designs .NET benchmarks, reviews benchmark methodology, and validates measurement correctness. Avoids dead code elimination, measurement bias, and common BenchmarkDotNet pitfalls. Triggers on: design a benchmark, review benchmark, benchmark pitfalls, how to measure, memory diagnoser setup."
 model: sonnet
 capabilities:
   - Design effective BenchmarkDotNet benchmark classes
@@ -78,7 +78,7 @@ This agent activates on benchmark design queries including: "design a benchmark"
 
 ## Explicit Boundaries
 
-- **Does NOT interpret profiling data** -- delegates to the `dotnet-performance-analyst` agent for analyzing flame graphs, heap dumps, and runtime diagnostics
+- **Does NOT interpret profiling data** -- delegates to [skill:dotnet-performance-analyst] for analyzing flame graphs, heap dumps, and runtime diagnostics
 - **Does NOT own CI pipeline setup** -- references [skill:dotnet-ci-benchmarking] for GitHub Actions workflow integration; focuses on benchmark class design
 - **Does NOT own performance architecture patterns** -- references [skill:dotnet-performance-patterns] for understanding what optimizations to measure; focuses on how to measure them correctly
 - **Does NOT diagnose production performance issues** -- focuses on controlled benchmark design; production investigation is the performance analyst's domain
