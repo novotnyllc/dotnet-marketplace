@@ -77,7 +77,7 @@ T1 -> T2 -> T3 -> {T8, T9} -> T4 -> T5 -> {T6A, T6B, T6C, T6D}
 
 ### T4: Normalize Foundation Router Language
 - **depends_on**: [T2, T8, T9]
-- **location**: `skills/foundation/dotnet-advisor/SKILL.md`, `skills/foundation/dotnet-version-detection/SKILL.md`, `AGENTS.md`
+- **location**: `skills/foundation/dotnet-advisor/SKILL.md`, `skills/foundation/dotnet-version-detection/SKILL.md`
 - **description**: Make baseline-first routing explicit and consistent, including generic app-request behavior and cross-skill escalation language.
 - **validation**: Targeted routing checks show foundation skill + baseline dependency invocation for non-specific prompts.
 - **status**: Not Completed
