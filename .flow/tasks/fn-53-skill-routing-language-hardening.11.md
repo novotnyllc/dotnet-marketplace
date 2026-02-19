@@ -34,6 +34,7 @@ Mandatory verification that all intended content remains represented after norma
 - [ ] Total description budget: `CURRENT_DESC_CHARS < 12,000` (strictly less than WARN threshold)
 - [ ] Similarity improvement verified: WARN pair count <= pre-sweep baseline count. No new unsuppressed ERROR pairs.
 - [ ] Updated `scripts/similarity-baseline.json` with post-sweep pair data
+- [ ] Similarity runs in full skills+agents mode (144 items) — verifies T3+T13 integration (shared `_agent_frontmatter.py` + wiring)
 - [ ] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline
 - [ ] `./scripts/validate-marketplace.sh` passes
 ## Done summary

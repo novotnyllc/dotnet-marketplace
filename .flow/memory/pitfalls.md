@@ -324,3 +324,6 @@ When counting findings in a severity summary table, ensure the count matches the
 
 ## 2026-02-17 manual [pitfall]
 BSD sed on macOS requires sed -i '' (space + empty string) syntax; GNU uses sed -i.bak (no space). Use portable sed > tmpfile && mv tmpfile pattern instead of sed -i in cross-platform scripts
+
+## 2026-02-19 manual [pitfall]
+Parallel tasks sharing a created file must have explicit sole-owner assignment; the other task imports only. Otherwise merge conflicts are guaranteed.

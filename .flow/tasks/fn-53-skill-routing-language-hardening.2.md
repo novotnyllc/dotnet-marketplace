@@ -6,7 +6,7 @@ Define canonical rules for skill routing language as a style guide document. Cov
 **Size:** M
 **Files:**
 - `docs/skill-routing-style-guide.md` (new)
-- `CONTRIBUTING-SKILLS.md` (update Section 3 "Writing Effective Descriptions")
+- `CONTRIBUTING-SKILLS.md` (update — **all sections** containing description examples: Quick Start (Section 1), Writing Effective Descriptions (Section 3), and any other sections with `WHEN`-prefix or budget example output)
 
 ## Approach
 
@@ -28,9 +28,17 @@ Define canonical rules for skill routing language as a style guide document. Cov
 
 Agent `description` fields follow the same no-WHEN-prefix rule as skills. Agent descriptions use third-person declarative style: "Analyzes X for Y" not "WHEN analyzing X". This aligns agents and skills under one convention. The style guide must state this explicitly with before/after examples.
 
+**CONTRIBUTING-SKILLS.md full update**: The current contributor guide uses `description: "WHEN ..."` examples in **both the Quick Start (Section 1) and Writing Effective Descriptions (Section 3)**, plus possibly other sections. T2 must replace ALL WHEN-prefix examples throughout the entire file with canonical non-WHEN third-person declarative style. This resolves the existing policy drift between contributor guide and validator (which already warns on WHEN-prefix).
+
+## Budget example output update
+
+Current `CONTRIBUTING-SKILLS.md` shows a sample validator output with `PROJECTED_DESC_CHARS=12000`, which is inconsistent (130 * 120 = 15,600). The budget narrative also implies contributors should reason about projected numbers. T2 must update:
+- Sample output to show a realistic `PROJECTED_DESC_CHARS` value (e.g., 15,600)
+- Surrounding text to clarify: `BUDGET_STATUS` is derived from `CURRENT_DESC_CHARS` only, and `PROJECTED_DESC_CHARS` is informational (not part of status determination)
+
 ## CONTRIBUTING-SKILLS.md scope boundary
 
-T2 writes the initial canonical rules into Section 3. T12 will add enforcement-specific guidance (validator flags, baseline policy, CI gate configuration) after verification is complete. T2 does NOT cover CI/validator usage patterns — only the style rules themselves.
+T2 writes the canonical style rules across all sections of CONTRIBUTING-SKILLS.md. T12 will add enforcement-specific guidance (validator flags, baseline policy, CI gate configuration) after verification is complete. T2 does NOT cover CI/validator usage patterns — only the style rules and examples themselves.
 
 ## Budget threshold semantics
 
@@ -42,13 +50,16 @@ Style guide must clarify: acceptance criterion is `CURRENT_DESC_CHARS < 12,000` 
 - Research: assertive cues create 7x bias, position bias 80.2% for first tool. Descriptions must be factual.
 - Budget constraint: 120 chars max per description, 12K warn threshold aggregate. Style guide must emphasize budget-neutral changes.
 - 5 agent descriptions currently use `WHEN` prefix. Style guide resolves: no WHEN prefix for agents or skills.
+- Current CONTRIBUTING-SKILLS.md has WHEN-prefix examples in multiple sections and inconsistent budget sample output. T2 resolves both.
 
 ## Acceptance
 - [ ] `docs/skill-routing-style-guide.md` exists with: description formula, scope/out-of-scope format, cross-reference format (unified `[skill:]` for skills and agents), precedence language, positive/negative examples table, migration checklist
 - [ ] Style guide explicitly documents unified `[skill:]` syntax covering both skills and agents, with examples
 - [ ] Style guide explicitly documents self-reference (error) vs cycle (informational report) policy
 - [ ] Style guide clarifies budget threshold: `CURRENT_DESC_CHARS < 12,000` and PROJECTED as informational only
-- [ ] `CONTRIBUTING-SKILLS.md` Section 3 updated to reference style guide and incorporate canonical rules (style rules only; enforcement guidance deferred to T12)
+- [ ] `CONTRIBUTING-SKILLS.md` ALL WHEN-prefix examples replaced with canonical non-WHEN style across ALL sections (Quick Start, Writing Effective Descriptions, any others)
+- [ ] `CONTRIBUTING-SKILLS.md` budget sample output updated: realistic PROJECTED value, text clarifies BUDGET_STATUS is current-only
+- [ ] `CONTRIBUTING-SKILLS.md` references style guide and incorporates canonical rules (style rules only; enforcement guidance deferred to T12)
 - [ ] Style guide explicitly resolves WHEN-prefix: no-WHEN-prefix for both skills and agents, with third-person declarative style and before/after examples
 - [ ] Style guide addresses CI strict mode recommendation (`STRICT_REFS=1`)
 - [ ] `./scripts/validate-skills.sh` still passes
