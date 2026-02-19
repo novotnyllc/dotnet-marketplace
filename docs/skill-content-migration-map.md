@@ -45,7 +45,7 @@ All 6 dropped sections (`Overview / Scope Boundary` x5, `Scope Boundary` x1) wer
 
 ## Advisor Catalog Status
 
-All 20 category status markers in the `dotnet-advisor` skill catalog were verified and updated:
+All 20 category status markers in the `dotnet-advisor` skill catalog were verified; 14 required changes (12 `planned`→`implemented`, 2 `(none)`→`implemented`). The remaining 6 were already `implemented`:
 
 | Category | Previous Status | Current Status |
 |----------|----------------|----------------|
@@ -111,7 +111,7 @@ Max similarity score decreased slightly (0.5429 -> 0.5416), confirming descripti
 
 | Check | Result |
 |-------|--------|
-| `validate-skills.sh` | PASSED (0 errors, 10 warnings) |
+| `validate-skills.sh` | PASSED (0 errors, 10 warnings — all match committed baseline, no new warnings) |
 | `validate-marketplace.sh` | PASSED (0 errors, 0 warnings) |
 | Broken cross-references | 0 |
 | Self-referential cross-links | 0 |

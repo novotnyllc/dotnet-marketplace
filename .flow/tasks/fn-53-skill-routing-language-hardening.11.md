@@ -38,9 +38,8 @@ Mandatory verification that all intended content remains represented after norma
 - [ ] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline
 - [ ] `./scripts/validate-marketplace.sh` passes
 ## Done summary
-TBD
-
+Created content migration map covering all 130 skills with section-level before/after mapping; updated 14 dotnet-advisor catalog markers (12 planned→implemented, 2 (none)→implemented); verified zero broken cross-references, zero self-referential links, description budget 11,595 < 12,000, and no similarity regression.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: fa8d844, d3f86ac, 6e1321b
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root . --suppressions scripts/similarity-suppressions.json --baseline scripts/similarity-baseline.json
 - PRs:

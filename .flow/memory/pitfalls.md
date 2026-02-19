@@ -348,3 +348,6 @@ Style guide 'Action + Domain + Differentiator' formula requires a verb-led descr
 
 ## 2026-02-19 manual [pitfall]
 When adding pre-processing logic to a shared utility function's call site, centralize it in the utility itself so all callers benefit and logic does not drift between scan paths
+
+## 2026-02-19 manual [pitfall]
+When generating migration/audit reports with automated scripts, cross-check summary tables against per-item detail tables for internal consistency -- regex-based token counts may not match validator allowlist-based counts, causing contradictions reviewers flag
