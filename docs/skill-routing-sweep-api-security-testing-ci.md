@@ -5,10 +5,10 @@ Generated for fn-53-skill-routing-language-hardening.7.
 ## Summary
 
 - **Skills normalized:** 26 (8 api-development, 7 cicd, 2 security, 9 testing)
-- **Budget delta:** -84 characters (budget-negative)
+- **Budget delta:** -92 characters (budget-negative)
 - **Budget before (T7 batch):** 2,388 characters
-- **Budget after (T7 batch):** 2,304 characters
-- **Global CURRENT_DESC_CHARS:** 11,834 (< 12,000 threshold)
+- **Budget after (T7 batch):** 2,296 characters
+- **Global CURRENT_DESC_CHARS:** 11,826 (< 12,000 threshold)
 - **BUDGET_STATUS:** OK
 - **Similarity pairs_above_warn:** 0 (unchanged from baseline)
 
@@ -45,14 +45,14 @@ All 26 skills received the following normalizations per the T2 style guide:
 | dotnet-secrets-management | 91 | 84 | -7 |
 | dotnet-blazor-testing | 89 | 87 | -2 |
 | dotnet-integration-testing | 90 | 88 | -2 |
-| dotnet-maui-testing | 86 | 87 | +1 |
+| dotnet-maui-testing | 86 | 79 | -7 |
 | dotnet-playwright | 92 | 91 | -1 |
 | dotnet-snapshot-testing | 89 | 88 | -1 |
 | dotnet-test-quality | 100 | 95 | -5 |
 | dotnet-testing-strategy | 87 | 86 | -1 |
 | dotnet-ui-testing-core | 87 | 85 | -2 |
 | dotnet-uno-testing | 90 | 88 | -2 |
-| **Total** | **2,388** | **2,304** | **-84** |
+| **Total** | **2,388** | **2,296** | **-92** |
 
 ## Similarity Check
 

@@ -24,7 +24,7 @@ Deployment patterns for .NET applications in GitHub Actions: GitHub Pages deploy
 - Container image authoring -- see [skill:dotnet-containers]
 - NuGet publishing and container builds -- see [skill:dotnet-gha-publish]
 - Starter CI templates -- see [skill:dotnet-add-ci]
-- Azure DevOps deployment -- see [skill:dotnet-ado-patterns]
+- Azure DevOps deployment -- see [skill:dotnet-ado-unique] and [skill:dotnet-ado-publish]
 - CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
 
 Cross-references: [skill:dotnet-container-deployment] for container orchestration patterns, [skill:dotnet-containers] for container image authoring, [skill:dotnet-add-ci] for starter CI templates, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
