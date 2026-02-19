@@ -92,13 +92,12 @@ def collect_skill_descriptions(repo_root: Path) -> list[dict]:
     for skill_md in sorted(skills_dir.glob("*/*/SKILL.md")):
         skill_id = skill_md.parent.name
         category = skill_md.parent.parent.name
-        description = _parse_skill_description(skill_md)
-        if description:
-            items.append({
-                "id": skill_id,
-                "description": description,
-                "category": category,
-            })
+        description = _parse_skill_description(skill_md) or ""
+        items.append({
+            "id": skill_id,
+            "description": description,
+            "category": category,
+        })
     return items
 
 
@@ -118,6 +117,9 @@ def _parse_skill_description(skill_md: Path) -> str | None:
     for i, line in enumerate(lines[1:], 1):
         if line.strip() == "---":
             break
+        # Require column-0 match (no leading whitespace) for top-level only
+        if line != line.lstrip():
+            continue
         m = re.match(r'^description\s*:\s*(.*)', line)
         if m:
             val = m.group(1).strip()
@@ -157,13 +159,12 @@ def collect_agent_descriptions(repo_root: Path) -> list[dict]:
     for agent_md in sorted(agents_dir.glob("*.md")):
         agent_id = agent_md.stem
         parsed = parse_agent_frontmatter(str(agent_md))
-        description = parsed.get("description")
-        if description:
-            items.append({
-                "id": agent_id,
-                "description": description,
-                "category": "agents",
-            })
+        description = parsed.get("description") or ""
+        items.append({
+            "id": agent_id,
+            "description": description,
+            "category": "agents",
+        })
     return items
 
 
@@ -180,9 +181,21 @@ def load_suppressions(path: Path | None) -> set[tuple[str, str]]:
         sys.exit(2)
 
     pairs = set()
-    for entry in data:
+    for idx, entry in enumerate(data):
         id_a = entry.get("id_a", "")
         id_b = entry.get("id_b", "")
+        if not id_a or not id_b:
+            print(
+                f"ERROR: Suppression entry {idx} has empty id_a or id_b",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        if id_a == id_b:
+            print(
+                f"ERROR: Suppression entry {idx} has identical id_a and id_b: {id_a}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
         canonical = (min(id_a, id_b), max(id_a, id_b))
         pairs.add(canonical)
     return pairs
@@ -211,7 +224,10 @@ def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
     pairs = set()
     for pair in data.get("pairs", []):
         if len(pair) == 2:
-            pairs.add((pair[0], pair[1]))
+            a, b = pair[0], pair[1]
+            if not a or not b or a == b:
+                continue
+            pairs.add((min(a, b), max(a, b)))
     return pairs
 
 
@@ -369,6 +385,20 @@ def main() -> int:
     skill_items = collect_skill_descriptions(repo_root)
     agent_items = collect_agent_descriptions(repo_root)
     all_items = skill_items + agent_items
+
+    # Detect duplicate IDs (skill dir name colliding with agent file stem)
+    seen_ids: dict[str, str] = {}
+    for item in all_items:
+        item_id = item["id"]
+        source = "skill" if item["category"] != "agents" else "agent"
+        if item_id in seen_ids:
+            print(
+                f"ERROR: ID collision between {seen_ids[item_id]} and {source}: "
+                f"{item_id}. Rename one to avoid ambiguity.",
+                file=sys.stderr,
+            )
+            return 2
+        seen_ids[item_id] = source
 
     total_items = len(all_items)
     total_pairs = total_items * (total_items - 1) // 2
