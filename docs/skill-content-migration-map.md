@@ -27,7 +27,7 @@ The normalization applied a consistent structural change across all 130 skills:
 | `Out of scope` section added | 130 | New section -- skills had no explicit out-of-scope boundary |
 | `Overview / Scope Boundary` dropped | 5 | Split into separate `Scope` + `Out of scope` sections |
 | `Scope Boundary` dropped | 1 | Split into separate `Scope` + `Out of scope` sections |
-| `Activation Guidance` added | 1 | New section in dotnet-slopwatch |
+| `Activation Guidance` added | 1 | New section in dotnet-csharp-coding-standards |
 | `Immediate Routing Actions (Do First)` added | 1 | New section in dotnet-advisor |
 | `Default Quality Rule` added | 1 | New section in dotnet-advisor |
 
@@ -83,13 +83,15 @@ All 20 category status markers in the `dotnet-advisor` skill catalog were verifi
 | dotnet-blazor-specialist | unchanged | 0->0 | 18->18 | unchanged |
 | dotnet-cloud-specialist | reworded | 3->0 | 9->15 | unchanged |
 | dotnet-code-review-agent | reworded | 9->0 | 7->16 | unchanged |
-| dotnet-csharp-concurrency-specialist | reworded | 1->1 | 3->4 | unchanged |
+| dotnet-csharp-concurrency-specialist | reworded | 0->0 | 3->4 | unchanged |
 | dotnet-docs-generator | reworded | 0->0 | 12->12 | unchanged |
 | dotnet-maui-specialist | reworded | 0->0 | 17->17 | unchanged |
 | dotnet-performance-analyst | reworded | 1->0 | 10->11 | unchanged |
 | dotnet-security-reviewer | reworded | 0->0 | 7->7 | unchanged |
 | dotnet-testing-specialist | reworded | 5->0 | 8->15 | unchanged |
 | dotnet-uno-specialist | reworded | 0->0 | 19->19 | unchanged |
+
+Note: "Bare Refs" counts use the validator's `find_bare_refs()` rules, which only flag backtick-wrapped tokens matching known skill or agent IDs. Frontmatter, pure-ID headings, and non-skill CLI tool names (e.g., `dotnet-counters`) are excluded, so counts may differ from the T1 baseline audit's broader regex methodology.
 
 ## Similarity Verification
 
