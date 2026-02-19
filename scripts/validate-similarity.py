@@ -114,7 +114,7 @@ def _parse_skill_description(skill_md: Path) -> str | None:
     if not lines or lines[0].strip() != "---":
         return None
 
-    for i, line in enumerate(lines[1:], 1):
+    for _, line in enumerate(lines[1:], 1):
         if line.strip() == "---":
             break
         # Require column-0 match (no leading whitespace) for top-level only
@@ -343,7 +343,6 @@ def build_summary(
     total_pairs: int,
     suppressions: set[tuple[str, str]],
     baseline: set[tuple[str, str]] | None,
-    warn_threshold: float,
 ) -> dict:
     """Build summary statistics from computed pairs."""
     max_score = max((p["composite"] for p in pairs), default=0.0)
@@ -451,7 +450,6 @@ def main() -> int:
     # Build summary
     summary = build_summary(
         pairs, total_items, total_pairs, suppressions, baseline,
-        args.warn_threshold,
     )
 
     # Output JSON report to stdout

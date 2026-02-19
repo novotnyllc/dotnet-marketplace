@@ -114,9 +114,8 @@ python3 scripts/validate-similarity.py --repo-root . [--suppressions scripts/sim
 - [ ] Does NOT edit `validate-skills.sh` or `validate.yml` (T3 owns those)
 - [ ] `./scripts/validate-skills.sh` still passes
 ## Done summary
-TBD
-
+Implemented scripts/validate-similarity.py: a standalone stdlib-only Python script that computes pairwise semantic similarity across 144 skill and agent descriptions using a multi-signal composite score (set Jaccard + SequenceMatcher + same-category boost). Includes suppression list, baseline file, strict JSON schema validation, duplicate-ID detection, and skills-only fallback when _agent_frontmatter.py is absent.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c773053, cfd2e89, 7acc8e7, 805b012
+- Tests: python3 scripts/validate-similarity.py --repo-root . --suppressions scripts/similarity-suppressions.json --baseline scripts/similarity-baseline.json, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
