@@ -1,11 +1,27 @@
 ---
 name: dotnet-advisor
-description: "Working with .NET, C#, ASP.NET Core, or related frameworks. Routes to specialist skills."
+description: "Working with .NET, C#, ASP.NET Core, or related frameworks. Routes to specialist skills and loads coding-standards by default for code work."
 ---
 
 # dotnet-advisor
 
 Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET development queries to the appropriate specialist skills based on context.
+
+## Immediate Routing Actions (Do First)
+
+For every .NET/C# request, execute this sequence before detailed planning:
+1. Invoke [skill:dotnet-csharp-coding-standards].
+2. Invoke the primary domain skill for the request (API, EF Core, testing, UI, CLI, architecture, etc.).
+3. Continue with any additional routed skills.
+
+For generic "build me an app" requests, do not skip step 1 even when project scaffolding is the next action.
+
+## Default Quality Rule
+
+For any task that may produce, change, or review C#/.NET code:
+1. Load [skill:dotnet-csharp-coding-standards] as a baseline dependency.
+2. Then load domain-specific skills (API, EF Core, testing, UI, etc.).
+3. Apply standards from coding-standards throughout planning and implementation, not only in final cleanup.
 
 ## First Step: Detect Project Version
 
@@ -188,8 +204,8 @@ Use this decision tree to load the right skills for the current task.
 - Build output layout (UseArtifactsOutput, .NET 8+) -> [skill:dotnet-artifacts-output]
 
 ### Writing or Modifying C# Code
+- Always load first -> [skill:dotnet-csharp-coding-standards] (baseline for all C#/.NET code paths)
 - Modern C# patterns -> [skill:dotnet-csharp-modern-patterns]
-- Coding standards -> [skill:dotnet-csharp-coding-standards]
 - NRT -> [skill:dotnet-csharp-nullable-reference-types]
 - DI -> [skill:dotnet-csharp-dependency-injection]
 - Configuration -> [skill:dotnet-csharp-configuration]

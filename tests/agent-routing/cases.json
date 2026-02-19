@@ -1,0 +1,353 @@
+[
+  {
+    "case_id": "foundation-version-detection",
+    "category": "foundation",
+    "prompt": "Build me a tool that scans this .NET repo and tells me what it currently targets before we upgrade anything.",
+    "expected_skill": "dotnet-version-detection",
+    "required_all_evidence": [
+      "dotnet-version-detection",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "testing-xunit-strategy",
+    "category": "testing",
+    "prompt": "Build me tests for an order service that cover success, validation failures, and async data calls.",
+    "expected_skill": "dotnet-xunit",
+    "required_all_evidence": [
+      "dotnet-xunit",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "ci-gha-build-test",
+    "category": "ci-cd",
+    "prompt": "Build me CI for this GitHub repo so every PR restores, builds, tests, and runs quickly with caching.",
+    "expected_skill": "dotnet-gha-build-test",
+    "required_all_evidence": [
+      "dotnet-gha-build-test",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "api-minimal-endpoints",
+    "category": "api",
+    "prompt": "Build me a small HTTP service for tasks with create, read, update, delete, and input validation.",
+    "expected_skill": "dotnet-minimal-apis",
+    "required_all_evidence": [
+      "dotnet-minimal-apis",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "architecture-layering",
+    "category": "architecture",
+    "prompt": "Build me a backend for orders, payments, and shipping that can keep growing without turning into a mess.",
+    "expected_skill": "dotnet-architecture-patterns",
+    "required_all_evidence": [
+      "dotnet-architecture-patterns",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "security-owasp-review",
+    "category": "security",
+    "prompt": "Build me a customer API with auth and file uploads, and lock it down against common web attacks.",
+    "expected_skill": "dotnet-security-owasp",
+    "required_all_evidence": [
+      "dotnet-security-owasp",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "perf-benchmark-design",
+    "category": "performance",
+    "prompt": "Build me a repeatable performance comparison for two serializer implementations, including memory usage.",
+    "expected_skill": "dotnet-benchmarkdotnet",
+    "required_all_evidence": [
+      "dotnet-benchmarkdotnet",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "ui-blazor-component",
+    "category": "ui",
+    "prompt": "Build me a reusable web form component with validation and event callbacks for a .NET app.",
+    "expected_skill": "dotnet-blazor-components",
+    "required_all_evidence": [
+      "dotnet-blazor-components",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "data-efcore-query",
+    "category": "data",
+    "prompt": "Build me data access for reporting that stays fast as records grow and avoids unnecessary query overhead.",
+    "expected_skill": "dotnet-efcore-patterns",
+    "required_all_evidence": [
+      "dotnet-efcore-patterns",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "build-msbuild-target",
+    "category": "build",
+    "prompt": "Build me custom build steps for version stamping and asset packaging that only run when inputs change.",
+    "expected_skill": "dotnet-msbuild-authoring",
+    "required_all_evidence": [
+      "dotnet-msbuild-authoring",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "aot-trimming",
+    "category": "aot",
+    "prompt": "Build me a very small, fast-starting command-line release binary for Linux and macOS.",
+    "expected_skill": "dotnet-trimming",
+    "required_all_evidence": [
+      "dotnet-trimming",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "cli-system-commandline",
+    "category": "cli",
+    "prompt": "Build me a CLI app for managing todos with subcommands like add, list, and remove.",
+    "expected_skill": "dotnet-system-commandline",
+    "required_all_evidence": [
+      "dotnet-system-commandline",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "advisor-routing-maintainable-app",
+    "category": "core-csharp",
+    "prompt": "Build me a web app with .NET that processes orders and invoices",
+    "expected_skill": "dotnet-advisor",
+    "required_all_evidence": [
+      "dotnet-advisor",
+      "dotnet-csharp-coding-standards",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "uno-mcp-routing-skill-id-only",
+    "category": "ui",
+    "prompt": "Build me an Uno Platform app and fetch current Uno docs via MCP before proposing architecture and project setup.",
+    "expected_skill": "dotnet-uno-mcp",
+    "required_all_evidence": [
+      "dotnet-uno-mcp",
+      "SKILL.md"
+    ],
+    "required_any_evidence": [
+      "tool_use",
+      "read_file",
+      "file_search",
+      "command_execution",
+      "mcp:",
+      "Glob ",
+      "Grep ",
+      "Read(",
+      "Grep(",
+      "Glob(",
+      "Bash(",
+      "shell("
+    ],
+    "required_evidence": []
+  }
+]

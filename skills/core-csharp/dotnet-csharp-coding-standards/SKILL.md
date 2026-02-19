@@ -1,12 +1,19 @@
 ---
 name: dotnet-csharp-coding-standards
-description: "Enforcing C# naming, style, and file layout conventions. Framework Design Guidelines."
+description: "Baseline C# conventions for any .NET code work. Use whenever generating, modifying, or reviewing C# code."
 user-invocable: false
 ---
 
 # dotnet-csharp-coding-standards
 
 Modern .NET coding standards based on Microsoft Framework Design Guidelines and C# Coding Conventions. This skill covers naming, file organization, and code style rules that agents should follow when generating or reviewing C# code.
+
+## Activation Guidance
+
+Load this skill by default for any task that plans, designs, generates, modifies, or reviews C#/.NET code.
+Do not wait for explicit user wording such as "coding standards", "style", or "conventions".
+If code will be produced, this skill should be active before implementation starts.
+This skill is a baseline dependency that should be loaded before domain-specific C#/.NET skills.
 
 Cross-references: [skill:dotnet-csharp-modern-patterns] for language feature usage, [skill:dotnet-csharp-async-patterns] for async naming conventions, [skill:dotnet-solid-principles] for SOLID, DRY, and SRP design principles at the class and interface level.
 

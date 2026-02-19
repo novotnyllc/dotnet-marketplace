@@ -1,0 +1,94 @@
+name: Agent Live Routing
+
+on:
+  workflow_dispatch:
+    inputs:
+      agents:
+        description: 'Comma-separated agent list (default: claude,codex,copilot)'
+        required: false
+        type: string
+      categories:
+        description: 'Optional comma-separated categories from tests/agent-routing/cases.json'
+        required: false
+        type: string
+      fail_on_infra:
+        description: 'Fail the workflow when infra_error results are present'
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    - cron: '30 9 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  live-routing:
+    name: Live routing checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Run live routing checks
+        env:
+          INPUT_AGENTS: ${{ github.event.inputs.agents }}
+          INPUT_CATEGORIES: ${{ github.event.inputs.categories }}
+          INPUT_FAIL_ON_INFRA: ${{ github.event.inputs.fail_on_infra }}
+        run: |
+          set -euo pipefail
+
+          AGENTS="${INPUT_AGENTS:-claude,codex,copilot}"
+          ARGS=(--agents "$AGENTS" --output tests/agent-routing/artifacts/live-results.json)
+
+          if [ -n "${INPUT_CATEGORIES:-}" ]; then
+            ARGS+=(--category "$INPUT_CATEGORIES")
+          fi
+
+          if [ "${INPUT_FAIL_ON_INFRA:-false}" = "true" ]; then
+            ARGS+=(--fail-on-infra)
+          fi
+
+          ./test.sh "${ARGS[@]}"
+
+      - name: Summarize live routing results
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ ! -f tests/agent-routing/artifacts/live-results.json ]; then
+            echo "No live results artifact generated." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          PASS_COUNT=$(jq '.summary.pass' tests/agent-routing/artifacts/live-results.json)
+          FAIL_COUNT=$(jq '.summary.fail' tests/agent-routing/artifacts/live-results.json)
+          INFRA_COUNT=$(jq '.summary.infra_error' tests/agent-routing/artifacts/live-results.json)
+          TOTAL_COUNT=$(jq '.summary.total' tests/agent-routing/artifacts/live-results.json)
+
+          {
+            echo "## Agent Live Routing Summary"
+            echo ""
+            echo "| Metric | Value |"
+            echo "|--------|-------|"
+            echo "| Total | ${TOTAL_COUNT} |"
+            echo "| Pass | ${PASS_COUNT} |"
+            echo "| Fail | ${FAIL_COUNT} |"
+            echo "| Infra Error | ${INFRA_COUNT} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload live routing artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-live-routing-results
+          path: |
+            tests/agent-routing/artifacts/live-results.json
+            tests/agent-routing/artifacts/tool-use-proof.log
+          if-no-files-found: warn

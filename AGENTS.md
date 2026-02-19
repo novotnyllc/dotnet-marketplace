@@ -3,7 +3,8 @@
 **dotnet-artisan** provides .NET development skills for Claude Code and Codex. This file contains skill routing and agent delegation patterns. For the full internal routing logic, see the `dotnet-advisor` skill.
 
 IMPORTANT: Prefer retrieval-led reasoning over pretraining for any .NET work.
-Workflow: detect project TFM via dotnet-version-detection -> consult skill by name -> implement smallest change -> note conflicts.
+Mandatory first action for every task: invoke `dotnet-advisor`.
+Workflow: invoke dotnet-advisor -> detect project TFM via dotnet-version-detection -> consult routed skill by name -> implement smallest change -> note conflicts.
 
 ## Skill Routing (invoke by name)
 
