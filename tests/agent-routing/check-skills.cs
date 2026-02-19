@@ -803,10 +803,16 @@ internal sealed class AgentRoutingRunner
             // For Claude, require definitive Skill-tool invocation instead.
             if (!isClaude)
             {
-                AddDistinct(all, ["SKILL.md"]);
                 if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
                 {
+                    // Skill-specific path only — prevents false-positive matches
+                    // from incidental SKILL.md mentions in unrelated output.
                     AddDistinct(all, [$"{testCase.ExpectedSkill}/SKILL.md"]);
+                }
+                else
+                {
+                    // Fallback to generic when no expected skill is set.
+                    AddDistinct(all, ["SKILL.md"]);
                 }
             }
         }
@@ -1579,7 +1585,12 @@ internal sealed class AgentResult
     private static string ClassifyFailure(CaseDefinition testCase, EvidenceEvaluation evidence)
     {
         var missingSkill = evidence.MissingAll.Contains(testCase.ExpectedSkill, StringComparer.OrdinalIgnoreCase);
-        var missingSkillFile = evidence.MissingAll.Contains("SKILL.md", StringComparer.OrdinalIgnoreCase);
+        // Detect missing skill-file evidence as any missing token ending with "/SKILL.md".
+        // This handles both skill-specific paths (e.g. "dotnet-xunit/SKILL.md") and
+        // the legacy generic "SKILL.md" token (when no ExpectedSkill is set).
+        var missingSkillFile = evidence.MissingAll.Any(token =>
+            token.EndsWith("/SKILL.md", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(token, "SKILL.md", StringComparison.OrdinalIgnoreCase));
         var missingAny = evidence.MissingAny.Count > 0;
 
         if (missingSkill && !missingAny)

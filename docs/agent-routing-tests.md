@@ -60,9 +60,21 @@ Examples:
 
 Evidence currently gates on:
 
-- `required_all_evidence`: all tokens must appear. For routing proof, use this for explicit skill-load evidence (`<skill-id>` and `SKILL.md`).
+- `required_all_evidence`: all tokens must appear. Evidence tokens differ by agent type:
+  - **Claude**: Uses definitive Skill-tool invocation tokens (`"Launching skill: <skill-id>"` or `{"skill":"<skill-id>"}`). SKILL.md file-read evidence is excluded because Claude does not reliably emit file-read traces. The runner extracts launched skill IDs from structured JSON output and `Launching skill:` log lines.
+  - **Non-Claude (Codex, Copilot)**: Uses skill-specific file paths (`"<skill-id>/SKILL.md"`) instead of the generic `"SKILL.md"` token. This prevents false-positive matches from incidental SKILL.md mentions in unrelated output. When `expected_skill` is set, only the skill-specific path is required. The generic `"SKILL.md"` token is used only as a fallback when no `expected_skill` is configured.
 - `required_any_evidence`: at least one activity token must appear. Defaults also include Copilot log activity markers (`function_call`, MCP startup/config lines).
 - `require_skill_file` (optional, default `true`): when `false`, only skill-id loading is required (useful for dedicated cross-agent routing assertions).
+
+### Failure Taxonomy
+
+The `failure_kind` field on failed results uses the following classification:
+
+- `skill_not_loaded`: The expected skill ID was not found in output (but activity evidence was present).
+- `missing_skill_file_evidence`: The skill-specific file path token (e.g. `dotnet-xunit/SKILL.md`) was missing, but the skill ID was matched. Detected via tokens ending with `/SKILL.md` or equal to the generic `SKILL.md`.
+- `missing_activity_evidence`: No activity tokens (tool_use, read_file, etc.) were found, but skill evidence was present.
+- `mixed_evidence_missing`: Both skill ID and activity evidence were missing.
+- `unknown`: None of the above patterns matched.
 
 Proof log options:
 

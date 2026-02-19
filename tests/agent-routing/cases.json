@@ -6,7 +6,7 @@
     "expected_skill": "dotnet-version-detection",
     "required_all_evidence": [
       "dotnet-version-detection",
-      "SKILL.md"
+      "dotnet-version-detection/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -31,7 +31,7 @@
     "expected_skill": "dotnet-xunit",
     "required_all_evidence": [
       "dotnet-xunit",
-      "SKILL.md"
+      "dotnet-xunit/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -56,7 +56,7 @@
     "expected_skill": "dotnet-gha-build-test",
     "required_all_evidence": [
       "dotnet-gha-build-test",
-      "SKILL.md"
+      "dotnet-gha-build-test/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -81,7 +81,7 @@
     "expected_skill": "dotnet-minimal-apis",
     "required_all_evidence": [
       "dotnet-minimal-apis",
-      "SKILL.md"
+      "dotnet-minimal-apis/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -106,7 +106,7 @@
     "expected_skill": "dotnet-architecture-patterns",
     "required_all_evidence": [
       "dotnet-architecture-patterns",
-      "SKILL.md"
+      "dotnet-architecture-patterns/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -131,7 +131,7 @@
     "expected_skill": "dotnet-security-owasp",
     "required_all_evidence": [
       "dotnet-security-owasp",
-      "SKILL.md"
+      "dotnet-security-owasp/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -156,7 +156,7 @@
     "expected_skill": "dotnet-benchmarkdotnet",
     "required_all_evidence": [
       "dotnet-benchmarkdotnet",
-      "SKILL.md"
+      "dotnet-benchmarkdotnet/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -181,7 +181,7 @@
     "expected_skill": "dotnet-blazor-components",
     "required_all_evidence": [
       "dotnet-blazor-components",
-      "SKILL.md"
+      "dotnet-blazor-components/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -206,7 +206,7 @@
     "expected_skill": "dotnet-efcore-patterns",
     "required_all_evidence": [
       "dotnet-efcore-patterns",
-      "SKILL.md"
+      "dotnet-efcore-patterns/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -231,7 +231,7 @@
     "expected_skill": "dotnet-msbuild-authoring",
     "required_all_evidence": [
       "dotnet-msbuild-authoring",
-      "SKILL.md"
+      "dotnet-msbuild-authoring/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -256,7 +256,7 @@
     "expected_skill": "dotnet-trimming",
     "required_all_evidence": [
       "dotnet-trimming",
-      "SKILL.md"
+      "dotnet-trimming/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -281,7 +281,7 @@
     "expected_skill": "dotnet-system-commandline",
     "required_all_evidence": [
       "dotnet-system-commandline",
-      "SKILL.md"
+      "dotnet-system-commandline/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -307,7 +307,7 @@
     "required_all_evidence": [
       "dotnet-advisor",
       "dotnet-csharp-coding-standards",
-      "SKILL.md"
+      "dotnet-advisor/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
@@ -332,7 +332,7 @@
     "expected_skill": "dotnet-uno-mcp",
     "required_all_evidence": [
       "dotnet-uno-mcp",
-      "SKILL.md"
+      "dotnet-uno-mcp/SKILL.md"
     ],
     "required_any_evidence": [
       "tool_use",
