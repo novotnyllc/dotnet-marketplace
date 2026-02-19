@@ -64,9 +64,8 @@ Style guide must clarify: acceptance criterion is `CURRENT_DESC_CHARS < 12,000` 
 - [ ] Style guide addresses CI strict mode recommendation (`STRICT_REFS=1`)
 - [ ] `./scripts/validate-skills.sh` still passes
 ## Done summary
-TBD
-
+Created docs/skill-routing-style-guide.md with canonical rules for description formula (Action + Domain + Differentiator), scope/out-of-scope heading format, unified [skill:] cross-reference syntax for both skills and agents, self-reference/cycle policy, budget threshold semantics (current vs canonical), CI strict mode recommendation, and migration checklist. Updated CONTRIBUTING-SKILLS.md to replace all WHEN-prefix examples with third-person declarative style, correct budget sample output with current/canonical separation, align scope boundary guidance with heading format, and add style guide references.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1800093, e7d4734, 7ee1dbe, 6585c00
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
