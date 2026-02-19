@@ -114,8 +114,21 @@ jobs:
               BASELINE_VAL=$(jq -r ".keys.${KEY} // empty" "$BASELINE_FILE" 2>/dev/null || echo "")
               CURRENT_VAL=$(grep "^${KEY}=" /tmp/skills-output.txt | cut -d= -f2 || echo "")
 
-              if [ -z "$BASELINE_VAL" ] || [ -z "$CURRENT_VAL" ]; then
-                echo "SKIP: $KEY (baseline=$BASELINE_VAL, current=$CURRENT_VAL)"
+              if [ -z "$BASELINE_VAL" ]; then
+                echo "FAIL: $KEY missing from baseline ($BASELINE_FILE)"
+                REGRESSION=1
+                continue
+              fi
+
+              if [ -z "$CURRENT_VAL" ]; then
+                echo "FAIL: $KEY missing from validator output (/tmp/skills-output.txt)"
+                REGRESSION=1
+                continue
+              fi
+
+              if ! [[ "$BASELINE_VAL" =~ ^[0-9]+$ && "$CURRENT_VAL" =~ ^[0-9]+$ ]]; then
+                echo "FAIL: $KEY non-numeric (baseline=$BASELINE_VAL, current=$CURRENT_VAL)"
+                REGRESSION=1
                 continue
               fi
 

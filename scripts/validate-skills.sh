@@ -72,11 +72,20 @@ SIMILARITY_EXIT=0
 if [[ -f "$REPO_ROOT/scripts/validate-similarity.py" ]]; then
     echo ""
     echo "=== Similarity Detection ==="
+    SIM_JSON="$(mktemp)"
+    SIM_ERR="$(mktemp)"
     python3 "$REPO_ROOT/scripts/validate-similarity.py" \
         --repo-root "$REPO_ROOT" \
         --baseline "$REPO_ROOT/scripts/similarity-baseline.json" \
         --suppressions "$REPO_ROOT/scripts/similarity-suppressions.json" \
-        2>&1 || SIMILARITY_EXIT=$?
+        >"$SIM_JSON" 2>"$SIM_ERR" || SIMILARITY_EXIT=$?
+    # Emit stable CI keys (from stderr) to stdout for CI capture
+    cat "$SIM_ERR"
+    # Print JSON report only on failure or locally (non-CI)
+    if [[ "$SIMILARITY_EXIT" -ne 0 ]] || [[ -z "${CI:-}" ]]; then
+        cat "$SIM_JSON"
+    fi
+    rm -f "$SIM_JSON" "$SIM_ERR"
 fi
 
 # --- Compose final exit code ---
