@@ -29,12 +29,12 @@ Build a baseline inventory covering all 130 skills: description length, overlap 
 Format: Markdown table with columns `| Skill Path | Category | Assigned Task | Notes |`. Sorted by assigned task then path. T5-T9 filter their batch by the Assigned Task column. T10 is always the 14 agent files.
 
 ## Acceptance
-- [ ] `docs/skill-routing-audit-baseline.md` exists with data for all 130 skills
-- [ ] Each skill entry includes: description length, overlap risk (top-3 most similar by Jaccard), cross-ref count, routing marker coverage (scope/out-of-scope/trigger: yes/no)
-- [ ] `docs/skill-routing-ownership-manifest.md` maps every skill path to exactly one task (T5-T10) using the specified table format
-- [ ] Zero overlaps in ownership (no skill path appears in two tasks)
-- [ ] Agent file bare-text reference count documented per agent
-- [ ] `./scripts/validate-skills.sh` still passes
+- [x] `docs/skill-routing-audit-baseline.md` exists with data for all 130 skills
+- [x] Each skill entry includes: description length, overlap risk (top-3 most similar by Jaccard), cross-ref count, routing marker coverage (scope/out-of-scope/trigger: yes/no)
+- [x] `docs/skill-routing-ownership-manifest.md` maps every skill path to exactly one task (T5-T10) using the specified table format
+- [x] Zero overlaps in ownership (no skill path appears in two tasks)
+- [x] Agent file bare-text reference count documented per agent
+- [x] `./scripts/validate-skills.sh` still passes
 ## Done summary
 Built baseline audit report covering all 130 skills (description length, pairwise Jaccard overlap top-3, cross-ref count, routing marker coverage) and ownership manifest mapping every skill path to exactly one downstream editing task (T5-T10) with zero overlaps. Aligned all downstream task specs with manifest assignments.
 ## Evidence
