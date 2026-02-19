@@ -60,7 +60,11 @@ See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 Route to [skill:dotnet-security-reviewer] for security audit.
 ```
 
-Use `[skill:name]` for ALL routable references (skills and agents) -- bare text names are not machine-parseable.
+Use `[skill:name]` for ALL routable references (skills and agents) -- bare text names are not machine-parseable. The validator resolves references against the union of skill directory names and agent file stems.
+
+### Routing Language Rules
+
+Descriptions must follow the **Action + Domain + Differentiator** formula using third-person declarative style. No WHEN prefix, no filler phrases. Every skill must have `## Scope` and `## Out of scope` sections. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) for the full canonical rules.
 
 ### Description Budget
 

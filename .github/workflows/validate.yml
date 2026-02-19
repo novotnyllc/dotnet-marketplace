@@ -71,6 +71,78 @@ jobs:
           echo "pairs_above_warn=$PAIRS_WARN" >> "$GITHUB_OUTPUT"
           echo "pairs_above_error=$PAIRS_ERROR" >> "$GITHUB_OUTPUT"
 
+      - name: Enforce routing quality gates
+        run: |
+          set -euo pipefail
+          echo "=== Routing Quality Gates ==="
+
+          # Gate 1: Agent bare references must be zero (tightened from informational)
+          AGENT_BARE=$(grep '^AGENT_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          AGENTSMD_BARE=$(grep '^AGENTSMD_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          GATE_FAIL=0
+
+          if [ "$AGENT_BARE" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: AGENT_BARE_REF_COUNT=$AGENT_BARE (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: AGENT_BARE_REF_COUNT=$AGENT_BARE"
+          fi
+
+          if [ "$AGENTSMD_BARE" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: AGENTSMD_BARE_REF_COUNT=$AGENTSMD_BARE (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: AGENTSMD_BARE_REF_COUNT=$AGENTSMD_BARE"
+          fi
+
+          # Gate 2: Self-references must be zero
+          SELF_REF=$(grep '^SELF_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          if [ "$SELF_REF" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: SELF_REF_COUNT=$SELF_REF (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: SELF_REF_COUNT=$SELF_REF"
+          fi
+
+          # Gate 3: Per-key baseline regression check
+          BASELINE_FILE="scripts/routing-warnings-baseline.json"
+          if [ -f "$BASELINE_FILE" ]; then
+            echo ""
+            echo "--- Per-Key Baseline Regression Check ---"
+            REGRESSION=0
+            for KEY in NAME_DIR_MISMATCHES EXTRA_FIELD_COUNT TYPE_WARNING_COUNT FILLER_PHRASE_COUNT WHEN_PREFIX_COUNT MISSING_SCOPE_COUNT MISSING_OOS_COUNT SELF_REF_COUNT AGENT_BARE_REF_COUNT AGENTSMD_BARE_REF_COUNT; do
+              BASELINE_VAL=$(jq -r ".keys.${KEY} // empty" "$BASELINE_FILE" 2>/dev/null || echo "")
+              CURRENT_VAL=$(grep "^${KEY}=" /tmp/skills-output.txt | cut -d= -f2 || echo "")
+
+              if [ -z "$BASELINE_VAL" ] || [ -z "$CURRENT_VAL" ]; then
+                echo "SKIP: $KEY (baseline=$BASELINE_VAL, current=$CURRENT_VAL)"
+                continue
+              fi
+
+              if [ "$CURRENT_VAL" -gt "$BASELINE_VAL" ] 2>/dev/null; then
+                echo "FAIL: $KEY regressed ($BASELINE_VAL -> $CURRENT_VAL)"
+                REGRESSION=1
+              else
+                echo "OK: $KEY ($CURRENT_VAL <= $BASELINE_VAL)"
+              fi
+            done
+
+            if [ "$REGRESSION" -eq 1 ]; then
+              echo ""
+              echo "Baseline regression detected. Fix the issues or update scripts/routing-warnings-baseline.json."
+              GATE_FAIL=1
+            fi
+          else
+            echo "WARN: Baseline file $BASELINE_FILE not found, skipping regression check"
+          fi
+
+          if [ "$GATE_FAIL" -eq 1 ]; then
+            exit 1
+          fi
+
+          echo ""
+          echo "All routing quality gates passed."
+
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
 
@@ -115,16 +187,28 @@ jobs:
         run: |
           echo "## Plugin Validation Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Description Budget" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Current description chars | ${{ steps.validate-skills.outputs.current_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Projected description chars | ${{ steps.validate-skills.outputs.projected_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Budget status | ${{ steps.validate-skills.outputs.budget_status }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Missing scope sections | ${{ steps.validate-skills.outputs.missing_scope_count }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Missing out-of-scope sections | ${{ steps.validate-skills.outputs.missing_oos_count }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Self-referential cross-links | ${{ steps.validate-skills.outputs.self_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Agent bare references | ${{ steps.validate-skills.outputs.agent_bare_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| AGENTS.md bare references | ${{ steps.validate-skills.outputs.agentsmd_bare_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Pairs above WARN | ${{ steps.validate-skills.outputs.pairs_above_warn }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Pairs above ERROR | ${{ steps.validate-skills.outputs.pairs_above_error }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Routing Quality" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value | Gate |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing scope sections | ${{ steps.validate-skills.outputs.missing_scope_count }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing out-of-scope sections | ${{ steps.validate-skills.outputs.missing_oos_count }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Self-referential cross-links | ${{ steps.validate-skills.outputs.self_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent bare references | ${{ steps.validate-skills.outputs.agent_bare_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| AGENTS.md bare references | ${{ steps.validate-skills.outputs.agentsmd_bare_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Semantic Similarity" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value | Gate |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | < 0.75 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"

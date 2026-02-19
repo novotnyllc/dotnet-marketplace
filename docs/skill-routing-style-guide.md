@@ -65,9 +65,7 @@ Each description must be **at most 120 characters**. This is a budget constraint
 
 ### Budget Threshold Semantics
 
-**Current validator behavior:** `BUDGET_STATUS` is computed from both `CURRENT_DESC_CHARS` and `PROJECTED_DESC_CHARS` against thresholds. With `--projected-skills 130` and `--max-desc-chars 120`, `PROJECTED_DESC_CHARS` is 15,600, so `BUDGET_STATUS` is at least `WARN` until the validator semantics change.
-
-**Canonical policy (T3 will align the validator to this):**
+The validator computes `BUDGET_STATUS` from `CURRENT_DESC_CHARS` only:
 
 - **Acceptance criterion:** `CURRENT_DESC_CHARS < 12,000` (strictly less than)
 - **BUDGET_STATUS:** Derived from `CURRENT_DESC_CHARS` only:
@@ -113,9 +111,7 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ### Unified `[skill:]` Syntax
 
-`[skill:name]` refers to any routable artifact -- **both skills and agents**. The validator should resolve references against the union of skill directory names and agent file stems (without `.md`).
-
-> **Note:** The current validator (`_validate_skills.py`) resolves `[skill:]` references against skill directory names only. T3 will extend validation to include agent file stems in the known-IDs set.
+`[skill:name]` refers to any routable artifact -- **both skills and agents**. The validator resolves references against the union of skill directory names and agent file stems (without `.md`).
 
 ```markdown
 # Referencing a skill
@@ -134,7 +130,7 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 
 ### Self-References and Cycles
 
-- **Self-references** (a skill referencing itself via `[skill:]`) are **always an error**. T3 will add a validator check that rejects self-references.
+- **Self-references** (a skill referencing itself via `[skill:]`) are **always an error**. The validator rejects self-references.
 - **Bidirectional references** (e.g., `[skill:dotnet-advisor]` in dotnet-version-detection and `[skill:dotnet-version-detection]` in dotnet-advisor) are **legitimate** and expected for hub skills. Cycle detection produces an **informational report**, not validation errors.
 
 ### Examples
@@ -199,7 +195,7 @@ env:
   STRICT_REFS: 1
 ```
 
-> **Note:** Enable `STRICT_REFS=1` in CI only after T3 extends the validator to include agent file stems in the known-IDs set. Until then, `[skill:]` references to agent names would be flagged as unresolved in strict mode.
+`STRICT_REFS=1` is enabled in CI. The validator resolves `[skill:]` references against both skill directory names and agent file stems.
 
 ---
 

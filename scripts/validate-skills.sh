@@ -67,13 +67,14 @@ python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --fail-threshold 15600 \
     $ALLOW_PLANNED_FLAG || VALIDATOR_EXIT=$?
 
-# --- Run similarity detection (guarded, error-only mode) ---
+# --- Run similarity detection (baseline regression mode) ---
 SIMILARITY_EXIT=0
 if [[ -f "$REPO_ROOT/scripts/validate-similarity.py" ]]; then
     echo ""
     echo "=== Similarity Detection ==="
     python3 "$REPO_ROOT/scripts/validate-similarity.py" \
         --repo-root "$REPO_ROOT" \
+        --baseline "$REPO_ROOT/scripts/similarity-baseline.json" \
         --suppressions "$REPO_ROOT/scripts/similarity-suppressions.json" \
         2>&1 || SIMILARITY_EXIT=$?
 fi

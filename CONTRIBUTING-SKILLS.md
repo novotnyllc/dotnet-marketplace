@@ -142,15 +142,61 @@ Each description must be **at most 120 characters**. This is a budget constraint
 The validation script reports the current budget:
 
 ```
-CURRENT_DESC_CHARS=12345
+CURRENT_DESC_CHARS=11595
 PROJECTED_DESC_CHARS=15600
-BUDGET_STATUS=WARN
+BUDGET_STATUS=OK
 ```
 
-- **BUDGET_STATUS** is currently computed from both `CURRENT_DESC_CHARS` and `PROJECTED_DESC_CHARS`. Canonical policy (T3 will align the validator): status should be determined by `CURRENT_DESC_CHARS` only -- `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
-- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600). It currently participates in status computation but will be decoupled by T3.
+- **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
+- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600). It is not part of `BUDGET_STATUS` determination.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
+
+### Avoiding Description Overlap
+
+When two descriptions share too much vocabulary, the routing model may pick the wrong skill. The plugin includes a **semantic similarity detection tool** that flags overlapping description pairs.
+
+**Running locally:**
+
+```bash
+# Basic check (error-only mode)
+python3 scripts/validate-similarity.py --repo-root .
+
+# Full baseline regression check (as CI runs it)
+python3 scripts/validate-similarity.py --repo-root . \
+  --baseline scripts/similarity-baseline.json \
+  --suppressions scripts/similarity-suppressions.json
+```
+
+**Thresholds:**
+
+| Level | Composite Score | Meaning |
+|-------|----------------|---------|
+| INFO | >= 0.40 | Reported, no action needed |
+| WARN | >= 0.55 | Needs review -- differentiate descriptions |
+| ERROR | >= 0.75 | Must be differentiated or suppressed |
+
+The composite score combines set Jaccard similarity (shared tokens), character-level similarity (SequenceMatcher), and a same-category boost. Pairs in the same category directory get a +0.15 boost because intra-category confusion is more concerning.
+
+**If your PR introduces a new WARN or ERROR pair:**
+
+1. Differentiate the descriptions -- use distinct action verbs and domain keywords
+2. If the pair is intentionally similar (e.g., parallel CI system skills), request a suppression by adding an entry to `scripts/similarity-suppressions.json` with a rationale
+3. Regenerate the baseline after description changes: run the similarity tool and update `scripts/similarity-baseline.json`
+
+**Suppression format** (`scripts/similarity-suppressions.json`):
+
+```json
+[
+  {
+    "id_a": "dotnet-skill-a",
+    "id_b": "dotnet-skill-b",
+    "rationale": "Intentional parallel descriptions for different platforms"
+  }
+]
+```
+
+Note: `id_a` must sort before `id_b` alphabetically.
 
 ---
 
@@ -348,8 +394,12 @@ Before committing a new or modified skill:
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name` and `description` fields
 - [ ] **`name` matches** the directory name exactly
+- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
 - [ ] **Description under 120 characters** (check budget math)
-- [ ] **Cross-references** use `[skill:skill-name]` syntax
+- [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
+- [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
+- [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
+- [ ] **No self-references** -- skill does not reference itself via `[skill:]`
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
 - [ ] **Validation passes** -- both commands run clean:
   ```bash

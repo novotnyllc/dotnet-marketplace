@@ -57,13 +57,18 @@ The description budget of 120 characters per skill keeps the aggregate catalog w
 
 ### Cross-Reference Syntax
 
-Reference other skills using the cross-reference syntax:
+Reference other skills and agents using the unified cross-reference syntax:
 
 ```markdown
 See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+Route to [skill:dotnet-security-reviewer] for security audit.
 ```
 
-This syntax enables machine-parseable skill references.
+Use `[skill:name]` for ALL routable references (skills and agents) -- bare text names are not machine-parseable.
+
+### Routing Language Rules
+
+Descriptions must follow the **Action + Domain + Differentiator** formula using third-person declarative style. No WHEN prefix, no filler phrases. Every skill must have `## Scope` and `## Out of scope` sections with attributed cross-references. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) and [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for full details.
 
 ### Content Guidelines
 
@@ -71,11 +76,11 @@ This syntax enables machine-parseable skill references.
 - Include Mermaid diagrams for architectural concepts where appropriate
 - Use YAML and Markdown formatting consistent with existing skills
 - Add an **Agent Gotchas** section for common AI agent mistakes
-- Mark scope boundaries clearly: use an "**Out of scope:**" paragraph with epic ownership attribution when a topic is covered by another skill
+- Mark scope boundaries with `## Scope` and `## Out of scope` headings, and include `[skill:]` attribution in out-of-scope bullets
 
 ### Skill Description Budget
 
-The total context budget for all skill descriptions is 15,000 characters (with a warning threshold at 12,000). Each individual skill description should target under 120 characters. This ensures the full skill catalog fits within the context window when Claude Code loads the plugin.
+The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 120 characters. This ensures the full skill catalog fits within the context window when Claude Code loads the plugin.
 
 ## Agent Authoring
 
