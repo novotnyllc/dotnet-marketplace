@@ -194,19 +194,22 @@ def main():
         else:
             desc = ""
 
+        # Canonical skill ID is the directory name (not frontmatter name)
+        skill_id = sf.parent.name
+
         body_text = "\n".join(lines[body_start:])
         refs = extract_refs(body_text)
         has_scope = bool(re.search(r"^## Scope\s*$", body_text, re.MULTILINE))
         has_oos = bool(re.search(r"^## Out of scope\s*$", body_text, re.MULTILINE))
-        self_ref = name in refs
-        unresolved_refs = [r for r in refs if r not in known_ids and r != name]
+        self_ref = skill_id in refs
+        unresolved_refs = [r for r in refs if r not in known_ids and r != skill_id]
 
-        if name:
-            ref_graph[name] = [r for r in refs if r != name]
+        ref_graph[skill_id] = [r for r in refs if r != skill_id]
 
         report = {
             "path": rel,
             "type": "skill",
+            "id": skill_id,
             "name": name,
             "description_length": len(desc),
             "has_scope": has_scope,
@@ -230,15 +233,16 @@ def main():
             continue
 
         refs = extract_refs(content)
-        unresolved = [r for r in refs if r not in known_ids]
-        stem = af.stem
-        if stem:
-            ref_graph[stem] = [r for r in refs if r != stem]
+        # Canonical agent ID is the file stem
+        agent_id = af.stem
+        unresolved = [r for r in refs if r not in known_ids and r != agent_id]
+        ref_graph[agent_id] = [r for r in refs if r != agent_id]
 
         agent_reports.append({
             "path": rel,
             "type": "agent",
-            "name": fm.get("name") or stem,
+            "id": agent_id,
+            "name": fm.get("name") or agent_id,
             "description": fm.get("description"),
             "cross_references": refs,
             "unresolved_references": unresolved,
@@ -258,14 +262,14 @@ def main():
     for cycle in cycles:
         nodes_in_cycles.update(cycle)
 
-    # Add cycle involvement to skill reports
+    # Add cycle involvement to skill and agent reports (using canonical ID)
     for report in skill_reports:
-        name = report.get("name", "")
-        report["in_cycle"] = name in nodes_in_cycles
+        canonical_id = report.get("id", "")
+        report["in_cycle"] = canonical_id in nodes_in_cycles
 
     for report in agent_reports:
-        name = report.get("name", "")
-        report["in_cycle"] = name in nodes_in_cycles
+        canonical_id = report.get("id", "")
+        report["in_cycle"] = canonical_id in nodes_in_cycles
 
     # Summary
     total_skills = len([r for r in skill_reports if "error" not in r])

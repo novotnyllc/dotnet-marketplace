@@ -10,18 +10,18 @@ Checks (skills):
   5.  Name-directory consistency (name field must match skill directory name)
   6.  Extra frontmatter field detection (allowed: name, description, user-invocable,
       disable-model-invocation, context, model)
-  6b. Type validation for optional fields (boolean/string type checking)
-  7.  Description filler phrase detection (routing quality enforcement)
-  8.  WHEN prefix regression detection (descriptions must not start with WHEN)
-  9.  Scope section presence (## Scope header required)
-  10. Out-of-scope section presence (## Out of scope header required)
-  11. Out-of-scope attribution format (items should reference owning skill via [skill:])
-  12. Self-referential cross-link detection (skill referencing itself -- error)
-  13. Cross-reference cycle detection (post-processing, informational report only)
+  7.  Type validation for optional fields (boolean/string type checking)
+  8.  Description filler phrase detection (routing quality enforcement)
+  9.  WHEN prefix regression detection (descriptions must not start with WHEN)
+  10. Scope section presence (## Scope header required)
+  11. Out-of-scope section presence (## Out of scope header required)
+  12. Out-of-scope attribution format (items should reference owning skill via [skill:])
+  13. Self-referential cross-link detection (skill referencing itself -- error)
+  14. Cross-reference cycle detection (post-processing, informational report only)
 
 Checks (agents):
-  14. Agent bare-ref detection using known IDs allowlist (informational)
-  15. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  15. Agent bare-ref detection using known IDs allowlist (informational)
+  16. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -530,13 +530,13 @@ def main():
             warnings += 1
             extra_field_count += len(extra_fields)
 
-        # Check 6b: Type validation for optional fields
+        # Check 7: Type validation for optional fields
         for tw in result.get("type_warnings", []):
             print(f"WARN:  {rel_path} -- {tw}")
             warnings += 1
             type_warning_count += 1
 
-        # Check 7: Filler phrase detection in description
+        # Check 8: Filler phrase detection in description
         if description:
             for pattern in FILLER_PHRASES:
                 match = pattern.search(description)
@@ -547,7 +547,7 @@ def main():
                     warnings += 1
                     filler_phrase_count += 1
 
-        # Check 8: WHEN prefix regression detection
+        # Check 9: WHEN prefix regression detection
         if description and description.startswith("WHEN "):
             print(
                 f"WARN:  {rel_path} -- description starts with 'WHEN ' prefix (removed in fn-49.2)"
@@ -555,19 +555,19 @@ def main():
             warnings += 1
             when_prefix_count += 1
 
-        # Check 9: Scope section presence
+        # Check 10: Scope section presence
         if not result["has_scope"]:
             print(f"WARN:  {rel_path} -- missing '## Scope' section")
             warnings += 1
             missing_scope_count += 1
 
-        # Check 10: Out-of-scope section presence
+        # Check 11: Out-of-scope section presence
         if not result["has_oos"]:
             print(f"WARN:  {rel_path} -- missing '## Out of scope' section")
             warnings += 1
             missing_oos_count += 1
 
-        # Check 11: Out-of-scope attribution format
+        # Check 12: Out-of-scope attribution format
         if result["has_oos"]:
             for item_text, has_ref in result["oos_items"]:
                 if not has_ref:
@@ -577,17 +577,21 @@ def main():
                     )
                     warnings += 1
 
-        # Check 12: Self-referential cross-link detection (ERROR)
-        if name and name in refs:
+        # Canonical skill ID is the directory name (not frontmatter name,
+        # which may differ if there's a name/dir mismatch)
+        skill_id = dir_name
+
+        # Check 13: Self-referential cross-link detection (ERROR)
+        if skill_id and skill_id in refs:
             print(
-                f"ERROR: {rel_path} -- self-referential cross-link [skill:{name}]"
+                f"ERROR: {rel_path} -- self-referential cross-link [skill:{skill_id}]"
             )
             errors += 1
             self_ref_count += 1
 
-        # Build cross-reference graph for cycle detection
-        if name:
-            ref_graph[name] = [r for r in refs if r != name]
+        # Build cross-reference graph for cycle detection (keyed by canonical ID)
+        if skill_id:
+            ref_graph[skill_id] = [r for r in refs if r != skill_id]
 
         # Track budget only for valid descriptions
         if description:
@@ -602,7 +606,7 @@ def main():
 
         # Validate cross-references against known IDs set
         for ref_name in refs:
-            if ref_name == name:
+            if ref_name == skill_id:
                 # Already reported as self-ref error above
                 continue
             if ref_name not in known_ids:
@@ -625,9 +629,6 @@ def main():
     for agent_file in agent_files:
         rel_path = agent_file.relative_to(repo_root)
         agent_stem = agent_file.stem
-
-        # Parse agent frontmatter using shared module
-        fm = parse_agent_frontmatter(str(agent_file))
 
         # Read full file content for cross-ref and bare-ref scanning
         try:
