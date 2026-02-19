@@ -336,3 +336,6 @@ Style guide docs that describe future validator behavior must clearly separate '
 
 ## 2026-02-19 manual [pitfall]
 When validating artifacts with both a user-facing name field and a filesystem-canonical ID (directory name, file stem), always use the canonical ID for graph operations (self-ref detection, cycle graphs, cross-ref resolution) -- frontmatter names may diverge from canonical IDs
+
+## 2026-02-19 manual [pitfall]
+JSON config parsers must validate root type (list vs dict) before calling .get() or iterating -- wrong root type causes AttributeError that bypasses intended exit-code handling

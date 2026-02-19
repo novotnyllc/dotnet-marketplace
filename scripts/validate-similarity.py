@@ -180,8 +180,18 @@ def load_suppressions(path: Path | None) -> set[tuple[str, str]]:
         print(f"ERROR: Failed to parse suppressions file: {e}", file=sys.stderr)
         sys.exit(2)
 
+    if not isinstance(data, list):
+        print("ERROR: Suppressions file must be a JSON array", file=sys.stderr)
+        sys.exit(2)
+
     pairs = set()
     for idx, entry in enumerate(data):
+        if not isinstance(entry, dict):
+            print(
+                f"ERROR: Suppression entry {idx} must be a JSON object",
+                file=sys.stderr,
+            )
+            sys.exit(2)
         id_a = entry.get("id_a", "")
         id_b = entry.get("id_b", "")
         if not id_a or not id_b:
@@ -212,6 +222,10 @@ def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
         data = json.loads(path.read_text(encoding="utf-8"))
     except Exception as e:
         print(f"ERROR: Failed to parse baseline file: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if not isinstance(data, dict):
+        print("ERROR: Baseline file must be a JSON object", file=sys.stderr)
         sys.exit(2)
 
     if data.get("version") != 1:
@@ -256,6 +270,7 @@ def compute_all_pairs(
 ) -> list[dict]:
     """Compute composite similarity for all pairs above INFO threshold.
 
+    Suppressed pairs are always included regardless of score (emitted as INFO).
     Returns list of pair records sorted by composite descending.
     """
     results = []
