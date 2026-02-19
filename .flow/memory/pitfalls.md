@@ -345,3 +345,6 @@ When loading JSON config files, always validate field types (isinstance checks) 
 
 ## 2026-02-19 manual [pitfall]
 Style guide 'Action + Domain + Differentiator' formula requires a verb-led description (present-tense verb or participle first) -- noun-phrase leads violate the formula even if they contain domain keywords
+
+## 2026-02-19 manual [pitfall]
+When adding pre-processing logic to a shared utility function's call site, centralize it in the utility itself so all callers benefit and logic does not drift between scan paths

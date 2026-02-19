@@ -31,9 +31,8 @@ Normalize all 14 agent files (`agents/*.md`) to use canonical `[skill:]` cross-r
 - [ ] T3 agent validation passes (zero `AGENT_BARE_REF_COUNT`)
 - [ ] `./scripts/validate-skills.sh` passes (agents not validated by this, but skills must not regress)
 ## Done summary
-TBD
-
+Normalized all 14 agent files: converted WHEN-prefix descriptions to third-person declarative style, converted 50+ bare-text agent/skill references to [skill:] syntax in Explicit Boundaries and Routing Table sections, and centralized frontmatter/heading exclusion in the validator's find_bare_refs() function. AGENT_BARE_REF_COUNT is now 0 (was 64 at baseline).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: ee8edc6c6f71cdab27e3e1bfa98e1b8edb8fcb74, 5fc577835ae571fb33e0e8bc1b15fbd516371488
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
