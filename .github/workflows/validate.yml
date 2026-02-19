@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
 
+    env:
+      STRICT_REFS: "1"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,14 +43,33 @@ jobs:
           set -o pipefail
           ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
 
-          # Parse stable output keys for summary
-          CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
-          PROJECTED=$(grep '^PROJECTED_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
-          STATUS=$(grep '^BUDGET_STATUS=' /tmp/skills-output.txt | cut -d= -f2)
+          # Parse stable output keys for summary (validator)
+          CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          PROJECTED=$(grep '^PROJECTED_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          STATUS=$(grep '^BUDGET_STATUS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          MISSING_SCOPE=$(grep '^MISSING_SCOPE_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          MISSING_OOS=$(grep '^MISSING_OOS_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          SELF_REF=$(grep '^SELF_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          AGENT_BARE=$(grep '^AGENT_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          AGENTSMD_BARE=$(grep '^AGENTSMD_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
 
           echo "current_desc_chars=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "projected_desc_chars=$PROJECTED" >> "$GITHUB_OUTPUT"
           echo "budget_status=$STATUS" >> "$GITHUB_OUTPUT"
+          echo "missing_scope_count=$MISSING_SCOPE" >> "$GITHUB_OUTPUT"
+          echo "missing_oos_count=$MISSING_OOS" >> "$GITHUB_OUTPUT"
+          echo "self_ref_count=$SELF_REF" >> "$GITHUB_OUTPUT"
+          echo "agent_bare_ref_count=$AGENT_BARE" >> "$GITHUB_OUTPUT"
+          echo "agentsmd_bare_ref_count=$AGENTSMD_BARE" >> "$GITHUB_OUTPUT"
+
+          # Parse stable output keys for summary (similarity, if present)
+          MAX_SIM=$(grep '^MAX_SIMILARITY_SCORE=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+          PAIRS_WARN=$(grep '^PAIRS_ABOVE_WARN=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+          PAIRS_ERROR=$(grep '^PAIRS_ABOVE_ERROR=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+
+          echo "max_similarity_score=$MAX_SIM" >> "$GITHUB_OUTPUT"
+          echo "pairs_above_warn=$PAIRS_WARN" >> "$GITHUB_OUTPUT"
+          echo "pairs_above_error=$PAIRS_ERROR" >> "$GITHUB_OUTPUT"
 
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
@@ -98,3 +120,11 @@ jobs:
           echo "| Current description chars | ${{ steps.validate-skills.outputs.current_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Projected description chars | ${{ steps.validate-skills.outputs.projected_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Budget status | ${{ steps.validate-skills.outputs.budget_status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing scope sections | ${{ steps.validate-skills.outputs.missing_scope_count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing out-of-scope sections | ${{ steps.validate-skills.outputs.missing_oos_count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Self-referential cross-links | ${{ steps.validate-skills.outputs.self_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent bare references | ${{ steps.validate-skills.outputs.agent_bare_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| AGENTS.md bare references | ${{ steps.validate-skills.outputs.agentsmd_bare_ref_count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above WARN | ${{ steps.validate-skills.outputs.pairs_above_warn }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above ERROR | ${{ steps.validate-skills.outputs.pairs_above_error }} |" >> "$GITHUB_STEP_SUMMARY"

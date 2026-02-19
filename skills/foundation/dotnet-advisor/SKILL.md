@@ -34,7 +34,7 @@ Before any .NET guidance, determine the project's target framework:
 ## Skill Catalog
 
 ### 1. Foundation & Plugin Infrastructure `implemented`
-- [skill:dotnet-advisor] -- this skill (router/index)
+- **dotnet-advisor** -- this skill (router/index)
 - [skill:dotnet-version-detection] -- TFM/SDK detection, preview features
 - [skill:dotnet-project-analysis] -- solution structure, project refs, CPM
 - [skill:dotnet-file-based-apps] -- .NET 10 file-based apps, `#:` directives, no .csproj

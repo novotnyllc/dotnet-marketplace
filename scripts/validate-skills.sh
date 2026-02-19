@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 #
-# validate-skills.sh -- Validate all SKILL.md files in the dotnet-artisan plugin.
+# validate-skills.sh -- Validate all SKILL.md files and agent files in the
+# dotnet-artisan plugin. Also runs semantic similarity detection if available.
 #
-# Thin wrapper that invokes the Python validation script.
+# Thin wrapper that invokes the Python validation script and (optionally)
+# the similarity detection script.
+#
 # All parsing, validation, and reporting happens in Python for:
 #   - Deterministic YAML parsing (strict subset parser, no PyYAML dependency)
 #   - No per-file subprocess spawning
@@ -17,7 +20,7 @@
 # During early development most skills are planned stubs, so --allow-planned-refs
 # is the default. Set STRICT_REFS=1 to enforce strict cross-reference validation.
 #
-# Output keys (stable, CI-parseable):
+# Output keys (stable, CI-parseable -- validator):
 #   CURRENT_DESC_CHARS=<N>
 #   PROJECTED_DESC_CHARS=<N>
 #   BUDGET_STATUS=OK|WARN|FAIL
@@ -26,6 +29,16 @@
 #   TYPE_WARNING_COUNT=<N>
 #   FILLER_PHRASE_COUNT=<N>
 #   WHEN_PREFIX_COUNT=<N>
+#   MISSING_SCOPE_COUNT=<N>
+#   MISSING_OOS_COUNT=<N>
+#   SELF_REF_COUNT=<N>
+#   AGENT_BARE_REF_COUNT=<N>
+#   AGENTSMD_BARE_REF_COUNT=<N>
+#
+# Output keys (stable, CI-parseable -- similarity, when script is present):
+#   MAX_SIMILARITY_SCORE=<N>
+#   PAIRS_ABOVE_WARN=<N>
+#   PAIRS_ABOVE_ERROR=<N>
 
 set -euo pipefail
 
@@ -44,10 +57,30 @@ if [ -n "${STRICT_REFS:-}" ]; then
     ALLOW_PLANNED_FLAG=""
 fi
 
-exec python3 "$REPO_ROOT/scripts/_validate_skills.py" \
+# --- Run skill/agent validator ---
+VALIDATOR_EXIT=0
+python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
     --projected-skills 130 \
     --max-desc-chars 120 \
     --warn-threshold 12000 \
     --fail-threshold 15600 \
-    $ALLOW_PLANNED_FLAG
+    $ALLOW_PLANNED_FLAG || VALIDATOR_EXIT=$?
+
+# --- Run similarity detection (guarded, error-only mode) ---
+SIMILARITY_EXIT=0
+if [[ -f "$REPO_ROOT/scripts/validate-similarity.py" ]]; then
+    echo ""
+    echo "=== Similarity Detection ==="
+    python3 "$REPO_ROOT/scripts/validate-similarity.py" \
+        --repo-root "$REPO_ROOT" \
+        --suppressions "$REPO_ROOT/scripts/similarity-suppressions.json" \
+        2>&1 || SIMILARITY_EXIT=$?
+fi
+
+# --- Compose final exit code ---
+if [[ "$VALIDATOR_EXIT" -ne 0 ]] || [[ "$SIMILARITY_EXIT" -ne 0 ]]; then
+    exit 1
+fi
+
+exit 0
