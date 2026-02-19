@@ -351,3 +351,9 @@ When adding pre-processing logic to a shared utility function's call site, centr
 
 ## 2026-02-19 manual [pitfall]
 When generating migration/audit reports with automated scripts, cross-check summary tables against per-item detail tables for internal consistency -- regex-based token counts may not match validator allowlist-based counts, causing contradictions reviewers flag
+
+## 2026-02-19 manual [pitfall]
+Shell boolean env vars using -n (non-empty) test treat '0' as truthy -- use explicit '= "1"' check when docs promise '0' means disabled
+
+## 2026-02-19 manual [pitfall]
+GHA steps with 'script | tee file' followed by output-parsing commands lose the script exit code -- capture it before parsing and exit with it at the end

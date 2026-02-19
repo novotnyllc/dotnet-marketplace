@@ -41,7 +41,8 @@ jobs:
         id: validate-skills
         run: |
           set -o pipefail
-          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+          VALIDATE_EXIT=0
+          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt || VALIDATE_EXIT=$?
 
           # Parse stable output keys for summary (validator)
           CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
@@ -70,6 +71,8 @@ jobs:
           echo "max_similarity_score=$MAX_SIM" >> "$GITHUB_OUTPUT"
           echo "pairs_above_warn=$PAIRS_WARN" >> "$GITHUB_OUTPUT"
           echo "pairs_above_error=$PAIRS_ERROR" >> "$GITHUB_OUTPUT"
+
+          exit "$VALIDATE_EXIT"
 
       - name: Enforce routing quality gates
         run: |
