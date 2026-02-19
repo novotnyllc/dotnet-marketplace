@@ -1,6 +1,6 @@
 ---
 name: dotnet-spectre-console
-description: "Building rich console output. Spectre.Console: tables, trees, progress, prompts, live displays."
+description: "Renders rich console output. Spectre.Console tables, trees, progress, prompts, live displays."
 user-invocable: false
 ---
 
@@ -10,7 +10,16 @@ Spectre.Console for building rich console output (tables, trees, progress bars, 
 
 **Version assumptions:** .NET 8.0+ baseline. Spectre.Console 0.54.0 (latest stable). Spectre.Console.Cli 0.53.1 (latest stable). Both packages target net8.0+ and netstandard2.0.
 
-**Scope boundary:** This skill owns rich console output and Spectre.Console.Cli command parsing. Full TUI applications (windows, menus, dialogs, views) are owned by [skill:dotnet-terminal-gui]. System.CommandLine parsing is owned by [skill:dotnet-system-commandline]. CLI application architecture and distribution are owned by [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution].
+## Scope
+
+- Spectre.Console rich output: markup, tables, trees, progress bars, prompts, live displays
+- Spectre.Console.Cli command-line application framework
+
+## Out of scope
+
+- Full TUI applications (windows, menus, dialogs, views) -- see [skill:dotnet-terminal-gui]
+- System.CommandLine parsing -- see [skill:dotnet-system-commandline]
+- CLI application architecture and distribution -- see [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution]
 
 Cross-references: [skill:dotnet-terminal-gui] for full TUI alternative, [skill:dotnet-system-commandline] for System.CommandLine scope boundary, [skill:dotnet-cli-architecture] for CLI structure, [skill:dotnet-csharp-async-patterns] for async patterns, [skill:dotnet-csharp-dependency-injection] for DI with Spectre.Console.Cli, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
 

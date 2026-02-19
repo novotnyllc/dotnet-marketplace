@@ -1,6 +1,6 @@
 ---
 name: dotnet-terminal-gui
-description: "Building full TUI apps. Terminal.Gui v2: views, layout (Pos/Dim), menus, dialogs, bindings, themes."
+description: "Builds full TUI apps. Terminal.Gui v2: views, layout (Pos/Dim), menus, dialogs, bindings, themes."
 user-invocable: false
 ---
 
@@ -10,7 +10,17 @@ Terminal.Gui v2 for building full terminal user interfaces with windows, menus, 
 
 **Version assumptions:** .NET 8.0+ baseline. Terminal.Gui 2.0.0-alpha (v2 Alpha is the active development line for new projects -- API is stable with comprehensive features; breaking changes possible before Beta but core architecture is solid). v1.x (1.19.0) is in maintenance mode with no new features.
 
-**Scope boundary:** This skill owns full TUI application development with Terminal.Gui -- application lifecycle, layout, views, menus, dialogs, event handling, themes. Rich console output (tables, progress bars, prompts, markup) is owned by [skill:dotnet-spectre-console]. CLI command-line parsing is owned by [skill:dotnet-system-commandline]. CLI application architecture and distribution are owned by [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution].
+## Scope
+
+- Terminal.Gui v2 application lifecycle and initialization
+- Views, layout (Pos/Dim), menus, dialogs, event handling
+- Data binding, color themes, mouse support
+
+## Out of scope
+
+- Rich console output (tables, progress bars, prompts) -- see [skill:dotnet-spectre-console]
+- CLI command-line parsing -- see [skill:dotnet-system-commandline]
+- CLI application architecture and distribution -- see [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution]
 
 Cross-references: [skill:dotnet-spectre-console] for rich console output alternative, [skill:dotnet-csharp-async-patterns] for async TUI patterns, [skill:dotnet-native-aot] for AOT compilation considerations, [skill:dotnet-system-commandline] for CLI parsing, [skill:dotnet-csharp-dependency-injection] for DI in TUI apps, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
 

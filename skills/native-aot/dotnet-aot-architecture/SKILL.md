@@ -1,6 +1,6 @@
 ---
 name: dotnet-aot-architecture
-description: "Designing AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories."
+description: "Designs AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories."
 user-invocable: false
 ---
 
@@ -10,7 +10,24 @@ AOT-first application design patterns for .NET 8+: preferring source generators 
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to all AOT-capable project types (console, ASP.NET Core Minimal APIs, worker services).
 
-**Out of scope:** Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]. Trim-safe library authoring and annotations -- see [skill:dotnet-trimming]. WASM AOT compilation -- see [skill:dotnet-aot-wasm]. MAUI-specific AOT -- see [skill:dotnet-maui-aot]. Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]. DI container internals -- see [skill:dotnet-csharp-dependency-injection]. Serialization depth -- see [skill:dotnet-serialization].
+## Scope
+
+- Source generator replacements for reflection patterns
+- AOT-safe DI patterns (explicit registration, keyed services)
+- Serialization choices for AOT (STJ source gen, Protobuf, MessagePack)
+- Factory patterns replacing Activator.CreateInstance
+- Library compatibility assessment for AOT
+- AOT application architecture template
+
+## Out of scope
+
+- Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]
+- Trim-safe library authoring and annotations -- see [skill:dotnet-trimming]
+- WASM AOT compilation -- see [skill:dotnet-aot-wasm]
+- MAUI-specific AOT -- see [skill:dotnet-maui-aot]
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
+- DI container internals -- see [skill:dotnet-csharp-dependency-injection]
+- Serialization depth -- see [skill:dotnet-serialization]
 
 Cross-references: [skill:dotnet-native-aot] for the AOT publish pipeline, [skill:dotnet-trimming] for trim annotations and library authoring, [skill:dotnet-serialization] for serialization patterns, [skill:dotnet-csharp-source-generators] for source gen mechanics, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-containers] for `runtime-deps` deployment, [skill:dotnet-native-interop] for general P/Invoke patterns and marshalling.
 

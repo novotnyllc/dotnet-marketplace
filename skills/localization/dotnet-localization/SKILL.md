@@ -1,6 +1,6 @@
 ---
 name: dotnet-localization
-description: "Localizing .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL."
+description: "Localizes .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ Comprehensive .NET internationalization and localization: .resx resource files a
 
 **Version assumptions:** .NET 8.0+ baseline. IStringLocalizer stable since .NET Core 1.0; localization APIs stable since .NET 5. .NET 9+ features explicitly marked.
 
-**Scope boundary:** This skill owns all cross-cutting localization concerns: resource formats, IStringLocalizer, formatting, RTL, pluralization. UI framework subsections provide architectural overview and cross-reference the framework-specific skills for deep implementation patterns.
+## Scope
 
-**Out of scope:** Deep Blazor component patterns -- see [skill:dotnet-blazor-components]. Deep MAUI development patterns -- see [skill:dotnet-maui-development]. Uno Platform project structure and Extensions ecosystem -- see [skill:dotnet-uno-platform]. WPF Host builder and MVVM patterns -- see [skill:dotnet-wpf-modern]. Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators].
+- .resx resource files, satellite assemblies, culture fallback chains
+- IStringLocalizer patterns and DI registration
+- Modern alternatives: JSON resources, source generators for AOT
+- Date/number/currency formatting with CultureInfo
+- RTL layout support per framework (Blazor, MAUI, Uno, WPF)
+- Pluralization engines (MessageFormat.NET, SmartFormat.NET)
+
+## Out of scope
+
+- Deep Blazor component patterns -- see [skill:dotnet-blazor-components]
+- Deep MAUI development patterns -- see [skill:dotnet-maui-development]
+- Uno Platform project structure and Extensions ecosystem -- see [skill:dotnet-uno-platform]
+- WPF Host builder and MVVM patterns -- see [skill:dotnet-wpf-modern]
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
 
 Cross-references: [skill:dotnet-blazor-components] for Blazor component lifecycle, [skill:dotnet-maui-development] for MAUI app structure, [skill:dotnet-uno-platform] for Uno Extensions and x:Uid, [skill:dotnet-wpf-modern] for WPF on modern .NET.
 

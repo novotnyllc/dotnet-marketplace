@@ -1,6 +1,6 @@
 ---
 name: dotnet-wpf-migration
-description: "Migrating desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI, decision matrix."
+description: "Migrates desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI."
 user-invocable: false
 ---
 
@@ -10,9 +10,23 @@ Context-dependent migration guidance for Windows desktop applications. Covers WP
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). `dotnet-upgrade-assistant` for automated migration. .NET 9 features explicitly marked where applicable.
 
-**Scope boundary:** This skill owns migration paths between desktop frameworks and from .NET Framework to modern .NET. Individual framework patterns (WPF modern, WinUI, WinForms modern) are owned by the respective framework skills. The framework selection decision tree is owned by [skill:dotnet-ui-chooser].
+## Scope
 
-**Out of scope:** WPF .NET 8+ development patterns -- see [skill:dotnet-wpf-modern]. WinUI 3 development patterns -- see [skill:dotnet-winui]. WinForms .NET 8+ development patterns -- see [skill:dotnet-winforms-basics]. Uno Platform development patterns -- see [skill:dotnet-uno-platform]. Framework selection decision tree -- see [skill:dotnet-ui-chooser]. Desktop testing -- see [skill:dotnet-ui-testing-core].
+- Migration decision matrix (current framework to target framework)
+- WPF .NET Framework to .NET 8+ migration
+- WPF to WinUI 3 (Windows-only modernization)
+- WPF to Uno Platform (cross-platform)
+- WinForms .NET Framework to .NET 8+
+- UWP to WinUI 3 and UWP to Uno Platform
+
+## Out of scope
+
+- WPF .NET 8+ development patterns -- see [skill:dotnet-wpf-modern]
+- WinUI 3 development patterns -- see [skill:dotnet-winui]
+- WinForms .NET 8+ development patterns -- see [skill:dotnet-winforms-basics]
+- Uno Platform development patterns -- see [skill:dotnet-uno-platform]
+- Framework selection decision tree -- see [skill:dotnet-ui-chooser]
+- Desktop testing -- see [skill:dotnet-ui-testing-core]
 
 Cross-references: [skill:dotnet-wpf-modern] for WPF .NET 8+ patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-winforms-basics] for WinForms .NET 8+ patterns, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-ui-testing-core] for desktop testing.
 

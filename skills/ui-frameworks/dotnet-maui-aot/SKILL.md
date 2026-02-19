@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-aot
-description: "Optimizing MAUI for iOS/Catalyst. Native AOT pipeline, size/startup gains, library gaps, trimming."
+description: "Optimizes MAUI for iOS/Catalyst. Native AOT pipeline, size/startup gains, library gaps, trimming."
 user-invocable: false
 ---
 
@@ -10,9 +10,21 @@ Native AOT compilation for .NET MAUI on iOS and Mac Catalyst: compilation pipeli
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for MAUI is available on iOS and Mac Catalyst. Android uses a different compilation model (CoreCLR in .NET 11, Mono/AOT in .NET 8-10).
 
-**Scope boundary:** This skill owns MAUI-specific Native AOT on iOS/Mac Catalyst -- the compilation pipeline, publish configuration, size/startup improvements, library compatibility for MAUI apps, and testing AOT builds. General Native AOT patterns are owned by [skill:dotnet-native-aot]; AOT architecture decisions by [skill:dotnet-aot-architecture].
+## Scope
 
-**Out of scope:** MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]. MAUI testing -- see [skill:dotnet-maui-testing]. WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm]. General AOT architecture -- see [skill:dotnet-native-aot].
+- iOS/Mac Catalyst AOT compilation pipeline
+- Publish profile configuration for MAUI AOT
+- Size/startup improvement measurements
+- Library compatibility gaps for MAUI AOT apps
+- Opt-out mechanisms and trimming interplay
+- Testing AOT builds on device
+
+## Out of scope
+
+- MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]
+- MAUI testing -- see [skill:dotnet-maui-testing]
+- WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm]
+- General AOT architecture -- see [skill:dotnet-native-aot]
 
 Cross-references: [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-maui-testing] for testing AOT builds, [skill:dotnet-native-aot] for general AOT patterns, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection.
 

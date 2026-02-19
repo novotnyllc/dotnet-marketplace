@@ -1,6 +1,6 @@
 ---
 name: dotnet-semantic-kernel
-description: "Building AI/LLM features. Semantic Kernel setup, plugins, prompt templates, memory stores, agents."
+description: "Integrates AI/LLM via Semantic Kernel. Plugins, prompt templates, memory stores, agents."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 Microsoft Semantic Kernel for AI and LLM orchestration in .NET applications. Covers kernel setup and configuration, plugin/function calling, prompt templates with Handlebars and Liquid syntax, memory and vector store integration, planners, the agents framework, and integration with Azure OpenAI, OpenAI, and local models.
 
-**Out of scope:** General async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]. DI container mechanics and service lifetime management -- see [skill:dotnet-csharp-dependency-injection]. HTTP client resilience and retry policies -- see [skill:dotnet-resilience]. Configuration binding (options pattern, secrets) -- see [skill:dotnet-csharp-configuration].
+## Scope
+
+- Kernel setup and DI integration for AI services (Azure OpenAI, OpenAI, Ollama)
+- Plugin/function calling with automatic invocation and filters
+- Prompt templates (inline, Handlebars, YAML)
+- Vector store abstractions and RAG patterns
+- Agents framework (ChatCompletionAgent, group chat, OpenAI Assistant)
+- Streaming responses
+
+## Out of scope
+
+- General async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
+- DI container mechanics and service lifetime management -- see [skill:dotnet-csharp-dependency-injection]
+- HTTP client resilience and retry policies -- see [skill:dotnet-resilience]
+- Configuration binding (options pattern, secrets) -- see [skill:dotnet-csharp-configuration]
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for async streaming patterns used with chat completions, [skill:dotnet-csharp-dependency-injection] for kernel service registration in ASP.NET Core, [skill:dotnet-resilience] for retry policies on AI service calls, [skill:dotnet-csharp-configuration] for managing API keys and model configuration.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-accessibility
-description: "Building accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing tools per platform."
+description: "Implements accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing per platform."
 user-invocable: false
 ---
 
@@ -8,9 +8,19 @@ user-invocable: false
 
 Cross-platform accessibility patterns for .NET UI frameworks: semantic markup, keyboard navigation, focus management, color contrast, and screen reader integration. In-depth coverage for Blazor (HTML ARIA), MAUI (SemanticProperties), and WinUI (AutomationProperties / UI Automation). Brief guidance with cross-references for WPF, Uno Platform, and TUI frameworks.
 
-**Scope boundary:** This skill owns cross-cutting accessibility principles and per-framework accessibility APIs. Framework-specific development patterns (project setup, MVVM, routing, deployment) are owned by the respective framework skills.
+## Scope
 
-**Out of scope:** Framework project setup -- see individual framework skills. Legal compliance advice -- this skill references WCAG standards but does not provide legal guidance. UI framework selection -- see [skill:dotnet-ui-chooser].
+- Cross-platform accessibility principles (semantic markup, keyboard nav, focus, contrast)
+- Blazor accessibility (HTML ARIA attributes, screen reader patterns)
+- MAUI accessibility (SemanticProperties, platform-specific setup)
+- WinUI accessibility (AutomationProperties, UI Automation, AutomationPeer)
+- WPF, Uno Platform, and TUI accessibility guidance with cross-references
+
+## Out of scope
+
+- Framework project setup -- see individual framework skills
+- Legal compliance advice (references WCAG but not legal guidance)
+- UI framework selection -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-blazor-patterns] for Blazor hosting and render modes, [skill:dotnet-blazor-components] for Blazor component lifecycle, [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-modern] for WPF on .NET 8+, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-terminal-gui] for Terminal.Gui, [skill:dotnet-spectre-console] for Spectre.Console, [skill:dotnet-ui-chooser] for framework selection.
 
