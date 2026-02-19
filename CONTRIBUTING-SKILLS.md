@@ -2,7 +2,7 @@
 
 This guide covers everything you need to create, test, and ship a skill for **dotnet-artisan**. It merges the patterns from the [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) with dotnet-artisan conventions.
 
-For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](CONTRIBUTING.md).
+For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](CONTRIBUTING.md). For the canonical routing language rules (description formula, scope format, cross-reference conventions), see the [Skill Routing Style Guide](docs/skill-routing-style-guide.md).
 
 ---
 
@@ -21,14 +21,14 @@ mkdir -p skills/core-csharp/dotnet-my-new-skill
 ```markdown
 ---
 name: dotnet-my-new-skill
-description: "WHEN writing C# code. Detects common pitfalls in X."
+description: "Detects common pitfalls in X during C# development."
 ---
 
 # dotnet-my-new-skill
 
 Guidance body goes here. See section 4 for writing instructions.
 
-Cross-references: [skill:dotnet-csharp-coding-standards] for related patterns.
+Cross-references: See [skill:dotnet-csharp-coding-standards] for baseline C# conventions.
 ```
 
 **Step 3 -- Register in plugin.json:**
@@ -72,7 +72,7 @@ A skill file has two parts: **frontmatter** and **body**.
 ```markdown
 ---
 name: dotnet-csharp-code-smells
-description: "WHEN writing, reviewing, or planning C# code. Catches code smells and anti-patterns."
+description: "Detects code smells and anti-patterns in C# code during writing and review."
 ---
 
 # dotnet-csharp-code-smells
@@ -111,11 +111,13 @@ The `description` field is the most important line in your skill. It determines 
 
 ### The Formula
 
-Structure descriptions as: **[What] + [When] + [Triggers]**
+Structure descriptions as: **Action + Domain + Differentiator**
+
+Use **third-person declarative** style. Front-load the most specific action verb or present participle. Do not start with `WHEN`, `A skill that`, `Helps with`, or other filler. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) for the full canonical rules.
 
 ```yaml
-# Good -- tells Claude what, when, and why to activate
-description: "WHEN writing, reviewing, or planning C# code. Catches code smells and anti-patterns."
+# Good -- declarative, specific domain, clear scope
+description: "Detects code smells and anti-patterns in C# code during writing and review."
 
 # Bad -- vague, no activation context
 description: "Helps with code quality stuff"
@@ -125,8 +127,9 @@ description: "Helps with code quality stuff"
 
 | Quality | Description | Problem |
 |---------|-------------|---------|
-| Good | `WHEN writing C# async code. Patterns for async/await, cancellation, and parallel execution.` | Clear trigger, specific scope |
+| Good | `Writing async/await code. Task patterns, ConfigureAwait, cancellation, and common agent pitfalls.` | Clear trigger, specific scope |
 | Good | `Detects and fixes common .NET dependency injection lifetime misuse and registration errors.` | Actionable, precise |
+| Bad | `WHEN writing C# async code. Patterns for async/await.` | WHEN prefix -- violates style rule |
 | Bad | `C# patterns` | Too vague; matches everything and nothing |
 | Bad | `Complete guide to everything about async programming in C# including all patterns, best practices, and common mistakes that developers make.` | 146 chars, over budget |
 
@@ -134,15 +137,18 @@ description: "Helps with code quality stuff"
 
 Each description must target **under 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills at an average of ~93 characters each, the catalog currently consumes ~12,115 characters (above the warning threshold of 12,000). The hard fail threshold is 15,600 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,600 characters (FAIL threshold = 130 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 
 ```
-CURRENT_DESC_CHARS=12458
-PROJECTED_DESC_CHARS=12000
+CURRENT_DESC_CHARS=12345
+PROJECTED_DESC_CHARS=15600
 BUDGET_STATUS=WARN
 ```
+
+- **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
+- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600) and is not part of the status determination.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
 
@@ -355,6 +361,7 @@ Before committing a new or modified skill:
 
 ## References
 
+- [Skill Routing Style Guide](docs/skill-routing-style-guide.md) -- canonical rules for descriptions, scope sections, and cross-references
 - [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) -- the complete six-chapter guide this manual adapts
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
