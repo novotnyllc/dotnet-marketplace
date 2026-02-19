@@ -228,17 +228,27 @@ def strip_skill_refs(text: str) -> str:
 
 
 def find_bare_refs(text: str, known_ids: set) -> list:
-    """Find bare references to known IDs in text after stripping [skill:] spans.
+    """Find bare references to known IDs in text after stripping structural elements.
 
-    Also strips markdown link URLs to avoid false positives on link targets.
+    Strips YAML frontmatter, [skill:] spans, markdown link URLs, and heading
+    lines whose text is exactly a known ID (structural titles, not cross-refs).
     Returns list of matched bare IDs.
     """
+    # Strip YAML frontmatter if present (structural, not body text)
+    cleaned = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.DOTALL)
     # Strip [skill:...] spans
-    cleaned = strip_skill_refs(text)
+    cleaned = strip_skill_refs(cleaned)
     # Strip markdown link URLs: [text](url) -> [text]
     cleaned = re.sub(r"\]\([^)]*\)", "]", cleaned)
-    # Strip inline code that contains skill refs (already valid in backticks)
-    # but keep other inline code for scanning
+    # Ignore structural headings that are exactly a known ID (agent titles,
+    # AGENTS.md section headers).  Avoids false positives on `# dotnet-foo`.
+    filtered_lines = []
+    for line in cleaned.splitlines():
+        m = re.match(r"^\s*#{1,6}\s+([a-zA-Z0-9_-]+)\s*$", line)
+        if m and m.group(1) in known_ids:
+            continue
+        filtered_lines.append(line)
+    cleaned = "\n".join(filtered_lines)
 
     found = []
     for known_id in sorted(known_ids):
@@ -659,21 +669,8 @@ def main():
             ref_graph[agent_stem] = [r for r in agent_refs if r != agent_stem]
 
         # Bare-ref detection in agent files (informational, not error)
-        # Strip YAML frontmatter (name/description fields) and markdown title
-        # heading before scanning -- these are structural, not cross-references.
-        agent_body_for_bare = agent_content
-        # Remove frontmatter block (between --- delimiters)
-        fm_match = re.match(r"^---\n.*?\n---\n", agent_body_for_bare, re.DOTALL)
-        if fm_match:
-            agent_body_for_bare = agent_body_for_bare[fm_match.end():]
-        # Remove markdown heading lines that are the agent's own title
-        agent_body_for_bare = re.sub(
-            r"^#+ +" + re.escape(agent_stem) + r"\s*$",
-            "",
-            agent_body_for_bare,
-            flags=re.MULTILINE,
-        )
-        bare_refs = find_bare_refs(agent_body_for_bare, known_ids)
+        # find_bare_refs() handles frontmatter/heading stripping centrally.
+        bare_refs = find_bare_refs(agent_content, known_ids)
         if bare_refs:
             for bare_id in bare_refs:
                 print(
