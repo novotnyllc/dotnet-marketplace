@@ -59,7 +59,7 @@ Agent descriptions use the same third-person declarative style as skills.
 
 ### The 120-Character Target
 
-Each description must target **under 120 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
+Each description must be **at most 120 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
 
 **Budget math:** The plugin loads all skill descriptions into the context window at session start. With 130 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,600 characters (FAIL threshold = 130 * 120).
 

@@ -135,7 +135,7 @@ description: "Helps with code quality stuff"
 
 ### The 120-Character Target
 
-Each description must target **under 120 characters**. This is a budget constraint, not a style preference.
+Each description must be **at most 120 characters**. This is a budget constraint, not a style preference.
 
 **Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,600 characters (FAIL threshold = 130 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
@@ -334,7 +334,7 @@ If validation reports `BUDGET_STATUS=WARN` or `BUDGET_STATUS=FAIL`:
 
 If validation reports unresolved cross-references:
 
-1. Verify the target skill name matches an existing `name` frontmatter field
+1. Verify the target skill ID matches an existing skill directory name (which should match that skill's `name` frontmatter)
 2. Check for typos in `[skill:exact-name-here]`
 3. If the target skill does not exist yet, the reference will produce a warning
 
