@@ -222,12 +222,27 @@ def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
         sys.exit(2)
 
     pairs = set()
-    for pair in data.get("pairs", []):
-        if len(pair) == 2:
-            a, b = pair[0], pair[1]
-            if not a or not b or a == b:
-                continue
-            pairs.add((min(a, b), max(a, b)))
+    for idx, pair in enumerate(data.get("pairs", [])):
+        if not isinstance(pair, list) or len(pair) != 2:
+            print(
+                f"ERROR: Baseline entry {idx} is not a 2-element array",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        a, b = pair[0], pair[1]
+        if not a or not b:
+            print(
+                f"ERROR: Baseline entry {idx} has empty ID(s): {pair}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        if a == b:
+            print(
+                f"ERROR: Baseline entry {idx} has identical IDs: {a}",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        pairs.add((min(a, b), max(a, b)))
     return pairs
 
 
@@ -274,11 +289,13 @@ def compute_all_pairs(
             same_cat = items[idx_a]["category"] == items[idx_b]["category"]
             comp = composite_score(jaccard, seqmatch, same_cat)
 
-            if comp < INFO_THRESHOLD:
-                continue
-
             canonical_pair = (id_a, id_b)
             is_suppressed = canonical_pair in suppressions
+
+            # Suppressed pairs always emitted as INFO regardless of score;
+            # unsuppressed pairs must meet INFO threshold
+            if comp < INFO_THRESHOLD and not is_suppressed:
+                continue
 
             # Determine level
             if is_suppressed:
