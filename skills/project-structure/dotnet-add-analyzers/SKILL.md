@@ -22,7 +22,7 @@ Add and configure .NET code analyzers to an existing project. Covers built-in Ro
 - Solution layout and Directory.Build.props -- see [skill:dotnet-project-structure]
 - New project scaffolding with analyzers -- see [skill:dotnet-scaffold-project]
 
-Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE* code style preferences, naming rules, and global AnalyzerConfig files.
+Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE code style preferences, naming rules, and global AnalyzerConfig files.
 
 ---
 
