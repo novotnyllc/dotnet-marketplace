@@ -1,0 +1,283 @@
+{
+  "created_at": "2026-02-19T01:52:12.560237Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-53-skill-routing-language-hardening",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-19T01:47:38.082993Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-53-skill-routing-language-hardening",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-53-skill-routing-language-hardening.md",
+      "status": "open",
+      "title": "Skill Routing Language Hardening",
+      "updated_at": "2026-02-19T01:48:14.448753Z"
+    },
+    "spec": "# Skill Routing Language Hardening\n\n## Overview\n\nStandardize routing language across all 130 SKILL.md files and 14 agent files so skills are discovered reliably from non-specific prompts. Descriptions stay concise/high-signal within the 12K char budget, inter-skill references use canonical `[skill:name]` syntax everywhere, and scope/out-of-scope boundaries are explicit. Harden validation scripts and CI gates to enforce these standards going forward.\n\n## Scope\n\n**In scope:**\n- All 130 `skills/**/SKILL.md` files (description, scope, out-of-scope, cross-references)\n- All 14 `agents/*.md` files (bare-text references \u2192 `[skill:]` syntax)\n- `AGENTS.md` routing index normalization\n- `scripts/_validate_skills.py` and `scripts/validate-skills.sh` (new checks)\n- `tests/agent-routing/check-skills.cs` and `cases.json` (assertion hardening)\n- `CONTRIBUTING-SKILLS.md`, `CONTRIBUTING.md`, `CLAUDE.md` (guidance updates)\n- `.github/workflows/validate.yml` (CI gate updates)\n\n**Out of scope:**\n- Changing skill functionality or body content beyond routing sections\n- Adding new skills or removing existing ones\n- Changing the routing architecture (advisor \u2192 domain skill chain)\n- Semantic similarity overlap detection (deferred \u2014 requires embedding infrastructure)\n\n## Key Context\n\n- Budget is at WARN threshold: 12,345 chars current vs 12,000 warn / 15,600 fail. All description changes must be budget-neutral or budget-negative.\n- Research shows assertive cues in descriptions create 7x selection bias; position bias gives 80.2% selection rate to first-listed tools. Descriptions must be factual, not promotional.\n- 16 skills have zero routing markers (no trigger, scope, or out-of-scope). These need markers added from scratch.\n- 8 of 14 agent files use bare-text references (~50 total) instead of `[skill:]` syntax.\n- `--allow-planned-refs` default in CI effectively disables cross-ref validation. Must address in hardening.\n- Prior art: fn-29 (fleet review), fn-37 (cleanup sweep), fn-49 (compliance review), fn-51 (frontmatter).\n\n## Quick commands\n\n```bash\n# Validate skills\n./scripts/validate-skills.sh\n\n# Validate marketplace\n./scripts/validate-marketplace.sh\n\n# Run routing tests (single case)\n./test.sh --agents claude --case-id foundation-routing\n```\n\n## Acceptance\n\n- [ ] All 130 SKILL.md descriptions follow canonical style guide from task 2\n- [ ] All cross-references in skills AND agent files use `[skill:name]` syntax\n- [ ] All skills have explicit scope/out-of-scope sections\n- [ ] Validator enforces new routing-language quality checks\n- [ ] Routing compliance report generates per-skill compliance data\n- [ ] Routing test assertions use definitive proof (Skill tool invocation, not text mentions)\n- [ ] `./scripts/validate-skills.sh` passes with zero errors\n- [ ] `./scripts/validate-marketplace.sh` passes\n- [ ] CI gates updated to enforce \"zero errors, zero new warnings vs baseline\"\n- [ ] CONTRIBUTING-SKILLS.md, CLAUDE.md, CONTRIBUTING.md updated with canonical conventions\n- [ ] CHANGELOG.md entry added\n- [ ] Description budget stays within WARN threshold (\u226412,000 chars)\n\n## Dependency Graph\n\n```text\nT1 \u2192 T2 \u2192 {T3, T4} \u2192 T5 \u2192 {T6, T7, T8, T9, T10} \u2192 T11 \u2192 T12\n```\n\nWaves:\n1. T1 (audit)\n2. T2 (spec)\n3. T3 + T4 (tooling, parallel)\n4. T5 (foundation + high-traffic)\n5. T6 + T7 + T8 + T9 + T10 (sweeps + agents, parallel)\n6. T11 (verification)\n7. T12 (docs + CI + rollout)\n\n## References\n\n- Spec: `.flow/specs/skill-routing-language-hardening-plan.md`\n- Agent Skills spec: https://agentskills.io/specification\n- Anthropic best practices: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices\n- Existing validator: `scripts/_validate_skills.py`\n- Routing tests: `tests/agent-routing/check-skills.cs`\n"
+  },
+  "epic_id": "fn-53-skill-routing-language-hardening",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:21.495444Z",
+        "depends_on": [],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.1.md",
+        "status": "todo",
+        "title": "Baseline Audit and Ownership Manifest",
+        "updated_at": "2026-02-19T01:49:14.609390Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.1",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.1 Baseline Audit and Ownership Manifest\n\n## Description\nBuild a baseline inventory covering all 130 skills: description length, overlap risk score (pairwise textual similarity), cross-skill reference count/format, routing marker coverage (scope/out-of-scope/trigger sections), and routing hotspots from `tests/agent-routing/cases.json`. Produce an ownership manifest mapping each skill path to exactly one downstream editing task (T5-T10) with zero overlaps.\n\n**Size:** M\n**Files:**\n- `docs/skill-routing-audit-baseline.md` (new)\n- `docs/skill-routing-ownership-manifest.md` (new)\n- Read-only: all `skills/**/SKILL.md`, `tests/agent-routing/cases.json`, `agents/*.md`\n\n## Approach\n\n- Script-driven audit: iterate all SKILL.md files, extract frontmatter descriptions, count `[skill:]` refs, check for `## Scope`, `## Out of scope`, `## Trigger` sections\n- Compute pairwise textual overlap (Jaccard on token sets or simple substring matching -- no embeddings needed)\n- Identify the 16 skills with zero routing markers: `dotnet-advisor`, `dotnet-csharp-coding-standards`, `dotnet-csharp-async-patterns`, `dotnet-csharp-dependency-injection`, `dotnet-project-analysis`, `dotnet-project-structure`, `dotnet-scaffold-project`, and 9 others\n- Count bare-text references in `agents/*.md` files (currently ~50 across 8 agents)\n- Ownership assignment: divide 130 skills into T5 (foundation + high-traffic ~16), T6 (~30), T7 (~25), T8 (~25), T9 (~30 long tail), T10 (14 agent files). Each skill path appears in exactly one task.\n\n## Key context\n\n- Budget is currently at 12,345 chars (WARN at 12,000). Record per-skill char counts for budget tracking during sweeps.\n- Prior art: fn-29 `docs/fleet-review-rubric.md` has 11-dimension review rubric. Reference but do not duplicate.\n- Memory pitfall: \"Proposed replacement descriptions must have character counts verified\" -- use consistent `echo -n | wc -c` measurement.\n## Acceptance\n- [ ] `docs/skill-routing-audit-baseline.md` exists with data for all 130 skills\n- [ ] Each skill entry includes: description length, overlap risk (top-3 most similar), cross-ref count, routing marker coverage (scope/out-of-scope/trigger: yes/no)\n- [ ] `docs/skill-routing-ownership-manifest.md` maps every skill path to exactly one task (T5-T10)\n- [ ] Zero overlaps in ownership (no skill path appears in two tasks)\n- [ ] Agent file bare-text reference count documented per agent\n- [ ] `./scripts/validate-skills.sh` still passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.959364Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.5"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.10",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.10.md",
+        "status": "todo",
+        "title": "Agent File Normalization",
+        "updated_at": "2026-02-19T01:51:09.533974Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.10",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.10 Agent File Normalization\n\n## Description\nNormalize all 14 agent files (`agents/*.md`) to use canonical `[skill:]` cross-reference syntax. Currently 8 of 14 agents use bare-text references (~50 total). Also normalize agent description conventions.\n\n**Size:** M\n**Files:**\n- All 14 `agents/*.md` files (edit)\n- Read-only: `docs/skill-routing-style-guide.md`\n\n## Approach\n\n- Convert all bare-text skill/agent references (backtick-wrapped, bold-wrapped) to `[skill:]` syntax\n- Agents confirmed to have bare refs: `dotnet-testing-specialist` (7), `dotnet-code-review-agent` (9), `dotnet-performance-analyst` (11), and 5 others\n- Agents already clean: `dotnet-architect`, `dotnet-blazor-specialist`, `dotnet-uno-specialist`, `dotnet-docs-generator`, `dotnet-security-reviewer`, `dotnet-maui-specialist`\n- Normalize agent description fields per style guide (resolve WHEN-prefix usage in agent descriptions)\n- Verify all `[skill:]` references in agent files resolve to existing skill directories\n\n## Key context\n\n- Agent files are NOT validated by `_validate_skills.py` currently. Cross-ref validation must be manual or a separate check.\n- Memory pitfall: \"Cross-reference IDs must be canonical\" -- verify each ref against actual skill name: fields.\n- 5 agent descriptions currently use `WHEN` prefix. Style guide (T2) must have decided the convention before this task runs.\n## Acceptance\n- [ ] All 14 agent files use `[skill:]` syntax for cross-references (zero bare-text refs)\n- [ ] Agent descriptions follow style guide conventions\n- [ ] All `[skill:]` references in agent files resolve to existing skill directories\n- [ ] `./scripts/validate-skills.sh` passes (agents not validated by this, but skills must not regress)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:48.617944Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.6",
+          "fn-53-skill-routing-language-hardening.7",
+          "fn-53-skill-routing-language-hardening.8",
+          "fn-53-skill-routing-language-hardening.9",
+          "fn-53-skill-routing-language-hardening.10"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.11",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.11.md",
+        "status": "todo",
+        "title": "Content-Preservation Verification",
+        "updated_at": "2026-02-19T01:51:21.585338Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.11",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.11 Content-Preservation Verification\n\n## Description\nMandatory verification that all intended content remains represented after normalization across T5-T10. Produce a content migration map with source-section to destination-section mapping. Run automated checks for dropped sections, broken references, and self/cyclic cross-links.\n\n**Size:** M\n**Files:**\n- `docs/skill-content-migration-map.md` (new)\n- Read-only: all `skills/**/SKILL.md`, `agents/*.md`, sweep reports from T6-T9\n\n## Approach\n\n- Diff each SKILL.md against its pre-normalization state (git diff against the branch point)\n- Build migration map: for each modified skill, list sections before/after with content status (unchanged/reworded/moved/removed)\n- Run the T3 validator to check all cross-references resolve\n- Check for self-referential cross-links (skill referencing itself)\n- Verify no section was dropped without being moved elsewhere\n- Verify total description budget is within WARN threshold\n\n## Key context\n\n- Memory pitfall: \"Stale not-yet-landed references must be treated consistently\" -- check for `planned` status markers that should now be `implemented`\n- The `dotnet-advisor` catalog sections marked `planned`/`implemented` must be verified current\n- This is the quality gate before docs/CI updates in T12\n## Acceptance\n- [ ] `docs/skill-content-migration-map.md` covers all 130 skills with section-level before/after mapping\n- [ ] Zero dropped sections without documented migration target\n- [ ] Zero broken cross-references across skills and agents\n- [ ] Zero self-referential cross-links\n- [ ] `dotnet-advisor` catalog status markers are current\n- [ ] Total description budget \u226412,000 chars (within WARN threshold)\n- [ ] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline\n- [ ] `./scripts/validate-marketplace.sh` passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:48.728718Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.11"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.12",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.12.md",
+        "status": "todo",
+        "title": "Contributor Guidance, CI Gates, and Rollout",
+        "updated_at": "2026-02-19T01:51:35.893539Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.12",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.12 Contributor Guidance, CI Gates, and Rollout\n\n## Description\nUpdate all contributor-facing documentation to codify routing-language standards. Update CI gates to enforce the new policy. Add CHANGELOG entry. Publish final compliance summary.\n\n**Size:** M\n**Files:**\n- `CONTRIBUTING-SKILLS.md` (edit -- final pass incorporating T2 style guide + T3 validator + T11 verification results)\n- `CONTRIBUTING.md` (edit -- sync cross-reference syntax, description budget sections)\n- `CLAUDE.md` (edit -- update cross-ref example if T2 changed format, add routing-language key rule)\n- `.github/workflows/validate.yml` (edit -- enforce zero-new-warnings policy with baseline comparison)\n- `CHANGELOG.md` (edit -- add entry under `## [Unreleased]` / `### Changed`)\n- `docs/skill-routing-final-summary.md` (new -- compliance summary)\n\n## Approach\n\n- Update `CONTRIBUTING-SKILLS.md` Section 3 with final canonical rules, add reference to style guide, update pre-commit checklist with routing-language items\n- Update `CONTRIBUTING.md` quick-reference to match\n- Update `CLAUDE.md` cross-reference example to show canonical format\n- Add CI step to validate.yml: compare current warnings against `scripts/routing-warnings-baseline.json`, fail if increased\n- CHANGELOG entry: \"Changed: Standardized routing language across all 130 skills and 14 agents for reliable skill discovery\"\n- Emit final compliance summary with aggregate stats\n\n## Key context\n\n- Follow Keep a Changelog format for CHANGELOG.md\n- `CLAUDE.md` is loaded into every Claude session -- keep additions concise\n- Memory pitfall: \"Skill/category counts in prose AND Mermaid diagrams must both be updated\" -- check for count references\n## Acceptance\n- [ ] `CONTRIBUTING-SKILLS.md` fully reflects canonical routing-language rules and references style guide\n- [ ] `CONTRIBUTING.md` quick-reference section synced with CONTRIBUTING-SKILLS.md\n- [ ] `CLAUDE.md` cross-reference example uses canonical format\n- [ ] `.github/workflows/validate.yml` enforces zero-new-warnings policy\n- [ ] `CHANGELOG.md` has entry for routing language standardization\n- [ ] `docs/skill-routing-final-summary.md` emitted with compliance stats\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] `./scripts/validate-marketplace.sh` passes\n- [ ] CI pipeline passes end-to-end\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:27.927166Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.1"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.2.md",
+        "status": "todo",
+        "title": "Canonical Routing Language Spec",
+        "updated_at": "2026-02-19T01:49:29.832774Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.2",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.2 Canonical Routing Language Spec\n\n## Description\nDefine canonical rules for skill routing language as a style guide document. Cover: classifier-style descriptions (\u2264120 chars, front-loaded action verb, what+when+triggers), explicit scope/out-of-scope section format, normalized cross-reference language (`See [skill:x] for Y` where Y is specific), router precedence language (baseline-first loading of `dotnet-csharp-coding-standards`), and agent file reference conventions.\n\n**Size:** M\n**Files:**\n- `docs/skill-routing-style-guide.md` (new)\n- `CONTRIBUTING-SKILLS.md` (update Section 3 \"Writing Effective Descriptions\")\n\n## Approach\n\n- Codify the present-participle description style already dominant across 130 skills (e.g., \"Building...\", \"Designing...\", \"Using...\")\n- Define mandatory sections: every skill must have `## Scope` and `## Out of scope` with `[skill:]` attribution\n- Define cross-reference format: `See [skill:x] for Y.` where Y is a specific topic (not \"more details\")\n- Define agent reference format: agents referenced as `[skill:agent-name]` (same syntax as skills since agents are also loaded via the skill system)\n- Include positive/negative examples table (follow pattern at `CONTRIBUTING-SKILLS.md:126-131`)\n- Include migration checklist for converting existing descriptions\n- Address `--allow-planned-refs`: recommend flipping default to strict in CI (broken refs = errors)\n\n## Key context\n\n- Anthropic best practices: \"description must describe what the skill does AND when to use it\" -- third person, no filler\n- Research: assertive cues create 7x bias, position bias 80.2% for first tool. Descriptions must be factual.\n- Budget constraint: 120 chars max per description, 12K warn threshold aggregate. Style guide must emphasize budget-neutral changes.\n- Agent descriptions use `WHEN` prefix (5 agents). Skills reject it. Style guide must resolve this inconsistency.\n## Acceptance\n- [ ] `docs/skill-routing-style-guide.md` exists with: description formula, scope/out-of-scope format, cross-reference format, precedence language, positive/negative examples table, migration checklist\n- [ ] `CONTRIBUTING-SKILLS.md` Section 3 updated to reference style guide and incorporate canonical rules\n- [ ] Style guide addresses agent vs skill description conventions (resolve WHEN-prefix inconsistency)\n- [ ] Style guide addresses `--allow-planned-refs` policy recommendation\n- [ ] `./scripts/validate-skills.sh` still passes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:28.033591Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.2"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.3.md",
+        "status": "todo",
+        "title": "Validator and Compliance Report Hardening",
+        "updated_at": "2026-02-19T01:49:46.081629Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.3",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.3 Validator and Compliance Report Hardening\n\n## Description\nExtend `_validate_skills.py` with new routing-language quality checks defined in the T2 style guide. Create a standalone compliance report script that outputs per-skill compliance data for PR review. Define CI policy: zero errors, zero new warnings vs committed baseline file.\n\n**Size:** M\n**Files:**\n- `scripts/_validate_skills.py` (edit)\n- `scripts/validate-skills.sh` (edit -- update header docs for new output keys)\n- `scripts/skill-routing-report.py` (new -- compliance report)\n- `scripts/routing-warnings-baseline.json` (new -- committed baseline)\n- `.github/workflows/validate.yml` (edit -- add new output key parsing)\n\n## Approach\n\n- New validator checks to add:\n  - Scope section presence (`## Scope` header required)\n  - Out-of-scope section presence (`## Out of scope` header required)\n  - Out-of-scope attribution format (each out-of-scope item should reference owning skill via `[skill:]`)\n  - Self-referential cross-link detection (skill referencing itself)\n  - Cycle detection (A\u2192B\u2192A) in cross-references\n- New stable CI-parseable output keys: `MISSING_SCOPE_COUNT`, `MISSING_OOS_COUNT`, `SELF_REF_COUNT`\n- Compliance report script: reads all SKILL.md files, outputs JSON with per-skill compliance metrics (description length, scope coverage, ref format, overlap candidates)\n- Baseline file: JSON with current warning counts, committed to repo. CI compares current run against baseline.\n- Flip `--allow-planned-refs` to strict by default (broken refs = errors). Existing planned refs that are legitimate must be added to an explicit allowlist.\n\n## Key context\n\n- Current validator: `scripts/_validate_skills.py` checks 8 things (see docstring lines 3-17). New checks extend this list.\n- Follow existing patterns: filler phrase detection uses `FILLER_PHRASES` list, new checks should follow same structure.\n- Memory pitfall: \"Hand-authored YAML configuration files require CI validation rules\" -- baseline JSON must have CI validation.\n## Acceptance\n- [ ] `_validate_skills.py` has new checks: scope presence, out-of-scope presence, out-of-scope attribution, self-referential refs, cycle detection\n- [ ] New stable output keys documented in `validate-skills.sh` header\n- [ ] `scripts/skill-routing-report.py` generates per-skill compliance JSON\n- [ ] `scripts/routing-warnings-baseline.json` committed with current counts\n- [ ] `--allow-planned-refs` default flipped to strict (or policy documented if kept)\n- [ ] `.github/workflows/validate.yml` parses new output keys\n- [ ] `./scripts/validate-skills.sh` passes (existing skills may need allowlist entries)\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:28.171416Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.2"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.4.md",
+        "status": "todo",
+        "title": "Routing Test Assertion Hardening",
+        "updated_at": "2026-02-19T01:49:56.448499Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.4",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.4 Routing Test Assertion Hardening\n\n## Description\nImprove routing test assertions in `check-skills.cs` to prefer definitive evidence (Skill tool invocation, `Launching skill:` lines) over incidental text mentions. Update `cases.json` evidence patterns. Update `docs/agent-routing-tests.md` with new evidence hierarchy.\n\n**Size:** M\n**Files:**\n- `tests/agent-routing/check-skills.cs` (edit)\n- `tests/agent-routing/cases.json` (edit)\n- `docs/agent-routing-tests.md` (edit)\n\n## Approach\n\n- Replace string-presence evidence patterns with skill-invocation-specific patterns\n- Follow pattern at `check-skills.cs` for `required_all_evidence` / `required_any_evidence` fields\n- Update `docs/agent-routing-tests.md` \"Evidence currently gates on\" section with new evidence hierarchy\n- Test against existing 14 cases to ensure no false negatives from stricter evidence\n\n## Key context\n\n- Current evidence uses patterns like `\"dotnet-xunit\"` and `\"SKILL.md\"` which match incidental mentions, not just skill invocations\n- Target: `\"Launching skill: dotnet-xunit\"` or `\"skill\":\"dotnet-xunit\"` as definitive proof\n- Only 14 test cases exist covering ~10% of 130 skills. This task hardens assertions, not coverage.\n## Acceptance\n- [ ] Evidence patterns in `cases.json` use definitive skill-invocation proof (not incidental text mentions)\n- [ ] `check-skills.cs` assertion logic prefers tool-invocation evidence\n- [ ] `docs/agent-routing-tests.md` updated with evidence hierarchy\n- [ ] All 14 existing test cases still pass with hardened assertions\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.422658Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.3",
+          "fn-53-skill-routing-language-hardening.4"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.5.md",
+        "status": "todo",
+        "title": "Normalize Foundation and High-Traffic Skills",
+        "updated_at": "2026-02-19T01:50:20.798349Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.5",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.5 Normalize Foundation and High-Traffic Skills\n\n## Description\nApply canonical routing language (from T2 style guide) to the foundation skills and all high-traffic skills listed in `tests/agent-routing/cases.json`. Normalize AGENTS.md routing index. These are the most-routed skills and set the pattern for subsequent sweeps.\n\n**Size:** M\n**Files:**\n- `skills/foundation/dotnet-advisor/SKILL.md` (edit)\n- `skills/foundation/dotnet-version-detection/SKILL.md` (edit)\n- `AGENTS.md` (edit -- routing index + delegation patterns table)\n- ~14 additional skills referenced in `tests/agent-routing/cases.json` (edit)\n- Read-only: `docs/skill-routing-ownership-manifest.md` (task list), `docs/skill-routing-style-guide.md` (rules)\n\n## Approach\n\n- Read ownership manifest to confirm which skills belong to this task (T5 batch only)\n- Apply style guide rules: scope/out-of-scope sections, cross-ref format, description normalization\n- For `dotnet-advisor`: add routing markers (currently zero markers), update specialist routing section to use `[skill:]` syntax instead of bold text\n- For `AGENTS.md`: convert Agent Delegation Patterns table bare-text skill names to `[skill:]` syntax, normalize Scope Boundaries section\n- Run `./scripts/validate-skills.sh` after each batch of changes\n- Track budget delta: record before/after description char counts. Must stay budget-neutral.\n\n## Key context\n\n- `dotnet-advisor` is the central router. Its SKILL.md has specialist references using `**name**` bold format (lines 334-338). Convert to `[skill:]`.\n- `AGENTS.md` delegation patterns table (lines 74-89) lists preloaded skills as bare comma-separated names. Convert.\n- The 14 cases.json skills are the highest-traffic paths. Getting these right first ensures routing test reliability.\n- Memory pitfall: \"Cross-reference IDs must be canonical\" -- verify each ref against actual `SKILL.md` name: fields.\n## Acceptance\n- [ ] Foundation skills (`dotnet-advisor`, `dotnet-version-detection`) have scope/out-of-scope sections and canonical descriptions\n- [ ] `dotnet-advisor` specialist routing uses `[skill:]` syntax (no bold-text agent names)\n- [ ] AGENTS.md routing index uses `[skill:]` syntax throughout\n- [ ] All ~14 high-traffic skills from `cases.json` normalized per style guide\n- [ ] All cross-references use canonical `[skill:]` syntax\n- [ ] Budget delta documented: total chars before vs after. No increase.\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] Existing routing test cases still pass\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.529726Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.5"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.6",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.6.md",
+        "status": "todo",
+        "title": "Category Sweep - Core, Architecture, Performance, Build",
+        "updated_at": "2026-02-19T01:50:28.991486Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.6",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.6 Category Sweep - Core, Architecture, Performance, Build\n\n## Description\nApply canonical routing language to skills assigned to this batch by the T1 ownership manifest. Categories: core-csharp, architecture, performance-benchmarking, msbuild-build. No overlap with T7/T8/T9.\n\n**Size:** M\n**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~30 skills)\n\n## Approach\n\n- Read ownership manifest to get exact skill list for this task\n- For each skill: normalize description (\u2264120 chars, front-loaded verb, what+when), add/update `## Scope` and `## Out of scope` sections, convert all cross-refs to `[skill:]` format\n- Track budget delta per skill\n- Run validator after completing batch\n- Emit `docs/skill-routing-sweep-core-arch-perf-build.md` with before/after stats\n\n## Key context\n\n- Budget-neutral: if a description grows, shorten another in the same batch\n- Follow the T2 style guide exactly -- no creative reinterpretation\n- Memory pitfall: \"Every skill section MUST use explicit `##` headers\" -- not inline bold labels\n## Acceptance\n- [ ] All assigned skills have scope/out-of-scope sections\n- [ ] All descriptions follow canonical style (\u2264120 chars, front-loaded verb)\n- [ ] All cross-references use `[skill:]` syntax\n- [ ] `docs/skill-routing-sweep-core-arch-perf-build.md` emitted with before/after stats\n- [ ] Budget delta documented: no net increase\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] No skills from T7/T8/T9/T10 batches were edited\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.637513Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.5"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.7",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.7.md",
+        "status": "todo",
+        "title": "Category Sweep - API, Security, Testing, CI",
+        "updated_at": "2026-02-19T01:50:35.685172Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.7",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.7 Category Sweep - API, Security, Testing, CI\n\n## Description\nApply canonical routing language to skills assigned to this batch: api-development, security, testing, ci-cd categories. No overlap with T6/T8/T9.\n\n**Size:** M\n**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~25 skills)\n\n## Approach\n\n- Same workflow as T6 but for API/Security/Testing/CI categories\n- Must include the two fn-36 skills (`dotnet-library-api-compat`, `dotnet-api-surface-validation`)\n- Emit `docs/skill-routing-sweep-api-security-testing-ci.md`\n\n## Key context\n\n- fn-36 added two new API skills that must be included in 100% coverage\n- Testing skills have significant overlap risk (e.g., `dotnet-testing-strategy` vs `dotnet-xunit` vs `dotnet-integration-testing`). Pay extra attention to scope boundaries.\n## Acceptance\n- [ ] All assigned skills have scope/out-of-scope sections\n- [ ] All descriptions follow canonical style\n- [ ] All cross-references use `[skill:]` syntax\n- [ ] fn-36 skills included\n- [ ] `docs/skill-routing-sweep-api-security-testing-ci.md` emitted\n- [ ] Budget delta documented: no net increase\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] No skills from T6/T8/T9/T10 batches were edited\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.744800Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.5"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.8",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.8.md",
+        "status": "todo",
+        "title": "Category Sweep - UI, NativeAOT, CLI, TUI",
+        "updated_at": "2026-02-19T01:50:41.688322Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.8",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.8 Category Sweep - UI, NativeAOT, CLI, TUI\n\n## Description\nApply canonical routing language to skills assigned to this batch: blazor, uno-platform, maui, desktop-frameworks, native-aot-trimming, cli-tools, tui categories. No overlap with T6/T7/T9.\n\n**Size:** M\n**Files:** Subset from `docs/skill-routing-ownership-manifest.md` (~25 skills)\n\n## Approach\n\n- Same workflow as T6 but for UI/NativeAOT/CLI/TUI categories\n- Align platform classifier wording across frameworks (Blazor vs MAUI vs Uno vs WinUI)\n- Emit `docs/skill-routing-sweep-ui-nativeaot-cli-tui.md`\n\n## Key context\n\n- UI framework skills need clear scope boundaries: \"Blazor components\" vs \"MAUI mobile\" vs \"Uno cross-platform\" vs \"WinUI desktop\"\n- AOT skills overlap with several framework skills. Scope boundaries are critical.\n## Acceptance\n- [ ] All assigned skills have scope/out-of-scope sections\n- [ ] All descriptions follow canonical style\n- [ ] Platform classifier wording is consistent across framework families\n- [ ] `docs/skill-routing-sweep-ui-nativeaot-cli-tui.md` emitted\n- [ ] Budget delta documented: no net increase\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] No skills from T6/T7/T9/T10 batches were edited\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-19T01:48:36.851901Z",
+        "depends_on": [
+          "fn-53-skill-routing-language-hardening.5"
+        ],
+        "epic": "fn-53-skill-routing-language-hardening",
+        "id": "fn-53-skill-routing-language-hardening.9",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-53-skill-routing-language-hardening.9.md",
+        "status": "todo",
+        "title": "Category Sweep - Long Tail",
+        "updated_at": "2026-02-19T01:50:56.525579Z"
+      },
+      "id": "fn-53-skill-routing-language-hardening.9",
+      "runtime": null,
+      "spec": "# fn-53-skill-routing-language-hardening.9 Category Sweep - Long Tail\n\n## Description\nNormalize all remaining skills not covered by T5-T8. This is the long-tail batch with a concrete, closed-form list from the ownership manifest.\n\n**Size:** M\n**Files:** Residual skill list from `docs/skill-routing-ownership-manifest.md` (~30 skills across remaining categories: serialization, documentation, localization, packaging, data-access, messaging, observability, domain-modeling, etc.)\n\n## Approach\n\n- Same workflow as T6 but for residual skills\n- List must be explicit and complete -- no implicit \"remaining\" edits\n- Emit `docs/skill-routing-sweep-long-tail.md`\n- After completion, verify ownership manifest shows 100% coverage (every skill assigned and completed)\n\n## Key context\n\n- These skills are lower-traffic but still need consistent routing language\n- Some may have unique scope challenges (e.g., `dotnet-domain-modeling` vs `dotnet-efcore-architecture`)\n## Acceptance\n- [ ] All assigned skills have scope/out-of-scope sections\n- [ ] All descriptions follow canonical style\n- [ ] `docs/skill-routing-sweep-long-tail.md` emitted\n- [ ] Ownership manifest shows 100% of skills assigned and completed (across T5-T9)\n- [ ] Budget delta documented: no net increase\n- [ ] `./scripts/validate-skills.sh` passes\n- [ ] No skills from T6/T7/T8/T10 batches were edited\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}

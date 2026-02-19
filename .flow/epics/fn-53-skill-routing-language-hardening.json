@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-53-skill-routing-language-hardening",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-19T01:47:38.082993Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-53-skill-routing-language-hardening",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-53-skill-routing-language-hardening.md",
+  "status": "open",
+  "title": "Skill Routing Language Hardening",
+  "updated_at": "2026-02-19T01:48:14.448753Z"
+}
