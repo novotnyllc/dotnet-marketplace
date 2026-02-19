@@ -1,6 +1,6 @@
 ---
 name: dotnet-ci-benchmarking
-description: "Gating CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports."
+description: "Gates CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports."
 user-invocable: false
 ---
 
@@ -10,7 +10,20 @@ Continuous benchmarking guidance for detecting performance regressions in CI pip
 
 **Version assumptions:** BenchmarkDotNet v0.14+ for JSON export, GitHub Actions runner environment. Examples use `actions/upload-artifact@v4` and `actions/download-artifact@v4`.
 
-**Out of scope:** BenchmarkDotNet setup, benchmark class design, memory diagnosers, and common pitfalls are owned by this epic's companion skill -- see [skill:dotnet-benchmarkdotnet]. Performance-oriented architecture patterns are owned by [skill:dotnet-performance-patterns]. Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) are covered by `dotnet-profiling`. OpenTelemetry metrics collection and distributed tracing -- see [skill:dotnet-observability]. Composable CI/CD workflow design and matrix build strategies -- see [skill:dotnet-gha-patterns]. Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns].
+## Scope
+
+- Baseline file management with BenchmarkDotNet JSON exporters
+- GitHub Actions workflows for artifact-based baseline comparison
+- Regression detection with configurable thresholds
+- Alerting strategies for performance degradation
+
+## Out of scope
+
+- BenchmarkDotNet setup and benchmark class design -- see [skill:dotnet-benchmarkdotnet]
+- Performance architecture patterns -- see [skill:dotnet-performance-patterns]
+- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
+- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-observability]
+- Composable CI/CD workflow design -- see [skill:dotnet-gha-patterns]
 
 Cross-references: [skill:dotnet-benchmarkdotnet] for benchmark class setup and JSON exporter configuration, [skill:dotnet-observability] for correlating benchmark regressions with runtime metrics changes, [skill:dotnet-gha-patterns] for composable workflow patterns (reusable workflows, composite actions, matrix builds).
 

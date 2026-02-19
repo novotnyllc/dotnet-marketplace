@@ -1,6 +1,6 @@
 ---
 name: dotnet-artifacts-output
-description: "Using artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
+description: "Configures artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
 user-invocable: false
 ---
 
@@ -10,7 +10,16 @@ Reference guide for the .NET SDK artifacts output layout, which centralizes buil
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to confirm .NET 8+ SDK -- artifacts output layout is not available in earlier SDK versions.
 
-**Scope boundary:** [skill:dotnet-project-structure] covers source tree organization (`.sln`, `.csproj`, `src/`, `tests/`). This skill covers build output organization (`artifacts/bin/`, `artifacts/obj/`, `artifacts/publish/`). Source tree vs output tree.
+## Scope
+
+- UseArtifactsOutput opt-in and ArtifactsPath configuration
+- Centralized build output layout (artifacts/bin/, artifacts/obj/, artifacts/publish/)
+- Impact on CI artifact upload paths and Docker builds
+- Migration tradeoffs for existing projects
+
+## Out of scope
+
+- Source tree organization (.sln, .csproj, src/, tests/) -- see [skill:dotnet-project-structure]
 
 Cross-references: [skill:dotnet-project-structure] for solution layout, [skill:dotnet-containers] for Dockerfile path adjustments, [skill:dotnet-gha-build-test] for CI artifact upload paths, [skill:dotnet-scaffold-project] for generating new projects with artifacts output enabled.
 

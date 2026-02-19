@@ -1,6 +1,6 @@
 ---
 name: dotnet-scaffold-project
-description: "Creating a new .NET project. Generates solution with CPM, analyzers, editorconfig, SourceLink."
+description: "Creates a new .NET project. Generates solution with CPM, analyzers, editorconfig, SourceLink."
 ---
 
 # dotnet-scaffold-project
@@ -8,6 +8,18 @@ description: "Creating a new .NET project. Generates solution with CPM, analyzer
 Scaffolds a new .NET project with all modern best practices applied. Generates the full solution structure including Central Package Management, analyzers, .editorconfig, SourceLink, and deterministic builds.
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine available SDK version — this affects which features and templates are available.
+
+## Scope
+
+- Full solution structure generation (src/, tests/, .sln)
+- Central Package Management and Directory.Build.props
+- Analyzers, .editorconfig, SourceLink, deterministic builds
+
+## Out of scope
+
+- Solution layout rationale and conventions -- see [skill:dotnet-project-structure]
+- Analyzer configuration details -- see [skill:dotnet-add-analyzers]
+- CI workflow generation -- see [skill:dotnet-add-ci]
 
 Cross-references: [skill:dotnet-project-structure] for layout rationale, [skill:dotnet-add-analyzers] for analyzer configuration, [skill:dotnet-add-ci] for adding CI after scaffolding.
 

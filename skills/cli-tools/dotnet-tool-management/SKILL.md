@@ -1,6 +1,6 @@
 ---
 name: dotnet-tool-management
-description: "Installing or managing .NET tools. Global, local, manifests, restore, version pinning."
+description: "Installs and manages .NET tools. Global, local, manifests, restore, version pinning."
 user-invocable: false
 ---
 
@@ -10,7 +10,20 @@ Consumer-side management of .NET CLI tools: installing global and local tools, c
 
 **Version assumptions:** .NET 8.0+ baseline. Local tools and tool manifests available since .NET Core 3.0. RID-specific tool packaging available since .NET 10.
 
-**Out of scope:** Tool authoring and packaging (`PackAsTool`, NuGet packaging, `ToolCommandName`) -- see [skill:dotnet-cli-packaging]. Distribution strategy (AOT vs framework-dependent vs dotnet tool decision) -- see [skill:dotnet-cli-distribution]. Release CI/CD pipeline -- see [skill:dotnet-cli-release-pipeline].
+## Scope
+
+- Global tool installation and management
+- Local tool manifests (.config/dotnet-tools.json)
+- Version pinning and team workflow reproducibility
+- CI integration with dotnet tool restore
+- RID-specific tool installation (.NET 10+)
+- Troubleshooting common tool issues
+
+## Out of scope
+
+- Tool authoring and packaging (PackAsTool, NuGet packaging) -- see [skill:dotnet-cli-packaging]
+- Distribution strategy (AOT vs framework-dependent decision) -- see [skill:dotnet-cli-distribution]
+- Release CI/CD pipeline -- see [skill:dotnet-cli-release-pipeline]
 
 Cross-references: [skill:dotnet-cli-packaging] for tool authoring and NuGet packaging, [skill:dotnet-cli-distribution] for distribution strategy and RID matrix, [skill:dotnet-cli-release-pipeline] for automated release workflows, [skill:dotnet-project-analysis] for detecting existing tool manifests.
 

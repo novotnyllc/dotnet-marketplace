@@ -1,6 +1,6 @@
 ---
 name: dotnet-xml-docs
-description: "Writing XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
+description: "Writes XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
 user-invocable: false
 ---
 
@@ -10,9 +10,19 @@ XML documentation comments for .NET: all standard tags (`<summary>`, `<param>`, 
 
 **Version assumptions:** .NET 8.0+ baseline. XML documentation comments are a C# language feature available in all .NET versions. `<GenerateDocumentationFile>` MSBuild property works with .NET SDK 6+. `<inheritdoc>` fully supported since C# 9.0 / .NET 5+.
 
-**Scope boundary:** This skill owns XML documentation comment authoring -- the syntax, conventions, and MSBuild configuration for generating XML doc files. API documentation site generation from XML comments (DocFX, Starlight) is owned by [skill:dotnet-api-docs]. General C# coding conventions (naming, formatting) are owned by [skill:dotnet-csharp-coding-standards].
+## Scope
 
-**Out of scope:** API documentation site generation from XML comments (DocFX setup, OpenAPI-as-docs, doc-code sync) -- see [skill:dotnet-api-docs]. General C# coding conventions and naming standards -- see [skill:dotnet-csharp-coding-standards]. CI/CD deployment of documentation sites -- see [skill:dotnet-gha-deploy].
+- Standard XML doc tags (summary, param, returns, exception, remarks, example)
+- Advanced tags (inheritdoc, see cref, seealso, c, code)
+- GenerateDocumentationFile MSBuild configuration
+- Warning suppression strategies for internal APIs (CS1591)
+- Conventions for public NuGet library documentation
+
+## Out of scope
+
+- API documentation site generation (DocFX, Starlight) -- see [skill:dotnet-api-docs]
+- General C# coding conventions and naming standards -- see [skill:dotnet-csharp-coding-standards]
+- CI/CD deployment of documentation sites -- see [skill:dotnet-gha-deploy]
 
 Cross-references: [skill:dotnet-api-docs] for downstream API documentation generation from XML comments, [skill:dotnet-csharp-coding-standards] for general C# coding conventions, [skill:dotnet-gha-deploy] for doc site deployment.
 

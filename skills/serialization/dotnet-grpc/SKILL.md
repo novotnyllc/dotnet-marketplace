@@ -1,6 +1,6 @@
 ---
 name: dotnet-grpc
-description: "Building gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth."
+description: "Builds gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, code generation, ASP.NET Core gRPC server implementation and endpoint hosting, `Grpc.Net.Client` client patterns, all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipeline configuration -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
+## Scope
+
+- Proto service definition and code generation
+- ASP.NET Core gRPC server implementation
+- Grpc.Net.Client client patterns
+- All four streaming patterns (unary, server, client, bidirectional)
+- Authentication, load balancing, and health checks
+
+## Out of scope
+
+- Source generator authoring patterns -- see [skill:dotnet-csharp-source-generators]
+- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
+- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
 
 Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. See [skill:dotnet-integration-testing] for testing gRPC services.
 

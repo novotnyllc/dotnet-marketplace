@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-packaging
-description: "Publishing to package managers. Homebrew, apt/deb, winget, Scoop, Chocolatey manifests."
+description: "Publishes to package managers. Homebrew, apt/deb, winget, Scoop, Chocolatey manifests."
 user-invocable: false
 ---
 
@@ -10,7 +10,22 @@ Multi-platform packaging for .NET CLI tools: Homebrew formula authoring (binary 
 
 **Version assumptions:** .NET 8.0+ baseline. Package manager formats are stable across .NET versions.
 
-**Out of scope:** CLI distribution strategy (AOT vs framework-dependent vs dotnet tool decision) -- see [skill:dotnet-cli-distribution]. Release CI/CD pipeline that automates packaging -- see [skill:dotnet-cli-release-pipeline]. Native AOT compilation -- see [skill:dotnet-native-aot]. Container-based distribution -- see [skill:dotnet-containers]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns].
+## Scope
+
+- Homebrew formula authoring (binary tap and cask)
+- apt/deb packaging with dpkg-deb
+- winget manifest YAML schema and PR submission
+- Scoop manifest JSON for Windows
+- Chocolatey package creation
+- dotnet tool global/local packaging and NuGet distribution
+
+## Out of scope
+
+- CLI distribution strategy (AOT vs framework-dependent decision) -- see [skill:dotnet-cli-distribution]
+- Release CI/CD pipeline that automates packaging -- see [skill:dotnet-cli-release-pipeline]
+- Native AOT compilation -- see [skill:dotnet-native-aot]
+- Container-based distribution -- see [skill:dotnet-containers]
+- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
 
 Cross-references: [skill:dotnet-cli-distribution] for distribution strategy and RID matrix, [skill:dotnet-cli-release-pipeline] for automated package publishing, [skill:dotnet-native-aot] for AOT binary production, [skill:dotnet-containers] for container-based distribution, [skill:dotnet-tool-management] for consumer-side tool installation and manifest management.
 

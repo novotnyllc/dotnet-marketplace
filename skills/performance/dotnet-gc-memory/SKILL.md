@@ -1,6 +1,6 @@
 ---
 name: dotnet-gc-memory
-description: "Tuning GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool, profiling."
+description: "Tunes GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 Garbage collection and memory management for .NET applications. Covers GC modes (workstation vs server, concurrent vs non-concurrent), Large Object Heap (LOH) and Pinned Object Heap (POH), generational tuning (Gen0/1/2), memory pressure notifications, deep Span<T>/Memory<T> ownership patterns beyond basics, buffer pooling with ArrayPool<T> and MemoryPool<T>, weak references, finalizers vs IDisposable, and memory profiling with dotMemory and PerfView.
 
-**Out of scope:** Span<T>/Memory<T> syntax introduction and basic usage -- see [skill:dotnet-performance-patterns]. Microbenchmarking setup -- see [skill:dotnet-benchmarkdotnet]. CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]. Channel<T> producer/consumer patterns -- see [skill:dotnet-channels].
+## Scope
+
+- GC modes (workstation vs server, concurrent vs non-concurrent)
+- Large Object Heap (LOH) and Pinned Object Heap (POH)
+- Generational tuning (Gen0/1/2) and memory pressure
+- Deep Span<T>/Memory<T> ownership patterns
+- Buffer pooling with ArrayPool<T> and MemoryPool<T>
+- Memory profiling with dotMemory and PerfView
+
+## Out of scope
+
+- Span<T>/Memory<T> syntax introduction and basic usage -- see [skill:dotnet-performance-patterns]
+- Microbenchmarking setup -- see [skill:dotnet-benchmarkdotnet]
+- CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
+- Channel<T> producer/consumer patterns -- see [skill:dotnet-channels]
 
 Cross-references: [skill:dotnet-performance-patterns] for Span<T>/Memory<T> basics and sealed devirtualization, [skill:dotnet-profiling] for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-channels] for backpressure patterns that interact with memory management, [skill:dotnet-file-io] for MemoryMappedFile usage and POH buffer patterns in file I/O.
 

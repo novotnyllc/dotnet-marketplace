@@ -1,6 +1,6 @@
 ---
 name: dotnet-realtime-communication
-description: "Building real-time features. SignalR hubs, SSE (.NET 10), JSON-RPC 2.0, gRPC streaming, scaling."
+description: "Builds real-time features. SignalR hubs, SSE (.NET 10), JSON-RPC 2.0, gRPC streaming, scaling."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 Real-time communication patterns for .NET applications. Compares SignalR (full-duplex over WebSockets with automatic fallback), Server-Sent Events (SSE, built-in to ASP.NET Core in .NET 10), JSON-RPC 2.0 (structured request-response over any transport), and gRPC streaming (high-performance binary streaming). Provides decision guidance for choosing the right protocol based on requirements.
 
-**Out of scope:** HTTP client factory patterns and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development. Blazor-specific SignalR usage (component integration, Blazor Server circuit management, render mode interaction) -- see [skill:dotnet-blazor-patterns] for Blazor hosting models and circuit patterns.
+## Scope
+
+- SignalR hubs (WebSocket, auto-fallback, scaling)
+- Server-Sent Events (SSE, built-in .NET 10)
+- JSON-RPC 2.0 over any transport
+- gRPC streaming for high-performance binary
+- Protocol comparison and decision guidance
+
+## Out of scope
+
+- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
+- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
+- Blazor-specific SignalR usage -- see [skill:dotnet-blazor-patterns]
 
 Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. See [skill:dotnet-integration-testing] for testing real-time communication endpoints. See [skill:dotnet-blazor-patterns] for Blazor-specific SignalR circuit management and render mode interaction.
 

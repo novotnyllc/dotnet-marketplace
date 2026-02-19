@@ -1,6 +1,6 @@
 ---
 name: dotnet-serialization
-description: "Serializing data. System.Text.Json source generators, Protobuf, MessagePack, AOT-safe anti-patterns."
+description: "Serializes data. System.Text.Json source generators, Protobuf, MessagePack, AOT-safe patterns."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 AOT-friendly serialization patterns for .NET applications. Covers System.Text.Json source generators for compile-time serialization, Protocol Buffers (Protobuf) for efficient binary serialization, and MessagePack for high-performance compact binary format. Includes performance tradeoff guidance for choosing the right serializer and warnings about reflection-based serialization in AOT scenarios.
 
-**Out of scope:** Source generator authoring patterns (incremental generator API, Roslyn syntax trees) -- see [skill:dotnet-csharp-source-generators]. HTTP client factory patterns and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]. Native AOT architecture and trimming strategies -- see [skill:dotnet-native-aot] for AOT compilation, [skill:dotnet-aot-architecture] for AOT-first design patterns, and [skill:dotnet-trimming] for trim-safe development.
+## Scope
+
+- System.Text.Json source generators for compile-time serialization
+- Protocol Buffers (Protobuf) for binary serialization
+- MessagePack for high-performance compact format
+- Performance tradeoff guidance for serializer selection
+- AOT-safe serialization patterns and anti-patterns
+
+## Out of scope
+
+- Source generator authoring patterns -- see [skill:dotnet-csharp-source-generators]
+- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
+- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
 
 Cross-references: [skill:dotnet-csharp-source-generators] for understanding how STJ source generators work under the hood. See [skill:dotnet-integration-testing] for testing serialization round-trip correctness.
 

@@ -1,13 +1,21 @@
 ---
 name: dotnet-add-ci
-description: "Adding CI/CD to a .NET project. GitHub Actions vs Azure DevOps detection, workflow templates."
+description: "Adds CI/CD to a .NET project. GitHub Actions vs Azure DevOps detection, workflow templates."
 ---
 
 # dotnet-add-ci
 
 Add starter CI/CD workflows to an existing .NET project. Detects the hosting platform (GitHub Actions or Azure DevOps) and generates an appropriate starter workflow for build, test, and pack.
 
-**Scope boundary:** This skill provides **starter templates** only. For advanced CI/CD patterns — composable reusable workflows, matrix builds, deployment pipelines, release automation, and environment promotion — see [skill:dotnet-gha-patterns], [skill:dotnet-ado-patterns], and related CI/CD depth skills.
+## Scope
+
+- Platform detection (GitHub Actions vs Azure DevOps)
+- Starter build/test/pack workflow generation
+- Basic CI workflow templates for .NET projects
+
+## Out of scope
+
+- Advanced CI/CD patterns (reusable workflows, matrix builds, deployment) -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine SDK version for the workflow. Run [skill:dotnet-project-analysis] to understand solution structure.
 

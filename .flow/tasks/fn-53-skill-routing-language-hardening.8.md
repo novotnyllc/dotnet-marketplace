@@ -26,9 +26,8 @@ Apply canonical routing language to skills assigned to this batch: ai, localizat
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T7/T9/T10 batches were edited
 ## Done summary
-TBD
-
+Normalized all 24 T8-assigned skills (ai, localization, multi-targeting, native-aot, tui, ui-frameworks) to canonical routing language: verb-led descriptions, explicit ## Scope and ## Out of scope headings with [skill:] cross-references, consistent platform classifier wording. Budget delta: -122 chars (global 11,703 < 12,000 threshold). Similarity pairs_above_warn: 0 (unchanged). Sweep report emitted at docs/skill-routing-sweep-ui-nativeaot-tui-multitarget.md.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: abcb7d5, f266599
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
