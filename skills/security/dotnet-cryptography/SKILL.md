@@ -23,8 +23,8 @@ Modern .NET cryptography covering hashing (SHA-256/384/512), symmetric encryptio
 - Secrets management and configuration binding -- see [skill:dotnet-secrets-management]
 - OWASP vulnerability categories and deprecated security patterns -- see [skill:dotnet-security-owasp]
 - Authentication/authorization implementation (JWT, OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]
-- Cloud-specific key management (Azure Key Vault, AWS KMS) -- cloud epics
-- TLS/HTTPS configuration -- covered by ASP.NET Core middleware
+- Cloud-specific key management (Azure Key Vault, AWS KMS) -- see [skill:dotnet-secrets-management]
+- TLS/HTTPS configuration -- see [skill:dotnet-advisor]
 
 Cross-references: [skill:dotnet-security-owasp] for OWASP A02 (Cryptographic Failures) and deprecated pattern warnings, [skill:dotnet-secrets-management] for storing keys and secrets securely.
 

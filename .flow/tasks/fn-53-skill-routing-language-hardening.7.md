@@ -27,9 +27,9 @@ Apply canonical routing language to skills assigned to this batch: api-developme
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T8/T9/T10 batches were edited
 ## Done summary
-TBD
+Normalized all 26 T7 skills (8 api-development, 7 cicd, 2 security, 9 testing) to canonical routing language: verb-led descriptions, explicit ## Scope and ## Out of scope sections with [skill:] cross-references. Budget delta: -84 chars (11,834 total). fn-36 skills included. All validations pass.
 
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7b95ffc, (fix commit pending)
+- Tests: validate-skills.sh, validate-marketplace.sh, validate-similarity.py
 - PRs:

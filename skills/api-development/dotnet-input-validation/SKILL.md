@@ -19,7 +19,7 @@ Comprehensive input validation patterns for .NET APIs. Covers the .NET 10 built-
 
 ## Out of scope
 
-- Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-blazor-auth]
+- Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-blazor-components]
 - OWASP injection prevention principles -- see [skill:dotnet-security-owasp]
 - Architectural patterns for validation placement -- see [skill:dotnet-architecture-patterns]
 - Options pattern ValidateDataAnnotations -- see [skill:dotnet-csharp-configuration]

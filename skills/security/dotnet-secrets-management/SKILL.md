@@ -19,7 +19,7 @@ Cloud-agnostic secrets management for .NET applications. Covers the full lifecyc
 
 ## Out of scope
 
-- Cloud-provider-specific vault services (Azure Key Vault, AWS Secrets Manager, GCP Secret Manager) -- cloud epics
+- Cloud-provider-specific vault services (Azure Key Vault, AWS Secrets Manager, GCP Secret Manager) -- see [skill:dotnet-advisor]
 - Authentication/authorization implementation (OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]
 - Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
 - General Options pattern and configuration sources -- see [skill:dotnet-csharp-configuration]

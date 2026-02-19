@@ -19,7 +19,7 @@ All 26 skills received the following normalizations per the T2 style guide:
 1. **Description:** Converted from participle/gerund leads to third-person declarative verbs (e.g., "Implementing API auth" -> "Secures ASP.NET Core APIs")
 2. **## Scope:** Added explicit `## Scope` section with bullet-pointed coverage topics
 3. **## Out of scope:** Converted inline `**Out of scope:**` / `**Scope boundary:**` bold labels to proper `## Out of scope` heading with bulleted cross-references
-4. **Cross-references:** Verified all use `[skill:]` syntax (already compliant pre-sweep)
+4. **Cross-references:** Converted bare-text references (e.g., "cloud epics", "covered by middleware") to `[skill:]` syntax; verified remaining references already compliant
 5. **fn-36 skills:** Both `dotnet-library-api-compat` and `dotnet-api-surface-validation` included and normalized
 
 ## Before/After Description Comparison
