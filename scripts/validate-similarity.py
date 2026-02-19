@@ -1,0 +1,417 @@
+#!/usr/bin/env python3
+"""Semantic similarity overlap detection for dotnet-artisan skill and agent descriptions.
+
+Computes pairwise semantic similarity using a multi-signal composite score:
+  composite = 0.4 * set_jaccard + 0.4 * seqmatcher + (0.15 if same_category else 0.0)
+
+Signals:
+  1. Set Jaccard (0.4 weight): tokenize -> lowercase -> strip domain stopwords -> set ->
+     |A & B| / |A | B|
+  2. SequenceMatcher ratio (0.4 weight): difflib.SequenceMatcher on raw descriptions
+  3. Same-category adjustment (+0.15 additive): flat boost for items in same category dir
+
+Exit codes:
+  0: No unsuppressed ERRORs AND no new WARNs vs baseline
+  1: Unsuppressed ERROR pairs exist, OR new WARN+ pairs not in baseline/suppressions
+  2: Script error (bad args, missing files)
+
+Task: fn-53-skill-routing-language-hardening.13
+"""
+
+import argparse
+import difflib
+import json
+import re
+import sys
+from pathlib import Path
+
+# ---- Domain stopwords (stripped before set Jaccard only) ----
+DOMAIN_STOPWORDS = {
+    "dotnet", "net", "apps", "building", "designing", "using", "writing",
+    "implementing", "adding", "creating", "configuring", "managing",
+    "choosing", "analyzing", "working", "patterns", "for",
+}
+
+# ---- Thresholds ----
+DEFAULT_WARN_THRESHOLD = 0.55
+DEFAULT_ERROR_THRESHOLD = 0.75
+INFO_THRESHOLD = 0.40
+
+# ---- Tokenisation ----
+_TOKEN_RE = re.compile(r"[a-zA-Z0-9]+")
+
+
+def tokenize(text: str) -> list[str]:
+    """Tokenize text into lowercase alphanumeric tokens."""
+    return [t.lower() for t in _TOKEN_RE.findall(text)]
+
+
+def strip_stopwords(tokens: list[str]) -> set[str]:
+    """Return set of tokens with domain stopwords removed."""
+    result = {t for t in tokens if t not in DOMAIN_STOPWORDS}
+    return result
+
+
+# ---- Similarity signals ----
+
+def set_jaccard(tokens_a: set[str], tokens_b: set[str]) -> float:
+    """Compute Jaccard index over two token sets."""
+    if not tokens_a and not tokens_b:
+        return 0.0
+    intersection = tokens_a & tokens_b
+    union = tokens_a | tokens_b
+    if not union:
+        return 0.0
+    return len(intersection) / len(union)
+
+
+def seqmatcher_ratio(desc_a: str, desc_b: str) -> float:
+    """Compute SequenceMatcher ratio on raw descriptions."""
+    if not desc_a and not desc_b:
+        return 0.0
+    return difflib.SequenceMatcher(a=desc_a, b=desc_b).ratio()
+
+
+def composite_score(
+    jaccard: float, seqmatch: float, same_category: bool
+) -> float:
+    """Compute composite similarity score per epic spec formula."""
+    return 0.4 * jaccard + 0.4 * seqmatch + (0.15 if same_category else 0.0)
+
+
+# ---- Description collection ----
+
+def collect_skill_descriptions(repo_root: Path) -> list[dict]:
+    """Collect skill ID, description, and category from all SKILL.md files."""
+    skills_dir = repo_root / "skills"
+    if not skills_dir.is_dir():
+        print(f"ERROR: skills directory not found: {skills_dir}", file=sys.stderr)
+        sys.exit(2)
+
+    items = []
+    for skill_md in sorted(skills_dir.glob("*/*/SKILL.md")):
+        skill_id = skill_md.parent.name
+        category = skill_md.parent.parent.name
+        description = _parse_skill_description(skill_md)
+        if description:
+            items.append({
+                "id": skill_id,
+                "description": description,
+                "category": category,
+            })
+    return items
+
+
+def _parse_skill_description(skill_md: Path) -> str | None:
+    """Extract description from SKILL.md frontmatter."""
+    try:
+        text = skill_md.read_text(encoding="utf-8")
+    except Exception:
+        return None
+
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    lines = text.split("\n")
+
+    if not lines or lines[0].strip() != "---":
+        return None
+
+    for i, line in enumerate(lines[1:], 1):
+        if line.strip() == "---":
+            break
+        m = re.match(r'^description\s*:\s*(.*)', line)
+        if m:
+            val = m.group(1).strip()
+            # Strip surrounding quotes
+            if len(val) >= 2 and val[0] == val[-1] and val[0] in ('"', "'"):
+                val = val[1:-1]
+            return val if val else None
+
+    return None
+
+
+def collect_agent_descriptions(repo_root: Path) -> list[dict]:
+    """Collect agent ID, description, and category from all agent .md files.
+
+    Uses the shared _agent_frontmatter.py module (T3). Falls back to
+    skills-only mode with stderr warning if the module is not available.
+    """
+    agents_dir = repo_root / "agents"
+    if not agents_dir.is_dir():
+        return []
+
+    # Import shared parser
+    try:
+        scripts_dir = repo_root / "scripts"
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        from _agent_frontmatter import parse_agent_frontmatter
+    except ImportError:
+        print(
+            "_agent_frontmatter.py not found -- running in skills-only mode, "
+            "agent descriptions excluded",
+            file=sys.stderr,
+        )
+        return []
+
+    items = []
+    for agent_md in sorted(agents_dir.glob("*.md")):
+        agent_id = agent_md.stem
+        parsed = parse_agent_frontmatter(str(agent_md))
+        description = parsed.get("description")
+        if description:
+            items.append({
+                "id": agent_id,
+                "description": description,
+                "category": "agents",
+            })
+    return items
+
+
+# ---- Suppression handling ----
+
+def load_suppressions(path: Path | None) -> set[tuple[str, str]]:
+    """Load suppression list and return set of canonical pairs."""
+    if path is None or not path.is_file():
+        return set()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"ERROR: Failed to parse suppressions file: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    pairs = set()
+    for entry in data:
+        id_a = entry.get("id_a", "")
+        id_b = entry.get("id_b", "")
+        canonical = (min(id_a, id_b), max(id_a, id_b))
+        pairs.add(canonical)
+    return pairs
+
+
+def load_baseline(path: Path | None) -> set[tuple[str, str]] | None:
+    """Load baseline file. Returns None if no baseline provided."""
+    if path is None:
+        return None
+    if not path.is_file():
+        print(f"ERROR: Baseline file not found: {path}", file=sys.stderr)
+        sys.exit(2)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"ERROR: Failed to parse baseline file: {e}", file=sys.stderr)
+        sys.exit(2)
+
+    if data.get("version") != 1:
+        print(
+            f"ERROR: Unsupported baseline version: {data.get('version')}",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+    pairs = set()
+    for pair in data.get("pairs", []):
+        if len(pair) == 2:
+            pairs.add((pair[0], pair[1]))
+    return pairs
+
+
+# ---- Main computation ----
+
+def compute_all_pairs(
+    items: list[dict],
+    suppressions: set[tuple[str, str]],
+    warn_threshold: float,
+    error_threshold: float,
+) -> list[dict]:
+    """Compute composite similarity for all pairs above INFO threshold.
+
+    Returns list of pair records sorted by composite descending.
+    """
+    results = []
+    n = len(items)
+
+    # Pre-compute tokenised sets for Jaccard
+    token_sets = []
+    for item in items:
+        tokens = tokenize(item["description"])
+        stripped = strip_stopwords(tokens)
+        token_sets.append(stripped)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            a = items[i]
+            b = items[j]
+
+            # Canonical ordering
+            if a["id"] <= b["id"]:
+                id_a, id_b = a["id"], b["id"]
+                idx_a, idx_b = i, j
+            else:
+                id_a, id_b = b["id"], a["id"]
+                idx_a, idx_b = j, i
+
+            # Compute signals
+            jaccard = set_jaccard(token_sets[idx_a], token_sets[idx_b])
+            seqmatch = seqmatcher_ratio(
+                items[idx_a]["description"], items[idx_b]["description"]
+            )
+            same_cat = items[idx_a]["category"] == items[idx_b]["category"]
+            comp = composite_score(jaccard, seqmatch, same_cat)
+
+            if comp < INFO_THRESHOLD:
+                continue
+
+            canonical_pair = (id_a, id_b)
+            is_suppressed = canonical_pair in suppressions
+
+            # Determine level
+            if is_suppressed:
+                level = "INFO"
+            elif comp >= error_threshold:
+                level = "ERROR"
+            elif comp >= warn_threshold:
+                level = "WARN"
+            else:
+                level = "INFO"
+
+            results.append({
+                "id_a": id_a,
+                "id_b": id_b,
+                "composite": round(comp, 6),
+                "jaccard": round(jaccard, 6),
+                "seqmatcher": round(seqmatch, 6),
+                "same_category": same_cat,
+                "level": level,
+            })
+
+    # Sort by composite descending, then by id_a, id_b for stability
+    results.sort(key=lambda r: (-r["composite"], r["id_a"], r["id_b"]))
+    return results
+
+
+def build_summary(
+    pairs: list[dict],
+    total_items: int,
+    total_pairs: int,
+    suppressions: set[tuple[str, str]],
+    baseline: set[tuple[str, str]] | None,
+    warn_threshold: float,
+) -> dict:
+    """Build summary statistics from computed pairs."""
+    max_score = max((p["composite"] for p in pairs), default=0.0)
+    pairs_above_warn = sum(
+        1 for p in pairs if p["level"] in ("WARN", "ERROR")
+    )
+    pairs_above_error = sum(1 for p in pairs if p["level"] == "ERROR")
+    suppressed_count = sum(
+        1 for p in pairs
+        if (p["id_a"], p["id_b"]) in suppressions
+    )
+    unsuppressed_errors = pairs_above_error  # ERROR level already excludes suppressed
+
+    # Compute new warns vs baseline
+    new_warns = 0
+    if baseline is not None:
+        for p in pairs:
+            if p["level"] in ("WARN", "ERROR"):
+                canonical = (p["id_a"], p["id_b"])
+                if canonical not in baseline and canonical not in suppressions:
+                    new_warns += 1
+
+    return {
+        "total_items": total_items,
+        "total_pairs": total_pairs,
+        "max_score": round(max_score, 6),
+        "pairs_above_warn": pairs_above_warn,
+        "pairs_above_error": pairs_above_error,
+        "suppressed_count": suppressed_count,
+        "unsuppressed_errors": unsuppressed_errors,
+        "new_warns_vs_baseline": new_warns if baseline is not None else None,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Detect semantic similarity overlap between skill/agent descriptions"
+    )
+    parser.add_argument(
+        "--repo-root", required=True, type=Path,
+        help="Path to repository root"
+    )
+    parser.add_argument(
+        "--suppressions", type=Path, default=None,
+        help="Path to similarity-suppressions.json"
+    )
+    parser.add_argument(
+        "--baseline", type=Path, default=None,
+        help="Path to similarity-baseline.json"
+    )
+    parser.add_argument(
+        "--warn-threshold", type=float, default=DEFAULT_WARN_THRESHOLD,
+        help=f"WARN threshold (default: {DEFAULT_WARN_THRESHOLD})"
+    )
+    parser.add_argument(
+        "--error-threshold", type=float, default=DEFAULT_ERROR_THRESHOLD,
+        help=f"ERROR threshold (default: {DEFAULT_ERROR_THRESHOLD})"
+    )
+
+    try:
+        args = parser.parse_args()
+    except SystemExit as e:
+        return 2 if e.code != 0 else 0
+
+    repo_root = args.repo_root.resolve()
+    if not repo_root.is_dir():
+        print(f"ERROR: repo-root is not a directory: {repo_root}", file=sys.stderr)
+        return 2
+
+    # Collect all items
+    skill_items = collect_skill_descriptions(repo_root)
+    agent_items = collect_agent_descriptions(repo_root)
+    all_items = skill_items + agent_items
+
+    total_items = len(all_items)
+    total_pairs = total_items * (total_items - 1) // 2
+
+    if total_items < 2:
+        print("ERROR: Need at least 2 items for similarity check", file=sys.stderr)
+        return 2
+
+    # Load suppressions and baseline
+    suppressions = load_suppressions(args.suppressions)
+    baseline = load_baseline(args.baseline)
+
+    # Compute all pairs
+    pairs = compute_all_pairs(
+        all_items, suppressions, args.warn_threshold, args.error_threshold
+    )
+
+    # Build summary
+    summary = build_summary(
+        pairs, total_items, total_pairs, suppressions, baseline,
+        args.warn_threshold,
+    )
+
+    # Output JSON report to stdout
+    report = {"pairs": pairs, "summary": summary}
+    print(json.dumps(report, indent=2))
+
+    # Stable CI output keys to stderr
+    print(f"MAX_SIMILARITY_SCORE={summary['max_score']}", file=sys.stderr)
+    print(f"PAIRS_ABOVE_WARN={summary['pairs_above_warn']}", file=sys.stderr)
+    print(f"PAIRS_ABOVE_ERROR={summary['pairs_above_error']}", file=sys.stderr)
+
+    # Determine exit code
+    has_unsuppressed_errors = summary["unsuppressed_errors"] > 0
+    has_new_warns = (
+        baseline is not None and summary["new_warns_vs_baseline"] is not None
+        and summary["new_warns_vs_baseline"] > 0
+    )
+
+    if has_unsuppressed_errors or has_new_warns:
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
