@@ -42,9 +42,8 @@ T4's primary job is hardening the assertion logic and evidence patterns. For loc
 - [ ] `docs/agent-routing-tests.md` updated with evidence hierarchy (Claude vs non-Claude)
 - [ ] All 14 existing test cases pass with hardened assertions (verified with `--agents claude` for local validation)
 ## Done summary
-TBD
-
+Hardened routing test evidence assertions: replaced generic "SKILL.md" tokens with skill-specific file paths in all 14 cases.json entries, updated BuildRequiredAllEvidence() to require only skill-specific paths when ExpectedSkill is set, updated ClassifyFailure() to detect missing skill-file evidence via EndsWith("/SKILL.md"), and documented the Claude vs non-Claude evidence hierarchy with failure taxonomy in docs/agent-routing-tests.md.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: f032e1e349344b94859436f55d0b5f266ce7a06a
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
