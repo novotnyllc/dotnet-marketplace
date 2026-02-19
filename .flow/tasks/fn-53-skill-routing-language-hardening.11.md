@@ -1,7 +1,7 @@
 # fn-53-skill-routing-language-hardening.11 Content-Preservation Verification
 
 ## Description
-Mandatory verification that all intended content remains represented after normalization across T5-T10. Produce a content migration map with source-section to destination-section mapping. Run automated checks for dropped sections, broken references, and self/cyclic cross-links.
+Mandatory verification that all intended content remains represented after normalization across T5-T10. Produce a content migration map with source-section to destination-section mapping. Run automated checks for dropped sections, broken references, self-links (errors) and cycles (report), and semantic similarity improvement.
 
 **Size:** M
 **Files:**
@@ -15,20 +15,25 @@ Mandatory verification that all intended content remains represented after norma
 - Run the T3 validator to check all cross-references resolve
 - Check for self-referential cross-links (skill referencing itself)
 - Verify no section was dropped without being moved elsewhere
-- Verify total description budget is within WARN threshold
+- Verify total description budget: `CURRENT_DESC_CHARS < 12,000` (strictly below WARN threshold)
+- **Run T13 similarity check** and compare against pre-sweep baseline: verify WARN pair count decreased or stayed the same, and no new ERROR pairs were introduced. Document before/after similarity summary.
 
 ## Key context
 
 - Memory pitfall: "Stale not-yet-landed references must be treated consistently" -- check for `planned` status markers that should now be `implemented`
 - The `dotnet-advisor` catalog sections marked `planned`/`implemented` must be verified current
 - This is the quality gate before docs/CI updates in T12
+- T13's similarity baseline (`scripts/similarity-baseline.json`) provides the pre-sweep state. Re-run `python3 scripts/validate-similarity.py --repo-root .` and compare against this baseline.
+
 ## Acceptance
 - [ ] `docs/skill-content-migration-map.md` covers all 130 skills with section-level before/after mapping
 - [ ] Zero dropped sections without documented migration target
 - [ ] Zero broken cross-references across skills and agents
 - [ ] Zero self-referential cross-links
 - [ ] `dotnet-advisor` catalog status markers are current
-- [ ] Total description budget ≤12,000 chars (within WARN threshold)
+- [ ] Total description budget: `CURRENT_DESC_CHARS < 12,000` (strictly less than WARN threshold)
+- [ ] Similarity improvement verified: WARN pair count <= pre-sweep baseline count. No new unsuppressed ERROR pairs.
+- [ ] Updated `scripts/similarity-baseline.json` with post-sweep pair data
 - [ ] `./scripts/validate-skills.sh` passes with zero errors and zero new warnings vs baseline
 - [ ] `./scripts/validate-marketplace.sh` passes
 ## Done summary

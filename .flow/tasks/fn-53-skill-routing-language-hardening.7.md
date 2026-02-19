@@ -23,6 +23,7 @@ Apply canonical routing language to skills assigned to this batch: api-developme
 - [ ] fn-36 skills included
 - [ ] `docs/skill-routing-sweep-api-security-testing-ci.md` emitted
 - [ ] Budget delta documented: no net increase
+- [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T8/T9/T10 batches were edited
 ## Done summary

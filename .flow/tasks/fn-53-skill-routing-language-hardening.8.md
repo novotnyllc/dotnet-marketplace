@@ -22,6 +22,7 @@ Apply canonical routing language to skills assigned to this batch: blazor, uno-p
 - [ ] Platform classifier wording is consistent across framework families
 - [ ] `docs/skill-routing-sweep-ui-nativeaot-cli-tui.md` emitted
 - [ ] Budget delta documented: no net increase
+- [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T7/T9/T10 batches were edited
 ## Done summary

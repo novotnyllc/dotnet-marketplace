@@ -25,6 +25,7 @@ Apply canonical routing language to skills assigned to this batch by the T1 owne
 - [ ] All cross-references use `[skill:]` syntax
 - [ ] `docs/skill-routing-sweep-core-arch-perf-build.md` emitted with before/after stats
 - [ ] Budget delta documented: no net increase
+- [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T7/T8/T9/T10 batches were edited
 ## Done summary

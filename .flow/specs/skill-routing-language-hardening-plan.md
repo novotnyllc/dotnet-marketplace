@@ -1,3 +1,5 @@
+> **HISTORICAL REFERENCE** — This is the prior plan snapshot (T1-T12, T6A-D, T7A-B structure). The authoritative plan is `.flow/specs/fn-53-skill-routing-language-hardening.md`.
+
 # Plan: Skill Routing Language Hardening
 
 **Generated**: 2026-02-19

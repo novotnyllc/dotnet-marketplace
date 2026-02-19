@@ -23,6 +23,7 @@ Normalize all remaining skills not covered by T5-T8. This is the long-tail batch
 - [ ] `docs/skill-routing-sweep-long-tail.md` emitted
 - [ ] Ownership manifest shows 100% of skills assigned and completed (across T5-T9)
 - [ ] Budget delta documented: no net increase
+- [ ] **Similarity check**: Run similarity before and after this batch (same branch, same suppressions). `pairs_above_warn` does not increase and `unsuppressed_errors == 0`.
 - [ ] `./scripts/validate-skills.sh` passes
 - [ ] No skills from T6/T7/T8/T10 batches were edited
 ## Done summary
