@@ -23,7 +23,7 @@ Mandatory verification that all intended content remains represented after norma
 - Memory pitfall: "Stale not-yet-landed references must be treated consistently" -- check for `planned` status markers that should now be `implemented`
 - The `dotnet-advisor` catalog sections marked `planned`/`implemented` must be verified current
 - This is the quality gate before docs/CI updates in T12
-- T13's similarity baseline (`scripts/similarity-baseline.json`) provides the pre-sweep state. Re-run `python3 scripts/validate-similarity.py --repo-root .` and compare against this baseline.
+- T13's similarity baseline file (`scripts/similarity-baseline.json`) is used for regression gating; T11 updates it to the post-sweep baseline after verification. Pre-sweep metrics are recorded in the migration map.
 
 ## Acceptance
 - [ ] `docs/skill-content-migration-map.md` covers all 130 skills with section-level before/after mapping
@@ -42,4 +42,4 @@ Created content migration map covering all 130 skills with section-level before/
 ## Evidence
 - Commits: fa8d844, d3f86ac, 6e1321b
 - Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root . --suppressions scripts/similarity-suppressions.json --baseline scripts/similarity-baseline.json
-- PRs:
+- PRs: n/a
