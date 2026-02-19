@@ -1,6 +1,6 @@
 ---
 name: dotnet-channels
-description: "Using producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain patterns"
+description: "Implements producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain."
 user-invocable: false
 ---
 
@@ -8,7 +8,17 @@ user-invocable: false
 
 Deep guide to `System.Threading.Channels` for high-performance, thread-safe producer/consumer communication in .NET. Covers channel creation, backpressure strategies, IAsyncEnumerable integration, and graceful shutdown patterns.
 
-**Out of scope:** Hosted service lifecycle and `BackgroundService` registration are owned by [skill:dotnet-background-services]. Async/await fundamentals and cancellation token propagation are owned by [skill:dotnet-csharp-async-patterns].
+## Scope
+
+- Channel<T> creation (bounded and unbounded)
+- Backpressure strategies and capacity management
+- IAsyncEnumerable integration with channel readers
+- Graceful shutdown and drain patterns
+
+## Out of scope
+
+- Hosted service lifecycle and BackgroundService registration -- see [skill:dotnet-background-services]
+- Async/await fundamentals and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
 
 Cross-references: [skill:dotnet-background-services] for integrating channels with hosted services, [skill:dotnet-csharp-async-patterns] for async patterns used in channel consumers.
 

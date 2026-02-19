@@ -1,6 +1,6 @@
 ---
 name: dotnet-background-services
-description: "Implementing background work. BackgroundService, IHostedService, lifecycle, graceful shutdown."
+description: "Implements background work. BackgroundService, IHostedService, lifecycle, graceful shutdown."
 user-invocable: false
 ---
 
@@ -8,7 +8,20 @@ user-invocable: false
 
 Patterns for long-running background work in .NET applications. Covers `BackgroundService`, `IHostedService`, hosted service lifecycle, and graceful shutdown handling.
 
-**Out of scope:** DI registration mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]. Project scaffolding -- see [skill:dotnet-scaffold-project]. Testing strategies for background services -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for hosted service testing patterns. Channel<T> fundamentals, bounded/unbounded options, and drain patterns -- see [skill:dotnet-channels].
+## Scope
+
+- BackgroundService and IHostedService patterns
+- Hosted service lifecycle and startup ordering
+- Graceful shutdown and cancellation handling
+- Periodic work, polling, and queue-draining loops
+
+## Out of scope
+
+- DI registration mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
+- Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
+- Project scaffolding -- see [skill:dotnet-scaffold-project]
+- Testing strategies for background services -- see [skill:dotnet-testing-strategy] and [skill:dotnet-integration-testing]
+- Channel<T> fundamentals and drain patterns -- see [skill:dotnet-channels]
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns in background workers, [skill:dotnet-csharp-dependency-injection] for hosted service registration and scope management, [skill:dotnet-channels] for Channel<T> patterns used in background work queues.
 

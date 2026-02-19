@@ -1,6 +1,6 @@
 ---
 name: dotnet-roslyn-analyzers
-description: "Authoring Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version."
+description: "Authors Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 Guidance for **authoring** custom Roslyn analyzers, code fix providers, code refactoring providers, and diagnostic suppressors. Covers project setup, DiagnosticDescriptor conventions, analysis context registration, code fix actions, code refactoring actions, multi-Roslyn-version targeting (3.8 through 4.14), testing with Microsoft.CodeAnalysis.Testing, NuGet packaging, and performance best practices.
 
-**Scope boundary:** This skill covers *writing* analyzers. For *consuming and configuring* existing analyzers (CA rules, EditorConfig severity, third-party packages), see [skill:dotnet-add-analyzers]. For *authoring source generators* (IIncrementalGenerator, syntax providers, code emission), see [skill:dotnet-csharp-source-generators]. Analyzers and source generators share the same NuGet packaging layout (`analyzers/dotnet/cs/`) and `Microsoft.CodeAnalysis.CSharp` dependency, but serve different purposes: analyzers report diagnostics, generators emit code.
+## Scope
+
+- DiagnosticAnalyzer authoring and analysis context registration
+- CodeFixProvider and CodeRefactoringProvider implementation
+- Multi-Roslyn-version targeting (3.8 through 4.14)
+- Testing with Microsoft.CodeAnalysis.Testing
+- NuGet packaging for analyzer assemblies
+
+## Out of scope
+
+- Consuming and configuring existing analyzers (CA rules, severity) -- see [skill:dotnet-add-analyzers]
+- Authoring source generators (IIncrementalGenerator) -- see [skill:dotnet-csharp-source-generators]
+- Naming conventions -- see [skill:dotnet-csharp-coding-standards]
 
 Cross-references: [skill:dotnet-csharp-source-generators] for shared Roslyn packaging concepts and IIncrementalGenerator patterns, [skill:dotnet-add-analyzers] for consuming and configuring analyzers, [skill:dotnet-testing-strategy] for general test organization and framework selection, [skill:dotnet-csharp-coding-standards] for naming conventions applied to analyzer code.
 

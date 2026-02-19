@@ -1,6 +1,6 @@
 ---
 name: dotnet-editorconfig
-description: "Authoring .editorconfig rules. IDE/CA severity, AnalysisLevel, globalconfig, code style enforcement."
+description: "Authors .editorconfig rules. IDE/CA severity, AnalysisLevel, globalconfig, code style enforcement."
 user-invocable: false
 ---
 
@@ -8,7 +8,18 @@ user-invocable: false
 
 Comprehensive guide to configuring .NET code analysis rules via `.editorconfig` and global AnalyzerConfig files. Covers code style rules (IDE*), code quality rules (CA*), severity levels, `AnalysisLevel`, `EnforceCodeStyleInBuild`, directory hierarchy precedence, and `.globalconfig` files.
 
-**Scope boundary:** This skill covers *configuring and tuning* analyzer rules. For *adding analyzer packages to a project*, see [skill:dotnet-add-analyzers]. For *authoring custom analyzers*, see [skill:dotnet-roslyn-analyzers]. For *project-level build configuration* (Directory.Build.props, solution layout), see [skill:dotnet-project-structure].
+## Scope
+
+- Code style rules (IDE*) and code quality rules (CA*) configuration
+- Severity levels and AnalysisLevel settings
+- Directory hierarchy precedence and .globalconfig files
+- EnforceCodeStyleInBuild integration
+
+## Out of scope
+
+- Adding analyzer packages to a project -- see [skill:dotnet-add-analyzers]
+- Authoring custom Roslyn analyzers -- see [skill:dotnet-roslyn-analyzers]
+- Project-level build configuration (Directory.Build.props) -- see [skill:dotnet-project-structure]
 
 Cross-references: [skill:dotnet-add-analyzers] for adding analyzer packages and AnalysisLevel setup, [skill:dotnet-roslyn-analyzers] for authoring custom analyzers, [skill:dotnet-project-structure] for Directory.Build.props and solution layout, [skill:dotnet-csharp-coding-standards] for naming and formatting conventions enforced by EditorConfig rules.
 

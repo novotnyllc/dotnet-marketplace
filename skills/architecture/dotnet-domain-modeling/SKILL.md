@@ -1,6 +1,6 @@
 ---
 name: dotnet-domain-modeling
-description: "Modeling business domains. Aggregates, value objects, domain events, rich models, repositories."
+description: "Models business domains. Aggregates, value objects, domain events, rich models, repositories."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, value objects, domain events, integration events, domain services, repository contract design, and the distinction between rich and anemic domain models. These patterns apply to the domain layer itself -- the pure C# model that encapsulates business rules -- independent of any persistence technology.
 
-**Out of scope:** EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-efcore-architecture]. Tactical EF Core usage (DbContext lifecycle, migrations, interceptors) -- see [skill:dotnet-efcore-patterns]. Input validation at API boundaries -- see [skill:dotnet-validation-patterns]. Choosing between EF Core, Dapper, and ADO.NET -- see [skill:dotnet-data-access-strategy]. Vertical slice architecture and request pipeline patterns -- see [skill:dotnet-architecture-patterns]. Messaging infrastructure and saga orchestration -- see [skill:dotnet-messaging-patterns].
+## Scope
+
+- Aggregate roots, entities, and value objects
+- Domain events and integration events
+- Domain services and rich vs anemic model design
+- Repository contract design (persistence-agnostic)
+
+## Out of scope
+
+- EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-efcore-architecture]
+- Tactical EF Core usage (DbContext lifecycle, migrations) -- see [skill:dotnet-efcore-patterns]
+- Input validation at API boundaries -- see [skill:dotnet-validation-patterns]
+- Data access technology selection -- see [skill:dotnet-data-access-strategy]
+- Vertical slice architecture and request pipelines -- see [skill:dotnet-architecture-patterns]
+- Messaging infrastructure and saga orchestration -- see [skill:dotnet-messaging-patterns]
 
 Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, [skill:dotnet-validation-patterns] for input validation patterns, [skill:dotnet-messaging-patterns] for integration event infrastructure.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-solid-principles
-description: "Designing classes or refactoring. SOLID, DRY, SRP with C# anti-patterns, fixes, compliance."
+description: "Applies SOLID and DRY principles. C# anti-patterns, fixes, SRP compliance checks."
 user-invocable: false
 ---
 
@@ -8,7 +8,18 @@ user-invocable: false
 
 Foundational design principles for .NET applications. Covers each SOLID principle with concrete C# anti-patterns and fixes, plus DRY guidance with nuance on when duplication is acceptable. These principles guide class design, interface contracts, and dependency management across all .NET project types.
 
-**Scope boundary:** This skill owns foundational SOLID/DRY design principles at the class and interface level. Architectural patterns (vertical slices, request pipelines, caching, idempotency) are owned by [skill:dotnet-architecture-patterns]. DI container mechanics (registration, lifetimes, keyed services) are owned by [skill:dotnet-csharp-dependency-injection]. Code smells and anti-pattern detection are owned by [skill:dotnet-csharp-code-smells].
+## Scope
+
+- SOLID principles with C# anti-patterns and fixes
+- DRY guidance and when duplication is acceptable
+- SRP compliance tests and class design heuristics
+- Interface segregation and dependency inversion patterns
+
+## Out of scope
+
+- Architectural patterns (vertical slices, request pipelines, caching) -- see [skill:dotnet-architecture-patterns]
+- DI container mechanics (registration, lifetimes, keyed services) -- see [skill:dotnet-csharp-dependency-injection]
+- Code smells and anti-pattern detection -- see [skill:dotnet-csharp-code-smells]
 
 Cross-references: [skill:dotnet-architecture-patterns] for clean architecture and vertical slices, [skill:dotnet-csharp-dependency-injection] for DI registration patterns and lifetime management, [skill:dotnet-csharp-code-smells] for anti-pattern detection, [skill:dotnet-csharp-coding-standards] for naming and style conventions.
 
