@@ -47,9 +47,8 @@ Update all contributor-facing documentation to codify routing-language standards
 - [ ] `./scripts/validate-marketplace.sh` passes
 - [ ] CI pipeline passes end-to-end
 ## Done summary
-TBD
-
+Updated contributor docs (CONTRIBUTING-SKILLS.md, CONTRIBUTING.md, AGENTS.md) with canonical routing-language rules and similarity avoidance guidance. Tightened CI gates: agent bare-ref counts gated at zero, per-key baseline regression check with hard failure on missing keys, similarity baseline regression enabled, validate-skills.sh exit code preserved. Added CHANGELOG entry, emitted final compliance summary, synced task JSON state, and cleaned up stale future-tense notes in style guide.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 381098d, a4233b9, 741e350, 20318c0, cf759e8
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
