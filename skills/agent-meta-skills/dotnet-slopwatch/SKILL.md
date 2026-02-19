@@ -17,7 +17,7 @@ Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modi
 
 ## Out of scope
 
-- Pattern recognition and manual code review for slop -- see [skill:dotnet-agent-gotchas] Slopwatch Anti-Patterns section
+- Pattern recognition and manual code review for slop -- see [skill:dotnet-agent-gotchas] for Slopwatch anti-patterns
 
 ## Prerequisites
 

@@ -65,7 +65,7 @@ Use `[skill:name]` for ALL routable references (skills and agents) -- bare text 
 ### Description Budget
 
 - Per-skill description: under 120 characters
-- Total context budget: 15,000 characters (warning threshold at 12,000)
+- Total context budget: 15,600 characters (warning threshold at 12,000)
 
 ## File Structure
 
