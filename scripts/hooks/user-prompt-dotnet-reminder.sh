@@ -3,15 +3,6 @@
 
 set -euo pipefail
 
-if ! command -v jq >/dev/null 2>&1; then
-  exit 0
-fi
-
-INPUT="$(cat)"
-if [ -z "$(echo "$INPUT" | jq -r '.user_prompt // .prompt // .message // empty')" ]; then
-  exit 0
-fi
-
 MSG=$(cat <<'EOF'
 <system-reminder>
 <dotnet-artisan-routing>
@@ -24,5 +15,7 @@ MSG=$(cat <<'EOF'
 EOF
 )
 
-jq -n --arg msg "$MSG" '{systemMessage: $msg, hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: $msg}}'
+echo "$MSG"
+
+
 exit 0
