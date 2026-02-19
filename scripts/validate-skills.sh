@@ -53,7 +53,7 @@ PLUGIN_DIR="$REPO_ROOT"
 # Default to allowing planned refs (most skills are stubs during early development).
 # Set STRICT_REFS=1 to treat unresolved cross-references as errors.
 ALLOW_PLANNED_FLAG="--allow-planned-refs"
-if [ -n "${STRICT_REFS:-}" ]; then
+if [ "${STRICT_REFS:-}" = "1" ]; then
     ALLOW_PLANNED_FLAG=""
 fi
 

@@ -146,7 +146,8 @@ jobs:
               GATE_FAIL=1
             fi
           else
-            echo "WARN: Baseline file $BASELINE_FILE not found, skipping regression check"
+            echo "FAIL: Baseline file $BASELINE_FILE not found (required for regression gating)"
+            GATE_FAIL=1
           fi
 
           if [ "$GATE_FAIL" -eq 1 ]; then
@@ -222,6 +223,6 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Metric | Value | Gate |" >> "$GITHUB_STEP_SUMMARY"
           echo "|--------|-------|------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | < 0.75 |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | informational |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline + suppressions |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 (unsuppressed) |" >> "$GITHUB_STEP_SUMMARY"
