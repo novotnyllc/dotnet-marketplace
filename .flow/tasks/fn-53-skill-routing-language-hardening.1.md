@@ -36,8 +36,8 @@ Format: Markdown table with columns `| Skill Path | Category | Assigned Task | N
 - [x] Agent file bare-text reference count documented per agent
 - [x] `./scripts/validate-skills.sh` still passes
 ## Done summary
-Built baseline audit report covering all 130 skills (description length, pairwise Jaccard overlap top-3, cross-ref count, routing marker coverage) and ownership manifest mapping every skill path to exactly one downstream editing task (T5-T10) with zero overlaps. Aligned all downstream task specs with manifest assignments.
+Built baseline audit report covering all 130 skills (description length, pairwise Jaccard overlap top-3, cross-ref count, routing marker coverage) and ownership manifest mapping every skill path to exactly one downstream editing task (T5-T10) with zero overlaps. Aligned all downstream task specs with manifest assignments. Reconciled task definition JSON and acceptance checklist.
 ## Evidence
-- Commits: 28df32c, 153995f, ed2be5f, 17b6858, f7afe82
+- Commits: 28df32c, 153995f, ed2be5f, 17b6858, f7afe82, abafb97, 5acae61
 - Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
