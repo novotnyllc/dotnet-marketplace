@@ -147,8 +147,8 @@ PROJECTED_DESC_CHARS=15600
 BUDGET_STATUS=WARN
 ```
 
-- **BUDGET_STATUS** should be determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above. (The current validator also factors in projected chars; T3 will align the validator with this canonical policy.)
-- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600) and should not be part of the status determination.
+- **BUDGET_STATUS** is currently computed from both `CURRENT_DESC_CHARS` and `PROJECTED_DESC_CHARS`. Canonical policy (T3 will align the validator): status should be determined by `CURRENT_DESC_CHARS` only -- `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
+- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600). It currently participates in status computation but will be decoupled by T3.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
 
@@ -178,7 +178,7 @@ See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 
 Rules:
 - Always use `[skill:skill-name]` -- bare text skill names are not machine-parseable
-- The skill name must match an existing `name` field in another SKILL.md
+- The referenced name must match an existing skill directory name (which should match that skill's `name` frontmatter)
 - Unresolved references produce validation warnings
 
 ### Content Patterns
@@ -186,7 +186,7 @@ Rules:
 - Use real .NET code examples, not pseudocode
 - Include tables for pattern catalogs (smell/fix/rule format works well)
 - Add an **Agent Gotchas** section for common AI agent mistakes
-- Mark scope boundaries with "**Out of scope:**" plus attribution to the owning skill
+- Mark scope boundaries with `## Scope` and `## Out of scope` headings, and include `[skill:]` attribution in out-of-scope bullets
 - Include a **References** section linking to Microsoft Learn and authoritative sources
 
 ### Size Limit

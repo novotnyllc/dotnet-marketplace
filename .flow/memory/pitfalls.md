@@ -330,3 +330,6 @@ Parallel tasks sharing a created file must have explicit sole-owner assignment; 
 
 ## 2026-02-19 manual [pitfall]
 When ownership manifests repartition work across tasks, update ALL downstream task specs (titles, descriptions, category lists, filenames) to match -- not just the ones flagged in the first review round
+
+## 2026-02-19 manual [pitfall]
+Style guide docs that describe future validator behavior must clearly separate 'current behavior' from 'canonical policy' with distinct subsections -- mixing them causes repeated reviewer churn even after adding qualifying notes

@@ -65,15 +65,17 @@ Each description must target **under 120 characters**. This is a budget constrai
 
 ### Budget Threshold Semantics
 
+**Current validator behavior:** `BUDGET_STATUS` is computed from both `CURRENT_DESC_CHARS` and `PROJECTED_DESC_CHARS` against thresholds. With `--projected-skills 130` and `--max-desc-chars 120`, `PROJECTED_DESC_CHARS` is 15,600, so `BUDGET_STATUS` is at least `WARN` until the validator semantics change.
+
+**Canonical policy (T3 will align the validator to this):**
+
 - **Acceptance criterion:** `CURRENT_DESC_CHARS < 12,000` (strictly less than)
-- **BUDGET_STATUS:** Should be derived from `CURRENT_DESC_CHARS` only, not projected chars. The canonical thresholds are:
+- **BUDGET_STATUS:** Derived from `CURRENT_DESC_CHARS` only:
   - `OK`: `CURRENT_DESC_CHARS < 12,000`
   - `WARN`: `CURRENT_DESC_CHARS >= 12,000`
   - `FAIL`: `CURRENT_DESC_CHARS >= 15,600`
-- **PROJECTED_DESC_CHARS:** Informational metric only (130 * 120 = 15,600). Should not be part of BUDGET_STATUS determination.
+- **PROJECTED_DESC_CHARS:** Informational metric only (130 * 120 = 15,600). Not part of BUDGET_STATUS determination.
 - Reaching exactly 12,000 counts as WARN. Acceptance requires being strictly below.
-
-> **Note:** The current validator (`_validate_skills.py`) also factors `PROJECTED_DESC_CHARS` into `BUDGET_STATUS`. T3 will update the validator to decouple projected from status, matching this canonical policy.
 
 All description changes during sweeps must be **budget-neutral or budget-negative** (same or fewer total characters).
 
@@ -179,7 +181,7 @@ description: "Analyzes X for Y. Routes to Z for edge cases."
 1. No WHEN prefix
 2. Third-person declarative ("Analyzes", "Debugs", "Reviews", not "WHEN analyzing")
 3. Include trigger phrases after the description when useful: `Triggers on: keyword1, keyword2.`
-4. Include WHEN NOT routing in the description body (not description field) if needed for disambiguation
+4. Include "Do not route for ..." disambiguation in the body (not the `description:` field) if needed
 
 ---
 
@@ -196,6 +198,8 @@ Local development retains the lenient default (`STRICT_REFS` unset or `0`) so au
 env:
   STRICT_REFS: 1
 ```
+
+> **Note:** Enable `STRICT_REFS=1` in CI only after T3 extends the validator to include agent file stems in the known-IDs set. Until then, `[skill:]` references to agent names would be flagged as unresolved in strict mode.
 
 ---
 
