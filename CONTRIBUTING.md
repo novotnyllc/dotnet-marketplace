@@ -184,15 +184,15 @@ Use `scripts/bump.sh` to increment the version and propagate to all locations:
 ```
 
 - The second argument defaults to `dotnet-artisan`
-- The script prints next-step instructions for committing, tagging, and pushing
+- Run this in your **PR branch**, not directly on main
 
 Example:
 
 ```bash
 ./scripts/bump.sh patch
 # Review: git diff
-# Commit: git add -A && git commit -m "chore(release): bump dotnet-artisan to v0.1.1"
-# Tag:    git tag dotnet-artisan/v0.1.1 && git push origin main && git push origin dotnet-artisan/v0.1.1
+# Commit: git add -A && git commit -m "chore(release): bump dotnet-artisan to v0.2.0"
+# Push your PR branch and merge -- the release is created automatically
 ```
 
 #### Tag Convention
@@ -201,13 +201,17 @@ Tags follow the format `dotnet-artisan/vX.Y.Z` (plugin-scoped, not bare `vX.Y.Z`
 
 #### Release Workflow
 
-On tag push matching `dotnet-artisan/v*`, the `release.yml` workflow:
+Releases are automated via two workflows:
 
-1. Verifies the tag version matches `plugin.json`
-2. Runs `scripts/validate-root-marketplace.sh` (shared root marketplace validation)
-3. Runs `scripts/validate-skills.sh` and `scripts/validate-marketplace.sh`
-4. Extracts the version-specific section from `CHANGELOG.md` using awk
-5. Creates a GitHub Release with the extracted notes and install instructions
+1. **`auto-tag.yml`** -- On every push to `main`, reads the version from `plugin.json` and checks if a matching tag exists. If not, it creates and pushes the tag `dotnet-artisan/vX.Y.Z`.
+2. **`release.yml`** -- Triggered by the tag push. It:
+   - Verifies the tag version matches `plugin.json`
+   - Runs `scripts/validate-root-marketplace.sh` (shared root marketplace validation)
+   - Runs `scripts/validate-skills.sh` and `scripts/validate-marketplace.sh`
+   - Extracts the version-specific section from `CHANGELOG.md` using awk
+   - Creates a GitHub Release with the extracted notes and install instructions
+
+PRs that don't bump the version merge without triggering a release (the tag already exists, so `auto-tag.yml` is a no-op).
 
 ## Publishing to Marketplace
 

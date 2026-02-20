@@ -1,0 +1,45 @@
+name: Auto-tag release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  auto-tag:
+    name: Create release tag if version changed
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for version tag
+        id: check
+        run: |
+          set -euo pipefail
+
+          VERSION=$(jq -r '.version' .claude-plugin/plugin.json)
+          TAG="dotnet-artisan/v${VERSION}"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists -- skipping"
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $TAG does not exist -- will create"
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          git tag "${{ steps.check.outputs.tag }}"
+          git push origin "${{ steps.check.outputs.tag }}"
