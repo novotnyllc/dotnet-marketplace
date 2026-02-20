@@ -363,3 +363,6 @@ dotnet-script and dotnet run --file are different invocations; this repo uses fi
 
 ## 2026-02-20 manual [pitfall]
 GITHUB_BASE_REF is empty for workflow_dispatch and schedule triggers — only populated for pull_request events. Baseline comparison designs must account for the actual workflow trigger types.
+
+## 2026-02-20 manual [pitfall]
+When running CLI tools via /bin/bash -lc, exit code 127 (command not found) and 126 (permission denied) indicate the binary is missing/non-executable -- the process still 'starts' (bash starts) so Started=true; detect these via exit code + stderr patterns to avoid misclassifying transport failures as assertion failures

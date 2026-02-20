@@ -325,6 +325,24 @@ internal sealed class AgentRoutingRunner
                 timedOut: exec.TimedOut);
         }
 
+        // Detect "command not found" (exit 127) or "permission denied" (exit 126)
+        // from bash -- these indicate a missing or non-executable CLI binary,
+        // which is a transport failure, not an assertion failure.
+        if (IsCommandNotFound(exec))
+        {
+            return AgentResult.Infra(
+                agent,
+                testCase,
+                $"CLI not found or not executable (exit code {exec.ExitCode})",
+                started.ElapsedMilliseconds,
+                source: "none",
+                unitRunId: unitRunId,
+                command: command,
+                exitCode: exec.ExitCode,
+                outputExcerpt: TrimExcerpt(combined),
+                timedOut: exec.TimedOut);
+        }
+
         var outputEval = EvaluateEvidence(combined, testCase, "cli_output", agent);
         if (outputEval.Success)
         {
@@ -1097,6 +1115,23 @@ internal sealed class AgentRoutingRunner
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Detects bash "command not found" (exit 127) or "permission denied" (exit 126)
+    /// which indicate a missing or non-executable CLI binary -- a transport failure.
+    /// </summary>
+    private static bool IsCommandNotFound(ExecutionResult exec)
+    {
+        if (exec.ExitCode is not (126 or 127))
+        {
+            return false;
+        }
+
+        var stderr = exec.Stderr ?? string.Empty;
+        return ContainsInsensitive(stderr, "command not found") ||
+               ContainsInsensitive(stderr, "No such file or directory") ||
+               ContainsInsensitive(stderr, "Permission denied");
     }
 
     private static string CombineOutput(string? stdout, string? stderr)

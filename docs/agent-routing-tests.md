@@ -59,7 +59,7 @@ Examples:
 - Includes `failure_kind` for failed results (`skill_not_loaded`, `missing_skill_file_evidence`, `missing_activity_evidence`, `mixed_evidence_missing`, `unknown`).
 - Includes `failure_category` for non-pass results with deterministic priority-order mapping: `timeout` (timed out), `transport` (process failed to start, CLI missing, or infra_error), `assertion` (evidence gating failed). Null when pass. Orthogonal to `failure_kind`.
 - Includes `tool_use_proof_lines` per result and writes a plain-text proof log file.
-- When progress is enabled (default), emits lifecycle transitions to stderr per unit: `queued` -> `running` -> `completed`/`failed`/`timeout`, prefixed with batch and unit run IDs for correlation.
+- When progress is enabled (default), emits lifecycle transitions to stderr per unit. Full line format: `[check-skills] HH:mm:ss [batch:{batch_run_id}] [unit:{unit_run_id}] {agent}:{case_id} -> {state}` where state is `queued`, `running`, `completed`, `failed`, or `timeout`.
 - `--no-progress` suppresses lifecycle transition output only.
 
 Evidence currently gates on:
