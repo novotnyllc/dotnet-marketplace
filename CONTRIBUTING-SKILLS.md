@@ -399,6 +399,7 @@ Before committing a new or modified skill:
 - [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
 - [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
 - [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
+- [ ] **Invocation contract** -- Scope has >=1 unordered bullet, OOS has >=1 unordered bullet, at least one OOS bullet contains `[skill:]` (see [Invocation Contract](docs/skill-routing-style-guide.md#6-invocation-contract))
 - [ ] **No self-references** -- skill does not reference itself via `[skill:]`
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
 - [ ] **Validation passes** -- both commands run clean:

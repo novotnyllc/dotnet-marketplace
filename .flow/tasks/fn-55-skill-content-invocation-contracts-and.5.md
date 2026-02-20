@@ -17,10 +17,13 @@ Establish cross-provider change policy with an operator-grade checklist in contr
 - Add pointer in CONTRIBUTING-SKILLS.md section 5 ("Testing Your Skill") to CI provider matrix output for verifying cross-agent behavior
 - Preserve all existing checklist items unchanged
 
+**Shared file note:** T1 also edits `CONTRIBUTING-SKILLS.md` (section 8 checklist item). T5 edits section 5 (testing pointer). These are disjoint sections. T5 depends on T1, ensuring sequential access.
+
 ## Key context
 
 - CONTRIBUTING.md release checklist (lines 234-245) uses `- [ ]` checkbox format with backtick-wrapped identifiers
 - CONTRIBUTING-SKILLS.md has "Testing Your Skill" section (section 5)
+- T1 edits CONTRIBUTING-SKILLS.md section 8 — be aware of this when making section 5 edits
 - Memory: "grep-verifiable ACs" — new items must be greppable
 - Policy should reference fn-54's provider-baseline.json for intentional divergence
 
@@ -29,5 +32,5 @@ Establish cross-provider change policy with an operator-grade checklist in contr
 - [ ] Policy includes 3 concrete bullets (targeted provider, CI artifacts, baseline updates)
 - [ ] Release checklist includes cross-provider verification checkbox item
 - [ ] Policy specifies that provider-targeted changes require explicit non-target verification
-- [ ] CONTRIBUTING-SKILLS.md references CI provider matrix for testing verification
+- [ ] CONTRIBUTING-SKILLS.md section 5 references CI provider matrix for testing verification
 - [ ] Existing checklist items preserved unchanged

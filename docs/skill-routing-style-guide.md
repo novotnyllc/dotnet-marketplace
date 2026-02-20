@@ -181,7 +181,104 @@ description: "Analyzes X for Y. Routes to Z for edge cases."
 
 ---
 
-## 6. CI Strict Mode
+## 6. Invocation Contract
+
+Every SKILL.md must satisfy three structural rules so the validator can confirm the skill is machine-invocable. These rules are purely structural and checkable without human judgment.
+
+### Rules
+
+1. **Scope bullets** -- `## Scope` contains at least one unordered bullet (`- `) within its section boundaries.
+2. **Out-of-scope bullets** -- `## Out of scope` contains at least one unordered bullet (`- `) within its section boundaries.
+3. **OOS cross-reference** -- At least one `## Out of scope` bullet contains a `[skill:<id>]` string.
+
+**Only unordered bullets count.** Numbered lists (`1.`, `2.`, etc.) do not satisfy rules 1--3. This ensures machine-parseable, uniform section structure.
+
+**No "Use when:" phrasing requirement.** The contract does not mandate any particular phrasing pattern in descriptions or body text. The three structural rules above are the complete contract.
+
+**Note:** This contract applies to SKILL.md files only. Agent files (`agents/*.md`) use a different structure and are not subject to these rules. A separate invocation-signal convention for agents will be defined in a follow-up effort.
+
+### Rule 3: Presence vs Resolution
+
+Rule 3 checks that the `[skill:` string appears inside at least one OOS bullet. It does **not** validate that the referenced skill ID actually exists -- that is the job of `STRICT_REFS`. The two checks are independent:
+
+| Toggle | What it checks | Default |
+|--------|---------------|---------|
+| `STRICT_INVOCATION` | Structural presence of bullets and `[skill:]` strings (rules 1--3) | WARN |
+| `STRICT_REFS` | Referenced skill IDs resolve to existing skill directories or agent file stems | WARN |
+
+These are independent toggles. Enabling one does not enable or require the other.
+
+### Validation Behavior
+
+By default, invocation contract violations produce warnings:
+
+```
+WARN:  skills/<cat>/<name>/SKILL.md -- INVOCATION_CONTRACT: Scope section has 0 unordered bullets (need >=1)
+WARN:  skills/<cat>/<name>/SKILL.md -- INVOCATION_CONTRACT: Out of scope section has 0 unordered bullets (need >=1)
+WARN:  skills/<cat>/<name>/SKILL.md -- INVOCATION_CONTRACT: No OOS bullet contains [skill:] cross-reference
+```
+
+The validator emits a summary key: `INVOCATION_CONTRACT_WARN_COUNT=<N>`.
+
+Set `STRICT_INVOCATION=1` to promote contract warnings to errors (exit 1):
+
+```bash
+# Local: strict invocation contract enforcement
+STRICT_INVOCATION=1 ./scripts/validate-skills.sh
+
+# CI: add to workflow env
+env:
+  STRICT_INVOCATION: 1
+```
+
+### Positive Example
+
+A skill that satisfies the invocation contract (from `dotnet-version-detection`):
+
+```markdown
+## Scope
+
+- Reading TFM from .csproj, Directory.Build.props, and global.json
+- Multi-targeting detection and highest-TFM selection
+- SDK version detection and preview feature gating
+- Version-specific API availability guidance
+
+## Out of scope
+
+- Project structure analysis beyond TFM -- see [skill:dotnet-project-analysis]
+- .NET 10 file-based apps without .csproj -- see [skill:dotnet-file-based-apps]
+- Framework upgrade migration steps -- see [skill:dotnet-version-upgrade]
+```
+
+All three rules pass: Scope has 4 unordered bullets, OOS has 3 unordered bullets, and every OOS bullet contains `[skill:]`.
+
+### Negative Example
+
+A skill that fails the invocation contract:
+
+```markdown
+## Scope
+
+1. Reading TFM from .csproj
+2. Multi-targeting detection
+
+## Out of scope
+
+- Project structure analysis beyond TFM
+- Framework upgrade migration steps
+```
+
+Failures:
+- **Rule 1 fails**: Scope uses numbered list items, not unordered bullets.
+- **Rule 3 fails**: No OOS bullet contains a `[skill:]` cross-reference. (Rule 2 passes: OOS has 2 unordered bullets.)
+
+### Rollout Playbook
+
+The invocation contract ships in **WARN-only mode** by default. During rollout, all 130+ skills will be audited and updated to comply. Once the full catalog is compliant, CI will flip to `STRICT_INVOCATION=1` to enforce the contract as a merge gate. Until then, the warning count (`INVOCATION_CONTRACT_WARN_COUNT`) serves as a progress metric.
+
+---
+
+## 7. CI Strict Mode
 
 ### STRICT_REFS Recommendation
 
@@ -197,9 +294,21 @@ env:
 
 `STRICT_REFS=1` is enabled in CI. The validator resolves `[skill:]` references against both skill directory names and agent file stems.
 
+### STRICT_INVOCATION Recommendation
+
+Set `STRICT_INVOCATION=1` in `.github/workflows/validate.yml` to make invocation contract violations into errors (not warnings). This prevents new skills from shipping without proper Scope/OOS structure.
+
+```yaml
+# In validate.yml
+env:
+  STRICT_INVOCATION: 1
+```
+
+`STRICT_INVOCATION` and `STRICT_REFS` are independent toggles. See section 6 for the invocation contract rules and rollout plan.
+
 ---
 
-## 7. Migration Checklist
+## 8. Migration Checklist
 
 When normalizing an existing skill to match this style guide:
 

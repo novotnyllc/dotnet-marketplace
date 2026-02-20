@@ -7,7 +7,7 @@
 - Last updated: 2026-02-19
 - Related Flow epics:
   - `fn-54-agent-routing-harness-determinism-and`
-  - `fn-57-skill-content-invocation-contracts-and`
+  - `fn-55-skill-content-invocation-contracts-and`
 
 ## Problem Statement
 
@@ -88,8 +88,9 @@ We need a stronger system that verifies skills are actually used (not skipped), 
 - Preserve machine-parseable cross-references (`[skill:name]`).
 
 2. High-traffic skill and agent updates
-- Update top-routed skills and key agents with stronger trigger signals.
+- Update top-routed skills with stronger trigger signals.
 - Keep description-budget compliance and routing-style consistency.
+- **Agent updates deferred:** Agent files (`agents/*.md`) use a different structure than SKILL.md and do not have `## Scope`/`## Out of scope` sections. A separate invocation-signal convention for agents is needed before updating them. Agent updates are deferred to a follow-up effort.
 
 3. Validation/linting
 - Extend `validate-skills` checks for invocation-contract compliance.
@@ -152,7 +153,7 @@ We need a stronger system that verifies skills are actually used (not skipped), 
 
 3. Phase 3: Skill contract and content migration
 - Publish invocation contract spec.
-- Update high-traffic skills/agents.
+- Update high-traffic skills (agent updates deferred -- see Workstream B.2).
 - Enable linting gates.
 
 4. Phase 4: Guardrails and policy enforcement
@@ -180,7 +181,7 @@ We need a stronger system that verifies skills are actually used (not skipped), 
 3. Required-skill assertions cannot pass using weak/fallback evidence alone.
 4. Case schema supports required/optional/disallowed expectations with provider aliases.
 5. CI reports per-provider outcomes and blocks regressions on non-target providers.
-6. Priority skills and agents satisfy invocation contract checks in validator + CI.
+6. Priority skills satisfy invocation contract checks in validator + CI. (Agent updates deferred -- agents use a different structure and require a separate invocation-signal convention.)
 
 ## Dependencies
 

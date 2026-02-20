@@ -1,7 +1,7 @@
 # fn-55-skill-content-invocation-contracts-and.3 Update high-traffic skills with stronger invocation signals
 
 ## Description
-Update the 14 skills in cases.json corpus with stronger invocation signals per the invocation contract spec.
+Update the 14 skills in cases.json corpus with stronger invocation signals per the invocation contract spec. No agents/*.md updates — deferred to follow-up epic.
 
 **Size:** M
 **Files:** Multiple SKILL.md files (14 skills), `skills/foundation/dotnet-advisor/SKILL.md`
@@ -16,7 +16,8 @@ Update the 14 skills in cases.json corpus with stronger invocation signals per t
 - Strengthen Scope (≥1 `- ` bullet) and OOS (≥1 `- ` bullet with `[skill:name]`)
 - dotnet-advisor: strengthen routing catalog
 - Budget: BUDGET_STATUS != FAIL
-- No agents/*.md, no plugin.json
+- **No agents/*.md edits** — agents use a different structure, deferred to follow-up epic
+- No plugin.json changes
 
 ## Key context
 
@@ -34,5 +35,6 @@ Update the 14 skills in cases.json corpus with stronger invocation signals per t
   ```
   Must output `0`
 - [ ] dotnet-advisor routing catalog strengthened
+- [ ] **No agents/*.md files modified**
 - [ ] `./scripts/validate-skills.sh` passes with 0 errors
 - [ ] `BUDGET_STATUS != FAIL`

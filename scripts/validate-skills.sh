@@ -15,7 +15,13 @@
 #   - python3
 #
 # Environment variables:
-#   STRICT_REFS=1  -- Treat unresolved cross-references as errors (default: downgrade to warnings).
+#   STRICT_REFS=1         -- Treat unresolved cross-references as errors (default: downgrade to warnings).
+#   STRICT_INVOCATION=1   -- Treat invocation contract violations as errors (default: downgrade to warnings).
+#
+# STRICT_REFS and STRICT_INVOCATION are independent toggles:
+#   - STRICT_REFS controls whether [skill:] references resolve to existing skill/agent IDs.
+#   - STRICT_INVOCATION controls whether SKILL.md files satisfy the 3-rule invocation contract
+#     (Scope bullets, OOS bullets, OOS [skill:] presence). See docs/skill-routing-style-guide.md section 6.
 #
 # During early development most skills are planned stubs, so --allow-planned-refs
 # is the default. Set STRICT_REFS=1 to enforce strict cross-reference validation.
@@ -34,6 +40,7 @@
 #   SELF_REF_COUNT=<N>
 #   AGENT_BARE_REF_COUNT=<N>
 #   AGENTSMD_BARE_REF_COUNT=<N>
+#   INVOCATION_CONTRACT_WARN_COUNT=<N>
 #
 # Output keys (stable, CI-parseable -- similarity, when script is present):
 #   MAX_SIMILARITY_SCORE=<N>
