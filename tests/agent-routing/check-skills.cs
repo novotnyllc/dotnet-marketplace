@@ -20,6 +20,7 @@ internal static class FailureKinds
     public const string MissingSkillFileEvidence = "missing_skill_file_evidence";
     public const string MissingActivityEvidence = "missing_activity_evidence";
     public const string MixedEvidenceMissing = "mixed_evidence_missing";
+    public const string WeakEvidenceOnly = "weak_evidence_only";
     public const string Unknown = "unknown";
 }
 
@@ -52,6 +53,11 @@ internal static class Program
             return 0;
         }
 
+        if (options.SelfTest)
+        {
+            return SelfTestRunner.Run();
+        }
+
         return await new AgentRoutingRunner(options).RunAsync();
     }
 }
@@ -81,6 +87,16 @@ internal sealed class AgentRoutingRunner
 
     private static readonly Regex ClaudeSkillFieldRegex = new("\"skill\":\"([^\"]+)\"", RegexOptions.Compiled);
     private static readonly Regex ClaudeLaunchingSkillRegex = new("Launching skill:\\s*([A-Za-z0-9._:-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    // ComputeTier regexes — per-provider, compiled, with named capture groups.
+    private static readonly Regex ClaudePrimarySkillRegex = new(
+        "\"name\"\\s*:\\s*\"Skill\"", RegexOptions.Compiled);
+    private static readonly Regex ClaudePrimarySkillFieldRegex = new(
+        "\"skill\"\\s*:\\s*\"(?<skill>[^\"]+)\"", RegexOptions.Compiled);
+    private static readonly Regex ClaudeSecondaryLaunchRegex = new(
+        "Launching skill:\\s*(?<skill>\\S+)", RegexOptions.Compiled);
+    private static readonly Regex CodexBaseDirectoryRegex = new(
+        "Base directory for this skill:\\s*(?<path>.+)", RegexOptions.Compiled);
 
     private readonly RunnerOptions _options;
     private readonly object _progressLock = new();
@@ -403,22 +419,38 @@ internal sealed class AgentRoutingRunner
         if (_options.EnableLogScan && batchSnapshot is not null)
         {
             var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, batchSnapshot);
-            if (logEval.Success)
+
+            // Cap all log_fallback TokenHits at Tier 2 (log_fallback can never satisfy Tier 1)
+            var cappedLogHits = CapLogFallbackTier(logEval.TokenHits);
+            var cappedLogEval = logEval with { TokenHits = cappedLogHits };
+
+            if (cappedLogEval.Success)
             {
-                return AgentResult.Pass(
-                    agent,
-                    testCase,
-                    started.ElapsedMilliseconds,
-                    source: "log_fallback",
-                    logEval,
-                    command,
-                    exec.ExitCode,
-                    TrimExcerpt(combined),
-                    exec.TimedOut,
-                    unitRunId: unitRunId);
+                // When parallel (maxParallel > 1): log_fallback is diagnostics-only unless
+                // --allow-log-fallback-pass is set (default false, auto-enabled when serial)
+                var isParallel = _options.MaxParallel > 1;
+                var allowLogPass = _options.AllowLogFallbackPass || !isParallel;
+
+                if (allowLogPass)
+                {
+                    return AgentResult.Pass(
+                        agent,
+                        testCase,
+                        started.ElapsedMilliseconds,
+                        source: "log_fallback",
+                        cappedLogEval,
+                        command,
+                        exec.ExitCode,
+                        TrimExcerpt(combined),
+                        exec.TimedOut,
+                        unitRunId: unitRunId);
+                }
+
+                // Diagnostics-only: log_fallback found evidence but we are parallel and not allowed
+                // to promote to pass. Fall through to fail with merged evidence.
             }
 
-            var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
+            var failedEval = EvidenceEvaluation.Merge(outputEval, cappedLogEval);
             var failureReason = exec.TimedOut
                 ? "command timed out"
                 : exec.ExitCode != 0
@@ -707,6 +739,56 @@ internal sealed class AgentRoutingRunner
             ? ExtractClaudeLaunchedSkills(requiredAllSearchText)
             : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
+        // Build per-token hits with tier information
+        var tokenHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
+        var lines = requiredAllSearchText.Replace("\r", string.Empty).Split('\n');
+
+        // Compute per-token best hit using ComputeTier
+        foreach (var token in requiredAll)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                continue;
+            }
+
+            EvidenceHit? bestHit = null;
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (string.IsNullOrWhiteSpace(line) || !ContainsInsensitive(line, token))
+                {
+                    continue;
+                }
+
+                var score = ScoreProofLine(line, token);
+                var tier = ComputeTier(agent, token, line, score);
+
+                if (bestHit is null ||
+                    tier < bestHit.Tier ||
+                    (tier == bestHit.Tier && score > bestHit.BestScore))
+                {
+                    bestHit = new EvidenceHit
+                    {
+                        Token = token,
+                        BestScore = score,
+                        Tier = tier,
+                        SourceKind = proofSource.Contains("log", StringComparison.OrdinalIgnoreCase) ? "log_fallback" : "cli_output",
+                        SourceDetail = proofSource,
+                        ProofLine = line.Length <= 500 ? line : line[..500] + "..."
+                    };
+                }
+            }
+
+            if (bestHit is not null)
+            {
+                tokenHits[token] = bestHit;
+            }
+        }
+
+        // Build tier requirements: which tokens need which tier
+        var tierRequirements = BuildTierRequirements(testCase, agent);
+
         var matchedAll = new List<string>();
         var missingAll = new List<string>();
         foreach (var token in requiredAll)
@@ -718,7 +800,24 @@ internal sealed class AgentRoutingRunner
 
             if (isMatched)
             {
-                matchedAll.Add(token);
+                // Check tier gating: if token has a tier requirement, verify the hit meets it
+                if (tierRequirements.TryGetValue(token, out var requiredTier) &&
+                    tokenHits.TryGetValue(token, out var hit))
+                {
+                    if (hit.Tier <= requiredTier)
+                    {
+                        matchedAll.Add(token);
+                    }
+                    else
+                    {
+                        // Token found but tier too weak for this requirement
+                        missingAll.Add(token);
+                    }
+                }
+                else
+                {
+                    matchedAll.Add(token);
+                }
             }
             else
             {
@@ -779,7 +878,97 @@ internal sealed class AgentRoutingRunner
             MatchedAny: matchedAny,
             MissingAny: missingAny,
             MatchedLogFile: null,
-            ToolUseProofLines: proofLines);
+            ToolUseProofLines: proofLines,
+            TokenHits: tokenHits);
+    }
+
+    /// <summary>
+    /// Builds per-token tier requirements. Returns token -> max acceptable tier number.
+    /// required_skills -> Tier 1 (max tier = 1), required_files -> Tier 2 (max tier = 2),
+    /// expected_skill -> Tier 1 (unless expected_skill_min_tier is set),
+    /// legacy required_all_evidence -> Tier 2 (unless also a skill).
+    /// </summary>
+    private static Dictionary<string, int> BuildTierRequirements(CaseDefinition testCase, string agent)
+    {
+        var requirements = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        // Explicit required_skills: Tier 1
+        foreach (var skill in testCase.RequiredSkills)
+        {
+            if (!string.IsNullOrWhiteSpace(skill))
+            {
+                requirements[skill] = 1;
+            }
+        }
+
+        // Explicit required_files: Tier 2
+        foreach (var file in testCase.RequiredFiles)
+        {
+            if (!string.IsNullOrWhiteSpace(file))
+            {
+                // Only set if not already more strictly required
+                requirements.TryAdd(file, 2);
+            }
+        }
+
+        // expected_skill: implicit Tier 1 unless expected_skill_min_tier is set to 2
+        if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
+        {
+            var minTier = testCase.ExpectedSkillMinTier ?? 1;
+            // Tier 1 gating for expected_skill unless opted out
+            if (!requirements.ContainsKey(testCase.ExpectedSkill) || requirements[testCase.ExpectedSkill] > minTier)
+            {
+                requirements[testCase.ExpectedSkill] = minTier;
+            }
+        }
+
+        // Legacy required_all_evidence: default Tier 2, but if token matches a skill ID
+        // (present in expected_skill or required_skills), treat as the skill's tier
+        foreach (var token in testCase.RequiredAllEvidence)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                continue;
+            }
+
+            if (!requirements.ContainsKey(token))
+            {
+                // Normalization: if legacy token is the same as expected_skill or in required_skills,
+                // use Tier 1 to avoid contradictory tiering
+                if (string.Equals(token, testCase.ExpectedSkill, StringComparison.OrdinalIgnoreCase) ||
+                    testCase.RequiredSkills.Contains(token, StringComparer.OrdinalIgnoreCase))
+                {
+                    requirements[token] = testCase.ExpectedSkillMinTier ?? 1;
+                }
+                else
+                {
+                    requirements[token] = 2;
+                }
+            }
+        }
+
+        foreach (var token in testCase.RequiredEvidence)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                continue;
+            }
+
+            if (!requirements.ContainsKey(token))
+            {
+                if (string.Equals(token, testCase.ExpectedSkill, StringComparison.OrdinalIgnoreCase) ||
+                    testCase.RequiredSkills.Contains(token, StringComparer.OrdinalIgnoreCase))
+                {
+                    requirements[token] = testCase.ExpectedSkillMinTier ?? 1;
+                }
+                else
+                {
+                    requirements[token] = 2;
+                }
+            }
+        }
+
+        return requirements;
     }
 
     private static List<ToolUseProofLine> ExtractToolUseProofLines(string text, List<string> tokens, string source)
@@ -875,6 +1064,112 @@ internal sealed class AgentRoutingRunner
         }
 
         return score;
+    }
+
+    /// <summary>
+    /// Single source of truth for evidence tier assignment. Pure, deterministic, no side effects.
+    /// Returns tier 1, 2, or 3 based on agent-specific regex + token attribution.
+    /// </summary>
+    internal static int ComputeTier(string agent, string token, string line, int score)
+    {
+        var agentLower = agent.ToLowerInvariant();
+        var tokenLower = token.ToLowerInvariant();
+
+        // Claude provider
+        if (agentLower == "claude")
+        {
+            // Claude Tier 1 (primary): "name":"Skill" on same line as "skill":"<id>"
+            if (ClaudePrimarySkillRegex.IsMatch(line))
+            {
+                var skillMatch = ClaudePrimarySkillFieldRegex.Match(line);
+                if (skillMatch.Success)
+                {
+                    var capturedSkill = skillMatch.Groups["skill"].Value;
+                    if (capturedSkill.ToLowerInvariant().Contains(tokenLower))
+                    {
+                        return 1;
+                    }
+
+                    // Tier 1 regex matched but token attribution failed -> Tier 2
+                    return 2;
+                }
+            }
+
+            // Claude Tier 1 (secondary): "Launching skill: <skill>"
+            var launchMatch = ClaudeSecondaryLaunchRegex.Match(line);
+            if (launchMatch.Success)
+            {
+                var capturedSkill = launchMatch.Groups["skill"].Value;
+                if (capturedSkill.ToLowerInvariant().Contains(tokenLower))
+                {
+                    return 1;
+                }
+
+                // Tier 1 regex matched but token attribution failed -> Tier 2
+                return 2;
+            }
+        }
+
+        // Codex/Copilot provider
+        if (agentLower is "codex" or "copilot")
+        {
+            // Codex/Copilot Tier 1: "Base directory for this skill: <path>"
+            var baseMatch = CodexBaseDirectoryRegex.Match(line);
+            if (baseMatch.Success)
+            {
+                var rawPath = baseMatch.Groups["path"].Value.Trim();
+                var normalizedPath = rawPath.Replace('\\', '/').ToLowerInvariant();
+
+                // Require /<token>/ in path (interior match)
+                if (normalizedPath.Contains("/" + tokenLower + "/"))
+                {
+                    return 1;
+                }
+
+                // End-of-path match: /<token> at string end
+                if (normalizedPath.EndsWith("/" + tokenLower))
+                {
+                    return 1;
+                }
+
+                // Tier 1 regex matched but token attribution failed -> Tier 2
+                return 2;
+            }
+        }
+
+        // Score-based tier assignment (all providers)
+        if (score >= 60)
+        {
+            return 2;
+        }
+
+        return 3;
+    }
+
+    /// <summary>
+    /// Caps all log_fallback TokenHits at Tier 2. Log fallback cannot satisfy Tier 1.
+    /// </summary>
+    private static Dictionary<string, EvidenceHit>? CapLogFallbackTier(Dictionary<string, EvidenceHit>? tokenHits)
+    {
+        if (tokenHits is null || tokenHits.Count == 0)
+        {
+            return tokenHits;
+        }
+
+        var capped = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (key, hit) in tokenHits)
+        {
+            if (hit.Tier < 2)
+            {
+                capped[key] = hit with { Tier = 2, SourceKind = "log_fallback" };
+            }
+            else
+            {
+                capped[key] = hit with { SourceKind = "log_fallback" };
+            }
+        }
+
+        return capped;
     }
 
     private static List<ToolUseProofLine> MergeProofLines(List<ToolUseProofLine> first, List<ToolUseProofLine> second)
@@ -1304,6 +1599,8 @@ internal sealed class RunnerOptions
     public bool Progress { get; init; } = true;
     public bool EnableLogScan { get; init; } = true;
     public bool FailOnInfra { get; init; }
+    public bool AllowLogFallbackPass { get; init; }
+    public bool SelfTest { get; init; }
     public bool ShowHelp { get; init; }
     public HashSet<string> Agents { get; init; } = new(StringComparer.OrdinalIgnoreCase);
     public HashSet<string> Categories { get; init; } = new(StringComparer.OrdinalIgnoreCase);
@@ -1335,6 +1632,8 @@ internal sealed class RunnerOptions
         }
 
         bool? enableLogScanExplicit = null;
+        bool allowLogFallbackPass = false;
+        bool selfTest = false;
 
         for (var i = 0; i < args.Length; i++)
         {
@@ -1344,6 +1643,12 @@ internal sealed class RunnerOptions
                 case "-h":
                 case "--help":
                     showHelp = true;
+                    break;
+                case "--self-test":
+                    selfTest = true;
+                    break;
+                case "--allow-log-fallback-pass":
+                    allowLogFallbackPass = true;
                     break;
                 case "--input":
                     input = ReadValue(args, ref i, "--input");
@@ -1415,6 +1720,8 @@ internal sealed class RunnerOptions
             Progress = progress,
             EnableLogScan = enableLogScan,
             FailOnInfra = failOnInfra,
+            AllowLogFallbackPass = allowLogFallbackPass,
+            SelfTest = selfTest,
             ShowHelp = showHelp,
             Agents = agents,
             Categories = categories,
@@ -1478,6 +1785,8 @@ internal sealed class RunnerOptions
               --enable-log-scan         Enable log file scanning (default: on when serial, off when parallel)
               --disable-log-scan        Disable log file scanning
               --fail-on-infra           Exit non-zero when infra_error exists
+              --allow-log-fallback-pass Allow log_fallback to satisfy pass (default: false, auto serial)
+              --self-test               Run ComputeTier self-test against built-in fixtures and exit
               --help                    Show this help
 
             Environment:
@@ -1523,6 +1832,24 @@ internal sealed record CaseDefinition
 
     [JsonPropertyName("require_skill_file")]
     public bool RequireSkillFile { get; init; } = true;
+
+    /// <summary>
+    /// Tier 1 gated skill tokens. expected_skill is auto-added unless expected_skill_min_tier is set to 2.
+    /// </summary>
+    [JsonPropertyName("required_skills")]
+    public string[] RequiredSkills { get; init; } = [];
+
+    /// <summary>
+    /// Tier 2 gated file tokens.
+    /// </summary>
+    [JsonPropertyName("required_files")]
+    public string[] RequiredFiles { get; init; } = [];
+
+    /// <summary>
+    /// Opt-out from implicit Tier 1 for expected_skill. Set to 2 to accept Tier 2 evidence.
+    /// </summary>
+    [JsonPropertyName("expected_skill_min_tier")]
+    public int? ExpectedSkillMinTier { get; init; }
 }
 
 internal sealed record EvidenceEvaluation(
@@ -1532,7 +1859,8 @@ internal sealed record EvidenceEvaluation(
     List<string> MatchedAny,
     List<string> MissingAny,
     string? MatchedLogFile,
-    List<ToolUseProofLine> ToolUseProofLines)
+    List<ToolUseProofLine> ToolUseProofLines,
+    Dictionary<string, EvidenceHit>? TokenHits = null)
 {
     public List<string> MatchedEvidence =>
     [
@@ -1548,6 +1876,11 @@ internal sealed record EvidenceEvaluation(
             : Array.Empty<string>())
     ];
 
+    /// <summary>
+    /// Merges two evaluations, selecting strongest hit per token.
+    /// Tie-breaker: higher tier (lower number) > higher score > cli_output over log_fallback > stable ordering.
+    /// log_fallback hits are capped at Tier 2.
+    /// </summary>
     public static EvidenceEvaluation Merge(EvidenceEvaluation first, EvidenceEvaluation second)
     {
         var matchedAll = new List<string>(first.MatchedAll);
@@ -1576,6 +1909,9 @@ internal sealed record EvidenceEvaluation(
             ? new List<string>()
             : new List<string>(first.MissingAny);
 
+        // Merge TokenHits: select strongest hit per token
+        var mergedHits = MergeTokenHits(first.TokenHits, second.TokenHits);
+
         return new EvidenceEvaluation(
             Success: missingAll.Count == 0 && missingAny.Count == 0,
             MatchedAll: matchedAll,
@@ -1583,7 +1919,66 @@ internal sealed record EvidenceEvaluation(
             MatchedAny: matchedAny,
             MissingAny: missingAny,
             MatchedLogFile: second.MatchedLogFile ?? first.MatchedLogFile,
-            ToolUseProofLines: MergeProofLines(first.ToolUseProofLines, second.ToolUseProofLines));
+            ToolUseProofLines: MergeProofLines(first.ToolUseProofLines, second.ToolUseProofLines),
+            TokenHits: mergedHits);
+    }
+
+    /// <summary>
+    /// Merges TokenHits dictionaries, selecting the strongest hit per token.
+    /// Tie-breaker: higher tier (lower number) > higher score > cli_output over log_fallback > stable (first wins).
+    /// </summary>
+    internal static Dictionary<string, EvidenceHit> MergeTokenHits(
+        Dictionary<string, EvidenceHit>? first,
+        Dictionary<string, EvidenceHit>? second)
+    {
+        var merged = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
+
+        if (first is not null)
+        {
+            foreach (var (key, hit) in first)
+            {
+                merged[key] = hit;
+            }
+        }
+
+        if (second is not null)
+        {
+            foreach (var (key, hit) in second)
+            {
+                if (!merged.TryGetValue(key, out var existing))
+                {
+                    merged[key] = hit;
+                    continue;
+                }
+
+                // Compare: lower tier number is better
+                if (hit.Tier < existing.Tier)
+                {
+                    merged[key] = hit;
+                }
+                else if (hit.Tier == existing.Tier)
+                {
+                    // Same tier: higher score wins
+                    if (hit.BestScore > existing.BestScore)
+                    {
+                        merged[key] = hit;
+                    }
+                    else if (hit.BestScore == existing.BestScore)
+                    {
+                        // Same score: cli_output beats log_fallback
+                        var existingIsLog = existing.SourceKind.Contains("log", StringComparison.OrdinalIgnoreCase);
+                        var newIsLog = hit.SourceKind.Contains("log", StringComparison.OrdinalIgnoreCase);
+                        if (existingIsLog && !newIsLog)
+                        {
+                            merged[key] = hit;
+                        }
+                        // Otherwise keep existing (stable ordering)
+                    }
+                }
+            }
+        }
+
+        return merged;
     }
 
     private static List<ToolUseProofLine> MergeProofLines(List<ToolUseProofLine> first, List<ToolUseProofLine> second)
@@ -1629,6 +2024,30 @@ internal sealed record ExecutionResult(
     string? ErrorMessage);
 
 internal sealed record LogFileState(long Length, DateTime LastWriteUtc);
+
+/// <summary>
+/// Per-token best evidence hit with tier, score, source, and proof line.
+/// </summary>
+internal sealed record EvidenceHit
+{
+    [JsonPropertyName("token")]
+    public string Token { get; init; } = string.Empty;
+
+    [JsonPropertyName("best_score")]
+    public int BestScore { get; init; }
+
+    [JsonPropertyName("tier")]
+    public int Tier { get; init; }
+
+    [JsonPropertyName("source_kind")]
+    public string SourceKind { get; init; } = string.Empty;
+
+    [JsonPropertyName("source_detail")]
+    public string SourceDetail { get; init; } = string.Empty;
+
+    [JsonPropertyName("proof_line")]
+    public string ProofLine { get; init; } = string.Empty;
+}
 
 internal sealed class ResultEnvelope
 {
@@ -1904,6 +2323,13 @@ internal sealed class AgentResult
 
     private static string ClassifyFailure(CaseDefinition testCase, EvidenceEvaluation evidence)
     {
+        // Check for weak_evidence_only: all token hits are Tier 3
+        if (evidence.TokenHits is { Count: > 0 } &&
+            evidence.TokenHits.Values.All(h => h.Tier >= 3))
+        {
+            return FailureKinds.WeakEvidenceOnly;
+        }
+
         var missingSkill = evidence.MissingAll.Contains(testCase.ExpectedSkill, StringComparer.OrdinalIgnoreCase);
         // Detect missing skill-file evidence as any missing token ending with "/SKILL.md".
         // This handles both skill-specific paths (e.g. "dotnet-xunit/SKILL.md") and
@@ -1934,5 +2360,129 @@ internal sealed class AgentResult
         }
 
         return FailureKinds.Unknown;
+    }
+}
+
+/// <summary>
+/// Self-test runner for ComputeTier. Runs built-in fixture inputs against expected tiers.
+/// Invocation: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
+/// Exits 0 on pass, 1 on failure with diff output.
+/// </summary>
+internal static class SelfTestRunner
+{
+    private sealed record Fixture(string Name, string Agent, string Token, string Line, int Score, int ExpectedTier);
+
+    public static int Run()
+    {
+        var fixtures = new List<Fixture>
+        {
+            // Claude primary Tier 1: tool_use JSON with "name":"Skill" + "skill":"dotnet-xunit"
+            new("Claude primary Tier 1 hit (tool_use JSON)",
+                "claude", "dotnet-xunit",
+                """{"type":"tool_use","id":"toolu_01","name":"Skill","input":{"skill":"dotnet-xunit","arguments":{}}}""",
+                1000, 1),
+
+            // Claude primary Tier 1: token attribution is case-insensitive substring
+            new("Claude primary Tier 1 hit (qualified skill name)",
+                "claude", "dotnet-xunit",
+                """{"type":"tool_use","id":"toolu_02","name":"Skill","input":{"skill":"dotnet-artisan:dotnet-xunit","arguments":{}}}""",
+                1000, 1),
+
+            // Claude secondary Tier 1: "Launching skill: dotnet-xunit"
+            new("Claude secondary Tier 1 hit (Launching skill)",
+                "claude", "dotnet-xunit",
+                "Launching skill: dotnet-xunit",
+                900, 1),
+
+            // Claude Tier 2 fallback: Tier 1 regex match but token attribution fails
+            new("Claude Tier 2 fallback (Tier 1 regex without token attribution)",
+                "claude", "dotnet-xunit",
+                """{"type":"tool_use","id":"toolu_03","name":"Skill","input":{"skill":"dotnet-blazor-components","arguments":{}}}""",
+                1000, 2),
+
+            // Claude secondary Tier 2 fallback: Launching skill with wrong token
+            new("Claude secondary Tier 2 fallback (Launching skill wrong token)",
+                "claude", "dotnet-xunit",
+                "Launching skill: dotnet-efcore-patterns",
+                900, 2),
+
+            // Codex Tier 1 hit: path contains /dotnet-xunit/
+            new("Codex Tier 1 hit (path contains /token/)",
+                "codex", "dotnet-xunit",
+                "Base directory for this skill: /skills/testing/dotnet-xunit/SKILL.md",
+                700, 1),
+
+            // Copilot Tier 1 hit: path contains /dotnet-xunit/
+            new("Copilot Tier 1 hit (path contains /token/)",
+                "copilot", "dotnet-xunit",
+                "Base directory for this skill: /skills/testing/dotnet-xunit/SKILL.md",
+                700, 1),
+
+            // Codex Tier 1 hit: end-of-path match /<token>
+            new("Codex Tier 1 hit (end-of-path match)",
+                "codex", "dotnet-xunit",
+                "Base directory for this skill: /skills/testing/dotnet-xunit",
+                700, 1),
+
+            // Codex Tier 1 miss -> Tier 2: path does not contain the token
+            new("Codex Tier 1 miss -> Tier 2 (path lacks token)",
+                "codex", "dotnet-xunit",
+                "Base directory for this skill: /skills/testing/dotnet-blazor-components/SKILL.md",
+                700, 2),
+
+            // Codex Tier 1: backslash path normalization
+            new("Codex Tier 1 hit (backslash path normalization)",
+                "codex", "dotnet-xunit",
+                @"Base directory for this skill: C:\skills\testing\dotnet-xunit\SKILL.md",
+                700, 1),
+
+            // Tier 3 low score (all providers)
+            new("Tier 3 low score (claude)",
+                "claude", "dotnet-xunit",
+                "some random line mentioning dotnet-xunit without strong signal",
+                10, 3),
+
+            // Tier 2 moderate score (no Tier 1 regex match)
+            new("Tier 2 moderate score (codex, no base-dir regex)",
+                "codex", "dotnet-xunit",
+                """{"tool_use":"read_file","path":"skills/testing/dotnet-xunit/SKILL.md"}""",
+                110, 2),
+        };
+
+        var failures = new List<string>();
+        var passed = 0;
+
+        foreach (var fixture in fixtures)
+        {
+            var actual = AgentRoutingRunner.ComputeTier(fixture.Agent, fixture.Token, fixture.Line, fixture.Score);
+            if (actual == fixture.ExpectedTier)
+            {
+                passed++;
+                Console.WriteLine($"  PASS: {fixture.Name} -> Tier {actual}");
+            }
+            else
+            {
+                failures.Add($"  FAIL: {fixture.Name}\n    expected: Tier {fixture.ExpectedTier}\n    actual:   Tier {actual}\n    agent={fixture.Agent} token={fixture.Token}\n    line={fixture.Line}");
+                Console.WriteLine($"  FAIL: {fixture.Name} -> expected Tier {fixture.ExpectedTier}, got Tier {actual}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Self-test results: {passed}/{fixtures.Count} passed");
+
+        if (failures.Count > 0)
+        {
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("--- FAILURES ---");
+            foreach (var f in failures)
+            {
+                Console.Error.WriteLine(f);
+            }
+
+            return 1;
+        }
+
+        Console.WriteLine("All ComputeTier self-tests passed.");
+        return 0;
     }
 }
