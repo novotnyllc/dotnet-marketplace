@@ -2144,9 +2144,11 @@ internal sealed record CaseDefinition
     public string[] DisallowedSkills { get; init; } = [];
 
     /// <summary>
-    /// Minimum tier at which disallowed skill matches cause failure.
-    /// Default 2: Tier 3 (weak mentions) are diagnostics only, not failure-causing.
-    /// Set to 1 for strict mode where even Tier 1 matches fail.
+    /// Maximum tier number (weakest evidence strength) that still causes disallowed failure.
+    /// Lower tier = stronger evidence (Tier 1 > Tier 2 > Tier 3).
+    /// Default 2: Tier 1 and Tier 2 matches cause failure; Tier 3 (weak mentions) diagnostics only.
+    /// Set to 1: only Tier 1 (definitive skill invocation) causes failure (more permissive).
+    /// Set to 3: all tiers including weak mentions cause failure (most strict).
     /// </summary>
     [JsonPropertyName("disallowed_min_tier")]
     public int DisallowedMinTier { get; init; } = 2;
@@ -2686,28 +2688,44 @@ internal sealed class AgentResult
         var missingAny = evidence.MissingAny.Count > 0;
         var hasMissingRequired = evidence.MissingAll.Count > 0 || missingAny;
 
-        // T3 granular classification with multi-reason detection
-        // Count how many distinct failure reasons apply
-        var reasons = new List<string>();
+        // optional_only detection: at least one optional skill was hit in TokenHits,
+        // but the expected/required skills are not satisfied, and activity evidence
+        // is present (MissingAny is empty). This is a more specific form of
+        // "missing required" where routing found some skills but not the right ones.
+        var optionalTokenHits = testCase.OptionalSkills.Length == 0 || evidence.TokenHits is null
+            ? Array.Empty<string>()
+            : testCase.OptionalSkills
+                .Where(s => !string.IsNullOrWhiteSpace(s) && evidence.TokenHits.ContainsKey(s))
+                .ToArray();
+        var hasOptionalHits = optionalTokenHits.Length > 0;
 
-        if (hasMissingRequired)
-        {
-            reasons.Add(FailureKinds.MissingRequired);
-        }
+        var expectedMissing =
+            !string.IsNullOrWhiteSpace(testCase.ExpectedSkill) &&
+            evidence.MissingAll.Contains(testCase.ExpectedSkill, StringComparer.OrdinalIgnoreCase);
+
+        // "Activity present" signal: required_any_evidence satisfied (MissingAny empty)
+        var hasActivityEvidence = evidence.MissingAny.Count == 0;
+
+        // optional_only: wrong skill(s) were found, but agent did engage with tools
+        var isOptionalOnly = hasOptionalHits && expectedMissing && hasActivityEvidence;
+
+        // T3 granular classification with multi-reason detection
+        var reasons = new List<string>();
 
         if (hasDisallowedHits)
         {
             reasons.Add(FailureKinds.DisallowedHit);
         }
 
-        // optional_only: all matched evidence comes from optional skills only,
-        // with no required skills matched. This means the routing found some
-        // skills but not the right ones.
-        if (!hasMissingRequired && !hasDisallowedHits &&
-            testCase.OptionalSkills.Length > 0 &&
-            evidence.MatchedAll.Count == 0 && evidence.MatchedAny.Count == 0)
+        // Prefer optional_only over missing_required — it is a more specific
+        // diagnosis (wrong skills hit vs. skills absent entirely).
+        if (isOptionalOnly)
         {
             reasons.Add(FailureKinds.OptionalOnly);
+        }
+        else if (hasMissingRequired)
+        {
+            reasons.Add(FailureKinds.MissingRequired);
         }
 
         // If multiple reasons apply, return mixed
@@ -2987,6 +3005,30 @@ internal static class SelfTestRunner
                 TokenHits: null),
             null,
             FailureKinds.MissingRequired);
+
+        // Test: optional_only — optional skill hit, expected skill missing, activity present
+        TestClassify(
+            "optional_only (optional skill hit, expected skill missing, activity present)",
+            new CaseDefinition
+            {
+                ExpectedSkill = "dotnet-xunit",
+                OptionalSkills = ["dotnet-blazor-components"],
+                RequiredSkills = ["dotnet-xunit"]
+            },
+            new EvidenceEvaluation(
+                Success: false,
+                MatchedAll: [],
+                MissingAll: ["dotnet-xunit"],
+                MatchedAny: ["tool_use"],
+                MissingAny: [],
+                MatchedLogFile: null,
+                ToolUseProofLines: [],
+                TokenHits: new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["dotnet-blazor-components"] = new() { Token = "dotnet-blazor-components", BestScore = 1000, Tier = 1, SourceKind = "cli_output" }
+                }),
+            null,
+            FailureKinds.OptionalOnly);
 
         // Test: EvaluateDisallowedSkills — Tier 3 is diagnostics only (default disallowed_min_tier=2)
         var tier3Case = new CaseDefinition
