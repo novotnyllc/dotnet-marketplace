@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: Validate plugin structure and skills
@@ -21,6 +25,30 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.local/share/NuGet/v3-cache
+          key: ${{ runner.os }}-nuget-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore routing runner
+        run: dotnet restore tests/agent-routing/check-skills.cs
+
+      - name: Build routing runner
+        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
+
+      - name: Run routing runner self-tests
+        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
 
       - name: Validate root marketplace.json
         run: |

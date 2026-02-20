@@ -1340,6 +1340,56 @@ internal sealed class AgentRoutingRunner
         // Codex/Copilot provider
         if (agentLower is "codex" or "copilot")
         {
+            var normalizedLine = line.Replace('\\', '/');
+            var normalizedLineLower = normalizedLine.ToLowerInvariant();
+
+            if (tokenLower.Contains('/') &&
+                normalizedLineLower.Contains(tokenLower, StringComparison.Ordinal))
+            {
+                var pathIndicatesRead = normalizedLineLower.Contains("sed -n", StringComparison.Ordinal) ||
+                                       normalizedLineLower.Contains("cat ", StringComparison.Ordinal) ||
+                                       normalizedLineLower.Contains("read_file", StringComparison.Ordinal) ||
+                                       normalizedLineLower.Contains("open ", StringComparison.Ordinal) ||
+                                       normalizedLineLower.Contains(" read ", StringComparison.Ordinal) ||
+                                       normalizedLineLower.Contains("read \"", StringComparison.Ordinal);
+
+                var pathLooksLikeListingNoise = normalizedLineLower.Contains("rg --files", StringComparison.Ordinal) ||
+                                                normalizedLineLower.Contains("glob \"**", StringComparison.Ordinal) ||
+                                                normalizedLineLower.Contains("find ", StringComparison.Ordinal) ||
+                                                normalizedLineLower.Contains("ls -la", StringComparison.Ordinal);
+
+                if (pathIndicatesRead && !pathLooksLikeListingNoise)
+                {
+                    // Path-token evidence is file-level proof (Tier 2), not direct
+                    // Skill tool invocation (Tier 1).
+                    return 2;
+                }
+            }
+
+            // Codex/Copilot Tier 1: explicit direct read/open of <skill>/SKILL.md.
+            // This captures the primary invocation trace for providers that do not emit
+            // Claude-style Skill tool events. Guard against broad file-list noise.
+            if (!tokenLower.Contains('/') &&
+                normalizedLineLower.Contains(tokenLower + "/skill.md", StringComparison.Ordinal))
+            {
+                var indicatesRead = normalizedLineLower.Contains("sed -n", StringComparison.Ordinal) ||
+                                   normalizedLineLower.Contains("cat ", StringComparison.Ordinal) ||
+                                   normalizedLineLower.Contains("read_file", StringComparison.Ordinal) ||
+                                   normalizedLineLower.Contains("open ", StringComparison.Ordinal) ||
+                                   normalizedLineLower.Contains(" read ", StringComparison.Ordinal) ||
+                                   normalizedLineLower.Contains("read \"", StringComparison.Ordinal);
+
+                var looksLikeListingNoise = normalizedLineLower.Contains("rg --files", StringComparison.Ordinal) ||
+                                            normalizedLineLower.Contains("glob \"**", StringComparison.Ordinal) ||
+                                            normalizedLineLower.Contains("find ", StringComparison.Ordinal) ||
+                                            normalizedLineLower.Contains("ls -la", StringComparison.Ordinal);
+
+                if (indicatesRead && !looksLikeListingNoise)
+                {
+                    return 1;
+                }
+            }
+
             // Codex/Copilot Tier 1: "Base directory for this skill: <path>"
             // Only apply Tier 1 attribution for skill-id tokens (no path separators).
             // Tokens containing '/' are file paths (e.g. "dotnet-xunit/SKILL.md") and should
@@ -2902,11 +2952,11 @@ internal static class SelfTestRunner
                 "some random line mentioning dotnet-xunit without strong signal",
                 10, 3),
 
-            // Tier 2 moderate score (no Tier 1 regex match)
-            new("Tier 2 moderate score (codex, no base-dir regex)",
+            // Direct SKILL.md reads are Tier 1 invocation evidence for Codex/Copilot
+            new("Tier 1 direct skill file read (codex, no base-dir regex)",
                 "codex", "dotnet-xunit",
                 """{"tool_use":"read_file","path":"skills/testing/dotnet-xunit/SKILL.md"}""",
-                110, 2),
+                110, 1),
 
             // Path token should not get Tier 1 from base-dir regex (Issue 3 guard)
             new("Codex path token skips base-dir Tier 1 (token contains /)",

@@ -32,6 +32,18 @@ Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all speci
 
 ---
 
+## Fast Repository Scan (Optional)
+
+For large repos, run the bundled scanner first to quickly inventory TFM/SDK signals before applying the precedence algorithm below:
+
+```bash
+python3 skills/foundation/dotnet-version-detection/scripts/scan-dotnet-targets.py --root . --json
+```
+
+Use the script output (`project_target_frameworks`, `global_json.sdk_version`, `workflow_dotnet_versions`) as discovery input. The precedence rules below remain authoritative for final TFM selection.
+
+---
+
 ## Detection Precedence Algorithm
 
 Read project files in this strict order. **Higher-numbered sources are lower priority.** Stop falling through once a TFM is resolved.
