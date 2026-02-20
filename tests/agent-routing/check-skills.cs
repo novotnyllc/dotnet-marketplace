@@ -86,9 +86,6 @@ internal sealed class AgentRoutingRunner
         "Invalid MCP config for plugin \"dotnet-artisan\""
     ];
 
-    private static readonly Regex ClaudeSkillFieldRegex = new("\"skill\":\"([^\"]+)\"", RegexOptions.Compiled);
-    private static readonly Regex ClaudeLaunchingSkillRegex = new("Launching skill:\\s*([A-Za-z0-9._:-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
     // ComputeTier regexes — per-provider, compiled, with named capture groups.
     private static readonly Regex ClaudePrimarySkillRegex = new(
         "\"name\"\\s*:\\s*\"Skill\"", RegexOptions.Compiled);
@@ -448,7 +445,34 @@ internal sealed class AgentRoutingRunner
                 }
 
                 // Diagnostics-only: log_fallback found evidence but we are parallel and not allowed
-                // to promote to pass. Fall through to fail with merged evidence.
+                // to promote to pass. Keep CLI evidence as the gating source (preserving its
+                // MissingAll/MissingAny), but merge observability data (TokenHits, proof lines,
+                // log file) for debugging.
+                var diagEval = outputEval with
+                {
+                    ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, cappedLogEval.ToolUseProofLines),
+                    TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, cappedLogEval.TokenHits),
+                    MatchedLogFile = cappedLogEval.MatchedLogFile ?? outputEval.MatchedLogFile,
+                };
+
+                var diagFailureReason = exec.TimedOut
+                    ? "command timed out"
+                    : exec.ExitCode != 0
+                        ? $"agent command returned exit code {exec.ExitCode}"
+                        : null;
+
+                return AgentResult.Fail(
+                    agent,
+                    testCase,
+                    started.ElapsedMilliseconds,
+                    source: "cli_output+log_fallback(diag)",
+                    diagEval,
+                    command,
+                    exec.ExitCode,
+                    TrimExcerpt(combined),
+                    exec.TimedOut,
+                    unitRunId: unitRunId,
+                    error: diagFailureReason);
             }
 
             var failedEval = EvidenceEvaluation.Merge(outputEval, cappedLogEval);
@@ -736,10 +760,6 @@ internal sealed class AgentRoutingRunner
         var requiredAll = BuildRequiredAllEvidence(testCase, agent);
         var requiredAny = BuildRequiredAnyEvidence(testCase);
         var requiredAllSearchText = BuildRequiredAllSearchText(text, agent);
-        var claudeLaunchedSkills = string.Equals(agent, "claude", StringComparison.OrdinalIgnoreCase)
-            ? ExtractClaudeLaunchedSkills(requiredAllSearchText)
-            : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
         // Build per-token hits with tier information
         var tokenHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
         var lines = requiredAllSearchText.Replace("\r", string.Empty).Split('\n');
@@ -812,8 +832,8 @@ internal sealed class AgentRoutingRunner
                 LooksLikeDotnetSkillId(token))
             {
                 // For Claude skill-id tokens, use TokenHits as presence test.
-                // This makes ComputeTier the single source of truth — the whitespace-tolerant
-                // regexes in ComputeTier determine presence, not the legacy ExtractClaudeLaunchedSkills.
+                // ComputeTier is the single source of truth — its whitespace-tolerant
+                // regexes determine whether a skill was invoked.
                 isMatched = tokenHits.ContainsKey(token);
             }
             else if (token.Contains('/'))
@@ -1387,62 +1407,6 @@ internal sealed class AgentRoutingRunner
     private static bool LooksLikeDotnetSkillId(string token)
     {
         return token.StartsWith("dotnet-", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static HashSet<string> ExtractClaudeLaunchedSkills(string text)
-    {
-        var launched = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var lines = text.Replace("\r", string.Empty).Split('\n');
-
-        foreach (var line in lines)
-        {
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                continue;
-            }
-
-            if (ContainsInsensitive(line, "\"name\":\"Skill\""))
-            {
-                foreach (Match match in ClaudeSkillFieldRegex.Matches(line))
-                {
-                    if (match.Groups.Count < 2)
-                    {
-                        continue;
-                    }
-
-                    AddSkillVariants(launched, match.Groups[1].Value);
-                }
-            }
-
-            foreach (Match match in ClaudeLaunchingSkillRegex.Matches(line))
-            {
-                if (match.Groups.Count < 2)
-                {
-                    continue;
-                }
-
-                AddSkillVariants(launched, match.Groups[1].Value);
-            }
-        }
-
-        return launched;
-    }
-
-    private static void AddSkillVariants(HashSet<string> set, string rawSkill)
-    {
-        if (string.IsNullOrWhiteSpace(rawSkill))
-        {
-            return;
-        }
-
-        var skill = rawSkill.Trim();
-        set.Add(skill);
-
-        var lastColon = skill.LastIndexOf(':');
-        if (lastColon >= 0 && lastColon + 1 < skill.Length)
-        {
-            set.Add(skill[(lastColon + 1)..]);
-        }
     }
 
     private static bool ContainsInsensitive(string source, string token)

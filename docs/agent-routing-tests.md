@@ -52,7 +52,7 @@ Examples:
 - Copilot is expected to fail routing for nested `dotnet-*` skills (missing skill-load evidence), while Claude/Codex should pass.
 - Executes agent command templates with timeout.
 - Evaluates evidence from stdout/stderr for tool usage + skill-file reads.
-- Always falls back to recent logs from agent home dirs.
+- Falls back to recent logs from agent home dirs when log scanning is enabled (default: on when serial, off when parallel). Use `--enable-log-scan` / `--disable-log-scan` to override. When parallel (`--max-parallel > 1`), log fallback is diagnostics-only by default (does not promote to pass) unless `--allow-log-fallback-pass` is set.
 - Emits JSON with statuses: `pass`, `fail`, `infra_error`.
 - Includes `batch_run_id` (UUID) on the result envelope and `unit_run_id` (UUID) per result for cross-referencing stderr lifecycle output with JSON results.
 - Includes `timed_out` per result so partial-output passes are visible.
@@ -76,6 +76,8 @@ Two orthogonal classification fields exist on non-pass results:
 
 **`failure_kind`** classifies routing mismatch type:
 
+- `weak_evidence_only`: All evidence hits are Tier 3 (very low confidence). Checked first.
+- `evidence_too_weak`: Token was found in output but at a weaker tier than required (e.g., Tier 2 when Tier 1 was needed).
 - `skill_not_loaded`: The expected skill ID was not found in output (but activity evidence was present).
 - `missing_skill_file_evidence`: The skill-specific file path token (e.g. `dotnet-xunit/SKILL.md`) was missing, but the skill ID was matched. Detected via tokens ending with `/SKILL.md` or equal to the generic `SKILL.md`.
 - `missing_activity_evidence`: No activity tokens (tool_use, read_file, etc.) were found, but skill evidence was present.
@@ -88,6 +90,28 @@ Two orthogonal classification fields exist on non-pass results:
 - `transport`: The process failed to start, CLI was missing, or status is `infra_error`.
 - `assertion`: Evidence gating failed and the command did not time out.
 - `null`: Result is pass (no failure category).
+
+### Evidence Tiers
+
+`ComputeTier(agent, token, line, score)` is the single source of truth for evidence tier assignment:
+
+- **Tier 1** (definitive skill invocation):
+  - Claude primary: `"name":"Skill"` + `"skill":"<id>"` on same line with token attribution
+  - Claude secondary: `Launching skill: <skill>` with token attribution
+  - Codex/Copilot: `Base directory for this skill: <path>` with `/<token>/` in path (case-insensitive, normalized separators)
+- **Tier 2** (moderate confidence): Score 60-800, or Tier 1 regex match that fails token attribution. Generic file reads remain Tier 2 for all providers.
+- **Tier 3** (low confidence): Score < 60.
+
+Tier gating for requirements:
+- `required_skills[]` (explicit) and `expected_skill` (implicit): Tier 1 gated. Use `expected_skill_min_tier: 2` to opt out.
+- `required_files[]`: Tier 2 gated.
+- Legacy `required_all_evidence`: Tier 2 default (Tier 1 if token matches a skill ID).
+- Log fallback evidence is capped at Tier 2 (cannot satisfy Tier 1).
+
+Run `--self-test` to verify ComputeTier against built-in fixtures:
+```
+dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
+```
 
 Proof log options:
 

@@ -372,3 +372,6 @@ When normalizing path separators for matching, apply the same normalization at E
 
 ## 2026-02-20 manual [pitfall]
 When a new function is designated 'single source of truth' for a classification, all upstream presence/filtering checks must delegate to it or use its same regexes -- parallel brittle checks with different tolerance (e.g. whitespace) create disagreement
+
+## 2026-02-20 manual [pitfall]
+When a 'diagnostics-only' mode suppresses a pass promotion, do not merge the diagnostic source's MatchedAll/MissingAll into the gating source -- only merge observability data (proof lines, TokenHits, log file) to avoid contradictory success+fail state
