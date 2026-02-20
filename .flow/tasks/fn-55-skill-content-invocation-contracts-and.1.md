@@ -45,3 +45,10 @@ Define a purely structural, machine-checkable invocation contract spec for SKILL
 - [ ] PRD: fn-57 → fn-55 corrected (Document Control)
 - [ ] PRD: Workstream B.2 agent deferral note added
 - [ ] PRD: AC #6 agent deferral note added
+
+## Done summary
+Defined the invocation contract spec (3 structural rules for SKILL.md) in the style guide section 6, documented STRICT_INVOCATION vs STRICT_REFS as independent toggles in both the style guide and validate-skills.sh header, added invocation contract checklist item to CONTRIBUTING-SKILLS.md section 8, and fixed the PRD (fn-57 -> fn-55, agent deferral notes in Workstream B.2, AC #6, and Rollout Phase 3).
+## Evidence
+- Commits: 8456661d2f1211646b67f2c09eb8f7399b51644f
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
