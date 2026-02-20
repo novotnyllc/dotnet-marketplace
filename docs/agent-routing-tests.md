@@ -54,9 +54,13 @@ Examples:
 - Evaluates evidence from stdout/stderr for tool usage + skill-file reads.
 - Always falls back to recent logs from agent home dirs.
 - Emits JSON with statuses: `pass`, `fail`, `infra_error`.
+- Includes `batch_run_id` (UUID) on the result envelope and `unit_run_id` (UUID) per result for cross-referencing stderr lifecycle output with JSON results.
 - Includes `timed_out` per result so partial-output passes are visible.
 - Includes `failure_kind` for failed results (`skill_not_loaded`, `missing_skill_file_evidence`, `missing_activity_evidence`, `mixed_evidence_missing`, `unknown`).
+- Includes `failure_category` for non-pass results with deterministic priority-order mapping: `timeout` (timed out), `transport` (process failed to start, CLI missing, or infra_error), `assertion` (evidence gating failed). Null when pass. Orthogonal to `failure_kind`.
 - Includes `tool_use_proof_lines` per result and writes a plain-text proof log file.
+- When progress is enabled (default), emits lifecycle transitions to stderr per unit: `queued` -> `running` -> `completed`/`failed`/`timeout`, prefixed with batch and unit run IDs for correlation.
+- `--no-progress` suppresses lifecycle transition output only.
 
 Evidence currently gates on:
 
@@ -68,13 +72,22 @@ Evidence currently gates on:
 
 ### Failure Taxonomy
 
-The `failure_kind` field on failed results uses the following classification:
+Two orthogonal classification fields exist on non-pass results:
+
+**`failure_kind`** classifies routing mismatch type:
 
 - `skill_not_loaded`: The expected skill ID was not found in output (but activity evidence was present).
 - `missing_skill_file_evidence`: The skill-specific file path token (e.g. `dotnet-xunit/SKILL.md`) was missing, but the skill ID was matched. Detected via tokens ending with `/SKILL.md` or equal to the generic `SKILL.md`.
 - `missing_activity_evidence`: No activity tokens (tool_use, read_file, etc.) were found, but skill evidence was present.
 - `mixed_evidence_missing`: Both skill ID and activity evidence were missing.
 - `unknown`: None of the above patterns matched.
+
+**`failure_category`** classifies failure cause with deterministic priority order:
+
+- `timeout`: The command timed out (`timed_out == true`). Highest priority.
+- `transport`: The process failed to start, CLI was missing, or status is `infra_error`.
+- `assertion`: Evidence gating failed and the command did not time out.
+- `null`: Result is pass (no failure category).
 
 Proof log options:
 

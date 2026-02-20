@@ -185,7 +185,7 @@ internal sealed class AgentRoutingRunner
         var proofLogPath = ResolveProofLogPath();
         if (!string.IsNullOrWhiteSpace(proofLogPath))
         {
-            await WriteProofLogAsync(results, proofLogPath!);
+            await WriteProofLogAsync(results, proofLogPath!, batchRunId);
         }
 
         if (!string.IsNullOrWhiteSpace(_options.OutputPath))
@@ -828,7 +828,7 @@ internal sealed class AgentRoutingRunner
         return null;
     }
 
-    private static async Task WriteProofLogAsync(List<AgentResult> results, string proofLogPath)
+    private static async Task WriteProofLogAsync(List<AgentResult> results, string proofLogPath, string batchRunId)
     {
         var dir = Path.GetDirectoryName(proofLogPath);
         if (!string.IsNullOrWhiteSpace(dir))
@@ -839,6 +839,7 @@ internal sealed class AgentRoutingRunner
         var sb = new StringBuilder();
         sb.AppendLine($"# Tool-Use Proof Log");
         sb.AppendLine($"# Generated UTC: {DateTimeOffset.UtcNow:O}");
+        sb.AppendLine($"# Batch Run ID: {batchRunId}");
         sb.AppendLine();
 
         foreach (var result in results)
