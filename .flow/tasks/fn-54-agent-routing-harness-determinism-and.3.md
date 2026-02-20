@@ -33,5 +33,8 @@ Extend the `CaseDefinition` schema with `optional_skills`, `disallowed_skills`, 
 - [ ] ClassifyFailure returns: missing_required, disallowed_hit, optional_only, mixed
 
 ## Done summary
-
+Extended CaseDefinition with optional_skills, disallowed_skills, provider_aliases, and disallowed_min_tier fields. Implemented tier-gated disallowed detection (Tier 3 diagnostics-only), optional skill tracking in optional_hits[], provider alias resolution before evidence matching, and granular ClassifyFailure mismatch kinds (missing_required, disallowed_hit, optional_only, mixed). Self-test extended with 9 T3-specific fixtures.
 ## Evidence
+- Commits: 1ab463b, 20f4518, bd77bd4
+- Tests: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:

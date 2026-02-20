@@ -1,0 +1,72 @@
+{
+  "foundation-version-detection": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "testing-xunit-strategy": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "ci-gha-build-test": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "api-minimal-endpoints": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "architecture-layering": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "security-owasp-review": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "perf-benchmark-design": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "ui-blazor-component": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "data-efcore-query": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "build-msbuild-target": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "aot-trimming": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "cli-system-commandline": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "advisor-routing-maintainable-app": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "uno-mcp-routing-skill-id-only": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": false }
+  }
+}

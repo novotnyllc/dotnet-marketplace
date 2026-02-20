@@ -381,3 +381,6 @@ When a policy (e.g. tier cap) must constrain how data is gated, apply the constr
 
 ## 2026-02-20 manual [pitfall]
 When merging evidence from multiple sources (CLI + logs), a full Merge that unions MatchedAll can eliminate MissingAll tokens from one source even when the other source also failed -- in fail+fail paths, merge only diagnostic fields and keep the primary source's gating decision
+
+## 2026-02-20 manual [pitfall]
+When adding a new classification category (e.g. optional_only), ensure the detection condition is actually reachable -- walk through the control flow to verify the branch can be entered, and add a self-test that exercises it
