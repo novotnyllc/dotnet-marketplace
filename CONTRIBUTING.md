@@ -201,15 +201,15 @@ Tags follow the format `dotnet-artisan/vX.Y.Z` (plugin-scoped, not bare `vX.Y.Z`
 
 #### Release Workflow
 
-Releases are automated via two workflows:
+Releases are automated via a single workflow:
 
-1. **`auto-tag.yml`** -- On every push to `main`, reads the version from `plugin.json` and checks if a matching tag exists. If not, it creates and pushes the tag `dotnet-artisan/vX.Y.Z`.
-2. **`release.yml`** -- Triggered by the tag push. It:
-   - Verifies the tag version matches `plugin.json`
-   - Runs `scripts/validate-root-marketplace.sh` (shared root marketplace validation)
-   - Runs `scripts/validate-skills.sh` and `scripts/validate-marketplace.sh`
-   - Extracts the version-specific section from `CHANGELOG.md` using awk
-   - Creates a GitHub Release with the extracted notes and install instructions
+1. **`auto-tag.yml`** -- On every push to `main`, reads the version from `plugin.json` and checks if a matching tag exists.
+   - If the tag already exists, the workflow exits with no release work.
+   - If the tag does not exist, it runs:
+     - `scripts/validate-root-marketplace.sh`
+     - `scripts/validate-skills.sh`
+     - `scripts/validate-marketplace.sh`
+   - It then creates and pushes `dotnet-artisan/vX.Y.Z`, extracts notes for that version from `CHANGELOG.md`, and creates the GitHub Release in the same run.
 
 PRs that don't bump the version merge without triggering a release (the tag already exists, so `auto-tag.yml` is a no-op).
 
