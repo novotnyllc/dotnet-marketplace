@@ -3,10 +3,6 @@ name: Agent Live Routing
 on:
   workflow_dispatch:
     inputs:
-      agents:
-        description: 'Comma-separated agent list (default: claude,codex,copilot)'
-        required: false
-        type: string
       categories:
         description: 'Optional comma-separated categories from tests/agent-routing/cases.json'
         required: false
@@ -88,8 +84,7 @@ jobs:
         with:
           name: routing-results-${{ matrix.agent }}
           path: |
-            tests/agent-routing/artifacts/*/results.json
-            tests/agent-routing/artifacts/*/tool-use-proof.log
+            ${{ env.ARTIFACT_DIR || 'tests/agent-routing/artifacts/' }}
           if-no-files-found: warn
 
   summarize:
@@ -110,7 +105,7 @@ jobs:
           BASELINE_REF: ${{ github.event.inputs.baseline_ref || 'main' }}
         run: |
           set -euo pipefail
-          git fetch origin "$BASELINE_REF"
+          git fetch origin -- "$BASELINE_REF"
 
       - name: Download all provider artifacts
         uses: actions/download-artifact@v4
@@ -206,6 +201,11 @@ jobs:
               # Get result for this case_id + provider
               RESULT_LINE=$(grep "^${case_id}"$'\t'"${provider}"$'\t' "$RESULT_TUPLES" | head -1 || true)
               if [ -z "$RESULT_LINE" ]; then
+                echo "ERROR: Missing result for case '${case_id}' provider '${provider}'." | tee -a delta-report.md
+                HARD_FAIL=1
+                if [ "$ROW_DELTA" != "REGRESSION" ] && [ "$ROW_DELTA" != "MISSING_BASELINE" ]; then
+                  ROW_DELTA="MISSING_RESULT"
+                fi
                 continue
               fi
 
