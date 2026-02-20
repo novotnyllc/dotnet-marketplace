@@ -254,6 +254,8 @@ internal sealed class AgentRoutingRunner
             }
         }
 
+        WriteSummaryToStderr(summary, results, batchDir);
+
         if (summary.Fail > 0)
         {
             return 1;
@@ -265,6 +267,39 @@ internal sealed class AgentRoutingRunner
         }
 
         return 0;
+    }
+
+    private static void WriteSummaryToStderr(Summary summary, List<AgentResult> results, string batchDir)
+    {
+        var err = Console.Error;
+        err.WriteLine();
+        err.WriteLine("────────────────────────────────────────────────────");
+
+        var passLabel = summary.Pass > 0 ? $"\u001b[32m{summary.Pass} passed\u001b[0m" : "0 passed";
+        var failLabel = summary.Fail > 0 ? $"\u001b[31m{summary.Fail} failed\u001b[0m" : "0 failed";
+        var infraLabel = summary.InfraError > 0 ? $"\u001b[33m{summary.InfraError} infra_error\u001b[0m" : "0 infra_error";
+        err.WriteLine($"  Results: {passLabel}, {failLabel}, {infraLabel} ({summary.Total} total)");
+
+        var failures = results.Where(r => r.Status != ResultStatus.Pass).ToList();
+        if (failures.Count > 0)
+        {
+            err.WriteLine();
+            foreach (var f in failures)
+            {
+                var statusColor = f.Status == ResultStatus.Fail ? "\u001b[31m" : "\u001b[33m";
+                var kind = f.FailureKind ?? f.Status;
+                err.WriteLine($"  {statusColor}FAIL\u001b[0m  {f.Agent}:{f.CaseId}  expected={f.ExpectedSkill}  kind={kind}");
+                if (!string.IsNullOrWhiteSpace(f.Error))
+                {
+                    var errorLine = f.Error!.Length > 120 ? f.Error[..120] + "..." : f.Error;
+                    err.WriteLine($"        {errorLine}");
+                }
+            }
+        }
+
+        err.WriteLine();
+        err.WriteLine($"  Artifacts: {batchDir}");
+        err.WriteLine("────────────────────────────────────────────────────");
     }
 
     private async Task<List<AgentResult>> ExecuteWorkAsync(

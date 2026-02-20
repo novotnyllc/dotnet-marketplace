@@ -22,10 +22,16 @@ contains_agent() {
     [[ ",${haystack}," == *",${needle},"* ]]
 }
 
-cleanup_generated_apps() {
+SAMPLES_DIR="$REPO_ROOT/samples"
+
+cleanup() {
     if [[ -d "$APPS_DIR" ]]; then
         log "Cleaning generated apps directory: $APPS_DIR"
         rm -rf "$APPS_DIR"
+    fi
+    if [[ -d "$SAMPLES_DIR" ]]; then
+        log "Cleaning generated samples directory: $SAMPLES_DIR"
+        rm -rf "$SAMPLES_DIR"
     fi
 }
 
@@ -219,14 +225,15 @@ while [[ $# -gt 0 ]]; do
 done
 
 prepare_agent_sources "$SELECTED_AGENTS" "$DO_SOURCE_SETUP"
-cleanup_generated_apps
-trap cleanup_generated_apps EXIT
+cleanup
+trap cleanup EXIT INT TERM
 
 set +e
 dotnet run --file "$RUNNER" -- \
     --input "$CASES" \
     --run-all \
-    "${RUNNER_ARGS[@]}"
+    "${RUNNER_ARGS[@]}" \
+    >/dev/null
 run_exit=$?
 set -e
 
