@@ -416,13 +416,12 @@ internal sealed class AgentRoutingRunner
         // Log fallback: only attempt when log scanning is enabled and snapshot is available.
         if (_options.EnableLogScan && batchSnapshot is not null)
         {
+            // log_fallback tiers are already capped at Tier 2 during EvaluateEvidence
+            // (sourceKind: "log_fallback" enforces the floor), so logEval.Success
+            // correctly reflects the cap — no post-hoc patching needed.
             var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, batchSnapshot);
 
-            // Cap all log_fallback TokenHits at Tier 2 (log_fallback can never satisfy Tier 1)
-            var cappedLogHits = CapLogFallbackTier(logEval.TokenHits);
-            var cappedLogEval = logEval with { TokenHits = cappedLogHits };
-
-            if (cappedLogEval.Success)
+            if (logEval.Success)
             {
                 // When parallel (maxParallel > 1): log_fallback is diagnostics-only unless
                 // --allow-log-fallback-pass is set (default false, auto-enabled when serial)
@@ -436,7 +435,7 @@ internal sealed class AgentRoutingRunner
                         testCase,
                         started.ElapsedMilliseconds,
                         source: "log_fallback",
-                        cappedLogEval,
+                        logEval,
                         command,
                         exec.ExitCode,
                         TrimExcerpt(combined),
@@ -450,9 +449,9 @@ internal sealed class AgentRoutingRunner
                 // log file) for debugging.
                 var diagEval = outputEval with
                 {
-                    ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, cappedLogEval.ToolUseProofLines),
-                    TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, cappedLogEval.TokenHits),
-                    MatchedLogFile = cappedLogEval.MatchedLogFile ?? outputEval.MatchedLogFile,
+                    ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, logEval.ToolUseProofLines),
+                    TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits),
+                    MatchedLogFile = logEval.MatchedLogFile ?? outputEval.MatchedLogFile,
                 };
 
                 var diagFailureReason = exec.TimedOut
@@ -475,7 +474,7 @@ internal sealed class AgentRoutingRunner
                     error: diagFailureReason);
             }
 
-            var failedEval = EvidenceEvaluation.Merge(outputEval, cappedLogEval);
+            var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
             var failureReason = exec.TimedOut
                 ? "command timed out"
                 : exec.ExitCode != 0
@@ -563,7 +562,7 @@ internal sealed class AgentRoutingRunner
 
         if (roots.Length == 0)
         {
-            return EvaluateEvidence(string.Empty, testCase, "log_fallback", agent);
+            return EvaluateEvidence(string.Empty, testCase, "log_fallback", agent, sourceKind: "log_fallback");
         }
 
         var candidates = new List<FileInfo>();
@@ -629,14 +628,14 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
-            var eval = EvaluateEvidence(content, testCase, file.FullName, agent);
+            var eval = EvaluateEvidence(content, testCase, file.FullName, agent, sourceKind: "log_fallback");
             if (eval.Success)
             {
                 return eval with { MatchedLogFile = file.FullName };
             }
         }
 
-        return EvaluateEvidence(string.Empty, testCase, "log_fallback", agent);
+        return EvaluateEvidence(string.Empty, testCase, "log_fallback", agent, sourceKind: "log_fallback");
     }
 
     private static IEnumerable<string> ResolveLogRoots(string agent)
@@ -755,11 +754,20 @@ internal sealed class AgentRoutingRunner
         return snapshot;
     }
 
-    private static EvidenceEvaluation EvaluateEvidence(string text, CaseDefinition testCase, string proofSource, string agent)
+    /// <summary>
+    /// Evaluates evidence in text against case requirements.
+    /// sourceKind: "cli_output" or "log_fallback" — controls tier floor (log_fallback capped at Tier 2).
+    /// proofSource: display label for proof lines (can be a file path for log sources).
+    /// </summary>
+    private static EvidenceEvaluation EvaluateEvidence(
+        string text, CaseDefinition testCase, string proofSource, string agent,
+        string sourceKind = "cli_output")
     {
         var requiredAll = BuildRequiredAllEvidence(testCase, agent);
         var requiredAny = BuildRequiredAnyEvidence(testCase);
         var requiredAllSearchText = BuildRequiredAllSearchText(text, agent);
+        var isLogFallback = string.Equals(sourceKind, "log_fallback", StringComparison.OrdinalIgnoreCase);
+
         // Build per-token hits with tier information
         var tokenHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
         var lines = requiredAllSearchText.Replace("\r", string.Empty).Split('\n');
@@ -795,6 +803,13 @@ internal sealed class AgentRoutingRunner
                 var score = ScoreProofLine(searchLine, token);
                 var tier = ComputeTier(agent, token, searchLine, score);
 
+                // Apply tier floor: log_fallback evidence cannot be better than Tier 2.
+                // This is enforced BEFORE gating so that MissingAll/Success reflect the cap.
+                if (isLogFallback && tier < 2)
+                {
+                    tier = 2;
+                }
+
                 if (bestHit is null ||
                     tier < bestHit.Tier ||
                     (tier == bestHit.Tier && score > bestHit.BestScore))
@@ -804,7 +819,7 @@ internal sealed class AgentRoutingRunner
                         Token = token,
                         BestScore = score,
                         Tier = tier,
-                        SourceKind = proofSource.Contains("log", StringComparison.OrdinalIgnoreCase) ? "log_fallback" : "cli_output",
+                        SourceKind = sourceKind,
                         SourceDetail = proofSource,
                         ProofLine = line.Length <= 500 ? line : line[..500] + "..."
                     };
@@ -1209,32 +1224,6 @@ internal sealed class AgentRoutingRunner
         }
 
         return 3;
-    }
-
-    /// <summary>
-    /// Caps all log_fallback TokenHits at Tier 2. Log fallback cannot satisfy Tier 1.
-    /// </summary>
-    private static Dictionary<string, EvidenceHit>? CapLogFallbackTier(Dictionary<string, EvidenceHit>? tokenHits)
-    {
-        if (tokenHits is null || tokenHits.Count == 0)
-        {
-            return tokenHits;
-        }
-
-        var capped = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
-        foreach (var (key, hit) in tokenHits)
-        {
-            if (hit.Tier < 2)
-            {
-                capped[key] = hit with { Tier = 2, SourceKind = "log_fallback" };
-            }
-            else
-            {
-                capped[key] = hit with { SourceKind = "log_fallback" };
-            }
-        }
-
-        return capped;
     }
 
     private static List<ToolUseProofLine> MergeProofLines(List<ToolUseProofLine> first, List<ToolUseProofLine> second)

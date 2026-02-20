@@ -375,3 +375,6 @@ When a new function is designated 'single source of truth' for a classification,
 
 ## 2026-02-20 manual [pitfall]
 When a 'diagnostics-only' mode suppresses a pass promotion, do not merge the diagnostic source's MatchedAll/MissingAll into the gating source -- only merge observability data (proof lines, TokenHits, log file) to avoid contradictory success+fail state
+
+## 2026-02-20 manual [pitfall]
+When a policy (e.g. tier cap) must constrain how data is gated, apply the constraint DURING evaluation (before the pass/fail decision), not AFTER -- post-hoc patching of metadata without recomputing the gating decision leaves the original decision unchanged
