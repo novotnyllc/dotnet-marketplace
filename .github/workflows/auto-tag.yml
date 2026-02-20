@@ -1,4 +1,4 @@
-name: Auto-tag release
+name: Auto-tag and release
 
 on:
   push:
@@ -7,11 +7,15 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  auto-tag:
-    name: Create release tag if version changed
+  tag-and-release:
+    name: Tag and release if version changed
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 8
 
     steps:
       - name: Checkout repository
@@ -23,6 +27,7 @@ jobs:
         id: check
         run: |
           set -euo pipefail
+          git fetch --force --tags
 
           VERSION=$(jq -r '.version' .claude-plugin/plugin.json)
           TAG="dotnet-artisan/v${VERSION}"
@@ -31,15 +36,76 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
           if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists -- skipping"
+            echo "Tag $TAG already exists -- skipping release"
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Tag $TAG does not exist -- will create"
+            echo "Tag $TAG does not exist -- validating and releasing"
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Validate root marketplace.json
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          set -o pipefail
+          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
+
+      - name: Validate plugin structure
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          set -o pipefail
+          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+
+      - name: Validate marketplace
+        if: steps.check.outputs.exists == 'false'
+        run: ./scripts/validate-marketplace.sh
 
       - name: Create and push tag
         if: steps.check.outputs.exists == 'false'
         run: |
           git tag "${{ steps.check.outputs.tag }}"
           git push origin "${{ steps.check.outputs.tag }}"
+
+      - name: Extract release notes from CHANGELOG
+        if: steps.check.outputs.exists == 'false'
+        id: changelog
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.check.outputs.version }}"
+
+          # Extract content between ## [VERSION] and the next ## [ header.
+          NOTES=$(awk '/^## \['"$VERSION"'\]/{flag=1;next}/^## \[/{flag=0}flag' CHANGELOG.md)
+
+          if [ -z "$NOTES" ]; then
+            echo "WARN: No CHANGELOG section found for version $VERSION"
+            NOTES="No changelog entry found for v${VERSION}."
+          fi
+
+          echo "$NOTES" > /tmp/release-notes.md
+
+          {
+            echo "## dotnet-artisan v${VERSION}"
+            echo ""
+            cat /tmp/release-notes.md
+            echo ""
+            echo "### Install"
+            echo ""
+            echo "From within Claude Code, run:"
+            echo ""
+            echo '```'
+            echo "/plugin marketplace add novotnyllc/dotnet-artisan"
+            echo '```'
+            echo ""
+            echo "### Validation"
+            echo "All validation checks passed before release:"
+            echo "- Plugin structure and skill validation"
+            echo "- Marketplace metadata validation"
+            echo "- Version-tag consistency verification"
+          } > /tmp/release-body.md
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.check.outputs.tag }}
+          name: dotnet-artisan v${{ steps.check.outputs.version }}
+          body_path: /tmp/release-body.md
