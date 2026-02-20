@@ -349,5 +349,122 @@
       "shell("
     ],
     "required_evidence": []
+  },
+  {
+    "case_id": "csharp-async-cancellation",
+    "category": "core-csharp",
+    "prompt": "Show me how to properly propagate CancellationToken through async call chains and handle OperationCanceledException in an ASP.NET request pipeline.",
+    "expected_skill": "dotnet-csharp-async-patterns",
+    "required_all_evidence": [
+      "dotnet-csharp-async-patterns",
+      "dotnet-csharp-async-patterns/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "CancellationToken",
+      "OperationCanceledException",
+      "async",
+      "await",
+      "cancellation"
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "testing-integration-webfactory",
+    "category": "testing",
+    "prompt": "Set up WebApplicationFactory-based integration tests for my ASP.NET API that replace the real database with an in-memory provider and assert HTTP response codes.",
+    "expected_skill": "dotnet-integration-testing",
+    "required_all_evidence": [
+      "dotnet-integration-testing",
+      "dotnet-integration-testing/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "WebApplicationFactory",
+      "integration test",
+      "HttpClient",
+      "CreateClient",
+      "IClassFixture"
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "observability-structured-logging",
+    "category": "architecture",
+    "prompt": "Design a structured logging pipeline for my distributed .NET services with correlation IDs, PII scrubbing, and log level filtering per namespace.",
+    "expected_skill": "dotnet-structured-logging",
+    "required_all_evidence": [
+      "dotnet-structured-logging",
+      "dotnet-structured-logging/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "ILogger",
+      "Serilog",
+      "structured logging",
+      "correlation",
+      "LogLevel"
+    ],
+    "required_evidence": []
+  },
+  {
+    "case_id": "security-hardening-no-blazor-auth",
+    "category": "security",
+    "prompt": "Harden my web application login page against CSRF, XSS, and brute-force attacks with proper authentication cookie settings and rate limiting.",
+    "expected_skill": "dotnet-security-owasp",
+    "required_all_evidence": [
+      "dotnet-security-owasp",
+      "dotnet-security-owasp/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "CSRF",
+      "XSS",
+      "antiforgery",
+      "Content-Security-Policy",
+      "rate limit"
+    ],
+    "required_evidence": [],
+    "disallowed_skills": [
+      "dotnet-blazor-auth"
+    ]
+  },
+  {
+    "case_id": "api-endpoints-no-efcore",
+    "category": "api",
+    "prompt": "Build me REST endpoints for a product catalog with filtering, sorting, and pagination using in-memory data and minimal API route groups.",
+    "expected_skill": "dotnet-minimal-apis",
+    "required_all_evidence": [
+      "dotnet-minimal-apis",
+      "dotnet-minimal-apis/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "MapGet",
+      "MapPost",
+      "RouteGroupBuilder",
+      "endpoint",
+      "TypedResults"
+    ],
+    "required_evidence": [],
+    "disallowed_skills": [
+      "dotnet-efcore-patterns"
+    ]
+  },
+  {
+    "case_id": "architecture-clean-with-di",
+    "category": "architecture",
+    "prompt": "Design a modular order processing backend with clean separation of concerns, proper service registration, and interface-based abstractions for testability.",
+    "expected_skill": "dotnet-architecture-patterns",
+    "required_all_evidence": [
+      "dotnet-architecture-patterns",
+      "dotnet-architecture-patterns/SKILL.md"
+    ],
+    "required_any_evidence": [
+      "service registration",
+      "dependency injection",
+      "IServiceCollection",
+      "interface",
+      "abstraction"
+    ],
+    "required_evidence": [],
+    "optional_skills": [
+      "dotnet-csharp-dependency-injection"
+    ]
   }
 ]

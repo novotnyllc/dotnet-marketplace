@@ -68,5 +68,35 @@
     "claude": { "expected_status": "pass", "allow_timeout": false },
     "codex": { "expected_status": "pass", "allow_timeout": false },
     "copilot": { "expected_status": "pass", "allow_timeout": false }
+  },
+  "csharp-async-cancellation": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": true }
+  },
+  "testing-integration-webfactory": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": true }
+  },
+  "observability-structured-logging": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": true }
+  },
+  "security-hardening-no-blazor-auth": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "fail", "allow_timeout": true }
+  },
+  "api-endpoints-no-efcore": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "fail", "allow_timeout": true }
+  },
+  "architecture-clean-with-di": {
+    "claude": { "expected_status": "pass", "allow_timeout": false },
+    "codex": { "expected_status": "pass", "allow_timeout": false },
+    "copilot": { "expected_status": "pass", "allow_timeout": true }
   }
 }
