@@ -13,7 +13,7 @@ This document describes the minimal routing test system used to verify that Clau
 
 - Live full-corpus checks:
   - `./test.sh`
-  - Proof log (default): `tests/agent-routing/artifacts/tool-use-proof.log`
+  - Results and proof logs are written to `<artifacts-root>/<batch_run_id>/` (default root: `tests/agent-routing/artifacts/`). Parse `ARTIFACT_DIR=<path>` from stderr to locate the batch directory.
 
 ## Source Setup (Default)
 

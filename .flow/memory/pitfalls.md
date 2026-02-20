@@ -378,3 +378,6 @@ When a 'diagnostics-only' mode suppresses a pass promotion, do not merge the dia
 
 ## 2026-02-20 manual [pitfall]
 When a policy (e.g. tier cap) must constrain how data is gated, apply the constraint DURING evaluation (before the pass/fail decision), not AFTER -- post-hoc patching of metadata without recomputing the gating decision leaves the original decision unchanged
+
+## 2026-02-20 manual [pitfall]
+When merging evidence from multiple sources (CLI + logs), a full Merge that unions MatchedAll can eliminate MissingAll tokens from one source even when the other source also failed -- in fail+fail paths, merge only diagnostic fields and keep the primary source's gating decision

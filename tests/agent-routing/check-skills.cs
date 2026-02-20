@@ -289,7 +289,7 @@ internal sealed class AgentRoutingRunner
 
                 // Use per-agent-per-batch log snapshot (captured once before scheduling).
                 agentLogSnapshots.TryGetValue(item.Agent, out var snapshot);
-                var result = await RunCaseAsync(item.Agent, item.TestCase, unitRunId, snapshot);
+                var result = await RunCaseAsync(item.Agent, item.TestCase, unitRunId, snapshot, maxParallel);
                 results[item.Index] = result;
 
                 string lifecycleState;
@@ -342,7 +342,8 @@ internal sealed class AgentRoutingRunner
         string agent,
         CaseDefinition testCase,
         string unitRunId,
-        Dictionary<string, LogFileState>? batchSnapshot)
+        Dictionary<string, LogFileState>? batchSnapshot,
+        int effectiveMaxParallel)
     {
         var startedAtUtc = DateTimeOffset.UtcNow;
         var started = Stopwatch.StartNew();
@@ -425,7 +426,7 @@ internal sealed class AgentRoutingRunner
             {
                 // When parallel (maxParallel > 1): log_fallback is diagnostics-only unless
                 // --allow-log-fallback-pass is set (default false, auto-enabled when serial)
-                var isParallel = _options.MaxParallel > 1;
+                var isParallel = effectiveMaxParallel > 1;
                 var allowLogPass = _options.AllowLogFallbackPass || !isParallel;
 
                 if (allowLogPass)
@@ -474,7 +475,16 @@ internal sealed class AgentRoutingRunner
                     error: diagFailureReason);
             }
 
-            var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
+            // Both CLI and log failed. Keep CLI evidence as the gating source (preserving
+            // its MissingAll/MissingAny for accurate failure classification) and merge only
+            // diagnostic fields from logs. A full Merge could union MatchedAll and eliminate
+            // MissingAll tokens, producing contradictory fail-with-no-missing output.
+            var failedEval = outputEval with
+            {
+                ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, logEval.ToolUseProofLines),
+                TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits),
+                MatchedLogFile = logEval.MatchedLogFile ?? outputEval.MatchedLogFile,
+            };
             var failureReason = exec.TimedOut
                 ? "command timed out"
                 : exec.ExitCode != 0
