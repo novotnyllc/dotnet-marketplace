@@ -41,5 +41,8 @@ Isolate ALL per-run artifacts (results.json AND tool-use-proof.log) into batch-r
 - [ ] test.sh `--help` documents all new options
 
 ## Done summary
-
+Isolate all per-run artifacts (results.json, tool-use-proof.log) into batch-run-ID directories under --artifacts-root, emit ARTIFACT_DIR protocol output on stderr, set MAX_CONCURRENCY default to 4 with env/flag precedence, gate log scanning behind --enable-log-scan (on serial, off parallel), and remove hardcoded PROOF_LOG from test.sh.
 ## Evidence
+- Commits: f661257, b43df0e
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh, grep -c PROOF_LOG test.sh
+- PRs:
