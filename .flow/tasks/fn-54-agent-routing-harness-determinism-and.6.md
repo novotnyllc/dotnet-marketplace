@@ -31,4 +31,8 @@ Update operator documentation for all new harness features: run IDs, lifecycle t
 - [ ] `grep "Targeted Reruns" docs/agent-routing-tests.md` finds rerun examples
 - [ ] `grep "Provider Matrix" docs/agent-routing-tests.md` finds CI matrix section
 - [ ] Failure taxonomy includes: weak_evidence_only, disallowed_hit, optional_only, mixed, timeout, transport, assertion
-- [ ] test.sh --help documents --max-parallel, --artifacts-root, --enable-log-scan, MAX_CONCURRENCY
+- [ ] test.sh --help documents --max-parallel, --artifacts-root, --enable-log-scan, --self-test, MAX_CONCURRENCY
+
+## Done summary
+
+## Evidence

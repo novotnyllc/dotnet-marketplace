@@ -31,3 +31,7 @@ Extend the `CaseDefinition` schema with `optional_skills`, `disallowed_skills`, 
 - [ ] Optional skill matches in `optional_hits[]` in AgentResult JSON, no pass/fail impact
 - [ ] Provider aliases resolved before evidence matching
 - [ ] ClassifyFailure returns: missing_required, disallowed_hit, optional_only, mixed
+
+## Done summary
+
+## Evidence

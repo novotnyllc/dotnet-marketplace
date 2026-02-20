@@ -23,6 +23,13 @@ internal static class FailureKinds
     public const string Unknown = "unknown";
 }
 
+internal static class FailureCategories
+{
+    public const string Timeout = "timeout";
+    public const string Transport = "transport";
+    public const string Assertion = "assertion";
+}
+
 internal static class Program
 {
     private static async Task<int> Main(string[] args)
@@ -91,6 +98,8 @@ internal sealed class AgentRoutingRunner
 
     public async Task<int> RunAsync()
     {
+        var batchRunId = Guid.NewGuid().ToString();
+
         if (!File.Exists(_options.InputPath))
         {
             Console.Error.WriteLine($"ERROR: Cases file not found: {_options.InputPath}");
@@ -138,9 +147,9 @@ internal sealed class AgentRoutingRunner
 
         var totalRuns = work.Count;
         var maxParallel = Math.Min(_options.MaxParallel, totalRuns);
-        LogProgress($"Starting {totalRuns} runs ({cases.Count} cases x {agents.Length} agents), max_parallel={maxParallel}.");
-        var results = await ExecuteWorkAsync(work, totalRuns, maxParallel);
-        LogProgress("Run matrix completed.");
+        LogProgress($"[batch:{batchRunId}] Starting {totalRuns} runs ({cases.Count} cases x {agents.Length} agents), max_parallel={maxParallel}.");
+        var results = await ExecuteWorkAsync(work, totalRuns, maxParallel, batchRunId);
+        LogProgress($"[batch:{batchRunId}] Run matrix completed.");
 
         var summary = new Summary
         {
@@ -152,6 +161,7 @@ internal sealed class AgentRoutingRunner
 
         var envelope = new ResultEnvelope
         {
+            BatchRunId = batchRunId,
             GeneratedAtUtc = DateTimeOffset.UtcNow,
             Summary = summary,
             Results = results,
@@ -206,7 +216,8 @@ internal sealed class AgentRoutingRunner
     private async Task<List<AgentResult>> ExecuteWorkAsync(
         List<(int Index, string Agent, CaseDefinition TestCase)> work,
         int totalRuns,
-        int maxParallel)
+        int maxParallel,
+        string batchRunId)
     {
         var semaphore = new SemaphoreSlim(maxParallel, maxParallel);
         var results = new AgentResult[totalRuns];
@@ -218,33 +229,40 @@ internal sealed class AgentRoutingRunner
 
         var tasks = work.Select(async item =>
         {
+            var unitRunId = Guid.NewGuid().ToString();
+            LogProgress($"[batch:{batchRunId}] [unit:{unitRunId}] {item.Agent}:{item.TestCase.CaseId} -> queued");
+
             await semaphore.WaitAsync();
             try
             {
                 var startedOrdinal = Interlocked.Increment(ref started);
-                LogProgress($"[{startedOrdinal}/{totalRuns}] starting agent={item.Agent} case_id={item.TestCase.CaseId}");
+                LogProgress($"[batch:{batchRunId}] [unit:{unitRunId}] {item.Agent}:{item.TestCase.CaseId} -> running [{startedOrdinal}/{totalRuns}]");
 
-                var result = await RunCaseAsync(item.Agent, item.TestCase);
+                var result = await RunCaseAsync(item.Agent, item.TestCase, unitRunId);
                 results[item.Index] = result;
 
+                string lifecycleState;
                 switch (result.Status)
                 {
                     case ResultStatus.Pass:
                         Interlocked.Increment(ref pass);
+                        lifecycleState = result.TimedOut ? "timeout" : "completed";
                         break;
                     case ResultStatus.Fail:
                         Interlocked.Increment(ref fail);
+                        lifecycleState = result.TimedOut ? "timeout" : "failed";
                         break;
                     default:
                         Interlocked.Increment(ref infra);
+                        lifecycleState = result.TimedOut ? "timeout" : "failed";
                         break;
                 }
 
                 var completedOrdinal = Interlocked.Increment(ref completed);
                 LogProgress(
-                    $"[{completedOrdinal}/{totalRuns}] completed agent={item.Agent} case_id={item.TestCase.CaseId} " +
-                    $"status={result.Status} duration_ms={result.DurationMs} timed_out={result.TimedOut} " +
-                    $"summary(pass={pass}, fail={fail}, infra={infra})");
+                    $"[batch:{batchRunId}] [unit:{unitRunId}] {item.Agent}:{item.TestCase.CaseId} -> {lifecycleState} " +
+                    $"[{completedOrdinal}/{totalRuns}] status={result.Status} duration_ms={result.DurationMs} " +
+                    $"timed_out={result.TimedOut} summary(pass={pass}, fail={fail}, infra={infra})");
             }
             finally
             {
@@ -269,7 +287,7 @@ internal sealed class AgentRoutingRunner
         }
     }
 
-    private async Task<AgentResult> RunCaseAsync(string agent, CaseDefinition testCase)
+    private async Task<AgentResult> RunCaseAsync(string agent, CaseDefinition testCase, string unitRunId)
     {
         var startedAtUtc = DateTimeOffset.UtcNow;
         var started = Stopwatch.StartNew();
@@ -284,6 +302,7 @@ internal sealed class AgentRoutingRunner
                 "No command template configured.",
                 started.ElapsedMilliseconds,
                 source: "none",
+                unitRunId: unitRunId,
                 timedOut: false);
         }
 
@@ -299,6 +318,7 @@ internal sealed class AgentRoutingRunner
                 exec.ErrorMessage ?? "failed to start process",
                 started.ElapsedMilliseconds,
                 source: "none",
+                unitRunId: unitRunId,
                 command: command,
                 exitCode: exec.ExitCode,
                 outputExcerpt: TrimExcerpt(combined),
@@ -317,7 +337,8 @@ internal sealed class AgentRoutingRunner
                 command,
                 exec.ExitCode,
                 TrimExcerpt(combined),
-                exec.TimedOut);
+                exec.TimedOut,
+                unitRunId: unitRunId);
         }
 
         var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, logSnapshot);
@@ -332,7 +353,8 @@ internal sealed class AgentRoutingRunner
                 command,
                 exec.ExitCode,
                 TrimExcerpt(combined),
-                exec.TimedOut);
+                exec.TimedOut,
+                unitRunId: unitRunId);
         }
 
         var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
@@ -352,7 +374,8 @@ internal sealed class AgentRoutingRunner
             exec.ExitCode,
             TrimExcerpt(combined),
             exec.TimedOut,
-            failureReason);
+            unitRunId: unitRunId,
+            error: failureReason);
     }
 
     private static string ResolveAgentTemplate(string agent)
@@ -820,10 +843,15 @@ internal sealed class AgentRoutingRunner
 
         foreach (var result in results)
         {
-            sb.AppendLine($"=== agent={result.Agent} case_id={result.CaseId} status={result.Status} source={result.Source}");
+            sb.AppendLine($"=== agent={result.Agent} case_id={result.CaseId} unit_run_id={result.UnitRunId} status={result.Status} source={result.Source}");
             if (!string.IsNullOrWhiteSpace(result.FailureKind))
             {
                 sb.AppendLine($"failure_kind={result.FailureKind}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(result.FailureCategory))
+            {
+                sb.AppendLine($"failure_category={result.FailureCategory}");
             }
 
             if (!string.IsNullOrWhiteSpace(result.Error))
@@ -1314,7 +1342,7 @@ internal sealed class RunnerOptions
               --max-parallel <int>      Max concurrent case/agent runs (default: all)
               --log-max-files <int>     Max recent log files scanned (default: 60)
               --log-max-bytes <int>     Max bytes read from each log file tail (default: 300000)
-              --no-progress             Disable stderr progress output
+              --no-progress             Disable stderr lifecycle progress output
               --output <path>           Optional JSON output path
               --proof-log <path>        Optional plain-text proof log path
               --fail-on-infra           Exit non-zero when infra_error exists
@@ -1463,6 +1491,9 @@ internal sealed record LogFileState(long Length, DateTime LastWriteUtc);
 
 internal sealed class ResultEnvelope
 {
+    [JsonPropertyName("batch_run_id")]
+    public string BatchRunId { get; init; } = string.Empty;
+
     [JsonPropertyName("generated_at_utc")]
     public DateTimeOffset GeneratedAtUtc { get; init; }
 
@@ -1523,6 +1554,9 @@ internal sealed class Summary
 
 internal sealed class AgentResult
 {
+    [JsonPropertyName("unit_run_id")]
+    public string UnitRunId { get; init; } = string.Empty;
+
     [JsonPropertyName("agent")]
     public string Agent { get; init; } = string.Empty;
 
@@ -1574,6 +1608,9 @@ internal sealed class AgentResult
     [JsonPropertyName("failure_kind")]
     public string? FailureKind { get; init; }
 
+    [JsonPropertyName("failure_category")]
+    public string? FailureCategory { get; init; }
+
     public static AgentResult Pass(
         string agent,
         CaseDefinition testCase,
@@ -1584,10 +1621,12 @@ internal sealed class AgentResult
         int? exitCode,
         string? outputExcerpt,
         bool timedOut,
+        string unitRunId,
         string? error = null)
     {
         return new AgentResult
         {
+            UnitRunId = unitRunId,
             Agent = agent,
             CaseId = testCase.CaseId,
             Category = testCase.Category,
@@ -1604,7 +1643,8 @@ internal sealed class AgentResult
             ExitCode = exitCode,
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
-            FailureKind = null
+            FailureKind = null,
+            FailureCategory = null
         };
     }
 
@@ -1618,12 +1658,15 @@ internal sealed class AgentResult
         int? exitCode,
         string? outputExcerpt,
         bool timedOut,
+        string unitRunId,
         string? error = null)
     {
         var failureKind = ClassifyFailure(testCase, evidence);
+        var failureCategory = ClassifyFailureCategory(timedOut, started: true, status: ResultStatus.Fail);
 
         return new AgentResult
         {
+            UnitRunId = unitRunId,
             Agent = agent,
             CaseId = testCase.CaseId,
             Category = testCase.Category,
@@ -1640,7 +1683,8 @@ internal sealed class AgentResult
             ExitCode = exitCode,
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
-            FailureKind = failureKind
+            FailureKind = failureKind,
+            FailureCategory = failureCategory
         };
     }
 
@@ -1650,14 +1694,18 @@ internal sealed class AgentResult
         string error,
         long durationMs,
         string source,
+        string unitRunId,
         string? command = null,
         int? exitCode = null,
         string? outputExcerpt = null,
         EvidenceEvaluation? evidence = null,
         bool timedOut = false)
     {
+        var failureCategory = ClassifyFailureCategory(timedOut, started: false, status: ResultStatus.Infra);
+
         return new AgentResult
         {
+            UnitRunId = unitRunId,
             Agent = agent,
             CaseId = testCase.CaseId,
             Category = testCase.Category,
@@ -1674,8 +1722,37 @@ internal sealed class AgentResult
             ExitCode = exitCode,
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
-            FailureKind = null
+            FailureKind = null,
+            FailureCategory = failureCategory
         };
+    }
+
+    /// <summary>
+    /// Deterministic failure category mapping with priority order: timeout > transport > assertion > null.
+    /// Orthogonal to routing mismatch failure_kind.
+    /// </summary>
+    internal static string? ClassifyFailureCategory(bool timedOut, bool started, string status)
+    {
+        // Priority 1: timeout
+        if (timedOut)
+        {
+            return FailureCategories.Timeout;
+        }
+
+        // Priority 2: transport (process failed to start, CLI missing, or infra_error status)
+        if (!started || string.Equals(status, ResultStatus.Infra, StringComparison.Ordinal))
+        {
+            return FailureCategories.Transport;
+        }
+
+        // Priority 3: assertion (evidence gating failed, not timed out)
+        if (string.Equals(status, ResultStatus.Fail, StringComparison.Ordinal))
+        {
+            return FailureCategories.Assertion;
+        }
+
+        // Pass results have no failure category
+        return null;
     }
 
     private static string ClassifyFailure(CaseDefinition testCase, EvidenceEvaluation evidence)

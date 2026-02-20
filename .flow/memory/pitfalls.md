@@ -357,3 +357,9 @@ Shell boolean env vars using -n (non-empty) test treat '0' as truthy -- use expl
 
 ## 2026-02-19 manual [pitfall]
 GHA steps with 'script | tee file' followed by output-parsing commands lose the script exit code -- capture it before parsing and exit with it at the end
+
+## 2026-02-20 manual [pitfall]
+dotnet-script and dotnet run --file are different invocations; this repo uses file-based apps via dotnet run --file, not dotnet-script
+
+## 2026-02-20 manual [pitfall]
+GITHUB_BASE_REF is empty for workflow_dispatch and schedule triggers — only populated for pull_request events. Baseline comparison designs must account for the actual workflow trigger types.
