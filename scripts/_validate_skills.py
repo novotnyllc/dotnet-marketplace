@@ -24,8 +24,8 @@ Checks (skills):
       independent of STRICT_REFS resolution)
 
 Checks (agents):
-  15. Agent bare-ref detection using known IDs allowlist (informational)
-  16. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  18. Agent bare-ref detection using known IDs allowlist (informational)
+  19. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -540,6 +540,8 @@ def main():
     self_ref_count = 0
     agent_bare_ref_count = 0
     agentsmd_bare_ref_count = 0
+    # Counts invocation contract violations (emitted as WARN or ERROR
+    # depending on STRICT_INVOCATION toggle; key name kept for CI compat)
     invocation_contract_warn_count = 0
 
     # Cross-reference graph for cycle detection
@@ -680,18 +682,19 @@ def main():
             invocation_contract_warn_count += 1
 
         # Rule 3: At least one OOS bullet must contain [skill:] reference
-        # This is a dedicated presence check, independent of STRICT_REFS resolution.
-        if oos_bullet_count >= 1:
-            has_any_skill_ref = any(has_ref for _, has_ref in result["oos_items"])
-            if not has_any_skill_ref:
-                msg = "INVOCATION_CONTRACT: No OOS bullet contains [skill:] reference"
-                if strict_invocation:
-                    print(f"ERROR: {rel_path} -- {msg}")
-                    errors += 1
-                else:
-                    print(f"WARN:  {rel_path} -- {msg}")
-                    warnings += 1
-                invocation_contract_warn_count += 1
+        # Dedicated presence check, independent of STRICT_REFS resolution.
+        # No guard on oos_bullet_count: when 0 bullets, any() returns False
+        # which correctly triggers the warning (vacuous failure).
+        has_any_skill_ref = any(has_ref for _, has_ref in result["oos_items"])
+        if not has_any_skill_ref:
+            msg = "INVOCATION_CONTRACT: No OOS bullet contains [skill:] reference"
+            if strict_invocation:
+                print(f"ERROR: {rel_path} -- {msg}")
+                errors += 1
+            else:
+                print(f"WARN:  {rel_path} -- {msg}")
+                warnings += 1
+            invocation_contract_warn_count += 1
 
         # Canonical skill ID is the directory name (not frontmatter name,
         # which may differ if there's a name/dir mismatch)
