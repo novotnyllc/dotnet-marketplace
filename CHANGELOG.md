@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-20
+
 ### Changed
 
 - **Standardized routing language** across all 130 skills and 14 agents for reliable skill discovery. Descriptions follow Action + Domain + Differentiator formula, all cross-references use `[skill:name]` syntax, and every skill has explicit Scope and Out-of-scope sections.
@@ -77,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...HEAD
+[0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0
 [0.1.1]: https://github.com/novotnyllc/dotnet-artisan/releases/tag/dotnet-artisan/v0.1.1
 [0.1.0]: https://github.com/novotnyllc/dotnet-artisan/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->

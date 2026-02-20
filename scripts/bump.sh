@@ -109,6 +109,19 @@ TODAY=$(date +%Y-%m-%d)
 echo "New version:     $NEW_VERSION"
 echo ""
 
+# --- 0. Auto-generate changelog entries from conventional commits ---
+
+GENERATE_SCRIPT="$REPO_ROOT/scripts/generate-changelog.sh"
+if [ -f "$GENERATE_SCRIPT" ] && [ -x "$GENERATE_SCRIPT" ]; then
+    echo "Generating changelog entries from conventional commits ..."
+    if "$GENERATE_SCRIPT" --changelog "$CHANGELOG"; then
+        echo "  OK: Changelog entries generated"
+    else
+        echo "  WARN: Changelog generation failed (continuing with manual entries)"
+    fi
+    echo ""
+fi
+
 # --- 1. Update plugin.json (canonical) ---
 
 echo "Updating $PLUGIN_JSON ..."
