@@ -244,15 +244,16 @@ Use this decision tree to load the right skills for the current task.
 - Resilience/HTTP clients -> [skill:dotnet-resilience], [skill:dotnet-http-client]
 
 ### Working with Data
-- EF Core usage -> [skill:dotnet-efcore-patterns], [skill:dotnet-efcore-architecture]
-- Choosing data access approach -> [skill:dotnet-data-access-strategy]
+- EF Core for working with databases -> [skill:dotnet-efcore-patterns], [skill:dotnet-efcore-architecture]
+- Choosing data access approach (EF Core vs Dapper vs ADO.NET) -> [skill:dotnet-data-access-strategy]
 - Serialization (JSON, Protobuf) -> [skill:dotnet-serialization]
 - Domain modeling, DDD patterns -> [skill:dotnet-domain-modeling]
 
 ### Building UI
 - Choosing a framework -> [skill:dotnet-ui-chooser]
 - Accessibility (any UI framework) -> [skill:dotnet-accessibility]
-- Blazor -> [skill:dotnet-blazor-patterns], [skill:dotnet-blazor-components], [skill:dotnet-blazor-auth]
+- Blazor app architecture/components -> [skill:dotnet-blazor-patterns], [skill:dotnet-blazor-components]
+- Blazor login/logout/auth UI behavior -> [skill:dotnet-blazor-auth]
 - Uno Platform -> [skill:dotnet-uno-platform], [skill:dotnet-uno-targets], [skill:dotnet-uno-mcp]
 - MAUI -> [skill:dotnet-maui-development], [skill:dotnet-maui-aot]
 - WPF -> [skill:dotnet-wpf-modern] (migration: [skill:dotnet-wpf-migration])

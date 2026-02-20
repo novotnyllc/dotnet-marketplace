@@ -2,7 +2,7 @@
   {
     "case_id": "foundation-version-detection",
     "category": "foundation",
-    "prompt": "Build me a tool that scans this .NET repo and tells me what it currently targets before we upgrade anything.",
+    "prompt": "Before upgrading, determine exactly which .NET target frameworks this repo currently targets by checking .csproj files, Directory.Build.props, and global.json.",
     "expected_skill": "dotnet-version-detection",
     "required_all_evidence": [
       "dotnet-version-detection",
@@ -202,7 +202,7 @@
   {
     "case_id": "data-efcore-query",
     "category": "data",
-    "prompt": "Build me data access for reporting that stays fast as records grow and avoids unnecessary query overhead.",
+    "prompt": "Design EF Core data access for reporting queries that stay fast as row counts grow, including AsNoTracking, query splitting, and compiled queries.",
     "expected_skill": "dotnet-efcore-patterns",
     "required_all_evidence": [
       "dotnet-efcore-patterns",
@@ -423,7 +423,8 @@
     "required_evidence": [],
     "disallowed_skills": [
       "dotnet-blazor-auth"
-    ]
+    ],
+    "disallowed_min_tier": 1
   },
   {
     "case_id": "api-endpoints-no-efcore",
@@ -444,7 +445,8 @@
     "required_evidence": [],
     "disallowed_skills": [
       "dotnet-efcore-patterns"
-    ]
+    ],
+    "disallowed_min_tier": 1
   },
   {
     "case_id": "architecture-clean-with-di",
