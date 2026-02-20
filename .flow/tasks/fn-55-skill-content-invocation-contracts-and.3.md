@@ -38,3 +38,10 @@ Update the 14 skills in cases.json corpus with stronger invocation signals per t
 - [ ] **No agents/*.md files modified**
 - [ ] `./scripts/validate-skills.sh` passes with 0 errors
 - [ ] `BUDGET_STATUS != FAIL`
+
+## Done summary
+Strengthened invocation signals for all 14 high-traffic skills from cases.json. Added specific Scope bullets reflecting existing body content and OOS bullets with [skill:] cross-references for routing disambiguation. Fixed dotnet-uno-mcp OOS wording per review feedback.
+## Evidence
+- Commits: fc9c49c, f3fe2a6
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
