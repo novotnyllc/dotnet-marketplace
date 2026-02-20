@@ -44,3 +44,5 @@ Add structural invocation-contract checks with fence-aware section extraction (a
 - [ ] `INVOCATION_CONTRACT_WARN_COUNT` emitted by `_validate_skills.py` (Python)
 - [ ] validate-skills.sh header comments document STRICT_INVOCATION and STRICT_REFS as independent toggles (already done by T1 -- verify presence, do not re-add)
 - [ ] Existing checks still pass (fence-awareness is a correctness improvement, not behavior change for well-formed skills)
+
+## Done summary
