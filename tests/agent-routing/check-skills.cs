@@ -807,13 +807,24 @@ internal sealed class AgentRoutingRunner
         var missingAll = new List<string>();
         foreach (var token in requiredAll)
         {
-            // For path tokens (containing '/'), match against normalized text to handle Windows backslashes
-            var isMatched = string.Equals(agent, "claude", StringComparison.OrdinalIgnoreCase) &&
-                            LooksLikeDotnetSkillId(token)
-                ? claudeLaunchedSkills.Contains(token)
-                : token.Contains('/')
-                    ? ContainsInsensitive(normalizedAllSearchText, token)
-                    : ContainsInsensitive(requiredAllSearchText, token);
+            bool isMatched;
+            if (string.Equals(agent, "claude", StringComparison.OrdinalIgnoreCase) &&
+                LooksLikeDotnetSkillId(token))
+            {
+                // For Claude skill-id tokens, use TokenHits as presence test.
+                // This makes ComputeTier the single source of truth — the whitespace-tolerant
+                // regexes in ComputeTier determine presence, not the legacy ExtractClaudeLaunchedSkills.
+                isMatched = tokenHits.ContainsKey(token);
+            }
+            else if (token.Contains('/'))
+            {
+                // For path tokens, match against backslash-normalized text
+                isMatched = ContainsInsensitive(normalizedAllSearchText, token);
+            }
+            else
+            {
+                isMatched = ContainsInsensitive(requiredAllSearchText, token);
+            }
 
             if (isMatched)
             {

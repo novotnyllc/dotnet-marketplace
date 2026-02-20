@@ -369,3 +369,6 @@ When running CLI tools via /bin/bash -lc, exit code 127 (command not found) and 
 
 ## 2026-02-20 manual [pitfall]
 When normalizing path separators for matching, apply the same normalization at EVERY code path that touches the same tokens -- partial normalization (e.g. in scoring but not in presence checks) creates false negatives on the un-normalized paths
+
+## 2026-02-20 manual [pitfall]
+When a new function is designated 'single source of truth' for a classification, all upstream presence/filtering checks must delegate to it or use its same regexes -- parallel brittle checks with different tolerance (e.g. whitespace) create disagreement
