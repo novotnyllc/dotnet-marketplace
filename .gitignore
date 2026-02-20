@@ -64,6 +64,7 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+apps/
 
 # Tye
 .tye/
@@ -483,3 +484,4 @@ $RECYCLE.BIN/
 
 # Ralph ephemeral run logs
 scripts/ralph/runs/
+.claude/settings.local.json

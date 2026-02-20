@@ -1,6 +1,6 @@
 ---
 name: dotnet-performance-analyst
-description: "WHEN analyzing .NET profiling data, benchmark results, GC behavior, or diagnosing performance bottlenecks. Interprets flame graphs, heap dumps, and benchmark comparisons. Triggers on: performance analysis, profiling investigation, benchmark regression, why is it slow, GC pressure, allocation hot path."
+description: "Analyzes .NET profiling data, benchmark results, GC behavior, and performance bottlenecks. Interprets flame graphs, heap dumps, and benchmark comparisons. Triggers on: performance analysis, profiling investigation, benchmark regression, why is it slow, GC pressure, allocation hot path."
 model: sonnet
 capabilities:
   - Interpret dotnet-trace flame graphs and CPU sampling data
@@ -64,7 +64,7 @@ This agent activates on performance investigation queries including: "analyze th
 
 ## Explicit Boundaries
 
-- **Does NOT design benchmarks** -- delegates to the `dotnet-benchmark-designer` agent for creating new benchmarks, choosing diagnosers, and validating methodology
+- **Does NOT design benchmarks** -- delegates to [skill:dotnet-benchmark-designer] for creating new benchmarks, choosing diagnosers, and validating methodology
 - **Does NOT set up profiling tools** -- defers tool installation and invocation to the developer; focuses on interpreting profiling output data using [skill:dotnet-profiling] as reference
 - **Does NOT set up CI benchmark pipelines** -- references [skill:dotnet-ci-benchmarking] for GitHub Actions workflow setup
 - **Does NOT modify code** -- uses Read, Grep, and Glob only; produces findings and recommendations for the developer to implement

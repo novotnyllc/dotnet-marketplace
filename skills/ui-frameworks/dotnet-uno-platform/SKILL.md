@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-platform
-description: "Building Uno Platform apps. Extensions, MVUX reactive pattern, Toolkit controls, Hot Reload."
+description: "Builds Uno Platform cross-platform apps. Extensions, MVUX, Toolkit controls, Hot Reload."
 user-invocable: false
 ---
 
@@ -8,9 +8,22 @@ user-invocable: false
 
 Uno Platform core development: Extensions ecosystem (Navigation, DI, Configuration, Serialization, Localization, Logging, HTTP, Authentication), MVUX reactive pattern, Toolkit controls, Theme resources (Material/Cupertino/Fluent), Hot Reload, and single-project structure. Covers Uno Platform 5.x+ on .NET 8.0+ baseline.
 
-**Scope boundary:** This skill owns Uno Platform project structure, Extensions ecosystem configuration, MVUX patterns, Toolkit controls, theming, and Hot Reload. Per-target deployment (WASM, iOS, Android, Desktop, Embedded) is owned by [skill:dotnet-uno-targets]. MCP server integration for live documentation is owned by [skill:dotnet-uno-mcp].
+## Scope
 
-**Out of scope:** Uno Platform testing (Playwright for WASM, platform-specific tests) -- see [skill:dotnet-uno-testing]. General serialization patterns -- see [skill:dotnet-serialization]. AOT/trimming for WASM -- see [skill:dotnet-aot-wasm]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
+- Uno Platform single-project structure with conditional TFMs
+- Extensions ecosystem (Navigation, DI, Configuration, Serialization, HTTP, Auth)
+- MVUX reactive pattern
+- Toolkit controls and theme resources (Material/Cupertino/Fluent)
+- Hot Reload
+
+## Out of scope
+
+- Per-target deployment (WASM, iOS, Android, Desktop) -- see [skill:dotnet-uno-targets]
+- MCP server integration for live documentation -- see [skill:dotnet-uno-mcp]
+- Uno Platform testing -- see [skill:dotnet-uno-testing]
+- General serialization patterns -- see [skill:dotnet-serialization]
+- AOT/trimming for WASM -- see [skill:dotnet-aot-wasm]
+- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, ARIA mapping on WASM).
 

@@ -1,12 +1,25 @@
 ---
 name: dotnet-csharp-source-generators
-description: "Creating source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ source-gen."
+description: "Creates Roslyn source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ."
 user-invocable: false
 ---
 
 # dotnet-csharp-source-generators
 
 Guidance for both **creating** and **consuming** Roslyn source generators in .NET. Creating: `IIncrementalGenerator`, syntax providers, semantic analysis, emit patterns, diagnostic reporting, testing with `CSharpGeneratorDriver`. Consuming: `[GeneratedRegex]`, `[LoggerMessage]`, System.Text.Json source generation, `[JsonSerializable]`.
+
+## Scope
+
+- IIncrementalGenerator authoring and syntax providers
+- Consuming built-in generators (GeneratedRegex, LoggerMessage, STJ)
+- Diagnostic reporting and testing with CSharpGeneratorDriver
+- NuGet packaging for analyzer/generator assemblies
+
+## Out of scope
+
+- Roslyn analyzers and code fix providers -- see [skill:dotnet-roslyn-analyzers]
+- Modern C# language features -- see [skill:dotnet-csharp-modern-patterns]
+- Naming conventions -- see [skill:dotnet-csharp-coding-standards]
 
 Cross-references: [skill:dotnet-csharp-modern-patterns] for partial properties and related C# features, [skill:dotnet-csharp-coding-standards] for naming conventions.
 

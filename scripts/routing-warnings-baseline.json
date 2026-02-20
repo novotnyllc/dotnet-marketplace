@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "keys": {
+    "NAME_DIR_MISMATCHES": 0,
+    "EXTRA_FIELD_COUNT": 0,
+    "TYPE_WARNING_COUNT": 0,
+    "FILLER_PHRASE_COUNT": 0,
+    "WHEN_PREFIX_COUNT": 0,
+    "MISSING_SCOPE_COUNT": 0,
+    "MISSING_OOS_COUNT": 0,
+    "SELF_REF_COUNT": 0,
+    "AGENT_BARE_REF_COUNT": 0,
+    "AGENTSMD_BARE_REF_COUNT": 0
+  }
+}

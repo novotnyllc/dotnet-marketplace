@@ -1,6 +1,6 @@
 ---
 name: dotnet-security-reviewer
-description: "WHEN reviewing .NET code for security vulnerabilities, OWASP compliance, secrets exposure, or cryptographic misuse. Read-only analysis agent -- does not modify code."
+description: "Reviews .NET code for security vulnerabilities, OWASP compliance, secrets exposure, and cryptographic misuse. Read-only analysis agent -- does not modify code."
 model: sonnet
 capabilities:
   - Analyze code for OWASP Top 10 vulnerabilities

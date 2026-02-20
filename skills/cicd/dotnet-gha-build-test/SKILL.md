@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-build-test
-description: "Configuring .NET build/test in GitHub Actions. setup-dotnet, NuGet caching, test reporting."
+description: "Configures GitHub Actions .NET build/test: setup-dotnet, NuGet cache, reporting."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ user-invocable: false
 
 **Version assumptions:** `actions/setup-dotnet@v4` for .NET 8/9/10 support. `dorny/test-reporter@v1` for test result visualization. Codecov and Coveralls GitHub Apps for coverage reporting.
 
-**Scope boundary:** This skill owns .NET build and test pipeline configuration for GitHub Actions. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci]. Composable workflow patterns (reusable workflows, matrix strategies, caching) are in [skill:dotnet-gha-patterns]. Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy]. Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking].
+## Scope
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci]. Test architecture and strategy -- see [skill:dotnet-testing-strategy]. Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]. Publishing and deployment -- see [skill:dotnet-gha-publish] and [skill:dotnet-gha-deploy]. Azure DevOps build/test pipelines -- see [skill:dotnet-ado-build-test].
+- setup-dotnet action configuration with multi-version installs
+- NuGet restore caching for fast CI
+- dotnet test with result publishing and coverage upload
+- Multi-TFM matrix testing and test sharding
+- NuGet authentication for private feeds in GitHub Actions
+
+## Out of scope
+
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- Test architecture and strategy -- see [skill:dotnet-testing-strategy]
+- Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]
+- Publishing and deployment -- see [skill:dotnet-gha-publish] and [skill:dotnet-gha-deploy]
+- Azure DevOps build/test pipelines -- see [skill:dotnet-ado-build-test]
+- Reusable workflow and composite action patterns -- see [skill:dotnet-gha-patterns]
 
 Cross-references: [skill:dotnet-add-ci] for starter build/test templates, [skill:dotnet-testing-strategy] for test architecture guidance, [skill:dotnet-ci-benchmarking] for benchmark CI integration, [skill:dotnet-artifacts-output] for artifact upload path adjustments when using centralized build output layout.
 

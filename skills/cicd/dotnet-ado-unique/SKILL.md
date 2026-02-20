@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-unique
-description: "Using ADO-exclusive features. Environments, approvals, service connections, classic releases."
+description: "Configures ADO-exclusive features. Environments, approvals, service connections, pipelines."
 user-invocable: false
 ---
 
@@ -10,9 +10,23 @@ Azure DevOps-exclusive features not available in GitHub Actions: Environments wi
 
 **Version assumptions:** Azure DevOps Services (cloud). YAML pipelines with multi-stage support. Classic release pipelines for legacy migration context only.
 
-**Scope boundary:** This skill owns ADO-exclusive platform features that have no direct GitHub Actions equivalent. Composable YAML pipeline patterns (templates, triggers, multi-stage) are in [skill:dotnet-ado-patterns]. Build/test pipeline configuration is in [skill:dotnet-ado-build-test]. Publishing pipelines are in [skill:dotnet-ado-publish]. Starter CI templates are owned by [skill:dotnet-add-ci].
+## Scope
 
-**Out of scope:** Composable pipeline patterns (templates, triggers) -- see [skill:dotnet-ado-patterns]. Build/test pipeline configuration -- see [skill:dotnet-ado-build-test]. Publishing pipelines -- see [skill:dotnet-ado-publish]. Starter CI templates -- see [skill:dotnet-add-ci]. GitHub Actions equivalents -- see [skill:dotnet-gha-patterns], [skill:dotnet-gha-build-test], [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy]. CLI release pipelines -- see [skill:dotnet-cli-release-pipeline].
+- Environments with approvals and gates (pre-deployment checks)
+- Service connections (Azure Resource Manager, Docker Registry, NuGet)
+- Classic release pipelines (legacy migration guidance to YAML)
+- Variable groups and library linked to Azure Key Vault
+- Pipeline decorators for organization-wide policy
+- Azure Artifacts universal packages
+
+## Out of scope
+
+- Composable pipeline patterns (templates, triggers) -- see [skill:dotnet-ado-patterns]
+- Build/test pipeline configuration -- see [skill:dotnet-ado-build-test]
+- Publishing pipelines -- see [skill:dotnet-ado-publish]
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- GitHub Actions equivalents -- see [skill:dotnet-gha-patterns], [skill:dotnet-gha-build-test], [skill:dotnet-gha-publish], [skill:dotnet-gha-deploy]
+- CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
 
 Cross-references: [skill:dotnet-add-ci] for starter CI templates, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-native-aot
-description: "Publishing Native AOT. PublishAot, ILLink descriptors, P/Invoke, size optimization, containers."
+description: "Publishes Native AOT binaries. PublishAot, ILLink descriptors, P/Invoke, size optimization."
 user-invocable: false
 ---
 
@@ -10,9 +10,26 @@ Full Native AOT compilation pipeline for .NET 8+ applications: `PublishAot` conf
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for ASP.NET Core Minimal APIs and console apps shipped in .NET 8. .NET 9 improved trimming warnings and library compat. .NET 10 enhanced request delegate generator and expanded Minimal API AOT support.
 
-**Scope boundary:** This skill owns general .NET Native AOT compilation -- the publish pipeline, MSBuild configuration, type preservation, P/Invoke, and size optimization. MAUI-specific iOS/Mac Catalyst AOT (publish profiles, platform-specific library compat) -- see [skill:dotnet-maui-aot]. AOT-first application design patterns (source gen over reflection, DI, serialization choices) are in [skill:dotnet-aot-architecture]. Trim-safe library authoring is in [skill:dotnet-trimming]. WASM AOT for Blazor/Uno is in [skill:dotnet-aot-wasm].
+## Scope
 
-**Out of scope:** MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-maui-aot]. Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]. DI container patterns -- see [skill:dotnet-csharp-dependency-injection]. Serialization depth -- see [skill:dotnet-serialization]. Container deployment orchestration -- see [skill:dotnet-containers].
+- PublishAot MSBuild configuration (apps vs libraries)
+- Diagnostic analyzers (EnableAotAnalyzer, EnableTrimAnalyzer)
+- ILLink descriptor XML for type preservation
+- Reflection-free coding patterns
+- P/Invoke with LibraryImport source generation
+- Binary size optimization and self-contained deployment
+- ASP.NET Core Native AOT (Minimal APIs, CreateSlimBuilder)
+
+## Out of scope
+
+- MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-maui-aot]
+- AOT-first design patterns (source gen, DI, serialization) -- see [skill:dotnet-aot-architecture]
+- Trim-safe library authoring -- see [skill:dotnet-trimming]
+- WASM AOT for Blazor/Uno -- see [skill:dotnet-aot-wasm]
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
+- DI container patterns -- see [skill:dotnet-csharp-dependency-injection]
+- Serialization depth -- see [skill:dotnet-serialization]
+- Container deployment orchestration -- see [skill:dotnet-containers]
 
 Cross-references: [skill:dotnet-aot-architecture] for AOT-first design patterns, [skill:dotnet-trimming] for trim-safe library authoring, [skill:dotnet-aot-wasm] for WebAssembly AOT, [skill:dotnet-maui-aot] for MAUI-specific AOT, [skill:dotnet-containers] for `runtime-deps` base images, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-csharp-dependency-injection] for AOT-safe DI, [skill:dotnet-native-interop] for general P/Invoke patterns and cross-platform library resolution.
 

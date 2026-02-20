@@ -1,12 +1,25 @@
 ---
 name: dotnet-csharp-dependency-injection
-description: "Registering or resolving services with MS DI. Keyed services, scopes, decoration, hosted services."
+description: "Registers and resolves services with MS DI. Keyed services, scopes, decoration, lifetimes."
 user-invocable: false
 ---
 
 # dotnet-csharp-dependency-injection
 
 Advanced Microsoft.Extensions.DependencyInjection patterns for .NET applications. Covers service lifetimes, keyed services (net8.0+), decoration, factory delegates, scope validation, and hosted service registration.
+
+## Scope
+
+- Service lifetimes (transient, scoped, singleton) and captive dependency detection
+- Keyed services (.NET 8+) and factory delegates
+- Decorator pattern and scope validation
+- Hosted service registration
+
+## Out of scope
+
+- Async/await patterns in BackgroundService -- see [skill:dotnet-csharp-async-patterns]
+- Options pattern binding and IOptions<T> -- see [skill:dotnet-csharp-configuration]
+- SOLID/DRY design principles -- see [skill:dotnet-solid-principles]
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for `BackgroundService` async patterns, [skill:dotnet-csharp-configuration] for `IOptions<T>` binding.
 

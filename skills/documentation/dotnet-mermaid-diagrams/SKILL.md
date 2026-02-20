@@ -1,6 +1,6 @@
 ---
 name: dotnet-mermaid-diagrams
-description: "Creating Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts."
+description: "Creates Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts."
 user-invocable: false
 ---
 
@@ -10,9 +10,20 @@ Mermaid diagram reference for .NET projects: architecture diagrams (C4-style con
 
 **Version assumptions:** Mermaid v10+ (supported by GitHub, Starlight, Docusaurus natively). GitHub renders Mermaid in Markdown files, issues, PRs, and discussions. .NET 8.0+ baseline for code examples.
 
-**Scope boundary:** This skill owns Mermaid diagram syntax and .NET-specific diagram patterns -- the actual diagram content, conventions, and rendering tips. Documentation platform setup for Mermaid rendering (Starlight plugins, Docusaurus themes, DocFX templates) is owned by [skill:dotnet-documentation-strategy]. GitHub-native documentation structure (README, CONTRIBUTING, templates) is owned by [skill:dotnet-github-docs].
+## Scope
 
-**Out of scope:** Documentation platform configuration for Mermaid rendering -- see [skill:dotnet-documentation-strategy]. GitHub-native doc structure and README patterns where diagrams are embedded -- see [skill:dotnet-github-docs]. CI/CD pipeline deployment of doc sites containing diagrams -- see [skill:dotnet-gha-deploy].
+- Architecture diagrams (C4-style, layered, microservice topology)
+- Sequence diagrams (API flows, async/await, middleware pipeline)
+- Class diagrams (domain models, DI graphs, inheritance)
+- Deployment diagrams (containers, Kubernetes, CI/CD flow)
+- ER diagrams (EF Core models, database schema)
+- Diagram-as-code conventions (naming, grouping, dark mode)
+
+## Out of scope
+
+- Documentation platform configuration for Mermaid rendering -- see [skill:dotnet-documentation-strategy]
+- GitHub-native doc structure and README patterns -- see [skill:dotnet-github-docs]
+- CI/CD pipeline deployment of doc sites -- see [skill:dotnet-gha-deploy]
 
 Cross-references: [skill:dotnet-documentation-strategy] for Mermaid rendering setup across doc platforms, [skill:dotnet-github-docs] for embedding diagrams in GitHub-native docs, [skill:dotnet-gha-deploy] for doc site deployment.
 

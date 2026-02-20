@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-based-apps
-description: "Running C# without a project file (.NET 10 SDK). Directives, CLI commands, migration."
+description: "Builds .NET 10 file-based C# apps: #: directives, CLI commands, csproj migration."
 user-invocable: false
 ---
 
@@ -13,6 +13,18 @@ user-invocable: false
 **Prerequisites:** Requires .NET 10 SDK or later. Run [skill:dotnet-version-detection] to confirm SDK version.
 
 Cross-references: [skill:dotnet-version-detection] for SDK version gating, [skill:dotnet-project-analysis] for project-based analysis (file-based apps have no `.csproj`), [skill:dotnet-scaffold-project] for csproj-based project scaffolding.
+
+## Scope
+
+- #: directives (package, sdk, property, project)
+- CLI commands for file-based apps (dotnet run, dotnet publish)
+- Migration from file-based to .csproj project format
+
+## Out of scope
+
+- File I/O (FileStream, RandomAccess, paths) -- see [skill:dotnet-file-io]
+- Project-based .csproj scaffolding -- see [skill:dotnet-scaffold-project]
+- Solution structure analysis -- see [skill:dotnet-project-analysis]
 
 ---
 

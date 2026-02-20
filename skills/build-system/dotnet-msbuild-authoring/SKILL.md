@@ -1,6 +1,6 @@
 ---
 name: dotnet-msbuild-authoring
-description: "Authoring MSBuild targets, props, or conditions. Custom targets, incrementality, Build patterns."
+description: "Authors MSBuild targets, props, conditions, incremental builds, and Directory.Build patterns."
 user-invocable: false
 ---
 
@@ -10,7 +10,21 @@ Guidance for authoring MSBuild project system elements: custom targets with `Bef
 
 **Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). All examples use SDK-style projects.
 
-**Scope boundary:** This skill owns MSBuild authoring fundamentals -- custom targets, import ordering, items, conditions, property functions, and advanced Directory.Build patterns. Basic solution layout and shared configuration (Directory.Build.props structure, CPM, .editorconfig) is owned by [skill:dotnet-project-structure]. MSBuild error interpretation and CI drift diagnosis is owned by [skill:dotnet-build-analysis].
+## Scope
+
+- Custom targets with BeforeTargets/AfterTargets/DependsOnTargets
+- Incremental build with Inputs/Outputs
+- Props vs targets import ordering
+- Items and item metadata (Include/Exclude/Update/Remove)
+- Conditions and property functions
+- Advanced Directory.Build.props/targets patterns
+- MSBuild well-known metadata and item batching
+
+## Out of scope
+
+- Solution layout and shared configuration (CPM, .editorconfig) -- see [skill:dotnet-project-structure]
+- MSBuild error interpretation and CI drift diagnosis -- see [skill:dotnet-build-analysis]
+- Reading and modifying .csproj files -- see [skill:dotnet-csproj-reading]
 
 Cross-references: [skill:dotnet-project-structure] for solution layout and basic Directory.Build.props structure, [skill:dotnet-build-analysis] for interpreting MSBuild errors and CI drift.
 

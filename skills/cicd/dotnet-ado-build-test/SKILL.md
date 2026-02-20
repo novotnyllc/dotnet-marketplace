@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-build-test
-description: "Configuring .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
+description: "Configures .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
 user-invocable: false
 ---
 
@@ -10,9 +10,21 @@ user-invocable: false
 
 **Version assumptions:** `DotNetCoreCLI@2` task (current). `UseDotNet@2` for SDK installation. `NuGetAuthenticate@1` for Azure Artifacts. `PublishTestResults@2` and `PublishCodeCoverageResults@2` for reporting.
 
-**Scope boundary:** This skill owns .NET build and test pipeline configuration for Azure DevOps. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci]. Composable pipeline patterns (templates, multi-stage, triggers) are in [skill:dotnet-ado-patterns]. Testing strategy guidance (what to test, test architecture, quality gates) is owned by [skill:dotnet-testing-strategy]. Benchmark CI workflows are owned by [skill:dotnet-ci-benchmarking].
+## Scope
 
-**Out of scope:** Starter CI templates -- see [skill:dotnet-add-ci]. Test architecture and strategy -- see [skill:dotnet-testing-strategy]. Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]. Publishing and deployment -- see [skill:dotnet-ado-publish] and [skill:dotnet-ado-unique]. GitHub Actions build/test workflows -- see [skill:dotnet-gha-build-test].
+- DotNetCoreCLI@2 task for build, test, pack, and custom commands
+- NuGet restore with Azure Artifacts feeds (NuGetAuthenticate@1)
+- Test result publishing with PublishTestResults@2 (TRX, JUnit)
+- Code coverage with PublishCodeCoverageResults@2 (Cobertura)
+- Multi-TFM matrix strategy across TFMs and operating systems
+
+## Out of scope
+
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- Test architecture and strategy -- see [skill:dotnet-testing-strategy]
+- Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]
+- Publishing and deployment -- see [skill:dotnet-ado-publish] and [skill:dotnet-ado-unique]
+- GitHub Actions build/test workflows -- see [skill:dotnet-gha-build-test]
 
 Cross-references: [skill:dotnet-add-ci] for starter build/test templates, [skill:dotnet-testing-strategy] for test architecture guidance, [skill:dotnet-ci-benchmarking] for benchmark CI integration.
 

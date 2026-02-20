@@ -1,6 +1,6 @@
 ---
 name: dotnet-add-analyzers
-description: "Adding analyzer packages to a project. Nullable, trimming, AOT compat analyzers, severity config."
+description: "Adds analyzer packages to a project. Nullable, trimming, AOT compat analyzers, severity config."
 ---
 
 # dotnet-add-analyzers
@@ -9,7 +9,20 @@ Add and configure .NET code analyzers to an existing project. Covers built-in Ro
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first — analyzer features vary by SDK version. Run [skill:dotnet-project-analysis] to understand the current project layout.
 
-Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE* code style preferences, naming rules, and global AnalyzerConfig files.
+## Scope
+
+- Built-in Roslyn CA rules and AnalysisLevel configuration
+- Nullable reference types enforcement
+- Trimming and AOT compatibility analyzers
+- Third-party analyzer packages and severity configuration
+
+## Out of scope
+
+- EditorConfig hierarchy and IDE code style preferences -- see [skill:dotnet-editorconfig]
+- Solution layout and Directory.Build.props -- see [skill:dotnet-project-structure]
+- New project scaffolding with analyzers -- see [skill:dotnet-scaffold-project]
+
+Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE code style preferences, naming rules, and global AnalyzerConfig files.
 
 ---
 

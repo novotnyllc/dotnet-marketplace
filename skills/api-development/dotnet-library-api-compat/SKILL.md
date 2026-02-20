@@ -1,6 +1,6 @@
 ---
 name: dotnet-library-api-compat
-description: "Maintaining library compatibility. Binary/source compat rules, type forwarders, SemVer impact."
+description: "Maintains library compatibility. Binary/source compat rules, type forwarders, SemVer impact."
 user-invocable: false
 ---
 
@@ -10,7 +10,22 @@ Binary and source compatibility rules for .NET library authors. Covers which API
 
 **Version assumptions:** .NET 8.0+ baseline. Compatibility rules apply to all .NET versions but examples target modern SDK-style projects.
 
-**Out of scope:** HTTP API versioning -- see [skill:dotnet-api-versioning]. NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]. Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]. PublicApiAnalyzers and API surface validation tooling -- see [skill:dotnet-api-surface-validation]. Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers].
+## Scope
+
+- Binary compatibility rules (safe vs breaking changes, runtime failures)
+- Source compatibility rules (overload resolution, extension method conflicts)
+- Type forwarders for assembly reorganization
+- SemVer impact mapping (change category to major/minor/patch)
+- Deprecation lifecycle with [Obsolete]
+- EnablePackageValidation and ApiCompat verification
+
+## Out of scope
+
+- HTTP API versioning -- see [skill:dotnet-api-versioning]
+- NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]
+- Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]
+- PublicApiAnalyzers and API surface validation tooling -- see [skill:dotnet-api-surface-validation]
+- Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers]
 
 Cross-references: [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for NuGet packaging and SemVer rules, [skill:dotnet-multi-targeting] for multi-TFM packaging and ApiCompat tooling.
 

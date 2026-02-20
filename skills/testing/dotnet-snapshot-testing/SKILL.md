@@ -1,6 +1,6 @@
 ---
 name: dotnet-snapshot-testing
-description: "Verifying complex outputs with Verify. API responses, scrubbing non-deterministic values."
+description: "Verifies complex outputs with Verify. API responses, scrubbing non-deterministic values."
 user-invocable: false
 ---
 
@@ -10,7 +10,19 @@ Snapshot (approval) testing with the Verify library for .NET. Covers verifying A
 
 **Version assumptions:** Verify 20.x+ (.NET 8.0+ baseline). Examples use the `Verify.Xunit` integration package; equivalent packages exist for NUnit (`Verify.NUnit`) and MSTest (`Verify.MSTest`). Verify auto-discovers the test framework from the referenced package.
 
-**Out of scope:** Test project scaffolding (creating projects, package references) is owned by [skill:dotnet-add-testing]. Testing strategy and test type decisions are covered by [skill:dotnet-testing-strategy]. Integration test infrastructure (WebApplicationFactory, Testcontainers) is covered by [skill:dotnet-integration-testing].
+## Scope
+
+- Verify library setup and snapshot lifecycle
+- Scrubbing and filtering non-deterministic values (dates, GUIDs)
+- Custom converters for domain-specific types
+- Organizing and reviewing snapshot files
+- Integration with xUnit, NUnit, and MSTest
+
+## Out of scope
+
+- Test project scaffolding (creating projects, package references) -- see [skill:dotnet-add-testing]
+- Testing strategy and test type decisions -- see [skill:dotnet-testing-strategy]
+- Integration test infrastructure (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-integration-testing]
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with Verify packages referenced. .NET 8.0+ baseline required.
 

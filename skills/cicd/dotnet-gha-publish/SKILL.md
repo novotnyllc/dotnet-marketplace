@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-publish
-description: "Publishing .NET artifacts from GitHub Actions. NuGet push, container images, signing, SBOM."
+description: "Publishes .NET artifacts from GitHub Actions. NuGet push, container images, signing, SBOM."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ Publishing workflows for .NET projects in GitHub Actions: NuGet package push to 
 
 **Version assumptions:** `actions/setup-dotnet@v4` for .NET 8/9/10. `docker/build-push-action@v6` for container image builds. `docker/login-action@v3` for registry authentication. .NET SDK container publish (`dotnet publish` with `PublishContainer`) for Dockerfile-free container builds.
 
-**Scope boundary:** This skill owns artifact publishing workflows from GitHub Actions. Container image authoring (Dockerfile best practices, SDK container properties) is owned by [skill:dotnet-containers]. Native AOT compilation configuration is owned by [skill:dotnet-native-aot] -- this skill references AOT for CI pipeline configuration only. CLI-specific release pipelines (build-package-release for CLI binaries) are owned by [skill:dotnet-cli-release-pipeline]. Starter CI templates are owned by [skill:dotnet-add-ci].
+## Scope
 
-**Out of scope:** Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-containers]. Native AOT MSBuild configuration -- see [skill:dotnet-native-aot]. CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]. Starter CI templates -- see [skill:dotnet-add-ci]. Azure DevOps publishing -- see [skill:dotnet-ado-publish]. Deployment to target environments -- see [skill:dotnet-gha-deploy].
+- NuGet package push to nuget.org and GitHub Packages
+- Container image build and push to GHCR/DockerHub/ACR
+- Artifact signing with NuGet signing and sigstore
+- SBOM generation with Microsoft SBOM tool
+- Conditional publishing triggered by tags and releases
+
+## Out of scope
+
+- Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-containers]
+- Native AOT MSBuild configuration -- see [skill:dotnet-native-aot]
+- CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- Azure DevOps publishing -- see [skill:dotnet-ado-publish]
+- Deployment to target environments -- see [skill:dotnet-gha-deploy]
 
 Cross-references: [skill:dotnet-containers] for container image authoring and SDK container properties, [skill:dotnet-native-aot] for AOT publish configuration in CI, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation, [skill:dotnet-add-ci] for starter publish templates.
 

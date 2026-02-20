@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-mcp
-description: "Using Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback, citation."
+description: "Queries Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback."
 user-invocable: false
 ---
 
@@ -8,9 +8,20 @@ user-invocable: false
 
 MCP (Model Context Protocol) server integration for Uno Platform live documentation lookups. Covers tool detection (`mcp__uno__` prefix), search-then-fetch workflow, initialization rules invocation, graceful fallback when MCP is unavailable, citation requirements, and safety guidelines for external data. Includes inline documentation that provides useful guidance without MCP server availability.
 
-**Scope boundary:** This skill owns MCP server integration patterns for Uno Platform documentation. Core Uno development (Extensions, MVUX, Toolkit, themes) is owned by [skill:dotnet-uno-platform]. Per-target deployment is owned by [skill:dotnet-uno-targets].
+## Scope
 
-**Out of scope:** General MCP protocol details. Uno Platform testing -- see [skill:dotnet-uno-testing]. Uno development patterns without MCP -- see [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets].
+- MCP tool detection (mcp__uno__ prefix)
+- Search-then-fetch workflow for Uno Platform documentation
+- Initialization rules invocation
+- Graceful fallback when MCP is unavailable
+- Citation requirements and safety guidelines
+- Uno SDK UnoFeatures reference for project configuration
+
+## Out of scope
+
+- General protocol and streaming communication patterns (not MCP-specific) -- see [skill:dotnet-realtime-communication]
+- Uno Platform testing -- see [skill:dotnet-uno-testing]
+- Uno development patterns without MCP -- see [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets]
 
 Cross-references: [skill:dotnet-uno-platform] for core development patterns, [skill:dotnet-uno-targets] for deployment guidance, [skill:dotnet-uno-testing] for testing.
 

@@ -1,13 +1,23 @@
 ---
 name: dotnet-modernize
-description: "Analyzing .NET code for modernization. Outdated TFMs, deprecated packages, superseded patterns."
+description: "Analyzes .NET code for modernization. Outdated TFMs, deprecated packages, superseded patterns."
 ---
 
 # dotnet-modernize
 
 Analyze existing .NET code for modernization opportunities. Identifies outdated target frameworks, deprecated packages, superseded API patterns, and missing modern best practices. Provides actionable recommendations for each finding.
 
-**Scope boundary:** This skill **flags opportunities** only. For actual migration paths, polyfill strategies, multi-targeting guidance, and step-by-step version upgrade procedures, see [skill:dotnet-version-upgrade] and [skill:dotnet-multi-targeting].
+## Scope
+
+- Outdated target framework detection
+- Deprecated package identification
+- Superseded API pattern flagging
+- Actionable modernization recommendations
+
+## Out of scope
+
+- Actual migration paths and polyfill strategies -- see [skill:dotnet-version-upgrade]
+- Multi-targeting guidance -- see [skill:dotnet-multi-targeting]
 
 **Prerequisites:** Run [skill:dotnet-version-detection] first to determine the current SDK, TFM, and language version. Run [skill:dotnet-project-analysis] to understand solution structure and dependencies.
 

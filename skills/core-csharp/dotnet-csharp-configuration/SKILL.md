@@ -1,12 +1,26 @@
 ---
 name: dotnet-csharp-configuration
-description: "Using Options pattern, user secrets, or feature flags. IOptions<T> and FeatureManagement."
+description: "Configures Options pattern, user secrets, and feature flags. IOptions<T>, FeatureManagement."
 user-invocable: false
 ---
 
 # dotnet-csharp-configuration
 
 Configuration patterns for .NET applications using Microsoft.Extensions.Configuration and Microsoft.Extensions.Options. Covers the Options pattern (`IOptions<T>`, `IOptionsMonitor<T>`, `IOptionsSnapshot<T>`), validation, user secrets, environment-based configuration, and feature flags with `Microsoft.FeatureManagement`.
+
+## Scope
+
+- Options pattern (IOptions<T>, IOptionsMonitor<T>, IOptionsSnapshot<T>)
+- Options validation and ValidateOnStart
+- User secrets and environment-based configuration
+- Feature flags with Microsoft.FeatureManagement
+- Configuration source precedence
+
+## Out of scope
+
+- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
+- EditorConfig and analyzer rule configuration -- see [skill:dotnet-editorconfig]
+- Structured logging pipeline configuration -- see [skill:dotnet-structured-logging]
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration patterns, [skill:dotnet-csharp-coding-standards] for naming conventions.
 

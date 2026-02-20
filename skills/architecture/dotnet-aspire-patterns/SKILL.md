@@ -1,6 +1,6 @@
 ---
 name: dotnet-aspire-patterns
-description: "Using .NET Aspire. AppHost orchestration, service discovery, components, dashboard, health checks."
+description: "Orchestrates .NET Aspire apps. AppHost, service discovery, components, dashboard, health checks."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 .NET Aspire orchestration patterns for building cloud-ready distributed applications. Covers AppHost configuration, service discovery, the component model for integrating backing services (databases, caches, message brokers), the Aspire dashboard for local observability, distributed health checks, and when to choose Aspire vs manual container orchestration.
 
-**Out of scope:** Raw Dockerfile authoring and multi-stage builds -- see [skill:dotnet-containers]. Kubernetes manifests, Helm charts, and Docker Compose -- see [skill:dotnet-container-deployment]. OpenTelemetry SDK configuration and custom metrics -- see [skill:dotnet-observability]. DI service lifetime mechanics -- see [skill:dotnet-csharp-dependency-injection]. Background service hosting -- see [skill:dotnet-background-services].
+## Scope
+
+- AppHost orchestration and distributed application topology
+- Service discovery and resource references
+- Aspire components for backing services (databases, caches, brokers)
+- Aspire dashboard for local traces, logs, and metrics
+- Distributed health checks
+
+## Out of scope
+
+- Raw Dockerfile authoring and multi-stage builds -- see [skill:dotnet-containers]
+- Kubernetes manifests, Helm charts, and Docker Compose -- see [skill:dotnet-container-deployment]
+- OpenTelemetry SDK configuration and custom metrics -- see [skill:dotnet-observability]
+- DI service lifetime mechanics -- see [skill:dotnet-csharp-dependency-injection]
+- Background service hosting -- see [skill:dotnet-background-services]
 
 Cross-references: [skill:dotnet-containers] for container image optimization and base image selection, [skill:dotnet-container-deployment] for production Kubernetes/Compose deployment, [skill:dotnet-observability] for OpenTelemetry details beyond Aspire defaults, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-background-services] for hosted service lifecycle patterns.
 

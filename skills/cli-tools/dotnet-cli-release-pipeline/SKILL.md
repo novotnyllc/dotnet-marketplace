@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-release-pipeline
-description: "Releasing CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums."
+description: "Releases CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ Unified release CI/CD pipeline for .NET CLI tools: GitHub Actions workflow produ
 
 **Version assumptions:** .NET 8.0+ baseline. GitHub Actions workflow syntax v2. Patterns apply to any CI system but examples use GitHub Actions.
 
-**Scope boundary:** This skill owns the CLI-specific release pipeline -- the build-package-release workflow for CLI tool artifacts. General CI/CD patterns (branch protection, matrix testing strategies, deployment pipelines, reusable workflows) -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. This skill focuses on the unique requirements of shipping CLI binaries to multiple package managers from a single trigger.
+## Scope
 
-**Out of scope:** General CI/CD patterns (branch strategies, matrix testing, deployment pipelines) -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. Native AOT compilation configuration -- see [skill:dotnet-native-aot]. Distribution strategy decisions -- see [skill:dotnet-cli-distribution]. Package format details -- see [skill:dotnet-cli-packaging]. Container image publishing -- see [skill:dotnet-containers].
+- Tag-triggered GitHub Actions release workflow
+- Build matrix per Runtime Identifier (RID)
+- Artifact staging between CI jobs
+- GitHub Releases with SHA-256 checksums
+- Automated Homebrew formula and winget manifest PR creation
+- SemVer versioning with git tags
+
+## Out of scope
+
+- General CI/CD patterns (branch strategies, matrix testing) -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
+- Native AOT compilation configuration -- see [skill:dotnet-native-aot]
+- Distribution strategy decisions -- see [skill:dotnet-cli-distribution]
+- Package format details -- see [skill:dotnet-cli-packaging]
+- Container image publishing -- see [skill:dotnet-containers]
 
 Cross-references: [skill:dotnet-cli-distribution] for RID matrix and publish strategy, [skill:dotnet-cli-packaging] for package format authoring, [skill:dotnet-native-aot] for AOT publish configuration, [skill:dotnet-containers] for container-based distribution.
 

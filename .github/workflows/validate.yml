@@ -9,15 +9,46 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: Validate plugin structure and skills
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 8
+
+    env:
+      STRICT_REFS: "1"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.local/share/NuGet/v3-cache
+          key: ${{ runner.os }}-nuget-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore routing runner
+        run: dotnet restore tests/agent-routing/check-skills.cs
+
+      - name: Build routing runner
+        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
+
+      - name: Run routing runner self-tests
+        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
 
       - name: Validate root marketplace.json
         run: |
@@ -38,16 +69,124 @@ jobs:
         id: validate-skills
         run: |
           set -o pipefail
-          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt
+          VALIDATE_EXIT=0
+          ./scripts/validate-skills.sh | tee /tmp/skills-output.txt || VALIDATE_EXIT=$?
 
-          # Parse stable output keys for summary
-          CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
-          PROJECTED=$(grep '^PROJECTED_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2)
-          STATUS=$(grep '^BUDGET_STATUS=' /tmp/skills-output.txt | cut -d= -f2)
+          # Parse stable output keys for summary (validator)
+          CURRENT=$(grep '^CURRENT_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          PROJECTED=$(grep '^PROJECTED_DESC_CHARS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          STATUS=$(grep '^BUDGET_STATUS=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          MISSING_SCOPE=$(grep '^MISSING_SCOPE_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          MISSING_OOS=$(grep '^MISSING_OOS_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          SELF_REF=$(grep '^SELF_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          AGENT_BARE=$(grep '^AGENT_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
+          AGENTSMD_BARE=$(grep '^AGENTSMD_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "")
 
           echo "current_desc_chars=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "projected_desc_chars=$PROJECTED" >> "$GITHUB_OUTPUT"
           echo "budget_status=$STATUS" >> "$GITHUB_OUTPUT"
+          echo "missing_scope_count=$MISSING_SCOPE" >> "$GITHUB_OUTPUT"
+          echo "missing_oos_count=$MISSING_OOS" >> "$GITHUB_OUTPUT"
+          echo "self_ref_count=$SELF_REF" >> "$GITHUB_OUTPUT"
+          echo "agent_bare_ref_count=$AGENT_BARE" >> "$GITHUB_OUTPUT"
+          echo "agentsmd_bare_ref_count=$AGENTSMD_BARE" >> "$GITHUB_OUTPUT"
+
+          # Parse stable output keys for summary (similarity, if present)
+          MAX_SIM=$(grep '^MAX_SIMILARITY_SCORE=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+          PAIRS_WARN=$(grep '^PAIRS_ABOVE_WARN=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+          PAIRS_ERROR=$(grep '^PAIRS_ABOVE_ERROR=' /tmp/skills-output.txt | cut -d= -f2 || echo "N/A")
+
+          echo "max_similarity_score=$MAX_SIM" >> "$GITHUB_OUTPUT"
+          echo "pairs_above_warn=$PAIRS_WARN" >> "$GITHUB_OUTPUT"
+          echo "pairs_above_error=$PAIRS_ERROR" >> "$GITHUB_OUTPUT"
+
+          exit "$VALIDATE_EXIT"
+
+      - name: Enforce routing quality gates
+        run: |
+          set -euo pipefail
+          echo "=== Routing Quality Gates ==="
+
+          # Gate 1: Agent bare references must be zero (tightened from informational)
+          AGENT_BARE=$(grep '^AGENT_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          AGENTSMD_BARE=$(grep '^AGENTSMD_BARE_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          GATE_FAIL=0
+
+          if [ "$AGENT_BARE" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: AGENT_BARE_REF_COUNT=$AGENT_BARE (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: AGENT_BARE_REF_COUNT=$AGENT_BARE"
+          fi
+
+          if [ "$AGENTSMD_BARE" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: AGENTSMD_BARE_REF_COUNT=$AGENTSMD_BARE (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: AGENTSMD_BARE_REF_COUNT=$AGENTSMD_BARE"
+          fi
+
+          # Gate 2: Self-references must be zero
+          SELF_REF=$(grep '^SELF_REF_COUNT=' /tmp/skills-output.txt | cut -d= -f2 || echo "0")
+          if [ "$SELF_REF" -gt 0 ] 2>/dev/null; then
+            echo "FAIL: SELF_REF_COUNT=$SELF_REF (must be 0)"
+            GATE_FAIL=1
+          else
+            echo "OK: SELF_REF_COUNT=$SELF_REF"
+          fi
+
+          # Gate 3: Per-key baseline regression check
+          BASELINE_FILE="scripts/routing-warnings-baseline.json"
+          if [ -f "$BASELINE_FILE" ]; then
+            echo ""
+            echo "--- Per-Key Baseline Regression Check ---"
+            REGRESSION=0
+            for KEY in NAME_DIR_MISMATCHES EXTRA_FIELD_COUNT TYPE_WARNING_COUNT FILLER_PHRASE_COUNT WHEN_PREFIX_COUNT MISSING_SCOPE_COUNT MISSING_OOS_COUNT SELF_REF_COUNT AGENT_BARE_REF_COUNT AGENTSMD_BARE_REF_COUNT; do
+              BASELINE_VAL=$(jq -r ".keys.${KEY} // empty" "$BASELINE_FILE" 2>/dev/null || echo "")
+              CURRENT_VAL=$(grep "^${KEY}=" /tmp/skills-output.txt | cut -d= -f2 || echo "")
+
+              if [ -z "$BASELINE_VAL" ]; then
+                echo "FAIL: $KEY missing from baseline ($BASELINE_FILE)"
+                REGRESSION=1
+                continue
+              fi
+
+              if [ -z "$CURRENT_VAL" ]; then
+                echo "FAIL: $KEY missing from validator output (/tmp/skills-output.txt)"
+                REGRESSION=1
+                continue
+              fi
+
+              if ! [[ "$BASELINE_VAL" =~ ^[0-9]+$ && "$CURRENT_VAL" =~ ^[0-9]+$ ]]; then
+                echo "FAIL: $KEY non-numeric (baseline=$BASELINE_VAL, current=$CURRENT_VAL)"
+                REGRESSION=1
+                continue
+              fi
+
+              if [ "$CURRENT_VAL" -gt "$BASELINE_VAL" ] 2>/dev/null; then
+                echo "FAIL: $KEY regressed ($BASELINE_VAL -> $CURRENT_VAL)"
+                REGRESSION=1
+              else
+                echo "OK: $KEY ($CURRENT_VAL <= $BASELINE_VAL)"
+              fi
+            done
+
+            if [ "$REGRESSION" -eq 1 ]; then
+              echo ""
+              echo "Baseline regression detected. Fix the issues or update scripts/routing-warnings-baseline.json."
+              GATE_FAIL=1
+            fi
+          else
+            echo "FAIL: Baseline file $BASELINE_FILE not found (required for regression gating)"
+            GATE_FAIL=1
+          fi
+
+          if [ "$GATE_FAIL" -eq 1 ]; then
+            exit 1
+          fi
+
+          echo ""
+          echo "All routing quality gates passed."
 
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
@@ -93,8 +232,28 @@ jobs:
         run: |
           echo "## Plugin Validation Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Description Budget" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
           echo "| Current description chars | ${{ steps.validate-skills.outputs.current_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Projected description chars | ${{ steps.validate-skills.outputs.projected_desc_chars }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Budget status | ${{ steps.validate-skills.outputs.budget_status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Routing Quality" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value | Gate |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing scope sections | ${{ steps.validate-skills.outputs.missing_scope_count }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Missing out-of-scope sections | ${{ steps.validate-skills.outputs.missing_oos_count }} | baseline |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Self-referential cross-links | ${{ steps.validate-skills.outputs.self_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent bare references | ${{ steps.validate-skills.outputs.agent_bare_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| AGENTS.md bare references | ${{ steps.validate-skills.outputs.agentsmd_bare_ref_count }} | == 0 |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Semantic Similarity" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value | Gate |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | informational |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline + suppressions |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 (unsuppressed) |" >> "$GITHUB_STEP_SUMMARY"

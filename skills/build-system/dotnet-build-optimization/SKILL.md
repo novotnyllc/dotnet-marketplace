@@ -1,6 +1,6 @@
 ---
 name: dotnet-build-optimization
-description: "Diagnosing slow builds or incremental failures. Binary logs, parallel builds, restore."
+description: "Diagnoses slow builds and incremental failures. Binary logs, parallel builds, restore."
 user-invocable: false
 ---
 
@@ -10,7 +10,20 @@ Guidance for diagnosing and fixing build performance problems: incremental build
 
 **Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). All examples use SDK-style projects.
 
-**Scope boundary:** This skill owns build optimization and diagnostics -- incremental build failures, binary logs, parallel builds, build caching, and restore optimization. MSBuild error interpretation and CI drift diagnosis is owned by [skill:dotnet-build-analysis]. MSBuild authoring (targets, props, items, conditions) is owned by [skill:dotnet-msbuild-authoring]. Custom task development is owned by [skill:dotnet-msbuild-tasks]. NuGet lock files and Central Package Management configuration is owned by [skill:dotnet-project-structure].
+## Scope
+
+- Incremental build failure diagnosis workflows
+- Binary log capture and analysis with MSBuild Structured Log Viewer
+- Parallel build configuration and graph build mode
+- Build caching and NuGet restore optimization
+- CI build optimization (NuGet cache, locked restore)
+
+## Out of scope
+
+- MSBuild error interpretation and CI drift diagnosis -- see [skill:dotnet-build-analysis]
+- MSBuild authoring (targets, props, items, conditions) -- see [skill:dotnet-msbuild-authoring]
+- Custom MSBuild task development -- see [skill:dotnet-msbuild-tasks]
+- NuGet lock files and Central Package Management -- see [skill:dotnet-project-structure]
 
 Cross-references: [skill:dotnet-msbuild-authoring] for custom targets, import ordering, and incremental build authoring patterns. [skill:dotnet-msbuild-tasks] for custom task development. [skill:dotnet-build-analysis] for interpreting MSBuild errors, NuGet restore failures, and CI drift diagnosis. [skill:dotnet-project-structure] for lock files, CPM, and nuget.config configuration.
 

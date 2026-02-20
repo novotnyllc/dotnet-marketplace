@@ -201,6 +201,15 @@ The `dotnet-csharp-concurrency-specialist` agent activates, loading `dotnet-csha
 
 Claude Code loads `dotnet-gha-build-test` and `dotnet-gha-publish` to generate a complete workflow with proper versioning, test matrix, and NuGet push configuration.
 
+## Agent Skill Routing Checks
+
+This repo includes a CI-ready routing checker to verify that agents discover and use expected skills.
+
+- Live full-corpus checks (manual/scheduled):
+  - `./test.sh`
+
+See `docs/agent-routing-tests.md` for details, workflow inputs, and environment variables.
+
 ## Contributing
 
 See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the skill authoring guide, or [CONTRIBUTING.md](CONTRIBUTING.md) for the general contribution workflow.

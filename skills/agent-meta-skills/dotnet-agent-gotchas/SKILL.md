@@ -1,16 +1,27 @@
 ---
 name: dotnet-agent-gotchas
-description: "Generating or modifying .NET code. Common agent mistakes: async, NuGet, deprecated APIs, DI."
+description: "Flags agent mistakes in .NET code: async misuse, NuGet errors, deprecated APIs, DI."
 user-invocable: false
 ---
 
 # dotnet-agent-gotchas
 
-## Overview / Scope Boundary
-
 Common mistakes AI agents make when generating or modifying .NET code, organized by category. Each category provides a brief warning, anti-pattern code, corrected code, and a cross-reference to the canonical skill that owns the deep guidance. This skill does NOT provide full implementation walkthroughs -- it surfaces the mistake and points to the right skill.
 
-**Out of scope:** Deep async/await patterns (owned by [skill:dotnet-csharp-async-patterns]), full dependency injection guidance (owned by [skill:dotnet-csharp-dependency-injection]), NRT usage patterns (owned by [skill:dotnet-csharp-nullable-reference-types]), source generator authoring (owned by [skill:dotnet-csharp-source-generators]), test framework features (owned by [skill:dotnet-testing-strategy]), security vulnerability mitigation (owned by [skill:dotnet-security-owasp]).
+## Scope
+
+- Common async/await, NuGet, deprecated API, and DI mistakes agents make
+- Anti-pattern / corrected-code pairs per category
+- Cross-references to canonical skills for deep guidance
+
+## Out of scope
+
+- Deep async/await patterns -- see [skill:dotnet-csharp-async-patterns]
+- Full dependency injection guidance -- see [skill:dotnet-csharp-dependency-injection]
+- NRT usage patterns -- see [skill:dotnet-csharp-nullable-reference-types]
+- Source generator authoring -- see [skill:dotnet-csharp-source-generators]
+- Test framework features -- see [skill:dotnet-testing-strategy]
+- Security vulnerability mitigation -- see [skill:dotnet-security-owasp]
 
 ## Prerequisites
 

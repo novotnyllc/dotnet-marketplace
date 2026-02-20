@@ -1,6 +1,6 @@
 ---
 name: dotnet-msbuild-tasks
-description: "Writing custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask."
+description: "Writes custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask."
 user-invocable: false
 ---
 
@@ -10,7 +10,18 @@ Guidance for authoring custom MSBuild tasks: implementing the `ITask` interface,
 
 **Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). `IIncrementalTask` requires MSBuild 17.8+ (VS 2022 17.8+, .NET 8 SDK). All examples use SDK-style projects. All C# examples assume `using Microsoft.Build.Framework;` and `using Microsoft.Build.Utilities;` are in scope unless shown explicitly.
 
-**Scope boundary:** This skill owns custom MSBuild task authoring -- ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask, parameters, debugging, and NuGet packaging. MSBuild project system authoring (targets, props, items, conditions) is owned by [skill:dotnet-msbuild-authoring].
+## Scope
+
+- ITask interface and Task base class implementation
+- ToolTask for wrapping external CLI tools
+- IIncrementalTask for engine-filtered incremental execution
+- Inline tasks with CodeTaskFactory
+- UsingTask registration and task parameters
+- Task debugging and NuGet packaging
+
+## Out of scope
+
+- MSBuild project system authoring (targets, props, items, conditions) -- see [skill:dotnet-msbuild-authoring]
 
 Cross-references: [skill:dotnet-msbuild-authoring] for custom targets, import ordering, items, conditions, and property functions.
 

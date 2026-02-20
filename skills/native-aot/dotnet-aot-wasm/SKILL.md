@@ -1,6 +1,6 @@
 ---
 name: dotnet-aot-wasm
-description: "AOT-compiling for WebAssembly. Blazor/Uno WASM AOT, size vs speed, lazy loading, Brotli."
+description: "Compiles .NET to WebAssembly AOT. Blazor/Uno WASM, size vs speed, lazy loading, Brotli."
 user-invocable: false
 ---
 
@@ -12,7 +12,24 @@ WebAssembly AOT compilation for Blazor WASM and Uno WASM applications: compilati
 
 **Important tradeoff:** Trimming and AOT have **opposite effects** on WASM artifact size. Trimming reduces download size by removing unused code. AOT **increases** artifact size (native WASM code is larger than IL) but **improves** runtime execution speed. Use both together for the best balance.
 
-**Out of scope:** Native AOT for server-side .NET -- see [skill:dotnet-native-aot]. AOT-first design patterns -- see [skill:dotnet-aot-architecture]. Trim-safe library authoring -- see [skill:dotnet-trimming]. MAUI-specific AOT -- see [skill:dotnet-maui-aot]. Blazor component patterns and architecture -- see [skill:dotnet-blazor-patterns] (soft). Uno Platform architecture -- see [skill:dotnet-uno-platform] (soft).
+## Scope
+
+- Download size vs runtime speed tradeoff analysis
+- Blazor WASM AOT (RunAOTCompilation, selective AOT)
+- Uno WASM AOT (.NET 8+ standard workload)
+- Lazy loading assemblies for size reduction
+- Brotli pre-compression for download optimization
+- WASM size optimization checklist
+
+## Out of scope
+
+- Native AOT for server-side .NET -- see [skill:dotnet-native-aot]
+- AOT-first design patterns -- see [skill:dotnet-aot-architecture]
+- Trim-safe library authoring -- see [skill:dotnet-trimming]
+- MAUI-specific AOT -- see [skill:dotnet-maui-aot]
+- Blazor hosting models and render modes -- see [skill:dotnet-blazor-patterns]
+- Blazor component lifecycle and JS interop -- see [skill:dotnet-blazor-components]
+- Uno Platform architecture -- see [skill:dotnet-uno-platform]
 
 Cross-references: [skill:dotnet-native-aot] for general AOT pipeline, [skill:dotnet-trimming] for trimming annotations, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-blazor-patterns] for Blazor architecture (soft), [skill:dotnet-uno-platform] for Uno Platform patterns (soft).
 

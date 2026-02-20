@@ -1,6 +1,6 @@
 ---
 name: dotnet-native-interop
-description: "Calling native libraries via P/Invoke. LibraryImport, marshalling, cross-platform resolution."
+description: "Calls native libraries via P/Invoke. LibraryImport, marshalling, cross-platform resolution."
 user-invocable: false
 ---
 
@@ -10,9 +10,18 @@ Platform Invoke (P/Invoke) patterns for calling native C/C++ libraries from .NET
 
 **Version assumptions:** .NET 7.0+ baseline for `[LibraryImport]`. `[DllImport]` available in all .NET versions. `NativeLibrary` API available since .NET Core 3.0.
 
-**Scope boundary:** This skill owns general P/Invoke guidance -- declaring native method signatures, marshalling data types, resolving library paths across platforms, and callback patterns. AOT-specific P/Invoke concerns (direct pinvoke, compile-time marshalling for AOT publishing) are in [skill:dotnet-native-aot]. Windows COM interop and CsWin32 source generator usage are in [skill:dotnet-winui]. WASM has no traditional P/Invoke support -- see [skill:dotnet-aot-wasm] for JavaScript interop via `[JSImport]`/`[JSExport]`.
+## Scope
 
-**Out of scope:** COM interop (Windows legacy). CsWin32 source generator -- see [skill:dotnet-winui]. JNI bridge for Android Java interop (different mechanism from P/Invoke). `[JSImport]`/`[JSExport]` for WASM -- see [skill:dotnet-aot-wasm].
+- LibraryImport (.NET 7+) and DllImport declarations
+- Struct and string marshalling patterns
+- Function pointer callbacks and delegates
+- NativeLibrary.SetDllImportResolver for cross-platform resolution
+
+## Out of scope
+
+- AOT-specific P/Invoke concerns (direct pinvoke) -- see [skill:dotnet-native-aot]
+- COM interop and CsWin32 source generator -- see [skill:dotnet-winui]
+- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-aot-wasm]
 
 Cross-references: [skill:dotnet-native-aot] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-aot-architecture] for AOT-first design patterns including source-generated interop, [skill:dotnet-winui] for CsWin32 source generator and COM interop, [skill:dotnet-aot-wasm] for WASM JavaScript interop (not native P/Invoke).
 

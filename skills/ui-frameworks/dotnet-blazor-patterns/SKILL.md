@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-patterns
-description: "Building Blazor apps. Hosting models, render modes, routing, streaming rendering, prerender."
+description: "Architects Blazor apps. Hosting models, render modes, routing, streaming, prerender."
 user-invocable: false
 ---
 
@@ -8,9 +8,23 @@ user-invocable: false
 
 Blazor hosting models, render modes, project setup, routing, enhanced navigation, streaming rendering, and AOT-safe patterns. Covers all five hosting models (InteractiveServer, InteractiveWebAssembly, InteractiveAuto, Static SSR, Hybrid) with trade-off analysis for each.
 
-**Scope boundary:** This skill owns Blazor project setup, hosting model selection, render mode configuration, routing, enhanced navigation, streaming rendering, and AOT-safe patterns. Component architecture (lifecycle, state management, JS interop, EditForm) is owned by [skill:dotnet-blazor-components]. Authentication across hosting models is owned by [skill:dotnet-blazor-auth].
+## Scope
 
-**Out of scope:** bUnit component testing -- see [skill:dotnet-blazor-testing]. Standalone SignalR patterns -- see [skill:dotnet-realtime-communication]. Browser-based E2E testing -- see [skill:dotnet-playwright]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
+- Blazor Web App project setup and configuration
+- Hosting model selection (Server, WASM, Auto, SSR, Hybrid)
+- Render mode configuration (global, per-page, per-component)
+- Routing and enhanced navigation
+- Streaming rendering and prerendering
+- AOT-safe Blazor patterns
+
+## Out of scope
+
+- Component architecture (lifecycle, state, JS interop) -- see [skill:dotnet-blazor-components]
+- Authentication across hosting models -- see [skill:dotnet-blazor-auth]
+- bUnit component testing -- see [skill:dotnet-blazor-testing]
+- Standalone SignalR patterns -- see [skill:dotnet-realtime-communication]
+- Browser-based E2E testing -- see [skill:dotnet-playwright]
+- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (ARIA, keyboard nav, screen readers).
 

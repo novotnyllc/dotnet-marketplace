@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-concurrency-patterns
-description: "Thread synchronization and concurrent collections. lock, SemaphoreSlim, Interlocked, ConcurrentDictionary."
+description: "Synchronizes threads and protects shared state. lock, SemaphoreSlim, Interlocked, concurrent collections."
 user-invocable: false
 ---
 
@@ -10,7 +10,18 @@ Thread synchronization primitives, concurrent data structures, and a decision fr
 
 **Version assumptions:** .NET 8.0+ baseline. All primitives covered are available from .NET Core 1.0+ but examples use modern C# idioms.
 
-**Differentiation:** [skill:dotnet-csharp-async-patterns] covers async/await and Task-based patterns. [skill:dotnet-channels] covers producer/consumer with `Channel<T>`. This skill covers **synchronization** and **thread-safe data access** -- the primitives that protect shared mutable state.
+## Scope
+
+- lock/Monitor, SemaphoreSlim, and Interlocked patterns
+- ConcurrentDictionary, ConcurrentQueue, and concurrent collections
+- ReaderWriterLockSlim and SpinLock for advanced scenarios
+- Concurrency primitive decision framework
+
+## Out of scope
+
+- Async/await and Task-based patterns -- see [skill:dotnet-csharp-async-patterns]
+- Producer/consumer with Channel<T> -- see [skill:dotnet-channels]
+- Naming and style conventions -- see [skill:dotnet-csharp-coding-standards]
 
 Cross-references: [skill:dotnet-csharp-async-patterns] for async/await patterns, [skill:dotnet-channels] for producer/consumer, [skill:dotnet-csharp-coding-standards] for naming conventions.
 

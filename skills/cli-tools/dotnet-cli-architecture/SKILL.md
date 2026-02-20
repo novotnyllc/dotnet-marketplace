@@ -1,6 +1,6 @@
 ---
 name: dotnet-cli-architecture
-description: "Structuring CLI app layers. Command/handler/service separation, clig.dev principles, exit codes."
+description: "Structures CLI app layers. Command/handler/service separation, clig.dev principles, exit codes."
 user-invocable: false
 ---
 
@@ -10,7 +10,23 @@ Layered CLI application architecture for .NET: command/handler/service separatio
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to CLI tools built with System.CommandLine 2.0 and generic host.
 
-**Out of scope:** System.CommandLine API details (RootCommand, Option<T>, middleware, hosting setup) -- see [skill:dotnet-system-commandline]. Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot]. CLI distribution, packaging, and release automation -- see [skill:dotnet-cli-distribution] and [skill:dotnet-cli-packaging]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container internals -- see [skill:dotnet-csharp-dependency-injection]. General testing strategies -- see [skill:dotnet-testing-strategy].
+## Scope
+
+- Layered command/handler/service architecture for CLI apps
+- clig.dev principles for .NET (stdout/stderr, exit codes, NO_COLOR)
+- Configuration precedence (appsettings, env vars, CLI args)
+- Structured logging in CLI context
+- Stdin/stdout/stderr patterns and machine-readable output
+- Testing CLI applications via in-process invocation
+
+## Out of scope
+
+- System.CommandLine API details (RootCommand, Option<T>, SetAction) -- see [skill:dotnet-system-commandline]
+- Native AOT compilation and publish pipeline -- see [skill:dotnet-native-aot]
+- CLI distribution and packaging -- see [skill:dotnet-cli-distribution] and [skill:dotnet-cli-packaging]
+- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
+- DI container internals -- see [skill:dotnet-csharp-dependency-injection]
+- General testing strategies -- see [skill:dotnet-testing-strategy]
 
 Cross-references: [skill:dotnet-system-commandline] for System.CommandLine 2.0 API, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI patterns, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-testing-strategy] for general testing patterns.
 

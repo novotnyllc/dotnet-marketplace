@@ -1,6 +1,6 @@
 ---
 name: dotnet-cloud-specialist
-description: "WHEN planning cloud deployment, .NET Aspire orchestration, AKS configuration, multi-stage CI/CD pipelines, distributed tracing, or infrastructure-as-code for .NET apps. WHEN NOT general architecture (use dotnet-architect), container image optimization (use dotnet-containers skill), or security auditing (use dotnet-security-reviewer)."
+description: "Plans cloud deployment, .NET Aspire orchestration, AKS configuration, multi-stage CI/CD pipelines, distributed tracing, and infrastructure-as-code for .NET apps. Routes architecture to [skill:dotnet-architect], container images to [skill:dotnet-containers], security to [skill:dotnet-security-reviewer]."
 model: sonnet
 capabilities:
   - Design .NET Aspire service discovery and orchestration patterns
@@ -104,10 +104,10 @@ Is the question about infrastructure-as-code?
 
 ## Explicit Boundaries
 
-- **Does NOT handle general application architecture** -- Layered architecture, vertical slices, domain modeling, and service decomposition are the domain of `dotnet-architect`
+- **Does NOT handle general application architecture** -- Layered architecture, vertical slices, domain modeling, and service decomposition are the domain of [skill:dotnet-architect]
 - **Does NOT handle container image optimization** -- Multi-stage build tuning, base image selection, and layer caching are covered in [skill:dotnet-containers]
-- **Does NOT handle security auditing** -- Secret exposure, OWASP compliance, and authentication configuration belong to `dotnet-security-reviewer`
-- **Does NOT handle performance profiling** -- Runtime performance analysis and benchmark interpretation belong to `dotnet-performance-analyst`
+- **Does NOT handle security auditing** -- Secret exposure, OWASP compliance, and authentication configuration belong to [skill:dotnet-security-reviewer]
+- **Does NOT handle performance profiling** -- Runtime performance analysis and benchmark interpretation belong to [skill:dotnet-performance-analyst]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations
 
 ## Trigger Lexicon

@@ -1,6 +1,6 @@
 ---
 name: dotnet-system-commandline
-description: "Using System.CommandLine 2.0. Commands, options, SetAction, custom parsing, middleware, testing."
+description: "Builds .NET CLI apps with System.CommandLine 2.0. Commands, options, SetAction, parsing, testing."
 user-invocable: false
 ---
 
@@ -12,7 +12,26 @@ System.CommandLine 2.0 stable API for building .NET CLI applications. Covers Roo
 
 **Breaking change note:** System.CommandLine 2.0.0 GA differs significantly from the pre-release beta4 API. Key changes: `SetHandler` replaced by `SetAction`, `ICommandHandler` removed in favor of `SynchronousCommandLineAction`/`AsynchronousCommandLineAction`, `InvocationContext` removed (ParseResult passed directly), `CommandLineBuilder` and `AddMiddleware` removed, `IConsole` removed in favor of TextWriter properties, and the `System.CommandLine.Hosting`/`System.CommandLine.NamingConventionBinder` packages discontinued. Do not use beta-era patterns.
 
-**Out of scope:** CLI application architecture patterns (layered command/handler/service design, configuration precedence, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]. Native AOT compilation -- see [skill:dotnet-native-aot]. CLI distribution strategy -- see [skill:dotnet-cli-distribution]. General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]. DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]. General coding standards -- see [skill:dotnet-csharp-coding-standards].
+## Scope
+
+- RootCommand, Command, Option<T>, Argument<T> hierarchy
+- SetAction handler binding (sync and async)
+- ParseResult-based value access
+- Custom type parsing and validation
+- Tab completion and directives
+- Testing with InvocationConfiguration and TextWriter capture
+- Migration from beta4 to 2.0.0 GA
+- Dependency injection integration without System.CommandLine.Hosting
+
+## Out of scope
+
+- CLI application architecture patterns (layered design, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]
+- Native AOT compilation -- see [skill:dotnet-native-aot]
+- CLI distribution strategy -- see [skill:dotnet-cli-distribution]
+- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
+- DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
+- General coding standards -- see [skill:dotnet-csharp-coding-standards]
+- CLI packaging for Homebrew, apt, winget -- see [skill:dotnet-cli-packaging]
 
 Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-csharp-coding-standards] for naming and style conventions.
 

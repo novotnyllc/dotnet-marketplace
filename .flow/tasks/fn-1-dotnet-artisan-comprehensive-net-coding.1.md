@@ -11,8 +11,7 @@ Final validation task for the umbrella epic. Verify all sub-epics (fn-2 through 
 - [ ] Context budget stays under 15,000 char limit
 
 ## Done summary
-Blocked:
-Task blocked: requires all 24 sub-epics (fn-2 through fn-25) to be complete. Currently 0/24 are done. This is the final validation task and should be revisited last.
+Umbrella epic closed — all child epics complete.
 ## Evidence
 - Commits:
 - Tests:

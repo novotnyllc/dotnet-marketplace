@@ -1,6 +1,6 @@
 ---
 name: dotnet-cryptography
-description: "Choosing crypto algorithms, hashing, encryption, or key derivation. AES-GCM, RSA, ECDSA, PQC."
+description: "Selects crypto algorithms and usage. Hashing, AES-GCM, RSA, ECDSA, PQC key derivation."
 user-invocable: false
 ---
 
@@ -8,17 +8,25 @@ user-invocable: false
 
 Modern .NET cryptography covering hashing (SHA-256/384/512), symmetric encryption (AES-GCM), asymmetric cryptography (RSA, ECDSA), key derivation (PBKDF2, Argon2), and post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) for .NET 10+. Includes TFM-aware guidance: what's available on net10.0 vs fallback strategies for net8.0/net9.0.
 
-**Out of scope:** Secrets management and configuration binding -- see [skill:dotnet-secrets-management]. OWASP vulnerability categories and deprecated security patterns -- see [skill:dotnet-security-owasp]. Authentication/authorization implementation (JWT, OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]. Cloud-specific key management (Azure Key Vault, AWS KMS) -- cloud epics. TLS/HTTPS configuration -- covered by ASP.NET Core middleware.
+## Scope
+
+- Algorithm selection and correct usage of System.Security.Cryptography APIs
+- Hashing for integrity (SHA-256/384/512)
+- Symmetric encryption (AES-GCM)
+- Asymmetric cryptography (RSA, ECDSA)
+- Key derivation (PBKDF2, Argon2)
+- Post-quantum cryptography (ML-KEM, ML-DSA, SLH-DSA) for .NET 10+
+- Deprecated algorithm warnings
+
+## Out of scope
+
+- Secrets management and configuration binding -- see [skill:dotnet-secrets-management]
+- OWASP vulnerability categories and deprecated security patterns -- see [skill:dotnet-security-owasp]
+- Authentication/authorization implementation (JWT, OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]
+- Cloud-specific key management (Azure Key Vault, AWS KMS) -- see [skill:dotnet-advisor]
+- TLS/HTTPS configuration -- see [skill:dotnet-advisor]
 
 Cross-references: [skill:dotnet-security-owasp] for OWASP A02 (Cryptographic Failures) and deprecated pattern warnings, [skill:dotnet-secrets-management] for storing keys and secrets securely.
-
----
-
-## Scope Boundary
-
-**In scope:** Algorithm selection, correct usage of `System.Security.Cryptography` APIs, key derivation, hashing for integrity, symmetric/asymmetric encryption, post-quantum cryptography, and deprecated algorithm warnings.
-
-**Not in scope:** Key storage (use secrets management), TLS termination (infrastructure), authentication protocols (see [skill:dotnet-api-security]), cloud HSM/KMS services (cloud epics).
 
 ---
 

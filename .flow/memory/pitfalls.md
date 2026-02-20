@@ -324,3 +324,72 @@ When counting findings in a severity summary table, ensure the count matches the
 
 ## 2026-02-17 manual [pitfall]
 BSD sed on macOS requires sed -i '' (space + empty string) syntax; GNU uses sed -i.bak (no space). Use portable sed > tmpfile && mv tmpfile pattern instead of sed -i in cross-platform scripts
+
+## 2026-02-19 manual [pitfall]
+Parallel tasks sharing a created file must have explicit sole-owner assignment; the other task imports only. Otherwise merge conflicts are guaranteed.
+
+## 2026-02-19 manual [pitfall]
+When ownership manifests repartition work across tasks, update ALL downstream task specs (titles, descriptions, category lists, filenames) to match -- not just the ones flagged in the first review round
+
+## 2026-02-19 manual [pitfall]
+Style guide docs that describe future validator behavior must clearly separate 'current behavior' from 'canonical policy' with distinct subsections -- mixing them causes repeated reviewer churn even after adding qualifying notes
+
+## 2026-02-19 manual [pitfall]
+When validating artifacts with both a user-facing name field and a filesystem-canonical ID (directory name, file stem), always use the canonical ID for graph operations (self-ref detection, cycle graphs, cross-ref resolution) -- frontmatter names may diverge from canonical IDs
+
+## 2026-02-19 manual [pitfall]
+JSON config parsers must validate root type (list vs dict) before calling .get() or iterating -- wrong root type causes AttributeError that bypasses intended exit-code handling
+
+## 2026-02-19 manual [pitfall]
+When loading JSON config files, always validate field types (isinstance checks) and fail loudly (exit 2) on schema violations — truthy checks alone miss non-string types and whitespace-only strings
+
+## 2026-02-19 manual [pitfall]
+Style guide 'Action + Domain + Differentiator' formula requires a verb-led description (present-tense verb or participle first) -- noun-phrase leads violate the formula even if they contain domain keywords
+
+## 2026-02-19 manual [pitfall]
+When adding pre-processing logic to a shared utility function's call site, centralize it in the utility itself so all callers benefit and logic does not drift between scan paths
+
+## 2026-02-19 manual [pitfall]
+When generating migration/audit reports with automated scripts, cross-check summary tables against per-item detail tables for internal consistency -- regex-based token counts may not match validator allowlist-based counts, causing contradictions reviewers flag
+
+## 2026-02-19 manual [pitfall]
+Shell boolean env vars using -n (non-empty) test treat '0' as truthy -- use explicit '= "1"' check when docs promise '0' means disabled
+
+## 2026-02-19 manual [pitfall]
+GHA steps with 'script | tee file' followed by output-parsing commands lose the script exit code -- capture it before parsing and exit with it at the end
+
+## 2026-02-20 manual [pitfall]
+dotnet-script and dotnet run --file are different invocations; this repo uses file-based apps via dotnet run --file, not dotnet-script
+
+## 2026-02-20 manual [pitfall]
+GITHUB_BASE_REF is empty for workflow_dispatch and schedule triggers — only populated for pull_request events. Baseline comparison designs must account for the actual workflow trigger types.
+
+## 2026-02-20 manual [pitfall]
+When running CLI tools via /bin/bash -lc, exit code 127 (command not found) and 126 (permission denied) indicate the binary is missing/non-executable -- the process still 'starts' (bash starts) so Started=true; detect these via exit code + stderr patterns to avoid misclassifying transport failures as assertion failures
+
+## 2026-02-20 manual [pitfall]
+When normalizing path separators for matching, apply the same normalization at EVERY code path that touches the same tokens -- partial normalization (e.g. in scoring but not in presence checks) creates false negatives on the un-normalized paths
+
+## 2026-02-20 manual [pitfall]
+When a new function is designated 'single source of truth' for a classification, all upstream presence/filtering checks must delegate to it or use its same regexes -- parallel brittle checks with different tolerance (e.g. whitespace) create disagreement
+
+## 2026-02-20 manual [pitfall]
+When a 'diagnostics-only' mode suppresses a pass promotion, do not merge the diagnostic source's MatchedAll/MissingAll into the gating source -- only merge observability data (proof lines, TokenHits, log file) to avoid contradictory success+fail state
+
+## 2026-02-20 manual [pitfall]
+When a policy (e.g. tier cap) must constrain how data is gated, apply the constraint DURING evaluation (before the pass/fail decision), not AFTER -- post-hoc patching of metadata without recomputing the gating decision leaves the original decision unchanged
+
+## 2026-02-20 manual [pitfall]
+When merging evidence from multiple sources (CLI + logs), a full Merge that unions MatchedAll can eliminate MissingAll tokens from one source even when the other source also failed -- in fail+fail paths, merge only diagnostic fields and keep the primary source's gating decision
+
+## 2026-02-20 manual [pitfall]
+When adding a new classification category (e.g. optional_only), ensure the detection condition is actually reachable -- walk through the control flow to verify the branch can be entered, and add a self-test that exercises it
+
+## 2026-02-20 manual [pitfall]
+When iterating a matrix of (case, provider) in CI summarize jobs, a missing result row for a specific tuple must be a hard failure -- silently skipping with 'continue' produces misleading OK rows and bypasses baseline completeness checks
+
+## 2026-02-20 manual [pitfall]
+When a validation rule checks 'at least one item has property X', do not guard it behind 'if count >= 1' -- any() on an empty sequence correctly returns False (vacuous failure), and the guard silently suppresses the warning for the empty case
+
+## 2026-02-20 manual [pitfall]
+Negative control test cases (disallowed/optional skills) must use temptation prompts that naturally overlap with the disallowed/optional skill domain -- prompts that avoid the domain will never trigger the skill, making the test case untestable

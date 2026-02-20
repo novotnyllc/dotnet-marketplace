@@ -1,6 +1,6 @@
 ---
 name: dotnet-gha-patterns
-description: "Designing GitHub Actions workflows. Reusable workflows, composite actions, matrix builds, caching."
+description: "Composes GitHub Actions workflows. Reusable workflows, composite actions, matrix, caching."
 user-invocable: false
 ---
 
@@ -10,9 +10,24 @@ Composable GitHub Actions workflow patterns for .NET projects: reusable workflow
 
 **Version assumptions:** GitHub Actions workflow syntax v2. `actions/setup-dotnet@v4` for .NET 8/9/10 support. `actions/cache@v4` for dependency caching.
 
-**Scope boundary:** This skill owns composable CI/CD workflow design patterns for GitHub Actions. Starter CI templates (basic build/test/pack) are owned by [skill:dotnet-add-ci] -- this skill extends those templates with advanced composition. CLI-specific release pipelines (build-package-release for CLI binaries) are owned by [skill:dotnet-cli-release-pipeline] -- this skill covers general workflow patterns that CLI pipelines consume. Benchmark CI integration is owned by [skill:dotnet-ci-benchmarking].
+## Scope
 
-**Out of scope:** Starter CI/CD templates -- see [skill:dotnet-add-ci]. CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline]. Benchmark CI workflows -- see [skill:dotnet-ci-benchmarking]. Azure DevOps pipeline patterns -- see [skill:dotnet-ado-patterns]. Build/test specifics -- see [skill:dotnet-gha-build-test]. Publishing workflows -- see [skill:dotnet-gha-publish]. Deployment patterns -- see [skill:dotnet-gha-deploy].
+- Reusable workflows with workflow_call
+- Composite actions for shared step sequences
+- Matrix builds across TFMs and operating systems
+- Path-based triggers and concurrency groups
+- NuGet and SDK caching strategies
+- workflow_dispatch inputs for manual triggers
+
+## Out of scope
+
+- Starter CI/CD templates -- see [skill:dotnet-add-ci]
+- CLI release pipelines (tag-triggered build-package-release for CLI tools) -- see [skill:dotnet-cli-release-pipeline]
+- Benchmark CI workflows -- see [skill:dotnet-ci-benchmarking]
+- Azure DevOps pipeline patterns -- see [skill:dotnet-ado-patterns]
+- Build/test specifics -- see [skill:dotnet-gha-build-test]
+- Publishing workflows -- see [skill:dotnet-gha-publish]
+- Deployment patterns -- see [skill:dotnet-gha-deploy]
 
 Cross-references: [skill:dotnet-add-ci] for starter templates that these patterns extend, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation, [skill:dotnet-ci-benchmarking] for benchmark-specific CI integration.
 

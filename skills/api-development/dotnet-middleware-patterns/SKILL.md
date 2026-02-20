@@ -1,6 +1,6 @@
 ---
 name: dotnet-middleware-patterns
-description: "Building ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling."
+description: "Builds ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 ASP.NET Core middleware patterns for the HTTP request pipeline. Covers correct ordering, writing custom middleware as classes or inline delegates, short-circuit logic, request/response manipulation, exception handling middleware, and conditional middleware registration.
 
-**Out of scope:** Authentication/authorization middleware configuration -- see [skill:dotnet-api-security]. Observability middleware (OpenTelemetry, health checks) -- see [skill:dotnet-observability]. Minimal API endpoint filters -- see [skill:dotnet-minimal-apis].
+## Scope
+
+- Correct middleware pipeline ordering and common ordering mistakes
+- Custom middleware classes (convention-based and IMiddleware)
+- Inline middleware (Use, Run, Map)
+- Short-circuit logic for early validation and feature flags
+- Request/response body manipulation
+- Exception handling middleware (IExceptionHandler, StatusCodePages)
+- Conditional middleware (UseWhen, MapWhen)
+
+## Out of scope
+
+- Authentication/authorization middleware configuration -- see [skill:dotnet-api-security]
+- Observability middleware (OpenTelemetry, health checks) -- see [skill:dotnet-observability]
+- Minimal API endpoint filters -- see [skill:dotnet-minimal-apis]
 
 Cross-references: [skill:dotnet-observability] for logging and telemetry middleware, [skill:dotnet-api-security] for auth middleware, [skill:dotnet-minimal-apis] for endpoint filters (the Minimal API equivalent of middleware).
 

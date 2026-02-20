@@ -1,6 +1,6 @@
 ---
 name: dotnet-benchmarkdotnet
-description: "Writing benchmarks. BenchmarkDotNet setup, memory diagnosers, baselines, result analysis."
+description: "Runs BenchmarkDotNet microbenchmarks. Setup, memory diagnosers, baselines, result analysis."
 user-invocable: false
 ---
 
@@ -10,7 +10,24 @@ Microbenchmarking guidance for .NET using BenchmarkDotNet v0.14+. Covers benchma
 
 **Version assumptions:** BenchmarkDotNet v0.14+ on .NET 8.0+ baseline. Examples use current stable APIs.
 
-**Out of scope:** Performance-oriented architecture patterns (Span\<T\>, ArrayPool\<T\>, sealed class devirtualization) are owned by this epic's companion skill -- see [skill:dotnet-performance-patterns]. C# syntax for modern patterns (records, primary constructors) -- see [skill:dotnet-csharp-modern-patterns]. Coding standards and style conventions -- see [skill:dotnet-csharp-coding-standards]. Native AOT compilation pipeline and performance characteristics -- see [skill:dotnet-native-aot]. Serialization format APIs and round-trip correctness -- see [skill:dotnet-serialization]. Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) are covered by [skill:dotnet-profiling]. CI benchmark regression detection is covered by [skill:dotnet-ci-benchmarking]. Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]. EF Core query optimization -- see [skill:dotnet-efcore-patterns].
+## Scope
+
+- Benchmark class setup and configuration
+- Memory and disassembly diagnosers
+- Exporters for CI artifact collection
+- Baseline comparisons and result analysis
+- Common pitfalls that invalidate measurements
+- Parameterized benchmarks with [Params] and benchmark categories
+
+## Out of scope
+
+- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-performance-patterns]
+- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
+- CI benchmark regression detection -- see [skill:dotnet-ci-benchmarking]
+- Native AOT compilation and performance -- see [skill:dotnet-native-aot]
+- Serialization format performance -- see [skill:dotnet-serialization]
+- Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]
+- GC tuning and memory management -- see [skill:dotnet-gc-memory]
 
 Cross-references: [skill:dotnet-performance-patterns] for zero-allocation patterns measured by benchmarks, [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax foundation, [skill:dotnet-csharp-coding-standards] for sealed class style conventions, [skill:dotnet-native-aot] for AOT performance characteristics and benchmark considerations, [skill:dotnet-serialization] for serialization format performance tradeoffs.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-winui
-description: "Building WinUI 3 apps. Windows App SDK setup, XAML patterns, MSIX/unpackaged deploy, UWP migration."
+description: "Builds WinUI 3 desktop apps. Windows App SDK, XAML patterns, MSIX/unpackaged, UWP migration."
 user-invocable: false
 ---
 
@@ -10,9 +10,21 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 **Version assumptions:** .NET 8.0+ baseline. Windows App SDK 1.6+ (current stable). TFM `net8.0-windows10.0.19041.0`. .NET 9 features explicitly marked.
 
-**Scope boundary:** This skill owns WinUI 3 project setup, XAML patterns, MVVM integration, packaging modes, Windows platform integration, and UWP migration guidance. Desktop testing is owned by [skill:dotnet-ui-testing-core]. Migration decision matrix is owned by [skill:dotnet-wpf-migration].
+## Scope
 
-**Out of scope:** Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser]. WPF patterns -- see [skill:dotnet-wpf-modern].
+- WinUI 3 project setup (UseWinUI, Windows 10 TFM)
+- XAML patterns (x:Bind compiled bindings, x:Load deferred loading)
+- MVVM with CommunityToolkit.Mvvm
+- MSIX and unpackaged deployment modes
+- Windows integration (lifecycle, notifications, widgets)
+- UWP migration guidance
+
+## Out of scope
+
+- Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]
+- General Native AOT patterns -- see [skill:dotnet-native-aot]
+- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
+- WPF patterns -- see [skill:dotnet-wpf-modern]
 
 Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-native-interop] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations), [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
 

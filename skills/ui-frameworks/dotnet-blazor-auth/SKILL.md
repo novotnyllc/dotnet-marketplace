@@ -1,6 +1,6 @@
 ---
 name: dotnet-blazor-auth
-description: "Adding auth to Blazor. AuthorizeView, CascadingAuthenticationState, Identity UI, per-model flows."
+description: "Implements Blazor auth flows: login/logout, AuthorizeView, Identity UI, OIDC."
 user-invocable: false
 ---
 
@@ -8,11 +8,28 @@ user-invocable: false
 
 Authentication and authorization across all Blazor hosting models. Covers AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, role/policy-based authorization, per-hosting-model auth flow differences (cookie vs token), and external identity providers.
 
-**Scope boundary:** This skill owns Blazor-specific auth UI patterns -- AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, client-side token handling, and per-hosting-model auth flow configuration. API-level auth (JWT, OAuth/OIDC, passkeys, CORS, rate limiting) -- see [skill:dotnet-api-security].
+## Scope
 
-**Out of scope:** JWT token generation and validation -- see [skill:dotnet-api-security]. OWASP security principles -- see [skill:dotnet-security-owasp]. bUnit testing of auth components -- see [skill:dotnet-blazor-testing]. E2E auth testing -- see [skill:dotnet-playwright]. UI framework selection -- see [skill:dotnet-ui-chooser].
+- Auth flow per Blazor hosting model (Server, WASM, Auto, SSR, Hybrid)
+- AuthorizeView and CascadingAuthenticationState patterns
+- Identity UI scaffolding and customization
+- Role/policy-based authorization in Blazor
+- Client-side token handling and external identity providers
+- Explicit login/logout/auth UI implementation tasks for Blazor apps
+
+## Out of scope
+
+- JWT token generation and validation -- see [skill:dotnet-api-security]
+- OWASP security principles -- see [skill:dotnet-security-owasp]
+- CSRF/XSS/CSP/rate-limiting hardening without auth-flow work -- see [skill:dotnet-security-owasp]
+- Hardening-only reviews of existing login pages without auth-flow implementation changes -- see [skill:dotnet-security-owasp]
+- bUnit testing of auth components -- see [skill:dotnet-blazor-testing]
+- E2E auth testing -- see [skill:dotnet-playwright]
+- UI framework selection -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-api-security] for API-level auth, [skill:dotnet-security-owasp] for OWASP principles, [skill:dotnet-blazor-patterns] for hosting models, [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection.
+
+Routing note: do not load this skill for OWASP hardening reviews unless the task explicitly includes Blazor auth flow/UI implementation.
 
 ---
 

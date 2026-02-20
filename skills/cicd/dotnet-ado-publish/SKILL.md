@@ -1,6 +1,6 @@
 ---
 name: dotnet-ado-publish
-description: "Publishing .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts."
+description: "Publishes .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts."
 user-invocable: false
 ---
 
@@ -10,9 +10,21 @@ Publishing pipelines for .NET projects in Azure DevOps: NuGet package push to Az
 
 **Version assumptions:** `DotNetCoreCLI@2` for pack/push operations. `Docker@2` for container image builds. `NuGetCommand@2` for NuGet push to external feeds. `PublishPipelineArtifact@1` (preferred over `PublishBuildArtifacts@1`).
 
-**Scope boundary:** This skill owns artifact publishing pipelines from Azure DevOps. Container image authoring (Dockerfile best practices, SDK container properties) is owned by [skill:dotnet-containers]. Native AOT compilation configuration is owned by [skill:dotnet-native-aot] -- this skill references AOT for CI pipeline configuration only. CLI-specific release pipelines are owned by [skill:dotnet-cli-release-pipeline]. Starter CI templates are owned by [skill:dotnet-add-ci].
+## Scope
 
-**Out of scope:** Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-containers]. Native AOT MSBuild configuration -- see [skill:dotnet-native-aot]. CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]. Starter CI templates -- see [skill:dotnet-add-ci]. GitHub Actions publishing -- see [skill:dotnet-gha-publish]. ADO-unique features (environments, service connections) -- see [skill:dotnet-ado-unique].
+- NuGet package push to Azure Artifacts and nuget.org
+- Container image build and push to ACR using Docker@2
+- Artifact staging with PublishPipelineArtifact@1
+- Pipeline artifacts for multi-stage release pipelines
+
+## Out of scope
+
+- Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-containers]
+- Native AOT MSBuild configuration -- see [skill:dotnet-native-aot]
+- CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
+- Starter CI templates -- see [skill:dotnet-add-ci]
+- GitHub Actions publishing -- see [skill:dotnet-gha-publish]
+- ADO-unique features (environments, service connections) -- see [skill:dotnet-ado-unique]
 
 Cross-references: [skill:dotnet-containers] for container image authoring and SDK container properties, [skill:dotnet-native-aot] for AOT publish configuration in CI, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation, [skill:dotnet-add-ci] for starter publish templates.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-uno-targets
-description: "Deploying Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux."
+description: "Deploys Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux."
 user-invocable: false
 ---
 
@@ -8,9 +8,20 @@ user-invocable: false
 
 Per-target deployment guidance for Uno Platform applications: Web/WASM, iOS, Android, macOS (Catalyst), Windows, Linux (Skia/GTK), and Embedded (Skia/Framebuffer). Each target section covers project setup, debugging workflow, packaging/distribution, platform-specific gotchas, AOT/trimming implications, and behavior differences from other targets.
 
-**Scope boundary:** This skill owns per-target deployment, debugging, packaging, and platform-specific gotchas. Core Uno Platform development (Extensions, MVUX, Toolkit, themes) is owned by [skill:dotnet-uno-platform]. MCP integration for live docs is owned by [skill:dotnet-uno-mcp].
+## Scope
 
-**Out of scope:** Uno Platform testing (Playwright for WASM, platform Appium tests) -- see [skill:dotnet-uno-testing]. General AOT/trimming patterns -- see [skill:dotnet-aot-wasm]. UI framework selection -- see [skill:dotnet-ui-chooser].
+- Per-target project setup: WASM, iOS, Android, macOS (Catalyst), Windows, Linux, Embedded
+- Debugging workflow per target platform
+- Packaging and distribution (App Store, Play Store, MSIX, Flatpak)
+- Platform-specific gotchas and AOT/trimming implications
+
+## Out of scope
+
+- Core Uno Platform development (Extensions, MVUX, Toolkit) -- see [skill:dotnet-uno-platform]
+- MCP integration for live docs -- see [skill:dotnet-uno-mcp]
+- Uno Platform testing -- see [skill:dotnet-uno-testing]
+- General AOT/trimming patterns -- see [skill:dotnet-aot-wasm]
+- UI framework selection -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing, [skill:dotnet-aot-wasm] for general WASM AOT patterns, [skill:dotnet-ui-chooser] for framework selection.
 

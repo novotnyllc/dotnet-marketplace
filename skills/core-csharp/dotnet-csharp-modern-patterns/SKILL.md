@@ -8,6 +8,18 @@ user-invocable: false
 
 Modern C# language feature guidance adapted to the project's target framework. Always run [skill:dotnet-version-detection] first to determine TFM and C# version.
 
+## Scope
+
+- Records, pattern matching, primary constructors, collection expressions
+- C# 12-15 feature usage mapped to TFM
+- Language feature adoption guidance
+
+## Out of scope
+
+- Naming and style conventions -- see [skill:dotnet-csharp-coding-standards]
+- Async/await patterns -- see [skill:dotnet-csharp-async-patterns]
+- Source generator usage (GeneratedRegex, LoggerMessage) -- see [skill:dotnet-csharp-source-generators]
+
 Cross-references: [skill:dotnet-csharp-coding-standards] for naming/style conventions, [skill:dotnet-csharp-async-patterns] for async-specific patterns.
 
 ---

@@ -1,15 +1,23 @@
 ---
 name: dotnet-ui-chooser
-description: "Selecting a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms."
+description: "Selects a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms."
 ---
 
 # dotnet-ui-chooser
 
 UI framework selection decision tree for .NET applications. Covers Web (Blazor Server, Blazor WebAssembly, Blazor Hybrid), cross-platform (MAUI, Uno Platform, Avalonia), and Windows-only (WinUI 3, WPF, WinForms) frameworks. Presents structured trade-off analysis across five decision factors to help teams evaluate options based on their specific constraints.
 
-**Scope boundary:** This skill owns the framework selection decision tree and cross-framework comparison. Individual framework depth, patterns, and APIs are owned by the respective framework skills. Migration guidance between frameworks is owned by [skill:dotnet-wpf-migration].
+## Scope
 
-**Out of scope:** Framework-specific implementation patterns -- see individual skills listed below. Migration paths between frameworks -- see [skill:dotnet-wpf-migration]. Desktop UI testing -- see [skill:dotnet-ui-testing-core].
+- Framework selection decision tree (target platforms, team skills, performance, ecosystem)
+- Cross-framework comparison tables
+- Trade-off analysis for Web, cross-platform, and Windows-only frameworks
+
+## Out of scope
+
+- Framework-specific implementation patterns -- see individual skills listed below
+- Migration paths between frameworks -- see [skill:dotnet-wpf-migration]
+- Desktop UI testing -- see [skill:dotnet-ui-testing-core]
 
 Cross-references: [skill:dotnet-blazor-patterns] for Blazor hosting and render modes, [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-modern] for modern WPF on .NET 8+, [skill:dotnet-winforms-basics] for WinForms modernization.
 

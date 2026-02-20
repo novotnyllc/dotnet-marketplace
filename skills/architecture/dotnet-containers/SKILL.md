@@ -1,6 +1,6 @@
 ---
 name: dotnet-containers
-description: "Containerizing .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
+description: "Containerizes .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
 user-invocable: false
 ---
 
@@ -8,7 +8,20 @@ user-invocable: false
 
 Best practices for containerizing .NET applications. Covers multi-stage Dockerfile patterns, the `dotnet publish` container image feature (.NET 8+), rootless container configuration, optimized layer caching, and container health checks.
 
-**Out of scope:** DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]. Kubernetes deployment manifests and Docker Compose orchestration are covered in [skill:dotnet-container-deployment]. CI/CD pipeline integration for building and pushing images -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]. Testing containerized applications -- see [skill:dotnet-integration-testing] for Testcontainers patterns.
+## Scope
+
+- Multi-stage Dockerfile patterns for .NET
+- SDK container publish (`dotnet publish /t:PublishContainer`)
+- Rootless container configuration and security
+- Optimized layer caching and base image selection
+- Container health checks
+
+## Out of scope
+
+- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
+- Kubernetes deployment manifests and Docker Compose -- see [skill:dotnet-container-deployment]
+- CI/CD pipeline integration for building and pushing images -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]
+- Testing containerized applications -- see [skill:dotnet-integration-testing]
 
 Cross-references: [skill:dotnet-observability] for health check patterns, [skill:dotnet-container-deployment] for deploying containers to Kubernetes and local dev with Compose, [skill:dotnet-artifacts-output] for Dockerfile path adjustments when using centralized build output layout.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-wpf-modern
-description: "Building WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns."
+description: "Builds WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ WPF on .NET 8+: Host builder and dependency injection, MVVM with CommunityToolki
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). TFM `net8.0-windows`. .NET 9 features (Fluent theme) explicitly marked.
 
-**Scope boundary:** This skill owns WPF on modern .NET patterns: Host builder, MVVM Toolkit, performance, modern C#, theming. Migration from .NET Framework to .NET 8+ is owned by [skill:dotnet-wpf-migration]. Desktop testing is owned by [skill:dotnet-ui-testing-core].
+## Scope
 
-**Out of scope:** WPF .NET Framework patterns (legacy) -- this skill covers .NET 8+ only. Migration guidance -- see [skill:dotnet-wpf-migration]. Desktop testing -- see [skill:dotnet-ui-testing-core]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection -- see [skill:dotnet-ui-chooser].
+- WPF .NET 8+ project setup (SDK-style)
+- Host builder and dependency injection
+- MVVM with CommunityToolkit.Mvvm source generators
+- Fluent theme (.NET 9+) and system theme detection
+- Hardware-accelerated rendering improvements
+- Modern C# patterns (records, primary constructors, pattern matching)
+
+## Out of scope
+
+- WPF .NET Framework patterns (legacy)
+- Migration guidance -- see [skill:dotnet-wpf-migration]
+- Desktop testing -- see [skill:dotnet-ui-testing-core]
+- General Native AOT patterns -- see [skill:dotnet-native-aot]
+- UI framework selection -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
 

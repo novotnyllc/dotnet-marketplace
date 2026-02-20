@@ -1,6 +1,6 @@
 ---
 name: dotnet-openapi
-description: "Generating OpenAPI docs. MS.AspNetCore.OpenApi (.NET 9+), Swashbuckle migration, NSwag."
+description: "Generates OpenAPI docs. MS.AspNetCore.OpenApi (.NET 9+), Swashbuckle migration, NSwag."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 OpenAPI/Swagger integration for ASP.NET Core. Microsoft.AspNetCore.OpenApi is the recommended first-party approach for .NET 9+ and is the default in new project templates. Swashbuckle is no longer actively maintained; existing projects using Swashbuckle should plan migration. NSwag remains an alternative for client generation and advanced scenarios.
 
-**Out of scope:** Minimal API endpoint patterns (route groups, filters, TypedResults) -- see [skill:dotnet-minimal-apis]. API versioning strategies -- see [skill:dotnet-api-versioning]. Authentication and authorization -- see [skill:dotnet-api-security].
+## Scope
+
+- Microsoft.AspNetCore.OpenApi setup and multi-document configuration
+- Document, operation, and schema transformers
+- Swashbuckle migration steps and filter-to-transformer mapping
+- NSwag document generation and client generation
+- OpenAPI 3.1 support in .NET 10
+
+## Out of scope
+
+- Minimal API endpoint patterns (route groups, filters, TypedResults) -- see [skill:dotnet-minimal-apis]
+- API versioning strategies -- see [skill:dotnet-api-versioning]
+- Authentication and authorization -- see [skill:dotnet-api-security]
 
 Cross-references: [skill:dotnet-minimal-apis] for endpoint patterns that generate OpenAPI metadata, [skill:dotnet-api-versioning] for versioned OpenAPI documents.
 

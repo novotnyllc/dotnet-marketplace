@@ -1,6 +1,6 @@
 ---
 name: dotnet-structured-logging
-description: "Designing log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation."
+description: "Designs log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation."
 user-invocable: false
 ---
 
@@ -8,7 +8,19 @@ user-invocable: false
 
 Log pipeline design and operations for .NET distributed systems. Covers log aggregation architecture (ELK, Seq, Grafana Loki), structured query patterns for each platform, log sampling and volume management strategies, PII scrubbing and destructuring policies, and cross-service correlation beyond single-service log scopes. This skill addresses what happens _after_ log emission -- the pipeline, query, and operations layer.
 
-**Out of scope:** Log emission mechanics (Serilog/NLog/MEL configuration, source-generated LoggerMessage, enrichers, single-service log scopes, sink registration, OTel logging export) -- see [skill:dotnet-observability]. Application configuration and options pattern -- see [skill:dotnet-csharp-configuration]. Distributed tracing setup and trace context propagation -- see [skill:dotnet-observability].
+## Scope
+
+- Log aggregation architecture (ELK, Seq, Grafana Loki)
+- Structured query patterns per platform
+- Log sampling and volume management strategies
+- PII scrubbing and destructuring policies
+- Cross-service correlation and distributed context
+
+## Out of scope
+
+- Log emission mechanics (Serilog/NLog/MEL, LoggerMessage, sinks, OTel export) -- see [skill:dotnet-observability]
+- Application configuration and options pattern -- see [skill:dotnet-csharp-configuration]
+- Distributed tracing setup and trace context propagation -- see [skill:dotnet-observability]
 
 Cross-references: [skill:dotnet-observability] for log emission, Serilog/MEL configuration, and OpenTelemetry logging export, [skill:dotnet-csharp-configuration] for appsettings.json configuration patterns used in log pipeline setup.
 

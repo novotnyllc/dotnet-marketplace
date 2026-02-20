@@ -1,6 +1,6 @@
 ---
 name: dotnet-release-management
-description: "Managing .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching."
+description: "Manages .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching."
 user-invocable: false
 ---
 
@@ -10,9 +10,20 @@ Release lifecycle management for .NET projects: Nerdbank.GitVersioning (NBGV) se
 
 **Version assumptions:** .NET 8.0+ baseline. `Nerdbank.GitVersioning` 3.6+ (current stable). SemVer 2.0 specification.
 
-**Scope boundary:** This skill owns the release lifecycle strategy -- versioning, changelogs, pre-release workflows, and branching patterns. Plugin-specific release workflows (dotnet-artisan versioning and publishing) are documented in repo-level CONTRIBUTING.md. CI/CD publish workflows (NuGet push, container push, deployment) are owned by [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]. GitHub Release creation and asset management are owned by [skill:dotnet-github-releases]. NuGet package versioning properties (`Version`, `PackageVersion`) are owned by [skill:dotnet-nuget-authoring].
+## Scope
 
-**Out of scope:** Plugin-specific release workflow -- see repo-level CONTRIBUTING.md. CI/CD NuGet push and deployment workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]. GitHub Release creation and asset attachment -- see [skill:dotnet-github-releases]. NuGet package metadata and signing -- see [skill:dotnet-nuget-authoring]. Project-level configuration (SourceLink, CPM) -- see [skill:dotnet-project-structure].
+- Nerdbank.GitVersioning (NBGV) setup and version height
+- SemVer 2.0 strategy for libraries and applications
+- Changelog generation (Keep a Changelog, git-cliff)
+- Pre-release version workflows (alpha, beta, rc, stable)
+- Release branching patterns (release branches, trunk-based)
+
+## Out of scope
+
+- CI/CD NuGet push and deployment workflows -- see [skill:dotnet-gha-publish] and [skill:dotnet-ado-publish]
+- GitHub Release creation and asset attachment -- see [skill:dotnet-github-releases]
+- NuGet package metadata and signing -- see [skill:dotnet-nuget-authoring]
+- Project-level configuration (SourceLink, CPM) -- see [skill:dotnet-project-structure]
 
 Cross-references: [skill:dotnet-gha-publish] for CI publish workflows, [skill:dotnet-ado-publish] for ADO publish workflows, [skill:dotnet-nuget-authoring] for NuGet package versioning properties.
 

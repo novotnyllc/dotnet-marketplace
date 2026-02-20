@@ -8,6 +8,19 @@ user-invocable: false
 
 Async/await best practices for .NET applications. Covers correct task usage, cancellation propagation, and the most common mistakes AI agents make when generating async code.
 
+## Scope
+
+- Async/await best practices and Task patterns
+- ConfigureAwait usage and SynchronizationContext
+- Cancellation token propagation
+- Common async agent pitfalls and fixes
+
+## Out of scope
+
+- Thread synchronization primitives (lock, SemaphoreSlim) -- see [skill:dotnet-csharp-concurrency-patterns]
+- Channel<T> producer/consumer patterns -- see [skill:dotnet-channels]
+- BackgroundService registration and lifecycle -- see [skill:dotnet-background-services]
+
 Cross-references: [skill:dotnet-csharp-dependency-injection] for `IHostedService`/`BackgroundService` registration, [skill:dotnet-csharp-coding-standards] for `Async` suffix naming, [skill:dotnet-csharp-modern-patterns] for language-level features.
 
 ---

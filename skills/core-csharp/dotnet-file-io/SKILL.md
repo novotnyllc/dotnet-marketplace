@@ -1,6 +1,6 @@
 ---
 name: dotnet-file-io
-description: "Doing file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
+description: "Performs file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
 user-invocable: false
 ---
 
@@ -8,9 +8,21 @@ user-invocable: false
 
 File I/O patterns for .NET applications. Covers FileStream construction with async flags, RandomAccess API for thread-safe offset-based I/O, File convenience methods, FileSystemWatcher event handling and debouncing, MemoryMappedFile for large files and IPC, path handling security (Combine vs Join), secure temp file creation, cross-platform considerations, IOException hierarchy, and buffer sizing guidance.
 
-**Out of scope:** PipeReader/PipeWriter and network I/O -- see [skill:dotnet-io-pipelines]. Async/await fundamentals -- see [skill:dotnet-csharp-async-patterns]. Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-performance-patterns]. JSON and Protobuf serialization -- see [skill:dotnet-serialization]. BackgroundService lifecycle -- see [skill:dotnet-background-services]. Channel<T> producer/consumer -- see [skill:dotnet-channels]. GC implications of pinned/memory-mapped backing arrays -- see [skill:dotnet-gc-memory]. File upload validation (IFormFile) -- see [skill:dotnet-input-validation].
+## Scope
 
-For testable file system access, consider `System.IO.Abstractions` -- see [skill:dotnet-testing-strategy] for test isolation patterns.
+- FileStream construction with async flags
+- RandomAccess API for thread-safe offset-based I/O
+- FileSystemWatcher event handling and debouncing
+- MemoryMappedFile for large files and IPC
+- Path handling security (Combine vs Join) and secure temp files
+
+## Out of scope
+
+- PipeReader/PipeWriter and network I/O -- see [skill:dotnet-io-pipelines]
+- Async/await fundamentals -- see [skill:dotnet-csharp-async-patterns]
+- Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-performance-patterns]
+- JSON and Protobuf serialization -- see [skill:dotnet-serialization]
+- GC implications of memory-mapped backing arrays -- see [skill:dotnet-gc-memory]
 
 Cross-references: [skill:dotnet-io-pipelines] for PipeReader/PipeWriter network I/O, [skill:dotnet-gc-memory] for POH and memory-mapped backing array GC implications, [skill:dotnet-performance-patterns] for Span/Memory basics and ArrayPool usage, [skill:dotnet-csharp-async-patterns] for async/await patterns used with file streams.
 

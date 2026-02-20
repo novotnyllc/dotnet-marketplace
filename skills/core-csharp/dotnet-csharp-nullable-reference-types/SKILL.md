@@ -1,12 +1,24 @@
 ---
 name: dotnet-csharp-nullable-reference-types
-description: "Enabling nullable reference types. Annotation strategies, attributes, common agent mistakes."
+description: "Enables nullable reference types. Annotation strategies, migration, common agent mistakes."
 user-invocable: false
 ---
 
 # dotnet-csharp-nullable-reference-types
 
 Nullable reference type (NRT) annotation strategies, migration guidance for legacy codebases, and the most common annotation mistakes AI agents make. NRT is enabled by default in all modern .NET templates (net6.0+), but many existing codebases still need migration.
+
+## Scope
+
+- NRT annotation strategies and nullable context configuration
+- Migration guidance for legacy codebases
+- Nullable attributes (MaybeNull, NotNull, etc.)
+- Common AI agent NRT annotation mistakes
+
+## Out of scope
+
+- Null-handling style (pattern matching, null-conditional) -- see [skill:dotnet-csharp-coding-standards]
+- Pattern matching language features -- see [skill:dotnet-csharp-modern-patterns]
 
 Cross-references: [skill:dotnet-csharp-coding-standards] for null-handling style, [skill:dotnet-csharp-modern-patterns] for pattern matching with nulls.
 

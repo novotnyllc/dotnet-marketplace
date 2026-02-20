@@ -1,6 +1,6 @@
 ---
 name: dotnet-validation-patterns
-description: "Validating models or IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>."
+description: "Validates models and IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>."
 user-invocable: false
 ---
 
@@ -8,7 +8,18 @@ user-invocable: false
 
 Built-in .NET validation patterns that do not require third-party packages. Covers DataAnnotations attributes, `IValidatableObject` for cross-property validation, `IValidateOptions<T>` for options validation at startup, custom `ValidationAttribute` authoring, and `Validator.TryValidateObject` for manual validation. Prefer these built-in mechanisms as the default; reserve FluentValidation for complex domain rules that outgrow declarative attributes.
 
-**Scope boundary:** This skill owns the built-in validation APIs as core C# patterns -- attribute-based, interface-based, and options-pattern validation. API pipeline integration (endpoint filters, ProblemDetails responses, .NET 10 `AddValidation`) is owned by [skill:dotnet-input-validation]. Options pattern binding and `ValidateOnStart()` registration are owned by [skill:dotnet-csharp-configuration]. Architectural placement of validation in clean architecture layers is owned by [skill:dotnet-architecture-patterns].
+## Scope
+
+- DataAnnotations attributes and Validator.TryValidateObject
+- IValidatableObject for cross-property validation
+- IValidateOptions<T> for options validation at startup
+- Custom ValidationAttribute authoring
+
+## Out of scope
+
+- API pipeline integration (endpoint filters, ProblemDetails, AddValidation) -- see [skill:dotnet-input-validation]
+- Options pattern binding and ValidateOnStart registration -- see [skill:dotnet-csharp-configuration]
+- Architectural placement of validation in layers -- see [skill:dotnet-architecture-patterns]
 
 Cross-references: [skill:dotnet-input-validation] for API pipeline validation and FluentValidation, [skill:dotnet-csharp-configuration] for Options pattern binding and `ValidateOnStart()`, [skill:dotnet-architecture-patterns] for validation placement in architecture layers, [skill:dotnet-csharp-coding-standards] for naming conventions.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-development
-description: "Building .NET MAUI apps. Project structure, XAML/MVVM, platform services, current caveats."
+description: "Builds .NET MAUI mobile apps. Project structure, XAML/MVVM, platform services, caveats."
 user-invocable: false
 ---
 
@@ -10,9 +10,21 @@ user-invocable: false
 
 **Version assumptions:** .NET 8.0+ baseline (MAUI ships with .NET 8+). .NET 11 Preview 1 content explicitly marked. Examples use the latest stable APIs.
 
-**Scope boundary:** This skill owns MAUI project structure, XAML/MVVM patterns, platform services, current-state assessment, migration options, and .NET 11 improvements. MAUI Native AOT on iOS/Mac Catalyst is owned by [skill:dotnet-maui-aot].
+## Scope
 
-**Out of scope:** MAUI testing (Appium, XHarness, platform-specific testing) -- see [skill:dotnet-maui-testing]. General Native AOT patterns -- see [skill:dotnet-native-aot]. UI framework selection decision tree -- see [skill:dotnet-ui-chooser].
+- Single-project structure with platform folders
+- XAML data binding with MVVM (CommunityToolkit.Mvvm)
+- Shell navigation and platform services
+- Dependency injection and Hot Reload
+- Current-state assessment and migration options
+- .NET 11 improvements (XAML source gen, CoreCLR for Android)
+
+## Out of scope
+
+- MAUI Native AOT on iOS/Mac Catalyst -- see [skill:dotnet-maui-aot]
+- MAUI testing (Appium, XHarness) -- see [skill:dotnet-maui-testing]
+- General Native AOT patterns -- see [skill:dotnet-native-aot]
+- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
 
 Cross-references: [skill:dotnet-maui-aot] for Native AOT on iOS/Mac Catalyst, [skill:dotnet-maui-testing] for testing patterns, [skill:dotnet-version-detection] for TFM detection, [skill:dotnet-native-aot] for general AOT patterns, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (SemanticProperties, screen readers).
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-container-deployment
-description: "Deploying .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
+description: "Deploys .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
 user-invocable: false
 ---
 
@@ -8,7 +8,18 @@ user-invocable: false
 
 Deploying .NET containers to Kubernetes and local development environments. Covers Kubernetes Deployment + Service + probe YAML, Docker Compose for local dev workflows, and CI/CD integration for building and pushing container images.
 
-**Out of scope:** Dockerfile authoring, multi-stage builds, base image selection, and `dotnet publish` container images are covered in [skill:dotnet-containers]. Advanced CI/CD pipeline patterns (matrix builds, deploy pipelines, environment promotion) -- see [skill:dotnet-gha-deploy] and [skill:dotnet-ado-patterns]. DI and async patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Testing container deployments -- see [skill:dotnet-integration-testing] for Testcontainers patterns and [skill:dotnet-playwright] for E2E testing against deployed containers.
+## Scope
+
+- Kubernetes Deployment, Service, and probe YAML for .NET apps
+- Docker Compose for local development workflows
+- CI/CD integration for building and pushing container images
+
+## Out of scope
+
+- Dockerfile authoring, multi-stage builds, and base image selection -- see [skill:dotnet-containers]
+- Advanced CI/CD pipeline patterns (matrix builds, deploy pipelines) -- see [skill:dotnet-gha-deploy] and [skill:dotnet-ado-patterns]
+- DI and async patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]
+- Testing container deployments -- see [skill:dotnet-integration-testing] and [skill:dotnet-playwright]
 
 Cross-references: [skill:dotnet-containers] for Dockerfile and image best practices, [skill:dotnet-observability] for health check endpoint patterns used by Kubernetes probes.
 

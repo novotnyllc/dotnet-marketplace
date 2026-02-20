@@ -1,6 +1,6 @@
 ---
 name: dotnet-architecture-patterns
-description: "Organizing APIs at scale. Vertical slices, request pipelines, caching, error handling, idempotency."
+description: "Designs ASP.NET Core architecture: vertical slices, pipelines, caching, errors."
 user-invocable: false
 ---
 
@@ -8,7 +8,21 @@ user-invocable: false
 
 Modern architecture patterns for .NET applications. Covers practical approaches to organizing minimal APIs at scale, vertical slice architecture, request pipeline composition, validation strategies, caching, error handling, and idempotency/outbox patterns.
 
-**Out of scope:** DI container mechanics and async/await patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]. Project scaffolding and file layout -- see [skill:dotnet-scaffold-project]. Testing strategies -- see [skill:dotnet-testing-strategy] for decision guidance and [skill:dotnet-integration-testing] for WebApplicationFactory patterns.
+## Scope
+
+- Vertical slice architecture and feature-folder organization
+- Request pipeline composition and MediatR patterns
+- Caching strategies (memory, distributed, output caching, HybridCache)
+- Error handling and problem details (RFC 9457)
+- Idempotency and outbox patterns
+- Result pattern for business logic error flow
+
+## Out of scope
+
+- DI container mechanics and async/await patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]
+- Project scaffolding and file layout -- see [skill:dotnet-scaffold-project]
+- Testing strategies -- see [skill:dotnet-testing-strategy] and [skill:dotnet-integration-testing]
+- SOLID principles and design pattern foundations -- see [skill:dotnet-solid-principles]
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and lifetimes, [skill:dotnet-csharp-async-patterns] for async pipeline patterns, [skill:dotnet-csharp-configuration] for Options pattern in configuration, [skill:dotnet-solid-principles] for SOLID/DRY design principles governing class and interface design.
 

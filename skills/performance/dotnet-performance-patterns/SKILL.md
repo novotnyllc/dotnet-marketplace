@@ -1,6 +1,6 @@
 ---
 name: dotnet-performance-patterns
-description: "Optimizing .NET allocations/throughput. Span, ArrayPool, ref struct, sealed, stackalloc."
+description: "Optimizes .NET allocations and throughput. Span, ArrayPool, ref struct, sealed, stackalloc."
 user-invocable: false
 ---
 
@@ -10,7 +10,23 @@ Performance-oriented architecture patterns for .NET applications. Covers zero-al
 
 **Version assumptions:** .NET 8.0+ baseline. Span\<T\> and Memory\<T\> are available from .NET Core 2.1+ but this skill targets modern usage patterns on .NET 8+.
 
-**Out of scope:** C# language syntax for Span, records, pattern matching, and collection expressions -- see [skill:dotnet-csharp-modern-patterns]. Coding standards and naming conventions (including sealed class style guidance) -- see [skill:dotnet-csharp-coding-standards]. Microbenchmarking setup and measurement is owned by this epic's companion skill -- see [skill:dotnet-benchmarkdotnet]. Native AOT compilation pipeline and trimming -- see [skill:dotnet-native-aot]. Serialization format performance tradeoffs -- see [skill:dotnet-serialization]. Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-architecture-patterns]. EF Core query optimization -- see [skill:dotnet-efcore-patterns].
+## Scope
+
+- Zero-allocation coding with Span<T> and Memory<T>
+- Buffer pooling with ArrayPool<T>
+- Struct design for performance (readonly struct, ref struct, in parameters)
+- Sealed class devirtualization by the JIT
+- Stack-based allocation with stackalloc
+- String handling performance patterns
+
+## Out of scope
+
+- C# language syntax for Span, records, pattern matching -- see [skill:dotnet-csharp-modern-patterns]
+- Coding standards and naming conventions -- see [skill:dotnet-csharp-coding-standards]
+- Microbenchmarking setup and measurement -- see [skill:dotnet-benchmarkdotnet]
+- Native AOT compilation and trimming -- see [skill:dotnet-native-aot]
+- Serialization format performance -- see [skill:dotnet-serialization]
+- Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-architecture-patterns]
 
 Cross-references: [skill:dotnet-benchmarkdotnet] for measuring the impact of these patterns, [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax foundation, [skill:dotnet-csharp-coding-standards] for sealed class style conventions, [skill:dotnet-native-aot] for AOT performance characteristics and trimming impact on pattern choices, [skill:dotnet-serialization] for serialization performance context.
 

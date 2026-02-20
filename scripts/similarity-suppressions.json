@@ -1,0 +1,7 @@
+[
+  {
+    "id_a": "dotnet-ado-publish",
+    "id_b": "dotnet-gha-publish",
+    "rationale": "Intentional parallel descriptions for different CI systems (Azure DevOps vs GitHub Actions)"
+  }
+]

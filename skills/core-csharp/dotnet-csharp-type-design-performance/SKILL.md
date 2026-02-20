@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-type-design-performance
-description: "Designing types for performance. struct vs class, sealed, readonly struct, Span/Memory, collection selection."
+description: "Designs types for performance. struct vs class, sealed, readonly struct, Span/Memory, collections."
 user-invocable: false
 ---
 
@@ -10,7 +10,19 @@ Upfront type design choices that affect performance throughout an application's 
 
 **Version assumptions:** .NET 8.0+ baseline. FrozenDictionary (requires .NET 8+) is in-scope by default.
 
-**Differentiation:** [skill:dotnet-performance-patterns] covers optimization techniques (pooling, caching, stackalloc, string handling). This skill covers **type selection at design time** -- the architectural choices that determine whether optimization is even necessary. [skill:dotnet-csharp-modern-patterns] covers language syntax for records, patterns, and collection expressions.
+## Scope
+
+- struct vs class decision matrix
+- sealed by default for library types
+- readonly struct for defensive copy elimination
+- ref struct and Span<T>/Memory<T> selection
+- Collection type selection (FrozenDictionary, ImmutableArray)
+
+## Out of scope
+
+- Runtime optimization techniques (pooling, caching, stackalloc) -- see [skill:dotnet-performance-patterns]
+- Language syntax for records and collection expressions -- see [skill:dotnet-csharp-modern-patterns]
+- GC behavior and memory management -- see [skill:dotnet-gc-memory]
 
 Cross-references: [skill:dotnet-performance-patterns] for optimization techniques, [skill:dotnet-csharp-modern-patterns] for language syntax, [skill:dotnet-gc-memory] for GC behavior and memory management.
 

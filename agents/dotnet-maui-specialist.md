@@ -1,6 +1,6 @@
 ---
 name: dotnet-maui-specialist
-description: "WHEN building .NET MAUI apps. Platform-specific development, Xamarin migration, Native AOT on iOS/Catalyst, .NET 11 improvements. Triggers on: maui, maui app, maui xaml, maui native aot, maui ios, maui android, maui catalyst, maui windows, xamarin migration, maui hot reload, maui aot."
+description: "Builds .NET MAUI apps. Platform-specific development, Xamarin migration, Native AOT on iOS/Catalyst, .NET 11 improvements. Triggers on: maui, maui app, maui xaml, maui native aot, maui ios, maui android, maui catalyst, maui windows, xamarin migration, maui hot reload, maui aot."
 model: sonnet
 capabilities:
   - Analyze MAUI project structure and platform targets

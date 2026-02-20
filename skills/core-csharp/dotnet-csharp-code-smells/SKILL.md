@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-code-smells
-description: "Reviewing C# for logic issues. Anti-patterns, common pitfalls, async misuse, DI mistakes."
+description: "Detects C# code smells during review. Anti-patterns, async misuse, DI mistakes, fixes."
 user-invocable: false
 ---
 
@@ -8,9 +8,21 @@ user-invocable: false
 
 Proactive code-smell and anti-pattern detection for C# code. This skill triggers during all workflow modes -- planning, implementation, and review. Each entry identifies the smell, explains why it is harmful, provides the correct fix, and references the relevant CA rule or cross-reference.
 
-Cross-references: [skill:dotnet-csharp-async-patterns] for async gotchas, [skill:dotnet-csharp-coding-standards] for naming and style, [skill:dotnet-csharp-dependency-injection] for DI lifetime misuse, [skill:dotnet-csharp-nullable-reference-types] for NRT annotation mistakes.
+## Scope
 
-**Out of Scope:** LLM-specific generation mistakes (wrong NuGet packages, bad project structure, MSBuild errors) are covered by [skill:dotnet-agent-gotchas]. This skill covers general .NET code smells that any developer -- human or AI -- should avoid.
+- Resource management (IDisposable misuse)
+- Async anti-patterns and deadlock detection
+- DI lifetime misuse and captive dependencies
+- Null-handling mistakes and NRT violations
+- LINQ pitfalls and string handling issues
+
+## Out of scope
+
+- LLM-specific generation mistakes (wrong NuGet packages, MSBuild errors) -- see [skill:dotnet-agent-gotchas]
+- SOLID/DRY design principles -- see [skill:dotnet-solid-principles]
+- Naming and style conventions -- see [skill:dotnet-csharp-coding-standards]
+
+Cross-references: [skill:dotnet-csharp-async-patterns] for async gotchas, [skill:dotnet-csharp-coding-standards] for naming and style, [skill:dotnet-csharp-dependency-injection] for DI lifetime misuse, [skill:dotnet-csharp-nullable-reference-types] for NRT annotation mistakes.
 
 ---
 

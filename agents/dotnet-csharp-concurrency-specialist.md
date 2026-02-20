@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-concurrency-specialist
-description: "WHEN debugging race conditions, deadlocks, thread safety issues, concurrent access bugs, lock contention, async races, parallel execution problems, or synchronization issues in .NET code. WHEN NOT general async/await questions (use dotnet-csharp-async-patterns skill instead)."
+description: "Debugs race conditions, deadlocks, thread safety issues, concurrent access bugs, lock contention, async races, parallel execution problems, and synchronization issues in .NET code. Routes general async/await questions to [skill:dotnet-csharp-async-patterns]."
 model: sonnet
 tools:
   - Read

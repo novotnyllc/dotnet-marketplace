@@ -2,7 +2,7 @@
 
 This guide covers everything you need to create, test, and ship a skill for **dotnet-artisan**. It merges the patterns from the [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) with dotnet-artisan conventions.
 
-For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](CONTRIBUTING.md).
+For the general contribution workflow (prerequisites, PRs, code of conduct), see [CONTRIBUTING.md](CONTRIBUTING.md). For the canonical routing language rules (description formula, scope format, cross-reference conventions), see the [Skill Routing Style Guide](docs/skill-routing-style-guide.md).
 
 ---
 
@@ -21,14 +21,14 @@ mkdir -p skills/core-csharp/dotnet-my-new-skill
 ```markdown
 ---
 name: dotnet-my-new-skill
-description: "WHEN writing C# code. Detects common pitfalls in X."
+description: "Detects common pitfalls in X during C# development."
 ---
 
 # dotnet-my-new-skill
 
 Guidance body goes here. See section 4 for writing instructions.
 
-Cross-references: [skill:dotnet-csharp-coding-standards] for related patterns.
+Cross-references: See [skill:dotnet-csharp-coding-standards] for baseline C# conventions.
 ```
 
 **Step 3 -- Register in plugin.json:**
@@ -72,7 +72,7 @@ A skill file has two parts: **frontmatter** and **body**.
 ```markdown
 ---
 name: dotnet-csharp-code-smells
-description: "WHEN writing, reviewing, or planning C# code. Catches code smells and anti-patterns."
+description: "Detects code smells and anti-patterns in C# code during writing and review."
 ---
 
 # dotnet-csharp-code-smells
@@ -111,11 +111,13 @@ The `description` field is the most important line in your skill. It determines 
 
 ### The Formula
 
-Structure descriptions as: **[What] + [When] + [Triggers]**
+Structure descriptions as: **Action + Domain + Differentiator**
+
+Use **third-person declarative** style. Front-load the most specific action verb or present participle. Do not start with `WHEN`, `A skill that`, `Helps with`, or other filler. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) for the full canonical rules.
 
 ```yaml
-# Good -- tells Claude what, when, and why to activate
-description: "WHEN writing, reviewing, or planning C# code. Catches code smells and anti-patterns."
+# Good -- declarative, specific domain, clear scope
+description: "Detects code smells and anti-patterns in C# code during writing and review."
 
 # Bad -- vague, no activation context
 description: "Helps with code quality stuff"
@@ -125,26 +127,76 @@ description: "Helps with code quality stuff"
 
 | Quality | Description | Problem |
 |---------|-------------|---------|
-| Good | `WHEN writing C# async code. Patterns for async/await, cancellation, and parallel execution.` | Clear trigger, specific scope |
+| Good | `Writing async/await code. Task patterns, ConfigureAwait, cancellation, and common agent pitfalls.` | Clear trigger, specific scope |
 | Good | `Detects and fixes common .NET dependency injection lifetime misuse and registration errors.` | Actionable, precise |
+| Bad | `WHEN writing C# async code. Patterns for async/await.` | WHEN prefix -- violates style rule |
 | Bad | `C# patterns` | Too vague; matches everything and nothing |
 | Bad | `Complete guide to everything about async programming in C# including all patterns, best practices, and common mistakes that developers make.` | 146 chars, over budget |
 
 ### The 120-Character Target
 
-Each description must target **under 120 characters**. This is a budget constraint, not a style preference.
+Each description must be **at most 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills at an average of ~93 characters each, the catalog currently consumes ~12,115 characters (above the warning threshold of 12,000). The hard fail threshold is 15,600 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,600 characters (FAIL threshold = 130 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 
 ```
-CURRENT_DESC_CHARS=12458
-PROJECTED_DESC_CHARS=12000
-BUDGET_STATUS=WARN
+CURRENT_DESC_CHARS=11595
+PROJECTED_DESC_CHARS=15600
+BUDGET_STATUS=OK
 ```
 
+- **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
+- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600). It is not part of `BUDGET_STATUS` determination.
+
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
+
+### Avoiding Description Overlap
+
+When two descriptions share too much vocabulary, the routing model may pick the wrong skill. The plugin includes a **semantic similarity detection tool** that flags overlapping description pairs.
+
+**Running locally:**
+
+```bash
+# Basic check (error-only mode)
+python3 scripts/validate-similarity.py --repo-root .
+
+# Full baseline regression check (as CI runs it)
+python3 scripts/validate-similarity.py --repo-root . \
+  --baseline scripts/similarity-baseline.json \
+  --suppressions scripts/similarity-suppressions.json
+```
+
+**Thresholds:**
+
+| Level | Composite Score | Meaning |
+|-------|----------------|---------|
+| INFO | >= 0.40 | Reported, no action needed |
+| WARN | >= 0.55 | Needs review -- differentiate descriptions |
+| ERROR | >= 0.75 | Must be differentiated or suppressed |
+
+The composite score combines set Jaccard similarity (shared tokens), character-level similarity (SequenceMatcher), and a same-category boost. Pairs in the same category directory get a +0.15 boost because intra-category confusion is more concerning.
+
+**If your PR introduces a new WARN or ERROR pair:**
+
+1. Differentiate the descriptions -- use distinct action verbs and domain keywords
+2. If the pair is intentionally similar (e.g., parallel CI system skills), request a suppression by adding an entry to `scripts/similarity-suppressions.json` with a rationale
+3. Regenerate the baseline after description changes: run the similarity tool and update `scripts/similarity-baseline.json`
+
+**Suppression format** (`scripts/similarity-suppressions.json`):
+
+```json
+[
+  {
+    "id_a": "dotnet-skill-a",
+    "id_b": "dotnet-skill-b",
+    "rationale": "Intentional parallel descriptions for different platforms"
+  }
+]
+```
+
+Note: `id_a` must sort before `id_b` alphabetically.
 
 ---
 
@@ -172,7 +224,7 @@ See [skill:dotnet-csharp-async-patterns] for async/await guidance.
 
 Rules:
 - Always use `[skill:skill-name]` -- bare text skill names are not machine-parseable
-- The skill name must match an existing `name` field in another SKILL.md
+- The referenced name must match an existing skill directory name (which should match that skill's `name` frontmatter)
 - Unresolved references produce validation warnings
 
 ### Content Patterns
@@ -180,7 +232,7 @@ Rules:
 - Use real .NET code examples, not pseudocode
 - Include tables for pattern catalogs (smell/fix/rule format works well)
 - Add an **Agent Gotchas** section for common AI agent mistakes
-- Mark scope boundaries with "**Out of scope:**" plus attribution to the owning skill
+- Mark scope boundaries with `## Scope` and `## Out of scope` headings, and include `[skill:]` attribution in out-of-scope bullets
 - Include a **References** section linking to Microsoft Learn and authoritative sources
 
 ### Size Limit
@@ -222,6 +274,16 @@ Both commands must pass before merging. Run them from the repo root:
 ```
 
 If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+
+### Cross-Provider Verification
+
+After validation passes, verify your skill behaves correctly across all supported providers by checking the CI provider matrix output. Run the test harness locally with multiple agents:
+
+```bash
+./test.sh --agents claude,codex,copilot
+```
+
+Review the per-provider summary lines in the output to confirm your skill triggers correctly for each provider. If any provider shows unexpected behavior, see the [Cross-Provider Change Policy](CONTRIBUTING.md#cross-provider-change-policy) for PR requirements.
 
 ---
 
@@ -328,7 +390,7 @@ If validation reports `BUDGET_STATUS=WARN` or `BUDGET_STATUS=FAIL`:
 
 If validation reports unresolved cross-references:
 
-1. Verify the target skill name matches an existing `name` frontmatter field
+1. Verify the target skill ID matches an existing skill directory name (which should match that skill's `name` frontmatter)
 2. Check for typos in `[skill:exact-name-here]`
 3. If the target skill does not exist yet, the reference will produce a warning
 
@@ -342,8 +404,13 @@ Before committing a new or modified skill:
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name` and `description` fields
 - [ ] **`name` matches** the directory name exactly
+- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
 - [ ] **Description under 120 characters** (check budget math)
-- [ ] **Cross-references** use `[skill:skill-name]` syntax
+- [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
+- [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
+- [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
+- [ ] **Invocation contract** -- Scope has >=1 unordered bullet, OOS has >=1 unordered bullet, at least one OOS bullet contains `[skill:]` (see [Invocation Contract](docs/skill-routing-style-guide.md#6-invocation-contract))
+- [ ] **No self-references** -- skill does not reference itself via `[skill:]`
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
 - [ ] **Validation passes** -- both commands run clean:
   ```bash
@@ -355,6 +422,7 @@ Before committing a new or modified skill:
 
 ## References
 
+- [Skill Routing Style Guide](docs/skill-routing-style-guide.md) -- canonical rules for descriptions, scope sections, and cross-references
 - [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) -- the complete six-chapter guide this manual adapts
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process

@@ -1,6 +1,6 @@
 ---
 name: dotnet-profiling
-description: "Diagnosing .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs."
+description: "Diagnoses .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs."
 user-invocable: false
 ---
 
@@ -10,7 +10,20 @@ Diagnostic tool guidance for investigating .NET performance problems. Covers rea
 
 **Version assumptions:** .NET SDK 8.0+ baseline. All three diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) ship with the .NET SDK -- no separate installation required.
 
-**Out of scope:** OpenTelemetry metrics collection and distributed tracing setup -- see [skill:dotnet-observability]. Microbenchmarking setup (BenchmarkDotNet) is owned by this epic's companion skill -- see [skill:dotnet-benchmarkdotnet]. Performance architecture patterns (Span\<T\>, ArrayPool, sealed devirtualization) are owned by this epic's companion skill -- see [skill:dotnet-performance-patterns]. Continuous benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]. Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns].
+## Scope
+
+- Real-time metric monitoring with dotnet-counters
+- Event tracing and flame graph generation with dotnet-trace
+- Memory dump capture and analysis with dotnet-dump
+- Interpreting profiling data (flame graphs, heap dumps, GC metrics)
+
+## Out of scope
+
+- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-observability]
+- Microbenchmarking setup (BenchmarkDotNet) -- see [skill:dotnet-benchmarkdotnet]
+- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-performance-patterns]
+- Continuous benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]
+- Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]
 
 Cross-references: [skill:dotnet-observability] for GC/threadpool metrics interpretation and OpenTelemetry correlation, [skill:dotnet-benchmarkdotnet] for structured benchmarking after profiling identifies hot paths, [skill:dotnet-performance-patterns] for optimization patterns to apply based on profiling results.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-github-docs
-description: "Creating GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
+description: "Creates GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
 user-invocable: false
 ---
 
@@ -10,9 +10,22 @@ GitHub-native documentation patterns for .NET projects: README structure with Nu
 
 **Version assumptions:** .NET 8.0+ baseline for code examples. GitHub Actions for CI badges. NuGet.org for package badges.
 
-**Scope boundary:** This skill owns GitHub-native documentation structure and templates for .NET projects -- the files that live in a repository root and `.github/` directory. CI/CD deployment pipelines for GitHub Pages sites are owned by [skill:dotnet-gha-deploy]. Changelog generation and versioning conventions are owned by [skill:dotnet-release-management]. Documentation tooling selection (Starlight, Docusaurus, DocFX) is owned by [skill:dotnet-documentation-strategy]. Mermaid diagram syntax and .NET-specific diagram patterns are owned by [skill:dotnet-mermaid-diagrams].
+## Scope
 
-**Out of scope:** CI/CD deployment workflows for GitHub Pages or doc sites -- see [skill:dotnet-gha-deploy]. Changelog generation and release versioning -- see [skill:dotnet-release-management]. Documentation platform selection and configuration -- see [skill:dotnet-documentation-strategy]. Mermaid diagram syntax details -- see [skill:dotnet-mermaid-diagrams]. Project file structure and solution organization -- see [skill:dotnet-project-structure].
+- README structure with NuGet/CI/coverage badges
+- CONTRIBUTING.md with fork-PR workflow
+- Issue templates (bug report, feature request)
+- PR templates with testing checklist
+- Repository metadata (CODEOWNERS, FUNDING.yml, topics/tags)
+- Mermaid diagram embedding in README files
+
+## Out of scope
+
+- CI/CD deployment workflows for GitHub Pages -- see [skill:dotnet-gha-deploy]
+- Changelog generation and release versioning -- see [skill:dotnet-release-management]
+- Documentation platform selection -- see [skill:dotnet-documentation-strategy]
+- Mermaid diagram syntax details -- see [skill:dotnet-mermaid-diagrams]
+- Project file structure and solution organization -- see [skill:dotnet-project-structure]
 
 Cross-references: [skill:dotnet-gha-deploy] for GitHub Pages deployment pipelines, [skill:dotnet-release-management] for changelog format and versioning, [skill:dotnet-mermaid-diagrams] for .NET-specific Mermaid diagrams in READMEs, [skill:dotnet-project-structure] for project metadata context, [skill:dotnet-documentation-strategy] for doc platform selection.
 
