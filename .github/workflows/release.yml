@@ -86,8 +86,10 @@ jobs:
             echo ""
             echo "### Install"
             echo ""
-            echo '```bash'
-            echo "claude plugin add novotnyllc/dotnet-artisan"
+            echo "From within Claude Code, run:"
+            echo ""
+            echo '```'
+            echo "/plugin marketplace add novotnyllc/dotnet-artisan"
             echo '```'
             echo ""
             echo "### Validation"
