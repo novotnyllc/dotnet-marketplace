@@ -21,6 +21,7 @@ internal static class FailureKinds
     public const string MissingActivityEvidence = "missing_activity_evidence";
     public const string MixedEvidenceMissing = "mixed_evidence_missing";
     public const string WeakEvidenceOnly = "weak_evidence_only";
+    public const string EvidenceTooWeak = "evidence_too_weak";
     public const string Unknown = "unknown";
 }
 
@@ -753,16 +754,26 @@ internal sealed class AgentRoutingRunner
 
             EvidenceHit? bestHit = null;
 
+            // For tokens containing '/' (file paths), also match backslash-normalized lines
+            var isPathToken = token.Contains('/');
+
             for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (string.IsNullOrWhiteSpace(line) || !ContainsInsensitive(line, token))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
 
-                var score = ScoreProofLine(line, token);
-                var tier = ComputeTier(agent, token, line, score);
+                // For path tokens, normalize backslashes to forward slashes for matching
+                var searchLine = isPathToken ? line.Replace('\\', '/') : line;
+                if (!ContainsInsensitive(searchLine, token))
+                {
+                    continue;
+                }
+
+                var score = ScoreProofLine(searchLine, token);
+                var tier = ComputeTier(agent, token, searchLine, score);
 
                 if (bestHit is null ||
                     tier < bestHit.Tier ||
@@ -801,21 +812,21 @@ internal sealed class AgentRoutingRunner
             if (isMatched)
             {
                 // Check tier gating: if token has a tier requirement, verify the hit meets it
-                if (tierRequirements.TryGetValue(token, out var requiredTier) &&
-                    tokenHits.TryGetValue(token, out var hit))
+                if (tierRequirements.TryGetValue(token, out var requiredTier))
                 {
-                    if (hit.Tier <= requiredTier)
+                    if (tokenHits.TryGetValue(token, out var hit) && hit.Tier <= requiredTier)
                     {
                         matchedAll.Add(token);
                     }
                     else
                     {
-                        // Token found but tier too weak for this requirement
+                        // Token found but either no tier hit or tier too weak for requirement
                         missingAll.Add(token);
                     }
                 }
                 else
                 {
+                    // No tier requirement — basic presence match is sufficient
                     matchedAll.Add(token);
                 }
             }
@@ -1114,26 +1125,32 @@ internal sealed class AgentRoutingRunner
         if (agentLower is "codex" or "copilot")
         {
             // Codex/Copilot Tier 1: "Base directory for this skill: <path>"
-            var baseMatch = CodexBaseDirectoryRegex.Match(line);
-            if (baseMatch.Success)
+            // Only apply Tier 1 attribution for skill-id tokens (no path separators).
+            // Tokens containing '/' are file paths (e.g. "dotnet-xunit/SKILL.md") and should
+            // not be promoted to Tier 1 via base directory matching.
+            if (!tokenLower.Contains('/'))
             {
-                var rawPath = baseMatch.Groups["path"].Value.Trim();
-                var normalizedPath = rawPath.Replace('\\', '/').ToLowerInvariant();
-
-                // Require /<token>/ in path (interior match)
-                if (normalizedPath.Contains("/" + tokenLower + "/"))
+                var baseMatch = CodexBaseDirectoryRegex.Match(line);
+                if (baseMatch.Success)
                 {
-                    return 1;
-                }
+                    var rawPath = baseMatch.Groups["path"].Value.Trim();
+                    var normalizedPath = rawPath.Replace('\\', '/').ToLowerInvariant();
 
-                // End-of-path match: /<token> at string end
-                if (normalizedPath.EndsWith("/" + tokenLower))
-                {
-                    return 1;
-                }
+                    // Require /<token>/ in path (interior match)
+                    if (normalizedPath.Contains("/" + tokenLower + "/"))
+                    {
+                        return 1;
+                    }
 
-                // Tier 1 regex matched but token attribution failed -> Tier 2
-                return 2;
+                    // End-of-path match: /<token> at string end
+                    if (normalizedPath.EndsWith("/" + tokenLower))
+                    {
+                        return 1;
+                    }
+
+                    // Tier 1 regex matched but token attribution failed -> Tier 2
+                    return 2;
+                }
             }
         }
 
@@ -1273,6 +1290,11 @@ internal sealed class AgentRoutingRunner
 
         AddDistinct(all, testCase.RequiredAllEvidence);
         AddDistinct(all, testCase.RequiredEvidence);
+
+        // Typed requirements: required_skills (Tier 1) and required_files (Tier 2) must be in
+        // the required token set so they are actually evaluated.
+        AddDistinct(all, testCase.RequiredSkills);
+        AddDistinct(all, testCase.RequiredFiles);
 
         if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
         {
@@ -2330,6 +2352,15 @@ internal sealed class AgentResult
             return FailureKinds.WeakEvidenceOnly;
         }
 
+        // Check for evidence_too_weak: token is in MissingAll but has a TokenHits entry
+        // (found but at insufficient tier for the requirement)
+        if (evidence.TokenHits is { Count: > 0 } &&
+            evidence.MissingAll.Any(token =>
+                evidence.TokenHits.ContainsKey(token)))
+        {
+            return FailureKinds.EvidenceTooWeak;
+        }
+
         var missingSkill = evidence.MissingAll.Contains(testCase.ExpectedSkill, StringComparer.OrdinalIgnoreCase);
         // Detect missing skill-file evidence as any missing token ending with "/SKILL.md".
         // This handles both skill-specific paths (e.g. "dotnet-xunit/SKILL.md") and
@@ -2447,6 +2478,12 @@ internal static class SelfTestRunner
                 "codex", "dotnet-xunit",
                 """{"tool_use":"read_file","path":"skills/testing/dotnet-xunit/SKILL.md"}""",
                 110, 2),
+
+            // Path token should not get Tier 1 from base-dir regex (Issue 3 guard)
+            new("Codex path token skips base-dir Tier 1 (token contains /)",
+                "codex", "dotnet-xunit/SKILL.md",
+                "Base directory for this skill: /skills/testing/dotnet-xunit/SKILL.md",
+                700, 2),
         };
 
         var failures = new List<string>();
