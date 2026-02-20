@@ -540,8 +540,8 @@ def main():
     self_ref_count = 0
     agent_bare_ref_count = 0
     agentsmd_bare_ref_count = 0
-    # Counts invocation contract violations (emitted as WARN or ERROR
-    # depending on STRICT_INVOCATION toggle; key name kept for CI compat)
+    # Counts invocation contract violations -- emitted as WARN or ERROR
+    # depending on STRICT_INVOCATION toggle; key name kept for CI compat.
     invocation_contract_warn_count = 0
 
     # Cross-reference graph for cycle detection
@@ -660,7 +660,7 @@ def main():
         # Rule 1: Scope section must contain >= 1 unordered bullet
         scope_bullet_count = len(result["scope_items"])
         if scope_bullet_count < 1:
-            msg = f"INVOCATION_CONTRACT: Scope section has {scope_bullet_count} unordered bullets (requires >=1)"
+            msg = f"INVOCATION_CONTRACT: Scope section has {scope_bullet_count} unordered bullets (need >=1)"
             if strict_invocation:
                 print(f"ERROR: {rel_path} -- {msg}")
                 errors += 1
@@ -672,7 +672,7 @@ def main():
         # Rule 2: Out of scope section must contain >= 1 unordered bullet
         oos_bullet_count = len(result["oos_items"])
         if oos_bullet_count < 1:
-            msg = f"INVOCATION_CONTRACT: Out of scope section has {oos_bullet_count} unordered bullets (requires >=1)"
+            msg = f"INVOCATION_CONTRACT: Out of scope section has {oos_bullet_count} unordered bullets (need >=1)"
             if strict_invocation:
                 print(f"ERROR: {rel_path} -- {msg}")
                 errors += 1
@@ -687,7 +687,7 @@ def main():
         # which correctly triggers the warning (vacuous failure).
         has_any_skill_ref = any(has_ref for _, has_ref in result["oos_items"])
         if not has_any_skill_ref:
-            msg = "INVOCATION_CONTRACT: No OOS bullet contains [skill:] reference"
+            msg = "INVOCATION_CONTRACT: No OOS bullet contains [skill:] cross-reference"
             if strict_invocation:
                 print(f"ERROR: {rel_path} -- {msg}")
                 errors += 1
