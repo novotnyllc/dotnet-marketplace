@@ -43,3 +43,6 @@ Add positive/negative control test cases exercising fn-54's schema. Update provi
 - [ ] At least one **optional** control case yields `optional_hits` entries in runner output — verifiable: `jq` query
 - [ ] New cases have case-specific evidence tokens
 - [ ] `tests/trigger-corpus.json` updated if new categories added
+
+## Done summary
+<!-- flowctl:done-summary -->
