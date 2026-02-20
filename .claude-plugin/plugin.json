@@ -151,7 +151,8 @@
     "./skills/core-csharp/dotnet-linq-optimization",
     "./skills/performance/dotnet-gc-memory",
     "./skills/architecture/dotnet-aspire-patterns",
-    "./skills/ai/dotnet-semantic-kernel"
+    "./skills/ai/dotnet-semantic-kernel",
+    "./skills/debugging/dotnet-windbg-debugging"
   ],
   "agents": [
     "./agents/dotnet-architect.md",
