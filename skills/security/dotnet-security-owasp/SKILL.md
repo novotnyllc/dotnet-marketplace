@@ -14,6 +14,8 @@ OWASP Top 10 (2021) security guidance for .NET applications. Each category inclu
 - Injection, broken access control, XSS, SSRF prevention patterns
 - Deprecated security API warnings (CAS, APTCA, BinaryFormatter, .NET Remoting)
 - Security header configuration and CORS hardening
+- Rate limiting and anti-forgery middleware patterns
+- NuGet package audit and dependency vulnerability scanning
 
 ## Out of scope
 
@@ -21,6 +23,7 @@ OWASP Top 10 (2021) security guidance for .NET applications. Each category inclu
 - Blazor auth UI -- see [skill:dotnet-blazor-auth]
 - Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
 - Configuration binding and Options pattern -- see [skill:dotnet-csharp-configuration]
+- Secrets storage and management -- see [skill:dotnet-secrets-management]
 
 Cross-references: [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices, [skill:dotnet-csharp-coding-standards] for secure coding conventions.
 

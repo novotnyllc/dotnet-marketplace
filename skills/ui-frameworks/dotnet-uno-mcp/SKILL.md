@@ -15,10 +15,11 @@ MCP (Model Context Protocol) server integration for Uno Platform live documentat
 - Initialization rules invocation
 - Graceful fallback when MCP is unavailable
 - Citation requirements and safety guidelines
+- Uno SDK UnoFeatures reference for project configuration
 
 ## Out of scope
 
-- General MCP protocol details
+- General MCP protocol details -- see [skill:dotnet-realtime-communication] for protocol-level communication patterns
 - Uno Platform testing -- see [skill:dotnet-uno-testing]
 - Uno development patterns without MCP -- see [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets]
 

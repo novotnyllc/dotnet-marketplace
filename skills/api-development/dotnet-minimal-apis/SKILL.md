@@ -14,6 +14,8 @@ Minimal APIs are Microsoft's recommended approach for new ASP.NET Core HTTP API 
 - Endpoint filters for cross-cutting concerns
 - TypedResults for compile-time response type safety
 - Parameter binding (route, query, body, services)
+- JSON configuration with ConfigureHttpJsonOptions
+- Carter library integration for auto-discovery modules
 
 ## Out of scope
 
@@ -22,6 +24,7 @@ Minimal APIs are Microsoft's recommended approach for new ASP.NET Core HTTP API 
 - Architectural patterns (vertical slices, CQRS) -- see [skill:dotnet-architecture-patterns]
 - Authentication and authorization -- see [skill:dotnet-api-security]
 - OpenAPI document generation -- see [skill:dotnet-openapi]
+- gRPC and real-time communication -- see [skill:dotnet-grpc] and [skill:dotnet-realtime-communication]
 
 Cross-references: [skill:dotnet-architecture-patterns] for organizing large APIs, [skill:dotnet-input-validation] for request validation, [skill:dotnet-api-versioning] for versioning strategies, [skill:dotnet-openapi] for OpenAPI customization.
 

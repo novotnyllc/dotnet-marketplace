@@ -13,8 +13,10 @@ Tactical patterns for Entity Framework Core in .NET applications. Covers DbConte
 - DbContext lifecycle and scoped registration
 - AsNoTracking and read-only query optimization
 - Query splitting and compiled queries
-- Migration workflows and interceptors
+- Migration workflows and migration bundles for production
+- SaveChanges and connection interceptors
 - Connection resiliency configuration
+- DbContextFactory for background services and Blazor Server
 
 ## Out of scope
 
@@ -22,6 +24,7 @@ Tactical patterns for Entity Framework Core in .NET applications. Covers DbConte
 - Data access technology selection (EF Core vs Dapper vs ADO.NET) -- see [skill:dotnet-data-access-strategy]
 - DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
 - Testing EF Core with fixtures -- see [skill:dotnet-integration-testing]
+- Domain modeling with DDD patterns -- see [skill:dotnet-domain-modeling]
 
 Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and DbContext lifetime, [skill:dotnet-csharp-async-patterns] for cancellation token propagation in queries, [skill:dotnet-efcore-architecture] for strategic data patterns, [skill:dotnet-data-access-strategy] for data access technology selection.
 

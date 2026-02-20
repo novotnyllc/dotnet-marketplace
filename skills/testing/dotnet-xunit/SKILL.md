@@ -17,12 +17,14 @@ xUnit v3 testing framework features for .NET. Covers `[Fact]` and `[Theory]` att
 - Parallel execution configuration and collection ordering
 - IAsyncLifetime for async setup/teardown
 - xUnit analyzers and custom assertions
+- xUnit v3 migration from v2 (TheoryDataRow, ValueTask lifecycle)
 
 ## Out of scope
 
 - Test project scaffolding -- see [skill:dotnet-add-testing]
 - Testing strategy and test type decisions -- see [skill:dotnet-testing-strategy]
 - Integration testing patterns (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-integration-testing]
+- Snapshot testing with Verify -- see [skill:dotnet-snapshot-testing]
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-add-testing] with xUnit packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline for xUnit v3 support.
 

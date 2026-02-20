@@ -21,12 +21,14 @@ Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all speci
 - Multi-targeting detection and highest-TFM selection
 - SDK version detection and preview feature gating
 - Version-specific API availability guidance
+- C# language version mapping and support lifecycle reporting
 
 ## Out of scope
 
 - Project structure analysis beyond TFM -- see [skill:dotnet-project-analysis]
 - .NET 10 file-based apps without .csproj -- see [skill:dotnet-file-based-apps]
 - Framework upgrade migration steps -- see [skill:dotnet-version-upgrade]
+- Multi-targeting polyfills and conditional compilation -- see [skill:dotnet-multi-targeting]
 
 ---
 

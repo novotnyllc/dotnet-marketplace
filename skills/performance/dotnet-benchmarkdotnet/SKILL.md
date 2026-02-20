@@ -17,6 +17,7 @@ Microbenchmarking guidance for .NET using BenchmarkDotNet v0.14+. Covers benchma
 - Exporters for CI artifact collection
 - Baseline comparisons and result analysis
 - Common pitfalls that invalidate measurements
+- Parameterized benchmarks with [Params] and benchmark categories
 
 ## Out of scope
 
@@ -26,6 +27,7 @@ Microbenchmarking guidance for .NET using BenchmarkDotNet v0.14+. Covers benchma
 - Native AOT compilation and performance -- see [skill:dotnet-native-aot]
 - Serialization format performance -- see [skill:dotnet-serialization]
 - Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]
+- GC tuning and memory management -- see [skill:dotnet-gc-memory]
 
 Cross-references: [skill:dotnet-performance-patterns] for zero-allocation patterns measured by benchmarks, [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax foundation, [skill:dotnet-csharp-coding-standards] for sealed class style conventions, [skill:dotnet-native-aot] for AOT performance characteristics and benchmark considerations, [skill:dotnet-serialization] for serialization format performance tradeoffs.
 

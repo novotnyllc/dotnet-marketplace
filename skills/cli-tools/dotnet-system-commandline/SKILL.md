@@ -21,6 +21,7 @@ System.CommandLine 2.0 stable API for building .NET CLI applications. Covers Roo
 - Tab completion and directives
 - Testing with InvocationConfiguration and TextWriter capture
 - Migration from beta4 to 2.0.0 GA
+- Dependency injection integration without System.CommandLine.Hosting
 
 ## Out of scope
 
@@ -30,6 +31,7 @@ System.CommandLine 2.0 stable API for building .NET CLI applications. Covers Roo
 - General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
 - DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
 - General coding standards -- see [skill:dotnet-csharp-coding-standards]
+- CLI packaging for Homebrew, apt, winget -- see [skill:dotnet-cli-packaging]
 
 Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-csharp-coding-standards] for naming and style conventions.
 

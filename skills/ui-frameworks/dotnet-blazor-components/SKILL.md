@@ -12,9 +12,10 @@ Blazor component architecture: lifecycle methods, state management (cascading va
 
 - Component lifecycle methods (SetParametersAsync, OnInitialized, OnAfterRender)
 - State management (cascading values, DI, browser storage)
-- JavaScript interop (AOT-safe patterns)
+- JavaScript interop (AOT-safe module imports)
 - EditForm validation and input components
 - QuickGrid data binding and virtualization
+- Per-render-mode behavior differences (Static SSR, InteractiveServer, WASM)
 
 ## Out of scope
 
@@ -24,6 +25,7 @@ Blazor component architecture: lifecycle methods, state management (cascading va
 - Standalone SignalR hub patterns -- see [skill:dotnet-realtime-communication]
 - E2E testing -- see [skill:dotnet-playwright]
 - UI framework selection -- see [skill:dotnet-ui-chooser]
+- Accessibility patterns (ARIA, keyboard navigation) -- see [skill:dotnet-accessibility]
 
 Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (ARIA, keyboard nav, screen readers).
 

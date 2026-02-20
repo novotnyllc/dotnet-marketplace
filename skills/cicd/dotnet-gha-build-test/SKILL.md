@@ -16,6 +16,7 @@ user-invocable: false
 - NuGet restore caching for fast CI
 - dotnet test with result publishing and coverage upload
 - Multi-TFM matrix testing and test sharding
+- NuGet authentication for private feeds in GitHub Actions
 
 ## Out of scope
 
@@ -24,6 +25,7 @@ user-invocable: false
 - Benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]
 - Publishing and deployment -- see [skill:dotnet-gha-publish] and [skill:dotnet-gha-deploy]
 - Azure DevOps build/test pipelines -- see [skill:dotnet-ado-build-test]
+- Reusable workflow and composite action patterns -- see [skill:dotnet-gha-patterns]
 
 Cross-references: [skill:dotnet-add-ci] for starter build/test templates, [skill:dotnet-testing-strategy] for test architecture guidance, [skill:dotnet-ci-benchmarking] for benchmark CI integration, [skill:dotnet-artifacts-output] for artifact upload path adjustments when using centralized build output layout.
 

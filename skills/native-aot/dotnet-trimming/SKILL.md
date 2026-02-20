@@ -18,7 +18,7 @@ Trim-safe development for .NET 8+ applications and libraries: trimming annotatio
 - TrimmerSingleWarn for granular diagnostics
 - IL2xxx/IL3xxx warning reference and fixes
 - Testing trimmed output and CI gates
-- Library authoring with IsTrimmable
+- Library authoring with IsTrimmable and IsAotCompatible
 
 ## Out of scope
 
@@ -29,6 +29,7 @@ Trim-safe development for .NET 8+ applications and libraries: trimming annotatio
 - Source generator authoring -- see [skill:dotnet-csharp-source-generators]
 - Serialization depth -- see [skill:dotnet-serialization]
 - Container deployment -- see [skill:dotnet-containers]
+- Performance patterns (Span, pooling) -- see [skill:dotnet-performance-patterns]
 
 Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as trimming enabler.
 

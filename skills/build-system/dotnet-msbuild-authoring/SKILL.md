@@ -18,11 +18,13 @@ Guidance for authoring MSBuild project system elements: custom targets with `Bef
 - Items and item metadata (Include/Exclude/Update/Remove)
 - Conditions and property functions
 - Advanced Directory.Build.props/targets patterns
+- MSBuild well-known metadata and item batching
 
 ## Out of scope
 
 - Solution layout and shared configuration (CPM, .editorconfig) -- see [skill:dotnet-project-structure]
 - MSBuild error interpretation and CI drift diagnosis -- see [skill:dotnet-build-analysis]
+- Reading and modifying .csproj files -- see [skill:dotnet-csproj-reading]
 
 Cross-references: [skill:dotnet-project-structure] for solution layout and basic Directory.Build.props structure, [skill:dotnet-build-analysis] for interpreting MSBuild errors and CI drift.
 

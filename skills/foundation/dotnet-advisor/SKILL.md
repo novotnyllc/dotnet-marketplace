@@ -13,12 +13,14 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 - Loading [skill:dotnet-csharp-coding-standards] as baseline for all code paths
 - Maintaining the skill catalog and routing precedence
 - Delegating complex analysis to specialist agents
+- Decision-tree navigation for ambiguous requests spanning multiple domains
 
 ## Out of scope
 
 - Domain-specific implementation guidance -- see [skill:dotnet-architecture-patterns], [skill:dotnet-csharp-async-patterns], and other domain skills in the catalog below
 - Project scaffolding -- see [skill:dotnet-scaffold-project]
 - Version detection -- see [skill:dotnet-version-detection]
+- Build system and MSBuild authoring -- see [skill:dotnet-msbuild-authoring]
 
 ## Immediate Routing Actions (Do First)
 
