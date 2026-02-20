@@ -34,3 +34,7 @@ Establish cross-provider change policy with an operator-grade checklist in contr
 - [ ] Policy specifies that provider-targeted changes require explicit non-target verification
 - [ ] CONTRIBUTING-SKILLS.md section 5 references CI provider matrix for testing verification
 - [ ] Existing checklist items preserved unchanged
+
+## Done summary
+
+## Evidence
