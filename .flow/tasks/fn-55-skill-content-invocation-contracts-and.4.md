@@ -44,5 +44,8 @@ Add positive/negative control test cases exercising fn-54's schema. Update provi
 - [ ] New cases have case-specific evidence tokens
 - [ ] `tests/trigger-corpus.json` updated if new categories added
 
+## Evidence
+<!-- flowctl:evidence -->
+
 ## Done summary
 <!-- flowctl:done-summary -->
