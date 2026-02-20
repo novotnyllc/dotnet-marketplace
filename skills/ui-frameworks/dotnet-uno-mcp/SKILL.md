@@ -19,7 +19,7 @@ MCP (Model Context Protocol) server integration for Uno Platform live documentat
 
 ## Out of scope
 
-- General MCP protocol details -- see [skill:dotnet-realtime-communication] for protocol-level communication patterns
+- General protocol and streaming communication patterns (not MCP-specific) -- see [skill:dotnet-realtime-communication]
 - Uno Platform testing -- see [skill:dotnet-uno-testing]
 - Uno development patterns without MCP -- see [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets]
 
