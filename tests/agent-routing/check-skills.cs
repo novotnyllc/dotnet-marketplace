@@ -408,8 +408,8 @@ internal sealed class AgentRoutingRunner
 
         // Evaluate optional and disallowed skills against TokenHits from CLI output.
         // These are computed once and propagated through all result paths.
-        var optionalHits = EvaluateOptionalSkills(testCase, outputEval.TokenHits);
-        var (disallowedAllHits, disallowedGatingHits) = EvaluateDisallowedSkills(testCase, outputEval.TokenHits);
+        var optionalHits = EvaluateOptionalSkills(testCase, outputEval.TokenHits, agent);
+        var (disallowedAllHits, disallowedGatingHits) = EvaluateDisallowedSkills(testCase, outputEval.TokenHits, agent);
 
         if (outputEval.Success)
         {
@@ -458,8 +458,8 @@ internal sealed class AgentRoutingRunner
 
             // Re-evaluate optional/disallowed against merged TokenHits from both sources
             var mergedHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits);
-            var mergedOptionalHits = EvaluateOptionalSkills(testCase, mergedHits);
-            var (mergedDisallowedAll, mergedDisallowedGating) = EvaluateDisallowedSkills(testCase, mergedHits);
+            var mergedOptionalHits = EvaluateOptionalSkills(testCase, mergedHits, agent);
+            var (mergedDisallowedAll, mergedDisallowedGating) = EvaluateDisallowedSkills(testCase, mergedHits, agent);
 
             if (logEval.Success)
             {
@@ -854,23 +854,27 @@ internal sealed class AgentRoutingRunner
         var tokenHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
         var lines = requiredAllSearchText.Replace("\r", string.Empty).Split('\n');
 
-        // Build combined token set: required + optional + disallowed (deduped)
+        // Build combined token set: required + optional + disallowed (deduped).
+        // Optional and disallowed tokens are resolved through provider aliases
+        // for consistency with required token handling.
         var allScanTokens = new List<string>(requiredAll);
         foreach (var opt in testCase.OptionalSkills)
         {
-            if (!string.IsNullOrWhiteSpace(opt) &&
-                !allScanTokens.Contains(opt, StringComparer.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(opt)) continue;
+            var resolved = ResolveProviderAlias(agent, opt, testCase);
+            if (!allScanTokens.Contains(resolved, StringComparer.OrdinalIgnoreCase))
             {
-                allScanTokens.Add(opt);
+                allScanTokens.Add(resolved);
             }
         }
 
         foreach (var dis in testCase.DisallowedSkills)
         {
-            if (!string.IsNullOrWhiteSpace(dis) &&
-                !allScanTokens.Contains(dis, StringComparer.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(dis)) continue;
+            var resolved = ResolveProviderAlias(agent, dis, testCase);
+            if (!allScanTokens.Contains(resolved, StringComparer.OrdinalIgnoreCase))
             {
-                allScanTokens.Add(dis);
+                allScanTokens.Add(resolved);
             }
         }
 
@@ -1579,9 +1583,10 @@ internal sealed class AgentRoutingRunner
 
     /// <summary>
     /// Evaluates optional skill tokens against TokenHits. Returns matched optional skill names.
-    /// Excluded from pass/fail gating.
+    /// Excluded from pass/fail gating. Provider aliases are resolved before lookup.
     /// </summary>
-    private static List<string> EvaluateOptionalSkills(CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+    private static List<string> EvaluateOptionalSkills(
+        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits, string agent = "")
     {
         var hits = new List<string>();
         if (testCase.OptionalSkills.Length == 0 || tokenHits is null)
@@ -1596,8 +1601,10 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
-            if (tokenHits.ContainsKey(skill))
+            var resolved = ResolveProviderAlias(agent, skill, testCase);
+            if (tokenHits.ContainsKey(resolved))
             {
+                // Report the original skill name (not the resolved alias) for clarity
                 hits.Add(skill);
             }
         }
@@ -1610,9 +1617,10 @@ internal sealed class AgentRoutingRunner
     /// - allHits: all disallowed tokens found in TokenHits (any tier, for diagnostics)
     /// - gatingHits: disallowed tokens found at >= disallowed_min_tier (cause failure)
     /// Tier 3 matches are diagnostics only when disallowed_min_tier is 2 (default).
+    /// Provider aliases are resolved before lookup.
     /// </summary>
     private static (List<string> AllHits, List<string> GatingHits) EvaluateDisallowedSkills(
-        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits, string agent = "")
     {
         var allHits = new List<string>();
         var gatingHits = new List<string>();
@@ -1631,8 +1639,10 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
-            if (tokenHits.TryGetValue(skill, out var hit))
+            var resolved = ResolveProviderAlias(agent, skill, testCase);
+            if (tokenHits.TryGetValue(resolved, out var hit))
             {
+                // Report the original skill name (not the resolved alias) for clarity
                 allHits.Add(skill);
 
                 // Only hits at or above the minimum tier threshold cause failure.
@@ -2990,9 +3000,9 @@ internal static class SelfTestRunner
             ["dotnet-blazor-components"],
             FailureKinds.Mixed);
 
-        // Test: legacy backward compat — skill_not_loaded (no T3 fields)
+        // Test: legacy backward compat — missing_required (no T3 fields, expected skill missing)
         TestClassify(
-            "legacy backward compat: skill_not_loaded",
+            "legacy backward compat: missing_required (no T3 fields)",
             new CaseDefinition { ExpectedSkill = "dotnet-xunit" },
             new EvidenceEvaluation(
                 Success: false,
