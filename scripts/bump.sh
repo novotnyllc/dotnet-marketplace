@@ -10,13 +10,14 @@
 #   plugin-name        -- Plugin to bump (default: dotnet-artisan)
 #
 # Version is propagated to:
-#   1. plugins/<plugin>/.claude-plugin/plugin.json  (canonical source of truth)
-#   2. .claude-plugin/marketplace.json              (root, matching plugin entry)
-#   3. .claude-plugin/marketplace.json              (metadata.version)
-#   4. plugins/<plugin>/README.md                   (version badge)
-#   5. CHANGELOG.md                                 (promote [Unreleased], update footer links)
+#   1. .claude-plugin/plugin.json       (canonical source of truth)
+#   2. .claude-plugin/marketplace.json  (root, matching plugin entry)
+#   3. .claude-plugin/marketplace.json  (metadata.version)
+#   4. README.md                        (version badge)
+#   5. CHANGELOG.md                     (promote [Unreleased], update footer links)
 #
-# After running, follow the printed instructions to commit, tag, and push.
+# After running, commit the changes in your PR branch. When the PR merges to
+# main, the auto-tag workflow creates the git tag and triggers the release.
 
 set -euo pipefail
 
@@ -45,10 +46,9 @@ fi
 
 # --- Validate paths ---
 
-PLUGIN_DIR="$REPO_ROOT/plugins/$PLUGIN_NAME"
-PLUGIN_JSON="$PLUGIN_DIR/.claude-plugin/plugin.json"
+PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
 ROOT_MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
-README="$PLUGIN_DIR/README.md"
+README="$REPO_ROOT/README.md"
 CHANGELOG="$REPO_ROOT/CHANGELOG.md"
 
 if [ ! -f "$PLUGIN_JSON" ]; then
@@ -108,6 +108,19 @@ TODAY=$(date +%Y-%m-%d)
 
 echo "New version:     $NEW_VERSION"
 echo ""
+
+# --- 0. Auto-generate changelog entries from conventional commits ---
+
+GENERATE_SCRIPT="$REPO_ROOT/scripts/generate-changelog.sh"
+if [ -f "$GENERATE_SCRIPT" ] && [ -x "$GENERATE_SCRIPT" ]; then
+    echo "Generating changelog entries from conventional commits ..."
+    if "$GENERATE_SCRIPT" --changelog "$CHANGELOG"; then
+        echo "  OK: Changelog entries generated"
+    else
+        echo "  WARN: Changelog generation failed (continuing with manual entries)"
+    fi
+    echo ""
+fi
 
 # --- 1. Update plugin.json (canonical) ---
 
@@ -212,9 +225,8 @@ echo ""
 echo "  1. Review changes:"
 echo "     git diff"
 echo ""
-echo "  2. Commit:"
+echo "  2. Commit in your PR branch:"
 echo "     git add -A && git commit -m \"chore(release): bump $PLUGIN_NAME to v$NEW_VERSION\""
 echo ""
-echo "  3. Tag and push:"
-echo "     git tag ${TAG_PREFIX}${NEW_VERSION} && git push origin main && git push origin ${TAG_PREFIX}${NEW_VERSION}"
+echo "  3. Merge to main -- the auto-tag workflow will create tag ${TAG_PREFIX}${NEW_VERSION} and trigger the release."
 echo ""

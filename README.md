@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.1-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.2.0-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
@@ -21,14 +21,13 @@ The plugin covers the full breadth of the .NET ecosystem:
 
 ## Installation
 
-Install the plugin using the Claude Code CLI:
+From within Claude Code, run:
 
-```bash
-claude plugin add novotnyllc/dotnet-artisan
-claude plugin install dotnet-artisan
+```
+/plugin marketplace add novotnyllc/dotnet-artisan
 ```
 
-Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development. Installation syntax may change as the Claude Code plugin system evolves.
+Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
 
 ## Skill Catalog
 

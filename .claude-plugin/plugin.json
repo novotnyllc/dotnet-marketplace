@@ -1,6 +1,6 @@
 {
   "name": "dotnet-artisan",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
   "author": {
     "name": "Claire Novotny LLC",
@@ -151,7 +151,8 @@
     "./skills/core-csharp/dotnet-linq-optimization",
     "./skills/performance/dotnet-gc-memory",
     "./skills/architecture/dotnet-aspire-patterns",
-    "./skills/ai/dotnet-semantic-kernel"
+    "./skills/ai/dotnet-semantic-kernel",
+    "./skills/debugging/dotnet-windbg-debugging"
   ],
   "agents": [
     "./agents/dotnet-architect.md",

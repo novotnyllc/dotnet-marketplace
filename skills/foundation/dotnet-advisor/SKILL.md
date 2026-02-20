@@ -204,6 +204,9 @@ Before any .NET guidance, determine the project's target framework:
 ### 20. AI & LLM Integration `implemented`
 - [skill:dotnet-semantic-kernel] -- Semantic Kernel: plugins, prompt templates, memory, agents
 
+### 21. Debugging `implemented`
+- [skill:dotnet-windbg-debugging] -- WinDbg MCP: crash dumps, hangs, high CPU, memory triage (any Windows app)
+
 ---
 
 ## Routing Logic
@@ -342,6 +345,9 @@ Use this decision tree to load the right skills for the current task.
 
 ### AI & LLM Integration
 - Semantic Kernel, LLM orchestration, plugins -> [skill:dotnet-semantic-kernel]
+
+### Debugging
+- Windows app crash, hang, freeze, high CPU, memory leak, dump analysis, WinDbg, cdb -> [skill:dotnet-windbg-debugging]
 
 ### Specialist Agent Routing
 
