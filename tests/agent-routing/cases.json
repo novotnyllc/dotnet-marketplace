@@ -407,7 +407,7 @@
   {
     "case_id": "security-hardening-no-blazor-auth",
     "category": "security",
-    "prompt": "Harden my web application login page against CSRF, XSS, and brute-force attacks with proper authentication cookie settings and rate limiting.",
+    "prompt": "Harden my Blazor Server login page against CSRF, XSS, and brute-force attacks with proper auth cookie settings, CSP headers, and rate limiting. Focus on OWASP-style hardening rather than Blazor auth components.",
     "expected_skill": "dotnet-security-owasp",
     "required_all_evidence": [
       "dotnet-security-owasp",
@@ -428,7 +428,7 @@
   {
     "case_id": "api-endpoints-no-efcore",
     "category": "api",
-    "prompt": "Build me REST endpoints for a product catalog with filtering, sorting, and pagination using in-memory data and minimal API route groups.",
+    "prompt": "Build me REST endpoints for a product catalog with filtering, sorting, and pagination using in-memory data and minimal API route groups. Briefly explain what would change if we later swapped the in-memory store for a database with DbContext, but do not implement data access now.",
     "expected_skill": "dotnet-minimal-apis",
     "required_all_evidence": [
       "dotnet-minimal-apis",
@@ -449,7 +449,7 @@
   {
     "case_id": "architecture-clean-with-di",
     "category": "architecture",
-    "prompt": "Design a modular order processing backend with clean separation of concerns, proper service registration, and interface-based abstractions for testability.",
+    "prompt": "Design a modular order processing backend with clean separation of concerns and interface-based abstractions for testability. Then show the concrete IServiceCollection registrations with proper lifetimes, options binding, and HttpClientFactory setup.",
     "expected_skill": "dotnet-architecture-patterns",
     "required_all_evidence": [
       "dotnet-architecture-patterns",
