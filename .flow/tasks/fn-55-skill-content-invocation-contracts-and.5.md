@@ -36,5 +36,8 @@ Establish cross-provider change policy with an operator-grade checklist in contr
 - [ ] Existing checklist items preserved unchanged
 
 ## Done summary
-
+Added Cross-Provider Change Policy section to CONTRIBUTING.md with 3 operator-grade bullets (PR description, CI artifacts, baseline updates) and cross-provider verification checkbox in the release checklist. Added Cross-Provider Verification subsection to CONTRIBUTING-SKILLS.md section 5 with CI provider matrix pointer.
 ## Evidence
+- Commits: 8844bbbf0d4897fd636b7d2708dea83468482387
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
