@@ -34,5 +34,15 @@ Update operator documentation for all new harness features: run IDs, lifecycle t
 - [ ] test.sh --help documents --max-parallel, --artifacts-root, --enable-log-scan, --self-test, MAX_CONCURRENCY
 
 ## Done summary
+Updated operator docs (docs/agent-routing-tests.md) and test.sh help block for all harness features from T1-T5.
 
+### Changes
+- docs/agent-routing-tests.md: Added sections for Run IDs and Telemetry, Evidence Tiers (ComputeTier, per-token model, self-test), Log Fallback Policy, Failure Categories (failure_kind + failure_category), Case Schema (all fields including typed requirements, provider aliases), Targeted Reruns, Provider Matrix and Deltas (CI matrix, baseline schema, regression rules, timeout/missing handling)
+- test.sh: Help block documents --max-parallel, --artifacts-root, --enable-log-scan, --self-test, MAX_CONCURRENCY, and all other runner flags
+- All 9 grep-verifiable ACs pass
+- Validation passes (0 errors)
+- Commits: 99e268f, 71019c4
 ## Evidence
+- Commits: 99e268f, 71019c4
+- Tests: validate-skills.sh PASSED, validate-marketplace.sh PASSED
+- PRs:
