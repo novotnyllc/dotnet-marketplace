@@ -1,0 +1,20 @@
+{
+  "branch_name": "fn-54-agent-routing-harness-determinism-and",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-19T23:00:22.408925Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [
+    "fn-53-skill-routing-language-hardening"
+  ],
+  "id": "fn-54-agent-routing-harness-determinism-and",
+  "next_task": 1,
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": null,
+  "spec_path": ".flow/specs/fn-54-agent-routing-harness-determinism-and.md",
+  "status": "open",
+  "title": "Agent Routing Harness Determinism and Observability",
+  "updated_at": "2026-02-19T23:28:34.292177Z"
+}

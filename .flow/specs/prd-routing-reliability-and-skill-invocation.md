@@ -51,7 +51,7 @@ We need a stronger system that verifies skills are actually used (not skipped), 
 1. `test.sh` lifecycle telemetry
 - Emit stable run IDs for each prompt-agent unit.
 - Print per-run and aggregate progress with totals.
-- Classify failure reasons (`timeout`, `transport`, `parse`, `assertion`).
+- Classify failure reasons (`timeout`, `transport`, `assertion`). Note: `parse` deferred to future structured-output epic — current runner performs substring matching, not JSON parsing.
 
 2. Bounded parallelization with isolation
 - Run independent prompt-agent units concurrently.
