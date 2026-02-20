@@ -5,7 +5,6 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 RUNNER="$REPO_ROOT/tests/agent-routing/check-skills.cs"
 CASES="$REPO_ROOT/tests/agent-routing/cases.json"
-PROOF_LOG="$REPO_ROOT/tests/agent-routing/artifacts/tool-use-proof.log"
 CODEX_SKILLS_DIR="${CODEX_HOME:-$HOME/.codex}/skills"
 APPS_DIR="$REPO_ROOT/apps"
 
@@ -153,9 +152,33 @@ Examples:
   ./test.sh
   ./test.sh --agents codex --category api
   ./test.sh --skip-source-setup --agents claude --case-id advisor-routing-maintainable-app
+  ./test.sh --agents claude --max-parallel 4
 
-Options:
+Wrapper options:
   --skip-source-setup   Do not repoint/sync local plugin and skill sources before run
+
+Runner options (passed through to check-skills.cs):
+  --agents <csv>            Agents filter (default: claude,codex,copilot)
+  --category <csv>          Category filter
+  --case-id <csv>           Case-id filter
+  --timeout-seconds <int>   Per-invocation timeout (default: 90)
+  --max-parallel <int>      Max concurrent runs (default: 4; env MAX_CONCURRENCY fallback)
+  --artifacts-root <path>   Base directory for per-batch artifact isolation
+                            (default: tests/agent-routing/artifacts)
+  --enable-log-scan         Enable log file scanning (default: on serial, off parallel)
+  --disable-log-scan        Disable log file scanning
+  --no-progress             Disable stderr lifecycle progress output
+  --output <path>           Optional additional JSON output path (backward compat)
+  --proof-log <path>        Optional additional proof log path (backward compat)
+  --fail-on-infra           Exit non-zero when infra_error exists
+  --help                    Show this help
+
+Environment:
+  MAX_CONCURRENCY           Fallback for --max-parallel (flag takes precedence)
+
+Artifacts:
+  Results and proof logs are always written to <artifacts-root>/<batch_run_id>/.
+  ARTIFACT_DIR=<path> is emitted on stderr (parseable via: grep '^ARTIFACT_DIR=' stderr.log).
 EOF
     exit 0
 fi
@@ -198,7 +221,6 @@ trap cleanup_generated_apps EXIT
 set +e
 dotnet run --file "$RUNNER" -- \
     --input "$CASES" \
-    --proof-log "$PROOF_LOG" \
     --run-all \
     "${RUNNER_ARGS[@]}"
 run_exit=$?

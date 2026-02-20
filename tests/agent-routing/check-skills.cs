@@ -100,6 +100,14 @@ internal sealed class AgentRoutingRunner
     {
         var batchRunId = Guid.NewGuid().ToString();
 
+        // Create batch artifact directory — runner is sole owner of this directory.
+        var batchDir = Path.GetFullPath(Path.Combine(_options.ArtifactsRoot, batchRunId));
+        Directory.CreateDirectory(batchDir);
+
+        // Protocol output: ARTIFACT_DIR is always emitted (not suppressed by --no-progress).
+        // Raw line on stderr — no prefix, no timestamp, no brackets.
+        Console.Error.WriteLine($"ARTIFACT_DIR={batchDir}");
+
         if (!File.Exists(_options.InputPath))
         {
             Console.Error.WriteLine($"ERROR: Cases file not found: {_options.InputPath}");
@@ -134,6 +142,16 @@ internal sealed class AgentRoutingRunner
             ? _options.Agents.Select(a => a.Trim().ToLowerInvariant()).Where(a => a.Length > 0).Distinct().ToArray()
             : DefaultAgents;
 
+        // Capture log snapshots once per agent per batch (before scheduling work items).
+        var agentLogSnapshots = new Dictionary<string, Dictionary<string, LogFileState>>(StringComparer.OrdinalIgnoreCase);
+        if (_options.EnableLogScan)
+        {
+            foreach (var agent in agents)
+            {
+                agentLogSnapshots[agent] = CaptureLogSnapshot(agent);
+            }
+        }
+
         var work = new List<(int Index, string Agent, CaseDefinition TestCase)>(cases.Count * agents.Length);
         var runIndex = 0;
         foreach (var testCase in cases)
@@ -147,8 +165,8 @@ internal sealed class AgentRoutingRunner
 
         var totalRuns = work.Count;
         var maxParallel = Math.Min(_options.MaxParallel, totalRuns);
-        LogProgress($"[batch:{batchRunId}] Starting {totalRuns} runs ({cases.Count} cases x {agents.Length} agents), max_parallel={maxParallel}.");
-        var results = await ExecuteWorkAsync(work, totalRuns, maxParallel, batchRunId);
+        LogProgress($"[batch:{batchRunId}] Starting {totalRuns} runs ({cases.Count} cases x {agents.Length} agents), max_parallel={maxParallel}, log_scan={_options.EnableLogScan}.");
+        var results = await ExecuteWorkAsync(work, totalRuns, maxParallel, batchRunId, agentLogSnapshots);
         LogProgress($"[batch:{batchRunId}] Run matrix completed.");
 
         var summary = new Summary
@@ -175,29 +193,45 @@ internal sealed class AgentRoutingRunner
                 MaxParallel = maxParallel,
                 LogMaxFiles = _options.LogMaxFiles,
                 LogMaxBytes = _options.LogMaxBytes,
-                Progress = _options.Progress
+                Progress = _options.Progress,
+                ArtifactsRoot = _options.ArtifactsRoot,
+                EnableLogScan = _options.EnableLogScan
             }
         };
 
         var payload = JsonSerializer.Serialize(envelope, _jsonOptions);
         Console.WriteLine(payload);
 
-        var proofLogPath = ResolveProofLogPath();
-        if (!string.IsNullOrWhiteSpace(proofLogPath))
+        // Always write results.json to batch directory (unconditional — source of truth).
+        var batchResultsPath = Path.Combine(batchDir, "results.json");
+        await File.WriteAllTextAsync(batchResultsPath, payload + Environment.NewLine);
+
+        // Always write proof log to batch directory (unconditional).
+        var batchProofLogPath = Path.Combine(batchDir, "tool-use-proof.log");
+        await WriteProofLogAsync(results, batchProofLogPath, batchRunId);
+
+        // Backward compat: --proof-log writes an additional copy.
+        var extraProofLogPath = ResolveProofLogPath();
+        if (!string.IsNullOrWhiteSpace(extraProofLogPath) &&
+            !string.Equals(Path.GetFullPath(extraProofLogPath!), Path.GetFullPath(batchProofLogPath), StringComparison.OrdinalIgnoreCase))
         {
-            await WriteProofLogAsync(results, proofLogPath!, batchRunId);
+            await WriteProofLogAsync(results, extraProofLogPath!, batchRunId);
         }
 
+        // Backward compat: --output writes an additional copy.
         if (!string.IsNullOrWhiteSpace(_options.OutputPath))
         {
             var outputPath = _options.OutputPath!;
-            var outputDir = Path.GetDirectoryName(outputPath);
-            if (!string.IsNullOrWhiteSpace(outputDir))
+            if (!string.Equals(Path.GetFullPath(outputPath), Path.GetFullPath(batchResultsPath), StringComparison.OrdinalIgnoreCase))
             {
-                Directory.CreateDirectory(outputDir);
-            }
+                var outputDir = Path.GetDirectoryName(outputPath);
+                if (!string.IsNullOrWhiteSpace(outputDir))
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
 
-            await File.WriteAllTextAsync(outputPath, payload + Environment.NewLine);
+                await File.WriteAllTextAsync(outputPath, payload + Environment.NewLine);
+            }
         }
 
         if (summary.Fail > 0)
@@ -217,7 +251,8 @@ internal sealed class AgentRoutingRunner
         List<(int Index, string Agent, CaseDefinition TestCase)> work,
         int totalRuns,
         int maxParallel,
-        string batchRunId)
+        string batchRunId,
+        Dictionary<string, Dictionary<string, LogFileState>> agentLogSnapshots)
     {
         var semaphore = new SemaphoreSlim(maxParallel, maxParallel);
         var results = new AgentResult[totalRuns];
@@ -238,7 +273,9 @@ internal sealed class AgentRoutingRunner
                 var startedOrdinal = Interlocked.Increment(ref started);
                 LogProgress($"[batch:{batchRunId}] [unit:{unitRunId}] {item.Agent}:{item.TestCase.CaseId} -> running [{startedOrdinal}/{totalRuns}]");
 
-                var result = await RunCaseAsync(item.Agent, item.TestCase, unitRunId);
+                // Use per-agent-per-batch log snapshot (captured once before scheduling).
+                agentLogSnapshots.TryGetValue(item.Agent, out var snapshot);
+                var result = await RunCaseAsync(item.Agent, item.TestCase, unitRunId, snapshot);
                 results[item.Index] = result;
 
                 string lifecycleState;
@@ -287,11 +324,14 @@ internal sealed class AgentRoutingRunner
         }
     }
 
-    private async Task<AgentResult> RunCaseAsync(string agent, CaseDefinition testCase, string unitRunId)
+    private async Task<AgentResult> RunCaseAsync(
+        string agent,
+        CaseDefinition testCase,
+        string unitRunId,
+        Dictionary<string, LogFileState>? batchSnapshot)
     {
         var startedAtUtc = DateTimeOffset.UtcNow;
         var started = Stopwatch.StartNew();
-        var logSnapshot = CaptureLogSnapshot(agent);
 
         var template = ResolveAgentTemplate(agent);
         if (string.IsNullOrWhiteSpace(template))
@@ -359,24 +399,48 @@ internal sealed class AgentRoutingRunner
                 unitRunId: unitRunId);
         }
 
-        var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, logSnapshot);
-        if (logEval.Success)
+        // Log fallback: only attempt when log scanning is enabled and snapshot is available.
+        if (_options.EnableLogScan && batchSnapshot is not null)
         {
-            return AgentResult.Pass(
+            var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, batchSnapshot);
+            if (logEval.Success)
+            {
+                return AgentResult.Pass(
+                    agent,
+                    testCase,
+                    started.ElapsedMilliseconds,
+                    source: "log_fallback",
+                    logEval,
+                    command,
+                    exec.ExitCode,
+                    TrimExcerpt(combined),
+                    exec.TimedOut,
+                    unitRunId: unitRunId);
+            }
+
+            var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
+            var failureReason = exec.TimedOut
+                ? "command timed out"
+                : exec.ExitCode != 0
+                    ? $"agent command returned exit code {exec.ExitCode}"
+                    : null;
+
+            return AgentResult.Fail(
                 agent,
                 testCase,
                 started.ElapsedMilliseconds,
-                source: "log_fallback",
-                logEval,
+                source: "cli_output+log_fallback",
+                failedEval,
                 command,
                 exec.ExitCode,
                 TrimExcerpt(combined),
                 exec.TimedOut,
-                unitRunId: unitRunId);
+                unitRunId: unitRunId,
+                error: failureReason);
         }
 
-        var failedEval = EvidenceEvaluation.Merge(outputEval, logEval);
-        var failureReason = exec.TimedOut
+        // No log fallback — fail based on CLI output only.
+        var cliFailureReason = exec.TimedOut
             ? "command timed out"
             : exec.ExitCode != 0
                 ? $"agent command returned exit code {exec.ExitCode}"
@@ -386,14 +450,14 @@ internal sealed class AgentRoutingRunner
             agent,
             testCase,
             started.ElapsedMilliseconds,
-            source: "cli_output+log_fallback",
-            failedEval,
+            source: "cli_output",
+            outputEval,
             command,
             exec.ExitCode,
             TrimExcerpt(combined),
             exec.TimedOut,
             unitRunId: unitRunId,
-            error: failureReason);
+            error: cliFailureReason);
     }
 
     private static string ResolveAgentTemplate(string agent)
@@ -1232,11 +1296,13 @@ internal sealed class RunnerOptions
     public string InputPath { get; init; } = "tests/agent-routing/cases.json";
     public string? OutputPath { get; init; }
     public string? ProofLogPath { get; init; }
+    public string ArtifactsRoot { get; init; } = "tests/agent-routing/artifacts";
     public int TimeoutSeconds { get; init; } = 90;
-    public int MaxParallel { get; init; } = int.MaxValue;
+    public int MaxParallel { get; init; } = 4;
     public int LogMaxFiles { get; init; } = 60;
     public int LogMaxBytes { get; init; } = 300_000;
     public bool Progress { get; init; } = true;
+    public bool EnableLogScan { get; init; } = true;
     public bool FailOnInfra { get; init; }
     public bool ShowHelp { get; init; }
     public HashSet<string> Agents { get; init; } = new(StringComparer.OrdinalIgnoreCase);
@@ -1248,8 +1314,8 @@ internal sealed class RunnerOptions
         string input = "tests/agent-routing/cases.json";
         string? output = null;
         string? proofLog = null;
+        string artifactsRoot = "tests/agent-routing/artifacts";
         int timeoutSeconds = 90;
-        int maxParallel = int.MaxValue;
         int logMaxFiles = 60;
         int logMaxBytes = 300_000;
         bool progress = true;
@@ -1258,6 +1324,18 @@ internal sealed class RunnerOptions
         var agents = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var caseIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        // MAX_CONCURRENCY: default 4, env fallback, --max-parallel flag precedence
+        int maxParallel = 4;
+        var envMaxConcurrency = Environment.GetEnvironmentVariable("MAX_CONCURRENCY");
+        if (!string.IsNullOrWhiteSpace(envMaxConcurrency) &&
+            int.TryParse(envMaxConcurrency, out var envParsed) && envParsed > 0)
+        {
+            maxParallel = envParsed;
+        }
+
+        bool maxParallelExplicit = false;
+        bool? enableLogScanExplicit = null;
 
         for (var i = 0; i < args.Length; i++)
         {
@@ -1277,11 +1355,15 @@ internal sealed class RunnerOptions
                 case "--proof-log":
                     proofLog = ReadValue(args, ref i, "--proof-log");
                     break;
+                case "--artifacts-root":
+                    artifactsRoot = ReadValue(args, ref i, "--artifacts-root");
+                    break;
                 case "--timeout-seconds":
                     timeoutSeconds = ParsePositiveInt(ReadValue(args, ref i, "--timeout-seconds"), "--timeout-seconds");
                     break;
                 case "--max-parallel":
                     maxParallel = ParsePositiveInt(ReadValue(args, ref i, "--max-parallel"), "--max-parallel");
+                    maxParallelExplicit = true;
                     break;
                 case "--log-max-files":
                     logMaxFiles = ParsePositiveInt(ReadValue(args, ref i, "--log-max-files"), "--log-max-files");
@@ -1291,6 +1373,12 @@ internal sealed class RunnerOptions
                     break;
                 case "--no-progress":
                     progress = false;
+                    break;
+                case "--enable-log-scan":
+                    enableLogScanExplicit = true;
+                    break;
+                case "--disable-log-scan":
+                    enableLogScanExplicit = false;
                     break;
                 case "--agents":
                     AddCsv(ReadValue(args, ref i, "--agents"), agents);
@@ -1313,16 +1401,21 @@ internal sealed class RunnerOptions
             }
         }
 
+        // --enable-log-scan: explicit flag wins, otherwise on when serial (maxParallel==1), off when parallel
+        bool enableLogScan = enableLogScanExplicit ?? (maxParallel == 1);
+
         return new RunnerOptions
         {
             InputPath = input,
             OutputPath = output,
             ProofLogPath = proofLog,
+            ArtifactsRoot = artifactsRoot,
             TimeoutSeconds = timeoutSeconds,
             MaxParallel = maxParallel,
             LogMaxFiles = logMaxFiles,
             LogMaxBytes = logMaxBytes,
             Progress = progress,
+            EnableLogScan = enableLogScan,
             FailOnInfra = failOnInfra,
             ShowHelp = showHelp,
             Agents = agents,
@@ -1375,14 +1468,28 @@ internal sealed class RunnerOptions
               --category <csv>          Category filter
               --case-id <csv>           Case-id filter
               --timeout-seconds <int>   Per-invocation timeout (default: 90)
-              --max-parallel <int>      Max concurrent case/agent runs (default: all)
+              --max-parallel <int>      Max concurrent case/agent runs (default: 4)
+                                        Precedence: --max-parallel flag > MAX_CONCURRENCY env > default 4
               --log-max-files <int>     Max recent log files scanned (default: 60)
               --log-max-bytes <int>     Max bytes read from each log file tail (default: 300000)
               --no-progress             Disable stderr lifecycle progress output
-              --output <path>           Optional JSON output path
-              --proof-log <path>        Optional plain-text proof log path
+              --output <path>           Optional additional JSON output path (backward compat)
+              --proof-log <path>        Optional additional proof log path (backward compat)
+              --artifacts-root <path>   Base directory for per-batch artifact isolation
+                                        (default: tests/agent-routing/artifacts)
+              --enable-log-scan         Enable log file scanning (default: on when serial, off when parallel)
+              --disable-log-scan        Disable log file scanning
               --fail-on-infra           Exit non-zero when infra_error exists
               --help                    Show this help
+
+            Environment:
+              MAX_CONCURRENCY           Fallback for --max-parallel (flag takes precedence)
+              AGENT_<NAME>_TEMPLATE     Command template override per agent
+              AGENT_<NAME>_LOG_DIRS     Log directory override per agent (path-separator delimited)
+
+            Artifacts:
+              Results and proof logs are always written to <artifacts-root>/<batch_run_id>/.
+              ARTIFACT_DIR=<path> is emitted on stderr as protocol output (always, even with --no-progress).
             """);
     }
 }
@@ -1571,6 +1678,12 @@ internal sealed class ResultOptions
 
     [JsonPropertyName("progress")]
     public bool Progress { get; init; }
+
+    [JsonPropertyName("artifacts_root")]
+    public string ArtifactsRoot { get; init; } = string.Empty;
+
+    [JsonPropertyName("enable_log_scan")]
+    public bool EnableLogScan { get; init; }
 }
 
 internal sealed class Summary

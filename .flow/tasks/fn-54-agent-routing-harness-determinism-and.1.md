@@ -32,5 +32,8 @@ Add batch and unit UUID run IDs, structured lifecycle progress output, and failu
 - [ ] Existing test cases continue to pass with no behavioral change
 
 ## Done summary
-
+Added batch_run_id (UUID) to ResultEnvelope and unit_run_id (UUID) to each AgentResult for cross-correlation. Implemented lifecycle progress output on stderr (queued/running/completed/failed/timeout) with run IDs. Added failure_category field with deterministic priority mapping (timeout > transport > assertion). Detects missing CLI binaries (bash exit 126/127) as transport failures. Updated operator docs with new fields and stderr format.
 ## Evidence
+- Commits: 733c2f599f8962818c9d45d2f05ea30c3df75a76, 08520bb, 686a61e
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, dotnet run --file tests/agent-routing/check-skills.cs -- --help, dotnet run --file tests/agent-routing/check-skills.cs -- --agents nonexistent --no-progress (verified batch_run_id, unit_run_id, failure_category), AGENT_FAKECLI_TEMPLATE='totally_nonexistent_binary_xyz {prompt}' dotnet run ... (verified CLI-missing -> transport)
+- PRs:
