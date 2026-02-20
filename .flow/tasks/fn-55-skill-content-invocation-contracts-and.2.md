@@ -23,7 +23,8 @@ Add structural invocation-contract checks with fence-aware section extraction (a
   This enables T3's grep-based acceptance to filter by skill path and marker prefix.
 - **Summary key:** `_validate_skills.py` emits `INVOCATION_CONTRACT_WARN_COUNT=<N>` to stdout. `validate-skills.sh` propagates this to output.
 - **STRICT_INVOCATION mechanism:** `_validate_skills.py` reads `STRICT_INVOCATION` env var directly. When `1`, contract warnings become errors (exit 1). Default WARN (exit 0).
-- **validate-skills.sh header comments:** Add documentation of STRICT_INVOCATION and STRICT_REFS toggles with explicit independence statement.
+- **validate-skills.sh header comments:** Already added by T1 (lines 17-24, 43 in validate-skills.sh). Verify presence; do not duplicate.
+<!-- Updated by plan-sync: fn-55.1 already added STRICT_INVOCATION/STRICT_REFS header docs and INVOCATION_CONTRACT_WARN_COUNT output key to validate-skills.sh -->
 - **Warning duplication note:** A skill missing `## Scope` entirely will produce both the existing `missing '## Scope' section` warning AND the new `INVOCATION_CONTRACT: Scope section has 0 unordered bullets` warning. This is expected and correct — the warnings serve distinct purposes (structural presence vs contract compliance). No deduplication needed during rollout.
 
 ## Key context
@@ -41,5 +42,5 @@ Add structural invocation-contract checks with fence-aware section extraction (a
 - [ ] OOS: `- ` only, fence-aware; `[skill:]` presence fence-aware
 - [ ] Default WARN (exit 0); STRICT_INVOCATION=1 → ERROR (exit 1) — toggle verified by exit code
 - [ ] `INVOCATION_CONTRACT_WARN_COUNT` emitted by `_validate_skills.py` (Python)
-- [ ] validate-skills.sh header comments document STRICT_INVOCATION and STRICT_REFS as independent toggles
+- [ ] validate-skills.sh header comments document STRICT_INVOCATION and STRICT_REFS as independent toggles (already done by T1 -- verify presence, do not re-add)
 - [ ] Existing checks still pass (fence-awareness is a correctness improvement, not behavior change for well-formed skills)

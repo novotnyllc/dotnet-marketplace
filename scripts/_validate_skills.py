@@ -18,6 +18,10 @@ Checks (skills):
   12. Out-of-scope attribution format (items should reference owning skill via [skill:])
   13. Self-referential cross-link detection (skill referencing itself -- error)
   14. Cross-reference cycle detection (post-processing, informational report only)
+  15. Invocation contract: Scope >= 1 unordered bullet (fence-aware)
+  16. Invocation contract: OOS >= 1 unordered bullet (fence-aware)
+  17. Invocation contract: OOS contains >= 1 [skill:] reference (presence check,
+      independent of STRICT_REFS resolution)
 
 Checks (agents):
   15. Agent bare-ref detection using known IDs allowlist (informational)
@@ -27,6 +31,9 @@ Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
   - ID collision detection between skills and agents (error)
   - BUDGET_STATUS computed from CURRENT_DESC_CHARS only (projected is informational)
+  - STRICT_INVOCATION env var: when "1", contract warnings become errors (exit 1)
+  - All section checks (has_section_header, extract_oos_items, extract_scope_items)
+    are fence-aware: lines inside ``` fenced code blocks are ignored
 
 Invoked by validate-skills.sh. All validation logic lives here to avoid
 per-file subprocess spawning and ensure deterministic YAML parsing.
@@ -36,6 +43,7 @@ across all environments regardless of installed packages.
 """
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -193,21 +201,43 @@ def extract_refs(body_text: str) -> list:
 
 
 def has_section_header(body_text: str, header: str) -> bool:
-    """Check if body text contains a specific ## level header."""
-    pattern = re.compile(r"^## " + re.escape(header) + r"\s*$", re.MULTILINE)
-    return bool(pattern.search(body_text))
+    """Check if body text contains a specific ## level header (fence-aware).
+
+    Lines inside fenced code blocks (``` delimiters) are ignored to prevent
+    false positives from example markdown in code fences.
+    """
+    pattern = re.compile(r"^## " + re.escape(header) + r"\s*$")
+    in_fence = False
+    for line in body_text.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence and pattern.match(stripped):
+            return True
+    return False
 
 
 def extract_oos_items(body_text: str) -> list:
-    """Extract items from the Out of scope section.
+    """Extract items from the Out of scope section (fence-aware).
 
-    Returns list of (line_text, has_skill_ref) tuples for items in the
-    Out of scope section (lines starting with - or numbered items).
+    Returns list of (line_text, has_skill_ref) tuples for unordered bullet
+    items (``- `` prefix only) in the Out of scope section. Numbered lists
+    are excluded per invocation contract rules.
+
+    Lines inside fenced code blocks are ignored.
     """
     items = []
     in_oos = False
+    in_fence = False
     for line in body_text.split("\n"):
         stripped = line.strip()
+        # Track fenced code blocks
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
         # Detect start of Out of scope section
         if re.match(r"^## Out of scope\s*$", stripped):
             in_oos = True
@@ -215,10 +245,42 @@ def extract_oos_items(body_text: str) -> list:
         # Detect next section header (end of Out of scope)
         if in_oos and re.match(r"^## ", stripped):
             break
-        # Collect list items
-        if in_oos and (stripped.startswith("- ") or re.match(r"^\d+\.\s", stripped)):
+        # Collect unordered bullet items only (- prefix)
+        if in_oos and stripped.startswith("- "):
             has_ref = bool(re.search(r"\[skill:[a-zA-Z0-9_-]+\]", stripped))
             items.append((stripped, has_ref))
+    return items
+
+
+def extract_scope_items(body_text: str) -> list:
+    """Extract unordered bullet items from the Scope section (fence-aware).
+
+    Returns list of line strings for items starting with ``- `` within the
+    ``## Scope`` section boundary (up to the next ``## `` header).
+
+    Lines inside fenced code blocks and numbered list items are excluded.
+    """
+    items = []
+    in_scope = False
+    in_fence = False
+    for line in body_text.split("\n"):
+        stripped = line.strip()
+        # Track fenced code blocks
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        # Detect start of Scope section
+        if re.match(r"^## Scope\s*$", stripped):
+            in_scope = True
+            continue
+        # Detect next section header (end of Scope)
+        if in_scope and re.match(r"^## ", stripped):
+            break
+        # Collect unordered bullet items only (- prefix)
+        if in_scope and stripped.startswith("- "):
+            items.append(stripped)
     return items
 
 
@@ -324,6 +386,7 @@ def process_file(path: str) -> dict:
     # Check for scope sections
     has_scope = has_section_header(body_text, "Scope")
     has_oos = has_section_header(body_text, "Out of scope")
+    scope_items = extract_scope_items(body_text) if has_scope else []
     oos_items = extract_oos_items(body_text) if has_oos else []
 
     # Type-validate optional fields (warnings, not errors)
@@ -349,6 +412,7 @@ def process_file(path: str) -> dict:
         "all_fields": set(parsed.keys()),
         "has_scope": has_scope,
         "has_oos": has_oos,
+        "scope_items": scope_items,
         "oos_items": oos_items,
     }
 
@@ -462,6 +526,9 @@ def main():
     total_desc_chars = 0
     skill_count = 0
 
+    # STRICT_INVOCATION: when "1", invocation contract warnings become errors
+    strict_invocation = os.environ.get("STRICT_INVOCATION") == "1"
+
     # Quality check counters (reported as stable output keys)
     name_dir_mismatches = 0
     extra_field_count = 0
@@ -473,6 +540,7 @@ def main():
     self_ref_count = 0
     agent_bare_ref_count = 0
     agentsmd_bare_ref_count = 0
+    invocation_contract_warn_count = 0
 
     # Cross-reference graph for cycle detection
     ref_graph = {}
@@ -585,6 +653,45 @@ def main():
                         f"{item_text[:60]}"
                     )
                     warnings += 1
+
+        # --- Invocation contract checks ---
+        # Rule 1: Scope section must contain >= 1 unordered bullet
+        scope_bullet_count = len(result["scope_items"])
+        if scope_bullet_count < 1:
+            msg = f"INVOCATION_CONTRACT: Scope section has {scope_bullet_count} unordered bullets (requires >=1)"
+            if strict_invocation:
+                print(f"ERROR: {rel_path} -- {msg}")
+                errors += 1
+            else:
+                print(f"WARN:  {rel_path} -- {msg}")
+                warnings += 1
+            invocation_contract_warn_count += 1
+
+        # Rule 2: Out of scope section must contain >= 1 unordered bullet
+        oos_bullet_count = len(result["oos_items"])
+        if oos_bullet_count < 1:
+            msg = f"INVOCATION_CONTRACT: Out of scope section has {oos_bullet_count} unordered bullets (requires >=1)"
+            if strict_invocation:
+                print(f"ERROR: {rel_path} -- {msg}")
+                errors += 1
+            else:
+                print(f"WARN:  {rel_path} -- {msg}")
+                warnings += 1
+            invocation_contract_warn_count += 1
+
+        # Rule 3: At least one OOS bullet must contain [skill:] reference
+        # This is a dedicated presence check, independent of STRICT_REFS resolution.
+        if oos_bullet_count >= 1:
+            has_any_skill_ref = any(has_ref for _, has_ref in result["oos_items"])
+            if not has_any_skill_ref:
+                msg = "INVOCATION_CONTRACT: No OOS bullet contains [skill:] reference"
+                if strict_invocation:
+                    print(f"ERROR: {rel_path} -- {msg}")
+                    errors += 1
+                else:
+                    print(f"WARN:  {rel_path} -- {msg}")
+                    warnings += 1
+                invocation_contract_warn_count += 1
 
         # Canonical skill ID is the directory name (not frontmatter name,
         # which may differ if there's a name/dir mismatch)
@@ -736,6 +843,7 @@ def main():
     print(f"SELF_REF_COUNT={self_ref_count}")
     print(f"AGENT_BARE_REF_COUNT={agent_bare_ref_count}")
     print(f"AGENTSMD_BARE_REF_COUNT={agentsmd_bare_ref_count}")
+    print(f"INVOCATION_CONTRACT_WARN_COUNT={invocation_contract_warn_count}")
 
     print()
     print(f"Skills validated: {skill_count}")
