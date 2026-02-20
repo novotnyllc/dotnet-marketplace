@@ -45,7 +45,8 @@ Add positive/negative control test cases exercising fn-54's schema. Update provi
 - [ ] `tests/trigger-corpus.json` updated if new categories added
 
 ## Evidence
-<!-- flowctl:evidence -->
-
+- Commits: 602cd71, 7b65f7d
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, ./test.sh --self-test --skip-source-setup
+- PRs:
 ## Done summary
-<!-- flowctl:done-summary -->
+Added 6 regression test cases to the agent-routing corpus: 3 positive controls (csharp-async-cancellation, testing-integration-webfactory, observability-structured-logging), 2 disallowed-skill controls (security-hardening-no-blazor-auth, api-endpoints-no-efcore), and 1 optional-skill control (architecture-clean-with-di). All cases use targeted evidence tokens and provider-baseline entries. Disallowed cases use temptation prompts designed to make disallowed_hit observable; optional case prompt forces DI-specific subtask for optional_hits observability.
