@@ -49,5 +49,8 @@ Reshape evidence evaluation to per-token best-hit with `ComputeTier(agent, token
 - [ ] `weak_evidence_only` emitted when only Tier 3 evidence found
 
 ## Done summary
-
+Implemented tier-based evidence gating with ComputeTier as single source of truth for per-provider regex + token attribution. Added 14 self-test fixtures, typed requirements (required_skills Tier 1, required_files Tier 2), implicit Tier 1 for expected_skill, log_fallback Tier 2 cap enforced during evaluation, diagnostics-only merge in fail paths, and updated docs.
 ## Evidence
+- Commits: f685a78, 577b8ce, 746498b, fa140c0, 794ba1e, fbba803, 30794ad
+- Tests: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:

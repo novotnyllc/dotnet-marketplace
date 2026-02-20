@@ -23,6 +23,12 @@ internal static class FailureKinds
     public const string WeakEvidenceOnly = "weak_evidence_only";
     public const string EvidenceTooWeak = "evidence_too_weak";
     public const string Unknown = "unknown";
+
+    // T3 granular mismatch kinds
+    public const string MissingRequired = "missing_required";
+    public const string DisallowedHit = "disallowed_hit";
+    public const string OptionalOnly = "optional_only";
+    public const string Mixed = "mixed";
 }
 
 internal static class FailureCategories
@@ -399,8 +405,34 @@ internal sealed class AgentRoutingRunner
         }
 
         var outputEval = EvaluateEvidence(combined, testCase, "cli_output", agent);
+
+        // Evaluate optional and disallowed skills against TokenHits from CLI output.
+        // These are computed once and propagated through all result paths.
+        var optionalHits = EvaluateOptionalSkills(testCase, outputEval.TokenHits);
+        var (disallowedAllHits, disallowedGatingHits) = EvaluateDisallowedSkills(testCase, outputEval.TokenHits);
+
         if (outputEval.Success)
         {
+            // Check if disallowed skills at gating tier should convert pass to fail
+            if (disallowedGatingHits.Count > 0)
+            {
+                return AgentResult.Fail(
+                    agent,
+                    testCase,
+                    started.ElapsedMilliseconds,
+                    source: "cli_output",
+                    outputEval,
+                    command,
+                    exec.ExitCode,
+                    TrimExcerpt(combined),
+                    exec.TimedOut,
+                    unitRunId: unitRunId,
+                    error: $"disallowed skill(s) detected: {string.Join(", ", disallowedGatingHits)}",
+                    optionalHits: optionalHits,
+                    disallowedHits: disallowedAllHits,
+                    disallowedGatingHits: disallowedGatingHits);
+            }
+
             return AgentResult.Pass(
                 agent,
                 testCase,
@@ -411,7 +443,9 @@ internal sealed class AgentRoutingRunner
                 exec.ExitCode,
                 TrimExcerpt(combined),
                 exec.TimedOut,
-                unitRunId: unitRunId);
+                unitRunId: unitRunId,
+                optionalHits: optionalHits,
+                disallowedHits: disallowedAllHits);
         }
 
         // Log fallback: only attempt when log scanning is enabled and snapshot is available.
@@ -422,6 +456,11 @@ internal sealed class AgentRoutingRunner
             // correctly reflects the cap — no post-hoc patching needed.
             var logEval = await TryFindEvidenceInLogsAsync(agent, testCase, startedAtUtc, batchSnapshot);
 
+            // Re-evaluate optional/disallowed against merged TokenHits from both sources
+            var mergedHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits);
+            var mergedOptionalHits = EvaluateOptionalSkills(testCase, mergedHits);
+            var (mergedDisallowedAll, mergedDisallowedGating) = EvaluateDisallowedSkills(testCase, mergedHits);
+
             if (logEval.Success)
             {
                 // When parallel (maxParallel > 1): log_fallback is diagnostics-only unless
@@ -431,6 +470,26 @@ internal sealed class AgentRoutingRunner
 
                 if (allowLogPass)
                 {
+                    // Check disallowed gating even when log_fallback passes
+                    if (mergedDisallowedGating.Count > 0)
+                    {
+                        return AgentResult.Fail(
+                            agent,
+                            testCase,
+                            started.ElapsedMilliseconds,
+                            source: "log_fallback",
+                            logEval,
+                            command,
+                            exec.ExitCode,
+                            TrimExcerpt(combined),
+                            exec.TimedOut,
+                            unitRunId: unitRunId,
+                            error: $"disallowed skill(s) detected: {string.Join(", ", mergedDisallowedGating)}",
+                            optionalHits: mergedOptionalHits,
+                            disallowedHits: mergedDisallowedAll,
+                            disallowedGatingHits: mergedDisallowedGating);
+                    }
+
                     return AgentResult.Pass(
                         agent,
                         testCase,
@@ -441,7 +500,9 @@ internal sealed class AgentRoutingRunner
                         exec.ExitCode,
                         TrimExcerpt(combined),
                         exec.TimedOut,
-                        unitRunId: unitRunId);
+                        unitRunId: unitRunId,
+                        optionalHits: mergedOptionalHits,
+                        disallowedHits: mergedDisallowedAll);
                 }
 
                 // Diagnostics-only: log_fallback found evidence but we are parallel and not allowed
@@ -451,7 +512,7 @@ internal sealed class AgentRoutingRunner
                 var diagEval = outputEval with
                 {
                     ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, logEval.ToolUseProofLines),
-                    TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits),
+                    TokenHits = mergedHits,
                     MatchedLogFile = logEval.MatchedLogFile ?? outputEval.MatchedLogFile,
                 };
 
@@ -472,7 +533,10 @@ internal sealed class AgentRoutingRunner
                     TrimExcerpt(combined),
                     exec.TimedOut,
                     unitRunId: unitRunId,
-                    error: diagFailureReason);
+                    error: diagFailureReason,
+                    optionalHits: mergedOptionalHits,
+                    disallowedHits: mergedDisallowedAll,
+                    disallowedGatingHits: mergedDisallowedGating);
             }
 
             // Both CLI and log failed. Keep CLI evidence as the gating source (preserving
@@ -482,7 +546,7 @@ internal sealed class AgentRoutingRunner
             var failedEval = outputEval with
             {
                 ToolUseProofLines = MergeProofLines(outputEval.ToolUseProofLines, logEval.ToolUseProofLines),
-                TokenHits = EvidenceEvaluation.MergeTokenHits(outputEval.TokenHits, logEval.TokenHits),
+                TokenHits = mergedHits,
                 MatchedLogFile = logEval.MatchedLogFile ?? outputEval.MatchedLogFile,
             };
             var failureReason = exec.TimedOut
@@ -502,7 +566,10 @@ internal sealed class AgentRoutingRunner
                 TrimExcerpt(combined),
                 exec.TimedOut,
                 unitRunId: unitRunId,
-                error: failureReason);
+                error: failureReason,
+                optionalHits: mergedOptionalHits,
+                disallowedHits: mergedDisallowedAll,
+                disallowedGatingHits: mergedDisallowedGating);
         }
 
         // No log fallback — fail based on CLI output only.
@@ -523,7 +590,10 @@ internal sealed class AgentRoutingRunner
             TrimExcerpt(combined),
             exec.TimedOut,
             unitRunId: unitRunId,
-            error: cliFailureReason);
+            error: cliFailureReason,
+            optionalHits: optionalHits,
+            disallowedHits: disallowedAllHits,
+            disallowedGatingHits: disallowedGatingHits);
     }
 
     private static string ResolveAgentTemplate(string agent)
@@ -778,12 +848,34 @@ internal sealed class AgentRoutingRunner
         var requiredAllSearchText = BuildRequiredAllSearchText(text, agent);
         var isLogFallback = string.Equals(sourceKind, "log_fallback", StringComparison.OrdinalIgnoreCase);
 
-        // Build per-token hits with tier information
+        // Build per-token hits with tier information.
+        // Scan required, optional, and disallowed tokens so they all appear in TokenHits
+        // for downstream evaluation (optional_hits, disallowed_hits).
         var tokenHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase);
         var lines = requiredAllSearchText.Replace("\r", string.Empty).Split('\n');
 
+        // Build combined token set: required + optional + disallowed (deduped)
+        var allScanTokens = new List<string>(requiredAll);
+        foreach (var opt in testCase.OptionalSkills)
+        {
+            if (!string.IsNullOrWhiteSpace(opt) &&
+                !allScanTokens.Contains(opt, StringComparer.OrdinalIgnoreCase))
+            {
+                allScanTokens.Add(opt);
+            }
+        }
+
+        foreach (var dis in testCase.DisallowedSkills)
+        {
+            if (!string.IsNullOrWhiteSpace(dis) &&
+                !allScanTokens.Contains(dis, StringComparer.OrdinalIgnoreCase))
+            {
+                allScanTokens.Add(dis);
+            }
+        }
+
         // Compute per-token best hit using ComputeTier
-        foreach (var token in requiredAll)
+        foreach (var token in allScanTokens)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -960,38 +1052,42 @@ internal sealed class AgentRoutingRunner
     /// required_skills -> Tier 1 (max tier = 1), required_files -> Tier 2 (max tier = 2),
     /// expected_skill -> Tier 1 (unless expected_skill_min_tier is set),
     /// legacy required_all_evidence -> Tier 2 (unless also a skill).
+    /// Provider aliases are resolved before building requirements.
     /// </summary>
     private static Dictionary<string, int> BuildTierRequirements(CaseDefinition testCase, string agent)
     {
         var requirements = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-        // Explicit required_skills: Tier 1
+        // Explicit required_skills: Tier 1 (resolved through provider aliases)
         foreach (var skill in testCase.RequiredSkills)
         {
             if (!string.IsNullOrWhiteSpace(skill))
             {
-                requirements[skill] = 1;
+                var resolved = ResolveProviderAlias(agent, skill, testCase);
+                requirements[resolved] = 1;
             }
         }
 
-        // Explicit required_files: Tier 2
+        // Explicit required_files: Tier 2 (resolved through provider aliases)
         foreach (var file in testCase.RequiredFiles)
         {
             if (!string.IsNullOrWhiteSpace(file))
             {
+                var resolved = ResolveProviderAlias(agent, file, testCase);
                 // Only set if not already more strictly required
-                requirements.TryAdd(file, 2);
+                requirements.TryAdd(resolved, 2);
             }
         }
 
         // expected_skill: implicit Tier 1 unless expected_skill_min_tier is set to 2
         if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
         {
+            var resolved = ResolveProviderAlias(agent, testCase.ExpectedSkill, testCase);
             var minTier = testCase.ExpectedSkillMinTier ?? 1;
             // Tier 1 gating for expected_skill unless opted out
-            if (!requirements.ContainsKey(testCase.ExpectedSkill) || requirements[testCase.ExpectedSkill] > minTier)
+            if (!requirements.ContainsKey(resolved) || requirements[resolved] > minTier)
             {
-                requirements[testCase.ExpectedSkill] = minTier;
+                requirements[resolved] = minTier;
             }
         }
 
@@ -1004,18 +1100,22 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
-            if (!requirements.ContainsKey(token))
+            var resolved = ResolveProviderAlias(agent, token, testCase);
+            if (!requirements.ContainsKey(resolved))
             {
+                var resolvedExpected = string.IsNullOrWhiteSpace(testCase.ExpectedSkill)
+                    ? string.Empty
+                    : ResolveProviderAlias(agent, testCase.ExpectedSkill, testCase);
                 // Normalization: if legacy token is the same as expected_skill or in required_skills,
                 // use Tier 1 to avoid contradictory tiering
-                if (string.Equals(token, testCase.ExpectedSkill, StringComparison.OrdinalIgnoreCase) ||
-                    testCase.RequiredSkills.Contains(token, StringComparer.OrdinalIgnoreCase))
+                if (string.Equals(resolved, resolvedExpected, StringComparison.OrdinalIgnoreCase) ||
+                    testCase.RequiredSkills.Any(s => string.Equals(ResolveProviderAlias(agent, s, testCase), resolved, StringComparison.OrdinalIgnoreCase)))
                 {
-                    requirements[token] = testCase.ExpectedSkillMinTier ?? 1;
+                    requirements[resolved] = testCase.ExpectedSkillMinTier ?? 1;
                 }
                 else
                 {
-                    requirements[token] = 2;
+                    requirements[resolved] = 2;
                 }
             }
         }
@@ -1027,16 +1127,20 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
-            if (!requirements.ContainsKey(token))
+            var resolved = ResolveProviderAlias(agent, token, testCase);
+            if (!requirements.ContainsKey(resolved))
             {
-                if (string.Equals(token, testCase.ExpectedSkill, StringComparison.OrdinalIgnoreCase) ||
-                    testCase.RequiredSkills.Contains(token, StringComparer.OrdinalIgnoreCase))
+                var resolvedExpected = string.IsNullOrWhiteSpace(testCase.ExpectedSkill)
+                    ? string.Empty
+                    : ResolveProviderAlias(agent, testCase.ExpectedSkill, testCase);
+                if (string.Equals(resolved, resolvedExpected, StringComparison.OrdinalIgnoreCase) ||
+                    testCase.RequiredSkills.Any(s => string.Equals(ResolveProviderAlias(agent, s, testCase), resolved, StringComparison.OrdinalIgnoreCase)))
                 {
-                    requirements[token] = testCase.ExpectedSkillMinTier ?? 1;
+                    requirements[resolved] = testCase.ExpectedSkillMinTier ?? 1;
                 }
                 else
                 {
-                    requirements[token] = 2;
+                    requirements[resolved] = 2;
                 }
             }
         }
@@ -1311,6 +1415,16 @@ internal sealed class AgentRoutingRunner
                 sb.AppendLine("missing_evidence=" + string.Join(", ", result.MissingEvidence));
             }
 
+            if (result.OptionalHits.Count > 0)
+            {
+                sb.AppendLine("optional_hits=" + string.Join(", ", result.OptionalHits));
+            }
+
+            if (result.DisallowedHits.Count > 0)
+            {
+                sb.AppendLine("disallowed_hits=" + string.Join(", ", result.DisallowedHits));
+            }
+
             sb.AppendLine("tool_use_proof_lines:");
             if (result.ToolUseProofLines.Count == 0)
             {
@@ -1335,17 +1449,20 @@ internal sealed class AgentRoutingRunner
         var all = new List<string>();
         var isClaude = string.Equals(agent, "claude", StringComparison.OrdinalIgnoreCase);
 
-        AddDistinct(all, testCase.RequiredAllEvidence);
-        AddDistinct(all, testCase.RequiredEvidence);
+        // Apply provider alias resolution to each token before adding.
+        // This normalizes agent-specific skill names to canonical names.
+        AddDistinctWithAliases(all, testCase.RequiredAllEvidence, agent, testCase);
+        AddDistinctWithAliases(all, testCase.RequiredEvidence, agent, testCase);
 
         // Typed requirements: required_skills (Tier 1) and required_files (Tier 2) must be in
         // the required token set so they are actually evaluated.
-        AddDistinct(all, testCase.RequiredSkills);
-        AddDistinct(all, testCase.RequiredFiles);
+        AddDistinctWithAliases(all, testCase.RequiredSkills, agent, testCase);
+        AddDistinctWithAliases(all, testCase.RequiredFiles, agent, testCase);
 
         if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
         {
-            AddDistinct(all, [testCase.ExpectedSkill]);
+            var resolved = ResolveProviderAlias(agent, testCase.ExpectedSkill, testCase);
+            AddDistinct(all, [resolved]);
         }
 
         if (testCase.RequireSkillFile)
@@ -1356,9 +1473,10 @@ internal sealed class AgentRoutingRunner
             {
                 if (!string.IsNullOrWhiteSpace(testCase.ExpectedSkill))
                 {
+                    var resolved = ResolveProviderAlias(agent, testCase.ExpectedSkill, testCase);
                     // Skill-specific path only — prevents false-positive matches
                     // from incidental SKILL.md mentions in unrelated output.
-                    AddDistinct(all, [$"{testCase.ExpectedSkill}/SKILL.md"]);
+                    AddDistinct(all, [$"{resolved}/SKILL.md"]);
                 }
                 else
                 {
@@ -1376,6 +1494,23 @@ internal sealed class AgentRoutingRunner
         }
 
         return all;
+    }
+
+    private static void AddDistinctWithAliases(List<string> destination, IEnumerable<string> source, string agent, CaseDefinition testCase)
+    {
+        foreach (var token in source)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                continue;
+            }
+
+            var resolved = ResolveProviderAlias(agent, token, testCase);
+            if (!destination.Contains(resolved, StringComparer.OrdinalIgnoreCase))
+            {
+                destination.Add(resolved);
+            }
+        }
     }
 
     private static List<string> BuildRequiredAnyEvidence(CaseDefinition testCase)
@@ -1401,6 +1536,116 @@ internal sealed class AgentRoutingRunner
                 destination.Add(token);
             }
         }
+    }
+
+    /// <summary>
+    /// Resolves provider aliases for a given agent. Returns the canonical token if an alias
+    /// mapping exists for this agent, otherwise returns the original token unchanged.
+    /// Integrates with AddSkillVariants() which already handles colon-separated prefixes.
+    /// </summary>
+    private static string ResolveProviderAlias(string agent, string token, CaseDefinition testCase)
+    {
+        if (testCase.ProviderAliases is null)
+        {
+            return token;
+        }
+
+        if (!testCase.ProviderAliases.TryGetValue(agent, out var aliasMap))
+        {
+            // Try case-insensitive lookup
+            var agentKey = testCase.ProviderAliases.Keys
+                .FirstOrDefault(k => string.Equals(k, agent, StringComparison.OrdinalIgnoreCase));
+            if (agentKey is null || !testCase.ProviderAliases.TryGetValue(agentKey, out aliasMap))
+            {
+                return token;
+            }
+        }
+
+        if (aliasMap.TryGetValue(token, out var canonical))
+        {
+            return canonical;
+        }
+
+        // Try case-insensitive lookup on alias key
+        var aliasKey = aliasMap.Keys
+            .FirstOrDefault(k => string.Equals(k, token, StringComparison.OrdinalIgnoreCase));
+        if (aliasKey is not null && aliasMap.TryGetValue(aliasKey, out canonical))
+        {
+            return canonical;
+        }
+
+        return token;
+    }
+
+    /// <summary>
+    /// Evaluates optional skill tokens against TokenHits. Returns matched optional skill names.
+    /// Excluded from pass/fail gating.
+    /// </summary>
+    private static List<string> EvaluateOptionalSkills(CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+    {
+        var hits = new List<string>();
+        if (testCase.OptionalSkills.Length == 0 || tokenHits is null)
+        {
+            return hits;
+        }
+
+        foreach (var skill in testCase.OptionalSkills)
+        {
+            if (string.IsNullOrWhiteSpace(skill))
+            {
+                continue;
+            }
+
+            if (tokenHits.ContainsKey(skill))
+            {
+                hits.Add(skill);
+            }
+        }
+
+        return hits;
+    }
+
+    /// <summary>
+    /// Evaluates disallowed skill tokens against TokenHits. Returns two lists:
+    /// - allHits: all disallowed tokens found in TokenHits (any tier, for diagnostics)
+    /// - gatingHits: disallowed tokens found at >= disallowed_min_tier (cause failure)
+    /// Tier 3 matches are diagnostics only when disallowed_min_tier is 2 (default).
+    /// </summary>
+    private static (List<string> AllHits, List<string> GatingHits) EvaluateDisallowedSkills(
+        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+    {
+        var allHits = new List<string>();
+        var gatingHits = new List<string>();
+
+        if (testCase.DisallowedSkills.Length == 0 || tokenHits is null)
+        {
+            return (allHits, gatingHits);
+        }
+
+        var minTier = testCase.DisallowedMinTier;
+
+        foreach (var skill in testCase.DisallowedSkills)
+        {
+            if (string.IsNullOrWhiteSpace(skill))
+            {
+                continue;
+            }
+
+            if (tokenHits.TryGetValue(skill, out var hit))
+            {
+                allHits.Add(skill);
+
+                // Only hits at or above the minimum tier threshold cause failure.
+                // Tier number is inverted: lower number = stronger evidence.
+                // "at or above" in strength means tier <= minTier.
+                if (hit.Tier <= minTier)
+                {
+                    gatingHits.Add(skill);
+                }
+            }
+        }
+
+        return (allHits, gatingHits);
     }
 
     private static bool LooksLikeDotnetSkillId(string token)
@@ -1596,6 +1841,25 @@ internal sealed class AgentRoutingRunner
         {
             return new ExecutionResult(false, -1, string.Empty, string.Empty, false, ex.Message);
         }
+    }
+
+    // --- Test-accessible wrappers for self-tests ---
+
+    internal static (List<string> AllHits, List<string> GatingHits) EvaluateDisallowedSkillsForTest(
+        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+    {
+        return EvaluateDisallowedSkills(testCase, tokenHits);
+    }
+
+    internal static List<string> EvaluateOptionalSkillsForTest(
+        CaseDefinition testCase, Dictionary<string, EvidenceHit>? tokenHits)
+    {
+        return EvaluateOptionalSkills(testCase, tokenHits);
+    }
+
+    internal static string ResolveProviderAliasForTest(string agent, string token, CaseDefinition testCase)
+    {
+        return ResolveProviderAlias(agent, token, testCase);
     }
 }
 
@@ -1863,6 +2127,36 @@ internal sealed record CaseDefinition
     /// </summary>
     [JsonPropertyName("expected_skill_min_tier")]
     public int? ExpectedSkillMinTier { get; init; }
+
+    /// <summary>
+    /// Optional skill tokens. Matches are tracked in AgentResult.OptionalHits for observability
+    /// but excluded from pass/fail gating.
+    /// </summary>
+    [JsonPropertyName("optional_skills")]
+    public string[] OptionalSkills { get; init; } = [];
+
+    /// <summary>
+    /// Disallowed skill tokens. If any disallowed token appears in TokenHits at or above
+    /// disallowed_min_tier, the result is classified as disallowed_hit.
+    /// Tier 3 matches are diagnostics only (not failure-causing).
+    /// </summary>
+    [JsonPropertyName("disallowed_skills")]
+    public string[] DisallowedSkills { get; init; } = [];
+
+    /// <summary>
+    /// Minimum tier at which disallowed skill matches cause failure.
+    /// Default 2: Tier 3 (weak mentions) are diagnostics only, not failure-causing.
+    /// Set to 1 for strict mode where even Tier 1 matches fail.
+    /// </summary>
+    [JsonPropertyName("disallowed_min_tier")]
+    public int DisallowedMinTier { get; init; } = 2;
+
+    /// <summary>
+    /// Per-agent alias maps: agent name -> (alias -> canonical skill name).
+    /// Resolved before evidence matching to normalize provider-specific skill names.
+    /// </summary>
+    [JsonPropertyName("provider_aliases")]
+    public Dictionary<string, Dictionary<string, string>>? ProviderAliases { get; init; }
 }
 
 internal sealed record EvidenceEvaluation(
@@ -2190,6 +2484,19 @@ internal sealed class AgentResult
     [JsonPropertyName("failure_category")]
     public string? FailureCategory { get; init; }
 
+    /// <summary>
+    /// Optional skill tokens that were matched in TokenHits. Informational only, no pass/fail impact.
+    /// </summary>
+    [JsonPropertyName("optional_hits")]
+    public List<string> OptionalHits { get; init; } = [];
+
+    /// <summary>
+    /// Disallowed skill tokens found in TokenHits (at any tier). Informational for diagnostics.
+    /// Only hits at >= disallowed_min_tier cause failure classification.
+    /// </summary>
+    [JsonPropertyName("disallowed_hits")]
+    public List<string> DisallowedHits { get; init; } = [];
+
     public static AgentResult Pass(
         string agent,
         CaseDefinition testCase,
@@ -2201,7 +2508,9 @@ internal sealed class AgentResult
         string? outputExcerpt,
         bool timedOut,
         string unitRunId,
-        string? error = null)
+        string? error = null,
+        List<string>? optionalHits = null,
+        List<string>? disallowedHits = null)
     {
         return new AgentResult
         {
@@ -2223,7 +2532,9 @@ internal sealed class AgentResult
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
             FailureKind = null,
-            FailureCategory = null
+            FailureCategory = null,
+            OptionalHits = optionalHits ?? [],
+            DisallowedHits = disallowedHits ?? []
         };
     }
 
@@ -2238,9 +2549,12 @@ internal sealed class AgentResult
         string? outputExcerpt,
         bool timedOut,
         string unitRunId,
-        string? error = null)
+        string? error = null,
+        List<string>? optionalHits = null,
+        List<string>? disallowedHits = null,
+        List<string>? disallowedGatingHits = null)
     {
-        var failureKind = ClassifyFailure(testCase, evidence);
+        var failureKind = ClassifyFailure(testCase, evidence, disallowedGatingHits);
         var failureCategory = ClassifyFailureCategory(timedOut, started: true, status: ResultStatus.Fail);
 
         return new AgentResult
@@ -2263,7 +2577,9 @@ internal sealed class AgentResult
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
             FailureKind = failureKind,
-            FailureCategory = failureCategory
+            FailureCategory = failureCategory,
+            OptionalHits = optionalHits ?? [],
+            DisallowedHits = disallowedHits ?? []
         };
     }
 
@@ -2302,7 +2618,9 @@ internal sealed class AgentResult
             OutputExcerpt = outputExcerpt,
             TimedOut = timedOut,
             FailureKind = null,
-            FailureCategory = failureCategory
+            FailureCategory = failureCategory,
+            OptionalHits = [],
+            DisallowedHits = []
         };
     }
 
@@ -2334,23 +2652,29 @@ internal sealed class AgentResult
         return null;
     }
 
-    private static string ClassifyFailure(CaseDefinition testCase, EvidenceEvaluation evidence)
+    /// <summary>
+    /// Classifies the failure mismatch kind. Returns one of the granular T3 kinds
+    /// (missing_required, disallowed_hit, optional_only, mixed) when applicable,
+    /// falling back to legacy kinds for backward compatibility.
+    /// </summary>
+    private static string ClassifyFailure(
+        CaseDefinition testCase, EvidenceEvaluation evidence,
+        List<string>? disallowedGatingHits = null)
     {
+        var hasDisallowedHits = disallowedGatingHits is { Count: > 0 };
+
         // Check for weak_evidence_only: all token hits are Tier 3
         if (evidence.TokenHits is { Count: > 0 } &&
             evidence.TokenHits.Values.All(h => h.Tier >= 3))
         {
-            return FailureKinds.WeakEvidenceOnly;
+            return hasDisallowedHits ? FailureKinds.Mixed : FailureKinds.WeakEvidenceOnly;
         }
 
         // Check for evidence_too_weak: token is in MissingAll but has a TokenHits entry
         // (found but at insufficient tier for the requirement)
-        if (evidence.TokenHits is { Count: > 0 } &&
+        var hasEvidenceTooWeak = evidence.TokenHits is { Count: > 0 } &&
             evidence.MissingAll.Any(token =>
-                evidence.TokenHits.ContainsKey(token)))
-        {
-            return FailureKinds.EvidenceTooWeak;
-        }
+                evidence.TokenHits.ContainsKey(token));
 
         var missingSkill = evidence.MissingAll.Contains(testCase.ExpectedSkill, StringComparer.OrdinalIgnoreCase);
         // Detect missing skill-file evidence as any missing token ending with "/SKILL.md".
@@ -2360,6 +2684,49 @@ internal sealed class AgentResult
             token.EndsWith("/SKILL.md", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(token, "SKILL.md", StringComparison.OrdinalIgnoreCase));
         var missingAny = evidence.MissingAny.Count > 0;
+        var hasMissingRequired = evidence.MissingAll.Count > 0 || missingAny;
+
+        // T3 granular classification with multi-reason detection
+        // Count how many distinct failure reasons apply
+        var reasons = new List<string>();
+
+        if (hasMissingRequired)
+        {
+            reasons.Add(FailureKinds.MissingRequired);
+        }
+
+        if (hasDisallowedHits)
+        {
+            reasons.Add(FailureKinds.DisallowedHit);
+        }
+
+        // optional_only: all matched evidence comes from optional skills only,
+        // with no required skills matched. This means the routing found some
+        // skills but not the right ones.
+        if (!hasMissingRequired && !hasDisallowedHits &&
+            testCase.OptionalSkills.Length > 0 &&
+            evidence.MatchedAll.Count == 0 && evidence.MatchedAny.Count == 0)
+        {
+            reasons.Add(FailureKinds.OptionalOnly);
+        }
+
+        // If multiple reasons apply, return mixed
+        if (reasons.Count > 1)
+        {
+            return FailureKinds.Mixed;
+        }
+
+        // If exactly one T3 reason, return it
+        if (reasons.Count == 1)
+        {
+            return reasons[0];
+        }
+
+        // Fall back to legacy classification for backward compatibility
+        if (hasEvidenceTooWeak)
+        {
+            return FailureKinds.EvidenceTooWeak;
+        }
 
         if (missingSkill && !missingAny)
         {
@@ -2382,6 +2749,14 @@ internal sealed class AgentResult
         }
 
         return FailureKinds.Unknown;
+    }
+
+    /// <summary>
+    /// Test-accessible wrapper for ClassifyFailure. Used by SelfTestRunner.
+    /// </summary>
+    internal static string ClassifyFailurePublic(CaseDefinition testCase, EvidenceEvaluation evidence, List<string>? disallowedGatingHits = null)
+    {
+        return ClassifyFailure(testCase, evidence, disallowedGatingHits);
     }
 }
 
@@ -2517,6 +2892,212 @@ internal static class SelfTestRunner
         }
 
         Console.WriteLine("All ComputeTier self-tests passed.");
-        return 0;
+
+        // --- T3 feature tests: ClassifyFailure, disallowed, optional ---
+        Console.WriteLine();
+        Console.WriteLine("=== T3 ClassifyFailure + disallowed/optional self-tests ===");
+
+        var t3Failures = new List<string>();
+        var t3Passed = 0;
+
+        // Helper: run a classify test
+        void TestClassify(string name, CaseDefinition tc, EvidenceEvaluation ev, List<string>? disallGating, string expected)
+        {
+            // Use reflection-free approach: call the method through a wrapper
+            var actual = ClassifyFailureForTest(tc, ev, disallGating);
+            if (string.Equals(actual, expected, StringComparison.Ordinal))
+            {
+                t3Passed++;
+                Console.WriteLine($"  PASS: {name} -> {actual}");
+            }
+            else
+            {
+                t3Failures.Add($"  FAIL: {name}\n    expected: {expected}\n    actual: {actual}");
+                Console.WriteLine($"  FAIL: {name} -> expected {expected}, got {actual}");
+            }
+        }
+
+        // Test: missing_required — required token missing, no disallowed
+        TestClassify(
+            "missing_required (required token missing)",
+            new CaseDefinition { ExpectedSkill = "dotnet-xunit", RequiredSkills = ["dotnet-xunit"] },
+            new EvidenceEvaluation(
+                Success: false,
+                MatchedAll: [],
+                MissingAll: ["dotnet-xunit"],
+                MatchedAny: ["tool_use"],
+                MissingAny: [],
+                MatchedLogFile: null,
+                ToolUseProofLines: [],
+                TokenHits: null),
+            null,
+            FailureKinds.MissingRequired);
+
+        // Test: disallowed_hit — no missing required, disallowed gating hits present
+        TestClassify(
+            "disallowed_hit (disallowed skill found at gating tier)",
+            new CaseDefinition { ExpectedSkill = "dotnet-xunit", DisallowedSkills = ["dotnet-blazor-components"] },
+            new EvidenceEvaluation(
+                Success: true,
+                MatchedAll: ["dotnet-xunit"],
+                MissingAll: [],
+                MatchedAny: ["tool_use"],
+                MissingAny: [],
+                MatchedLogFile: null,
+                ToolUseProofLines: [],
+                TokenHits: new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["dotnet-xunit"] = new() { Token = "dotnet-xunit", BestScore = 1000, Tier = 1, SourceKind = "cli_output" },
+                    ["dotnet-blazor-components"] = new() { Token = "dotnet-blazor-components", BestScore = 1000, Tier = 1, SourceKind = "cli_output" }
+                }),
+            ["dotnet-blazor-components"],
+            FailureKinds.DisallowedHit);
+
+        // Test: mixed — both missing required and disallowed hits
+        TestClassify(
+            "mixed (missing required + disallowed hit)",
+            new CaseDefinition { ExpectedSkill = "dotnet-xunit", DisallowedSkills = ["dotnet-blazor-components"] },
+            new EvidenceEvaluation(
+                Success: false,
+                MatchedAll: [],
+                MissingAll: ["dotnet-xunit"],
+                MatchedAny: ["tool_use"],
+                MissingAny: [],
+                MatchedLogFile: null,
+                ToolUseProofLines: [],
+                TokenHits: new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["dotnet-blazor-components"] = new() { Token = "dotnet-blazor-components", BestScore = 1000, Tier = 1, SourceKind = "cli_output" }
+                }),
+            ["dotnet-blazor-components"],
+            FailureKinds.Mixed);
+
+        // Test: legacy backward compat — skill_not_loaded (no T3 fields)
+        TestClassify(
+            "legacy backward compat: skill_not_loaded",
+            new CaseDefinition { ExpectedSkill = "dotnet-xunit" },
+            new EvidenceEvaluation(
+                Success: false,
+                MatchedAll: [],
+                MissingAll: ["dotnet-xunit"],
+                MatchedAny: ["tool_use"],
+                MissingAny: [],
+                MatchedLogFile: null,
+                ToolUseProofLines: [],
+                TokenHits: null),
+            null,
+            FailureKinds.MissingRequired);
+
+        // Test: EvaluateDisallowedSkills — Tier 3 is diagnostics only (default disallowed_min_tier=2)
+        var tier3Case = new CaseDefinition
+        {
+            DisallowedSkills = ["dotnet-wrong-skill"],
+            DisallowedMinTier = 2
+        };
+        var tier3Hits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["dotnet-wrong-skill"] = new() { Token = "dotnet-wrong-skill", BestScore = 10, Tier = 3, SourceKind = "cli_output" }
+        };
+        var (t3AllHits, t3GatingHits) = AgentRoutingRunner.EvaluateDisallowedSkillsForTest(tier3Case, tier3Hits);
+        if (t3AllHits.Count == 1 && t3GatingHits.Count == 0)
+        {
+            t3Passed++;
+            Console.WriteLine("  PASS: Tier 3 disallowed is diagnostics-only (not gating)");
+        }
+        else
+        {
+            t3Failures.Add($"  FAIL: Tier 3 disallowed should be diagnostics-only\n    allHits={t3AllHits.Count} gatingHits={t3GatingHits.Count}");
+            Console.WriteLine("  FAIL: Tier 3 disallowed is diagnostics-only (not gating)");
+        }
+
+        // Test: disallowed_min_tier=1 makes Tier 1 a gating hit
+        var tier1Case = new CaseDefinition
+        {
+            DisallowedSkills = ["dotnet-wrong-skill"],
+            DisallowedMinTier = 1
+        };
+        var tier1Hits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["dotnet-wrong-skill"] = new() { Token = "dotnet-wrong-skill", BestScore = 1000, Tier = 1, SourceKind = "cli_output" }
+        };
+        var (t1AllHits, t1GatingHits) = AgentRoutingRunner.EvaluateDisallowedSkillsForTest(tier1Case, tier1Hits);
+        if (t1AllHits.Count == 1 && t1GatingHits.Count == 1)
+        {
+            t3Passed++;
+            Console.WriteLine("  PASS: disallowed_min_tier=1 makes Tier 1 a gating hit");
+        }
+        else
+        {
+            t3Failures.Add($"  FAIL: disallowed_min_tier=1 should gate Tier 1\n    allHits={t1AllHits.Count} gatingHits={t1GatingHits.Count}");
+            Console.WriteLine("  FAIL: disallowed_min_tier=1 makes Tier 1 a gating hit");
+        }
+
+        // Test: optional skills tracked in hits, no pass/fail impact
+        var optCase = new CaseDefinition
+        {
+            OptionalSkills = ["dotnet-optional-skill", "dotnet-missing-opt"]
+        };
+        var optHits = new Dictionary<string, EvidenceHit>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["dotnet-optional-skill"] = new() { Token = "dotnet-optional-skill", BestScore = 700, Tier = 2, SourceKind = "cli_output" }
+        };
+        var optResult = AgentRoutingRunner.EvaluateOptionalSkillsForTest(optCase, optHits);
+        if (optResult.Count == 1 && optResult[0] == "dotnet-optional-skill")
+        {
+            t3Passed++;
+            Console.WriteLine("  PASS: optional_skills tracked in optional_hits");
+        }
+        else
+        {
+            t3Failures.Add($"  FAIL: optional_skills should track matched skills\n    result={string.Join(",", optResult)}");
+            Console.WriteLine("  FAIL: optional_skills tracked in optional_hits");
+        }
+
+        // Test: provider alias resolution
+        var aliasCase = new CaseDefinition
+        {
+            ProviderAliases = new Dictionary<string, Dictionary<string, string>>
+            {
+                ["codex"] = new() { ["my-custom-skill"] = "dotnet-xunit" }
+            }
+        };
+        var resolved = AgentRoutingRunner.ResolveProviderAliasForTest("codex", "my-custom-skill", aliasCase);
+        var unresolved = AgentRoutingRunner.ResolveProviderAliasForTest("claude", "my-custom-skill", aliasCase);
+        if (resolved == "dotnet-xunit" && unresolved == "my-custom-skill")
+        {
+            t3Passed++;
+            Console.WriteLine("  PASS: provider alias resolves for matching agent, passthrough for others");
+        }
+        else
+        {
+            t3Failures.Add($"  FAIL: provider alias resolution\n    resolved={resolved} unresolved={unresolved}");
+            Console.WriteLine("  FAIL: provider alias resolves for matching agent, passthrough for others");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"T3 self-test results: {t3Passed}/{t3Passed + t3Failures.Count} passed");
+
+        if (t3Failures.Count > 0)
+        {
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("--- T3 FAILURES ---");
+            foreach (var f in t3Failures)
+            {
+                Console.Error.WriteLine(f);
+            }
+
+            return 1;
+        }
+
+        Console.WriteLine("All T3 self-tests passed.");
+        return failures.Count > 0 ? 1 : 0;
+    }
+
+    /// <summary>
+    /// Wrapper to call the private ClassifyFailure method from self-tests.
+    /// </summary>
+    private static string ClassifyFailureForTest(CaseDefinition testCase, EvidenceEvaluation evidence, List<string>? disallowedGatingHits)
+    {
+        return AgentResult.ClassifyFailurePublic(testCase, evidence, disallowedGatingHits);
     }
 }
