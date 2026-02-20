@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# generate-changelog.sh -- Generate changelog entries from conventional commits.
+# generate-changelog.sh -- Generate changelog entries from git commits via Claude.
 #
 # Usage:
 #   ./scripts/generate-changelog.sh [--dry-run] [--since TAG] [--changelog FILE]
@@ -39,32 +39,28 @@ done
 # --- Determine commit range ---
 
 if [ -z "$SINCE_TAG" ]; then
-    # Derive the since tag from the version in plugin.json (source of truth),
-    # not from git tags. Tags are created by auto-tag.yml after merge, so they
-    # may not exist locally when running on a branch.
+    # Try the version in plugin.json first. If its tag exists, use it.
+    # If not (version was already bumped), find the nearest prior version tag.
     PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
     if [ -f "$PLUGIN_JSON" ] && command -v jq &>/dev/null; then
         CURRENT_VERSION=$(jq -r '.version' "$PLUGIN_JSON")
         if [ -n "$CURRENT_VERSION" ] && [ "$CURRENT_VERSION" != "null" ]; then
-            SINCE_TAG="${TAG_PREFIX}${CURRENT_VERSION}"
+            CANDIDATE="${TAG_PREFIX}${CURRENT_VERSION}"
+            if git rev-parse "$CANDIDATE" &>/dev/null; then
+                SINCE_TAG="$CANDIDATE"
+            fi
         fi
     fi
 
-    # Fall back to tag scan if plugin.json read failed
+    # plugin.json tag didn't resolve -- find the most recent existing version tag
     if [ -z "$SINCE_TAG" ]; then
         SINCE_TAG=$(git tag --list "${TAG_PREFIX}*" --sort=-version:refname | head -1)
     fi
 fi
 
 if [ -n "$SINCE_TAG" ]; then
-    # Verify the tag actually exists as a git ref
-    if git rev-parse "$SINCE_TAG" &>/dev/null; then
-        RANGE="${SINCE_TAG}..HEAD"
-        echo "Generating changelog from $SINCE_TAG to HEAD"
-    else
-        echo "WARN: Tag $SINCE_TAG not found locally -- generating changelog from all commits"
-        RANGE=""
-    fi
+    RANGE="${SINCE_TAG}..HEAD"
+    echo "Generating changelog from $SINCE_TAG to HEAD"
 else
     RANGE=""
     echo "No previous tag found -- generating changelog from all commits"
@@ -78,106 +74,88 @@ fi
 
 echo "  $COMMIT_COUNT commits in range"
 
-# --- Parse and categorize commits ---
+# --- Collect commits and generate changelog via Claude ---
 
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-# One file per Keep-a-Changelog category
-for cat in breaking added changed fixed documentation; do
-    > "$TMP_DIR/$cat"
-done
-> "$TMP_DIR/seen"
+git log --no-merges --format='%s' $RANGE -- > "$TMP_DIR/commits.txt"
 
-SKIPPED=0
-NONCONVENTIONAL=0
+# Build the prompt with concrete examples from the existing changelog
+cat > "$TMP_DIR/prompt.txt" << 'PROMPT_EOF'
+Generate Keep-a-Changelog entries from the git commits below.
 
-# Process each commit (subject only -- body inspection for BREAKING CHANGE uses a second pass)
-while IFS= read -r subject; do
-    [ -z "$subject" ] && continue
+OUTPUT FORMAT -- raw markdown only, no commentary, no code fences, no preamble:
 
-    # Parse conventional commit: type(scope)!: description
-    # Regex stored in variable for bash 3.2 compatibility
-    CC_RE='^([a-z]+)(\(([^)]+)\))?(!)?: *(.+)$'
-    if [[ "$subject" =~ $CC_RE ]]; then
-        TYPE="${BASH_REMATCH[1]}"
-        SCOPE="${BASH_REMATCH[3]:-}"
-        BANG="${BASH_REMATCH[4]:-}"
-        DESC="${BASH_REMATCH[5]}"
-    else
-        NONCONVENTIONAL=$((NONCONVENTIONAL + 1))
-        echo "  SKIP (non-conventional): $subject" >&2
-        continue
-    fi
+### Added
 
-    # Filter noise
-    if [[ "$TYPE" == "chore" && "$SCOPE" == "release" ]] || [[ "$TYPE" == "chore" && "$SCOPE" == "flow" ]]; then
-        SKIPPED=$((SKIPPED + 1))
-        continue
-    fi
+- **Feature area** -- What was added and why it matters
+- **Another feature** -- Concise user-facing description
 
-    # Capitalize first letter
-    DESC="$(echo "${DESC:0:1}" | tr '[:lower:]' '[:upper:]')${DESC:1}"
+### Changed
 
-    # Format bullet
-    if [ -n "$SCOPE" ]; then
-        LINE="- **${SCOPE}**: ${DESC}"
-    else
-        LINE="- ${DESC}"
-    fi
+- **Area** -- What changed and the practical effect
 
-    # Deduplicate by lowercase description
-    DEDUP_KEY=$(echo "$DESC" | tr '[:upper:]' '[:lower:]')
-    if grep -qxF "$DEDUP_KEY" "$TMP_DIR/seen" 2>/dev/null; then
-        continue
-    fi
-    echo "$DEDUP_KEY" >> "$TMP_DIR/seen"
+### Fixed
 
-    # Route to category
-    if [ -n "$BANG" ]; then
-        echo "$LINE" >> "$TMP_DIR/breaking"
-    else
-        case "$TYPE" in
-            feat)     echo "$LINE" >> "$TMP_DIR/added" ;;
-            fix)      echo "$LINE" >> "$TMP_DIR/fixed" ;;
-            docs)     echo "$LINE" >> "$TMP_DIR/documentation" ;;
-            *)        echo "$LINE" >> "$TMP_DIR/changed" ;;
-        esac
-    fi
-done < <(git log --no-merges --format='%s' $RANGE --)
+- **Area** -- What was broken and how it's fixed
 
-# --- Assemble output ---
+RULES:
+- Omit empty sections entirely.
+- Collapse related commits into ONE bullet. 50 commits about "routing normalization" = 1 bullet.
+- Skip: chore commits, release bumps, task tracking, flow state, "address review feedback", CI noise.
+- Write for users of the plugin, not contributors. Internal refactoring is irrelevant unless it changes behavior.
+- Bold the feature area, use " -- " separator, then describe the change.
+- Aim for 3-10 bullets total. Fewer is better.
+- Output ONLY the markdown. No analysis, no explanations, no "here's what I found" preamble.
 
-OUTPUT=""
+EXAMPLE of good output (from a prior release):
 
-for section in "breaking:### Breaking" "added:### Added" "changed:### Changed" "fixed:### Fixed" "documentation:### Documentation"; do
-    FILE="${section%%:*}"
-    HEADER="${section#*:}"
+### Added
 
-    if [ -s "$TMP_DIR/$FILE" ]; then
-        [ -n "$OUTPUT" ] && OUTPUT="${OUTPUT}
-"
-        OUTPUT="${OUTPUT}${HEADER}
+- **Version bump automation** -- `scripts/bump.sh` propagates version to plugin.json, marketplace.json, README badge, and CHANGELOG footer links
+- **Root marketplace validation** -- `scripts/validate-root-marketplace.sh` as shared validation used by both local and CI workflows
 
-$(cat "$TMP_DIR/$FILE")
-"
-    fi
-done
+### Changed
+
+- **Marketplace restructure** -- Flat marketplace layout with root `.claude-plugin/marketplace.json` discovery file
+- **Per-plugin versioning** -- Release workflow uses `dotnet-artisan/v*` tag format instead of `v*`
+- **Description budget trimmed** from 13,481 to 11,948 chars -- now below the 12,000-char warning threshold
+
+COMMITS TO SUMMARIZE:
+
+PROMPT_EOF
+
+cat "$TMP_DIR/commits.txt" >> "$TMP_DIR/prompt.txt"
+
+echo "  Calling Codex ..."
+
+codex exec -m gpt-5.3-codex-spark --color never --ephemeral \
+    --skip-git-repo-check -C "$TMP_DIR" \
+    -o "$TMP_DIR/output.txt" \
+    - < "$TMP_DIR/prompt.txt" >"$TMP_DIR/stderr.txt" 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Codex call failed"
+    cat "$TMP_DIR/stderr.txt" >&2
+    exit 1
+fi
+
+OUTPUT=$(cat "$TMP_DIR/output.txt")
 
 if [ -z "$OUTPUT" ]; then
-    echo "No categorizable commits found"
-    exit 0
+    echo "ERROR: Codex returned empty output"
+    exit 1
 fi
+
+# Strip code fences if Claude added them
+OUTPUT=$(echo "$OUTPUT" | sed '/^```/d')
 
 # --- Dry-run or insert ---
 
 if [ "$DRY_RUN" = true ]; then
     echo ""
-    echo "=== Generated Changelog Entries ==="
-    echo ""
     echo "$OUTPUT"
-    echo ""
-    echo "($COMMIT_COUNT commits processed, $SKIPPED filtered, $NONCONVENTIONAL non-conventional)"
     exit 0
 fi
 
@@ -187,10 +165,9 @@ if [ ! -f "$CHANGELOG" ]; then
     exit 1
 fi
 
-# Extract existing [Unreleased] content (between ## [Unreleased] and next ## [)
+# Extract existing [Unreleased] content
 EXISTING=$(awk '/^## \[Unreleased\]/{flag=1;next}/^## \[/{flag=0}flag' "$CHANGELOG" | sed '/^[[:space:]]*$/d')
 
-# Build replacement content
 if [ -n "$EXISTING" ]; then
     NEW_CONTENT="${EXISTING}
 
@@ -199,14 +176,17 @@ else
     NEW_CONTENT="${OUTPUT}"
 fi
 
-# Replace [Unreleased] section content
+# Write content to temp file for awk (awk -v can't handle multi-line strings)
+CONTENT_FILE=$(mktemp)
+echo "$NEW_CONTENT" > "$CONTENT_FILE"
+
 TMP_FILE=$(mktemp)
-awk -v "content=${NEW_CONTENT}" '
+awk -v "cfile=$CONTENT_FILE" '
 /^## \[Unreleased\]/ {
     print
     print ""
-    n = split(content, lines, "\n")
-    for (i = 1; i <= n; i++) print lines[i]
+    while ((getline cline < cfile) > 0) print cline
+    close(cfile)
     print ""
     # Skip old content until next ## [ header
     while ((getline line) > 0) {
@@ -216,6 +196,6 @@ awk -v "content=${NEW_CONTENT}" '
 }
 {print}
 ' "$CHANGELOG" > "$TMP_FILE" && mv "$TMP_FILE" "$CHANGELOG"
+rm -f "$CONTENT_FILE"
 
-echo "  Inserted entries into [Unreleased] section"
-echo "  ($COMMIT_COUNT commits processed, $SKIPPED filtered, $NONCONVENTIONAL non-conventional)"
+echo "  Updated [Unreleased] section"

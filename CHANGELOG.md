@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-02-20
 
+### Added
+
+- **Invocation contract enforcement** -- Added MCP invocation-contract and routing-language compliance checks (including canonical IDs and compliance reporting), so invalid skill invocation definitions are caught before execution.
+- **Routing quality tooling** -- Added routing language quality checks such as semantic overlap detection plus baseline and ownership audits to reduce ambiguous or conflicting guidance between skills.
+- **Agent-routing CI validation** -- Added provider-matrix CI flows and agent skill-usage checks in the test runner to catch routing regressions with stronger regression guardrails.
+
+### Changed
+
+- **Routing execution and telemetry** -- Updated routing execution to use provider-matrix workflows with run-ID isolation, concurrency bounds, progress logging, and lifecycle telemetry for clearer, more reliable evaluations.
+- **Routing schema and gating** -- Extended routing case schemas with optional, disallowed, and provider-alias fields and introduced tier-based evidence gating with ComputeTier, producing more predictable routing outcomes.
+
+### Fixed
+
+- **Routing decision consistency** -- Fixed path normalization, optional/disallowed token handling, provider aliasing, and merge behavior so routing candidates are evaluated consistently across runs.
+- **Failure handling accuracy** -- Fixed CLI/transport failure detection and preserved script exit codes so diagnostics are reliable, with reduced noisy or misleading failure reporting.
+- **Validation accuracy** -- Fixed validator and frontmatter parsing issues plus metadata/spec drift, ensuring reported thresholds and guidance stay aligned with actual runtime behavior.
+
 ### Changed
 
 - **Standardized routing language** across all 130 skills and 14 agents for reliable skill discovery. Descriptions follow Action + Domain + Differentiator formula, all cross-references use `[skill:name]` syntax, and every skill has explicit Scope and Out-of-scope sections.
