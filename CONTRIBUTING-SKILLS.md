@@ -275,6 +275,16 @@ Both commands must pass before merging. Run them from the repo root:
 
 If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
 
+### Cross-Provider Verification
+
+After validation passes, verify your skill behaves correctly across all supported providers by checking the CI provider matrix output. Run the test harness locally with multiple agents:
+
+```bash
+./test.sh --agents claude,codex,copilot
+```
+
+Review the per-provider summary lines in the output to confirm your skill triggers correctly for each provider. If any provider shows unexpected behavior, see the [Cross-Provider Change Policy](CONTRIBUTING.md#cross-provider-change-policy) for PR requirements.
+
 ---
 
 ## 6. Common Patterns

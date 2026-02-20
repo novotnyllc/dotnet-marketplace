@@ -231,6 +231,14 @@ After publishing, confirm:
 - Plugin metadata (description, keywords, categories) renders correctly
 - All skills are listed and accessible
 
+### Cross-Provider Change Policy
+
+Skill content must behave correctly across all supported providers (Claude, Codex, Copilot). Any PR that modifies skill content, routing descriptions, or agent definitions must satisfy these requirements:
+
+- **PR description must state:** targeted provider (if any) and expected behavior deltas across providers. Provider-targeted changes require explicit verification against non-target providers to confirm no regressions.
+- **Attach CI artifact links** or paste per-provider summary lines for `claude`/`codex`/`copilot` from CI matrix output. Run `./test.sh --agents claude,codex,copilot` locally or reference the CI workflow artifacts.
+- **If behavior intentionally diverges** between providers, update `provider-baseline.json` in the same PR with a justification comment explaining why the divergence is expected.
+
 ### Release Checklist
 
 Before every release, verify:
@@ -243,6 +251,7 @@ Before every release, verify:
 - [ ] All SKILL.md files have required frontmatter (`name`, `description`)
 - [ ] Budget status is OK or WARN (not FAIL)
 - [ ] No broken cross-references (all `[skill:<name>]` refs resolve)
+- [ ] Cross-provider verification: changes verified against `claude`/`codex`/`copilot` matrix
 
 ## Hooks and MCP Contributions
 
