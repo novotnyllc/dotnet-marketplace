@@ -1334,7 +1334,6 @@ internal sealed class RunnerOptions
             maxParallel = envParsed;
         }
 
-        bool maxParallelExplicit = false;
         bool? enableLogScanExplicit = null;
 
         for (var i = 0; i < args.Length; i++)
@@ -1363,7 +1362,6 @@ internal sealed class RunnerOptions
                     break;
                 case "--max-parallel":
                     maxParallel = ParsePositiveInt(ReadValue(args, ref i, "--max-parallel"), "--max-parallel");
-                    maxParallelExplicit = true;
                     break;
                 case "--log-max-files":
                     logMaxFiles = ParsePositiveInt(ReadValue(args, ref i, "--log-max-files"), "--log-max-files");
