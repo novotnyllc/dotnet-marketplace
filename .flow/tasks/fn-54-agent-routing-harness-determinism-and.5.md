@@ -58,5 +58,8 @@ Convert CI routing workflow to GHA strategy matrix with per-provider artifacts, 
 - [ ] Each matrix job uploads artifacts with `if: always()` to ensure summarize has data even on failure
 
 ## Done summary
-
+Converted CI routing workflow to GHA strategy matrix (claude, codex, copilot) with ref-based baseline comparison via baseline_ref input and mechanically enforceable regression gate. Added provider-baseline.json with per-case per-provider expected_status and allow_timeout fields, two-file baseline comparison policy, delta table in job summary, and hard-fail on regressions, missing artifacts, and missing baseline entries.
 ## Evidence
+- Commits: ae20b6e8fba10c7424af804796336b884b87c6fe, e95cefb
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
+- PRs:

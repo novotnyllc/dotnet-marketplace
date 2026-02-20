@@ -167,7 +167,9 @@ Runner options (passed through to check-skills.cs):
                             (default: tests/agent-routing/artifacts)
   --enable-log-scan         Enable log file scanning (default: on serial, off parallel)
   --disable-log-scan        Disable log file scanning
+  --allow-log-fallback-pass Allow log fallback to promote pass when parallel
   --no-progress             Disable stderr lifecycle progress output
+  --self-test               Run ComputeTier self-test fixtures and exit
   --output <path>           Optional additional JSON output path (backward compat)
   --proof-log <path>        Optional additional proof log path (backward compat)
   --fail-on-infra           Exit non-zero when infra_error exists
