@@ -800,14 +800,20 @@ internal sealed class AgentRoutingRunner
         // Build tier requirements: which tokens need which tier
         var tierRequirements = BuildTierRequirements(testCase, agent);
 
+        // Pre-compute backslash-normalized text for path-token matching
+        var normalizedAllSearchText = requiredAllSearchText.Replace('\\', '/');
+
         var matchedAll = new List<string>();
         var missingAll = new List<string>();
         foreach (var token in requiredAll)
         {
+            // For path tokens (containing '/'), match against normalized text to handle Windows backslashes
             var isMatched = string.Equals(agent, "claude", StringComparison.OrdinalIgnoreCase) &&
                             LooksLikeDotnetSkillId(token)
                 ? claudeLaunchedSkills.Contains(token)
-                : ContainsInsensitive(requiredAllSearchText, token);
+                : token.Contains('/')
+                    ? ContainsInsensitive(normalizedAllSearchText, token)
+                    : ContainsInsensitive(requiredAllSearchText, token);
 
             if (isMatched)
             {
@@ -994,18 +1000,26 @@ internal sealed class AgentRoutingRunner
                 continue;
             }
 
+            // For path tokens (containing '/'), normalize backslashes for matching
+            var isPathToken = token.Contains('/');
             var candidates = new List<(int LineNumber, string Line, int Score)>();
 
             for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (string.IsNullOrWhiteSpace(line) || !ContainsInsensitive(line, token))
+                if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
 
-                var score = ScoreProofLine(line, token);
-                candidates.Add((i + 1, line, score));
+                var searchLine = isPathToken ? line.Replace('\\', '/') : line;
+                if (!ContainsInsensitive(searchLine, token))
+                {
+                    continue;
+                }
+
+                var score = ScoreProofLine(searchLine, token);
+                candidates.Add((i + 1, line, score)); // Store original line for display
             }
 
             foreach (var candidate in candidates
@@ -1104,6 +1118,9 @@ internal sealed class AgentRoutingRunner
                     // Tier 1 regex matched but token attribution failed -> Tier 2
                     return 2;
                 }
+
+                // "name":"Skill" matched but no "skill":"..." capture present -> Tier 2
+                return 2;
             }
 
             // Claude Tier 1 (secondary): "Launching skill: <skill>"
@@ -2484,6 +2501,12 @@ internal static class SelfTestRunner
                 "codex", "dotnet-xunit/SKILL.md",
                 "Base directory for this skill: /skills/testing/dotnet-xunit/SKILL.md",
                 700, 2),
+
+            // Claude primary regex match without "skill":"..." field -> Tier 2
+            new("Claude primary Tier 2 (name:Skill but no skill field)",
+                "claude", "dotnet-xunit",
+                """{"type":"tool_use","id":"toolu_04","name":"Skill","input":{"arguments":{}}}""",
+                1000, 2),
         };
 
         var failures = new List<string>();

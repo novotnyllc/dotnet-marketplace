@@ -366,3 +366,6 @@ GITHUB_BASE_REF is empty for workflow_dispatch and schedule triggers — only po
 
 ## 2026-02-20 manual [pitfall]
 When running CLI tools via /bin/bash -lc, exit code 127 (command not found) and 126 (permission denied) indicate the binary is missing/non-executable -- the process still 'starts' (bash starts) so Started=true; detect these via exit code + stderr patterns to avoid misclassifying transport failures as assertion failures
+
+## 2026-02-20 manual [pitfall]
+When normalizing path separators for matching, apply the same normalization at EVERY code path that touches the same tokens -- partial normalization (e.g. in scoring but not in presence checks) creates false negatives on the un-normalized paths
