@@ -387,3 +387,6 @@ When adding a new classification category (e.g. optional_only), ensure the detec
 
 ## 2026-02-20 manual [pitfall]
 When iterating a matrix of (case, provider) in CI summarize jobs, a missing result row for a specific tuple must be a hard failure -- silently skipping with 'continue' produces misleading OK rows and bypasses baseline completeness checks
+
+## 2026-02-20 manual [pitfall]
+When a validation rule checks 'at least one item has property X', do not guard it behind 'if count >= 1' -- any() on an empty sequence correctly returns False (vacuous failure), and the guard silently suppresses the warning for the empty case

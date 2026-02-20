@@ -46,5 +46,8 @@ Add structural invocation-contract checks with fence-aware section extraction (a
 - [ ] Existing checks still pass (fence-awareness is a correctness improvement, not behavior change for well-formed skills)
 
 ## Evidence
-
+- Commits: 1ec8a8c, bde2242, 9d20213, 57e1e7f, 2995ab5
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 unit tests for fence-aware functions, STRICT_INVOCATION=1 toggle verification
+- PRs:
 ## Done summary
+Added fence-aware invocation-contract compliance checks to _validate_skills.py: 3 structural rules (Scope bullets, OOS bullets, OOS [skill:] cross-reference presence), STRICT_INVOCATION env var toggle, and INVOCATION_CONTRACT_WARN_COUNT summary key. Made has_section_header(), extract_oos_items(), and new extract_scope_items() all fence-aware for consistency.
