@@ -43,9 +43,9 @@ Examples:
   - `./test.sh --category api,testing`
 - Fail on infra errors:
   - `./test.sh --fail-on-infra`
-- Dedicated copilot-negative routing assertion:
+- Single case with extended timeout:
   - `./test.sh --case-id uno-mcp-routing-skill-id-only --timeout-seconds 180 --output /tmp/uno-routing.json`
-  - Expected matrix: `claude=pass`, `codex=pass`, `copilot=fail` (failure kind `skill_not_loaded`).
+  - Expected outcomes are defined in `provider-baseline.json`; check the baseline for the current expected status per provider.
 
 ## Run IDs and Telemetry
 
@@ -76,7 +76,7 @@ grep '^ARTIFACT_DIR=' stderr.log | cut -d= -f2-
 ## Runner Behavior
 
 - Expands each case across selected agents.
-- Copilot is expected to fail routing for nested `dotnet-*` skills (missing skill-load evidence), while Claude/Codex should pass.
+- Copilot historically had weaker skill-load evidence for nested `dotnet-*` skills; the harness uses provider-aware Tier 1 signals and CI baselines define expected outcomes per case/provider.
 - Executes agent command templates with timeout.
 - Evaluates evidence from stdout/stderr for tool usage + skill-file reads.
 - Falls back to recent logs from agent home dirs when log scanning is enabled (see Log Fallback Policy below).
@@ -122,7 +122,7 @@ Score < 60. Weak mentions without structural evidence.
 
 - `required_skills[]` (explicit) and `expected_skill` (implicit): Tier 1 gated. Use `expected_skill_min_tier: 2` to opt out.
 - `required_files[]`: Tier 2 gated.
-- Legacy `required_all_evidence`: Tier 2 default (Tier 1 if token matches a skill ID).
+- Legacy `required_all_evidence`: Tier 2 by default; tokens that are also required skills (e.g. coincide with `expected_skill` or `required_skills`) are Tier-gated accordingly.
 - Log fallback evidence is capped at Tier 2 (cannot satisfy Tier 1 requirements).
 
 ### Per-token evidence model
@@ -174,14 +174,14 @@ Each entry in `cases.json` defines a routing test case. The full schema:
 | `prompt` | string | required | Prompt sent to the agent |
 | `expected_skill` | string | `""` | Primary skill expected to be invoked. Implicitly Tier 1 gated (added to `required_skills`) unless `expected_skill_min_tier` is set to 2 |
 | `expected_skill_min_tier` | int? | `null` (= 1) | Opt-out from implicit Tier 1 for `expected_skill`. Set to `2` to accept Tier 2 evidence |
-| `required_all_evidence` | string[] | `[]` | Legacy: all tokens must appear (Tier 2 default, Tier 1 if token matches a skill ID) |
+| `required_all_evidence` | string[] | `[]` | Legacy: all tokens must appear (Tier 2 default; tokens coinciding with `expected_skill`/`required_skills` are Tier-gated accordingly) |
 | `required_any_evidence` | string[] | `[]` | At least one token must appear |
 | `required_evidence` | string[] | `[]` | Legacy alias |
 | `require_skill_file` | bool | `true` | When `false`, only skill-id loading is required |
 | `required_skills` | string[] | `[]` | Tier 1 gated skill tokens. Require definitive skill invocation evidence |
 | `required_files` | string[] | `[]` | Tier 2 gated file tokens. Require file-read or path evidence |
 | `optional_skills` | string[] | `[]` | Tracked in `optional_hits` for observability but excluded from pass/fail gating |
-| `disallowed_skills` | string[] | `[]` | If detected at or above `disallowed_min_tier`, the result becomes `disallowed_hit`. Tier 3 matches are diagnostics only |
+| `disallowed_skills` | string[] | `[]` | If detected with evidence strength Tier N or stronger (tier number <= `disallowed_min_tier`), the result becomes `disallowed_hit`. Tier 3 matches are diagnostics only when default min_tier=2 |
 | `disallowed_min_tier` | int | `2` | Maximum tier (weakest) that causes disallowed failure. `1` = only definitive invocation fails; `2` = moderate confidence fails; `3` = all mentions fail |
 | `provider_aliases` | object? | `null` | Per-agent alias maps: `{ "agent": { "alias": "canonical" } }`. Resolved before evidence matching to normalize provider-specific skill names |
 
@@ -192,7 +192,7 @@ The runner supports three tiers of evidence requirements:
 - **`required_skills[]`** (Tier 1): Tokens that must have definitive skill invocation evidence (tool_use JSON, Launching skill prefix, or Base directory path containing the token).
 - **`required_files[]`** (Tier 2): Tokens that must have at least moderate-confidence file-read evidence.
 - **`expected_skill`** (implicit Tier 1): Automatically added to `required_skills` unless `expected_skill_min_tier: 2` opts out. This ensures existing cases enforce actual skill invocation without bulk-editing `cases.json`.
-- **Legacy `required_all_evidence`**: Preserved for backward compatibility. Tokens default to Tier 2 gating unless they match a skill ID (then Tier 1).
+- **Legacy `required_all_evidence`**: Preserved for backward compatibility. Tokens default to Tier 2 gating; tokens that coincide with `expected_skill` or `required_skills` are Tier-gated accordingly.
 
 ### Provider aliases
 
@@ -221,7 +221,7 @@ Two orthogonal classification fields exist on non-pass results.
 | `weak_evidence_only` | All evidence hits are Tier 3 (very low confidence). Checked first |
 | `evidence_too_weak` | Token found but at weaker tier than required (e.g. Tier 2 when Tier 1 needed) |
 | `missing_required` | A `required_skills` or `required_files` token was not found |
-| `disallowed_hit` | A `disallowed_skills` token was detected at or above `disallowed_min_tier` |
+| `disallowed_hit` | A `disallowed_skills` token was detected with evidence strength at or stronger than `disallowed_min_tier` (tier number <= min_tier) |
 | `optional_only` | Only optional skill tokens matched; no required evidence present |
 | `mixed` | Multiple mismatch conditions present (e.g. missing required + disallowed hit) |
 | `skill_not_loaded` | Expected skill ID not found in output (activity evidence was present) |
@@ -280,7 +280,7 @@ strategy:
 ```
 
 - `fail-fast: false`: All provider jobs run to completion regardless of individual failures.
-- `continue-on-error: true` for copilot: Copilot infra failures do not block the workflow.
+- `continue-on-error: true` for copilot: Prevents the copilot matrix job from stopping the workflow early, but the summarize job still enforces the regression gate (including infra/timeouts) based on baselines.
 - Each job uploads artifacts with `if: always()` so the summarize step always has data.
 - Checkout uses `fetch-depth: 0` for full history access during baseline comparison.
 

@@ -168,6 +168,8 @@ Runner options (passed through to check-skills.cs):
   --enable-log-scan         Enable log file scanning (default: on serial, off parallel)
   --disable-log-scan        Disable log file scanning
   --allow-log-fallback-pass Allow log fallback to promote pass when parallel
+  --log-max-files <int>     Max log files to scan per agent (default: 60)
+  --log-max-bytes <int>     Max bytes to read per log file (default: 300000)
   --no-progress             Disable stderr lifecycle progress output
   --self-test               Run ComputeTier self-test fixtures and exit
   --output <path>           Optional additional JSON output path (backward compat)
