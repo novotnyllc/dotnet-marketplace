@@ -34,11 +34,12 @@ if [ -n "$FIRST_CSPROJ" ]; then
     TFM="$(sed -n 's/.*<TargetFramework[s]\{0,1\}>\([^<;]*\).*/\1/p' "$FIRST_CSPROJ" 2>/dev/null | head -1)" || true
 fi
 
-# Build context message (routing instruction first)
-CONTEXT="Mandatory first action for every task: invoke [skill:dotnet-advisor]. Do not plan, reason, design, or implement until it has been invoked, then follow its routing to load additional skills and apply their standards."
+# Build context message; inject only for .NET repositories.
+CONTEXT=""
 
-# Add project-specific context only when .NET indicators exist
+# Add routing instruction and project-specific context only when .NET indicators exist
 if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" = true ]; then
+    CONTEXT="Mandatory first action for every task: invoke [skill:dotnet-advisor]. Do not plan, reason, design, or implement until it has been invoked, then follow its routing to load additional skills and apply their standards."
     PROJECT_CONTEXT="This is a .NET project"
     if [ -n "$TFM" ]; then
         PROJECT_CONTEXT="This is a .NET project ($TFM)"
@@ -53,5 +54,11 @@ if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" =
     CONTEXT="$CONTEXT $PROJECT_CONTEXT"
 fi
 
-echo "{\"additionalContext\": \"$CONTEXT\"}"
+if command -v jq >/dev/null 2>&1; then
+    jq -Rn --arg additionalContext "$CONTEXT" '{additionalContext: $additionalContext}'
+else
+    ESCAPED_CONTEXT="$(printf '%s' "$CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\r/\\r/g; s/\t/\\t/g')"
+    printf '{"additionalContext":"%s"}\n' "$ESCAPED_CONTEXT"
+fi
+
 exit 0

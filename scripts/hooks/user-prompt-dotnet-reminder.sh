@@ -2,7 +2,18 @@
 # UserPromptSubmit hook: silently inject XML reminder via additionalContext.
 set -euo pipefail
 
-read -r -d '' MSG <<'EOF' || true
+# Check if current directory looks like a .NET repo.
+SLN_COUNT="$(find . -maxdepth 3 \( -name '*.sln' -o -name '*.slnx' \) 2>/dev/null | wc -l | tr -d ' ')" || SLN_COUNT=0
+CSPROJ_COUNT="$(find . -maxdepth 3 -name '*.csproj' 2>/dev/null | wc -l | tr -d ' ')" || CSPROJ_COUNT=0
+CS_COUNT="$(find . -maxdepth 4 -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')" || CS_COUNT=0
+HAS_GLOBAL_JSON=false
+if [ -f "global.json" ]; then
+  HAS_GLOBAL_JSON=true
+fi
+
+MSG=""
+if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$CS_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" = true ]; then
+  read -r -d '' MSG <<'EOF' || true
 <system-reminder>
 <dotnet-artisan-routing>
 1. Mandatory first action: invoke [skill:dotnet-advisor].
@@ -12,6 +23,7 @@ read -r -d '' MSG <<'EOF' || true
 </dotnet-artisan-routing>
 </system-reminder>
 EOF
+fi
 
 if command -v jq &>/dev/null; then
   jq -n --arg ctx "$MSG" '{

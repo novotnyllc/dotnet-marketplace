@@ -25,14 +25,46 @@ contains_agent() {
 SAMPLES_DIR="$REPO_ROOT/samples"
 
 cleanup() {
-    if [[ -d "$APPS_DIR" ]]; then
-        log "Cleaning generated apps directory: $APPS_DIR"
-        rm -rf "$APPS_DIR"
+    safe_remove_generated_dir "$APPS_DIR" "apps"
+    safe_remove_generated_dir "$SAMPLES_DIR" "samples"
+}
+
+safe_remove_generated_dir() {
+    local target_dir="$1"
+    local label="$2"
+
+    if [[ -z "${target_dir:-}" || -z "${REPO_ROOT:-}" ]]; then
+        log "WARNING: target directory or REPO_ROOT unset; skipping cleanup for $label."
+        return
     fi
-    if [[ -d "$SAMPLES_DIR" ]]; then
-        log "Cleaning generated samples directory: $SAMPLES_DIR"
-        rm -rf "$SAMPLES_DIR"
+
+    local resolved_repo resolved_target
+    resolved_repo="$(cd "$REPO_ROOT" 2>/dev/null && pwd -P)" || resolved_repo=""
+
+    if [[ -z "$resolved_repo" ]]; then
+        log "WARNING: Unable to resolve REPO_ROOT; skipping cleanup for $label."
+        return
     fi
+
+    if [[ ! -d "$target_dir" ]]; then
+        return
+    fi
+
+    resolved_target="$(cd "$target_dir" 2>/dev/null && pwd -P)" || resolved_target=""
+    if [[ -z "$resolved_target" ]]; then
+        log "WARNING: Unable to resolve target directory ($target_dir); skipping cleanup for $label."
+        return
+    fi
+
+    case "$resolved_target" in
+        "$resolved_repo"/*)
+            log "Cleaning generated $label directory: $resolved_target"
+            rm -rf -- "$resolved_target"
+            ;;
+        *)
+            log "WARNING: Refusing to clean $label outside repo: $resolved_target"
+            ;;
+    esac
 }
 
 prepare_claude_plugin() {

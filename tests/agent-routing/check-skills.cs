@@ -71,6 +71,8 @@ internal static class Program
 
 internal sealed class AgentRoutingRunner
 {
+    private readonly record struct ShellSpec(string FileName, string[] PrefixArgs, bool UsePowerShellQuoting);
+
     private static readonly string[] DefaultAgents = ["claude", "codex", "copilot"];
 
     private static readonly string[] DefaultAnyEvidence =
@@ -402,8 +404,9 @@ internal sealed class AgentRoutingRunner
                 timedOut: false);
         }
 
-        var command = BuildShellCommand(template, testCase.Prompt);
-        var exec = await ExecuteCommandAsync(command, _options.TimeoutSeconds);
+        var shell = ResolveShell();
+        var command = BuildShellCommand(template, testCase.Prompt, shell.UsePowerShellQuoting);
+        var exec = await ExecuteCommandAsync(shell, command, _options.TimeoutSeconds);
         var combined = CombineOutput(exec.Stdout, exec.Stderr);
 
         if (!exec.Started)
@@ -421,9 +424,8 @@ internal sealed class AgentRoutingRunner
                 timedOut: exec.TimedOut);
         }
 
-        // Detect "command not found" (exit 127) or "permission denied" (exit 126)
-        // from bash -- these indicate a missing or non-executable CLI binary,
-        // which is a transport failure, not an assertion failure.
+        // Detect shell-level missing CLI failures and classify as infra/transport
+        // instead of assertion failures.
         if (IsCommandNotFound(exec))
         {
             return AgentResult.Infra(
@@ -648,9 +650,9 @@ internal sealed class AgentRoutingRunner
         };
     }
 
-    private static string BuildShellCommand(string template, string prompt)
+    private static string BuildShellCommand(string template, string prompt, bool usePowerShellQuoting)
     {
-        var quotedPrompt = ShellQuote(prompt);
+        var quotedPrompt = usePowerShellQuoting ? PowerShellQuote(prompt) : ShellQuote(prompt);
 
         return template.Contains("{prompt}", StringComparison.Ordinal)
             ? template.Replace("{prompt}", quotedPrompt, StringComparison.Ordinal)
@@ -660,6 +662,35 @@ internal sealed class AgentRoutingRunner
     private static string ShellQuote(string value)
     {
         return "'" + value.Replace("'", "'\"'\"'") + "'";
+    }
+
+    private static string PowerShellQuote(string value)
+    {
+        return "'" + value.Replace("'", "''") + "'";
+    }
+
+    private static ShellSpec ResolveShell()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return new ShellSpec(
+                FileName: "powershell",
+                PrefixArgs: ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command"],
+                UsePowerShellQuoting: true);
+        }
+
+        if (File.Exists("/bin/bash"))
+        {
+            return new ShellSpec(
+                FileName: "/bin/bash",
+                PrefixArgs: ["-lc"],
+                UsePowerShellQuoting: false);
+        }
+
+        return new ShellSpec(
+            FileName: "bash",
+            PrefixArgs: ["-lc"],
+            UsePowerShellQuoting: false);
     }
 
     private async Task<EvidenceEvaluation> TryFindEvidenceInLogsAsync(
@@ -1830,20 +1861,27 @@ internal sealed class AgentRoutingRunner
     }
 
     /// <summary>
-    /// Detects bash "command not found" (exit 127) or "permission denied" (exit 126)
-    /// which indicate a missing or non-executable CLI binary -- a transport failure.
+    /// Detects shell-level "command not found" failures that indicate missing
+    /// or non-executable CLI binaries. These are infra/transport failures.
     /// </summary>
     private static bool IsCommandNotFound(ExecutionResult exec)
     {
-        if (exec.ExitCode is not (126 or 127))
+        if (exec.ExitCode is 126 or 127 or 9009)
+        {
+            return true;
+        }
+
+        var combined = CombineOutput(exec.Stdout, exec.Stderr);
+        if (string.IsNullOrWhiteSpace(combined))
         {
             return false;
         }
 
-        var stderr = exec.Stderr ?? string.Empty;
-        return ContainsInsensitive(stderr, "command not found") ||
-               ContainsInsensitive(stderr, "No such file or directory") ||
-               ContainsInsensitive(stderr, "Permission denied");
+        return ContainsInsensitive(combined, "command not found") ||
+               ContainsInsensitive(combined, "No such file or directory") ||
+               ContainsInsensitive(combined, "Permission denied") ||
+               ContainsInsensitive(combined, "is not recognized as an internal or external command") ||
+               ContainsInsensitive(combined, "is not recognized as the name of a cmdlet");
     }
 
     private static string CombineOutput(string? stdout, string? stderr)
@@ -1877,13 +1915,13 @@ internal sealed class AgentRoutingRunner
         return wrapped?.Cases ?? [];
     }
 
-    private static async Task<ExecutionResult> ExecuteCommandAsync(string command, int timeoutSeconds)
+    private static async Task<ExecutionResult> ExecuteCommandAsync(ShellSpec shell, string command, int timeoutSeconds)
     {
         using var process = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "/bin/bash",
+                FileName = shell.FileName,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -1891,7 +1929,11 @@ internal sealed class AgentRoutingRunner
             }
         };
 
-        process.StartInfo.ArgumentList.Add("-lc");
+        foreach (var arg in shell.PrefixArgs)
+        {
+            process.StartInfo.ArgumentList.Add(arg);
+        }
+
         process.StartInfo.ArgumentList.Add(command);
 
         try
