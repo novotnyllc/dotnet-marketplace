@@ -62,6 +62,10 @@ Migrate all 131 SKILL.md frontmatter files to be Copilot-safe. Address known Cop
 
 _Populated by flowctl done._
 
+## Evidence
+
+_Populated by flowctl done._
+
 ## Acceptance
 - [ ] metadata-ordering behavior verified with Copilot CLI test skills; exact command and observed output recorded as evidence (or conservative assumption documented if CLI unavailable)
 - [ ] Validator enforces the verified metadata-ordering invariant as an ERROR
