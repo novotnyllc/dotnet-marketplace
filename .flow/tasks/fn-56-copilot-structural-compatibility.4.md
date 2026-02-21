@@ -63,5 +63,8 @@ Verify how Copilot's 32-skill display limit interacts with `user-invocable: fals
 - [ ] All `[skill:]` cross-references in advisor resolve correctly
 
 ## Done summary
-
+Added explicit user-invocable: true to 10 skills that relied on defaults (bringing all 131 skills to explicit invocability: 11 true, 120 false). Documented the Copilot CLI 32-skill display limit routing strategy in CONTRIBUTING-SKILLS.md, including dual-ordering strategy (manifest + alphabetical), behavior scenarios, compatibility rules, and verification procedure.
 ## Evidence
+- Commits: ea0e981, 8bd368c, 5004b4f
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
