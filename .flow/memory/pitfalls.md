@@ -405,3 +405,6 @@ When updating required-fields lists in one doc, grep ALL docs for the same field
 
 ## 2026-02-21 manual [pitfall]
 When spec says 'verify X behavior' and the tool IS available locally, run the actual test and capture output as evidence — reviewers will block on 'deferred to later' if the tool is present
+
+## 2026-02-21 manual [pitfall]
+When a CI comparison script silently degrades on missing data (e.g. ref baseline not found), it can bypass the regression gate entirely -- always hard-fail on missing inputs that would disable the gate

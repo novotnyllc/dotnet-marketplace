@@ -46,3 +46,10 @@ Verify that Claude Code, Codex, and Copilot all correctly discover and use skill
 - [ ] Baseline comparison shows no unintentional regressions vs `main`
 - [ ] `provider-baseline.json` updated with any intentional behavior changes + justification comments
 - [ ] All three providers can be tested via `./test.sh --agents claude,codex,copilot`
+
+## Evidence
+- Commits: b9679dccb262d688bdf4bddc2e004cb58dcfd2cd, 5fede19, 5b3c2c8
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/run-agent-routing-smoke.py
+- PRs:
+## Done summary
+Added cross-provider regression test scripts (run-agent-routing-smoke.py for structural verification and compare-agent-routing-baseline.py for baseline comparison) and refactored the CI workflow to use these Python scripts with a new structural-smoke gate job, robust baseline-ref handling, and proper missing-data/duplicate detection.

@@ -84,6 +84,7 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
     - Expected skill count matches
     Note: [skill:name] cross-ref validation is handled by validate-skills.sh.
     """
+    _ = skill_dirs  # Interface conformance with check_codex/check_copilot dispatch
     errors = []
 
     if not PLUGIN_JSON.exists():
