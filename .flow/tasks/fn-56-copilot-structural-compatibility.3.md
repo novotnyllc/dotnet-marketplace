@@ -40,5 +40,8 @@ Update layout-dependent validation scripts (similarity detector, marketplace val
 - [ ] Full validation suite: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` green
 
 ## Done summary
-
+Updated similarity validator for flat layout: changed glob from */*/SKILL.md to */SKILL.md, removed same-category boost and category fields, reweighted composite score to 0.5/0.5. Added flat layout guard to _validate_skills.py that errors if SKILL.md is found more than 1 level deep. Regenerated similarity-baseline.json; routing-warnings-baseline.json unchanged (all zeros).
 ## Evidence
+- Commits: b585e0a0f7abc306ba6d57e904ca1c1656b27393
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
