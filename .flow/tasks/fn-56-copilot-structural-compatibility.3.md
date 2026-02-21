@@ -38,3 +38,7 @@ Update layout-dependent validation scripts (similarity detector, marketplace val
 - [ ] `similarity-baseline.json` regenerated for flat layout
 - [ ] `routing-warnings-baseline.json` regenerated for flat layout + T2 frontmatter checks
 - [ ] Full validation suite: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` green
+
+## Done summary
+
+## Evidence
