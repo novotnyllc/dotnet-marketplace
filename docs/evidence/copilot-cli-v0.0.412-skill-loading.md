@@ -41,17 +41,35 @@
 - `license: MIT` present on all skills (no loading failures)
 - `user-invocable: false` skills loaded alongside `user-invocable: true` skills
 
-## metadata-last Key Verification
+## metadata-last Key Verification (copilot-cli#951)
 
-**Check:** Do any dotnet-artisan skills use a `metadata:` frontmatter key?
+### Test 3: metadata: as last frontmatter key
 
-```bash
-for f in skills/*/SKILL.md; do
-  awk '/^---$/{n++; next} n==1{print}' "$f" | grep -q "^metadata:" && echo "FOUND: $f"
-done
+**Setup:** Created temporary test skill `skills/test-metadata-last/SKILL.md` with frontmatter:
+
+```yaml
+---
+name: test-metadata-last
+description: Temporary test skill for metadata-last key verification
+license: MIT
+user-invocable: false
+metadata: test-value
+---
 ```
 
-**Result:** No skills use the `metadata:` key. The conservative validator guard (ERROR if `metadata:` is the last frontmatter key, per copilot-cli#951) has **zero false-positive risk** on the current catalog. Full runtime verification of the silent-drop behavior would require creating a test skill with `metadata:` as the last key and testing it in an interactive Copilot session; this is tracked in fn-57 but has no practical impact since no skill uses this key.
+**Command:** `copilot -p "Does a skill called 'test-metadata-last' exist? What is its description?" --allow-all-tools --log-level info`
+
+**Observed:**
+- Copilot CLI discovered the skill via `Glob "**/test-metadata-last/SKILL.md"` (1 file found)
+- Successfully read `skills/test-metadata-last/SKILL.md` (19 lines)
+- Correctly extracted description: "Temporary test skill for metadata-last key verification"
+- **No silent drop.** The skill loaded and was accessible despite `metadata:` being the last frontmatter key.
+
+### metadata-last Findings
+
+- **copilot-cli#951 behavior NOT reproduced in v0.0.412.** The skill loaded successfully.
+- No dotnet-artisan skills use a `metadata:` frontmatter key (verified via `grep` across all 131 SKILL.md files).
+- The conservative validator guard (ERROR if `metadata:` is the last key) is retained as a preventive measure against older or future Copilot versions, with zero false-positive risk on the current catalog.
 
 ## Conclusion
 

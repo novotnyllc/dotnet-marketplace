@@ -401,17 +401,13 @@ def process_file(path: str) -> dict:
     # last frontmatter key causes silent skill drop. Conservative enforcement:
     # ERROR if metadata: is the last non-blank top-level key in frontmatter.
     #
-    # Evidence trail (fn-56.2):
-    # - Spec fallback clause: "T2 verifies exact behavior with test skills before
-    #   implementing the check; falls back to conservative 'ERROR if metadata is
-    #   last key' if CLI unavailable."
-    # - Install-time parse verified: Copilot CLI v0.0.412 accepts test skills
-    #   with various frontmatter orderings (no parse failure at install time).
-    # - Runtime load verification (whether metadata-last causes silent drop at
-    #   inference time) requires interactive CLI session; deferred to fn-57.
-    # - Decision: conservative guard enforced per spec fallback policy. No
-    #   dotnet-artisan skill uses a "metadata:" key, so this guard is preventive
-    #   with zero false-positive risk on the current catalog.
+    # Evidence trail (fn-56.2, verified with Copilot CLI v0.0.412):
+    # - Test: created skill with metadata: as last key, ran copilot -p to load it.
+    # - Result: skill loaded successfully, description extracted correctly.
+    # - copilot-cli#951 behavior NOT reproduced in v0.0.412.
+    # - No dotnet-artisan skill uses a "metadata:" key (zero false-positive risk).
+    # - Decision: conservative guard retained as preventive measure against older
+    #   or future Copilot versions. See docs/evidence/copilot-cli-v0.0.412-skill-loading.md.
     # Only scan column-0 lines to avoid false positives on block scalar content.
     last_key = None
     for fm_line in fm_lines:
