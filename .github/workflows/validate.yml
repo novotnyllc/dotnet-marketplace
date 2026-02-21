@@ -14,10 +14,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate plugin structure and skills
+  # ── Job 1: Structural lint (no .NET needed, runs in parallel with build-test) ──
+  lint:
+    name: Lint & validate structure
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
 
     env:
       STRICT_REFS: "1"
@@ -26,37 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.nuget/packages
-            ~/.local/share/NuGet/v3-cache
-          key: ${{ runner.os }}-nuget-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore routing runner
-        run: dotnet restore tests/agent-routing/check-skills.cs
-
-      - name: Build routing runner
-        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
-
-      - name: Run routing runner self-tests
-        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
-
-      - name: Validate root marketplace.json
-        run: |
-          set -o pipefail
-          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
-
       - name: Validate plugin JSON files
         run: |
+          set -euo pipefail
           echo "=== Plugin JSON Validation ==="
           jq empty .claude-plugin/plugin.json
           echo "OK: plugin.json"
@@ -64,6 +37,11 @@ jobs:
           echo "OK: hooks.json"
           jq empty .mcp.json
           echo "OK: .mcp.json"
+
+      - name: Validate root marketplace.json
+        run: |
+          set -o pipefail
+          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
 
       - name: Validate skills
         id: validate-skills
@@ -272,9 +250,44 @@ jobs:
           echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline + suppressions |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 (unsuppressed) |" >> "$GITHUB_STEP_SUMMARY"
 
+  # ── Job 2: .NET routing runner (runs in parallel with lint) ──
+  build-test:
+    name: Build & test routing runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.local/share/NuGet/v3-cache
+          key: nuget-${{ runner.os }}-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore tests/agent-routing/check-skills.cs
+
+      - name: Build
+        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
+
+      - name: Self-test
+        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
+
+  # ── Job 3: Copilot smoke (depends on both lint + build-test) ──
   copilot-smoke:
     name: Copilot smoke tests
-    needs: [validate]
+    needs: [lint, build-test]
     # Only run on pull_request events (push to main has no fork context)
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
