@@ -310,10 +310,11 @@ def main() -> int:
         ref_baseline = load_baseline_from_ref(args.baseline_ref, relative_path)
         if ref_baseline is None:
             print(
-                f"WARNING: Could not load baseline from ref '{args.baseline_ref}'. "
-                f"All results will be compared against current baseline only.",
+                f"ERROR: Could not load baseline from ref '{args.baseline_ref}' "
+                f"at {relative_path}. Ref-based regression gate cannot run.",
                 file=sys.stderr,
             )
+            return 1
 
     # Collect and compare
     result_tuples, duplicate_errors = collect_results(results_paths)

@@ -128,8 +128,17 @@ jobs:
           # Strip origin/ prefix if user provided it to avoid double-prefixing
           CLEAN_REF="${BASELINE_REF#origin/}"
           git fetch origin -- "$CLEAN_REF"
-          # Export the resolved ref for downstream steps
-          echo "RESOLVED_BASELINE_REF=origin/${CLEAN_REF}" >> "$GITHUB_ENV"
+          # Verify the fetched ref resolves, preferring origin/<branch>, falling
+          # back to FETCH_HEAD for tags or non-branch refs
+          if git rev-parse --verify "origin/${CLEAN_REF}" >/dev/null 2>&1; then
+            RESOLVED="origin/${CLEAN_REF}"
+          elif git rev-parse --verify FETCH_HEAD >/dev/null 2>&1; then
+            RESOLVED="FETCH_HEAD"
+          else
+            echo "ERROR: Cannot resolve fetched ref '${CLEAN_REF}'"
+            exit 1
+          fi
+          echo "RESOLVED_BASELINE_REF=${RESOLVED}" >> "$GITHUB_ENV"
 
       - name: Download all provider artifacts
         uses: actions/download-artifact@v4
