@@ -408,3 +408,9 @@ When spec says 'verify X behavior' and the tool IS available locally, run the ac
 
 ## 2026-02-21 manual [pitfall]
 When a CI comparison script silently degrades on missing data (e.g. ref baseline not found), it can bypass the regression gate entirely -- always hard-fail on missing inputs that would disable the gate
+
+## 2026-02-21 manual [pitfall]
+In GitHub Actions steps with 'set -euo pipefail', capturing exit codes (cmd; EXIT=$?) is dead code -- the shell exits on non-zero before the assignment. Use 'set +e' before the command, then 'set -e' after capturing the exit code.
+
+## 2026-02-21 manual [pitfall]
+GitHub Actions expressions like github.event.pull_request.head.repo.fork are undefined on push events (not just null). Jobs referencing PR-only context must guard with 'if: github.event_name == pull_request' or use null-safe expressions.

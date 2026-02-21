@@ -275,12 +275,14 @@ jobs:
   copilot-smoke:
     name: Copilot smoke tests
     needs: [validate]
+    # Only run on pull_request events (push to main has no fork context)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 25
 
     # "Soft infra, hard functional" policy:
-    # - Fork PRs or missing auth: produce infra_error results, exit 0
-    # - Non-fork PRs with auth: infra_error is a failure (--require-copilot)
+    # - Fork PRs: produce infra_error results, exit 0 (no secrets access)
+    # - Non-fork PRs: Copilot must be available; infra_error is a failure
     env:
       # Pinned Copilot CLI version for reproducibility
       COPILOT_CLI_VERSION: "0.0.412"
@@ -294,72 +296,43 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Detect fork and auth availability
+      - name: Detect fork
         id: detect-env
         run: |
           set -euo pipefail
-          IS_FORK="${{ github.event.pull_request.head.repo.fork || 'false' }}"
+          IS_FORK="${{ github.event.pull_request.head.repo.fork }}"
           echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
 
-          # Check if COPILOT_TOKEN secret is available (non-fork PRs should have it)
-          if [ -n "${COPILOT_TOKEN:-}" ]; then
-            echo "has_auth=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_auth=false" >> "$GITHUB_OUTPUT"
-          fi
-
-          # Determine if Copilot is required (non-fork with potential auth)
-          if [ "$IS_FORK" = "true" ]; then
-            echo "require_copilot=false" >> "$GITHUB_OUTPUT"
-            echo "skip_reason=fork PR (no access to secrets)" >> "$GITHUB_OUTPUT"
-          else
-            echo "require_copilot=true" >> "$GITHUB_OUTPUT"
-            echo "skip_reason=" >> "$GITHUB_OUTPUT"
-          fi
-        env:
-          COPILOT_TOKEN: ${{ secrets.COPILOT_TOKEN }}
-
-      - name: Install Copilot CLI
+      - name: Install Copilot CLI (non-fork only)
         id: install-copilot
         if: steps.detect-env.outputs.is_fork != 'true'
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
           set -euo pipefail
           echo "=== Installing Copilot CLI v${COPILOT_CLI_VERSION} ==="
-          npm install -g @github/copilot-cli@${COPILOT_CLI_VERSION} 2>/dev/null || \
-            npm install -g copilot-cli@${COPILOT_CLI_VERSION} 2>/dev/null || {
-              echo "WARNING: Pinned install failed, trying unversioned..."
-              npm install -g @github/copilot-cli 2>/dev/null || \
-                npm install -g copilot-cli 2>/dev/null || {
-                  echo "copilot_installed=false" >> "$GITHUB_OUTPUT"
-                  echo "ERROR: All Copilot CLI install methods failed"
-                  exit 1
-                }
-            }
+          # Use pinned version only -- no fallback to latest (determinism requirement)
+          npm install -g @github/copilot-cli@${COPILOT_CLI_VERSION} || {
+            echo "ERROR: Failed to install Copilot CLI v${COPILOT_CLI_VERSION}"
+            exit 1
+          }
 
-          echo ""
           COPILOT_VERSION="$(copilot --version 2>/dev/null || echo 'unknown')"
           echo "Copilot CLI version: $COPILOT_VERSION"
-          echo "copilot_installed=true" >> "$GITHUB_OUTPUT"
           echo "copilot_version=$COPILOT_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Health check (copilot --version)
         id: health-check
-        if: steps.install-copilot.outcome == 'success'
-        continue-on-error: true
+        if: steps.detect-env.outputs.is_fork != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
           set -euo pipefail
           copilot --version
-          echo "health=ok" >> "$GITHUB_OUTPUT"
 
-      - name: Register plugin
+      - name: Register plugin (non-fork only)
         id: register-plugin
-        if: steps.health-check.outcome == 'success'
-        continue-on-error: true
+        if: steps.detect-env.outputs.is_fork != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
@@ -372,38 +345,32 @@ jobs:
             copilot plugin update dotnet-artisan@dotnet-artisan 2>/dev/null || true
 
           # Verify discovery
-          if copilot plugin marketplace list | grep -F "dotnet-artisan"; then
-            echo "registered=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "registered=false" >> "$GITHUB_OUTPUT"
+          if ! copilot plugin marketplace list | grep -F "dotnet-artisan"; then
             echo "ERROR: dotnet-artisan not found in marketplace list"
             exit 1
           fi
+          echo "OK: dotnet-artisan registered"
 
       - name: Run Copilot smoke tests
         id: smoke-run
         env:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
 
           SMOKE_ARGS=()
-          # Only run deterministic (non-flaky) cases for PR gating
-          # Categories: direct, negative (skip advisor-routed and progressive-disclosure as flaky)
-          SMOKE_ARGS+=(--category "direct,negative")
+          # Deterministic smoke subset: direct + advisor-routed (non-flaky) + negative
+          # Per fn-57.4 spec: "direct activation, advisor routing, and one negative control"
+          # smoke-011 is advisor-routed with flaky=false in baseline
+          SMOKE_ARGS+=(--case-id "smoke-001,smoke-002,smoke-003,smoke-004,smoke-005,smoke-006,smoke-007,smoke-008,smoke-009,smoke-010,smoke-011,smoke-016,smoke-017,smoke-018,smoke-019,smoke-020,smoke-026,smoke-027,smoke-028")
           SMOKE_ARGS+=(--output "tests/copilot-smoke/ci-results.json")
 
-          # Fork or infra failure: skip gracefully
           IS_FORK="${{ steps.detect-env.outputs.is_fork }}"
-          COPILOT_READY="false"
-          if [ "${{ steps.register-plugin.outcome }}" = "success" ]; then
-            COPILOT_READY="true"
-          fi
 
-          if [ "$IS_FORK" = "true" ] || [ "$COPILOT_READY" != "true" ]; then
-            echo "::notice::Copilot skipped (${{ steps.detect-env.outputs.skip_reason || 'Copilot not available' }})"
+          if [ "$IS_FORK" = "true" ]; then
+            echo "::notice::Copilot skipped (fork PR, no access to secrets)"
 
-            # Produce synthetic infra_error results for baseline comparison
+            # Produce synthetic infra_error results for observability
             python tests/copilot-smoke/run_smoke.py \
               "${SMOKE_ARGS[@]}" || true
 
@@ -411,16 +378,17 @@ jobs:
             exit 0
           fi
 
-          # Non-fork with Copilot available: require it
+          # Non-fork: Copilot is required -- infra_error causes failure
           SMOKE_ARGS+=(--require-copilot)
 
+          set +e
           python tests/copilot-smoke/run_smoke.py "${SMOKE_ARGS[@]}"
           SMOKE_EXIT=$?
+          set -e
 
           if [ "$SMOKE_EXIT" -eq 0 ]; then
             echo "smoke_status=passed" >> "$GITHUB_OUTPUT"
           elif [ "$SMOKE_EXIT" -eq 2 ]; then
-            # Exit 2 = infra_error with --require-copilot
             echo "smoke_status=infra_error" >> "$GITHUB_OUTPUT"
             exit 1
           else
@@ -433,7 +401,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: copilot-smoke-results
-          path: tests/copilot-smoke/ci-results*.json
+          path: |
+            tests/copilot-smoke/ci-results.json
+            tests/copilot-smoke/results-agent-routing-compat.json
           if-no-files-found: warn
 
       - name: Write smoke summary

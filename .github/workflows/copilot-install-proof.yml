@@ -28,10 +28,10 @@ jobs:
           set -euo pipefail
           echo "=== Installing Copilot CLI ==="
 
-          # Install via npm (copilot-cli is the official package)
-          npm install -g @anthropic-ai/copilot-cli@0.0.412 || {
+          # Install via npm -- same package as validate.yml copilot-smoke job
+          npm install -g @github/copilot-cli@0.0.412 || {
             echo "WARNING: Pinned version failed, trying latest..."
-            npm install -g @anthropic-ai/copilot-cli
+            npm install -g @github/copilot-cli
           }
 
           echo ""

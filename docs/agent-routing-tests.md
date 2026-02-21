@@ -365,8 +365,8 @@ Concurrency:
 
 Runs on `push` and `pull_request` to `main`. Contains:
 
-- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 131, flat layout guard, Copilot frontmatter safety checks).
-- **`copilot-smoke` job**: Deterministic Copilot smoke test subset (direct + negative categories only; flaky cases excluded). Compares results against `tests/copilot-smoke/baseline.json`. Gates PRs on regressions.
+- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 131, flat layout guard, Copilot frontmatter safety checks). Runs on both `push` and `pull_request`.
+- **`copilot-smoke` job**: Runs on `pull_request` only (guarded by `if: github.event_name == 'pull_request'`). Deterministic Copilot smoke test subset covering direct activation, one advisor-routed case (smoke-011), and negative controls. Uses explicit `--case-id` list to select only non-flaky cases. Compares results against `tests/copilot-smoke/baseline.json`. Gates PRs on regressions.
 
 ### `agent-live-routing.yml` (comprehensive)
 
@@ -395,7 +395,7 @@ A Copilot test run passes when:
 | Workflow | Condition | `infra_error` acceptable? | Mechanism |
 |----------|-----------|---------------------------|-----------|
 | `validate.yml` (PR) | Fork PR (`head.repo.fork == true`) | Yes | Forks lack access to `COPILOT_TOKEN` secret. Synthetic `infra_error` results produced; exit 0 with annotation. |
-| `validate.yml` (PR) | Non-fork, Copilot auth fails | No | `--require-copilot` flag set; exit non-zero on infra_error. |
+| `validate.yml` (PR) | Non-fork, Copilot install/auth/registration fails | No | Install/health/register steps have no `continue-on-error`; `--require-copilot` flag set on smoke runner. Any failure is a hard stop. |
 | `agent-live-routing.yml` (schedule) | Any | No | Schedule hard-codes `fail_on_infra=true`. Infra outages surface as failures. |
 | `agent-live-routing.yml` (manual) | `fail_on_infra=true` (default) | No | Default is true; infra_error causes failure. |
 | `agent-live-routing.yml` (manual) | `fail_on_infra=false` (explicit override) | Yes | Operator explicitly opted into soft infra mode. |
@@ -419,9 +419,9 @@ A Copilot test run passes when:
 Fork PRs cannot access repository secrets (`COPILOT_TOKEN`), so Copilot tests naturally skip:
 
 - **Detection**: `github.event.pull_request.head.repo.fork == true` check in the `copilot-smoke` job.
-- **Behavior**: The smoke runner executes without `--require-copilot`, producing synthetic `infra_error` results for all cases. The job exits 0 and adds a `::notice::` annotation explaining the skip.
+- **Behavior**: The Copilot CLI install, health check, and plugin registration steps are skipped entirely. The smoke runner executes without `--require-copilot`, producing synthetic `infra_error` results for the selected smoke cases. The job exits 0 and adds a `::notice::` annotation explaining the skip.
 - **Result artifacts**: `infra_error` results are still uploaded as artifacts for observability.
-- **Non-fork PRs**: `--require-copilot` is set. If Copilot is unavailable, the job fails (infra_error is not silently swallowed).
+- **Non-fork PRs**: Install, health check, and registration steps run without `continue-on-error` -- any failure is a hard stop. The smoke runner uses `--require-copilot`, so if Copilot is unavailable, the job fails (infra_error is not silently swallowed).
 
 ### Copilot CLI version pinning
 
