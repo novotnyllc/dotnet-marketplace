@@ -8,7 +8,7 @@
   "id": "fn-56-copilot-structural-compatibility.1",
   "priority": null,
   "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.1.md",
-  "status": "todo",
+  "status": "in_progress",
   "title": "Atomic flatten of skills directory",
   "updated_at": "2026-02-21T00:47:44.076942Z"
 }

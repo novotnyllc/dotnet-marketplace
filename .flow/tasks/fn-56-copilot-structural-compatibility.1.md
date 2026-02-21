@@ -50,3 +50,10 @@ Move all 131 skill directories from `skills/<category>/<skill-name>/` to `skills
 - [ ] `git log --follow` works for at least 3 sampled skill files (history preserved)
 - [ ] Skill count: `find skills -name SKILL.md -maxdepth 2 | wc -l` equals 131
 - [ ] Single commit containing all changes
+
+## Done summary
+Flattened all 131 skill directories from skills/<category>/<skill-name>/ to skills/<skill-name>/ via git mv. Updated plugin.json paths, test.sh find depth, openai.yaml layout/count, and validate-skills.sh projected count. Removed empty category directories.
+## Evidence
+- Commits: dbf4f75453694c080b6419c9d4e64c33e601fd8a
+- Tests: find skills -name SKILL.md -maxdepth 2 | wc -l (131), jq .skills|length plugin.json (131), git log --follow for 3 sampled skills, plugin.json path resolution check (0 missing)
+- PRs:
