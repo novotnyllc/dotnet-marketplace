@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-auth
-description: "Implements Blazor auth flows: login/logout, AuthorizeView, Identity UI, OIDC."
+description: Implements Blazor auth flows -- login/logout, AuthorizeView, Identity UI, OIDC.
+license: MIT
 user-invocable: false
 ---
 

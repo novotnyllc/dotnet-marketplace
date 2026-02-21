@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-distribution
-description: "Chooses CLI output format. AOT vs framework-dependent, RID matrix, single-file, dotnet tool."
+description: Chooses CLI output format. AOT vs framework-dependent, RID matrix, single-file, dotnet tool.
+license: MIT
 user-invocable: false
 ---
 

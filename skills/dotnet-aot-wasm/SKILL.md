@@ -1,6 +1,7 @@
 ---
 name: dotnet-aot-wasm
-description: "Compiles .NET to WebAssembly AOT. Blazor/Uno WASM, size vs speed, lazy loading, Brotli."
+description: Compiles .NET to WebAssembly AOT. Blazor/Uno WASM, size vs speed, lazy loading, Brotli.
+license: MIT
 user-invocable: false
 ---
 

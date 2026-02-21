@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-type-design-performance
-description: "Designs types for performance. struct vs class, sealed, readonly struct, Span/Memory, collections."
+description: Designs types for performance. struct vs class, sealed, readonly struct, Span/Memory, collections.
+license: MIT
 user-invocable: false
 ---
 

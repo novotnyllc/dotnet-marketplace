@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-platform
-description: "Builds Uno Platform cross-platform apps. Extensions, MVUX, Toolkit controls, Hot Reload."
+description: Builds Uno Platform cross-platform apps. Extensions, MVUX, Toolkit controls, Hot Reload.
+license: MIT
 user-invocable: false
 ---
 

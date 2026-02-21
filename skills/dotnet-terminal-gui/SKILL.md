@@ -1,6 +1,7 @@
 ---
 name: dotnet-terminal-gui
-description: "Builds full TUI apps. Terminal.Gui v2: views, layout (Pos/Dim), menus, dialogs, bindings, themes."
+description: Builds full TUI apps. Terminal.Gui v2 -- views, layout (Pos/Dim), menus, dialogs, bindings, themes.
+license: MIT
 user-invocable: false
 ---
 

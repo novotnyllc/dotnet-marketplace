@@ -1,6 +1,7 @@
 ---
 name: dotnet-msbuild-tasks
-description: "Writes custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask."
+description: Writes custom MSBuild tasks. ITask, ToolTask, IIncrementalTask, inline tasks, UsingTask.
+license: MIT
 user-invocable: false
 ---
 

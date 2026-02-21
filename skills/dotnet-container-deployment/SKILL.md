@@ -1,6 +1,7 @@
 ---
 name: dotnet-container-deployment
-description: "Deploys .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration."
+description: Deploys .NET containers. Kubernetes probes, Docker Compose for local dev, CI/CD integration.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-components
-description: "Implements Blazor components. Lifecycle, state management, JS interop, EditForm, QuickGrid."
+description: Implements Blazor components. Lifecycle, state management, JS interop, EditForm, QuickGrid.
+license: MIT
 user-invocable: false
 ---
 

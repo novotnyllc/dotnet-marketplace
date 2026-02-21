@@ -1,6 +1,7 @@
 ---
 name: dotnet-secrets-management
-description: "Manages secrets and sensitive config. User secrets, environment variables, rotation."
+description: Manages secrets and sensitive config. User secrets, environment variables, rotation.
+license: MIT
 user-invocable: false
 ---
 

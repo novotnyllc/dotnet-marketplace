@@ -1,6 +1,7 @@
 ---
 name: dotnet-cryptography
-description: "Selects crypto algorithms and usage. Hashing, AES-GCM, RSA, ECDSA, PQC key derivation."
+description: Selects crypto algorithms and usage. Hashing, AES-GCM, RSA, ECDSA, PQC key derivation.
+license: MIT
 user-invocable: false
 ---
 

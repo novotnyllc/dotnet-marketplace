@@ -1,6 +1,7 @@
 ---
 name: dotnet-native-interop
-description: "Calls native libraries via P/Invoke. LibraryImport, marshalling, cross-platform resolution."
+description: Calls native libraries via P/Invoke. LibraryImport, marshalling, cross-platform resolution.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-file-io
-description: "Performs file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths."
+description: Performs file I/O. FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile, paths.
+license: MIT
 user-invocable: false
 ---
 

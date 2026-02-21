@@ -1,6 +1,7 @@
 ---
 name: dotnet-validation-patterns
-description: "Validates models and IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>."
+description: Validates models and IOptions. DataAnnotations, IValidatableObject, IValidateOptions<T>.
+license: MIT
 user-invocable: false
 ---
 

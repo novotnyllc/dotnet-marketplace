@@ -1,6 +1,7 @@
 ---
 name: dotnet-gha-patterns
-description: "Composes GitHub Actions workflows. Reusable workflows, composite actions, matrix, caching."
+description: Composes GitHub Actions workflows. Reusable workflows, composite actions, matrix, caching.
+license: MIT
 user-invocable: false
 ---
 

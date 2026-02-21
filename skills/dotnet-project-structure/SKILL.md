@@ -1,6 +1,7 @@
 ---
 name: dotnet-project-structure
-description: "Sets up .NET solution layout. .slnx, Directory.Build.props, CPM, .editorconfig, analyzers."
+description: Sets up .NET solution layout. .slnx, Directory.Build.props, CPM, .editorconfig, analyzers.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-csproj-reading
-description: "Reads and modifies SDK-style .csproj files. PropertyGroup, ItemGroup, CPM, props."
+description: Reads and modifies SDK-style .csproj files. PropertyGroup, ItemGroup, CPM, props.
+license: MIT
 user-invocable: false
 ---
 

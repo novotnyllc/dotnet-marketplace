@@ -1,6 +1,7 @@
 ---
 name: dotnet-slopwatch
-description: "Runs Slopwatch CLI to detect LLM reward hacking: disabled tests, suppressed warnings."
+description: Runs Slopwatch CLI to detect LLM reward hacking -- disabled tests, suppressed warnings.
+license: MIT
 user-invocable: true
 ---
 

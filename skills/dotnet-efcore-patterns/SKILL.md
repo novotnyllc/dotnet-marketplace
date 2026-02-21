@@ -1,6 +1,7 @@
 ---
 name: dotnet-efcore-patterns
-description: "EF Core, DbContext, AsNoTracking, query splitting."
+description: EF Core, DbContext, AsNoTracking, query splitting.
+license: MIT
 user-invocable: false
 ---
 

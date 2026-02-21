@@ -1,6 +1,7 @@
 ---
 name: dotnet-tool-management
-description: "Installs and manages .NET tools. Global, local, manifests, restore, version pinning."
+description: Installs and manages .NET tools. Global, local, manifests, restore, version pinning.
+license: MIT
 user-invocable: false
 ---
 

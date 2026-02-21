@@ -1,6 +1,7 @@
 ---
 name: dotnet-integration-testing
-description: "Tests with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures."
+description: Tests with real infrastructure. WebApplicationFactory, Testcontainers, Aspire, fixtures.
+license: MIT
 user-invocable: false
 ---
 

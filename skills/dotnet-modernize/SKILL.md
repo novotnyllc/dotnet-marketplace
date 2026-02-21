@@ -1,6 +1,7 @@
 ---
 name: dotnet-modernize
-description: "Analyzes .NET code for modernization. Outdated TFMs, deprecated packages, superseded patterns."
+description: Analyzes .NET code for modernization. Outdated TFMs, deprecated packages, superseded patterns.
+license: MIT
 ---
 
 # dotnet-modernize

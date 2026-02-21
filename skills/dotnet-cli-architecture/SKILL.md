@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-architecture
-description: "Structures CLI app layers. Command/handler/service separation, clig.dev principles, exit codes."
+description: Structures CLI app layers. Command/handler/service separation, clig.dev principles, exit codes.
+license: MIT
 user-invocable: false
 ---
 

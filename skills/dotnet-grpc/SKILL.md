@@ -1,6 +1,7 @@
 ---
 name: dotnet-grpc
-description: "Builds gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth."
+description: Builds gRPC services. Proto definition, code-gen, ASP.NET Core host, streaming, auth.
+license: MIT
 user-invocable: false
 ---
 

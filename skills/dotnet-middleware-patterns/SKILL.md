@@ -1,6 +1,7 @@
 ---
 name: dotnet-middleware-patterns
-description: "Builds ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling."
+description: Builds ASP.NET Core middleware. Pipeline ordering, short-circuit, exception handling.
+license: MIT
 user-invocable: false
 ---
 

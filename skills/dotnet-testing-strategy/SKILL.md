@@ -1,6 +1,7 @@
 ---
 name: dotnet-testing-strategy
-description: "Decides how to test .NET code. Unit vs integration vs E2E decision tree, test doubles."
+description: Decides how to test .NET code. Unit vs integration vs E2E decision tree, test doubles.
+license: MIT
 user-invocable: false
 ---
 

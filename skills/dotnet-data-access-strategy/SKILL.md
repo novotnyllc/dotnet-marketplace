@@ -1,6 +1,7 @@
 ---
 name: dotnet-data-access-strategy
-description: "Chooses a data access approach. EF Core vs Dapper vs ADO.NET decision matrix, tradeoffs."
+description: Chooses a data access approach. EF Core vs Dapper vs ADO.NET decision matrix, tradeoffs.
+license: MIT
 ---
 
 # dotnet-data-access-strategy

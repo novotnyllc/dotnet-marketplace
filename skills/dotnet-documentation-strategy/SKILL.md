@@ -1,6 +1,7 @@
 ---
 name: dotnet-documentation-strategy
-description: "Chooses documentation tooling. Starlight, Docusaurus, DocFX decision tree, migration paths."
+description: Chooses documentation tooling. Starlight, Docusaurus, DocFX decision tree, migration paths.
+license: MIT
 user-invocable: false
 ---
 

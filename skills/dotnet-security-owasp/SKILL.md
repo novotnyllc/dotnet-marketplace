@@ -1,6 +1,7 @@
 ---
 name: dotnet-security-owasp
-description: "Hardens .NET apps per OWASP Top 10: injection, auth, XSS, deprecated security APIs."
+description: Hardens .NET apps per OWASP Top 10 -- injection, auth, XSS, deprecated security APIs.
+license: MIT
 user-invocable: false
 ---
 

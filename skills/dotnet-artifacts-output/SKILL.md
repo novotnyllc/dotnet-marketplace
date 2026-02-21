@@ -1,6 +1,7 @@
 ---
 name: dotnet-artifacts-output
-description: "Configures artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker."
+description: Configures artifacts output layout. UseArtifactsOutput, ArtifactsPath, impact on CI and Docker.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-semantic-kernel
-description: "Integrates AI/LLM via Semantic Kernel. Plugins, prompt templates, memory stores, agents."
+description: Integrates AI/LLM via Semantic Kernel. Plugins, prompt templates, memory stores, agents.
+license: MIT
 user-invocable: false
 ---
 

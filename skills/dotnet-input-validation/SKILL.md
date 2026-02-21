@@ -1,6 +1,7 @@
 ---
 name: dotnet-input-validation
-description: "Validates HTTP request inputs. .NET 10 AddValidation, FluentValidation, ProblemDetails."
+description: Validates HTTP request inputs. .NET 10 AddValidation, FluentValidation, ProblemDetails.
+license: MIT
 user-invocable: false
 ---
 

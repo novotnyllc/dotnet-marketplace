@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-publish
-description: "Publishes .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts."
+description: Publishes .NET artifacts from Azure DevOps. NuGet push, containers to ACR, pipeline artifacts.
+license: MIT
 user-invocable: false
 ---
 

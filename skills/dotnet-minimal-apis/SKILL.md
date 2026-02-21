@@ -1,6 +1,7 @@
 ---
 name: dotnet-minimal-apis
-description: "Builds ASP.NET Core Minimal APIs: route groups, filters, TypedResults, OpenAPI."
+description: Builds ASP.NET Core Minimal APIs -- route groups, filters, TypedResults, OpenAPI.
+license: MIT
 user-invocable: false
 ---
 

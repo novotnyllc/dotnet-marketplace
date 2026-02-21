@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-patterns
-description: "Architects Blazor apps. Hosting models, render modes, routing, streaming, prerender."
+description: Architects Blazor apps. Hosting models, render modes, routing, streaming, prerender.
+license: MIT
 user-invocable: false
 ---
 

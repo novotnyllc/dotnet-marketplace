@@ -1,6 +1,7 @@
 ---
 name: dotnet-service-communication
-description: "Chooses inter-service protocols. REST vs gRPC vs SignalR vs SSE decision matrix, tradeoffs."
+description: Chooses inter-service protocols. REST vs gRPC vs SignalR vs SSE decision matrix, tradeoffs.
+license: MIT
 user-invocable: false
 ---
 

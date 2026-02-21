@@ -1,6 +1,7 @@
 ---
 name: dotnet-file-based-apps
-description: "Builds .NET 10 file-based C# apps: #: directives, CLI commands, csproj migration."
+description: Builds .NET 10 file-based C# apps. Directives, CLI commands, csproj migration.
+license: MIT
 user-invocable: false
 ---
 

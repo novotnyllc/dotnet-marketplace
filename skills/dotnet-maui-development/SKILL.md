@@ -1,6 +1,7 @@
 ---
 name: dotnet-maui-development
-description: "Builds .NET MAUI mobile apps. Project structure, XAML/MVVM, platform services, caveats."
+description: Builds .NET MAUI mobile apps. Project structure, XAML/MVVM, platform services, caveats.
+license: MIT
 user-invocable: false
 ---
 

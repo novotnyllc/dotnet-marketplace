@@ -1,6 +1,7 @@
 ---
 name: dotnet-roslyn-analyzers
-description: "Authors Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version."
+description: Authors Roslyn analyzers. DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring, multi-version.
+license: MIT
 user-invocable: false
 ---
 

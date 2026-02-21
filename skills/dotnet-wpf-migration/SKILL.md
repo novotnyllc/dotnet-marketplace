@@ -1,6 +1,7 @@
 ---
 name: dotnet-wpf-migration
-description: "Migrates desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI."
+description: Migrates desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-concurrency-patterns
-description: "Synchronizes threads and protects shared state. lock, SemaphoreSlim, Interlocked, concurrent collections."
+description: Synchronizes threads and protects shared state. lock, SemaphoreSlim, Interlocked, concurrent collections.
+license: MIT
 user-invocable: false
 ---
 

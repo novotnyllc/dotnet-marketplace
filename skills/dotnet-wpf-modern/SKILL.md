@@ -1,6 +1,7 @@
 ---
 name: dotnet-wpf-modern
-description: "Builds WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns."
+description: Builds WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns.
+license: MIT
 user-invocable: false
 ---
 

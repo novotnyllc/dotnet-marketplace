@@ -1,6 +1,7 @@
 ---
 name: dotnet-ci-benchmarking
-description: "Gates CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports."
+description: Gates CI on perf regressions. Automated threshold alerts, baseline tracking, trend reports.
+license: MIT
 user-invocable: false
 ---
 

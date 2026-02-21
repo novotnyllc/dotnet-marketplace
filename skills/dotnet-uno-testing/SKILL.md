@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-testing
-description: "Tests Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads."
+description: Tests Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads.
+license: MIT
 user-invocable: false
 ---
 

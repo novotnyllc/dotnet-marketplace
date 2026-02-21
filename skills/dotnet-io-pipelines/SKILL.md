@@ -1,6 +1,7 @@
 ---
 name: dotnet-io-pipelines
-description: "Builds high-perf network I/O. PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel."
+description: Builds high-perf network I/O. PipeReader/PipeWriter, backpressure, protocol parsers, Kestrel.
+license: MIT
 user-invocable: false
 ---
 

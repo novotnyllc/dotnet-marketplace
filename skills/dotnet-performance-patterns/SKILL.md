@@ -1,6 +1,7 @@
 ---
 name: dotnet-performance-patterns
-description: "Optimizes .NET allocations and throughput. Span, ArrayPool, ref struct, sealed, stackalloc."
+description: Optimizes .NET allocations and throughput. Span, ArrayPool, ref struct, sealed, stackalloc.
+license: MIT
 user-invocable: false
 ---
 

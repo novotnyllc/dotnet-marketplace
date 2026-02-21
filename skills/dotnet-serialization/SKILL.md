@@ -1,6 +1,7 @@
 ---
 name: dotnet-serialization
-description: "Serializes data. System.Text.Json source generators, Protobuf, MessagePack, AOT-safe patterns."
+description: Serializes data. System.Text.Json source generators, Protobuf, MessagePack, AOT-safe patterns.
+license: MIT
 user-invocable: false
 ---
 

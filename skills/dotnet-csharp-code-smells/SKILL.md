@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-code-smells
-description: "Detects C# code smells during review. Anti-patterns, async misuse, DI mistakes, fixes."
+description: Detects C# code smells during review. Anti-patterns, async misuse, DI mistakes, fixes.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-blazor-testing
-description: "Tests Blazor components. bUnit rendering, events, cascading params, JS interop mocking."
+description: Tests Blazor components. bUnit rendering, events, cascading params, JS interop mocking.
+license: MIT
 user-invocable: false
 ---
 

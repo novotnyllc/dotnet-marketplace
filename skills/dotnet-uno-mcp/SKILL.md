@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-mcp
-description: "Queries Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback."
+description: Queries Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback.
+license: MIT
 user-invocable: false
 ---
 

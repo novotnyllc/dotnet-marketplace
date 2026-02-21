@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-nullable-reference-types
-description: "Enables nullable reference types. Annotation strategies, migration, common agent mistakes."
+description: Enables nullable reference types. Annotation strategies, migration, common agent mistakes.
+license: MIT
 user-invocable: false
 ---
 

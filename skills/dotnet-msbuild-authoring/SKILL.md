@@ -1,6 +1,7 @@
 ---
 name: dotnet-msbuild-authoring
-description: "Authors MSBuild targets, props, conditions, incremental builds, and Directory.Build patterns."
+description: Authors MSBuild targets, props, conditions, incremental builds, and Directory.Build patterns.
+license: MIT
 user-invocable: false
 ---
 

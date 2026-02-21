@@ -1,6 +1,7 @@
 ---
 name: dotnet-nuget-authoring
-description: "Creates NuGet packages. SDK-style csproj, source generators, multi-TFM, symbols, signing."
+description: Creates NuGet packages. SDK-style csproj, source generators, multi-TFM, symbols, signing.
+license: MIT
 user-invocable: false
 ---
 

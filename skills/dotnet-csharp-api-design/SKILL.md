@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-api-design
-description: "Designs public .NET APIs. Naming, parameter ordering, return types, error patterns, extensions."
+description: Designs public .NET APIs. Naming, parameter ordering, return types, error patterns, extensions.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-project-analysis
-description: "Analyzes .NET solution layout and build config: .sln, .csproj, CPM."
+description: Analyzes .NET solution layout and build config -- .sln, .csproj, CPM.
+license: MIT
 user-invocable: false
 context: fork
 model: haiku

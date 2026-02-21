@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-dependency-injection
-description: "Registers and resolves services with MS DI. Keyed services, scopes, decoration, lifetimes."
+description: Registers and resolves services with MS DI. Keyed services, scopes, decoration, lifetimes.
+license: MIT
 user-invocable: false
 ---
 

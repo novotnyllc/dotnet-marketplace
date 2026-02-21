@@ -1,6 +1,7 @@
 ---
 name: dotnet-channels
-description: "Implements producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain."
+description: Implements producer/consumer queues. Channel<T>, bounded/unbounded, backpressure, drain.
+license: MIT
 user-invocable: false
 ---
 

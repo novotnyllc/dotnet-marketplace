@@ -1,6 +1,7 @@
 ---
 name: dotnet-efcore-architecture
-description: "Designs EF Core data layer architecture. Read/write split, aggregate boundaries, N+1 governance."
+description: Designs EF Core data layer architecture. Read/write split, aggregate boundaries, N+1 governance.
+license: MIT
 user-invocable: false
 ---
 

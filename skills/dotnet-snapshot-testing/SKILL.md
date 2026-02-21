@@ -1,6 +1,7 @@
 ---
 name: dotnet-snapshot-testing
-description: "Verifies complex outputs with Verify. API responses, scrubbing non-deterministic values."
+description: Verifies complex outputs with Verify. API responses, scrubbing non-deterministic values.
+license: MIT
 user-invocable: false
 ---
 

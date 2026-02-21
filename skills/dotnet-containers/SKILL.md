@@ -1,6 +1,7 @@
 ---
 name: dotnet-containers
-description: "Containerizes .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless."
+description: Containerizes .NET apps. Multi-stage Dockerfiles, SDK container publish (.NET 8+), rootless.
+license: MIT
 user-invocable: false
 ---
 

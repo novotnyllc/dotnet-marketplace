@@ -1,6 +1,7 @@
 ---
 name: dotnet-aot-architecture
-description: "Designs AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories."
+description: Designs AOT-first apps. Source gen over reflection, AOT-safe DI, serialization, factories.
+license: MIT
 user-invocable: false
 ---
 

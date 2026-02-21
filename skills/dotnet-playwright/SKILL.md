@@ -1,6 +1,7 @@
 ---
 name: dotnet-playwright
-description: "Automates browser tests in .NET. Playwright E2E, CI browser caching, trace viewer, codegen."
+description: Automates browser tests in .NET. Playwright E2E, CI browser caching, trace viewer, codegen.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-multi-targeting
-description: "Targets multiple TFMs via polyfills and conditional compilation. PolySharp, API compat."
+description: Targets multiple TFMs via polyfills and conditional compilation. PolySharp, API compat.
+license: MIT
 user-invocable: false
 ---
 

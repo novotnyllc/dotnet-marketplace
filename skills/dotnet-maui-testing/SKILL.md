@@ -1,6 +1,7 @@
 ---
 name: dotnet-maui-testing
-description: "Tests .NET MAUI apps. Appium device automation, XHarness, platform validation."
+description: Tests .NET MAUI apps. Appium device automation, XHarness, platform validation.
+license: MIT
 user-invocable: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-security
-description: "Secures ASP.NET Core APIs. Identity, OAuth/OIDC, JWT bearer, passkeys, CORS, rate limiting."
+description: Secures ASP.NET Core APIs. Identity, OAuth/OIDC, JWT bearer, passkeys, CORS, rate limiting.
+license: MIT
 user-invocable: false
 ---
 

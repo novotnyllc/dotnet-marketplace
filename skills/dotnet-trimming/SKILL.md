@@ -1,6 +1,7 @@
 ---
 name: dotnet-trimming
-description: "Trims .NET 8+ apps and libraries. Annotations, ILLink descriptors, IL2xxx warnings, IsTrimmable."
+description: Trims .NET 8+ apps and libraries. Annotations, ILLink descriptors, IL2xxx warnings, IsTrimmable.
+license: MIT
 user-invocable: false
 ---
 

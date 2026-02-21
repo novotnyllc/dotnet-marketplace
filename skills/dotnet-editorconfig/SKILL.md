@@ -1,6 +1,7 @@
 ---
 name: dotnet-editorconfig
-description: "Authors .editorconfig rules. IDE/CA severity, AnalysisLevel, globalconfig, code style enforcement."
+description: Authors .editorconfig rules. IDE/CA severity, AnalysisLevel, globalconfig, code style enforcement.
+license: MIT
 user-invocable: false
 ---
 

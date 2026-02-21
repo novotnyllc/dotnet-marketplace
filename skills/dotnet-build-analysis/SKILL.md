@@ -1,6 +1,7 @@
 ---
 name: dotnet-build-analysis
-description: "Interprets MSBuild output, NuGet errors, analyzer warnings. Error codes, CI drift."
+description: Interprets MSBuild output, NuGet errors, analyzer warnings. Error codes, CI drift.
+license: MIT
 user-invocable: false
 context: fork
 model: haiku

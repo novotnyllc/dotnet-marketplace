@@ -1,6 +1,7 @@
 ---
 name: dotnet-xml-docs
-description: "Writes XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression."
+description: Writes XML doc comments. Tags, inheritdoc, GenerateDocumentationFile, warning suppression.
+license: MIT
 user-invocable: false
 ---
 

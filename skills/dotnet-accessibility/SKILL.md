@@ -1,6 +1,7 @@
 ---
 name: dotnet-accessibility
-description: "Implements accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing per platform."
+description: Implements accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing per platform.
+license: MIT
 user-invocable: false
 ---
 

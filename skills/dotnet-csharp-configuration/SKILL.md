@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-configuration
-description: "Configures Options pattern, user secrets, and feature flags. IOptions<T>, FeatureManagement."
+description: Configures Options pattern, user secrets, and feature flags. IOptions<T>, FeatureManagement.
+license: MIT
 user-invocable: false
 ---
 

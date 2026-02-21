@@ -1,6 +1,7 @@
 ---
 name: dotnet-structured-logging
-description: "Designs log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation."
+description: Designs log pipelines. Aggregation, structured queries, sampling, PII scrubbing, correlation.
+license: MIT
 user-invocable: false
 ---
 

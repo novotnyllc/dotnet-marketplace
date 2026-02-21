@@ -1,6 +1,7 @@
 ---
 name: dotnet-library-api-compat
-description: "Maintains library compatibility. Binary/source compat rules, type forwarders, SemVer impact."
+description: Maintains library compatibility. Binary/source compat rules, type forwarders, SemVer impact.
+license: MIT
 user-invocable: false
 ---
 

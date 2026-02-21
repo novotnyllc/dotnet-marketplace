@@ -1,6 +1,7 @@
 ---
 name: dotnet-http-client
-description: "Consumes HTTP APIs. IHttpClientFactory, typed/named clients, resilience, DelegatingHandlers."
+description: Consumes HTTP APIs. IHttpClientFactory, typed/named clients, resilience, DelegatingHandlers.
+license: MIT
 user-invocable: false
 ---
 

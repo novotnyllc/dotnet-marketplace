@@ -1,6 +1,7 @@
 ---
 name: dotnet-ui-testing-core
-description: "Tests UI across frameworks. Page objects, test selectors, async waits, accessibility."
+description: Tests UI across frameworks. Page objects, test selectors, async waits, accessibility.
+license: MIT
 user-invocable: false
 ---
 

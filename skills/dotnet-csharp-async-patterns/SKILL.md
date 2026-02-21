@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-async-patterns
-description: "Writing async/await code. Task patterns, ConfigureAwait, cancellation, and common agent pitfalls."
+description: Writing async/await code. Task patterns, ConfigureAwait, cancellation, and common agent pitfalls.
+license: MIT
 user-invocable: false
 ---
 

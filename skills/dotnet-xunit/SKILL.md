@@ -1,6 +1,7 @@
 ---
 name: dotnet-xunit
-description: "Authors xUnit v3 tests: Facts, Theories, fixtures, parallelism, IAsyncLifetime."
+description: Authors xUnit v3 tests -- Facts, Theories, fixtures, parallelism, IAsyncLifetime.
+license: MIT
 user-invocable: false
 ---
 

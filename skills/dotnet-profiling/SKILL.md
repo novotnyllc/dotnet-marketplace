@@ -1,6 +1,7 @@
 ---
 name: dotnet-profiling
-description: "Diagnoses .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs."
+description: Diagnoses .NET performance issues. dotnet-counters, dotnet-trace, dotnet-dump, flame graphs.
+license: MIT
 user-invocable: false
 ---
 

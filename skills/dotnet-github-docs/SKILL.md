@@ -1,6 +1,7 @@
 ---
 name: dotnet-github-docs
-description: "Creates GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata."
+description: Creates GitHub-native docs. README badges, CONTRIBUTING, issue/PR templates, repo metadata.
+license: MIT
 user-invocable: false
 ---
 

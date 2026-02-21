@@ -1,6 +1,7 @@
 ---
 name: dotnet-winforms-basics
-description: "Builds WinForms on .NET 8+. High-DPI, dark mode (experimental), DI patterns, modernization."
+description: Builds WinForms on .NET 8+. High-DPI, dark mode (experimental), DI patterns, modernization.
+license: MIT
 user-invocable: false
 ---
 

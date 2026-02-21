@@ -1,6 +1,7 @@
 ---
 name: dotnet-linq-optimization
-description: "Optimizes LINQ queries. IQueryable vs IEnumerable, compiled queries, deferred exec, allocations."
+description: Optimizes LINQ queries. IQueryable vs IEnumerable, compiled queries, deferred exec, allocations.
+license: MIT
 user-invocable: false
 ---
 

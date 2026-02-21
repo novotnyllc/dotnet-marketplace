@@ -1,6 +1,7 @@
 ---
 name: dotnet-uno-targets
-description: "Deploys Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux."
+description: Deploys Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux.
+license: MIT
 user-invocable: false
 ---
 

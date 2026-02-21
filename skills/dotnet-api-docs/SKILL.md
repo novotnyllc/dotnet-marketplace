@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-docs
-description: "Generates API documentation. DocFX setup, OpenAPI-as-docs, doc-code sync, versioned docs."
+description: Generates API documentation. DocFX setup, OpenAPI-as-docs, doc-code sync, versioned docs.
+license: MIT
 user-invocable: false
 ---
 

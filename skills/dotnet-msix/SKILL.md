@@ -1,6 +1,7 @@
 ---
 name: dotnet-msix
-description: "Packages MSIX apps. Creation, signing, Store submission, App Installer sideload, auto-update."
+description: Packages MSIX apps. Creation, signing, Store submission, App Installer sideload, auto-update.
+license: MIT
 user-invocable: false
 ---
 

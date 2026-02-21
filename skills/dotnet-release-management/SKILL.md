@@ -1,6 +1,7 @@
 ---
 name: dotnet-release-management
-description: "Manages .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching."
+description: Manages .NET release lifecycle. NBGV versioning, SemVer, changelogs, pre-release, branching.
+license: MIT
 user-invocable: false
 ---
 

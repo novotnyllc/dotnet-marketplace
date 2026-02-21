@@ -1,6 +1,7 @@
 ---
 name: dotnet-aspire-patterns
-description: "Orchestrates .NET Aspire apps. AppHost, service discovery, components, dashboard, health checks."
+description: Orchestrates .NET Aspire apps. AppHost, service discovery, components, dashboard, health checks.
+license: MIT
 user-invocable: false
 ---
 

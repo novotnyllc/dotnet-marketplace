@@ -1,6 +1,7 @@
 ---
 name: dotnet-solution-navigation
-description: "Orients in .NET solutions: entry points, .sln/.slnx, dependency graphs, config."
+description: Orients in .NET solutions -- entry points, .sln/.slnx, dependency graphs, config.
+license: MIT
 user-invocable: false
 context: fork
 model: haiku

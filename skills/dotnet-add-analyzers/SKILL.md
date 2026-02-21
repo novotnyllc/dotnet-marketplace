@@ -1,6 +1,7 @@
 ---
 name: dotnet-add-analyzers
-description: "Adds analyzer packages to a project. Nullable, trimming, AOT compat analyzers, severity config."
+description: Adds analyzer packages to a project. Nullable, trimming, AOT compat analyzers, severity config.
+license: MIT
 ---
 
 # dotnet-add-analyzers

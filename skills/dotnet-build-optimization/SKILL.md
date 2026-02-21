@@ -1,6 +1,7 @@
 ---
 name: dotnet-build-optimization
-description: "Diagnoses slow builds and incremental failures. Binary logs, parallel builds, restore."
+description: Diagnoses slow builds and incremental failures. Binary logs, parallel builds, restore.
+license: MIT
 user-invocable: false
 ---
 

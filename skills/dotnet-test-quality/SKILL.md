@@ -1,6 +1,7 @@
 ---
 name: dotnet-test-quality
-description: "Measures test effectiveness. Coverlet code coverage, Stryker.NET mutation testing, flaky tests."
+description: Measures test effectiveness. Coverlet code coverage, Stryker.NET mutation testing, flaky tests.
+license: MIT
 user-invocable: false
 ---
 

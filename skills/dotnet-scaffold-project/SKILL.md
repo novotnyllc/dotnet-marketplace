@@ -1,6 +1,7 @@
 ---
 name: dotnet-scaffold-project
-description: "Creates a new .NET project. Generates solution with CPM, analyzers, editorconfig, SourceLink."
+description: Creates a new .NET project. Generates solution with CPM, analyzers, editorconfig, SourceLink.
+license: MIT
 ---
 
 # dotnet-scaffold-project

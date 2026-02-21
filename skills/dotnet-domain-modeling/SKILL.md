@@ -1,6 +1,7 @@
 ---
 name: dotnet-domain-modeling
-description: "Models business domains. Aggregates, value objects, domain events, rich models, repositories."
+description: Models business domains. Aggregates, value objects, domain events, rich models, repositories.
+license: MIT
 user-invocable: false
 ---
 

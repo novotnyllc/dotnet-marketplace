@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-build-test
-description: "Configures .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results."
+description: Configures .NET build/test in Azure DevOps. DotNetCoreCLI task, Artifacts, test results.
+license: MIT
 user-invocable: false
 ---
 

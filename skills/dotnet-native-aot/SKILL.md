@@ -1,6 +1,7 @@
 ---
 name: dotnet-native-aot
-description: "Publishes Native AOT binaries. PublishAot, ILLink descriptors, P/Invoke, size optimization."
+description: Publishes Native AOT binaries. PublishAot, ILLink descriptors, P/Invoke, size optimization.
+license: MIT
 user-invocable: false
 ---
 

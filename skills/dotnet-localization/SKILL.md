@@ -1,6 +1,7 @@
 ---
 name: dotnet-localization
-description: "Localizes .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL."
+description: Localizes .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL.
+license: MIT
 user-invocable: false
 ---
 

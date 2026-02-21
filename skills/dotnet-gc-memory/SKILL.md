@@ -1,6 +1,7 @@
 ---
 name: dotnet-gc-memory
-description: "Tunes GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool."
+description: Tunes GC and memory. GC modes, LOH/POH, Gen0/1/2, Span/Memory deep patterns, ArrayPool.
+license: MIT
 user-invocable: false
 ---
 

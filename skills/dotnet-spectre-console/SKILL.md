@@ -1,6 +1,7 @@
 ---
 name: dotnet-spectre-console
-description: "Renders rich console output. Spectre.Console tables, trees, progress, prompts, live displays."
+description: Renders rich console output. Spectre.Console tables, trees, progress, prompts, live displays.
+license: MIT
 user-invocable: false
 ---
 

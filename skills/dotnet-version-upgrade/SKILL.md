@@ -1,6 +1,7 @@
 ---
 name: dotnet-version-upgrade
-description: "Upgrades .NET to a newer TFM. LTS-to-LTS, staged through STS, preview, upgrade paths."
+description: Upgrades .NET to a newer TFM. LTS-to-LTS, staged through STS, preview, upgrade paths.
+license: MIT
 ---
 
 # dotnet-version-upgrade

@@ -1,6 +1,7 @@
 ---
 name: dotnet-cli-release-pipeline
-description: "Releases CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums."
+description: Releases CLI tools. GitHub Actions build matrix, artifact staging, Releases, checksums.
+license: MIT
 user-invocable: false
 ---
 

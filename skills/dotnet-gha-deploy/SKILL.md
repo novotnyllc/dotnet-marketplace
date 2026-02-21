@@ -1,6 +1,7 @@
 ---
 name: dotnet-gha-deploy
-description: "Deploys .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries."
+description: Deploys .NET from GitHub Actions. Azure Web Apps, GitHub Pages, container registries.
+license: MIT
 user-invocable: false
 ---
 

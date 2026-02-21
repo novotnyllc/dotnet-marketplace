@@ -1,6 +1,7 @@
 ---
 name: dotnet-add-ci
-description: "Adds CI/CD to a .NET project. GitHub Actions vs Azure DevOps detection, workflow templates."
+description: Adds CI/CD to a .NET project. GitHub Actions vs Azure DevOps detection, workflow templates.
+license: MIT
 ---
 
 # dotnet-add-ci

@@ -1,6 +1,7 @@
 ---
 name: dotnet-background-services
-description: "Implements background work. BackgroundService, IHostedService, lifecycle, graceful shutdown."
+description: Implements background work. BackgroundService, IHostedService, lifecycle, graceful shutdown.
+license: MIT
 user-invocable: false
 ---
 

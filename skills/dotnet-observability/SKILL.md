@@ -1,6 +1,7 @@
 ---
 name: dotnet-observability
-description: "Adds observability. OpenTelemetry traces/metrics/logs, health checks, custom metrics."
+description: Adds observability. OpenTelemetry traces/metrics/logs, health checks, custom metrics.
+license: MIT
 user-invocable: false
 ---
 

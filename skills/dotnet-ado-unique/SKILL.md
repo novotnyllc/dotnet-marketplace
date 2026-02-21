@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-unique
-description: "Configures ADO-exclusive features. Environments, approvals, service connections, pipelines."
+description: Configures ADO-exclusive features. Environments, approvals, service connections, pipelines.
+license: MIT
 user-invocable: false
 ---
 

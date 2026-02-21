@@ -1,6 +1,7 @@
 ---
 name: dotnet-ado-patterns
-description: "Composes Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers."
+description: Composes Azure DevOps YAML pipelines. Templates, variable groups, multi-stage, triggers.
+license: MIT
 user-invocable: false
 ---
 

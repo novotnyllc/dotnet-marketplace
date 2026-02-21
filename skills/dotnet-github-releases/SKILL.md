@@ -1,6 +1,7 @@
 ---
 name: dotnet-github-releases
-description: "Creates GitHub Releases for .NET. Release creation, assets, notes, pre-release management."
+description: Creates GitHub Releases for .NET. Release creation, assets, notes, pre-release management.
+license: MIT
 user-invocable: false
 ---
 

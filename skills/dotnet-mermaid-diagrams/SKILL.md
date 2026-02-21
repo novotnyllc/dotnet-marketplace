@@ -1,6 +1,7 @@
 ---
 name: dotnet-mermaid-diagrams
-description: "Creates Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts."
+description: Creates Mermaid diagrams for .NET. Architecture, sequence, class, deployment, ER, flowcharts.
+license: MIT
 user-invocable: false
 ---
 

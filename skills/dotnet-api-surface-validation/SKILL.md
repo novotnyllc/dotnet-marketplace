@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-surface-validation
-description: "Detects API surface changes in CI. PublicApiAnalyzers, Verify snapshots, ApiCompat gating."
+description: Detects API surface changes in CI. PublicApiAnalyzers, Verify snapshots, ApiCompat gating.
+license: MIT
 user-invocable: false
 ---
 

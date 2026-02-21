@@ -1,6 +1,7 @@
 ---
 name: dotnet-agent-gotchas
-description: "Flags agent mistakes in .NET code: async misuse, NuGet errors, deprecated APIs, DI."
+description: Flags agent mistakes in .NET code -- async misuse, NuGet errors, deprecated APIs, DI.
+license: MIT
 user-invocable: false
 ---
 

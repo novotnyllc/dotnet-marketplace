@@ -1,6 +1,7 @@
 ---
 name: dotnet-api-versioning
-description: "Versions HTTP APIs. Asp.Versioning.Http/Mvc, URL segment, header, query string, sunset."
+description: Versions HTTP APIs. Asp.Versioning.Http/Mvc, URL segment, header, query string, sunset.
+license: MIT
 user-invocable: false
 ---
 

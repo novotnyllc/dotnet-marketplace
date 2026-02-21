@@ -1,6 +1,7 @@
 ---
 name: dotnet-winui
-description: "Builds WinUI 3 desktop apps. Windows App SDK, XAML patterns, MSIX/unpackaged, UWP migration."
+description: Builds WinUI 3 desktop apps. Windows App SDK, XAML patterns, MSIX/unpackaged, UWP migration.
+license: MIT
 user-invocable: false
 ---
 

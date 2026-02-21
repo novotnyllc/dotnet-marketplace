@@ -1,6 +1,7 @@
 ---
 name: dotnet-solid-principles
-description: "Applies SOLID and DRY principles. C# anti-patterns, fixes, SRP compliance checks."
+description: Applies SOLID and DRY principles. C# anti-patterns, fixes, SRP compliance checks.
+license: MIT
 user-invocable: false
 ---
 

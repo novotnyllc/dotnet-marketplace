@@ -1,6 +1,7 @@
 ---
 name: dotnet-csharp-source-generators
-description: "Creates Roslyn source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ."
+description: Creates Roslyn source generators. IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ.
+license: MIT
 user-invocable: false
 ---
 

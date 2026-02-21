@@ -1,6 +1,7 @@
 ---
 name: dotnet-benchmarkdotnet
-description: "Runs BenchmarkDotNet microbenchmarks. Setup, memory diagnosers, baselines, result analysis."
+description: Runs BenchmarkDotNet microbenchmarks. Setup, memory diagnosers, baselines, result analysis.
+license: MIT
 user-invocable: false
 ---
 
