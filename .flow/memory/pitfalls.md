@@ -402,3 +402,6 @@ When documenting behaviors observed in upstream issue trackers (not locally meas
 
 ## 2026-02-21 manual [pitfall]
 When updating required-fields lists in one doc, grep ALL docs for the same field list pattern and update them all atomically -- partial updates create contributor-facing inconsistencies that reviewers catch across rounds
+
+## 2026-02-21 manual [pitfall]
+When spec says 'verify X behavior' and the tool IS available locally, run the actual test and capture output as evidence — reviewers will block on 'deferred to later' if the tool is present

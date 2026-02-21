@@ -1,7 +1,7 @@
 {
   "branch_name": "fn-56-copilot-structural-compatibility",
-  "completion_review_status": "unknown",
-  "completion_reviewed_at": null,
+  "completion_review_status": "ship",
+  "completion_reviewed_at": "2026-02-21T04:10:47.857390Z",
   "created_at": "2026-02-21T00:03:13.475656Z",
   "default_impl": null,
   "default_review": null,
@@ -12,7 +12,7 @@
   "plan_review_status": "ship",
   "plan_reviewed_at": "2026-02-21T01:11:56.290916Z",
   "spec_path": ".flow/specs/fn-56-copilot-structural-compatibility.md",
-  "status": "open",
+  "status": "done",
   "title": "Copilot Structural Compatibility",
-  "updated_at": "2026-02-21T01:11:56.291470Z"
+  "updated_at": "2026-02-21T04:11:25.569188Z"
 }
