@@ -393,3 +393,27 @@ When a validation rule checks 'at least one item has property X', do not guard i
 
 ## 2026-02-20 manual [pitfall]
 Negative control test cases (disallowed/optional skills) must use temptation prompts that naturally overlap with the disallowed/optional skill domain -- prompts that avoid the domain will never trigger the skill, making the test case untestable
+
+## 2026-02-21 manual [pitfall]
+When scanning raw frontmatter lines for key patterns, only check column-0 (non-indented) lines -- indented lines may be block scalar content and produce false positives on key-like patterns
+
+## 2026-02-21 manual [pitfall]
+When documenting behaviors observed in upstream issue trackers (not locally measured), use qualified language like 'upstream reports suggest' and 'implementation-defined' rather than 'verified' or definitive claims -- reviewers flag overclaimed verification
+
+## 2026-02-21 manual [pitfall]
+When updating required-fields lists in one doc, grep ALL docs for the same field list pattern and update them all atomically -- partial updates create contributor-facing inconsistencies that reviewers catch across rounds
+
+## 2026-02-21 manual [pitfall]
+When spec says 'verify X behavior' and the tool IS available locally, run the actual test and capture output as evidence — reviewers will block on 'deferred to later' if the tool is present
+
+## 2026-02-21 manual [pitfall]
+When a CI comparison script silently degrades on missing data (e.g. ref baseline not found), it can bypass the regression gate entirely -- always hard-fail on missing inputs that would disable the gate
+
+## 2026-02-21 manual [pitfall]
+In GitHub Actions steps with 'set -euo pipefail', capturing exit codes (cmd; EXIT=$?) is dead code -- the shell exits on non-zero before the assignment. Use 'set +e' before the command, then 'set -e' after capturing the exit code.
+
+## 2026-02-21 manual [pitfall]
+GitHub Actions expressions like github.event.pull_request.head.repo.fork are undefined on push events (not just null). Jobs referencing PR-only context must guard with 'if: github.event_name == pull_request' or use null-safe expressions.
+
+## 2026-02-21 manual [pitfall]
+Heredocs inside GitHub Actions YAML 'run:' blocks break YAML parsing when the delimiter (e.g. PY, EOF) appears at column 1. Use single-line python -c commands or write to a temp script file instead.

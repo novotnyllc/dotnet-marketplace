@@ -125,8 +125,9 @@ prepare_codex_skills() {
 
     local -a skill_dirs=()
     while IFS= read -r skill_dir; do
+        [[ -f "$skill_dir/SKILL.md" ]] || continue
         skill_dirs+=("$skill_dir")
-    done < <(find "$REPO_ROOT/skills" -mindepth 2 -maxdepth 2 -type d | sort)
+    done < <(find "$REPO_ROOT/skills" -mindepth 1 -maxdepth 1 -type d | sort)
 
     local total_skills="${#skill_dirs[@]}"
     if (( total_skills == 0 )); then
@@ -199,7 +200,10 @@ Runner options (passed through to check-skills.cs):
   --agents <csv>            Agents filter (default: claude,codex,copilot)
   --category <csv>          Category filter
   --case-id <csv>           Case-id filter
-  --timeout-seconds <int>   Per-invocation timeout (default: 90)
+  --timeout-seconds <int>   Global per-invocation timeout (default: 300)
+  --provider-model <p:m>    Per-provider model (e.g. copilot:gpt-4.1, claude:sonnet)
+  --provider-timeout <p:s>  Per-provider timeout in seconds (e.g. copilot:300)
+  --sample <N>              Randomly sample N cases after filtering
   --max-parallel <int>      Max concurrent runs (default: 4; env MAX_CONCURRENCY fallback)
   --artifacts-root <path>   Base directory for per-batch artifact isolation
                             (default: tests/agent-routing/artifacts)

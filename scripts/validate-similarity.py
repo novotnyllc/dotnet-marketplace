@@ -2,20 +2,19 @@
 """Semantic similarity overlap detection for dotnet-artisan skill and agent descriptions.
 
 Computes pairwise semantic similarity using a multi-signal composite score:
-  composite = 0.4 * set_jaccard + 0.4 * seqmatcher + (0.15 if same_category else 0.0)
+  composite = 0.5 * set_jaccard + 0.5 * seqmatcher
 
 Signals:
-  1. Set Jaccard (0.4 weight): tokenize -> lowercase -> strip domain stopwords -> set ->
+  1. Set Jaccard (0.5 weight): tokenize -> lowercase -> strip domain stopwords -> set ->
      |A & B| / |A | B|
-  2. SequenceMatcher ratio (0.4 weight): difflib.SequenceMatcher on raw descriptions
-  3. Same-category adjustment (+0.15 additive): flat boost for items in same category dir
+  2. SequenceMatcher ratio (0.5 weight): difflib.SequenceMatcher on raw descriptions
 
 Exit codes:
   0: No unsuppressed ERRORs AND no new WARNs vs baseline
   1: Unsuppressed ERROR pairs exist, OR new WARN+ pairs not in baseline/suppressions
   2: Script error (bad args, missing files)
 
-Task: fn-53-skill-routing-language-hardening.13
+Task: fn-53-skill-routing-language-hardening.13, fn-56-copilot-structural-compatibility.3
 """
 
 import argparse
@@ -72,31 +71,35 @@ def seqmatcher_ratio(desc_a: str, desc_b: str) -> float:
     return difflib.SequenceMatcher(a=desc_a, b=desc_b).ratio()
 
 
-def composite_score(
-    jaccard: float, seqmatch: float, same_category: bool
-) -> float:
-    """Compute composite similarity score per epic spec formula."""
-    return 0.4 * jaccard + 0.4 * seqmatch + (0.15 if same_category else 0.0)
+def composite_score(jaccard: float, seqmatch: float) -> float:
+    """Compute composite similarity score.
+
+    After the flat layout migration (fn-56), the same-category boost was
+    removed because all skills share the same parent directory (skills/).
+    Weights are now 0.5/0.5 for the two remaining signals.
+    """
+    return 0.5 * jaccard + 0.5 * seqmatch
 
 
 # ---- Description collection ----
 
 def collect_skill_descriptions(repo_root: Path) -> list[dict]:
-    """Collect skill ID, description, and category from all SKILL.md files."""
+    """Collect skill ID and description from all SKILL.md files.
+
+    Uses ``*/SKILL.md`` glob (flat layout -- one level deep under skills/).
+    """
     skills_dir = repo_root / "skills"
     if not skills_dir.is_dir():
         print(f"ERROR: skills directory not found: {skills_dir}", file=sys.stderr)
         sys.exit(2)
 
     items = []
-    for skill_md in sorted(skills_dir.glob("*/*/SKILL.md")):
+    for skill_md in sorted(skills_dir.glob("*/SKILL.md")):
         skill_id = skill_md.parent.name
-        category = skill_md.parent.parent.name
         description = _parse_skill_description(skill_md) or ""
         items.append({
             "id": skill_id,
             "description": description,
-            "category": category,
         })
     return items
 
@@ -132,7 +135,7 @@ def _parse_skill_description(skill_md: Path) -> str | None:
 
 
 def collect_agent_descriptions(repo_root: Path) -> list[dict]:
-    """Collect agent ID, description, and category from all agent .md files.
+    """Collect agent ID and description from all agent .md files.
 
     Uses the shared _agent_frontmatter.py module (T3). Falls back to
     skills-only mode with stderr warning if the module is not available.
@@ -163,7 +166,6 @@ def collect_agent_descriptions(repo_root: Path) -> list[dict]:
         items.append({
             "id": agent_id,
             "description": description,
-            "category": "agents",
         })
     return items
 
@@ -325,8 +327,7 @@ def compute_all_pairs(
             seqmatch = seqmatcher_ratio(
                 items[idx_a]["description"], items[idx_b]["description"]
             )
-            same_cat = items[idx_a]["category"] == items[idx_b]["category"]
-            comp = composite_score(jaccard, seqmatch, same_cat)
+            comp = composite_score(jaccard, seqmatch)
 
             canonical_pair = (id_a, id_b)
             is_suppressed = canonical_pair in suppressions
@@ -352,7 +353,6 @@ def compute_all_pairs(
                 "composite": round(comp, 6),
                 "jaccard": round(jaccard, 6),
                 "seqmatcher": round(seqmatch, 6),
-                "same_category": same_cat,
                 "level": level,
             })
 
@@ -449,9 +449,9 @@ def main() -> int:
 
     # Detect duplicate IDs (skill dir name colliding with agent file stem)
     seen_ids: dict[str, str] = {}
-    for item in all_items:
+    for idx, item in enumerate(all_items):
         item_id = item["id"]
-        source = "skill" if item["category"] != "agents" else "agent"
+        source = "skill" if idx < len(skill_items) else "agent"
         if item_id in seen_ids:
             print(
                 f"ERROR: ID collision between {seen_ids[item_id]} and {source}: "

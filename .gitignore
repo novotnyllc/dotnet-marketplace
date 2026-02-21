@@ -485,3 +485,6 @@ $RECYCLE.BIN/
 # Ralph ephemeral run logs
 scripts/ralph/runs/
 .claude/settings.local.json
+
+# Smoke test output
+tests/copilot-smoke/results*.json

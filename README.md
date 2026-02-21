@@ -4,11 +4,11 @@
 
 [![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 130 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 131 skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -21,6 +21,8 @@ The plugin covers the full breadth of the .NET ecosystem:
 
 ## Installation
 
+### Claude Code
+
 From within Claude Code, run:
 
 ```
@@ -29,9 +31,23 @@ From within Claude Code, run:
 
 Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
 
+### GitHub Copilot CLI
+
+Install the plugin as a Copilot skill:
+
+```bash
+copilot skill install novotnyllc/dotnet-artisan@dotnet-artisan
+```
+
+The flat `skills/<skill-name>/` layout is compatible with Copilot's one-level-deep skill scanning.
+
+### OpenAI Codex
+
+Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+
 ## Skill Catalog
 
-The plugin organizes 130 skills into 22 categories. Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 131 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
@@ -57,6 +73,7 @@ The plugin organizes 130 skills into 22 categories. Each skill follows the Agent
 | **Localization** | 1 | dotnet-localization |
 | **Build System** | 3 | dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization |
 | **AI** | 1 | dotnet-semantic-kernel |
+| **Debugging** | 1 | dotnet-windbg-debugging |
 
 ## Agents
 
@@ -106,7 +123,7 @@ graph TB
             CR[code-review-agent]
         end
 
-        subgraph Skills["22 Skill Categories / 130 Skills"]
+        subgraph Skills["131 Skills"]
             F[Foundation<br/>4 skills]
             CC[Core C#<br/>18 skills]
             PS[Project Structure<br/>7 skills]
@@ -129,6 +146,7 @@ graph TB
             LO[Localization<br/>1 skill]
             BSys[Build System<br/>3 skills]
             AI[AI<br/>1 skill]
+            DB[Debugging<br/>1 skill]
         end
 
         subgraph Infra["Infrastructure"]

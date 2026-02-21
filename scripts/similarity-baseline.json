@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "_comment": "Empty pairs is correct: max composite score (0.5416) is below WARN threshold (0.55). Regenerate after description changes with: python3 scripts/validate-similarity.py --repo-root . --suppressions scripts/similarity-suppressions.json 2>/dev/null | python3 -c \"import json,sys; d=json.load(sys.stdin); print(json.dumps({'version':1,'pairs':sorted([p['id_a'],p['id_b']] for p in d['pairs'] if p['level'] in ('WARN','ERROR'))},indent=2))\"",
+  "_comment": "Regenerated for flat layout (fn-56.3). Max composite score (0.48945) is below WARN threshold (0.55). Same-category boost removed; scoring is now 0.5*jaccard + 0.5*seqmatcher. Regenerate after description changes with: python3 scripts/validate-similarity.py --repo-root . --suppressions scripts/similarity-suppressions.json 2>/dev/null | python3 -c \"import json,sys; d=json.load(sys.stdin); print(json.dumps({'version':1,'pairs':sorted([p['id_a'],p['id_b']] for p in d['pairs'] if p['level'] in ('WARN','ERROR'))},indent=2))\"",
   "pairs": []
 }

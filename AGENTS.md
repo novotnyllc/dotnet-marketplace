@@ -25,28 +25,32 @@ This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead o
 <!-- END FLOW-NEXT -->
 
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 130 skills across 22 categories and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 131 skills and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
 ### SKILL.md Frontmatter
 
-Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
+Every skill requires `name`, `description`, and `license` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
 name: dotnet-example-skill
 description: One-line summary under 120 characters
+license: MIT
 user-invocable: false
 ---
 ```
 
 **Required fields:**
 - `name` (string) -- must match the directory name
-- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 130 skills)
+- `description` (string) -- target under 120 characters (WARN at 12,000 total, FAIL at 15,600)
+- `license` (string) -- must be `MIT`; required by Copilot CLI
+
+**Required by repo policy:**
+- `user-invocable` (boolean) -- must be explicitly set on every skill (`true` or `false`); required for cross-provider predictability
 
 **Optional fields:**
-- `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
 - `disable-model-invocation` (boolean) -- set to `true` to prevent Claude from loading the skill
 - `context` (string) -- set to `fork` for isolated execution without conversation history
 - `model` (string) -- model override, e.g. `haiku` for lightweight detection tasks
@@ -74,7 +78,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 ## File Structure
 
 ```
-skills/<category>/<skill-name>/SKILL.md   # 130 skills across 22 categories
+skills/<skill-name>/SKILL.md               # 131 skills (flat layout)
 agents/<agent-name>.md                     # 14 specialist agents
 hooks/hooks.json                           # Session hooks (start context, post-edit)
 .mcp.json                                  # MCP server integrations
@@ -86,7 +90,7 @@ docs/                                      # Plugin-specific documentation
 ```
 
 Key directories:
-- **`skills/`** -- All skill content organized by category (foundation, core-csharp, architecture, testing, etc.)
+- **`skills/`** -- All skill content in a flat layout (one directory per skill, no category subdirectories)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
 - **`hooks/`** -- Session lifecycle hooks
 - **`scripts/`** -- Hook shell scripts
@@ -112,7 +116,7 @@ Run both in sequence:
 
 ## Development Workflow
 
-1. **Edit skills** -- Modify or create `SKILL.md` files under `skills/<category>/<skill-name>/`
+1. **Edit skills** -- Modify or create `SKILL.md` files under `skills/<skill-name>/`
 2. **Register in plugin.json** -- Add new skill paths to the `skills` array in `.claude-plugin/plugin.json`
 3. **Validate locally** -- Run both validation commands above
 4. **Commit** -- Use conventional commit messages with appropriate scope

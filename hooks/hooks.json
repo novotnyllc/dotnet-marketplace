@@ -1,4 +1,5 @@
 {
+  "version": 1,
   "description": "dotnet-artisan: smart defaults for .NET development",
   "hooks": {
     "PostToolUse": [

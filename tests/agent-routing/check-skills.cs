@@ -154,6 +154,17 @@ internal sealed class AgentRoutingRunner
             ];
         }
 
+        if (_options.SampleSize is > 0)
+        {
+            var seed = Environment.TickCount;
+            LogProgress($"Sampling {_options.SampleSize.Value} cases (seed={seed}) from {cases.Count} available.");
+            var rng = new Random(seed);
+            cases =
+            [
+                .. cases.OrderBy(_ => rng.Next()).Take(_options.SampleSize.Value)
+            ];
+        }
+
         if (cases.Count == 0)
         {
             Console.Error.WriteLine("ERROR: No cases to execute after filtering.");
@@ -391,7 +402,8 @@ internal sealed class AgentRoutingRunner
         var startedAtUtc = DateTimeOffset.UtcNow;
         var started = Stopwatch.StartNew();
 
-        var template = ResolveAgentTemplate(agent);
+        _options.ProviderModels.TryGetValue(agent, out var providerModel);
+        var template = ResolveAgentTemplate(agent, providerModel);
         if (string.IsNullOrWhiteSpace(template))
         {
             return AgentResult.Infra(
@@ -406,7 +418,8 @@ internal sealed class AgentRoutingRunner
 
         var shell = ResolveShell();
         var command = BuildShellCommand(template, testCase.Prompt, shell.UsePowerShellQuoting);
-        var exec = await ExecuteCommandAsync(shell, command, _options.TimeoutSeconds);
+        var timeout = _options.ProviderTimeouts.TryGetValue(agent, out var pt) ? pt : _options.TimeoutSeconds;
+        var exec = await ExecuteCommandAsync(shell, command, timeout);
         var combined = CombineOutput(exec.Stdout, exec.Stderr);
 
         if (!exec.Started)
@@ -633,20 +646,31 @@ internal sealed class AgentRoutingRunner
             disallowedGatingHits: disallowedGatingHits);
     }
 
-    private static string ResolveAgentTemplate(string agent)
+    private static string ResolveAgentTemplate(string agent, string? model)
     {
         var env = Environment.GetEnvironmentVariable($"AGENT_{agent.ToUpperInvariant()}_TEMPLATE");
         if (!string.IsNullOrWhiteSpace(env))
         {
-            return env;
+            return model is not null ? AppendModelFlag(agent, env, model) : env;
         }
 
-        return agent switch
+        var template = agent switch
         {
             "claude" => "claude -p --verbose --output-format stream-json --include-partial-messages --permission-mode bypassPermissions {prompt} --disallowed-tools AskUserQuestion --disallowed-tools EnterPlanMode",
             "codex" => "codex -a never exec --json {prompt}",
             "copilot" => "copilot -p {prompt} --allow-all-tools --no-ask-user --log-level debug",
             _ => string.Empty
+        };
+
+        return model is not null && template.Length > 0 ? AppendModelFlag(agent, template, model) : template;
+    }
+
+    private static string AppendModelFlag(string agent, string template, string model)
+    {
+        return agent switch
+        {
+            "codex" => $"{template} -m {model}",
+            _ => $"{template} --model {model}" // claude, copilot
         };
     }
 
@@ -2006,7 +2030,7 @@ internal sealed class RunnerOptions
     public string? OutputPath { get; init; }
     public string? ProofLogPath { get; init; }
     public string ArtifactsRoot { get; init; } = "tests/agent-routing/artifacts";
-    public int TimeoutSeconds { get; init; } = 90;
+    public int TimeoutSeconds { get; init; } = 300;
     public int MaxParallel { get; init; } = 4;
     public int LogMaxFiles { get; init; } = 60;
     public int LogMaxBytes { get; init; } = 300_000;
@@ -2019,6 +2043,9 @@ internal sealed class RunnerOptions
     public HashSet<string> Agents { get; init; } = new(StringComparer.OrdinalIgnoreCase);
     public HashSet<string> Categories { get; init; } = new(StringComparer.OrdinalIgnoreCase);
     public HashSet<string> CaseIds { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+    public Dictionary<string, string> ProviderModels { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+    public Dictionary<string, int> ProviderTimeouts { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+    public int? SampleSize { get; init; }
 
     public static RunnerOptions Parse(string[] args)
     {
@@ -2026,7 +2053,7 @@ internal sealed class RunnerOptions
         string? output = null;
         string? proofLog = null;
         string artifactsRoot = "tests/agent-routing/artifacts";
-        int timeoutSeconds = 90;
+        int timeoutSeconds = 300;
         int logMaxFiles = 60;
         int logMaxBytes = 300_000;
         bool progress = true;
@@ -2035,6 +2062,9 @@ internal sealed class RunnerOptions
         var agents = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var categories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var caseIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var providerModels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var providerTimeouts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        int? sampleSize = null;
 
         // MAX_CONCURRENCY: default 4, env fallback, --max-parallel flag precedence
         int maxParallel = 4;
@@ -2108,6 +2138,15 @@ internal sealed class RunnerOptions
                 case "--case-id":
                     AddCsv(ReadValue(args, ref i, arg), caseIds);
                     break;
+                case "--provider-model":
+                    ParseProviderKv(ReadValue(args, ref i, "--provider-model"), providerModels, "--provider-model");
+                    break;
+                case "--provider-timeout":
+                    ParseProviderTimeout(ReadValue(args, ref i, "--provider-timeout"), providerTimeouts);
+                    break;
+                case "--sample":
+                    sampleSize = ParsePositiveInt(ReadValue(args, ref i, "--sample"), "--sample");
+                    break;
                 case "--run-all":
                     break;
                 case "--fail-on-infra":
@@ -2139,7 +2178,10 @@ internal sealed class RunnerOptions
             ShowHelp = showHelp,
             Agents = agents,
             Categories = categories,
-            CaseIds = caseIds
+            CaseIds = caseIds,
+            ProviderModels = providerModels,
+            ProviderTimeouts = providerTimeouts,
+            SampleSize = sampleSize
         };
     }
 
@@ -2172,6 +2214,32 @@ internal sealed class RunnerOptions
         }
     }
 
+    private static void ParseProviderKv(string raw, Dictionary<string, string> target, string flag)
+    {
+        var colonIndex = raw.IndexOf(':');
+        if (colonIndex <= 0 || colonIndex >= raw.Length - 1)
+        {
+            throw new ArgumentException($"Invalid {flag} format: '{raw}' (expected provider:value)");
+        }
+
+        var provider = raw[..colonIndex].Trim();
+        var value = raw[(colonIndex + 1)..].Trim();
+        target[provider] = value;
+    }
+
+    private static void ParseProviderTimeout(string raw, Dictionary<string, int> target)
+    {
+        var colonIndex = raw.IndexOf(':');
+        if (colonIndex <= 0 || colonIndex >= raw.Length - 1)
+        {
+            throw new ArgumentException($"Invalid --provider-timeout format: '{raw}' (expected provider:seconds)");
+        }
+
+        var provider = raw[..colonIndex].Trim();
+        var seconds = ParsePositiveInt(raw[(colonIndex + 1)..].Trim(), "--provider-timeout");
+        target[provider] = seconds;
+    }
+
     public static void PrintHelp()
     {
         Console.WriteLine(
@@ -2186,7 +2254,12 @@ internal sealed class RunnerOptions
               --agents <csv>            Agents filter (default: claude,codex,copilot)
               --category <csv>          Category filter
               --case-id <csv>           Case-id filter
-              --timeout-seconds <int>   Per-invocation timeout (default: 90)
+              --timeout-seconds <int>   Global per-invocation timeout (default: 300)
+              --provider-model <p:m>    Per-provider model override (e.g. copilot:gpt-4.1)
+                                        Claude: --model <m>  Codex: -m <m>  Copilot: --model <m>
+              --provider-timeout <p:s>  Per-provider timeout in seconds (e.g. copilot:300)
+                                        Falls back to --timeout-seconds when not set for a provider
+              --sample <N>              Randomly sample N cases after filtering (deterministic seed)
               --max-parallel <int>      Max concurrent case/agent runs (default: 4)
                                         Precedence: --max-parallel flag > MAX_CONCURRENCY env > default 4
               --log-max-files <int>     Max recent log files scanned (default: 60)
