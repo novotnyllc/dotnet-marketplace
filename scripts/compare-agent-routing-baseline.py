@@ -140,39 +140,36 @@ def compare(
                 row_delta = "MISSING_BASELINE"
                 continue
 
-            # If no ref baseline, everything present in current but absent
-            # from ref is NEW coverage (per decision: new entries absent from
-            # baseline ref treated as 'new coverage', not hard failures).
-            if ref_baseline is None:
-                if row_delta == "OK":
-                    row_delta = "NEW"
-                continue
+            # Validate against current baseline expectations (the "what do we
+            # expect today" contract)
+            cur_expected = current_entry.get("expected_status", "pass")
+            cur_allow_timeout = current_entry.get("allow_timeout", False)
 
-            ref_entry = ref_baseline.get(case_id, {}).get(provider)
-            if ref_entry is None:
-                if row_delta == "OK":
-                    row_delta = "NEW"
-                continue
-
-            # Regression comparison
-            ref_expected = ref_entry.get("expected_status", "pass")
-            ref_allow_timeout = ref_entry.get("allow_timeout", False)
-
-            # pass -> fail/infra_error regression
-            if ref_expected == "pass" and status in ("fail", "infra_error"):
+            if cur_expected == "pass" and status in ("fail", "infra_error"):
                 regressions.append(f"{case_id}/{provider}: expected pass, got {status}")
                 row_delta = "REGRESSION"
 
-            # Timeout regression
-            if timed_out and not ref_allow_timeout:
+            if timed_out and not cur_allow_timeout:
                 regressions.append(f"{case_id}/{provider}: timed out but allow_timeout=false")
                 row_delta = "REGRESSION"
 
-            # Improvement (fail -> pass)
-            if ref_expected in ("fail", "infra_error") and status == "pass":
-                improvements.append(f"{case_id}/{provider}")
+            # Ref-baseline comparison for regression/improvement reporting
+            if ref_baseline is None:
+                ref_entry = None
+            else:
+                ref_entry = ref_baseline.get(case_id, {}).get(provider)
+
+            if ref_entry is None:
+                # New coverage (absent from ref baseline)
                 if row_delta == "OK":
-                    row_delta = "IMPROVEMENT"
+                    row_delta = "NEW"
+            else:
+                ref_expected = ref_entry.get("expected_status", "pass")
+                # Improvement: ref expected fail but now passes
+                if ref_expected in ("fail", "infra_error") and status == "pass":
+                    improvements.append(f"{case_id}/{provider}")
+                    if row_delta == "OK":
+                        row_delta = "IMPROVEMENT"
 
         if row_delta == "NEW":
             new_entries.append(case_id)

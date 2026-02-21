@@ -104,11 +104,15 @@ def resolve_skill_path(skill_path_str: str) -> Path | None:
 
 
 def extract_skill_path(entry: str | dict) -> str | None:
-    """Extract skill path string from a plugin.json entry."""
+    """Extract skill path string from a plugin.json entry.
+
+    Returns None for unrecognized types or missing/empty paths.
+    """
     if isinstance(entry, str):
-        return entry
+        return entry if entry.strip() else None
     if isinstance(entry, dict):
-        return entry.get("path", "")
+        path = entry.get("path", "")
+        return path if path and path.strip() else None
     return None
 
 
@@ -121,10 +125,11 @@ def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
 
     missing_paths = []
     bad_paths = []
+    not_dirs = []
     for entry in skills_list:
         skill_path = extract_skill_path(entry)
         if skill_path is None:
-            errors.append(f"Unexpected skill entry type: {type(entry)}")
+            bad_paths.append(repr(entry))
             continue
 
         full = resolve_skill_path(skill_path)
@@ -132,17 +137,25 @@ def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
             bad_paths.append(skill_path)
         elif not full.exists():
             missing_paths.append(skill_path)
+        elif not full.is_dir():
+            not_dirs.append(skill_path)
 
     if bad_paths:
         errors.append(
-            f"{len(bad_paths)} plugin.json skill path(s) have unsafe values "
-            f"(absolute or traversal): {bad_paths[:5]}{'...' if len(bad_paths) > 5 else ''}"
+            f"{len(bad_paths)} plugin.json skill entry/path(s) are invalid "
+            f"(missing, empty, absolute, or traversal): {bad_paths[:5]}{'...' if len(bad_paths) > 5 else ''}"
         )
 
     if missing_paths:
         errors.append(
             f"{len(missing_paths)} plugin.json skill path(s) do not resolve: "
             f"{missing_paths[:5]}{'...' if len(missing_paths) > 5 else ''}"
+        )
+
+    if not_dirs:
+        errors.append(
+            f"{len(not_dirs)} plugin.json skill path(s) are not directories: "
+            f"{not_dirs[:5]}{'...' if len(not_dirs) > 5 else ''}"
         )
 
 
@@ -281,11 +294,14 @@ def check_copilot(skill_dirs: list[Path]) -> list[str]:
     return errors
 
 
-def run_checks(providers: list[str]) -> dict:
-    """Run structural checks for specified providers."""
+def run_checks(providers: list[str]) -> dict | None:
+    """Run structural checks for specified providers.
+
+    Returns None if skills/ directory is missing (fatal precondition).
+    """
     if not SKILLS_DIR.is_dir():
         print(f"ERROR: skills/ directory not found at {SKILLS_DIR}", file=sys.stderr)
-        return {"_error": {"status": "fail", "errors": [f"skills/ not found at {SKILLS_DIR}"], "skill_count": 0}}
+        return None
 
     skill_dirs = discover_skill_dirs()
     results = {}
@@ -335,6 +351,10 @@ def main() -> int:
         return 2
 
     results = run_checks(providers)
+
+    # Fatal: skills/ directory missing
+    if results is None:
+        return 1
 
     # If no recognized providers produced results, treat as usage error
     if not results:
