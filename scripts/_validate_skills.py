@@ -84,6 +84,10 @@ FIELD_TYPES = {
     "model": str,
 }
 
+# Keys that must always be treated as strings (skip bool/null scalar coercion).
+# Derived from FIELD_TYPES so the sets stay in sync automatically.
+STRING_TYPED_KEYS = {k for k, v in FIELD_TYPES.items() if v is str}
+
 # Filler phrases that reduce description routing quality.
 # Case-insensitive patterns matched against the description text.
 # "Covers" was the only instance found by the fn-49.1 audit; others are preventive.
@@ -184,6 +188,15 @@ def parse_frontmatter(text: str) -> dict:
             raise ValueError(
                 f"line {i + 2}: sequences not allowed in frontmatter"
             )
+
+        # String-typed keys skip scalar coercion. This prevents unquoted
+        # description/name/license/context/model values like "yes", "no",
+        # "true", "false", "null" from being coerced to bool/None, which
+        # would cause type-validation errors downstream.
+        if key in STRING_TYPED_KEYS:
+            result[key] = raw_value if raw_value else None
+            i += 1
+            continue
 
         # Handle booleans and other scalars
         if raw_value.lower() in ("true", "yes"):
@@ -341,9 +354,12 @@ def process_file(path: str) -> dict:
     # These operate on raw bytes/text to catch issues the YAML parser would miss.
     copilot_errors = []
 
-    # BOM check: UTF-8 BOM causes silent Copilot CLI parse failures
+    # BOM check: UTF-8 BOM causes silent Copilot CLI parse failures.
+    # Strip BOM for parsing so downstream checks still run and surface
+    # all errors (not just "missing opening ---").
     if content.startswith("\ufeff"):
         copilot_errors.append("file starts with UTF-8 BOM (Copilot CLI bug)")
+        content = content.lstrip("\ufeff")
 
     # Normalize CRLF to LF
     content = content.replace("\r\n", "\n").replace("\r", "\n")
@@ -369,9 +385,12 @@ def process_file(path: str) -> dict:
 
     # Quoted description check: Copilot CLI #1024 fails on quoted descriptions.
     # Uses raw-line inspection since YAML parser strips quotes.
+    # Only check column-0 lines (non-indented) to avoid false positives on
+    # indented content inside block scalars (e.g. context: |).
     for fm_line in fm_lines:
-        stripped_fm = fm_line.strip()
-        if re.match(r'description\s*:\s*["\']', stripped_fm):
+        if fm_line and fm_line[0] in (" ", "\t"):
+            continue  # Skip indented lines (block scalar content)
+        if re.match(r'description\s*:\s*["\']', fm_line):
             copilot_errors.append(
                 "quoted description value (Copilot CLI #1024 breaks on quoted descriptions)"
             )
@@ -379,13 +398,15 @@ def process_file(path: str) -> dict:
 
     # metadata-ordering check: Copilot CLI #951 reports that metadata: as the
     # last frontmatter key causes silent skill drop. Conservative enforcement:
-    # ERROR if metadata: is the last non-blank key in frontmatter.
-    # Verified with Copilot CLI v0.0.412: `copilot plugin install` accepted both
-    # metadata-last and metadata-not-last test skills (2 skills installed).
-    # Runtime loading could not be tested in non-interactive CLI; conservative
-    # "ERROR if metadata is last key" enforced as a preventive guard.
+    # ERROR if metadata: is the last non-blank top-level key in frontmatter.
+    # Install verified with Copilot CLI v0.0.412 (both test skills accepted);
+    # runtime load not verified in non-interactive CLI. Conservative guard
+    # enforced as preventive measure pending full runtime evidence.
+    # Only scan column-0 lines to avoid false positives on block scalar content.
     last_key = None
     for fm_line in fm_lines:
+        if fm_line and fm_line[0] in (" ", "\t"):
+            continue  # Skip indented lines (block scalar content)
         stripped_fm = fm_line.strip()
         if not stripped_fm or stripped_fm.startswith("#"):
             continue
@@ -403,10 +424,12 @@ def process_file(path: str) -> dict:
     except ValueError as e:
         return {"path": path, "valid": False, "error": str(e)}
 
-    # Missing license check: Copilot CLI #894 effectively requires license field
-    if "license" not in parsed:
+    # License check: Copilot CLI #894 effectively requires a non-empty license field.
+    # Check both presence and non-empty string value (empty license: parses to None).
+    license_raw = parsed.get("license")
+    if not isinstance(license_raw, str) or not license_raw.strip():
         copilot_errors.append(
-            "missing license field in frontmatter (Copilot CLI #894 requires license)"
+            "license field must be a non-empty string in frontmatter (Copilot CLI #894)"
         )
 
     # Extract and type-validate required fields
