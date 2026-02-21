@@ -38,7 +38,7 @@ Cross-references: See [skill:dotnet-csharp-coding-standards] for baseline C# con
 Open `.claude-plugin/plugin.json` and add your skill path to the `skills` array:
 
 ```json
-"skills/dotnet-my-new-skill"
+"./skills/dotnet-my-new-skill"
 ```
 
 **Step 4 -- Validate:**
@@ -112,7 +112,9 @@ This keeps the primary skill lean while making extended content available to age
 
 ### Copilot CLI 32-Skill Display Limit
 
-GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). We treat the exact ordering as **implementation-defined** until confirmed with repo-local measurement for the specific Copilot version under test. Skills beyond the cutoff may not be discoverable by the model.
+GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
+
+**Verification status:** The structural routing strategy below is based on upstream issue reports and Copilot CLI source analysis. Runtime verification (exact cutoff, ordering, and `user-invocable: false` exclusion behavior) is tracked in fn-57 (Copilot testing epic). Use the verification procedure at the end of this section to confirm behavior for the specific Copilot version under test.
 
 **Current status (131 skills, 11 user-invocable):**
 
@@ -138,7 +140,7 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 2. **Do not rename `dotnet-advisor`** to anything that sorts late alphabetically among all skills. The name is chosen to sort early in the `dotnet-*` namespace.
 3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
 4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
-5. **Treat skill ordering as implementation-defined.** Upstream reports suggest alphabetical ordering ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464)), but verify against the Copilot version you are testing. If you create a new user-invocable skill, check its alphabetical position relative to the full skill list as a conservative estimate.
+5. **Treat skill ordering as implementation-defined until runtime-verified.** Upstream reports suggest alphabetical ordering ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464)). Runtime verification is tracked in fn-57. If you create a new user-invocable skill, check its alphabetical position relative to the full skill list as a conservative estimate.
 
 **Verification procedure:**
 

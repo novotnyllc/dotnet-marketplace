@@ -28,6 +28,7 @@ Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
   19. Quoted description detection via raw-line regex (Copilot CLI #1024)
   20. Missing license field (Copilot CLI #894 requires license)
   21. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
+  22. Missing user-invocable field (repo policy requires explicit true/false)
 
 Checks (agents):
   22. Agent bare-ref detection using known IDs allowlist (informational)
@@ -399,9 +400,11 @@ def process_file(path: str) -> dict:
     # metadata-ordering check: Copilot CLI #951 reports that metadata: as the
     # last frontmatter key causes silent skill drop. Conservative enforcement:
     # ERROR if metadata: is the last non-blank top-level key in frontmatter.
-    # Install verified with Copilot CLI v0.0.412 (both test skills accepted);
-    # runtime load not verified in non-interactive CLI. Conservative guard
-    # enforced as preventive measure pending full runtime evidence.
+    # Per fn-56 spec: "verify exact behavior with test skills before implementing;
+    # falls back to conservative guard if CLI unavailable." Install-time parse
+    # verified with Copilot CLI v0.0.412 (test skills accepted). Runtime load
+    # verification deferred to fn-57 (Copilot testing epic). Conservative guard
+    # enforced per spec fallback policy.
     # Only scan column-0 lines to avoid false positives on block scalar content.
     last_key = None
     for fm_line in fm_lines:
@@ -430,6 +433,13 @@ def process_file(path: str) -> dict:
     if not isinstance(license_raw, str) or not license_raw.strip():
         copilot_errors.append(
             "license field must be a non-empty string in frontmatter (Copilot CLI #894)"
+        )
+
+    # user-invocable presence check: repo policy requires explicit true/false on
+    # every skill for cross-provider predictability (prevents regression after fn-56.4).
+    if "user-invocable" not in parsed:
+        copilot_errors.append(
+            "missing user-invocable field (repo policy requires explicit true or false)"
         )
 
     # Extract and type-validate required fields

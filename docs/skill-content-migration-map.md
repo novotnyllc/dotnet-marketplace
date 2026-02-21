@@ -1,5 +1,7 @@
 # Skill Content Migration Map
 
+> **Historical document (fn-53).** Counts in this report reflect the catalog at the time of the fn-53 audit (130 skills). The current canonical skill count is 131 (dotnet-windbg-debugging was added after this audit).
+
 Content-preservation verification for the Skill Routing Language Hardening epic (fn-53).
 Generated as part of T11 (Content-Preservation Verification).
 
