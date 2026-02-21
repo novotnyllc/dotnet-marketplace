@@ -11,7 +11,7 @@ on:
         description: 'Fail the workflow when infra_error results are present'
         required: false
         type: boolean
-        default: false
+        default: true
       baseline_ref:
         description: 'Git ref for baseline comparison (default: main)'
         required: false
@@ -48,7 +48,6 @@ jobs:
     needs: [structural-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    continue-on-error: ${{ matrix.agent == 'copilot' }}
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +68,7 @@ jobs:
         env:
           INPUT_CATEGORIES: ${{ github.event.inputs.categories }}
           INPUT_FAIL_ON_INFRA: ${{ github.event.inputs.fail_on_infra }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -uo pipefail
 
@@ -78,7 +78,11 @@ jobs:
             ARGS+=(--category "$INPUT_CATEGORIES")
           fi
 
-          if [ "${INPUT_FAIL_ON_INFRA:-false}" = "true" ]; then
+          # Schedule runs: hard-code fail_on_infra=true (no inputs available).
+          # Manual runs: use the input value (default changed to true).
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            ARGS+=(--fail-on-infra)
+          elif [ "${INPUT_FAIL_ON_INFRA:-true}" = "true" ]; then
             ARGS+=(--fail-on-infra)
           fi
 
@@ -159,6 +163,9 @@ jobs:
           python-version: '3.12'
 
       - name: Run regression comparison
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_FAIL_ON_INFRA: ${{ github.event.inputs.fail_on_infra }}
         run: |
           set -euo pipefail
 
@@ -172,3 +179,34 @@ jobs:
 
           # Also print to stdout for log visibility
           cat delta-report.md
+
+          # Determine fail_on_infra policy for infra_error handling
+          FAIL_ON_INFRA="true"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "${INPUT_FAIL_ON_INFRA:-true}" = "false" ]; then
+            FAIL_ON_INFRA="false"
+          fi
+
+          # Check for infra_error results and apply policy
+          INFRA_COUNT=0
+          if [ -d downloaded-artifacts ]; then
+            INFRA_COUNT=$(find downloaded-artifacts -name 'results.json' -exec python3 -c "
+          import json, sys
+          count = 0
+          for path in sys.argv[1:]:
+              data = json.load(open(path))
+              count += sum(1 for r in data.get('results', []) if r.get('status') == 'infra_error')
+          print(count)
+          " {} + 2>/dev/null || echo "0")
+          fi
+
+          if [ "$INFRA_COUNT" -gt 0 ]; then
+            if [ "$FAIL_ON_INFRA" = "true" ]; then
+              echo ""
+              echo "FAILED: $INFRA_COUNT infra_error result(s) detected with fail_on_infra=true"
+              echo "  (schedule runs and workflow_dispatch default both enforce fail_on_infra=true)"
+              exit 1
+            else
+              echo ""
+              echo "WARNING: $INFRA_COUNT infra_error result(s) skipped (fail_on_infra=false, manual override)"
+            fi
+          fi

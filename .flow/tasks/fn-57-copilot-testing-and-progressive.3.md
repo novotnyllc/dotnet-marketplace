@@ -61,3 +61,10 @@ For each oversized skill:
 - [ ] `./scripts/validate-skills.sh` passes after changes
 - [ ] `find skills -name SKILL.md -exec sh -c 'lines=$(wc -l < "$1"); [ "$lines" -gt 500 ] && echo "$1: $lines"' _ {} \;` returns zero matches
 - [ ] Sibling file naming follows existing convention (reference/, examples.md, details.md)
+
+## Done summary
+Refactored 11 oversized SKILL.md files (>500 lines) into progressive disclosure format: extracted detailed code examples to sibling examples.md files while retaining routing essentials (scope, OOS, cross-references, agent gotchas) in core SKILL.md files, all now under 500 lines. Validation passes (131 skills, PASSED).
+## Evidence
+- Commits: 2cf0d19f0b80d9ba56dd9bedec452440ca9446ed
+- Tests: ./scripts/validate-skills.sh, line count check: all 11 skills under 500 lines
+- PRs:

@@ -227,6 +227,20 @@ jobs:
 
           echo "OK: All version locations are consistent ($PLUGIN_VERSION)"
 
+      - name: Assert skill count
+        run: |
+          set -euo pipefail
+          echo "=== Skill Count Assertion ==="
+          EXPECTED=131
+          ACTUAL=$(find skills -name SKILL.md -maxdepth 2 | wc -l | tr -d ' ')
+          echo "Expected: $EXPECTED"
+          echo "Actual:   $ACTUAL"
+          if [ "$ACTUAL" -ne "$EXPECTED" ]; then
+            echo "FAIL: Skill count mismatch (expected $EXPECTED, found $ACTUAL)"
+            exit 1
+          fi
+          echo "OK: Skill count matches ($ACTUAL)"
+
       - name: Write job summary
         if: always()
         run: |
@@ -257,3 +271,181 @@ jobs:
           echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | informational |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline + suppressions |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 (unsuppressed) |" >> "$GITHUB_STEP_SUMMARY"
+
+  copilot-smoke:
+    name: Copilot smoke tests
+    needs: [validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    # "Soft infra, hard functional" policy:
+    # - Fork PRs or missing auth: produce infra_error results, exit 0
+    # - Non-fork PRs with auth: infra_error is a failure (--require-copilot)
+    env:
+      # Pinned Copilot CLI version for reproducibility
+      COPILOT_CLI_VERSION: "0.0.412"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Detect fork and auth availability
+        id: detect-env
+        run: |
+          set -euo pipefail
+          IS_FORK="${{ github.event.pull_request.head.repo.fork || 'false' }}"
+          echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
+
+          # Check if COPILOT_TOKEN secret is available (non-fork PRs should have it)
+          if [ -n "${COPILOT_TOKEN:-}" ]; then
+            echo "has_auth=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_auth=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Determine if Copilot is required (non-fork with potential auth)
+          if [ "$IS_FORK" = "true" ]; then
+            echo "require_copilot=false" >> "$GITHUB_OUTPUT"
+            echo "skip_reason=fork PR (no access to secrets)" >> "$GITHUB_OUTPUT"
+          else
+            echo "require_copilot=true" >> "$GITHUB_OUTPUT"
+            echo "skip_reason=" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          COPILOT_TOKEN: ${{ secrets.COPILOT_TOKEN }}
+
+      - name: Install Copilot CLI
+        id: install-copilot
+        if: steps.detect-env.outputs.is_fork != 'true'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          echo "=== Installing Copilot CLI v${COPILOT_CLI_VERSION} ==="
+          npm install -g @github/copilot-cli@${COPILOT_CLI_VERSION} 2>/dev/null || \
+            npm install -g copilot-cli@${COPILOT_CLI_VERSION} 2>/dev/null || {
+              echo "WARNING: Pinned install failed, trying unversioned..."
+              npm install -g @github/copilot-cli 2>/dev/null || \
+                npm install -g copilot-cli 2>/dev/null || {
+                  echo "copilot_installed=false" >> "$GITHUB_OUTPUT"
+                  echo "ERROR: All Copilot CLI install methods failed"
+                  exit 1
+                }
+            }
+
+          echo ""
+          COPILOT_VERSION="$(copilot --version 2>/dev/null || echo 'unknown')"
+          echo "Copilot CLI version: $COPILOT_VERSION"
+          echo "copilot_installed=true" >> "$GITHUB_OUTPUT"
+          echo "copilot_version=$COPILOT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Health check (copilot --version)
+        id: health-check
+        if: steps.install-copilot.outcome == 'success'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          copilot --version
+          echo "health=ok" >> "$GITHUB_OUTPUT"
+
+      - name: Register plugin
+        id: register-plugin
+        if: steps.health-check.outcome == 'success'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          REPO_ROOT="$(pwd)"
+
+          # Use same mechanism as test.sh:prepare_copilot_plugin()
+          copilot plugin marketplace add "$REPO_ROOT"
+          copilot plugin install dotnet-artisan@dotnet-artisan 2>/dev/null || \
+            copilot plugin update dotnet-artisan@dotnet-artisan 2>/dev/null || true
+
+          # Verify discovery
+          if copilot plugin marketplace list | grep -F "dotnet-artisan"; then
+            echo "registered=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "registered=false" >> "$GITHUB_OUTPUT"
+            echo "ERROR: dotnet-artisan not found in marketplace list"
+            exit 1
+          fi
+
+      - name: Run Copilot smoke tests
+        id: smoke-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+
+          SMOKE_ARGS=()
+          # Only run deterministic (non-flaky) cases for PR gating
+          # Categories: direct, negative (skip advisor-routed and progressive-disclosure as flaky)
+          SMOKE_ARGS+=(--category "direct,negative")
+          SMOKE_ARGS+=(--output "tests/copilot-smoke/ci-results.json")
+
+          # Fork or infra failure: skip gracefully
+          IS_FORK="${{ steps.detect-env.outputs.is_fork }}"
+          COPILOT_READY="false"
+          if [ "${{ steps.register-plugin.outcome }}" = "success" ]; then
+            COPILOT_READY="true"
+          fi
+
+          if [ "$IS_FORK" = "true" ] || [ "$COPILOT_READY" != "true" ]; then
+            echo "::notice::Copilot skipped (${{ steps.detect-env.outputs.skip_reason || 'Copilot not available' }})"
+
+            # Produce synthetic infra_error results for baseline comparison
+            python tests/copilot-smoke/run_smoke.py \
+              "${SMOKE_ARGS[@]}" || true
+
+            echo "smoke_status=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Non-fork with Copilot available: require it
+          SMOKE_ARGS+=(--require-copilot)
+
+          python tests/copilot-smoke/run_smoke.py "${SMOKE_ARGS[@]}"
+          SMOKE_EXIT=$?
+
+          if [ "$SMOKE_EXIT" -eq 0 ]; then
+            echo "smoke_status=passed" >> "$GITHUB_OUTPUT"
+          elif [ "$SMOKE_EXIT" -eq 2 ]; then
+            # Exit 2 = infra_error with --require-copilot
+            echo "smoke_status=infra_error" >> "$GITHUB_OUTPUT"
+            exit 1
+          else
+            echo "smoke_status=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Upload smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-smoke-results
+          path: tests/copilot-smoke/ci-results*.json
+          if-no-files-found: warn
+
+      - name: Write smoke summary
+        if: always()
+        run: |
+          echo "## Copilot Smoke Tests" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Setting | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Fork PR | ${{ steps.detect-env.outputs.is_fork }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Copilot installed | ${{ steps.install-copilot.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Health check | ${{ steps.health-check.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Plugin registered | ${{ steps.register-plugin.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Smoke status | ${{ steps.smoke-run.outputs.smoke_status || 'unknown' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Copilot version | ${{ steps.install-copilot.outputs.copilot_version || 'N/A' }} |" >> "$GITHUB_STEP_SUMMARY"
