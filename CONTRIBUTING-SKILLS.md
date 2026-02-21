@@ -22,6 +22,8 @@ mkdir -p skills/dotnet-my-new-skill
 ---
 name: dotnet-my-new-skill
 description: Detects common pitfalls in X during C# development
+license: MIT
+user-invocable: false
 ---
 
 # dotnet-my-new-skill
@@ -73,6 +75,8 @@ A skill file has two parts: **frontmatter** and **body**.
 ---
 name: dotnet-csharp-code-smells
 description: Detects code smells and anti-patterns in C# code during writing and review
+license: MIT
+user-invocable: false
 ---
 
 # dotnet-csharp-code-smells
@@ -86,12 +90,13 @@ Body content starts here...
 |-------|----------|------|-------|
 | `name` | Yes | string | Must match directory name exactly |
 | `description` | Yes | string | Target under 120 characters (see section 3) |
+| `license` | Yes | string | Must be `MIT` for this repo. Required by Copilot CLI for skill loading. |
 | `user-invocable` | No | boolean | Set to `false` to hide from the `/` menu. Default: `true` (visible). Use for reference/convention skills that should not be directly invoked by users. |
 | `disable-model-invocation` | No | boolean | Set to `true` to prevent Claude from loading the skill. The description is excluded from the context budget. Use only for non-guidance meta-skills. |
 | `context` | No | string | Execution context. Set to `fork` for self-contained detection/analysis skills that do not need conversation history. |
 | `model` | No | string | Model override. Set to `haiku` for lightweight detection tasks that do not require full reasoning. Only meaningful with `context: fork`. |
 
-Only `name` and `description` are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
+The `name`, `description`, and `license` fields are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
 
 **Important:** All skills must have an explicit `user-invocable` field (either `true` or `false`). Do not omit it and rely on the default. This ensures predictable behavior across all agent runtimes.
 
@@ -179,18 +184,18 @@ description: Helps with code quality stuff
 
 Each description must be **at most 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 131 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,720 characters (FAIL threshold = 131 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 131 skills, the projected maximum is 15,720 characters (131 * 120). The validator enforces a stricter FAIL threshold at 15,600 characters as a buffer. The WARN threshold is 12,000 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 
 ```
 CURRENT_DESC_CHARS=11595
-PROJECTED_DESC_CHARS=15600
+PROJECTED_DESC_CHARS=15720
 BUDGET_STATUS=OK
 ```
 
 - **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
-- **PROJECTED_DESC_CHARS** is informational (130 * 120 = 15,600). It is not part of `BUDGET_STATUS` determination.
+- **PROJECTED_DESC_CHARS** is informational (131 * 120 = 15,720). Not part of `BUDGET_STATUS` determination. The validator uses a stricter FAIL threshold (15,600) as a buffer.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
 
@@ -408,7 +413,7 @@ The file must be named exactly `SKILL.md` (uppercase). The validation script loo
 - Frontmatter must be enclosed between two `---` lines
 - The `name` value must match the directory name exactly
 - Do not quote descriptions -- Copilot CLI requires unquoted YAML values for reliable parsing
-- Only use recognized frontmatter fields: `name`, `description`, `user-invocable`, `disable-model-invocation`, `context`, `model`
+- Only use recognized frontmatter fields: `name`, `description`, `license`, `user-invocable`, `disable-model-invocation`, `context`, `model`
 - Boolean fields (`user-invocable`, `disable-model-invocation`) must use bare `true`/`false`, not quoted strings
 
 ### Skill Not Triggering

@@ -31,12 +31,13 @@ For example: `skills/dotnet-csharp-async-patterns/SKILL.md`
 
 ### SKILL.md Frontmatter
 
-Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
+Every skill requires `name`, `description`, and `license` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
 name: dotnet-csharp-async-patterns
 description: Async/await patterns, cancellation, and parallel execution in modern C#
+license: MIT
 user-invocable: false
 ---
 ```
@@ -44,6 +45,7 @@ user-invocable: false
 **Required fields:**
 - **`name`** (string) -- Unique skill identifier, must match the directory name
 - **`description`** (string) -- One-line summary; target under 120 characters
+- **`license`** (string) -- Must be `MIT`; required by Copilot CLI for skill loading
 
 **Optional fields:**
 - **`user-invocable`** (boolean) -- Set to `false` to hide from the `/` menu; default `true`

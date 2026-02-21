@@ -31,12 +31,13 @@ This directory contains **dotnet-artisan**, a Claude Code plugin providing 131 s
 
 ### SKILL.md Frontmatter
 
-Every skill requires `name` and `description` frontmatter fields. Additional optional fields control skill visibility and execution:
+Every skill requires `name`, `description`, and `license` frontmatter fields. Additional optional fields control skill visibility and execution:
 
 ```yaml
 ---
 name: dotnet-example-skill
 description: One-line summary under 120 characters
+license: MIT
 user-invocable: false
 ---
 ```
@@ -44,6 +45,7 @@ user-invocable: false
 **Required fields:**
 - `name` (string) -- must match the directory name
 - `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 131 skills)
+- `license` (string) -- must be `MIT`; required by Copilot CLI
 
 **Optional fields:**
 - `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
