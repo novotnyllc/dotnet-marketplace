@@ -91,7 +91,7 @@ Body content starts here...
 | `name` | Yes | string | Must match directory name exactly |
 | `description` | Yes | string | Target under 120 characters (see section 3) |
 | `license` | Yes | string | Must be `MIT` for this repo. Required by Copilot CLI for skill loading. |
-| `user-invocable` | No | boolean | Set to `false` to hide from the `/` menu. Default: `true` (visible). Use for reference/convention skills that should not be directly invoked by users. |
+| `user-invocable` | Yes (repo policy) | boolean | Must be explicitly set on every skill (`true` or `false`). Set to `false` to hide from the `/` menu. Not required by the upstream Agent Skills spec, but required in this repo for cross-provider predictability. |
 | `disable-model-invocation` | No | boolean | Set to `true` to prevent Claude from loading the skill. The description is excluded from the context budget. Use only for non-guidance meta-skills. |
 | `context` | No | string | Execution context. Set to `fork` for self-contained detection/analysis skills that do not need conversation history. |
 | `model` | No | string | Model override. Set to `haiku` for lightweight detection tasks that do not require full reasoning. Only meaningful with `context: fork`. |

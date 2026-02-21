@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Flat skill directory layout** -- Migrated from `skills/<category>/<skill-name>/` to `skills/<skill-name>/` to support cross-provider discovery (Claude Code, Copilot CLI, Codex).
+- **Flat skill directory layout** -- Migrated from the prior nested category layout to flat `skills/<skill-name>/` to support cross-provider discovery (Claude Code, Copilot CLI, Codex).
 - **Frontmatter migration** -- Removed quoted descriptions and added `license: MIT` across all 131 skills for Copilot CLI compatibility.
 - **Similarity scoring** -- Removed same-category boost from similarity detection (no longer applicable with flat layout).
 - **Updated documentation** -- AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, README.md, and docs updated for flat layout, Copilot compatibility, and canonical skill count of 131.
