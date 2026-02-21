@@ -63,11 +63,8 @@ Create Copilot-specific activation smoke tests that prove skills are discovered,
 - [x] Runner supports two modes: (1) default — skip with `infra_error` status and warning if Copilot not installed (exit 0); (2) `--require-copilot` — output `infra_error` and exit non-zero if Copilot unavailable (used by CI to enforce the gate on non-fork PRs)
 
 ## Evidence
-
-```json
-{"commits": ["0e4b608", "bedc15e", "9ec4b30"], "tests": ["python3 tests/copilot-smoke/run_smoke.py --category negative", "./scripts/validate-skills.sh", "./scripts/validate-marketplace.sh"], "prs": []}
-```
-
+- Commits: 0e4b608, bedc15e
+- Tests: python3 tests/copilot-smoke/run_smoke.py --category negative, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
 ## Done summary
-
 Added Copilot activation smoke test framework with 29 test cases (13 direct, 5 advisor-routed, 5 negative, 6 progressive disclosure), Python runner that invokes Copilot CLI and parses skill activation evidence, baseline.json for deterministic regression gating, and sentinel fixture plugin for sibling file access verification.
