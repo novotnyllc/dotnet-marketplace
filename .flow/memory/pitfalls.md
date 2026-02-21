@@ -399,3 +399,6 @@ When scanning raw frontmatter lines for key patterns, only check column-0 (non-i
 
 ## 2026-02-21 manual [pitfall]
 When documenting behaviors observed in upstream issue trackers (not locally measured), use qualified language like 'upstream reports suggest' and 'implementation-defined' rather than 'verified' or definitive claims -- reviewers flag overclaimed verification
+
+## 2026-02-21 manual [pitfall]
+When updating required-fields lists in one doc, grep ALL docs for the same field list pattern and update them all atomically -- partial updates create contributor-facing inconsistencies that reviewers catch across rounds

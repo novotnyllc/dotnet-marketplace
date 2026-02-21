@@ -47,15 +47,17 @@ user-invocable: false
 - **`description`** (string) -- One-line summary; target under 120 characters
 - **`license`** (string) -- Must be `MIT`; required by Copilot CLI for skill loading
 
+**Required by repo policy:**
+- **`user-invocable`** (boolean) -- Must be explicitly set on every skill (`true` or `false`). Set to `false` to hide from the `/` menu. Required for cross-provider predictability.
+
 **Optional fields:**
-- **`user-invocable`** (boolean) -- Set to `false` to hide from the `/` menu; default `true`
 - **`disable-model-invocation`** (boolean) -- Set to `true` to prevent Claude from loading the skill
 - **`context`** (string) -- Set to `fork` for isolated execution without conversation history
 - **`model`** (string) -- Model override, e.g. `haiku` for lightweight detection tasks
 
 See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 131 skills).
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600).
 
 ### Cross-Reference Syntax
 

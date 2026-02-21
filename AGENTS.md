@@ -44,11 +44,13 @@ user-invocable: false
 
 **Required fields:**
 - `name` (string) -- must match the directory name
-- `description` (string) -- target under 120 characters to stay within the context budget (~12,000 chars for 131 skills)
+- `description` (string) -- target under 120 characters (WARN at 12,000 total, FAIL at 15,600)
 - `license` (string) -- must be `MIT`; required by Copilot CLI
 
+**Required by repo policy:**
+- `user-invocable` (boolean) -- must be explicitly set on every skill (`true` or `false`); required for cross-provider predictability
+
 **Optional fields:**
-- `user-invocable` (boolean) -- set to `false` to hide from the `/` menu; default `true`
 - `disable-model-invocation` (boolean) -- set to `true` to prevent Claude from loading the skill
 - `context` (string) -- set to `fork` for isolated execution without conversation history
 - `model` (string) -- model override, e.g. `haiku` for lightweight detection tasks

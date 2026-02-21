@@ -47,7 +47,7 @@ Codex discovers skills via the `.agents/openai.yaml` manifest at the repository 
 
 ## Skill Catalog
 
-The plugin organizes 131 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`) and rich guidance content.
+The plugin organizes 131 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content.
 
 | Category | Count | Example Skills |
 |---|---|---|
