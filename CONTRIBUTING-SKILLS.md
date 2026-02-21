@@ -114,7 +114,7 @@ This keeps the primary skill lean while making extended content available to age
 
 GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
 
-**Verification status:** The structural routing strategy below is based on upstream issue reports ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)) and Copilot CLI source analysis. Runtime verification of exact cutoff, ordering, and `user-invocable: false` exclusion behavior requires an interactive Copilot CLI session and is deferred to fn-57 (Copilot testing epic), which depends on fn-56 completing the structural preparation first. The strategy below is designed to work correctly under both possible outcomes (exclusion or inclusion of non-user-invocable skills). Use the verification procedure at the end of this section to record measured results for the specific Copilot CLI version under test.
+**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. All 131 skills (11 user-invocable, 120 non-user-invocable) were accessible to the model -- **no 32-skill truncation observed**. Skills appear in manifest order (plugin.json array) when the model reads the manifest, or alphabetical when discovered via filesystem glob. The ~32-skill limit reported in upstream issues may be version-dependent or resolved. See [docs/evidence/copilot-cli-v0.0.412-skill-loading.md](docs/evidence/copilot-cli-v0.0.412-skill-loading.md) for full test output. The advisor meta-routing strategy below remains a beneficial redundancy. Re-verify with the procedure below when upgrading Copilot CLI versions.
 
 **Current status (131 skills, 11 user-invocable):**
 
@@ -140,7 +140,7 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 2. **Do not rename `dotnet-advisor`** to anything that sorts late alphabetically among all skills. The name is chosen to sort early in the `dotnet-*` namespace.
 3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
 4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
-5. **Treat skill ordering as implementation-defined until runtime-verified.** Upstream reports suggest alphabetical ordering ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464)). Runtime verification is tracked in fn-57. If you create a new user-invocable skill, check its alphabetical position relative to the full skill list as a conservative estimate.
+5. **Skill ordering is manifest-order or alphabetical.** Verified in v0.0.412: skills appear in plugin.json array order when the model reads the manifest, or alphabetical when using filesystem glob. If you create a new user-invocable skill, ensure it's registered in plugin.json and check its position in both orderings.
 
 **Verification procedure:**
 
