@@ -52,12 +52,16 @@ Create Copilot-specific activation smoke tests that prove skills are discovered,
 - Copilot issue #978: "Skills not auto-activated" — descriptions must use strong activation language
 
 ## Acceptance
-- [ ] Test case dataset exists with >= 25 cases (10 direct, 5 advisor-routed, 5 negative, 5 progressive disclosure)
-- [ ] Smoke runner can invoke Copilot CLI and parse skill activation evidence
-- [ ] Baseline file captures expected per-case outcomes deterministically
-- [ ] Regression comparison gates on "no unexpected regressions vs baseline" (not percentage thresholds)
-- [ ] Known-flaky cases marked in baseline; CI does not fail on them but tracks results
-- [ ] Negative controls: false activations tracked in baseline (informational, not a gate — occasional false positives are expected)
-- [ ] Progressive disclosure: sibling file access verified via sentinel string (unique token in sibling file, asserted in response)
-- [ ] Results output in a format compatible with `compare-agent-routing-baseline.py`
-- [ ] Runner supports two modes: (1) default — skip with `infra_error` status and warning if Copilot not installed (exit 0); (2) `--require-copilot` — output `infra_error` and exit non-zero if Copilot unavailable (used by CI to enforce the gate on non-fork PRs)
+- [x] Test case dataset exists with >= 25 cases (10 direct, 5 advisor-routed, 5 negative, 5 progressive disclosure)
+- [x] Smoke runner can invoke Copilot CLI and parse skill activation evidence
+- [x] Baseline file captures expected per-case outcomes deterministically
+- [x] Regression comparison gates on "no unexpected regressions vs baseline" (not percentage thresholds)
+- [x] Known-flaky cases marked in baseline; CI does not fail on them but tracks results
+- [x] Negative controls: false activations tracked in baseline (informational, not a gate — occasional false positives are expected)
+- [x] Progressive disclosure: sibling file access verified via sentinel string (unique token in sibling file, asserted in response)
+- [x] Results output in a format compatible with `compare-agent-routing-baseline.py`
+- [x] Runner supports two modes: (1) default — skip with `infra_error` status and warning if Copilot not installed (exit 0); (2) `--require-copilot` — output `infra_error` and exit non-zero if Copilot unavailable (used by CI to enforce the gate on non-fork PRs)
+
+## Done summary
+
+Added Copilot activation smoke test framework with 29 test cases (13 direct, 5 advisor-routed, 5 negative, 6 progressive disclosure), Python runner that invokes Copilot CLI and parses skill activation evidence, baseline.json for deterministic regression gating, and sentinel fixture plugin for sibling file access verification.
