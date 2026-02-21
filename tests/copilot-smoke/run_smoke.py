@@ -281,6 +281,7 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
             "failure_kind": None,
             "failure_category": "transport",
             "sentinel_found": False,
+            "negative_false_positive": False,
             "proof_lines": [],
         }
 
@@ -324,6 +325,7 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
             "failure_kind": None,
             "failure_category": "transport",
             "sentinel_found": False,
+            "negative_false_positive": False,
             "proof_lines": [],
         }
 
@@ -438,7 +440,7 @@ def compare_baseline(results: list[dict], baseline: dict) -> dict:
         # Validate baseline skills match case expected_skills (detect drift)
         baseline_skills = sorted(entry.get("skills", []))
         case_skills = sorted(r.get("expected_skills", []))
-        if baseline_skills and case_skills and baseline_skills != case_skills:
+        if baseline_skills != case_skills:
             regressions.append(case_id)
             deltas[case_id] = {
                 "status": actual_status,
