@@ -1,6 +1,7 @@
 ---
 name: dotnet-windbg-debugging
 description: Debugs Windows apps via WinDbg MCP. Crash, hang, high-CPU, and memory triage from dumps or live attach.
+user-invocable: true
 license: MIT
 ---
 

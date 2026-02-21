@@ -1,6 +1,7 @@
 ---
 name: dotnet-ui-chooser
 description: Selects a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms.
+user-invocable: true
 license: MIT
 ---
 

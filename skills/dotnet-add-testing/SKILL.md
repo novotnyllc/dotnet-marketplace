@@ -1,6 +1,7 @@
 ---
 name: dotnet-add-testing
 description: Adds test infrastructure to a .NET project. Scaffolds xUnit project, coverlet, layout.
+user-invocable: true
 license: MIT
 ---
 

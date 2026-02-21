@@ -1,6 +1,7 @@
 ---
 name: dotnet-advisor
 description: Routes .NET/C# work to domain skills. Loads coding-standards for code paths.
+user-invocable: true
 license: MIT
 ---
 

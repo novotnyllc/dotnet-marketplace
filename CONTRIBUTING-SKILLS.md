@@ -93,6 +93,8 @@ Body content starts here...
 
 Only `name` and `description` are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
 
+**Important:** All skills must have an explicit `user-invocable` field (either `true` or `false`). Do not omit it and rely on the default. This ensures predictable behavior across all agent runtimes.
+
 ### Companion Files
 
 When a skill needs extended code examples, diagnostic tables, or deep-dive content that would bloat the main SKILL.md, extract it into a `details.md` file in the same directory. Reference it from the body:
@@ -102,6 +104,42 @@ See `details.md` for code examples of each pattern.
 ```
 
 This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/core-csharp/dotnet-csharp-code-smells/details.md` for a working example.
+
+### Copilot CLI 32-Skill Display Limit
+
+GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. In practice this results in approximately 32 skills being shown, sorted alphabetically by skill name ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
+
+**Current status (131 skills, 11 user-invocable):**
+
+| Category | Count | Alphabetical range |
+|----------|-------|--------------------|
+| `user-invocable: true` | 11 | dotnet-add-analyzers through dotnet-windbg-debugging |
+| `user-invocable: false` | 120 | All remaining skills |
+
+**Routing strategy:** The `dotnet-advisor` skill (alphabetical position 9 of 131) serves as the meta-router. It is always within the visible window regardless of how the 32-skill limit interacts with `user-invocable: false` skills. The advisor's skill catalog and routing logic sections contain `[skill:]` cross-references to all 131 skills, enabling the model to discover and load any skill through the advisor even if that skill is not directly listed in the system prompt.
+
+**Behavior scenarios:**
+
+- **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 11 user-invocable skills compete for the window. All 11 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
+- **If all 131 skills count against the budget:** The advisor at position 9 is well within the first 32 slots. When activated, the advisor body exposes the complete catalog, allowing the model to discover and load skills beyond the visible window.
+
+**Rules for maintaining Copilot compatibility:**
+
+1. **Keep `dotnet-advisor` user-invocable.** It must remain in the visible window to serve as the meta-router.
+2. **Do not rename `dotnet-advisor`** to anything that sorts after position 32 alphabetically among all skills.
+3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
+4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
+5. **Skill ordering is alphabetical** (verified via [copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464)). If you create a new user-invocable skill, check its alphabetical position relative to the full skill list.
+
+**Verification procedure:**
+
+To verify the 32-skill limit behavior with a specific Copilot CLI version:
+
+1. Install the plugin in `~/.copilot/skills/` or `.github/skills/`
+2. Start a Copilot CLI session and ask: "List all available skills"
+3. Check the system prompt for `<!-- Showing N of M skills due to token limits -->`
+4. Verify `dotnet-advisor` appears in the visible set
+5. Test that advisor-routed skills (outside the visible set) can be activated via the advisor
 
 ---
 
