@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed (Routing Language)
 
-- **Standardized routing language** across all 130 skills and 14 agents for reliable skill discovery. Descriptions follow Action + Domain + Differentiator formula, all cross-references use `[skill:name]` syntax, and every skill has explicit Scope and Out-of-scope sections.
+- **Standardized routing language** across the full skill catalog and 14 agents for reliable skill discovery. Descriptions follow Action + Domain + Differentiator formula, all cross-references use `[skill:name]` syntax, and every skill has explicit Scope and Out-of-scope sections.
 - **Added semantic similarity detection** to prevent description overlap between skills. CI gates on baseline regression with suppression list for known-acceptable pairs.
 - **Tightened CI quality gates** -- agent bare-reference counts gated at zero, per-key baseline regression check, similarity baseline regression enabled.
 - **Updated contributor documentation** -- CONTRIBUTING-SKILLS.md, CONTRIBUTING.md, and AGENTS.md updated with canonical routing-language conventions and similarity avoidance guidance.
