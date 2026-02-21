@@ -59,13 +59,11 @@ Migrate all 131 SKILL.md frontmatter files to be Copilot-safe. Address known Cop
 - After T1 flatten, `validate-similarity.py` will find zero skills until T3 fixes its glob — so this task validates with `_validate_skills.py` directly, not the full `validate-skills.sh`
 
 ## Done summary
-
-_Populated by flowctl done._
-
+Migrated all 131 SKILL.md files to Copilot-safe frontmatter: unquoted descriptions (13 rewritten to avoid YAML-unsafe `: ` patterns), added `license: MIT` to all skills, and added raw-frontmatter Copilot safety checks (BOM, quoted description, missing license, metadata-last ordering) as ERRORs in `_validate_skills.py`.
 ## Evidence
-
-_Populated by flowctl done._
-
+- Commits: 19c0670be27d00b37dca0413a61b2e01b4e2ae3c, 6b8694a2903e058103f6d53fc9e2f44a4b1a2e41
+- Tests: python3 scripts/_validate_skills.py --repo-root . --projected-skills 131 --max-desc-chars 120 --warn-threshold 12000 --fail-threshold 15600 --allow-planned-refs
+- PRs:
 ## Acceptance
 - [ ] metadata-ordering behavior verified with Copilot CLI test skills; exact command and observed output recorded as evidence (or conservative assumption documented if CLI unavailable)
 - [ ] Validator enforces the verified metadata-ordering invariant as an ERROR
