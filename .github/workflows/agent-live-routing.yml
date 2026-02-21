@@ -87,8 +87,8 @@ jobs:
           ./test.sh "${ARGS[@]}" 2>stderr.log | tee stdout.log || true
           TEST_EXIT=${PIPESTATUS[0]}
 
-          # Extract ARTIFACT_DIR from stderr for artifact upload
-          ARTIFACT_DIR=$(grep '^ARTIFACT_DIR=' stderr.log | cut -d= -f2- || true)
+          # Extract ARTIFACT_DIR from stderr for artifact upload (first match only)
+          ARTIFACT_DIR="$(grep -m1 '^ARTIFACT_DIR=' stderr.log | cut -d= -f2- | tr -d '\r' || true)"
           if [ -n "$ARTIFACT_DIR" ]; then
             echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> "$GITHUB_ENV"
           fi
@@ -125,7 +125,11 @@ jobs:
           BASELINE_REF: ${{ github.event.inputs.baseline_ref || 'main' }}
         run: |
           set -euo pipefail
-          git fetch origin -- "$BASELINE_REF"
+          # Strip origin/ prefix if user provided it to avoid double-prefixing
+          CLEAN_REF="${BASELINE_REF#origin/}"
+          git fetch origin -- "$CLEAN_REF"
+          # Export the resolved ref for downstream steps
+          echo "RESOLVED_BASELINE_REF=origin/${CLEAN_REF}" >> "$GITHUB_ENV"
 
       - name: Download all provider artifacts
         uses: actions/download-artifact@v4
@@ -140,14 +144,12 @@ jobs:
           python-version: '3.12'
 
       - name: Run regression comparison
-        env:
-          BASELINE_REF: ${{ github.event.inputs.baseline_ref || 'main' }}
         run: |
           set -euo pipefail
 
           python scripts/compare-agent-routing-baseline.py \
             --results-dir downloaded-artifacts \
-            --baseline-ref "origin/${BASELINE_REF}" \
+            --baseline-ref "$RESOLVED_BASELINE_REF" \
             --output delta-report.md
 
           # Write to job summary

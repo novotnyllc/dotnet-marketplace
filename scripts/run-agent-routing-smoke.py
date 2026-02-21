@@ -6,9 +6,9 @@ provider to confirm the flat skill layout is discoverable.  For live
 CLI tests, use test.sh which delegates to check-skills.cs.
 
 This script validates:
-  - Claude Code: plugin.json skill paths resolve, cross-refs validate
+  - Claude Code: plugin.json skill paths resolve, expected skill count
   - Codex:       131 skill dirs found at expected depth, openai.yaml consistent
-  - Copilot:     plugin.json paths resolve, SKILL.md frontmatter present
+  - Copilot:     plugin.json paths resolve, SKILL.md frontmatter + license valid
 
 Exit codes:
     0 - All structural checks pass
@@ -35,8 +35,8 @@ PLUGIN_JSON = REPO_ROOT / ".claude-plugin" / "plugin.json"
 OPENAI_YAML = REPO_ROOT / ".agents" / "openai.yaml"
 EXPECTED_SKILL_COUNT = 131
 
-# Frontmatter required fields for every SKILL.md
-REQUIRED_FRONTMATTER = {"name", "description", "license"}
+# Frontmatter required fields for every SKILL.md (per repo policy in AGENTS.md)
+REQUIRED_FRONTMATTER = {"name", "description", "license", "user-invocable"}
 
 
 def load_plugin_json() -> dict:
@@ -54,8 +54,13 @@ def discover_skill_dirs() -> list[Path]:
 
 
 def parse_frontmatter(skill_md_path: Path) -> dict | None:
-    """Parse YAML frontmatter from a SKILL.md file (simple key: value parser)."""
+    """Parse YAML frontmatter from a SKILL.md file (simple key: value parser).
+
+    Normalizes CRLF to LF before parsing to handle Windows-edited files.
+    """
     content = skill_md_path.read_text(encoding="utf-8")
+    # Normalize CRLF -> LF (pitfall: Windows line endings break exact string matching)
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
     # Frontmatter is between --- delimiters
     match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
     if not match:
@@ -75,8 +80,9 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
     """Verify Claude Code structural requirements.
 
     - plugin.json exists and lists skill paths
-    - All listed paths resolve to existing SKILL.md files
-    - [skill:name] cross-references resolve (via validate-skills.sh, just check here)
+    - All listed paths resolve to existing directories
+    - Expected skill count matches
+    Note: [skill:name] cross-ref validation is handled by validate-skills.sh.
     """
     errors = []
 
@@ -176,8 +182,9 @@ def check_copilot(skill_dirs: list[Path]) -> list[str]:
         errors.append(f"plugin.json not found at {PLUGIN_JSON}")
         return errors
 
-    # Verify each skill has required frontmatter
+    # Verify each skill has required frontmatter (per repo policy in AGENTS.md)
     missing_frontmatter = []
+    bad_license = []
     for skill_dir in skill_dirs:
         skill_md = skill_dir / "SKILL.md"
         fm = parse_frontmatter(skill_md)
@@ -189,11 +196,20 @@ def check_copilot(skill_dirs: list[Path]) -> list[str]:
             missing_frontmatter.append(
                 f"{skill_dir.name}: missing {missing_fields}"
             )
+        # Validate license == MIT (required by Copilot CLI per AGENTS.md)
+        if fm.get("license", "") != "MIT":
+            bad_license.append(f"{skill_dir.name}: license={fm.get('license', '<missing>')}")
 
     if missing_frontmatter:
         errors.append(
             f"{len(missing_frontmatter)} skill(s) have frontmatter issues: "
             f"{missing_frontmatter[:5]}{'...' if len(missing_frontmatter) > 5 else ''}"
+        )
+
+    if bad_license:
+        errors.append(
+            f"{len(bad_license)} skill(s) have non-MIT license: "
+            f"{bad_license[:5]}{'...' if len(bad_license) > 5 else ''}"
         )
 
     # Verify the evidence pattern is detectable (Copilot emits "Base directory for this skill:")

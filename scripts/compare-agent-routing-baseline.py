@@ -50,20 +50,33 @@ def load_baseline_from_ref(ref: str, relative_path: str) -> dict | None:
         return None
 
 
-def collect_results(paths: list[Path]) -> list[dict]:
-    """Collect all result tuples from one or more results.json files."""
+def collect_results(paths: list[Path]) -> tuple[list[dict], list[str]]:
+    """Collect all result tuples from one or more results.json files.
+
+    Returns (tuples, errors) where errors lists any duplicate (case_id, agent)
+    entries detected across files.
+    """
     tuples = []
+    seen: set[tuple[str, str]] = set()
+    errors: list[str] = []
     for path in paths:
         data = load_json(path)
         results = data.get("results", [])
         for r in results:
+            key = (r["case_id"], r["agent"])
+            if key in seen:
+                errors.append(
+                    f"Duplicate result for ({r['case_id']}, {r['agent']}) in {path}"
+                )
+                continue
+            seen.add(key)
             tuples.append({
                 "case_id": r["case_id"],
                 "agent": r["agent"],
                 "status": r["status"],
                 "timed_out": r.get("timed_out", False),
             })
-    return tuples
+    return tuples, errors
 
 
 def find_results_files(directory: Path) -> list[Path]:
@@ -85,7 +98,14 @@ def compare(
     improvements = []
     new_entries = []
     missing_baseline = []
+    missing_results = []
     rows = {}
+
+    # Check that every provider has at least one result
+    seen_providers = {t["agent"] for t in result_tuples}
+    for p in PROVIDERS:
+        if p not in seen_providers:
+            missing_results.append(f"No results for provider '{p}'")
 
     # Group results by case_id
     by_case: dict[str, dict[str, dict]] = {}
@@ -100,6 +120,11 @@ def compare(
             result = by_case[case_id].get(provider)
             if result is None:
                 provider_statuses[provider] = "-"
+                missing_results.append(
+                    f"Missing result for case '{case_id}' provider '{provider}'"
+                )
+                if row_delta not in ("REGRESSION", "MISSING_BASELINE"):
+                    row_delta = "MISSING_RESULT"
                 continue
 
             status = result["status"]
@@ -158,8 +183,13 @@ def compare(
         "improvements": improvements,
         "new_entries": new_entries,
         "missing_baseline": missing_baseline,
+        "missing_results": missing_results,
         "rows": rows,
-        "has_failures": len(regressions) > 0 or len(missing_baseline) > 0,
+        "has_failures": (
+            len(regressions) > 0
+            or len(missing_baseline) > 0
+            or len(missing_results) > 0
+        ),
     }
 
 
@@ -199,6 +229,12 @@ def format_markdown_report(comparison: dict, baseline_ref: str | None) -> str:
         lines.append("")
         lines.append("**MISSING BASELINE ENTRIES:**")
         for m in comparison["missing_baseline"]:
+            lines.append(f"- {m}")
+
+    if comparison["missing_results"]:
+        lines.append("")
+        lines.append("**MISSING RESULTS:**")
+        for m in comparison["missing_results"]:
             lines.append(f"- {m}")
 
     return "\n".join(lines)
@@ -280,9 +316,19 @@ def main() -> int:
             )
 
     # Collect and compare
-    result_tuples = collect_results(results_paths)
+    result_tuples, duplicate_errors = collect_results(results_paths)
     if not result_tuples:
         print("ERROR: No result tuples found in provided files.", file=sys.stderr)
+        return 1
+
+    if duplicate_errors:
+        for err in duplicate_errors:
+            print(f"ERROR: {err}", file=sys.stderr)
+        print(
+            f"ERROR: {len(duplicate_errors)} duplicate result(s) detected. "
+            f"Fix artifact merging before comparing.",
+            file=sys.stderr,
+        )
         return 1
 
     comparison = compare(result_tuples, current_baseline, ref_baseline)
@@ -295,11 +341,14 @@ def main() -> int:
         print(report)
 
     if comparison["has_failures"]:
-        print(
-            f"\nFAILED: {len(comparison['regressions'])} regression(s), "
-            f"{len(comparison['missing_baseline'])} missing baseline entries.",
-            file=sys.stderr,
-        )
+        failure_parts = []
+        if comparison["regressions"]:
+            failure_parts.append(f"{len(comparison['regressions'])} regression(s)")
+        if comparison["missing_baseline"]:
+            failure_parts.append(f"{len(comparison['missing_baseline'])} missing baseline entries")
+        if comparison["missing_results"]:
+            failure_parts.append(f"{len(comparison['missing_results'])} missing results")
+        print(f"\nFAILED: {', '.join(failure_parts)}.", file=sys.stderr)
         return 1
 
     print("\nPASSED: No regressions detected.", file=sys.stderr)
