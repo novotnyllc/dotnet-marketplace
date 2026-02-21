@@ -400,11 +400,18 @@ def process_file(path: str) -> dict:
     # metadata-ordering check: Copilot CLI #951 reports that metadata: as the
     # last frontmatter key causes silent skill drop. Conservative enforcement:
     # ERROR if metadata: is the last non-blank top-level key in frontmatter.
-    # Per fn-56 spec: "verify exact behavior with test skills before implementing;
-    # falls back to conservative guard if CLI unavailable." Install-time parse
-    # verified with Copilot CLI v0.0.412 (test skills accepted). Runtime load
-    # verification deferred to fn-57 (Copilot testing epic). Conservative guard
-    # enforced per spec fallback policy.
+    #
+    # Evidence trail (fn-56.2):
+    # - Spec fallback clause: "T2 verifies exact behavior with test skills before
+    #   implementing the check; falls back to conservative 'ERROR if metadata is
+    #   last key' if CLI unavailable."
+    # - Install-time parse verified: Copilot CLI v0.0.412 accepts test skills
+    #   with various frontmatter orderings (no parse failure at install time).
+    # - Runtime load verification (whether metadata-last causes silent drop at
+    #   inference time) requires interactive CLI session; deferred to fn-57.
+    # - Decision: conservative guard enforced per spec fallback policy. No
+    #   dotnet-artisan skill uses a "metadata:" key, so this guard is preventive
+    #   with zero false-positive risk on the current catalog.
     # Only scan column-0 lines to avoid false positives on block scalar content.
     last_key = None
     for fm_line in fm_lines:
@@ -428,11 +435,16 @@ def process_file(path: str) -> dict:
         return {"path": path, "valid": False, "error": str(e)}
 
     # License check: Copilot CLI #894 effectively requires a non-empty license field.
-    # Check both presence and non-empty string value (empty license: parses to None).
+    # Repo policy requires MIT specifically (fn-56 acceptance: "All 131 SKILL.md files
+    # have license: MIT"). Check both presence and exact value.
     license_raw = parsed.get("license")
     if not isinstance(license_raw, str) or not license_raw.strip():
         copilot_errors.append(
             "license field must be a non-empty string in frontmatter (Copilot CLI #894)"
+        )
+    elif license_raw.strip() != "MIT":
+        copilot_errors.append(
+            f"license must be 'MIT' (got '{license_raw.strip()}'); required by repo policy and Copilot CLI"
         )
 
     # user-invocable presence check: repo policy requires explicit true/false on
