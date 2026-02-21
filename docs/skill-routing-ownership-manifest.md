@@ -1,6 +1,6 @@
 # Skill Routing Ownership Manifest
 
-> **Historical document (fn-53).** This manifest was generated before the flat layout migration (fn-56). Paths shown as `skills/<category>/<skill-name>/` now resolve to `skills/<skill-name>/` in the current repo. The category column is preserved for audit traceability. Skill count was 130 at the time of this audit; current canonical count is 131.
+> **Historical document (fn-53).** This manifest was generated before the flat layout migration (fn-56). Paths have been updated to the current flat layout (`skills/<skill-name>/SKILL.md`). The category column is preserved for audit traceability. Canonical skill count is 131.
 
 Generated for fn-53-skill-routing-language-hardening.1 (T1).
 Each skill path maps to exactly one downstream editing task (T5-T10).

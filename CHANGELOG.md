@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Failure handling accuracy** -- Fixed CLI/transport failure detection and preserved script exit codes so diagnostics are reliable, with reduced noisy or misleading failure reporting.
 - **Validation accuracy** -- Fixed validator and frontmatter parsing issues plus metadata/spec drift, ensuring reported thresholds and guidance stay aligned with actual runtime behavior.
 
-### Changed
+### Changed (Routing Language)
 
 - **Standardized routing language** across all 130 skills and 14 agents for reliable skill discovery. Descriptions follow Action + Domain + Differentiator formula, all cross-references use `[skill:name]` syntax, and every skill has explicit Scope and Out-of-scope sections.
 - **Added semantic similarity detection** to prevent description overlap between skills. CI gates on baseline regression with suppression list for known-acceptable pairs.

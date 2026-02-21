@@ -449,7 +449,7 @@ Before committing a new or modified skill:
 
 - [ ] **Folder created** at `skills/<skill-name>/`
 - [ ] **SKILL.md** exists with correct casing
-- [ ] **Frontmatter** has `name` and `description` fields
+- [ ] **Frontmatter** has `name`, `description`, `license`, and `user-invocable` fields
 - [ ] **`name` matches** the directory name exactly
 - [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
 - [ ] **Description under 120 characters** (check budget math)

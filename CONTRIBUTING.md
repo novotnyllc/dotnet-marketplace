@@ -139,7 +139,7 @@ Both validation commands must pass before a PR can be merged:
 ./scripts/validate-skills.sh
 ```
 
-Validates skill frontmatter structure, required fields (`name`, `description`), directory conventions, and cross-references.
+Validates skill frontmatter structure, required fields (`name`, `description`, `license`, `user-invocable`), directory conventions, and cross-references.
 
 ### 2. Marketplace Validation
 
@@ -254,7 +254,7 @@ Before every release, verify:
 - [ ] `CHANGELOG.md` has entries for this version with correct date
 - [ ] `validate-skills.sh` passes (exit code 0)
 - [ ] `validate-marketplace.sh` passes (exit code 0)
-- [ ] All SKILL.md files have required frontmatter (`name`, `description`)
+- [ ] All SKILL.md files have required frontmatter (`name`, `description`, `license`, `user-invocable`)
 - [ ] Budget status is OK or WARN (not FAIL)
 - [ ] No broken cross-references (all `[skill:<name>]` refs resolve)
 - [ ] Cross-provider verification: changes verified against `claude`/`codex`/`copilot` matrix
