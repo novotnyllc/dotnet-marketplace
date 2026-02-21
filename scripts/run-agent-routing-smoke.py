@@ -117,7 +117,10 @@ def extract_skill_path(entry: str | dict) -> str | None:
 
 
 def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
-    """Validate that all plugin.json skill paths resolve to existing locations."""
+    """Validate that all plugin.json skill paths resolve to existing skill directories.
+
+    Checks: path validity, existence, is_dir, contains SKILL.md, and uniqueness.
+    """
     skills_list = plugin.get("skills", [])
     if not skills_list:
         errors.append("plugin.json has empty 'skills' array")
@@ -126,11 +129,22 @@ def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
     missing_paths = []
     bad_paths = []
     not_dirs = []
+    no_skill_md = []
+    seen_paths: set[str] = set()
+    duplicates = []
+
     for entry in skills_list:
         skill_path = extract_skill_path(entry)
         if skill_path is None:
             bad_paths.append(repr(entry))
             continue
+
+        # Uniqueness check (normalize to canonical form)
+        canonical = str(Path(skill_path))
+        if canonical in seen_paths:
+            duplicates.append(skill_path)
+            continue
+        seen_paths.add(canonical)
 
         full = resolve_skill_path(skill_path)
         if full is None:
@@ -139,11 +153,19 @@ def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
             missing_paths.append(skill_path)
         elif not full.is_dir():
             not_dirs.append(skill_path)
+        elif not (full / "SKILL.md").is_file():
+            no_skill_md.append(skill_path)
 
     if bad_paths:
         errors.append(
             f"{len(bad_paths)} plugin.json skill entry/path(s) are invalid "
             f"(missing, empty, absolute, or traversal): {bad_paths[:5]}{'...' if len(bad_paths) > 5 else ''}"
+        )
+
+    if duplicates:
+        errors.append(
+            f"{len(duplicates)} duplicate plugin.json skill path(s): "
+            f"{duplicates[:5]}{'...' if len(duplicates) > 5 else ''}"
         )
 
     if missing_paths:
@@ -156,6 +178,12 @@ def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
         errors.append(
             f"{len(not_dirs)} plugin.json skill path(s) are not directories: "
             f"{not_dirs[:5]}{'...' if len(not_dirs) > 5 else ''}"
+        )
+
+    if no_skill_md:
+        errors.append(
+            f"{len(no_skill_md)} plugin.json skill path(s) missing SKILL.md: "
+            f"{no_skill_md[:5]}{'...' if len(no_skill_md) > 5 else ''}"
         )
 
 
@@ -224,10 +252,11 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
         errors.append(f".agents/openai.yaml not found at {OPENAI_YAML}")
     else:
         yaml_content = OPENAI_YAML.read_text(encoding="utf-8")
-        # Verify it references the flat layout pattern (skills/<skill-name>/)
-        if "skills/" not in yaml_content:
+        # Check for the canonical flat-layout path pattern: skills/<skill-name>/
+        # This is more specific than a bare "skills/" substring
+        if not re.search(r"skills/\S+/", yaml_content):
             errors.append(
-                ".agents/openai.yaml does not reference skills/ directory layout"
+                ".agents/openai.yaml does not reference skills/<name>/ layout pattern"
             )
 
     return errors

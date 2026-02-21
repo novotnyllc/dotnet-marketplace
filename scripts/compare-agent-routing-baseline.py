@@ -140,13 +140,20 @@ def compare(
                 row_delta = "MISSING_BASELINE"
                 continue
 
-            # Validate against current baseline expectations (the "what do we
-            # expect today" contract)
+            # Validate against current baseline expectations using severity
+            # ranking: infra_error (0) < fail (1) < pass (2).
+            # A result worse than expected is a regression.
             cur_expected = current_entry.get("expected_status", "pass")
             cur_allow_timeout = current_entry.get("allow_timeout", False)
+            status_rank = {"infra_error": 0, "fail": 1, "pass": 2}
 
-            if cur_expected == "pass" and status in ("fail", "infra_error"):
-                regressions.append(f"{case_id}/{provider}: expected pass, got {status}")
+            actual_rank = status_rank.get(status, -1)
+            expected_rank = status_rank.get(cur_expected, -1)
+
+            if actual_rank < expected_rank:
+                regressions.append(
+                    f"{case_id}/{provider}: expected {cur_expected}, got {status}"
+                )
                 row_delta = "REGRESSION"
 
             if timed_out and not cur_allow_timeout:
