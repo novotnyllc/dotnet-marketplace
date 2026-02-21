@@ -189,14 +189,7 @@ jobs:
           # Check for infra_error results and apply policy
           INFRA_COUNT=0
           if [ -d downloaded-artifacts ]; then
-            INFRA_COUNT=$(find downloaded-artifacts -name 'results.json' -exec python3 -c "
-          import json, sys
-          count = 0
-          for path in sys.argv[1:]:
-              data = json.load(open(path))
-              count += sum(1 for r in data.get('results', []) if r.get('status') == 'infra_error')
-          print(count)
-          " {} + 2>/dev/null || echo "0")
+            INFRA_COUNT="$(python3 -c 'import json; from pathlib import Path; print(sum(1 for p in Path("downloaded-artifacts").rglob("results.json") for r in json.load(open(p)).get("results",[]) if r.get("status")=="infra_error"))')"
           fi
 
           if [ "$INFRA_COUNT" -gt 0 ]; then

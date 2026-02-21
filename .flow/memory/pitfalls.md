@@ -414,3 +414,6 @@ In GitHub Actions steps with 'set -euo pipefail', capturing exit codes (cmd; EXI
 
 ## 2026-02-21 manual [pitfall]
 GitHub Actions expressions like github.event.pull_request.head.repo.fork are undefined on push events (not just null). Jobs referencing PR-only context must guard with 'if: github.event_name == pull_request' or use null-safe expressions.
+
+## 2026-02-21 manual [pitfall]
+Heredocs inside GitHub Actions YAML 'run:' blocks break YAML parsing when the delimiter (e.g. PY, EOF) appears at column 1. Use single-line python -c commands or write to a temp script file instead.

@@ -341,15 +341,17 @@ jobs:
 
           # Use same mechanism as test.sh:prepare_copilot_plugin()
           copilot plugin marketplace add "$REPO_ROOT"
-          copilot plugin install dotnet-artisan@dotnet-artisan 2>/dev/null || \
-            copilot plugin update dotnet-artisan@dotnet-artisan 2>/dev/null || true
+          if ! copilot plugin install dotnet-artisan@dotnet-artisan 2>/dev/null; then
+            copilot plugin update dotnet-artisan@dotnet-artisan
+          fi
 
-          # Verify discovery
-          if ! copilot plugin marketplace list | grep -F "dotnet-artisan"; then
-            echo "ERROR: dotnet-artisan not found in marketplace list"
+          # Verify discovery (tighten grep to local source)
+          if ! copilot plugin marketplace list | grep -F "dotnet-artisan" | grep -qF "$REPO_ROOT"; then
+            echo "ERROR: dotnet-artisan not pointing at $REPO_ROOT in marketplace list"
+            copilot plugin marketplace list
             exit 1
           fi
-          echo "OK: dotnet-artisan registered"
+          echo "OK: dotnet-artisan registered from $REPO_ROOT"
 
       - name: Run Copilot smoke tests
         id: smoke-run
@@ -359,10 +361,12 @@ jobs:
           set -uo pipefail
 
           SMOKE_ARGS=()
-          # Deterministic smoke subset: direct + advisor-routed (non-flaky) + negative
-          # Per fn-57.4 spec: "direct activation, advisor routing, and one negative control"
-          # smoke-011 is advisor-routed with flaky=false in baseline
-          SMOKE_ARGS+=(--case-id "smoke-001,smoke-002,smoke-003,smoke-004,smoke-005,smoke-006,smoke-007,smoke-008,smoke-009,smoke-010,smoke-011,smoke-016,smoke-017,smoke-018,smoke-019,smoke-020,smoke-026,smoke-027,smoke-028")
+          # Deterministic smoke subset (8 cases, spec: 5-10):
+          #   3 direct activation, 1 advisor-routed (smoke-011, non-flaky),
+          #   2 negative controls, 2 direct (different domains)
+          # Per fn-57.4: "direct activation, advisor routing, and one negative control"
+          SMOKE_ARGS+=(--case-id "smoke-001,smoke-003,smoke-004,smoke-011,smoke-016,smoke-017,smoke-026,smoke-027")
+          SMOKE_ARGS+=(--timeout-seconds 60)
           SMOKE_ARGS+=(--output "tests/copilot-smoke/ci-results.json")
 
           IS_FORK="${{ steps.detect-env.outputs.is_fork }}"
