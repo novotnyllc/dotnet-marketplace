@@ -125,8 +125,9 @@ prepare_codex_skills() {
 
     local -a skill_dirs=()
     while IFS= read -r skill_dir; do
+        [[ -f "$skill_dir/SKILL.md" ]] || continue
         skill_dirs+=("$skill_dir")
-    done < <(find "$REPO_ROOT/skills" -mindepth 2 -maxdepth 2 -type d | sort)
+    done < <(find "$REPO_ROOT/skills" -mindepth 1 -maxdepth 1 -type d | sort)
 
     local total_skills="${#skill_dirs[@]}"
     if (( total_skills == 0 )); then
