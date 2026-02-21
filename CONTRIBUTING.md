@@ -21,13 +21,13 @@ The section below provides a quick reference. Skills are the primary content uni
 
 ### Directory Convention
 
-All skills follow this directory structure within the plugin:
+All skills follow a flat directory structure within the plugin:
 
 ```
-skills/<category>/<skill-name>/SKILL.md
+skills/<skill-name>/SKILL.md
 ```
 
-For example: `skills/core-csharp/dotnet-csharp-async-patterns/SKILL.md`
+For example: `skills/dotnet-csharp-async-patterns/SKILL.md`
 
 ### SKILL.md Frontmatter
 
@@ -53,7 +53,7 @@ user-invocable: false
 
 See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 130 skills).
+The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (~12,000 characters for 131 skills).
 
 ### Cross-Reference Syntax
 

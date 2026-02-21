@@ -13,7 +13,7 @@ Create a working skill in five minutes using `dotnet-csharp-code-smells` as a re
 **Step 1 -- Create the folder:**
 
 ```bash
-mkdir -p skills/core-csharp/dotnet-my-new-skill
+mkdir -p skills/dotnet-my-new-skill
 ```
 
 **Step 2 -- Write the SKILL.md:**
@@ -21,7 +21,7 @@ mkdir -p skills/core-csharp/dotnet-my-new-skill
 ```markdown
 ---
 name: dotnet-my-new-skill
-description: "Detects common pitfalls in X during C# development."
+description: Detects common pitfalls in X during C# development
 ---
 
 # dotnet-my-new-skill
@@ -36,7 +36,7 @@ Cross-references: See [skill:dotnet-csharp-coding-standards] for baseline C# con
 Open `.claude-plugin/plugin.json` and add your skill path to the `skills` array:
 
 ```json
-"skills/core-csharp/dotnet-my-new-skill"
+"skills/dotnet-my-new-skill"
 ```
 
 **Step 4 -- Validate:**
@@ -55,10 +55,10 @@ That's it. Read on for the details behind each step.
 
 ### Folder Structure
 
-Every skill lives in a category directory:
+Every skill lives in a flat directory under `skills/`:
 
 ```
-skills/<category>/<skill-name>/
+skills/<skill-name>/
   SKILL.md          # Required -- main skill file (casing matters)
   details.md        # Optional -- extended content, examples, deep dives
 ```
@@ -72,7 +72,7 @@ A skill file has two parts: **frontmatter** and **body**.
 ```markdown
 ---
 name: dotnet-csharp-code-smells
-description: "Detects code smells and anti-patterns in C# code during writing and review."
+description: Detects code smells and anti-patterns in C# code during writing and review
 ---
 
 # dotnet-csharp-code-smells
@@ -103,7 +103,7 @@ When a skill needs extended code examples, diagnostic tables, or deep-dive conte
 See `details.md` for code examples of each pattern.
 ```
 
-This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/core-csharp/dotnet-csharp-code-smells/details.md` for a working example.
+This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/dotnet-csharp-code-smells/details.md` for a working example.
 
 ### Copilot CLI 32-Skill Display Limit
 
@@ -159,10 +159,10 @@ Use **third-person declarative** style. Front-load the most specific action verb
 
 ```yaml
 # Good -- declarative, specific domain, clear scope
-description: "Detects code smells and anti-patterns in C# code during writing and review."
+description: Detects code smells and anti-patterns in C# code during writing and review
 
 # Bad -- vague, no activation context
-description: "Helps with code quality stuff"
+description: Helps with code quality stuff
 ```
 
 ### Good vs. Bad Examples
@@ -179,7 +179,7 @@ description: "Helps with code quality stuff"
 
 Each description must be **at most 120 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 130 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,600 characters (FAIL threshold = 130 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 131 skills, the aggregate must stay below 12,000 characters (WARN threshold) and 15,720 characters (FAIL threshold = 131 * 120). Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
 
 The validation script reports the current budget:
 
@@ -218,7 +218,7 @@ python3 scripts/validate-similarity.py --repo-root . \
 | WARN | >= 0.55 | Needs review -- differentiate descriptions |
 | ERROR | >= 0.75 | Must be differentiated or suppressed |
 
-The composite score combines set Jaccard similarity (shared tokens), character-level similarity (SequenceMatcher), and a same-category boost. Pairs in the same category directory get a +0.15 boost because intra-category confusion is more concerning.
+The composite score combines set Jaccard similarity (shared tokens) and character-level similarity (SequenceMatcher). With the flat skill layout, there is no category-based boost; all pairs are scored uniformly.
 
 **If your PR introduces a new WARN or ERROR pair:**
 
@@ -407,7 +407,7 @@ The file must be named exactly `SKILL.md` (uppercase). The validation script loo
 
 - Frontmatter must be enclosed between two `---` lines
 - The `name` value must match the directory name exactly
-- Quote descriptions that contain colons, commas, or special YAML characters
+- Do not quote descriptions -- Copilot CLI requires unquoted YAML values for reliable parsing
 - Only use recognized frontmatter fields: `name`, `description`, `user-invocable`, `disable-model-invocation`, `context`, `model`
 - Boolean fields (`user-invocable`, `disable-model-invocation`) must use bare `true`/`false`, not quoted strings
 
@@ -442,7 +442,7 @@ If validation reports unresolved cross-references:
 
 Before committing a new or modified skill:
 
-- [ ] **Folder created** at `skills/<category>/<skill-name>/`
+- [ ] **Folder created** at `skills/<skill-name>/`
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name` and `description` fields
 - [ ] **`name` matches** the directory name exactly
@@ -469,4 +469,4 @@ Before committing a new or modified skill:
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
 - [CLAUDE.md](CLAUDE.md) -- plugin conventions and validation commands
-- Example skill: [`skills/core-csharp/dotnet-csharp-code-smells/SKILL.md`](skills/core-csharp/dotnet-csharp-code-smells/SKILL.md) -- well-structured skill with companion `details.md`
+- Example skill: [`skills/dotnet-csharp-code-smells/SKILL.md`](skills/dotnet-csharp-code-smells/SKILL.md) -- well-structured skill with companion `details.md`

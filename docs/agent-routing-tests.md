@@ -22,7 +22,7 @@ This document describes the routing test system used to verify that Claude, Code
 
 - Claude: disables user-scope `dotnet-artisan`, points marketplace `dotnet-artisan` to this repo path, installs local scope plugin.
 - Copilot: repoints marketplace `dotnet-artisan` to this repo path and reinstalls/updates `dotnet-artisan@dotnet-artisan`.
-- Codex: syncs `skills/*/*` from this repo into `~/.codex/skills/<skill-name>`.
+- Codex: syncs `skills/*/` from this repo into `~/.codex/skills/<skill-name>`.
 - Cleanup: removes `apps/` before and after each run to avoid persisted generated app scaffolds.
 
 Use `--skip-source-setup` only for debugging:
@@ -76,7 +76,7 @@ grep '^ARTIFACT_DIR=' stderr.log | cut -d= -f2-
 ## Runner Behavior
 
 - Expands each case across selected agents.
-- Copilot historically had weaker skill-load evidence for nested `dotnet-*` skills; the harness uses provider-aware Tier 1 signals and CI baselines define expected outcomes per case/provider.
+- Copilot skill-load evidence is now consistent with other providers after the flat layout migration; the harness uses provider-aware Tier 1 signals and CI baselines define expected outcomes per case/provider.
 - Executes agent command templates with timeout.
 - Evaluates evidence from stdout/stderr for tool usage + skill-file reads.
 - Falls back to recent logs from agent home dirs when log scanning is enabled (see Log Fallback Policy below).
