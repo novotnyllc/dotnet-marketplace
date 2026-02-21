@@ -22,14 +22,12 @@ import re
 import shutil
 import subprocess
 import sys
-import uuid
-from datetime import datetime, timezone
+import tempfile
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
 CASES_FILE = SCRIPT_DIR / "cases.jsonl"
-BASELINE_FILE = SCRIPT_DIR / "baseline.json"
 FIXTURE_PLUGIN_DIR = SCRIPT_DIR / "fixture-plugin"
 
 # Copilot skill-load evidence pattern (from docs/agent-routing-tests.md:L111)
@@ -87,14 +85,6 @@ def load_cases(path: Path) -> list[dict]:
             seen_ids.add(case["id"])
             cases.append(case)
     return cases
-
-
-def load_baseline(path: Path) -> dict:
-    """Load expected outcomes baseline."""
-    if not path.exists():
-        return {}
-    with open(path) as f:
-        return json.load(f)
 
 
 def install_fixture_plugin() -> bool:
@@ -179,7 +169,7 @@ def uninstall_fixture_plugin() -> None:
         pass  # Best-effort cleanup
 
 
-def run_copilot_prompt(prompt: str, timeout_seconds: int = 90) -> dict:
+def run_copilot_prompt(prompt: str, timeout_seconds: int = 90, cwd: str | None = None) -> dict:
     """Run a single prompt through the Copilot CLI and capture output.
 
     Returns a dict with keys: stdout, stderr, exit_code, timed_out, started.
@@ -203,7 +193,7 @@ def run_copilot_prompt(prompt: str, timeout_seconds: int = 90) -> dict:
             capture_output=True,
             text=True,
             timeout=timeout_seconds,
-            cwd=str(REPO_ROOT),
+            cwd=cwd or str(REPO_ROOT),
         )
         result["stdout"] = proc.stdout or ""
         result["stderr"] = proc.stderr or ""
@@ -257,7 +247,7 @@ def parse_activated_skills(output: str) -> list[str]:
 def evaluate_case(case: dict, cli_result: dict) -> dict:
     """Evaluate a single test case against CLI output.
 
-    Returns a result dict compatible with compare-agent-routing-baseline.py format.
+    Returns a result dict with pass/fail status and skill activation details.
     """
     case_id = case["id"]
     expected_skills = case.get("expected_skills", [])
@@ -412,108 +402,33 @@ def _extract_proof_lines(output: str) -> list[str]:
     return proof[:50]  # cap to avoid huge results
 
 
-def compare_baseline(results: list[dict], baseline: dict) -> dict:
-    """Compare results against baseline for regression detection.
-
-    Returns a summary dict with regressions, improvements, and per-case deltas.
-    """
-    regressions = []
-    improvements = []
-    flaky_failures = []
-    deltas = {}
-
-    for r in results:
-        case_id = r["case_id"]
-        actual_status = r["status"]
-
-        if case_id not in baseline:
-            # Missing baseline entry is a hard failure -- every case must
-            # have a deterministic expected outcome in baseline.json
-            regressions.append(case_id)
-            deltas[case_id] = {"status": actual_status, "delta": "MISSING_BASELINE"}
-            continue
-
-        entry = baseline[case_id]
-        expected_status = entry.get("expected", "pass")
-        is_flaky = entry.get("flaky", False)
-
-        # Validate baseline skills match case expected_skills (detect drift)
-        baseline_skills = sorted(entry.get("skills", []))
-        case_skills = sorted(r.get("expected_skills", []))
-        if baseline_skills != case_skills:
-            regressions.append(case_id)
-            deltas[case_id] = {
-                "status": actual_status,
-                "delta": "BASELINE_SKILL_DRIFT",
-                "baseline_skills": baseline_skills,
-                "case_skills": case_skills,
-            }
-            continue
-
-        if actual_status == expected_status:
-            deltas[case_id] = {"status": actual_status, "delta": "OK"}
-        elif expected_status == "pass" and actual_status in ("fail", "infra_error"):
-            if is_flaky:
-                flaky_failures.append(case_id)
-                deltas[case_id] = {
-                    "status": actual_status,
-                    "delta": "FLAKY_FAIL",
-                }
-            else:
-                regressions.append(case_id)
-                deltas[case_id] = {
-                    "status": actual_status,
-                    "delta": "REGRESSION",
-                }
-        elif expected_status in ("fail", "infra_error") and actual_status == "pass":
-            improvements.append(case_id)
-            deltas[case_id] = {"status": actual_status, "delta": "IMPROVED"}
-        else:
-            deltas[case_id] = {"status": actual_status, "delta": "CHANGED"}
-
-    return {
-        "regressions": regressions,
-        "improvements": improvements,
-        "flaky_failures": flaky_failures,
-        "deltas": deltas,
-        "has_regressions": len(regressions) > 0,
-    }
-
-
-def format_results_for_baseline_compare(results: list[dict]) -> dict:
-    """Format results in a structure compatible with compare-agent-routing-baseline.py.
-
-    Produces an envelope matching the agent-routing results format.
-    """
-    batch_id = str(uuid.uuid4())
-    agent_results = []
-    for r in results:
-        agent_results.append(
-            {
-                "case_id": r["case_id"],
-                "agent": "copilot",
-                "status": r["status"],
-                "timed_out": r.get("timed_out", False),
-                "failure_kind": r.get("failure_kind"),
-                "failure_category": r.get("failure_category"),
-                "tool_use_proof_lines": r.get("proof_lines", []),
-            }
-        )
-    return {
-        "batch_run_id": batch_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "provider": "copilot",
-        "source": "copilot-smoke",
-        "results": agent_results,
-    }
-
-
 def _write_output_files(results: list[dict], output_path: str) -> None:
-    """Write both output_data and agent-routing-compatible results files."""
+    """Write results to JSON output file."""
     total = len(results)
     pass_count = sum(1 for r in results if r["status"] == "pass")
     fail_count = sum(1 for r in results if r["status"] == "fail")
     infra_count = sum(1 for r in results if r["status"] == "infra_error")
+
+    # Per-category breakdown
+    categories: dict[str, list[dict]] = {}
+    for r in results:
+        cat = r.get("category", "unknown")
+        categories.setdefault(cat, []).append(r)
+
+    per_category = {}
+    for cat in sorted(categories):
+        cat_results = categories[cat]
+        cat_total = len(cat_results)
+        cat_pass = sum(1 for r in cat_results if r["status"] == "pass")
+        cat_fail = sum(1 for r in cat_results if r["status"] == "fail")
+        cat_infra = sum(1 for r in cat_results if r["status"] == "infra_error")
+        per_category[cat] = {
+            "total": cat_total,
+            "pass": cat_pass,
+            "fail": cat_fail,
+            "infra_error": cat_infra,
+            "pass_rate": round(cat_pass / cat_total * 100, 1) if cat_total > 0 else 0,
+        }
 
     output_data = {
         "results": results,
@@ -522,21 +437,12 @@ def _write_output_files(results: list[dict], output_path: str) -> None:
             "pass": pass_count,
             "fail": fail_count,
             "infra_error": infra_count,
+            "per_category": per_category,
         },
     }
     with open(output_path, "w") as f:
         json.dump(output_data, f, indent=2)
     print(f"[smoke] Results written to: {output_path}", file=sys.stderr)
-
-    # Also write in agent-routing-compatible format
-    envelope = format_results_for_baseline_compare(results)
-    envelope_path = str(Path(output_path).parent / "results-agent-routing-compat.json")
-    with open(envelope_path, "w") as f:
-        json.dump(envelope, f, indent=2)
-    print(
-        f"[smoke] Agent-routing compatible results: {envelope_path}",
-        file=sys.stderr,
-    )
 
 
 def _should_include_sentinel(args: argparse.Namespace) -> bool:
@@ -655,6 +561,27 @@ def main() -> int:
 
     include_sentinel = _should_include_sentinel(args)
 
+    # Create an isolated temp directory for all copilot invocations so the
+    # agent's file operations don't leave artefacts in the repo tree.
+    work_dir = tempfile.mkdtemp(prefix="copilot-smoke-")
+    print(f"[smoke] Using workspace: {work_dir}", file=sys.stderr)
+
+    try:
+        return _run_cases(args, cases, include_sentinel, work_dir)
+    finally:
+        # Always clean up the workspace, even on failure / Ctrl-C
+        shutil.rmtree(work_dir, ignore_errors=True)
+        print(f"[smoke] Cleaned up workspace: {work_dir}", file=sys.stderr)
+
+
+def _run_cases(
+    args: argparse.Namespace,
+    cases: list[dict],
+    include_sentinel: bool,
+    work_dir: str,
+) -> int:
+    """Execute test cases and print results. Returns exit code."""
+
     # Install fixture plugin for sentinel test
     fixture_installed = False
     if include_sentinel:
@@ -665,8 +592,6 @@ def main() -> int:
                 "WARNING: Could not install fixture plugin; sentinel test may fail.",
                 file=sys.stderr,
             )
-
-    baseline = load_baseline(BASELINE_FILE)
 
     # Run test cases
     total = len(cases)
@@ -681,7 +606,7 @@ def main() -> int:
         )
 
         cli_result = run_copilot_prompt(
-            case["user_prompt"], timeout_seconds=args.timeout_seconds
+            case["user_prompt"], timeout_seconds=args.timeout_seconds, cwd=work_dir
         )
         result = evaluate_case(case, cli_result)
         results.append(result)
@@ -713,9 +638,6 @@ def main() -> int:
         print("[smoke] Removing sentinel fixture plugin...", file=sys.stderr)
         uninstall_fixture_plugin()
 
-    # Compare against baseline
-    comparison = compare_baseline(results, baseline)
-
     # Print summary
     pass_count = sum(1 for r in results if r["status"] == "pass")
     fail_count = sum(1 for r in results if r["status"] == "fail")
@@ -727,19 +649,23 @@ def main() -> int:
         file=sys.stderr,
     )
 
-    if comparison["regressions"]:
+    # Per-category breakdown
+    categories: dict[str, list[dict]] = {}
+    for r in results:
+        cat = r.get("category", "unknown")
+        categories.setdefault(cat, []).append(r)
+
+    print(f"\n[smoke] === Per-Category Breakdown ===", file=sys.stderr)
+    for cat in sorted(categories):
+        cat_results = categories[cat]
+        cat_total = len(cat_results)
+        cat_pass = sum(1 for r in cat_results if r["status"] == "pass")
+        cat_fail = sum(1 for r in cat_results if r["status"] == "fail")
+        cat_infra = sum(1 for r in cat_results if r["status"] == "infra_error")
+        pct = (cat_pass / cat_total * 100) if cat_total > 0 else 0
         print(
-            f"[smoke] REGRESSIONS ({len(comparison['regressions'])}): {comparison['regressions']}",
-            file=sys.stderr,
-        )
-    if comparison["improvements"]:
-        print(
-            f"[smoke] Improvements ({len(comparison['improvements'])}): {comparison['improvements']}",
-            file=sys.stderr,
-        )
-    if comparison["flaky_failures"]:
-        print(
-            f"[smoke] Flaky failures ({len(comparison['flaky_failures'])}): {comparison['flaky_failures']}",
+            f"[smoke]   {cat}: {cat_pass}/{cat_total} passed ({pct:.0f}%)"
+            + (f"  [{cat_fail} fail, {cat_infra} infra]" if cat_fail or cat_infra else ""),
             file=sys.stderr,
         )
 
@@ -747,15 +673,22 @@ def main() -> int:
     results_path = args.output or str(SCRIPT_DIR / "results.json")
     _write_output_files(results, results_path)
 
-    # Gate on regressions (not percentage thresholds)
-    if comparison["has_regressions"]:
+    # Gate on hard failures (infra errors are warnings, not failures)
+    if fail_count > 0:
+        failed_ids = [r["case_id"] for r in results if r["status"] == "fail"]
         print(
-            f"\n[smoke] FAILED: {len(comparison['regressions'])} unexpected regression(s) vs baseline.",
+            f"\n[smoke] FAILED: {fail_count} test(s) failed: {failed_ids}",
             file=sys.stderr,
         )
         return 1
 
-    print(f"\n[smoke] PASSED: No unexpected regressions vs baseline.", file=sys.stderr)
+    if infra_count > 0:
+        print(
+            f"\n[smoke] PASSED (with {infra_count} infra warning(s)).",
+            file=sys.stderr,
+        )
+    else:
+        print(f"\n[smoke] PASSED: All {pass_count} tests passed.", file=sys.stderr)
     return 0
 
 
