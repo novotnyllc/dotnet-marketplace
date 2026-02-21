@@ -7,17 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+## [0.3.0] - 2026-02-21
 
+### Added
 - **GitHub Copilot CLI compatibility** -- Flat `skills/<skill-name>/` layout enables Copilot's one-level-deep skill scanning. All 131 SKILL.md files include `license: MIT` and unquoted descriptions for Copilot CLI compatibility.
 - **32-skill routing strategy** -- Documented Copilot CLI display limit behavior and `dotnet-advisor` meta-routing strategy in CONTRIBUTING-SKILLS.md.
-
 ### Changed
-
 - **Flat skill directory layout** -- Migrated from the prior nested category layout to flat `skills/<skill-name>/` to support cross-provider discovery (Claude Code, Copilot CLI, Codex).
 - **Frontmatter migration** -- Removed quoted descriptions and added `license: MIT` across all 131 skills for Copilot CLI compatibility.
 - **Similarity scoring** -- Removed same-category boost from similarity detection (no longer applicable with flat layout).
 - **Updated documentation** -- AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, README.md, and docs updated for flat layout, Copilot compatibility, and canonical skill count of 131.
+
+### Added
+
+- **Flat skill layout and Copilot-safe metadata** -- Reorganized skills into a single-level catalog and migrated skill frontmatter to a Copilot-safe format, including explicit user-invocable metadata, so skill discovery and routing are more reliable.
+- **Copilot compatibility test coverage** -- Added Copilot activation smoke tests and cross-provider regression testing with CI integration, including per-category pass reporting and workspace isolation for clearer validation.
+
+### Changed
+
+- **Routing and validation for Copilot compatibility** -- Updated validators/baselines and documentation to match the new flat layout and 32-skill routing strategy, aligning required fields and guidance with actual runtime behavior.
+
+### Fixed
+
+- **Provider routing failures** -- Corrected the Microsoft Docs MCP key issue and updated compare-agent routing logic with sampling plus provider-specific timeouts to reduce false routing failures.
+- **Metadata and baseline compatibility checks** -- Fixed metadata-last and baseline/reference handling so Copilot CLI v0.0.412 verification and safety checks behave correctly.
+- **Documentation accuracy for available skills** -- Fixed stale counts, nested-path remnants, and missing catalog entries so user-facing skill metadata and documentation reflect the actual plugin state.
 
 ## [0.2.0] - 2026-02-20
 
@@ -108,7 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...HEAD
+[0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0
 [0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0
 [0.1.1]: https://github.com/novotnyllc/dotnet-artisan/releases/tag/dotnet-artisan/v0.1.1
 [0.1.0]: https://github.com/novotnyllc/dotnet-artisan/commits/main  <!-- no release tag for 0.1.0; links to main branch history -->
