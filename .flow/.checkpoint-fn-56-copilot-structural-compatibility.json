@@ -1,0 +1,133 @@
+{
+  "created_at": "2026-02-21T00:08:07.470873Z",
+  "epic": {
+    "data": {
+      "branch_name": "fn-56-copilot-structural-compatibility",
+      "completion_review_status": "unknown",
+      "completion_reviewed_at": null,
+      "created_at": "2026-02-21T00:03:13.475656Z",
+      "default_impl": null,
+      "default_review": null,
+      "default_sync": null,
+      "depends_on_epics": [],
+      "id": "fn-56-copilot-structural-compatibility",
+      "next_task": 1,
+      "plan_review_status": "unknown",
+      "plan_reviewed_at": null,
+      "spec_path": ".flow/specs/fn-56-copilot-structural-compatibility.md",
+      "status": "open",
+      "title": "Copilot Structural Compatibility",
+      "updated_at": "2026-02-21T00:03:59.008553Z"
+    },
+    "spec": "# Copilot Structural Compatibility\n\n## Overview\n\nMake dotnet-artisan's skill directory layout, YAML frontmatter, and validators compatible with GitHub Copilot CLI and VS Code Copilot Chat, while preserving full Claude Code and Codex functionality.\n\n**Problem:** Copilot discovers skills by scanning one level deep under `skills/`. The current nested layout (`skills/<category>/<skill-name>/SKILL.md`) causes Copilot to interpret category directories as skill names, finding zero actual skills. Additionally, YAML frontmatter quirks (quoted descriptions, missing `license:` field) cause silent load failures in Copilot CLI.\n\n**Critical constraint:** Copilot CLI has a hard ~32 skill display limit in the system prompt (issues #1464, #1130). With 130 skills, only the first ~32 alphabetically are visible. This requires a routing strategy, not just a flatten.\n\n## Research Sources\n\n- **VS Code Copilot Chat source** (`microsoft/vscode-copilot-chat`): `relativePath.split('/')[0]` confirms one-level-deep scanning\n- **Copilot CLI changelog**: v0.0.413 (today) did NOT change nested directory behavior; only fixed YAML array `allowed-tools`\n- **Agent Skills spec** (`agentskills.io/specification`): Defines flat `skill-name/SKILL.md` layout; all reference repos use flat\n- **Copilot CLI issues**: #1464 (32-skill limit), #894 (license required), #1024 (quoted descriptions fail), #951 (metadata last field), #1021 (symlinks ignored)\n- **dotnet-skills-evals**: DSPy eval framework; compressed-index discovery mechanism tested at 56.5% TPR\n- **dotnet-skills issue #48**: Progressive disclosure for skills >500 lines\n- **Existing work on `copilot-refactor` branch**: Smoke runners, baseline JSONs, validator updates already committed\n\n## Scope\n\n- Flatten `skills/<category>/<skill-name>/` to `skills/<skill-name>/` (131 directories)\n- Update all 132 `plugin.json` skill paths\n- Migrate all 131 SKILL.md frontmatter for Copilot safety\n- Update validators, baselines, and depth-sensitive scripts\n- Design and implement 32-skill routing strategy\n- Update all documentation referencing the nested layout\n\n## Out of scope\n\n- Copilot Extensions/Skillsets API (different feature from Agent Skills)\n- Changes to hook scripts or MCP server configuration (Copilot handles these differently; addressed if testing reveals issues)\n- Copilot CLI installation/distribution (users install separately)\n\n## Approach\n\n1. **Atomic flatten** in a single commit using `git mv` to preserve history\n2. **Frontmatter migration** scripted across all 131 SKILL.md files\n3. **Validator updates** additive (new flat-layout checks alongside existing)\n4. **32-skill strategy**: Leverage `dotnet-advisor` as meta-router (alphabetically ~8th, within visible set); advisor's compressed catalog serves as Level 2 index for all 130 skills\n5. **Documentation** updated in a dedicated pass after structural changes stabilize\n\n## Risks\n\n- **plugin.json + filesystem inconsistency** causes all Claude Code skill loading to fail \u2192 mitigated by atomic commit\n- **Codex sync breaks** due to `find -mindepth 2` in `test.sh:129` \u2192 explicit fix in flatten task\n- **Description unquoting** may break YAML for descriptions with special characters \u2192 scripted with validation pass\n- **Baseline invalidation** across routing-warnings and similarity baselines \u2192 reset in validator task\n\n## Quick commands\n\n```bash\n# Verify flat layout (no nested SKILL.md)\nfor dir in skills/*/*/; do [[ -f \"${dir}SKILL.md\" ]] && echo \"NESTED: $dir\"; done\n\n# Verify skill count preserved\nfind skills -name SKILL.md -maxdepth 2 | wc -l  # should be 131\n\n# Verify plugin.json paths resolve\njq -r '.skills[]' .claude-plugin/plugin.json | while read p; do [[ -f \"${p}/SKILL.md\" ]] || echo \"MISSING: $p\"; done\n\n# Run validators\n./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh\n```\n\n## Acceptance\n\n- [ ] All 131 skills exist at `skills/<skill-name>/SKILL.md` (flat, one level deep)\n- [ ] No `skills/<category>/<skill-name>/SKILL.md` paths remain (no nested skills)\n- [ ] `plugin.json` skill paths all resolve to existing directories with SKILL.md\n- [ ] All 131 SKILL.md files have `license:` field and unquoted descriptions\n- [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass\n- [ ] `dotnet-advisor` contains compressed catalog visible within Copilot's 32-skill window\n- [ ] AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, README.md updated for flat layout\n- [ ] Git history preserved for all moved files (git mv, not delete+create)\n\n## Dependencies\n\n- Builds on fn-42 (directory structure), fn-51 (frontmatter), fn-54 (test harness), fn-55 (validator)\n- All predecessors are done/merged; no open blockers\n- Epic fn-57 (testing) depends on this epic completing first\n\n## References\n\n- VS Code Copilot Chat: `src/platform/customInstructions/common/customInstructionsService.ts`\n- Agent Skills spec: https://agentskills.io/specification\n- Copilot CLI: https://github.com/github/copilot-cli/\n- Issue #48: https://github.com/Aaronontheweb/dotnet-skills/issues/48\n- dotnet-skills-evals: https://github.com/Aaronontheweb/dotnet-skills-evals\n- microsoft/skills: https://github.com/microsoft/skills (flat layout reference)\n"
+  },
+  "epic_id": "fn-56-copilot-structural-compatibility",
+  "schema_version": 2,
+  "tasks": [
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-21T00:04:30.307316Z",
+        "depends_on": [],
+        "epic": "fn-56-copilot-structural-compatibility",
+        "id": "fn-56-copilot-structural-compatibility.1",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.1.md",
+        "status": "todo",
+        "title": "Atomic flatten of skills directory",
+        "updated_at": "2026-02-21T00:05:01.365677Z"
+      },
+      "id": "fn-56-copilot-structural-compatibility.1",
+      "runtime": null,
+      "spec": "# fn-56-copilot-structural-compatibility.1 Atomic flatten of skills directory\n\n## Description\nMove all 131 skill directories from `skills/<category>/<skill-name>/` to `skills/<skill-name>/` in a single atomic commit. Update all path references that depend on the nested layout.\n\n**Size:** M\n**Files:** skills/ (131 directories moved), .claude-plugin/plugin.json (132 path entries), test.sh (find depth), .agents/openai.yaml (default_prompt path pattern)\n\n## Approach\n\n1. Write a shell script that iterates all `skills/<category>/<skill-name>/` directories and runs `git mv` for each to `skills/<skill-name>/` \u2014 preserves git history\n2. Update all 132 entries in `.claude-plugin/plugin.json` `skills` array from `./skills/<category>/<skill-name>` to `./skills/<skill-name>`\n3. Fix `test.sh:129` \u2014 change `find \"$REPO_ROOT/skills\" -mindepth 2 -maxdepth 2 -type d` to `-mindepth 1 -maxdepth 1`\n4. Update `.agents/openai.yaml` `default_prompt` \u2014 change `skills/<category>/<skill-name>/` to `skills/<skill-name>/`\n5. Remove empty category directories (25 dirs including `containers/`, `data-access/`)\n6. Preserve companion files: `details.md` (2 skills), `reference/` (windbg - 16 files), `scripts/` (version-detection)\n7. Verify skill count preserved: `find skills -name SKILL.md -maxdepth 2 | wc -l` must equal 131\n8. All operations in a single commit\n\n## Key context\n\n- `_validate_skills.py:L499-507` uses `rglob(\"SKILL.md\")` so it finds skills at any depth \u2014 should still work after flatten\n- `_validate_skills.py:L515` extracts IDs from `f.parent.name` (directory name only) \u2014 no change needed\n- Companion files must move with their parent skill directory (git mv handles this)\n- Empty category dirs: foundation, core-csharp, architecture, testing, api-development, security, ui-frameworks, native-aot, cli-tools, agent-meta-skills, cicd, packaging, performance, project-structure, serialization, documentation, localization, build-system, tui, multi-targeting, release-management, ai, debugging, containers, data-access\n- `test.sh:129` is the ONLY depth-sensitive find command discovered by research\n## Acceptance\n- [ ] All 131 skills exist at `skills/<skill-name>/SKILL.md` (one level deep)\n- [ ] No `skills/<category>/<skill-name>/SKILL.md` paths remain\n- [ ] No empty category directories remain under `skills/`\n- [ ] All 132 `plugin.json` skill paths updated to `./skills/<skill-name>` format\n- [ ] `test.sh` find command uses `-mindepth 1 -maxdepth 1`\n- [ ] `.agents/openai.yaml` path pattern updated\n- [ ] Companion files (details.md, reference/, scripts/) preserved with their skills\n- [ ] `git log --follow` works for at least 3 sampled skill files (history preserved)\n- [ ] Skill count: `find skills -name SKILL.md -maxdepth 2 | wc -l` equals 131\n- [ ] Single commit containing all changes\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-21T00:04:30.442328Z",
+        "depends_on": [
+          "fn-56-copilot-structural-compatibility.1"
+        ],
+        "epic": "fn-56-copilot-structural-compatibility",
+        "id": "fn-56-copilot-structural-compatibility.2",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.2.md",
+        "status": "todo",
+        "title": "Copilot-safe frontmatter migration",
+        "updated_at": "2026-02-21T00:05:19.426686Z"
+      },
+      "id": "fn-56-copilot-structural-compatibility.2",
+      "runtime": null,
+      "spec": "# fn-56-copilot-structural-compatibility.2 Copilot-safe frontmatter migration\n\n## Description\nMigrate all 131 SKILL.md frontmatter files to be Copilot-safe. Address known Copilot CLI YAML parsing bugs that cause silent skill load failures.\n\n**Size:** M\n**Files:** skills/*/SKILL.md (131 files), scripts/_validate_skills.py (ALLOWED_FRONTMATTER_FIELDS)\n\n## Approach\n\n1. **Add `license: MIT` field** to all 131 SKILL.md files \u2014 Copilot bug #894 effectively requires this field. Add after `description:` and before any optional fields.\n2. **Unquote description values** \u2014 Copilot bug #1024 breaks on `description: \"quoted text\"`. Remove surrounding double quotes from all description values. Verify no description starts with YAML special characters (`{`, `[`, `*`, `&`, `!`, `%`, `@`, `` ` ``) after unquoting.\n3. **Audit `metadata:` field position** \u2014 Copilot bug #951 breaks if `metadata:` is the last frontmatter field. No current skills have this, but add a validator check to prevent regression.\n4. **Add `license` to `ALLOWED_FRONTMATTER_FIELDS`** in `_validate_skills.py:L58-65`.\n5. **Check for UTF-8 BOM** \u2014 Copilot bug #958 breaks if SKILL.md starts with BOM. Verify none exist; add validator check.\n6. Write a migration script (temporary, not committed) that processes all 131 files.\n\n## Key context\n\n- All 131 skills currently use `description: \"...\"` (double-quoted). Research confirms Copilot CLI #1024 fails on quoted descriptions.\n- 12+ descriptions contain colons (e.g., `OWASP Top 10: injection`). After unquoting, these are still valid YAML because the colon appears within a value context, not at the mapping level.\n- `_validate_skills.py:L58-65` has `ALLOWED_FRONTMATTER_FIELDS = {\"name\", \"description\", \"user-invocable\", \"disable-model-invocation\", \"context\", \"model\"}`. Must add `\"license\"`.\n- The `EXTRA_FIELD_COUNT` baseline in `routing-warnings-baseline.json` will NOT be affected because `license` will be in the allowed set.\n- Single-quoted description exists for `dotnet-gha-patterns` \u2014 also needs unquoting.\n## Acceptance\n- [ ] All 131 SKILL.md files contain `license: MIT` in frontmatter\n- [ ] No SKILL.md file has double-quoted or single-quoted `description:` value\n- [ ] No SKILL.md file starts with UTF-8 BOM\n- [ ] No SKILL.md file has `metadata:` as the last frontmatter field\n- [ ] `license` added to `ALLOWED_FRONTMATTER_FIELDS` in `_validate_skills.py`\n- [ ] `./scripts/validate-skills.sh` passes after changes\n- [ ] Spot-check 5 descriptions containing colons parse correctly with both Python yaml and Copilot CLI\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-21T00:04:30.601907Z",
+        "depends_on": [
+          "fn-56-copilot-structural-compatibility.1",
+          "fn-56-copilot-structural-compatibility.2"
+        ],
+        "epic": "fn-56-copilot-structural-compatibility",
+        "id": "fn-56-copilot-structural-compatibility.3",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.3.md",
+        "status": "todo",
+        "title": "Update validators and baselines for flat layout",
+        "updated_at": "2026-02-21T00:05:35.751105Z"
+      },
+      "id": "fn-56-copilot-structural-compatibility.3",
+      "runtime": null,
+      "spec": "# fn-56-copilot-structural-compatibility.3 Update validators and baselines for flat layout\n\n## Description\nUpdate all validation scripts and their baselines to work correctly with the flat directory layout and new frontmatter fields.\n\n**Size:** M\n**Files:** scripts/validate-marketplace.sh, scripts/_validate_skills.py, scripts/validate-similarity.py, scripts/similarity-baseline.json, scripts/routing-warnings-baseline.json\n\n## Approach\n\n1. **`validate-marketplace.sh`**: Verify skill path resolution logic works with flat `./skills/<skill-name>` paths. The script iterates `plugin.json` `skills[]` array and checks each path resolves to a directory with SKILL.md \u2014 should work unchanged if plugin.json paths were updated in T1, but verify.\n2. **`_validate_skills.py`**: The `rglob(\"SKILL.md\")` at L499-507 finds skills at any depth \u2014 verify it still works. Add a new check: **flat layout guard** that warns if any SKILL.md is found more than 1 level deep under `skills/` (catches accidental re-nesting).\n3. **`_validate_skills.py`**: Add frontmatter safety checks for Copilot compatibility:\n   - Warn if `description:` value is quoted\n   - Warn if `metadata:` is the last frontmatter field\n   - Warn if file starts with UTF-8 BOM\n   - Warn if `license:` is missing\n4. **`validate-similarity.py`**: Check if it keys on category paths. If so, update to use flat skill names. Regenerate `similarity-baseline.json`.\n5. **`routing-warnings-baseline.json`**: Regenerate by running `./scripts/validate-skills.sh` after T1 and T2 changes.\n6. **Add Copilot discovery smoke check**: New validation that verifies every skill directory under `skills/` is exactly one level deep (no `skills/<category>/<skill>/SKILL.md`).\n\n## Key context\n\n- `_validate_skills.py:L515` extracts IDs from `f.parent.name` \u2014 path-independent, should work\n- `validate-similarity.py` uses a `+0.15` same-category scoring boost for skills in the same parent directory. After flatten, ALL skills share the same parent \u2014 this boost becomes meaningless. Remove the boost or replace with a naming-prefix heuristic.\n- Existing `copilot-refactor` branch already has some validator updates committed \u2014 build on those\n## Acceptance\n- [ ] `./scripts/validate-skills.sh` passes on flat layout\n- [ ] `./scripts/validate-marketplace.sh` passes on flat layout\n- [ ] Flat layout guard added: warns if SKILL.md found >1 level deep under skills/\n- [ ] Copilot frontmatter safety checks added (quoted description, metadata position, BOM, license)\n- [ ] Similarity detection updated for flat layout (same-category boost removed or replaced)\n- [ ] `similarity-baseline.json` regenerated for flat layout\n- [ ] `routing-warnings-baseline.json` regenerated for flat layout + new frontmatter\n- [ ] Full validation suite: `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` green\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-21T00:04:30.748545Z",
+        "depends_on": [
+          "fn-56-copilot-structural-compatibility.1"
+        ],
+        "epic": "fn-56-copilot-structural-compatibility",
+        "id": "fn-56-copilot-structural-compatibility.4",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.4.md",
+        "status": "todo",
+        "title": "32-skill routing strategy",
+        "updated_at": "2026-02-21T00:05:55.595926Z"
+      },
+      "id": "fn-56-copilot-structural-compatibility.4",
+      "runtime": null,
+      "spec": "# fn-56-copilot-structural-compatibility.4 32-skill routing strategy\n\n## Description\nDesign and implement a strategy for making all 130 skills accessible through Copilot despite the hard ~32 skill display limit (Copilot CLI issues #1464, #1130).\n\n**Size:** M\n**Files:** skills/dotnet-advisor/SKILL.md (primary), potentially skill directory renames\n\n## Approach\n\n**Strategy: Advisor as Meta-Router + Alphabetical Priority**\n\n1. **Ensure `dotnet-advisor` is within the visible 32-skill window.** Currently alphabetically ~8th among `dotnet-*` skills \u2014 safely within the limit. Verify this after flatten.\n\n2. **Optimize advisor description for Copilot activation.** Current description routes .NET work generically. For Copilot, the description must clearly signal that it covers ALL .NET development topics \u2014 making it the primary entry point.\n\n3. **Update advisor compressed catalog.** The advisor already contains a compressed skill catalog with `[skill:name]` cross-references. Ensure this catalog:\n   - Lists all 130 skills organized by domain (not alphabetically \u2014 by capability)\n   - Uses strong activation language per Copilot best practice (#978)\n   - Is optimized for the Level 2 \u2192 Level 3 progressive disclosure model (advisor body loaded \u2192 references load specific skills on demand)\n\n4. **Prioritize the top 32 visible skills.** Analyze which 32 skills (alphabetically first `dotnet-*`) are in the visible window. Identify any high-value skills that fall outside the window. Options:\n   - If critical skills are outside top 32: consider strategic renames (e.g., prefix with `a-dotnet-*` or create alias skills)\n   - If the top 32 naturally cover the highest-value domains: no renames needed \u2014 document the prioritization\n\n5. **Document the 32-skill constraint** in CONTRIBUTING-SKILLS.md so future skill authors understand the naming implications.\n\n## Key context\n\n- dotnet-skills-evals tested a \"compressed index\" discovery mechanism and found 56.5% TPR with Sonnet \u2014 this is the advisor's approach\n- The advisor at `skills/foundation/dotnet-advisor/SKILL.md` (after flatten: `skills/dotnet-advisor/SKILL.md`) currently has 360 lines with 221 `[skill:]` cross-references\n- Copilot's progressive disclosure: Level 1 (name+description) \u2192 Level 2 (SKILL.md body) \u2192 Level 3 (referenced skills)\n- The model can only invoke skills it has seen metadata for at Level 1, OR skills referenced within an already-loaded skill's body at Level 2\n- Copilot issue #978: \"Skills not auto-activated\" \u2014 strong activation language in descriptions is essential\n## Acceptance\n- [ ] `dotnet-advisor` verified within Copilot's 32-skill visible window after flatten\n- [ ] Advisor description optimized for Copilot activation (strong trigger language, covers all .NET domains)\n- [ ] Advisor compressed catalog updated with all 130 skills, organized by capability domain\n- [ ] Top 32 alphabetically-first skills documented with their domains\n- [ ] Any critical-but-invisible skills addressed (rename, alias, or documented as advisor-routed only)\n- [ ] 32-skill constraint documented in CONTRIBUTING-SKILLS.md\n- [ ] Advisor `[skill:]` cross-references all resolve correctly\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    },
+    {
+      "data": {
+        "assignee": null,
+        "claim_note": "",
+        "claimed_at": null,
+        "created_at": "2026-02-21T00:04:30.868605Z",
+        "depends_on": [
+          "fn-56-copilot-structural-compatibility.1",
+          "fn-56-copilot-structural-compatibility.4"
+        ],
+        "epic": "fn-56-copilot-structural-compatibility",
+        "id": "fn-56-copilot-structural-compatibility.5",
+        "priority": null,
+        "spec_path": ".flow/tasks/fn-56-copilot-structural-compatibility.5.md",
+        "status": "todo",
+        "title": "Update all documentation for flat layout",
+        "updated_at": "2026-02-21T00:06:11.753297Z"
+      },
+      "id": "fn-56-copilot-structural-compatibility.5",
+      "runtime": null,
+      "spec": "# fn-56-copilot-structural-compatibility.5 Update all documentation for flat layout\n\n## Description\nUpdate all documentation files that reference the nested `skills/<category>/<skill-name>/` directory layout to reflect the new flat `skills/<skill-name>/` structure.\n\n**Size:** M\n**Files:** AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, README.md, docs/agent-routing-tests.md, .agents/openai.yaml, CHANGELOG.md\n\n## Approach\n\n1. **AGENTS.md** (and CLAUDE.md which @includes it): Update file structure diagram from `skills/<category>/<skill-name>/SKILL.md` to `skills/<skill-name>/SKILL.md`. Update category count references. Update validation commands section if needed.\n2. **CONTRIBUTING.md**: Update cross-provider verification section (L238-258). Update any path references. Add Copilot-specific install instructions if applicable.\n3. **CONTRIBUTING-SKILLS.md**: Update skill authoring guide \u2014 directory creation instructions change from `skills/<category>/<name>/` to `skills/<name>/`. Update checklist items. Add the 32-skill constraint documentation (from T4).\n4. **README.md**: Update installation section to include Copilot. Update architecture diagram if it shows nested layout. Change \"Claude Code plugin\" framing to \"multi-platform plugin\" if appropriate.\n5. **docs/agent-routing-tests.md**: Update Copilot source setup description (L22-32). Update evidence tier documentation (L93, L111) for new evidence patterns.\n6. **`.agents/openai.yaml`**: Update `default_prompt` path pattern (already handled in T1 but verify).\n7. **CHANGELOG.md**: Add entries under `[Unreleased]` \u2192 `### Added` for Copilot compatibility, flat layout, frontmatter migration.\n\n## Key context\n\n- AGENTS.md says `skills/<category>/<skill-name>/SKILL.md   # 130 skills across 22 categories` \u2014 update to `skills/<skill-name>/SKILL.md   # 131 skills`\n- CONTRIBUTING-SKILLS.md has detailed directory creation instructions that assume category subdirectories\n- README.md describes the plugin as \"a Claude Code plugin\" \u2014 broadening scope\n- docs/agent-routing-tests.md L93: \"Copilot historically had weaker skill-load evidence for nested `dotnet-*` skills\" \u2014 this is now resolved\n- CHANGELOG.md uses Keep a Changelog format\n## Acceptance\n- [ ] No documentation file references `skills/<category>/<skill-name>/` pattern\n- [ ] AGENTS.md file structure diagram shows flat layout\n- [ ] CONTRIBUTING-SKILLS.md skill creation instructions use flat layout\n- [ ] CONTRIBUTING-SKILLS.md includes 32-skill constraint documentation\n- [ ] README.md mentions Copilot compatibility\n- [ ] docs/agent-routing-tests.md updated for current Copilot evidence patterns\n- [ ] CHANGELOG.md has unreleased entries for Copilot compatibility changes\n- [ ] `grep -r \"skills/.*/.*/SKILL.md\" *.md docs/ CONTRIBUTING* README* AGENTS* CLAUDE*` returns zero matches\n## Done summary\nTBD\n\n## Evidence\n- Commits:\n- Tests:\n- PRs:\n"
+    }
+  ]
+}
