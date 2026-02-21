@@ -63,18 +63,25 @@ Harden CI to make Copilot a functional gate on PRs, pin Copilot CLI version, add
 - `agent-live-routing.yml` already has `fail_on_infra` workflow input (default: `false`); schedule runs currently have no equivalent
 
 ## Acceptance
-- [ ] `copilot-smoke` job added to `validate.yml` running a deterministic smoke subset on PRs
-- [ ] Smoke job compares results against committed baseline (not percentage thresholds)
-- [ ] Copilot CLI install proven on `ubuntu-latest` via throwaway workflow (exact install command + auth env documented)
-- [ ] Copilot CLI pinned version in CI workflow
-- [ ] Plugin registration uses same mechanism as `test.sh:prepare_copilot_plugin()`
-- [ ] Auth mechanism implemented (token source documented, `copilot --version` health check gates execution)
-- [ ] Smoke runner supports `--require-copilot` flag: non-fork PRs exit non-zero on infra_error
-- [ ] `validate.yml`: fork/no-secrets → accept infra_error; non-fork with secrets → infra_error is failure (enforced via `--require-copilot`)
-- [ ] `agent-live-routing.yml`: `continue-on-error` removed; schedule hard-codes `fail_on_infra=true`; `workflow_dispatch` default changed to `true`
-- [ ] `summarize` job handles `infra_error` status: "failed" when `fail_on_infra=true`, "skipped" otherwise
-- [ ] Frontmatter safety checks verified running in CI as ERRORs
-- [ ] Flat layout guard verified running in CI
-- [ ] Skill count assertion (131) added to CI
-- [ ] Exit criteria documented in docs/agent-routing-tests.md with deterministic infra_error rules per workflow
-- [ ] Fork CI behavior documented and tested
+- [x] `copilot-smoke` job added to `validate.yml` running a deterministic smoke subset on PRs
+- [x] Smoke job compares results against committed baseline (not percentage thresholds)
+- [x] Copilot CLI install proven on `ubuntu-latest` via throwaway workflow (exact install command + auth env documented)
+- [x] Copilot CLI pinned version in CI workflow
+- [x] Plugin registration uses same mechanism as `test.sh:prepare_copilot_plugin()`
+- [x] Auth mechanism implemented (token source documented, `copilot --version` health check gates execution)
+- [x] Smoke runner supports `--require-copilot` flag: non-fork PRs exit non-zero on infra_error
+- [x] `validate.yml`: fork/no-secrets → accept infra_error; non-fork with secrets → infra_error is failure (enforced via `--require-copilot`)
+- [x] `agent-live-routing.yml`: `continue-on-error` removed; schedule hard-codes `fail_on_infra=true`; `workflow_dispatch` default changed to `true`
+- [x] `summarize` job handles `infra_error` status: "failed" when `fail_on_infra=true`, "skipped" otherwise
+- [x] Frontmatter safety checks verified running in CI as ERRORs
+- [x] Flat layout guard verified running in CI
+- [x] Skill count assertion (131) added to CI
+- [x] Exit criteria documented in docs/agent-routing-tests.md with deterministic infra_error rules per workflow
+- [x] Fork CI behavior documented and tested
+
+## Evidence
+- Commits: 1dbb77f, 2a54309, 3d01f93
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
+## Done summary
+Hardened CI for Copilot gate: added copilot-smoke job to validate.yml with 8 deterministic smoke cases on PRs, implemented soft infra / hard functional policy (fork/no-secrets accepts infra_error, non-fork requires Copilot via --require-copilot), pinned Copilot CLI v0.0.412, added skill count assertion (131), removed continue-on-error from agent-live-routing.yml, updated fail_on_infra defaults to true for both schedule and manual runs, updated summarize job to enforce infra_error policy, documented exit criteria in docs/agent-routing-tests.md, and created copilot-install-proof.yml throwaway workflow.
