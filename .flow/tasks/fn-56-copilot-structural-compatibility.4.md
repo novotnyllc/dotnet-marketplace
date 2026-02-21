@@ -61,3 +61,7 @@ Verify how Copilot's 32-skill display limit interacts with `user-invocable: fals
 - [ ] If Phase 2B: advisor compressed catalog updated with all skills organized by domain
 - [ ] 32-skill constraint (or non-issue finding) documented in CONTRIBUTING-SKILLS.md
 - [ ] All `[skill:]` cross-references in advisor resolve correctly
+
+## Done summary
+
+## Evidence

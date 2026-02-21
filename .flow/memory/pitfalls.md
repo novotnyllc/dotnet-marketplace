@@ -396,3 +396,6 @@ Negative control test cases (disallowed/optional skills) must use temptation pro
 
 ## 2026-02-21 manual [pitfall]
 When scanning raw frontmatter lines for key patterns, only check column-0 (non-indented) lines -- indented lines may be block scalar content and produce false positives on key-like patterns
+
+## 2026-02-21 manual [pitfall]
+When documenting behaviors observed in upstream issue trackers (not locally measured), use qualified language like 'upstream reports suggest' and 'implementation-defined' rather than 'verified' or definitive claims -- reviewers flag overclaimed verification
