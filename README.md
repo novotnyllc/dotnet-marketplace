@@ -73,6 +73,7 @@ The plugin organizes 131 skills in a flat directory layout (`skills/<skill-name>
 | **Localization** | 1 | dotnet-localization |
 | **Build System** | 3 | dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization |
 | **AI** | 1 | dotnet-semantic-kernel |
+| **Debugging** | 1 | dotnet-windbg-debugging |
 
 ## Agents
 
@@ -145,6 +146,7 @@ graph TB
             LO[Localization<br/>1 skill]
             BSys[Build System<br/>3 skills]
             AI[AI<br/>1 skill]
+            DB[Debugging<br/>1 skill]
         end
 
         subgraph Infra["Infrastructure"]
