@@ -38,6 +38,15 @@ SKILL_LOAD_REGEX = re.compile(r"Base directory for this skill:\s*(?P<path>.+)")
 # Sentinel string for progressive disclosure verification
 SENTINEL_STRING = "SENTINEL-COPILOT-SIBLING-TEST-7f3a"
 
+# Sentinel test case (progressive disclosure via fixture plugin)
+SENTINEL_CASE = {
+    "id": "smoke-sentinel",
+    "user_prompt": "Look up the dotnet-sentinel-test skill and tell me what the verification sentinel value is from its reference.md sibling file.",
+    "expected_skills": ["dotnet-sentinel-test"],
+    "should_activate": True,
+    "category": "progressive-disclosure",
+}
+
 
 def have_copilot() -> bool:
     """Check if the copilot CLI is available."""
@@ -47,6 +56,7 @@ def have_copilot() -> bool:
 def load_cases(path: Path) -> list[dict]:
     """Load test cases from JSONL file."""
     cases = []
+    seen_ids: set[str] = set()
     with open(path) as f:
         for line_num, line in enumerate(f, 1):
             line = line.strip()
@@ -67,6 +77,14 @@ def load_cases(path: Path) -> list[dict]:
                     file=sys.stderr,
                 )
                 continue
+            # Detect duplicate IDs
+            if case["id"] in seen_ids:
+                print(
+                    f"WARNING: Skipping duplicate case ID '{case['id']}' at line {line_num}",
+                    file=sys.stderr,
+                )
+                continue
+            seen_ids.add(case["id"])
             cases.append(case)
     return cases
 
@@ -85,7 +103,10 @@ def install_fixture_plugin() -> bool:
         return False
     fixture_dir = str(FIXTURE_PLUGIN_DIR)
     try:
-        # Add fixture as a marketplace source
+        # Best-effort cleanup before install for idempotency
+        uninstall_fixture_plugin()
+
+        # Add fixture as a marketplace source (keyed by path)
         r1 = subprocess.run(
             ["copilot", "plugin", "marketplace", "add", fixture_dir],
             capture_output=True,
@@ -128,6 +149,7 @@ def uninstall_fixture_plugin() -> None:
     """Remove the sentinel test fixture plugin from Copilot."""
     if not have_copilot():
         return
+    fixture_dir = str(FIXTURE_PLUGIN_DIR)
     try:
         subprocess.run(
             [
@@ -136,6 +158,13 @@ def uninstall_fixture_plugin() -> None:
                 "uninstall",
                 "dotnet-sentinel-fixture@dotnet-sentinel-fixture",
             ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        # Remove by path (same identifier used in add) and by name as fallback
+        subprocess.run(
+            ["copilot", "plugin", "marketplace", "remove", "-f", fixture_dir],
             capture_output=True,
             text=True,
             timeout=30,
@@ -181,8 +210,15 @@ def run_copilot_prompt(prompt: str, timeout_seconds: int = 90) -> dict:
         result["exit_code"] = proc.returncode
         result["started"] = True
     except subprocess.TimeoutExpired as e:
-        result["stdout"] = (e.stdout or b"").decode("utf-8", errors="replace")
-        result["stderr"] = (e.stderr or b"").decode("utf-8", errors="replace")
+        def _to_str(x: object) -> str:
+            if x is None:
+                return ""
+            if isinstance(x, bytes):
+                return x.decode("utf-8", errors="replace")
+            return str(x)
+
+        result["stdout"] = _to_str(e.stdout)
+        result["stderr"] = _to_str(e.stderr)
         result["timed_out"] = True
         result["started"] = True
     except FileNotFoundError:
@@ -399,6 +435,19 @@ def compare_baseline(results: list[dict], baseline: dict) -> dict:
         expected_status = entry.get("expected", "pass")
         is_flaky = entry.get("flaky", False)
 
+        # Validate baseline skills match case expected_skills (detect drift)
+        baseline_skills = sorted(entry.get("skills", []))
+        case_skills = sorted(r.get("expected_skills", []))
+        if baseline_skills and case_skills and baseline_skills != case_skills:
+            regressions.append(case_id)
+            deltas[case_id] = {
+                "status": actual_status,
+                "delta": "BASELINE_SKILL_DRIFT",
+                "baseline_skills": baseline_skills,
+                "case_skills": case_skills,
+            }
+            continue
+
         if actual_status == expected_status:
             deltas[case_id] = {"status": actual_status, "delta": "OK"}
         elif expected_status == "pass" and actual_status in ("fail", "infra_error"):
@@ -488,6 +537,37 @@ def _write_output_files(results: list[dict], output_path: str) -> None:
     )
 
 
+def _should_include_sentinel(args: argparse.Namespace) -> bool:
+    """Check if sentinel case should be included based on filters."""
+    if args.case_id:
+        case_ids = [c.strip() for c in args.case_id.split(",")]
+        if "smoke-sentinel" not in case_ids:
+            return False
+    if args.category:
+        categories = [c.strip() for c in args.category.split(",")]
+        if "progressive-disclosure" not in categories:
+            return False
+    return True
+
+
+def _build_full_case_list(args: argparse.Namespace) -> list[dict]:
+    """Build the complete case list including sentinel, respecting filters."""
+    cases = load_cases(CASES_FILE)
+
+    if args.category:
+        categories = [c.strip() for c in args.category.split(",")]
+        cases = [c for c in cases if c.get("category") in categories]
+
+    if args.case_id:
+        case_ids = [c.strip() for c in args.case_id.split(",")]
+        cases = [c for c in cases if c["id"] in case_ids]
+
+    if _should_include_sentinel(args):
+        cases.append(SENTINEL_CASE)
+
+    return cases
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Copilot activation smoke test runner"
@@ -528,7 +608,7 @@ def main() -> int:
     if not have_copilot():
         if args.require_copilot:
             print(
-                "ERROR: Copilot CLI not installed. Use --require-copilot to enforce.",
+                "ERROR: Copilot CLI not installed (exit 2).",
                 file=sys.stderr,
             )
             exit_code = 2
@@ -541,9 +621,9 @@ def main() -> int:
 
         # Write infra_error results if output requested (consistent format)
         if args.output:
-            cases = load_cases(CASES_FILE)
+            all_cases = _build_full_case_list(args)
             infra_results = []
-            for case in cases:
+            for case in all_cases:
                 infra_results.append(
                     {
                         "case_id": case["id"],
@@ -565,44 +645,13 @@ def main() -> int:
             _write_output_files(infra_results, args.output)
         return exit_code
 
-    # Load test cases
-    cases = load_cases(CASES_FILE)
-    if not cases:
-        print("ERROR: No test cases loaded.", file=sys.stderr)
-        return 2
-
-    # Filter by category
-    if args.category:
-        categories = [c.strip() for c in args.category.split(",")]
-        cases = [c for c in cases if c.get("category") in categories]
-
-    # Filter by case ID
-    if args.case_id:
-        case_ids = [c.strip() for c in args.case_id.split(",")]
-        cases = [c for c in cases if c["id"] in case_ids]
-
+    # Load and filter test cases (shared logic with no-Copilot path)
+    cases = _build_full_case_list(args)
     if not cases:
         print("WARNING: No cases matched filters.", file=sys.stderr)
         return 0
 
-    # Add sentinel test case (progressive disclosure via fixture plugin)
-    sentinel_case = {
-        "id": "smoke-sentinel",
-        "user_prompt": f"Look up the dotnet-sentinel-test skill and tell me what the verification sentinel value is from its reference.md sibling file.",
-        "expected_skills": ["dotnet-sentinel-test"],
-        "should_activate": True,
-        "category": "progressive-disclosure",
-    }
-
-    # Only include sentinel case if not filtering by specific case or category
-    include_sentinel = True
-    if args.case_id and "smoke-sentinel" not in (args.case_id or ""):
-        include_sentinel = False
-    if args.category and "progressive-disclosure" not in (args.category or ""):
-        include_sentinel = False
-
-    if include_sentinel:
-        cases.append(sentinel_case)
+    include_sentinel = _should_include_sentinel(args)
 
     # Install fixture plugin for sentinel test
     fixture_installed = False
