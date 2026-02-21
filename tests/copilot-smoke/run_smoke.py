@@ -18,7 +18,6 @@ Exit codes:
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -86,14 +85,22 @@ def install_fixture_plugin() -> bool:
         return False
     fixture_dir = str(FIXTURE_PLUGIN_DIR)
     try:
-        # Add fixture as a marketplace source and install it
-        subprocess.run(
+        # Add fixture as a marketplace source
+        r1 = subprocess.run(
             ["copilot", "plugin", "marketplace", "add", fixture_dir],
             capture_output=True,
             text=True,
             timeout=30,
         )
-        subprocess.run(
+        if r1.returncode != 0:
+            print(
+                f"WARNING: marketplace add failed (exit {r1.returncode}): {r1.stderr}",
+                file=sys.stderr,
+            )
+            return False
+
+        # Install the fixture plugin
+        r2 = subprocess.run(
             [
                 "copilot",
                 "plugin",
@@ -104,6 +111,13 @@ def install_fixture_plugin() -> bool:
             text=True,
             timeout=30,
         )
+        if r2.returncode != 0:
+            print(
+                f"WARNING: plugin install failed (exit {r2.returncode}): {r2.stderr}",
+                file=sys.stderr,
+            )
+            return False
+
         return True
     except (subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
         print(f"WARNING: Failed to install fixture plugin: {e}", file=sys.stderr)
@@ -234,8 +248,15 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
             "proof_lines": [],
         }
 
+    is_sentinel_case = case_id == "smoke-sentinel"
+
     if cli_result["timed_out"]:
         activated = parse_activated_skills(output)
+        sentinel_found = SENTINEL_STRING in output
+        # Sentinel case: even on timeout, fail if sentinel not found
+        failure_kind = "timeout"
+        if is_sentinel_case and not sentinel_found:
+            failure_kind = "missing_sentinel"
         return {
             "case_id": case_id,
             "category": category,
@@ -246,9 +267,9 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
             "missing_skills": [s for s in expected_skills if s not in activated],
             "unexpected_skills": [s for s in activated if s not in expected_skills],
             "timed_out": True,
-            "failure_kind": "timeout",
+            "failure_kind": failure_kind,
             "failure_category": "timeout",
-            "sentinel_found": SENTINEL_STRING in output,
+            "sentinel_found": sentinel_found,
             "proof_lines": _extract_proof_lines(output),
         }
 
@@ -294,24 +315,35 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
             else:
                 failure_kind = "unknown"
             failure_category = "assertion"
-    else:
-        # Negative control: no .NET skills should activate
-        dotnet_activated = [s for s in activated if s.startswith("dotnet-")]
-        if not dotnet_activated:
-            status = "pass"
-            failure_kind = None
-            failure_category = None
-            matched = []
-            missing = []
-            unexpected = []
-        else:
-            # False activation -- informational, tracked in baseline
+
+        # Sentinel case: skill activation alone is insufficient --
+        # the sentinel string from reference.md must also appear in output
+        if is_sentinel_case and status == "pass" and not sentinel_found:
             status = "fail"
-            failure_kind = "disallowed_hit"
+            failure_kind = "missing_sentinel"
             failure_category = "assertion"
-            matched = []
-            missing = []
+    else:
+        # Negative control: no .NET skills should activate.
+        # False activations are informational, not a gate -- occasional
+        # false positives are expected (per spec). We record them as pass
+        # with a negative_false_positive flag for observability.
+        dotnet_activated = [s for s in activated if s.startswith("dotnet-")]
+        matched = []
+        missing = []
+        # Always pass for negative controls; false activations are tracked
+        # but do not gate the regression comparison.
+        status = "pass"
+        failure_kind = None
+        failure_category = None
+        if dotnet_activated:
             unexpected = dotnet_activated
+        else:
+            unexpected = []
+
+    # Track negative-control false positives for observability
+    negative_false_positive = (
+        not should_activate and len(unexpected) > 0
+    )
 
     return {
         "case_id": case_id,
@@ -326,6 +358,7 @@ def evaluate_case(case: dict, cli_result: dict) -> dict:
         "failure_kind": failure_kind,
         "failure_category": failure_category,
         "sentinel_found": sentinel_found,
+        "negative_false_positive": negative_false_positive,
         "proof_lines": proof_lines,
     }
 
@@ -348,7 +381,6 @@ def compare_baseline(results: list[dict], baseline: dict) -> dict:
     """
     regressions = []
     improvements = []
-    new_cases = []
     flaky_failures = []
     deltas = {}
 
@@ -357,8 +389,10 @@ def compare_baseline(results: list[dict], baseline: dict) -> dict:
         actual_status = r["status"]
 
         if case_id not in baseline:
-            new_cases.append(case_id)
-            deltas[case_id] = {"status": actual_status, "delta": "NEW"}
+            # Missing baseline entry is a hard failure -- every case must
+            # have a deterministic expected outcome in baseline.json
+            regressions.append(case_id)
+            deltas[case_id] = {"status": actual_status, "delta": "MISSING_BASELINE"}
             continue
 
         entry = baseline[case_id]
@@ -389,7 +423,6 @@ def compare_baseline(results: list[dict], baseline: dict) -> dict:
     return {
         "regressions": regressions,
         "improvements": improvements,
-        "new_cases": new_cases,
         "flaky_failures": flaky_failures,
         "deltas": deltas,
         "has_regressions": len(regressions) > 0,
@@ -422,6 +455,37 @@ def format_results_for_baseline_compare(results: list[dict]) -> dict:
         "source": "copilot-smoke",
         "results": agent_results,
     }
+
+
+def _write_output_files(results: list[dict], output_path: str) -> None:
+    """Write both output_data and agent-routing-compatible results files."""
+    total = len(results)
+    pass_count = sum(1 for r in results if r["status"] == "pass")
+    fail_count = sum(1 for r in results if r["status"] == "fail")
+    infra_count = sum(1 for r in results if r["status"] == "infra_error")
+
+    output_data = {
+        "results": results,
+        "summary": {
+            "total": total,
+            "pass": pass_count,
+            "fail": fail_count,
+            "infra_error": infra_count,
+        },
+    }
+    with open(output_path, "w") as f:
+        json.dump(output_data, f, indent=2)
+    print(f"[smoke] Results written to: {output_path}", file=sys.stderr)
+
+    # Also write in agent-routing-compatible format
+    envelope = format_results_for_baseline_compare(results)
+    envelope_path = str(Path(output_path).parent / "results-agent-routing-compat.json")
+    with open(envelope_path, "w") as f:
+        json.dump(envelope, f, indent=2)
+    print(
+        f"[smoke] Agent-routing compatible results: {envelope_path}",
+        file=sys.stderr,
+    )
 
 
 def main() -> int:
@@ -457,12 +521,6 @@ def main() -> int:
         default=None,
         help="Write results JSON to this path",
     )
-    parser.add_argument(
-        "--provider",
-        type=str,
-        default="copilot",
-        help="Provider name for results envelope (default: copilot)",
-    )
 
     args = parser.parse_args()
 
@@ -473,63 +531,39 @@ def main() -> int:
                 "ERROR: Copilot CLI not installed. Use --require-copilot to enforce.",
                 file=sys.stderr,
             )
-            # Write infra_error results if output requested
-            if args.output:
-                cases = load_cases(CASES_FILE)
-                infra_results = []
-                for case in cases:
-                    infra_results.append(
-                        {
-                            "case_id": case["id"],
-                            "category": case.get("category", "unknown"),
-                            "status": "infra_error",
-                            "expected_skills": case.get("expected_skills", []),
-                            "activated_skills": [],
-                            "matched_skills": [],
-                            "missing_skills": case.get("expected_skills", []),
-                            "unexpected_skills": [],
-                            "timed_out": False,
-                            "failure_kind": None,
-                            "failure_category": "transport",
-                            "sentinel_found": False,
-                            "proof_lines": [],
-                        }
-                    )
-                envelope = format_results_for_baseline_compare(infra_results)
-                with open(args.output, "w") as f:
-                    json.dump(envelope, f, indent=2)
-            return 2
+            exit_code = 2
         else:
             print(
                 "WARNING: Copilot CLI not installed. Skipping smoke tests (exit 0).",
                 file=sys.stderr,
             )
-            # Write skip results if output requested
-            if args.output:
-                cases = load_cases(CASES_FILE)
-                skip_results = []
-                for case in cases:
-                    skip_results.append(
-                        {
-                            "case_id": case["id"],
-                            "category": case.get("category", "unknown"),
-                            "status": "infra_error",
-                            "expected_skills": case.get("expected_skills", []),
-                            "activated_skills": [],
-                            "matched_skills": [],
-                            "missing_skills": [],
-                            "unexpected_skills": [],
-                            "timed_out": False,
-                            "failure_kind": None,
-                            "failure_category": "transport",
-                            "sentinel_found": False,
-                            "proof_lines": [],
-                        }
-                    )
-                envelope = format_results_for_baseline_compare(skip_results)
-                with open(args.output, "w") as f:
-                    json.dump(envelope, f, indent=2)
-            return 0
+            exit_code = 0
+
+        # Write infra_error results if output requested (consistent format)
+        if args.output:
+            cases = load_cases(CASES_FILE)
+            infra_results = []
+            for case in cases:
+                infra_results.append(
+                    {
+                        "case_id": case["id"],
+                        "category": case.get("category", "unknown"),
+                        "status": "infra_error",
+                        "expected_skills": case.get("expected_skills", []),
+                        "activated_skills": [],
+                        "matched_skills": [],
+                        "missing_skills": case.get("expected_skills", []) if exit_code != 0 else [],
+                        "unexpected_skills": [],
+                        "timed_out": False,
+                        "failure_kind": None,
+                        "failure_category": "transport",
+                        "sentinel_found": False,
+                        "negative_false_positive": False,
+                        "proof_lines": [],
+                    }
+                )
+            _write_output_files(infra_results, args.output)
+        return exit_code
 
     # Load test cases
     cases = load_cases(CASES_FILE)
@@ -657,44 +691,10 @@ def main() -> int:
             f"[smoke] Flaky failures ({len(comparison['flaky_failures'])}): {comparison['flaky_failures']}",
             file=sys.stderr,
         )
-    if comparison["new_cases"]:
-        print(
-            f"[smoke] New cases ({len(comparison['new_cases'])}): {comparison['new_cases']}",
-            file=sys.stderr,
-        )
 
-    # Build output
-    output_data = {
-        "results": results,
-        "summary": {
-            "total": total,
-            "pass": pass_count,
-            "fail": fail_count,
-            "infra_error": infra_count,
-            "regressions": comparison["regressions"],
-            "improvements": comparison["improvements"],
-            "flaky_failures": comparison["flaky_failures"],
-            "new_cases": comparison["new_cases"],
-            "has_regressions": comparison["has_regressions"],
-        },
-        "baseline_comparison": comparison["deltas"],
-    }
-
-    # Write results JSON
+    # Write results files
     results_path = args.output or str(SCRIPT_DIR / "results.json")
-    with open(results_path, "w") as f:
-        json.dump(output_data, f, indent=2)
-    print(f"[smoke] Results written to: {results_path}", file=sys.stderr)
-
-    # Also write in agent-routing-compatible format
-    envelope = format_results_for_baseline_compare(results)
-    envelope_path = str(Path(results_path).parent / "results-agent-routing-compat.json")
-    with open(envelope_path, "w") as f:
-        json.dump(envelope, f, indent=2)
-    print(
-        f"[smoke] Agent-routing compatible results: {envelope_path}",
-        file=sys.stderr,
-    )
+    _write_output_files(results, results_path)
 
     # Gate on regressions (not percentage thresholds)
     if comparison["has_regressions"]:
