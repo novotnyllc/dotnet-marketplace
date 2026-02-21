@@ -46,6 +46,8 @@ def load_plugin_json() -> dict:
 
 def discover_skill_dirs() -> list[Path]:
     """Find all skill directories (flat layout: skills/<name>/SKILL.md)."""
+    if not SKILLS_DIR.is_dir():
+        return []
     dirs = []
     for child in sorted(SKILLS_DIR.iterdir()):
         if child.is_dir() and (child / "SKILL.md").exists():
@@ -76,6 +78,74 @@ def parse_frontmatter(skill_md_path: Path) -> dict | None:
     return fm
 
 
+def resolve_skill_path(skill_path_str: str) -> Path | None:
+    """Resolve a skill path from plugin.json, rejecting unsafe values.
+
+    Rejects absolute paths and traversal (.. segments).
+    Returns the resolved full path under REPO_ROOT, or None if invalid.
+    """
+    p = Path(skill_path_str)
+
+    if p.is_absolute():
+        return None
+
+    if ".." in p.parts:
+        return None
+
+    full = (REPO_ROOT / p).resolve(strict=False)
+
+    # Ensure it stays under the repo root
+    try:
+        full.relative_to(REPO_ROOT.resolve())
+    except ValueError:
+        return None
+
+    return full
+
+
+def extract_skill_path(entry: str | dict) -> str | None:
+    """Extract skill path string from a plugin.json entry."""
+    if isinstance(entry, str):
+        return entry
+    if isinstance(entry, dict):
+        return entry.get("path", "")
+    return None
+
+
+def validate_plugin_paths(plugin: dict, errors: list[str]) -> None:
+    """Validate that all plugin.json skill paths resolve to existing locations."""
+    skills_list = plugin.get("skills", [])
+    if not skills_list:
+        errors.append("plugin.json has empty 'skills' array")
+        return
+
+    missing_paths = []
+    bad_paths = []
+    for entry in skills_list:
+        skill_path = extract_skill_path(entry)
+        if skill_path is None:
+            errors.append(f"Unexpected skill entry type: {type(entry)}")
+            continue
+
+        full = resolve_skill_path(skill_path)
+        if full is None:
+            bad_paths.append(skill_path)
+        elif not full.exists():
+            missing_paths.append(skill_path)
+
+    if bad_paths:
+        errors.append(
+            f"{len(bad_paths)} plugin.json skill path(s) have unsafe values "
+            f"(absolute or traversal): {bad_paths[:5]}{'...' if len(bad_paths) > 5 else ''}"
+        )
+
+    if missing_paths:
+        errors.append(
+            f"{len(missing_paths)} plugin.json skill path(s) do not resolve: "
+            f"{missing_paths[:5]}{'...' if len(missing_paths) > 5 else ''}"
+        )
+
+
 def check_claude(skill_dirs: list[Path]) -> list[str]:
     """Verify Claude Code structural requirements.
 
@@ -85,7 +155,7 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
     Note: [skill:name] cross-ref validation is handled by validate-skills.sh.
     """
     _ = skill_dirs  # Interface conformance with check_codex/check_copilot dispatch
-    errors = []
+    errors: list[str] = []
 
     if not PLUGIN_JSON.exists():
         errors.append(f"plugin.json not found at {PLUGIN_JSON}")
@@ -93,9 +163,6 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
 
     plugin = load_plugin_json()
     skills_list = plugin.get("skills", [])
-    if not skills_list:
-        errors.append("plugin.json has empty 'skills' array")
-        return errors
 
     # Verify count
     if len(skills_list) != EXPECTED_SKILL_COUNT:
@@ -103,27 +170,8 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
             f"plugin.json lists {len(skills_list)} skills, expected {EXPECTED_SKILL_COUNT}"
         )
 
-    # Verify each path resolves
-    missing_paths = []
-    for skill_entry in skills_list:
-        # Entries may be strings (paths) or dicts with a 'path' key
-        if isinstance(skill_entry, str):
-            skill_path = skill_entry
-        elif isinstance(skill_entry, dict):
-            skill_path = skill_entry.get("path", "")
-        else:
-            errors.append(f"Unexpected skill entry type: {type(skill_entry)}")
-            continue
-
-        full_path = REPO_ROOT / skill_path
-        if not full_path.exists():
-            missing_paths.append(skill_path)
-
-    if missing_paths:
-        errors.append(
-            f"{len(missing_paths)} plugin.json skill path(s) do not resolve: "
-            f"{missing_paths[:5]}{'...' if len(missing_paths) > 5 else ''}"
-        )
+    # Verify paths resolve (shared validation)
+    validate_plugin_paths(plugin, errors)
 
     return errors
 
@@ -135,7 +183,11 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
     - Each has SKILL.md
     - .agents/openai.yaml exists and references flat layout
     """
-    errors = []
+    errors: list[str] = []
+
+    if not SKILLS_DIR.is_dir():
+        errors.append(f"skills/ directory not found at {SKILLS_DIR}")
+        return errors
 
     # Skill count verification
     if len(skill_dirs) != EXPECTED_SKILL_COUNT:
@@ -154,17 +206,15 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
                     f"{[p.parent.name for p in nested[:3]]}"
                 )
 
-    # Verify openai.yaml exists
+    # Verify openai.yaml exists and references the flat skill layout
     if not OPENAI_YAML.exists():
         errors.append(f".agents/openai.yaml not found at {OPENAI_YAML}")
     else:
         yaml_content = OPENAI_YAML.read_text(encoding="utf-8")
-        # Verify it references the flat layout pattern
-        if "skills/<skill-name>/" in yaml_content or "skills/" in yaml_content:
-            pass  # Good -- references the skills directory
-        else:
+        # Verify it references the flat layout pattern (skills/<skill-name>/)
+        if "skills/" not in yaml_content:
             errors.append(
-                ".agents/openai.yaml does not reference skills/ directory pattern"
+                ".agents/openai.yaml does not reference skills/ directory layout"
             )
 
     return errors
@@ -173,15 +223,19 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
 def check_copilot(skill_dirs: list[Path]) -> list[str]:
     """Verify Copilot structural requirements.
 
-    - plugin.json paths resolve (shared with Claude check)
+    - plugin.json paths resolve to existing directories
     - Each SKILL.md has required frontmatter fields
     - Flat layout allows Copilot to discover skills via SKILL.md glob
     """
-    errors = []
+    errors: list[str] = []
 
     if not PLUGIN_JSON.exists():
         errors.append(f"plugin.json not found at {PLUGIN_JSON}")
         return errors
+
+    # Validate plugin.json paths resolve (shared with Claude)
+    plugin = load_plugin_json()
+    validate_plugin_paths(plugin, errors)
 
     # Verify each skill has required frontmatter (per repo policy in AGENTS.md)
     missing_frontmatter = []
@@ -213,21 +267,15 @@ def check_copilot(skill_dirs: list[Path]) -> list[str]:
             f"{bad_license[:5]}{'...' if len(bad_license) > 5 else ''}"
         )
 
-    # Verify the evidence pattern is detectable (Copilot emits "Base directory for this skill:")
-    # This is a structural check: SKILL.md must exist at the right path for the pattern to work
-    plugin = load_plugin_json()
+    # Verify skill paths are under skills/ (Copilot discovery pattern)
     skills_list = plugin.get("skills", [])
     for entry in skills_list:
-        if isinstance(entry, str):
-            skill_path = entry
-        elif isinstance(entry, dict):
-            skill_path = entry.get("path", "")
-        else:
+        skill_path = extract_skill_path(entry)
+        if skill_path is None:
             continue
-        # Verify the path follows the expected pattern for Copilot discovery.
-        # Paths may use ./skills/ or skills/ prefix -- both are valid.
-        normalized = skill_path.lstrip("./")
-        if not normalized.startswith("skills/"):
+        # Use Path parsing instead of string stripping
+        normalized = Path(skill_path)
+        if normalized.parts and normalized.parts[0] != "skills":
             errors.append(f"Skill path not under skills/: {skill_path}")
 
     return errors
@@ -235,6 +283,10 @@ def check_copilot(skill_dirs: list[Path]) -> list[str]:
 
 def run_checks(providers: list[str]) -> dict:
     """Run structural checks for specified providers."""
+    if not SKILLS_DIR.is_dir():
+        print(f"ERROR: skills/ directory not found at {SKILLS_DIR}", file=sys.stderr)
+        return {"_error": {"status": "fail", "errors": [f"skills/ not found at {SKILLS_DIR}"], "skill_count": 0}}
+
     skill_dirs = discover_skill_dirs()
     results = {}
 
@@ -283,6 +335,11 @@ def main() -> int:
         return 2
 
     results = run_checks(providers)
+
+    # If no recognized providers produced results, treat as usage error
+    if not results:
+        print("ERROR: No recognized providers found.", file=sys.stderr)
+        return 2
 
     # Print results
     all_pass = True

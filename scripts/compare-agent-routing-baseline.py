@@ -63,16 +63,17 @@ def collect_results(paths: list[Path]) -> tuple[list[dict], list[str]]:
         data = load_json(path)
         results = data.get("results", [])
         for r in results:
-            key = (r["case_id"], r["agent"])
+            agent = str(r["agent"]).strip().lower()
+            key = (r["case_id"], agent)
             if key in seen:
                 errors.append(
-                    f"Duplicate result for ({r['case_id']}, {r['agent']}) in {path}"
+                    f"Duplicate result for ({r['case_id']}, {agent}) in {path}"
                 )
                 continue
             seen.add(key)
             tuples.append({
                 "case_id": r["case_id"],
-                "agent": r["agent"],
+                "agent": agent,
                 "status": r["status"],
                 "timed_out": r.get("timed_out", False),
             })

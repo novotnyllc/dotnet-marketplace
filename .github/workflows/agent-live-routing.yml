@@ -127,16 +127,22 @@ jobs:
           set -euo pipefail
           # Strip origin/ prefix if user provided it to avoid double-prefixing
           CLEAN_REF="${BASELINE_REF#origin/}"
-          git fetch origin -- "$CLEAN_REF"
-          # Verify the fetched ref resolves, preferring origin/<branch>, falling
-          # back to FETCH_HEAD for tags or non-branch refs
-          if git rev-parse --verify "origin/${CLEAN_REF}" >/dev/null 2>&1; then
-            RESOLVED="origin/${CLEAN_REF}"
-          elif git rev-parse --verify FETCH_HEAD >/dev/null 2>&1; then
-            RESOLVED="FETCH_HEAD"
+
+          # If the ref already resolves locally (e.g. a SHA from fetch-depth: 0),
+          # use it directly without fetching
+          if git rev-parse --verify "${CLEAN_REF}^{commit}" >/dev/null 2>&1; then
+            RESOLVED="${CLEAN_REF}"
           else
-            echo "ERROR: Cannot resolve fetched ref '${CLEAN_REF}'"
-            exit 1
+            git fetch origin -- "$CLEAN_REF"
+            # Prefer origin/<branch>, fall back to FETCH_HEAD for tags/non-branch refs
+            if git rev-parse --verify "origin/${CLEAN_REF}" >/dev/null 2>&1; then
+              RESOLVED="origin/${CLEAN_REF}"
+            elif git rev-parse --verify FETCH_HEAD >/dev/null 2>&1; then
+              RESOLVED="FETCH_HEAD"
+            else
+              echo "ERROR: Cannot resolve fetched ref '${CLEAN_REF}'"
+              exit 1
+            fi
           fi
           echo "RESOLVED_BASELINE_REF=${RESOLVED}" >> "$GITHUB_ENV"
 
