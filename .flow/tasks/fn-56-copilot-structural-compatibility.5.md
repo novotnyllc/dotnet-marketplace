@@ -42,3 +42,10 @@ Update all documentation files that reference the nested `skills/<category>/<ski
 - [ ] CONTRIBUTING-SKILLS.md similarity formula matches the code (no same-category boost, no category/same_category fields) and troubleshooting no longer recommends quoting descriptions
 
 <!-- Updated by plan-sync: fn-56-copilot-structural-compatibility.4 already added 32-skill constraint docs to CONTRIBUTING-SKILLS.md (lines 108-147) and explicit user-invocable requirement (line 96); approach step 3 and acceptance criterion updated to verify/preserve rather than create -->
+
+## Done summary
+Updated all documentation files for flat skill layout and Copilot compatibility. Changed AGENTS.md, CONTRIBUTING.md, CONTRIBUTING-SKILLS.md, README.md, CHANGELOG.md, docs/agent-routing-tests.md, docs/skill-routing-style-guide.md, docs/skill-routing-ownership-manifest.md, docs/skill-content-migration-map.md, and skills/dotnet-version-detection/SKILL.md to use flat paths, canonical count 131, unquoted description guidance, license: MIT as required field, user-invocable as repo-required, and consistent budget thresholds. Added Copilot/Codex installation instructions to README and CHANGELOG unreleased entries.
+## Evidence
+- Commits: 39e0c4d93ca846abc1968bb389d7a8633513f6d1
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
