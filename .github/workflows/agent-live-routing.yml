@@ -24,8 +24,28 @@ permissions:
   contents: read
 
 jobs:
+  structural-smoke:
+    name: Cross-provider structural checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run structural smoke tests
+        run: |
+          set -euo pipefail
+          python scripts/run-agent-routing-smoke.py --provider claude,codex,copilot
+
   routing-test:
     name: Route ${{ matrix.agent }}
+    needs: [structural-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     continue-on-error: ${{ matrix.agent == 'copilot' }}
@@ -114,204 +134,24 @@ jobs:
           merge-multiple: true
           path: downloaded-artifacts
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Run regression comparison
         env:
           BASELINE_REF: ${{ github.event.inputs.baseline_ref || 'main' }}
         run: |
           set -euo pipefail
 
-          PROVIDERS=(claude codex copilot)
-          BASELINE_FILE="tests/agent-routing/provider-baseline.json"
-          HARD_FAIL=0
-          REGRESSION_COUNT=0
-          IMPROVEMENT_COUNT=0
-          NEW_COUNT=0
-
-          # --- Load current baseline (working tree) ---
-          if [ ! -f "$BASELINE_FILE" ]; then
-            echo "ERROR: Current baseline file not found: $BASELINE_FILE"
-            exit 1
-          fi
-          CURRENT_BASELINE=$(cat "$BASELINE_FILE")
-
-          # --- Load ref baseline (from baseline_ref) ---
-          REF_BASELINE=""
-          if git show "origin/${BASELINE_REF}:${BASELINE_FILE}" >/dev/null 2>&1; then
-            REF_BASELINE=$(git show "origin/${BASELINE_REF}:${BASELINE_FILE}")
-          else
-            echo "WARNING: No baseline file found at origin/${BASELINE_REF}:${BASELINE_FILE}"
-            echo "All results with current baseline entries will be treated as NEW."
-          fi
-
-          # --- Collect all results.json files from downloaded artifacts ---
-          RESULTS_FILES=()
-          if [ -d downloaded-artifacts ]; then
-            while IFS= read -r -d '' f; do
-              RESULTS_FILES+=("$f")
-            done < <(find downloaded-artifacts -name 'results.json' -print0 2>/dev/null || true)
-          fi
-
-          # --- Build delta table header ---
-          {
-            echo "## Agent Live Routing Delta Report"
-            echo ""
-            echo "**Baseline ref:** \`origin/${BASELINE_REF}\`"
-            echo ""
-          } > delta-report.md
-
-          # --- Check for missing provider artifacts ---
-          for provider in "${PROVIDERS[@]}"; do
-            PROVIDER_HAS_RESULTS=0
-            for rf in "${RESULTS_FILES[@]}"; do
-              if jq -e --arg agent "$provider" '.results[] | select(.agent == $agent)' "$rf" >/dev/null 2>&1; then
-                PROVIDER_HAS_RESULTS=1
-                break
-              fi
-            done
-            if [ "$PROVIDER_HAS_RESULTS" = "0" ]; then
-              echo "ERROR: No results found for provider '$provider'. Missing artifact or results.json." | tee -a delta-report.md
-              HARD_FAIL=1
-            fi
-          done
-
-          # --- Extract all (case_id, agent, status, timed_out) tuples from results ---
-          RESULT_TUPLES=$(mktemp)
-          for rf in "${RESULTS_FILES[@]}"; do
-            jq -r '.results[] | "\(.case_id)\t\(.agent)\t\(.status)\t\(.timed_out)"' "$rf" >> "$RESULT_TUPLES"
-          done
-
-          # --- Build delta table ---
-          {
-            echo "| case_id | claude | codex | copilot | delta |"
-            echo "|---------|--------|-------|---------|-------|"
-          } >> delta-report.md
-
-          # Get unique case_ids from results
-          CASE_IDS=$(cut -f1 "$RESULT_TUPLES" | sort -u)
-
-          while IFS= read -r case_id; do
-            [ -z "$case_id" ] && continue
-
-            ROW_DELTA="OK"
-            CLAUDE_STATUS="-"
-            CODEX_STATUS="-"
-            COPILOT_STATUS="-"
-
-            for provider in "${PROVIDERS[@]}"; do
-              # Get result for this case_id + provider
-              RESULT_LINE=$(grep "^${case_id}"$'\t'"${provider}"$'\t' "$RESULT_TUPLES" | head -1 || true)
-              if [ -z "$RESULT_LINE" ]; then
-                echo "ERROR: Missing result for case '${case_id}' provider '${provider}'." | tee -a delta-report.md
-                HARD_FAIL=1
-                if [ "$ROW_DELTA" != "REGRESSION" ] && [ "$ROW_DELTA" != "MISSING_BASELINE" ]; then
-                  ROW_DELTA="MISSING_RESULT"
-                fi
-                continue
-              fi
-
-              RESULT_STATUS=$(echo "$RESULT_LINE" | cut -f3)
-              RESULT_TIMED_OUT=$(echo "$RESULT_LINE" | cut -f4)
-
-              # Display value
-              DISPLAY="${RESULT_STATUS}"
-              if [ "$RESULT_TIMED_OUT" = "true" ]; then
-                DISPLAY="${RESULT_STATUS} (timeout)"
-              fi
-
-              case "$provider" in
-                claude)  CLAUDE_STATUS="$DISPLAY" ;;
-                codex)   CODEX_STATUS="$DISPLAY" ;;
-                copilot) COPILOT_STATUS="$DISPLAY" ;;
-              esac
-
-              # --- Check current baseline entry exists ---
-              CURRENT_ENTRY=$(echo "$CURRENT_BASELINE" | jq -e --arg cid "$case_id" --arg p "$provider" '.[$cid][$p]' 2>/dev/null || true)
-              if [ -z "$CURRENT_ENTRY" ] || [ "$CURRENT_ENTRY" = "null" ]; then
-                echo "ERROR: No baseline entry for case '${case_id}' provider '${provider}'. Update provider-baseline.json."
-                HARD_FAIL=1
-                ROW_DELTA="MISSING_BASELINE"
-                continue
-              fi
-
-              # --- Check ref baseline for regression comparison ---
-              if [ -z "$REF_BASELINE" ]; then
-                # No ref baseline at all - everything is NEW
-                if [ "$ROW_DELTA" = "OK" ]; then
-                  ROW_DELTA="NEW"
-                fi
-                continue
-              fi
-
-              REF_ENTRY=$(echo "$REF_BASELINE" | jq -e --arg cid "$case_id" --arg p "$provider" '.[$cid][$p]' 2>/dev/null || true)
-              if [ -z "$REF_ENTRY" ] || [ "$REF_ENTRY" = "null" ]; then
-                # Present in current baseline but absent from ref baseline - NEW coverage
-                if [ "$ROW_DELTA" = "OK" ]; then
-                  ROW_DELTA="NEW"
-                fi
-                continue
-              fi
-
-              # --- Regression comparison ---
-              REF_EXPECTED=$(echo "$REF_ENTRY" | jq -r '.expected_status')
-              REF_ALLOW_TIMEOUT=$(echo "$REF_ENTRY" | jq -r '.allow_timeout')
-
-              # Check pass -> fail or pass -> infra_error regression
-              if [ "$REF_EXPECTED" = "pass" ] && { [ "$RESULT_STATUS" = "fail" ] || [ "$RESULT_STATUS" = "infra_error" ]; }; then
-                echo "REGRESSION: case '${case_id}' provider '${provider}': expected pass, got ${RESULT_STATUS}"
-                REGRESSION_COUNT=$((REGRESSION_COUNT + 1))
-                ROW_DELTA="REGRESSION"
-              fi
-
-              # Check timeout regression
-              if [ "$RESULT_TIMED_OUT" = "true" ] && [ "$REF_ALLOW_TIMEOUT" = "false" ]; then
-                echo "REGRESSION: case '${case_id}' provider '${provider}': timed out but allow_timeout=false"
-                REGRESSION_COUNT=$((REGRESSION_COUNT + 1))
-                if [ "$ROW_DELTA" != "REGRESSION" ]; then
-                  ROW_DELTA="REGRESSION"
-                fi
-              fi
-
-              # Check improvement (fail -> pass)
-              if { [ "$REF_EXPECTED" = "fail" ] || [ "$REF_EXPECTED" = "infra_error" ]; } && [ "$RESULT_STATUS" = "pass" ]; then
-                IMPROVEMENT_COUNT=$((IMPROVEMENT_COUNT + 1))
-                if [ "$ROW_DELTA" = "OK" ]; then
-                  ROW_DELTA="IMPROVEMENT"
-                fi
-              fi
-            done
-
-            if [ "$ROW_DELTA" = "NEW" ]; then
-              NEW_COUNT=$((NEW_COUNT + 1))
-            fi
-
-            echo "| ${case_id} | ${CLAUDE_STATUS} | ${CODEX_STATUS} | ${COPILOT_STATUS} | ${ROW_DELTA} |" >> delta-report.md
-          done <<< "$CASE_IDS"
-
-          # --- Summary footer ---
-          {
-            echo ""
-            echo "**Regressions:** ${REGRESSION_COUNT} | **Improvements:** ${IMPROVEMENT_COUNT} | **New:** ${NEW_COUNT}"
-          } >> delta-report.md
-
-          if [ "$REGRESSION_COUNT" -gt 0 ]; then
-            echo "" >> delta-report.md
-            echo "**RESULT: REGRESSION DETECTED -- CI gate FAILED**" >> delta-report.md
-            HARD_FAIL=1
-          fi
+          python scripts/compare-agent-routing-baseline.py \
+            --results-dir downloaded-artifacts \
+            --baseline-ref "origin/${BASELINE_REF}" \
+            --output delta-report.md
 
           # Write to job summary
           cat delta-report.md >> "$GITHUB_STEP_SUMMARY"
 
           # Also print to stdout for log visibility
           cat delta-report.md
-
-          rm -f "$RESULT_TUPLES"
-
-          if [ "$HARD_FAIL" = "1" ]; then
-            echo ""
-            echo "Exiting with failure due to regressions or missing data."
-            exit 1
-          fi
-
-          echo ""
-          echo "All checks passed. No regressions detected."
