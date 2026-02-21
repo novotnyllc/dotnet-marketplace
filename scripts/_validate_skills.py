@@ -585,6 +585,18 @@ def main():
         print(f"ERROR: No SKILL.md files found under {skills_dir}")
         sys.exit(1)
 
+    # Flat layout guard: ERROR if any SKILL.md is found more than 1 level
+    # deep under skills/ (catches accidental re-nesting after fn-56 flatten).
+    nested_files = [
+        f for f in skill_files
+        if len(f.relative_to(skills_dir).parts) > 2  # e.g. category/skill/SKILL.md = 3 parts
+    ]
+    if nested_files:
+        print("ERROR: SKILL.md files found more than 1 level deep under skills/ (flat layout required):")
+        for nf in nested_files:
+            print(f"  {nf.relative_to(repo_root)}")
+        sys.exit(1)
+
     # --- Build known IDs set ---
     # Skill directory names
     valid_skill_dirs = {f.parent.name for f in skill_files}
