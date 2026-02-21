@@ -116,17 +116,21 @@ GitHub Copilot CLI has a system prompt token budget that limits how many skills 
 | `user-invocable: true` | 11 | dotnet-add-analyzers through dotnet-windbg-debugging |
 | `user-invocable: false` | 120 | All remaining skills |
 
-**Routing strategy:** The `dotnet-advisor` skill sorts early alphabetically (around position 9 of 131) and serves as the meta-router. It is expected to be within the visible window regardless of how the 32-skill limit interacts with `user-invocable: false` skills. The advisor's skill catalog and routing logic sections contain `[skill:]` cross-references to all 131 skills, enabling the model to discover and load any skill through the advisor even if that skill is not directly listed in the system prompt.
+**Routing strategy:** `dotnet-advisor` is the meta-router. We intentionally keep it early in **both** plausible orderings:
+- **Manifest order:** it is listed first in `.claude-plugin/plugin.json`.
+- **Reported alphabetical order:** its name (`dotnet-advisor`) is chosen to sort early among `dotnet-*` skills.
+
+This increases the likelihood it stays within Copilot's visible window if the ~32-skill truncation applies broadly. The advisor includes `[skill:]` cross-references to the full catalog. If Copilot supports loading skills referenced from an activated skill body, this provides a fallback path to reach skills beyond the visible window; verify this behavior with the procedure below.
 
 **Behavior scenarios:**
 
 - **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 11 user-invocable skills compete for the window. All 11 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
-- **If all 131 skills count against the budget:** The advisor at position 9 is well within the first 32 slots. When activated, the advisor body exposes the complete catalog, allowing the model to discover and load skills beyond the visible window.
+- **If all 131 skills count against the budget:** The advisor sorts early and is expected to be within the first 32 slots. When activated, the advisor body exposes the complete catalog, potentially allowing the model to discover and load skills beyond the visible window (pending verification).
 
 **Rules for maintaining Copilot compatibility:**
 
 1. **Keep `dotnet-advisor` user-invocable.** It must remain in the visible window to serve as the meta-router.
-2. **Do not rename `dotnet-advisor`** to anything that sorts after position 32 alphabetically among all skills.
+2. **Do not rename `dotnet-advisor`** to anything that sorts late alphabetically among all skills. The name is chosen to sort early in the `dotnet-*` namespace.
 3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
 4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
 5. **Treat skill ordering as implementation-defined.** Upstream reports suggest alphabetical ordering ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464)), but verify against the Copilot version you are testing. If you create a new user-invocable skill, check its alphabetical position relative to the full skill list as a conservative estimate.
