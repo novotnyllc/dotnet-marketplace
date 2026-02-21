@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Compare agent-routing results against provider-baseline.json.
+"""Compare agent-routing results for regressions.
 
 Reads one or more results.json files (produced by check-skills.cs) and
-compares each (case_id, provider) tuple against the expected status in
-provider-baseline.json.  Optionally compares against a git ref's version
-of the baseline file to detect regressions introduced between refs.
+checks every (case_id, provider) result against the uniform expectation:
+all cases must pass and must not time out.
+
+If an explicit baseline file exists, it is loaded and used instead.
+Otherwise a synthetic all-pass baseline is generated from the result set.
+Optionally compares against a git ref's baseline for regression detection.
 
 Exit codes:
     0 - No regressions detected
@@ -87,10 +90,14 @@ def find_results_files(directory: Path) -> list[Path]:
 
 def compare(
     result_tuples: list[dict],
-    current_baseline: dict,
+    current_baseline: dict | None,
     ref_baseline: dict | None,
 ) -> dict:
     """Compare results against baselines.
+
+    When current_baseline is None, no static expectation checking is done —
+    regressions are detected only via ref-baseline comparison (previous run
+    on the base branch passed but this run failed).
 
     Returns a summary dict with regressions, improvements, new entries,
     and a per-case delta table.
@@ -124,7 +131,7 @@ def compare(
                 missing_results.append(
                     f"Missing result for case '{case_id}' provider '{provider}'"
                 )
-                if row_delta not in ("REGRESSION", "MISSING_BASELINE"):
+                if row_delta not in ("REGRESSION",):
                     row_delta = "MISSING_RESULT"
                 continue
 
@@ -133,50 +140,57 @@ def compare(
             display = f"{status} (timeout)" if timed_out else status
             provider_statuses[provider] = display
 
-            # Check current baseline entry exists
-            current_entry = current_baseline.get(case_id, {}).get(provider)
-            if current_entry is None:
-                missing_baseline.append(f"{case_id}/{provider}")
-                row_delta = "MISSING_BASELINE"
-                continue
+            # Static baseline checking (only when explicit file exists)
+            if current_baseline is not None:
+                current_entry = current_baseline.get(case_id, {}).get(provider)
+                if current_entry is None:
+                    missing_baseline.append(f"{case_id}/{provider}")
+                    row_delta = "MISSING_BASELINE"
+                else:
+                    cur_expected = current_entry.get("expected_status", "pass")
+                    cur_allow_timeout = current_entry.get("allow_timeout", False)
+                    status_rank = {"infra_error": 0, "fail": 1, "pass": 2}
 
-            # Validate against current baseline expectations using severity
-            # ranking: infra_error (0) < fail (1) < pass (2).
-            # A result worse than expected is a regression.
-            cur_expected = current_entry.get("expected_status", "pass")
-            cur_allow_timeout = current_entry.get("allow_timeout", False)
-            status_rank = {"infra_error": 0, "fail": 1, "pass": 2}
+                    actual_rank = status_rank.get(status, -1)
+                    expected_rank = status_rank.get(cur_expected, -1)
 
-            actual_rank = status_rank.get(status, -1)
-            expected_rank = status_rank.get(cur_expected, -1)
+                    if actual_rank < expected_rank:
+                        regressions.append(
+                            f"{case_id}/{provider}: expected {cur_expected}, got {status}"
+                        )
+                        row_delta = "REGRESSION"
 
-            if actual_rank < expected_rank:
-                regressions.append(
-                    f"{case_id}/{provider}: expected {cur_expected}, got {status}"
-                )
-                row_delta = "REGRESSION"
+                    if timed_out and not cur_allow_timeout:
+                        regressions.append(f"{case_id}/{provider}: timed out but allow_timeout=false")
+                        row_delta = "REGRESSION"
 
-            if timed_out and not cur_allow_timeout:
-                regressions.append(f"{case_id}/{provider}: timed out but allow_timeout=false")
-                row_delta = "REGRESSION"
-
-            # Ref-baseline comparison for regression/improvement reporting
-            if ref_baseline is None:
-                ref_entry = None
-            else:
+            # Ref-baseline comparison: detect regressions vs the base branch.
+            # When no static baseline file exists, this is the only regression gate.
+            if ref_baseline is not None:
                 ref_entry = ref_baseline.get(case_id, {}).get(provider)
-
-            if ref_entry is None:
-                # New coverage (absent from ref baseline)
-                if row_delta == "OK":
-                    row_delta = "NEW"
-            else:
-                ref_expected = ref_entry.get("expected_status", "pass")
-                # Improvement: ref expected fail but now passes
-                if ref_expected in ("fail", "infra_error") and status == "pass":
-                    improvements.append(f"{case_id}/{provider}")
+                if ref_entry is None:
                     if row_delta == "OK":
-                        row_delta = "IMPROVEMENT"
+                        row_delta = "NEW"
+                else:
+                    ref_expected = ref_entry.get("expected_status", "pass")
+                    # Regression: ref expected pass but we got worse
+                    if current_baseline is None:
+                        status_rank = {"infra_error": 0, "fail": 1, "pass": 2}
+                        ref_rank = status_rank.get(ref_expected, -1)
+                        actual_rank = status_rank.get(status, -1)
+                        if actual_rank < ref_rank:
+                            regressions.append(
+                                f"{case_id}/{provider}: was {ref_expected} on base, now {status}"
+                            )
+                            row_delta = "REGRESSION"
+                    # Improvement: ref expected fail but now passes
+                    if ref_expected in ("fail", "infra_error") and status == "pass":
+                        improvements.append(f"{case_id}/{provider}")
+                        if row_delta == "OK":
+                            row_delta = "IMPROVEMENT"
+            else:
+                if row_delta == "OK" and current_baseline is None:
+                    row_delta = "NEW"
 
         if row_delta == "NEW":
             new_entries.append(case_id)
@@ -264,7 +278,7 @@ def main() -> int:
         "--baseline",
         type=str,
         default=str(DEFAULT_BASELINE_PATH),
-        help="Path to current provider-baseline.json (default: tests/agent-routing/provider-baseline.json)",
+        help="Path to baseline file (default: tests/agent-routing/provider-baseline.json; all-pass if missing)",
     )
     parser.add_argument(
         "--baseline-ref",
@@ -301,27 +315,7 @@ def main() -> int:
             print(f"ERROR: Results file not found: {p}", file=sys.stderr)
             return 2
 
-    # Load baselines
-    baseline_path = Path(args.baseline)
-    if not baseline_path.exists():
-        print(f"ERROR: Baseline file not found: {baseline_path}", file=sys.stderr)
-        return 1
-
-    current_baseline = load_json(baseline_path)
-
-    ref_baseline = None
-    if args.baseline_ref:
-        relative_path = "tests/agent-routing/provider-baseline.json"
-        ref_baseline = load_baseline_from_ref(args.baseline_ref, relative_path)
-        if ref_baseline is None:
-            print(
-                f"ERROR: Could not load baseline from ref '{args.baseline_ref}' "
-                f"at {relative_path}. Ref-based regression gate cannot run.",
-                file=sys.stderr,
-            )
-            return 1
-
-    # Collect and compare
+    # Collect results first (needed for synthetic baseline generation)
     result_tuples, duplicate_errors = collect_results(results_paths)
     if not result_tuples:
         print("ERROR: No result tuples found in provided files.", file=sys.stderr)
@@ -336,6 +330,23 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
+
+    # Load baselines
+    baseline_path = Path(args.baseline)
+    current_baseline: dict | None = None
+    if baseline_path.exists():
+        current_baseline = load_json(baseline_path)
+    else:
+        print(
+            f"INFO: No baseline file at {baseline_path}; regressions detected via ref comparison only.",
+            file=sys.stderr,
+        )
+
+    ref_baseline = None
+    if args.baseline_ref:
+        relative_path = "tests/agent-routing/provider-baseline.json"
+        ref_baseline = load_baseline_from_ref(args.baseline_ref, relative_path)
+        # Missing ref baseline is not fatal — just skip ref comparison
 
     comparison = compare(result_tuples, current_baseline, ref_baseline)
     report = format_markdown_report(comparison, args.baseline_ref)

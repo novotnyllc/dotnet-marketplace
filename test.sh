@@ -200,7 +200,10 @@ Runner options (passed through to check-skills.cs):
   --agents <csv>            Agents filter (default: claude,codex,copilot)
   --category <csv>          Category filter
   --case-id <csv>           Case-id filter
-  --timeout-seconds <int>   Per-invocation timeout (default: 90)
+  --timeout-seconds <int>   Global per-invocation timeout (default: 300)
+  --provider-model <p:m>    Per-provider model (e.g. copilot:gpt-4.1, claude:sonnet)
+  --provider-timeout <p:s>  Per-provider timeout in seconds (e.g. copilot:300)
+  --sample <N>              Randomly sample N cases after filtering
   --max-parallel <int>      Max concurrent runs (default: 4; env MAX_CONCURRENCY fallback)
   --artifacts-root <path>   Base directory for per-batch artifact isolation
                             (default: tests/agent-routing/artifacts)
