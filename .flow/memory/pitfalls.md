@@ -393,3 +393,6 @@ When a validation rule checks 'at least one item has property X', do not guard i
 
 ## 2026-02-20 manual [pitfall]
 Negative control test cases (disallowed/optional skills) must use temptation prompts that naturally overlap with the disallowed/optional skill domain -- prompts that avoid the domain will never trigger the skill, making the test case untestable
+
+## 2026-02-21 manual [pitfall]
+When scanning raw frontmatter lines for key patterns, only check column-0 (non-indented) lines -- indented lines may be block scalar content and produce false positives on key-like patterns

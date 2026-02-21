@@ -58,6 +58,10 @@ Migrate all 131 SKILL.md frontmatter files to be Copilot-safe. Address known Cop
 - This task is the sole owner of all Copilot frontmatter checks in `_validate_skills.py` — T3 does NOT add frontmatter checks (only layout guard + similarity)
 - After T1 flatten, `validate-similarity.py` will find zero skills until T3 fixes its glob — so this task validates with `_validate_skills.py` directly, not the full `validate-skills.sh`
 
+## Done summary
+
+_Populated by flowctl done._
+
 ## Acceptance
 - [ ] metadata-ordering behavior verified with Copilot CLI test skills; exact command and observed output recorded as evidence (or conservative assumption documented if CLI unavailable)
 - [ ] Validator enforces the verified metadata-ordering invariant as an ERROR
