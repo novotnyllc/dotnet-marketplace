@@ -7,8 +7,9 @@ Add a GitHub Actions workflow for scheduled evals (all 4 eval types), implement 
 **Size:** M
 **Files:**
 - `.github/workflows/skill-evals.yml` (new workflow: weekly schedule + manual trigger ONLY — NOT on PR/push events)
-- `tests/evals/compare_baseline.py` (flesh out skeleton from task .1)
+- `tests/evals/compare_baseline.py` (already fully implemented — verify and test, do NOT rewrite)
 <!-- Updated by plan-sync: fn-58...from.2 — compare_baseline.py uses f"{eval_type}_baseline.json" (underscores, not hyphens) -->
+<!-- Updated by plan-sync: fn-58...from.3 — compare_baseline.py already fully fleshed out with all 4 comparators (compare_effectiveness, compare_activation, compare_size_impact, compare_confusion), CLI with --results-dir/--baselines-dir/--eval-type flags, and _COMPARATORS dispatch dict. No skeleton remains. -->
 - `tests/evals/baselines/effectiveness_baseline.json` (initial baseline)
 - `tests/evals/baselines/activation_baseline.json` (initial baseline)
 - `tests/evals/baselines/confusion_baseline.json` (initial baseline)

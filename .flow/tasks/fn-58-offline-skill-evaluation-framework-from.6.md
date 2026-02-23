@@ -24,8 +24,13 @@ Add size impact evals (L6 runner) that test whether skill content format affects
   5. Concatenate: frontmatter `description` + newline + extracted scope text
   6. Record exact bytes and token count per condition in results
 
-- Judge all three pairwise via `judge_prompt.py`:
+- Judge all three pairwise via `judge_prompt.invoke_judge()`:
   - Full vs Baseline, Full vs Summary, Summary vs Baseline
+  - Call signature: `judge_prompt.invoke_judge(client, user_prompt, response_a, response_b, criteria, judge_model, temperature=0.0, max_retries=2)`
+  - Returns dict: `{"parsed": dict|None, "raw_judge_text": str, "cost": float, "attempts": int, "judge_error": str|None}`
+  - Parsed JSON shape: `{"criteria": [{"name", "score_a", "score_b", "reasoning"}], "overall_winner": "A"|"B"|"tie"}`
+  - Scores are integers 1-5; remap score_a/score_b to condition labels based on your A/B assignment
+<!-- Updated by plan-sync: fn-58...from.3 — judge_prompt.invoke_judge() API finalized with above signature and return shape -->
 
 - **Candidate selection** (8-10 skills in `candidates.yaml`):
   - Small (<2KB body), Medium (2-5KB), Large (>5KB)
