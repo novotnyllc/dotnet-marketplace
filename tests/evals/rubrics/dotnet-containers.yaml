@@ -1,0 +1,22 @@
+skill_name: dotnet-containers
+
+test_prompts:
+  - "Create a production-ready Dockerfile for a multi-project .NET solution with an API project and a shared library. It should use multi-stage builds, optimized layer caching, rootless execution, and a health check endpoint."
+  - "What is the difference between using a multi-stage Dockerfile and dotnet publish /t:PublishContainer for containerizing a .NET app? When should I use each approach? Show me how to use the SDK container publish with chiseled base images."
+
+criteria:
+  - name: multi_stage_build
+    weight: 0.30
+    description: "Uses multi-stage Dockerfile with SDK image for build and aspnet/runtime/runtime-deps for final stage. Never uses the SDK image as the final runtime image. Copies project files and runs dotnet restore before copying source code for optimal layer caching. Uses --no-restore on dotnet publish after separate restore."
+  - name: rootless_and_security
+    weight: 0.25
+    description: "Runs containers as non-root user via USER directive or chiseled base images (UID 1654 app user). Uses chiseled/distroless images (noble-chiseled) for production to minimize attack surface (no shell, no package manager). Binds to ports >= 1024 (default 8080 via ASPNETCORE_HTTP_PORTS)."
+  - name: base_image_selection
+    weight: 0.20
+    description: "Selects appropriate base image: aspnet for web apps, runtime for worker services, runtime-deps for self-contained/AOT apps. Uses chiseled-extra when globalization or time zones are needed. Uses Alpine when smaller size matters and musl compatibility is verified. Does not hardcode patch version tags."
+  - name: health_and_diagnostics
+    weight: 0.15
+    description: "Adds HEALTHCHECK directive with curl for standard images or relies on orchestrator-level probes for chiseled images (no curl available). Registers health check endpoints (/health/live and /health/ready) in the application with appropriate tag-based filtering."
+  - name: optimization
+    weight: 0.10
+    description: "Includes .dockerignore to exclude .git, bin/obj, and unnecessary files. Understands DOTNET_SYSTEM_GLOBALIZATION_INVARIANT for smaller images. Mentions container memory limit auto-detection by .NET runtime GC. Uses ContainerBaseImage and ContainerImageTag MSBuild properties for SDK publish."

@@ -1,0 +1,22 @@
+skill_name: dotnet-native-aot
+
+test_prompts:
+  - "Publish an ASP.NET Core Minimal API as a Native AOT binary. Show the project configuration, source-generated JSON serialization, CreateSlimBuilder usage, ILLink descriptors for a type that uses reflection, and a Dockerfile using runtime-deps base image."
+  - "I am converting a .NET library to be AOT-compatible. What MSBuild properties should I set? How do I replace DllImport with LibraryImport for P/Invoke? Show me how to handle a type that the trimmer cannot analyze statically."
+
+criteria:
+  - name: publish_configuration
+    weight: 0.25
+    description: "Uses PublishAot in application projects and IsAotCompatible/IsTrimmable in library projects, never PublishAot in libraries. Enables EnableAotAnalyzer and EnableTrimAnalyzer for development-time diagnostics. Uses dotnet build with analyzer properties for fast feedback without full publish."
+  - name: reflection_free_patterns
+    weight: 0.25
+    description: "Replaces reflection-based patterns with compile-time alternatives: source-generated JsonSerializerContext instead of JsonSerializer.Deserialize<T>, explicit DI registration instead of Assembly.GetTypes scanning, factory methods instead of Activator.CreateInstance. Uses CreateSlimBuilder for ASP.NET Core AOT apps, not CreateBuilder."
+  - name: type_preservation
+    weight: 0.20
+    description: "Uses ILLink descriptor XML (not legacy RD.xml) with TrimmerRootDescriptor for preserving types the trimmer cannot analyze. Uses [DynamicDependency] attribute for targeted, localized preservation. Understands when to use each approach: attribute for 1-2 types, XML for entire assemblies."
+  - name: pinvoke_source_gen
+    weight: 0.15
+    description: "Uses [LibraryImport] (.NET 7+) instead of [DllImport] for P/Invoke calls, generating marshalling code at compile time. Applies [MarshalAs] attributes for string and boolean parameters. Marks methods as static partial for source generator compatibility."
+  - name: size_and_deployment
+    weight: 0.15
+    description: "Configures size optimization properties: StripSymbols, OptimizationPreference=Size, InvariantGlobalization when globalization is not needed. Uses runtime-deps base image for containers (not aspnet or runtime) since the runtime is embedded in the AOT binary. Understands typical binary size ranges."

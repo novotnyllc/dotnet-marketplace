@@ -1,0 +1,22 @@
+skill_name: dotnet-minimal-apis
+
+test_prompts:
+  - "Build a Minimal API for a product catalog with CRUD endpoints. The API should use route groups, TypedResults for response types, and an endpoint filter for request validation. Include proper OpenAPI metadata."
+  - "I have a growing Minimal API with 30+ endpoints all in Program.cs. How should I reorganize this for maintainability? Show me the extension method pattern with route groups."
+
+criteria:
+  - name: typed_results_usage
+    weight: 0.30
+    description: "Uses TypedResults (static factory) instead of Results (interface factory) for all return values. Declares union return types via Results<T1, T2, ...> for endpoints with multiple response codes, enabling automatic OpenAPI schema generation."
+  - name: route_group_organization
+    weight: 0.25
+    description: "Organizes endpoints into MapGroup route groups with shared prefix, tags, and authorization. Uses extension method pattern (e.g., MapProductEndpoints) or Carter modules to keep Program.cs clean. Demonstrates nested groups for versioning or shared filters."
+  - name: endpoint_filters
+    weight: 0.20
+    description: "Implements IEndpointFilter for cross-cutting concerns like validation or logging. Applies filters via AddEndpointFilter on individual endpoints or entire route groups. Understands filter execution order (first registered = outermost)."
+  - name: parameter_binding
+    weight: 0.15
+    description: "Uses correct parameter binding attributes: route parameters via {id:int} constraints, [FromQuery] for query strings, [FromHeader] for headers, body binding for DTOs, and [AsParameters] for complex query objects. Injects services directly from DI."
+  - name: openapi_integration
+    weight: 0.10
+    description: "Adds OpenAPI metadata via WithName, WithSummary, WithDescription, WithTags, and Produces/ProducesProblem. Registers AddOpenApi and MapOpenApi for document generation. Understands ConfigureHttpJsonOptions applies only to Minimal APIs, not MVC."

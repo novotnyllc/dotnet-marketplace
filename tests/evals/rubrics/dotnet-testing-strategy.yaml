@@ -1,0 +1,22 @@
+skill_name: dotnet-testing-strategy
+
+test_prompts:
+  - "I have a new ASP.NET Core API with an OrderService that calls a database repository, an external payment gateway, and sends email notifications. Design a testing strategy: which parts get unit tests, integration tests, and E2E tests? Show concrete test examples with appropriate test doubles."
+  - "My team over-uses mocks -- every test has 5+ mock setups and we spend more time maintaining mocks than writing features. How should we decide between mocks, fakes, and stubs? Refactor this approach for an order processing service."
+
+criteria:
+  - name: test_type_decision
+    weight: 0.30
+    description: "Applies the correct test type based on dependency analysis: unit tests for pure logic and domain rules with no infrastructure, integration tests for database queries and HTTP contract verification with real infrastructure, E2E/functional tests sparingly for critical user flows with full stack. Follows the testing pyramid as a guideline, not a rule."
+  - name: test_doubles_selection
+    weight: 0.25
+    description: "Distinguishes between stubs (canned data, no interaction verification), mocks (interaction verification via NSubstitute Received), fakes (working in-memory implementations), and spies. Prefers fakes for domain-heavy scenarios over excessive mock setup. Recognizes that mocked DbContext does not verify SQL generation."
+  - name: test_organization
+    weight: 0.20
+    description: "Mirrors src/ structure under tests/ with suffixes (UnitTests, IntegrationTests, FunctionalTests). One test class per production class. Uses Method_Scenario_ExpectedBehavior naming convention. Follows Arrange-Act-Assert pattern with clear section separation."
+  - name: anti_pattern_avoidance
+    weight: 0.15
+    description: "Tests behavior not implementation (asserts on observable outcomes, not internal method call sequences). Avoids excessive mock setup (suggests builders or fakes instead). Uses TimeProvider for time-dependent logic instead of DateTime.UtcNow. Does not test private methods directly."
+  - name: determinism
+    weight: 0.10
+    description: "Tests do not depend on system clock, random values, or external network. Uses FakeTimeProvider (.NET 8+) for time control. Uses Testcontainers or WebApplicationFactory for infrastructure instead of shared databases. Each test is independent with fresh fixtures."

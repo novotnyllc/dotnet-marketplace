@@ -1,0 +1,22 @@
+skill_name: dotnet-csharp-async-patterns
+
+test_prompts:
+  - "Write an async service that loads a dashboard by fetching orders, user profile, and statistics in parallel, with a 30-second timeout and proper cancellation support. Include error handling for partial failures."
+  - "I have a .NET service that sometimes deadlocks. It calls .Result on async methods and uses async void for event handlers. Show me how to fix these patterns and explain why they are dangerous."
+
+criteria:
+  - name: async_all_the_way
+    weight: 0.30
+    description: "Never blocks on async with .Result, .Wait(), or .GetAwaiter().GetResult(). Every method in the async chain is async and awaited. Returns Task or ValueTask from async methods, never async void (except event handlers). Uses ValueTask when synchronous completion is frequent (cache hits)."
+  - name: cancellation_propagation
+    weight: 0.25
+    description: "Accepts CancellationToken as last parameter in all async methods. Forwards the token to every downstream async call (ToListAsync(ct), ReadAllBytesAsync(path, ct)). Uses CancellationTokenSource.CreateLinkedTokenSource for combining cancellation with timeouts. Calls ThrowIfCancellationRequested in loops."
+  - name: parallel_patterns
+    weight: 0.20
+    description: "Uses Task.WhenAll for independent concurrent operations. Uses Parallel.ForEachAsync with MaxDegreeOfParallelism for bounded parallelism. Accesses results from completed tasks via .Result after WhenAll (safe because tasks are completed). Avoids unbounded Task.Run fire-and-forget."
+  - name: configureawait_and_context
+    weight: 0.15
+    description: "Uses ConfigureAwait(false) in library code to avoid capturing SynchronizationContext. Omits ConfigureAwait in ASP.NET Core application code (no SynchronizationContext). Understands that fire-and-forget requires explicit error handling (try/catch with logging) or a background queue via BackgroundService."
+  - name: streaming_and_disposal
+    weight: 0.10
+    description: "Uses IAsyncEnumerable<T> for streaming results with [EnumeratorCancellation] and WithCancellation(ct). Uses await using for IAsyncDisposable resources. Uses BackgroundService instead of Task.Run for long-running background work."
