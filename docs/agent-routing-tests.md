@@ -28,12 +28,13 @@ This document describes the routing test system used to verify that Claude, Code
 - Copilot: repoints marketplace `dotnet-artisan` to this repo path and reinstalls/updates `dotnet-artisan@dotnet-artisan`.
 - Codex: syncs `skills/*/` from this repo into `~/.codex/skills/<skill-name>`.
 - Cleanup: removes `apps/` before and after each run to avoid persisted generated app scaffolds.
+- Restore: after each run, Claude/Copilot marketplaces are restored to the public plugin source (`novotnyllc/dotnet-artisan`) and Codex skills are restored to pre-test state.
 
 Use `--skip-source-setup` only for debugging:
 
 - `./test.sh --skip-source-setup --agents claude --case-id advisor-routing-maintainable-app`
-
-Note: source setup updates local plugin/marketplace state in `~/.claude` and `~/.copilot`.
+- `./test.sh --restore-public-marketplaces` restores Claude/Copilot marketplaces to public source and restores/removes Codex local sync state, then exits without running tests.
+- `./test.sh --restore-public-marketplaces --agents codex --purge-codex-skills` force-removes all dotnet-artisan Codex skill dirs even if no snapshot/marker exists.
 
 ## Optional Filters
 
