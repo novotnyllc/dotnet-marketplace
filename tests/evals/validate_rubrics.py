@@ -47,6 +47,13 @@ def validate_rubric(rubric_path: Path, errors: list[str]) -> None:
         errors.append(
             f"{prefix}: skill_name '{skill_name}' does not match filename '{filename}'"
         )
+    else:
+        # Verify the skill directory and SKILL.md actually exist
+        skill_md = SKILLS_DIR / skill_name / "SKILL.md"
+        if not skill_md.is_file():
+            errors.append(
+                f"{prefix}: skill '{skill_name}' not found at {skill_md}"
+            )
 
     # --- test_prompts ---
     test_prompts = data.get("test_prompts")

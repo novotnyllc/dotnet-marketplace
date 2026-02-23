@@ -51,6 +51,9 @@ def load_config(config_path: Optional[Path] = None) -> dict:
     with open(path) as f:
         cfg = yaml.safe_load(f)
 
+    if not isinstance(cfg, dict):
+        raise ValueError(f"Invalid config at {path}: expected YAML mapping, got {type(cfg).__name__}")
+
     # Inject API key from environment
     cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY", "")
 
@@ -134,8 +137,6 @@ def retry_with_backoff(
 # JSON extraction from LLM responses
 # ---------------------------------------------------------------------------
 
-# Regex to find the first top-level JSON object in text
-_JSON_BLOCK_RE = re.compile(r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", re.DOTALL)
 _CODE_FENCE_RE = re.compile(r"```(?:json)?\s*\n?(.*?)\n?```", re.DOTALL)
 _TRAILING_COMMA_RE = re.compile(r",\s*([}\]])")
 
@@ -147,6 +148,9 @@ def extract_json(text: str) -> Optional[dict]:
     - JSON wrapped in prose text
     - Markdown code fences around JSON
     - Trailing commas before } or ]
+
+    Uses json.JSONDecoder.raw_decode for robust nested-object parsing
+    instead of fragile regex-based brace matching.
 
     Args:
         text: Raw LLM response text.
@@ -161,13 +165,28 @@ def extract_json(text: str) -> Optional[dict]:
         if result is not None:
             return result
 
-    # Second try: find first top-level { ... } block
-    for block_match in _JSON_BLOCK_RE.finditer(text):
-        candidate = block_match.group(0)
-        result = _try_parse_json(candidate)
-        if result is not None:
-            return result
+    # Second try: scan for first valid JSON object using raw_decode
+    result = _extract_first_object(text)
+    if result is not None:
+        return result
 
+    # Third try: strip trailing commas and scan again
+    cleaned = _TRAILING_COMMA_RE.sub(r"\1", text)
+    return _extract_first_object(cleaned)
+
+
+def _extract_first_object(text: str) -> Optional[dict]:
+    """Scan text for the first valid JSON object using raw_decode."""
+    decoder = json.JSONDecoder()
+    for i, ch in enumerate(text):
+        if ch != "{":
+            continue
+        try:
+            obj, _ = decoder.raw_decode(text[i:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(obj, dict):
+            return obj
     return None
 
 
@@ -366,7 +385,7 @@ def write_results(
     }
 
     output_path = output_dir / filename
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(envelope, f, indent=2)
 
     return output_path
