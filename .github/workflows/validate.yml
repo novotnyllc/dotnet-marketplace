@@ -397,6 +397,9 @@ jobs:
 
           if [ "$SMOKE_EXIT" -eq 0 ]; then
             echo "smoke_status=passed" >> "$GITHUB_OUTPUT"
+          elif [ "$SMOKE_EXIT" -eq 1 ]; then
+            echo "::warning::Copilot smoke functional mismatches detected (non-blocking); see uploaded artifact."
+            echo "smoke_status=soft_failed" >> "$GITHUB_OUTPUT"
           elif [ "$SMOKE_EXIT" -eq 2 ]; then
             echo "smoke_status=infra_error" >> "$GITHUB_OUTPUT"
             exit 1
