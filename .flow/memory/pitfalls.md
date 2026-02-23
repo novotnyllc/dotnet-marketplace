@@ -423,3 +423,9 @@ Regex-based JSON extraction from LLM responses fails on nested objects and brace
 
 ## 2026-02-23 manual [pitfall]
 Generation cache keys must include ALL inputs that affect output (model, temperature, prompt content hash) -- not just the semantic identifier -- to prevent silent stale reuse when parameters change
+
+## 2026-02-23 manual [pitfall]
+When a runner emits summary dicts consumed by a comparator, keep comparator-facing entries to a single well-known key (e.g. _overall) and put per-entity breakdowns in artifacts -- comparators iterate all summary keys as entity IDs
+
+## 2026-02-23 manual [pitfall]
+When multiple code paths conditionally assign a variable (e.g. fallback_cost inside an if/else), initialize the variable BEFORE the branch to prevent UnboundLocalError on the paths that skip assignment

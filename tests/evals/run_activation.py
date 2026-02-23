@@ -128,7 +128,7 @@ def load_dataset(
     for jsonl_path in sorted(datasets_dir.iterdir()):
         if jsonl_path.suffix != ".jsonl":
             continue
-        with open(jsonl_path) as f:
+        with open(jsonl_path, encoding="utf-8") as f:
             for line_num, line in enumerate(f, 1):
                 stripped = line.strip()
                 if not stripped or stripped.startswith("#"):
@@ -231,7 +231,14 @@ def detect_activation_fallback(
 
     parsed = _common.extract_json(text)
     if parsed is not None:
-        return bool(parsed.get("activated", False)), cost, fb_input, fb_output
+        val = parsed.get("activated", False)
+        if isinstance(val, bool):
+            activated = val
+        elif isinstance(val, str):
+            activated = val.strip().lower() == "true"
+        else:
+            activated = False
+        return activated, cost, fb_input, fb_output
     return False, cost, fb_input, fb_output
 
 
@@ -292,18 +299,16 @@ def compute_metrics(
     for result in case_results:
         should_activate = result.get("should_activate", True)
         expected_skills = set(result.get("expected_skills", []))
-        acceptable_skills = set(result.get("acceptable_skills", []))
         activated_skills = set(result.get("activated_skills", []))
-        all_valid = expected_skills | acceptable_skills
+        passed = bool(result.get("passed", False))
 
         total_input_tokens += result.get("input_tokens", 0)
         total_output_tokens += result.get("output_tokens", 0)
         total_cost += result.get("cost", 0.0)
 
         if should_activate:
-            # Positive case: check if at least one expected skill was activated
-            hit = bool(activated_skills & all_valid)
-            if hit:
+            # Positive case: passed means at least one valid skill activated
+            if passed:
                 true_positives += 1
             else:
                 false_negatives += 1
@@ -315,8 +320,9 @@ def compute_metrics(
                     per_skill_activated[skill] = per_skill_activated.get(skill, 0) + 1
                     per_skill_correct[skill] = per_skill_correct.get(skill, 0) + 1
         else:
-            # Negative case: no skills should be activated
-            if not activated_skills:
+            # Negative case: passed means no skills activated AND
+            # model complied with JSON format (parse_failure = non-compliant)
+            if passed:
                 true_negatives += 1
             else:
                 false_positives += 1
@@ -594,7 +600,7 @@ def main() -> int:
                     # Fallback: use LLM to classify per expected/acceptable skill
                     # Only run fallback if there are skills to check; otherwise
                     # keep detection_method as "parse_failure" (from structured)
-                    fallback_targets = list(
+                    fallback_targets = sorted(
                         set(expected_skills) | set(acceptable_skills)
                     )
                     if should_activate and fallback_targets:
