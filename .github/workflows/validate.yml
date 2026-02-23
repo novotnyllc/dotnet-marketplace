@@ -316,7 +316,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== Installing Copilot CLI ==="
-          # Use pinned version only -- no fallback to latest (determinism requirement)
+          npm view @github/copilot version >/dev/null
           npm install -g @github/copilot
 
           COPILOT_VERSION="$(copilot --version 2>/dev/null || echo 'unknown')"

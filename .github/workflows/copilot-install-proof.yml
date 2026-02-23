@@ -27,8 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== Installing Copilot CLI ==="
-
-          # Install via npm -- same package as validate.yml copilot-smoke job
+          npm view @github/copilot version >/dev/null
           npm install -g @github/copilot
 
           echo ""
