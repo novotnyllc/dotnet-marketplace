@@ -47,9 +47,8 @@ Each rubric also includes 1-2 test prompts (realistic developer questions) that 
 - [ ] No rubric references a skill that does not exist in `skills/` directory
 - [ ] Rubric file names match the skill directory names exactly
 ## Done summary
-TBD
-
+Authored 12 priority rubric YAML files for skill effectiveness evaluation under tests/evals/rubrics/. Each rubric has 5 weighted criteria (sum=1.0) referencing specific APIs and patterns from the corresponding SKILL.md, plus 2 realistic developer test prompts for A/B comparison. Skills covered: xunit, minimal-apis, efcore-patterns, csharp-coding-standards, csharp-async-patterns, resilience, containers, blazor-patterns, testing-strategy, observability, security-owasp, and native-aot.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 8f98b5ec7c7c4ce50903cbbb26f1319d9e35cbdf
+- Tests: python3 tests/evals/validate_rubrics.py, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
