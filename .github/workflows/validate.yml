@@ -319,7 +319,10 @@ jobs:
           npm view @github/copilot version >/dev/null
           npm install -g @github/copilot
 
-          COPILOT_VERSION="$(copilot --version 2>/dev/null || echo 'unknown')"
+          COPILOT_VERSION="$(copilot --version 2>/dev/null | head -n 1 || true)"
+          if [ -z "$COPILOT_VERSION" ]; then
+            COPILOT_VERSION='unknown'
+          fi
           echo "Copilot CLI version: $COPILOT_VERSION"
           echo "copilot_version=$COPILOT_VERSION" >> "$GITHUB_OUTPUT"
 
