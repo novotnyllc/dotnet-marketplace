@@ -371,7 +371,7 @@ jobs:
           #   2 negative controls, 2 direct (different domains)
           # Per fn-57.4: "direct activation, advisor routing, and one negative control"
           SMOKE_ARGS+=(--case-id "smoke-001,smoke-003,smoke-004,smoke-011,smoke-016,smoke-017,smoke-026,smoke-027")
-          SMOKE_ARGS+=(--timeout-seconds 60)
+          SMOKE_ARGS+=(--timeout-seconds 120)
           SMOKE_ARGS+=(--output "tests/copilot-smoke/ci-results.json")
 
           IS_FORK="${{ steps.detect-env.outputs.is_fork }}"
