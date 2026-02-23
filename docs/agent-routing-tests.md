@@ -423,14 +423,6 @@ Fork PRs cannot access repository secrets (`COPILOT_TOKEN`), so Copilot tests na
 - **Result artifacts**: `infra_error` results are still uploaded as artifacts for observability.
 - **Non-fork PRs**: Install, health check, and registration steps run without `continue-on-error` -- any failure is a hard stop. The smoke runner uses `--require-copilot`, so if Copilot is unavailable, the job fails (infra_error is not silently swallowed).
 
-### Copilot CLI version pinning
-
-The `copilot-smoke` job pins the Copilot CLI version via the `COPILOT_CLI_VERSION` env var (currently `0.0.412`). To update:
-
-1. Test the new version locally.
-2. Update `COPILOT_CLI_VERSION` in `.github/workflows/validate.yml`.
-3. Verify smoke tests pass with the new version.
-
 ## Troubleshooting
 
 - `infra_error` means the runner could not start the command (for example, missing CLI or invalid template).

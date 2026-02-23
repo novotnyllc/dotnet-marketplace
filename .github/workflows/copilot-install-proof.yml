@@ -29,10 +29,7 @@ jobs:
           echo "=== Installing Copilot CLI ==="
 
           # Install via npm -- same package as validate.yml copilot-smoke job
-          npm install -g @github/copilot-cli@0.0.412 || {
-            echo "WARNING: Pinned version failed, trying latest..."
-            npm install -g @github/copilot-cli
-          }
+          npm install -g @github/copilot
 
           echo ""
           echo "=== Copilot CLI Version ==="

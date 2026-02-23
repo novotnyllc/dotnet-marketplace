@@ -292,14 +292,6 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 25
-
-    # "Soft infra, hard functional" policy:
-    # - Fork PRs: produce infra_error results, exit 0 (no secrets access)
-    # - Non-fork PRs: Copilot must be available; infra_error is a failure
-    env:
-      # Pinned Copilot CLI version for reproducibility
-      COPILOT_CLI_VERSION: "0.0.412"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -323,12 +315,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
           set -euo pipefail
-          echo "=== Installing Copilot CLI v${COPILOT_CLI_VERSION} ==="
+          echo "=== Installing Copilot CLI (${COPILOT_NPM_PACKAGE}@${COPILOT_CLI_VERSION}) ==="
           # Use pinned version only -- no fallback to latest (determinism requirement)
-          npm install -g @github/copilot-cli@${COPILOT_CLI_VERSION} || {
-            echo "ERROR: Failed to install Copilot CLI v${COPILOT_CLI_VERSION}"
-            exit 1
-          }
+          npm install -g @github/copilot
 
           COPILOT_VERSION="$(copilot --version 2>/dev/null || echo 'unknown')"
           echo "Copilot CLI version: $COPILOT_VERSION"
