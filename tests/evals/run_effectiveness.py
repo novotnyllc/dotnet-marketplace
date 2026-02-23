@@ -84,7 +84,11 @@ def _generations_dir(output_dir: Path) -> Path:
 def _load_cached_generation(
     gen_dir: Path, skill_name: str, phash: str
 ) -> Optional[dict]:
-    """Load a cached generation from disk if it exists.
+    """Load a cached generation from disk if it exists and is valid.
+
+    Validates that the cached data contains the required 'enhanced' and
+    'baseline' keys with string values. Returns None (cache miss) if the
+    file is missing, corrupt, or has an unexpected shape.
 
     Args:
         gen_dir: Generations directory.
@@ -92,16 +96,26 @@ def _load_cached_generation(
         phash: Prompt hash (filename stem).
 
     Returns:
-        Parsed dict with 'enhanced' and 'baseline' keys, or None.
+        Parsed dict with 'enhanced' and 'baseline' string keys, or None.
     """
     cache_path = gen_dir / skill_name / f"{phash}.json"
     if not cache_path.is_file():
         return None
     try:
         with open(cache_path) as f:
-            return json.load(f)
+            data = json.load(f)
     except (json.JSONDecodeError, OSError):
         return None
+
+    # Validate expected shape
+    if not isinstance(data, dict):
+        return None
+    if not isinstance(data.get("enhanced"), str):
+        return None
+    if not isinstance(data.get("baseline"), str):
+        return None
+
+    return data
 
 
 def _save_generation(
@@ -200,8 +214,16 @@ def _compute_stats(values: list[float]) -> dict:
 def _compute_case_scores(judge_parsed: dict, criteria: list[dict]) -> dict:
     """Compute weighted scores from judge output.
 
+    Assumes judge output has already been validated by
+    judge_prompt._validate_judge_response(), which ensures all expected
+    criteria are present with valid scores. No normalization is performed;
+    if criteria are missing or weights don't sum to 1.0, that indicates
+    a validation gap upstream.
+
     Args:
         judge_parsed: Parsed judge JSON with 'criteria' and 'overall_winner'.
+            The caller must have already remapped score_a/score_b so that
+            score_a = enhanced and score_b = baseline.
         criteria: Rubric criteria list with 'name' and 'weight'.
 
     Returns:
@@ -214,7 +236,6 @@ def _compute_case_scores(judge_parsed: dict, criteria: list[dict]) -> dict:
     enhanced_weighted = 0.0
     baseline_weighted = 0.0
     per_criterion = []
-    total_weight = 0.0
 
     for jc in judge_criteria:
         name = jc.get("name", "")
@@ -223,8 +244,6 @@ def _compute_case_scores(judge_parsed: dict, criteria: list[dict]) -> dict:
         score_b = jc.get("score_b", 0)
         reasoning = jc.get("reasoning", "")
 
-        # Note: score_a/score_b correspond to Response A/Response B labels
-        # The caller tracks which is enhanced vs baseline via ab_assignment
         per_criterion.append({
             "name": name,
             "weight": weight,
@@ -235,12 +254,6 @@ def _compute_case_scores(judge_parsed: dict, criteria: list[dict]) -> dict:
 
         enhanced_weighted += score_a * weight
         baseline_weighted += score_b * weight
-        total_weight += weight
-
-    # Normalize if weights don't sum exactly to 1
-    if total_weight > 0 and abs(total_weight - 1.0) > 0.01:
-        enhanced_weighted /= total_weight
-        baseline_weighted /= total_weight
 
     improvement = enhanced_weighted - baseline_weighted
     if enhanced_weighted > baseline_weighted:
@@ -381,7 +394,6 @@ def main() -> int:
     temperature = cfg.get("temperature", 0.0)
     max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
     seed = meta["seed"]
-    rng = random.Random(seed)
 
     print(
         f"[effectiveness] Starting eval run {meta['run_id']}", file=sys.stderr
@@ -520,6 +532,7 @@ def main() -> int:
                 if generation_error:
                     cases.append({
                         "id": case_id,
+                        "entity_id": skill_name,
                         "skill_name": skill_name,
                         "prompt": user_prompt,
                         "run_index": run_idx,
@@ -535,8 +548,13 @@ def main() -> int:
                     continue
 
                 # --- A/B randomization ---
-                # Use per-case seeded RNG for reproducible A/B assignment
-                case_seed = rng.randint(0, 2**31 - 1)
+                # Derive case_seed from a stable hash of identifying fields
+                # so A/B assignment is reproducible regardless of iteration
+                # order (--skill X matches the same assignment from a full run)
+                seed_input = f"{seed}|{skill_name}|{prompt_idx}|{run_idx}"
+                case_seed = int(
+                    hashlib.sha256(seed_input.encode()).hexdigest()[:8], 16
+                )
                 case_rng = random.Random(case_seed)
                 enhanced_is_a = case_rng.random() < 0.5
 
@@ -550,20 +568,31 @@ def main() -> int:
                     ab_assignment = "enhanced=B,baseline=A"
 
                 # --- Judge phase ---
-                judge_result = judge_prompt.invoke_judge(
-                    client=client,
-                    user_prompt=user_prompt,
-                    response_a=response_a,
-                    response_b=response_b,
-                    criteria=criteria,
-                    judge_model=meta["judge_model"],
-                    temperature=temperature,
-                )
+                judge_result: Optional[dict] = None
+                try:
+                    judge_result = judge_prompt.invoke_judge(
+                        client=client,
+                        user_prompt=user_prompt,
+                        response_a=response_a,
+                        response_b=response_b,
+                        criteria=criteria,
+                        judge_model=meta["judge_model"],
+                        temperature=temperature,
+                    )
+                except Exception as exc:
+                    judge_result = {
+                        "parsed": None,
+                        "raw_judge_text": "",
+                        "cost": 0.0,
+                        "attempts": 0,
+                        "judge_error": f"judge invocation failed: {exc}",
+                    }
 
                 total_cost += judge_result["cost"]
 
                 case_record: dict = {
                     "id": case_id,
+                    "entity_id": skill_name,
                     "skill_name": skill_name,
                     "prompt": user_prompt,
                     "run_index": run_idx,
