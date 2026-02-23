@@ -429,3 +429,6 @@ When a runner emits summary dicts consumed by a comparator, keep comparator-faci
 
 ## 2026-02-23 manual [pitfall]
 When multiple code paths conditionally assign a variable (e.g. fallback_cost inside an if/else), initialize the variable BEFORE the branch to prevent UnboundLocalError on the paths that skip assignment
+
+## 2026-02-23 manual [pitfall]
+When a runner computes pass/fail per case AND an aggregator computes TP/FP/TN/FN from cases, the aggregator must use the runner's passed field -- not recompute from raw signals -- otherwise compliance rules (e.g. parse_failure = fail) are silently bypassed

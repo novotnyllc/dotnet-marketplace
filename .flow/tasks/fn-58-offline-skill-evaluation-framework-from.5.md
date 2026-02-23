@@ -55,9 +55,8 @@ Build an offline activation eval (L3 runner) that tests whether models correctly
 - [ ] Per-case details in results JSON: prompt, expected, actual, detection_method, pass/fail
 - [ ] Reuses at least 10 prompts from existing test infrastructure
 ## Done summary
-TBD
-
+Implemented offline activation eval runner (L3) with compressed routing index built dynamically from skill frontmatter, structured JSON detection with LLM fallback, 55 positive test cases across 55 skills and 18 negative controls in 3 JSONL datasets, and full metrics (TPR/FPR/accuracy/per-skill activation rate/token usage/cost) with multi-run stats support.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: a0f4d0fc71b013a627e2d431bf92a523bafe3ea4
+- Tests: python3 tests/evals/run_activation.py --dry-run, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
