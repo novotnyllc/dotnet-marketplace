@@ -192,7 +192,7 @@ def detect_activation_fallback(
     target_skill: str,
     judge_model: str,
     temperature: float,
-) -> tuple[bool, float]:
+) -> tuple[bool, float, int, int]:
     """LLM fallback detection for when structured parsing fails.
 
     Asks a fast model whether the response indicates the target skill
@@ -206,7 +206,7 @@ def detect_activation_fallback(
         temperature: Sampling temperature.
 
     Returns:
-        Tuple of (activated_bool, cost).
+        Tuple of (activated_bool, cost, input_tokens, output_tokens).
     """
     user_content = (
         f"Target skill: {target_skill}\n\n"
@@ -226,11 +226,13 @@ def detect_activation_fallback(
     text = response.content[0].text if response.content else ""
     usage = response.usage
     cost = _common.track_cost(judge_model, usage.input_tokens, usage.output_tokens)
+    fb_input = usage.input_tokens
+    fb_output = usage.output_tokens
 
     parsed = _common.extract_json(text)
     if parsed is not None:
-        return bool(parsed.get("activated", False)), cost
-    return False, cost
+        return bool(parsed.get("activated", False)), cost, fb_input, fb_output
+    return False, cost, fb_input, fb_output
 
 
 # ---------------------------------------------------------------------------
@@ -578,6 +580,9 @@ def main() -> int:
             # Detect activation
             activated_skills: list[str] = []
             detection_method = "error"
+            fallback_cost = 0.0
+            fallback_input_tokens = 0
+            fallback_output_tokens = 0
 
             if api_error is None:
                 activated_skills_opt, detection_method = (
@@ -594,35 +599,41 @@ def main() -> int:
                     )
                     if should_activate and fallback_targets:
                         detection_method = "fallback"
-                        fallback_cost = 0.0
-                        fallback_input = 0
-                        fallback_output = 0
                         for target_skill in fallback_targets:
-                            activated, fb_cost = detect_activation_fallback(
-                                client,
-                                response_text,
-                                target_skill,
-                                meta["judge_model"],
-                                temperature,
+                            activated, fb_cost, fb_in, fb_out = (
+                                detect_activation_fallback(
+                                    client,
+                                    response_text,
+                                    target_skill,
+                                    meta["judge_model"],
+                                    temperature,
+                                )
                             )
                             fallback_cost += fb_cost
+                            fallback_input_tokens += fb_in
+                            fallback_output_tokens += fb_out
                             total_cost += fb_cost
                             if activated:
                                 activated_skills.append(target_skill)
-                    else:
-                        fallback_cost = 0.0
+                    # else: detection_method stays "parse_failure"
 
             # Determine pass/fail
             if should_activate:
                 all_valid = set(expected_skills) | set(acceptable_skills)
                 passed = bool(set(activated_skills) & all_valid)
             else:
-                passed = len(activated_skills) == 0
+                # Negative case: no skills should be activated.
+                # If structured parse failed, treat as non-compliant (fail)
+                # since the model may have indicated skills in non-JSON text.
+                if detection_method == "parse_failure":
+                    passed = False
+                else:
+                    passed = len(activated_skills) == 0
 
-            # Total cost includes both main call and any fallback calls
-            case_total_cost = call_cost + (
-                fallback_cost if api_error is None else 0.0
-            )
+            # Total cost and tokens include both main call and fallback calls
+            case_total_cost = call_cost + fallback_cost
+            case_input_tokens = input_tokens + fallback_input_tokens
+            case_output_tokens = output_tokens + fallback_output_tokens
 
             case_result = {
                 "id": run_case_id,
@@ -636,8 +647,8 @@ def main() -> int:
                 "detection_method": detection_method,
                 "passed": passed,
                 "run_index": run_idx,
-                "input_tokens": input_tokens,
-                "output_tokens": output_tokens,
+                "input_tokens": case_input_tokens,
+                "output_tokens": case_output_tokens,
                 "cost": round(case_total_cost, 6),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -691,6 +702,9 @@ def main() -> int:
             "n": 1,
         }
 
+    # Summary contains only _overall for compare_baseline.py compatibility.
+    # Per-skill activation rates go in artifacts to avoid polluting the
+    # comparator namespace (which iterates all summary keys as entities).
     summary: dict = {
         "_overall": {
             # Scalar fields for compare_baseline.py compatibility
@@ -714,15 +728,16 @@ def main() -> int:
             "total_input_tokens": overall_metrics["total_input_tokens"],
             "total_output_tokens": overall_metrics["total_output_tokens"],
         },
-        **{
-            skill: {
-                "activation_rate": data["activation_rate"],
-                "expected_count": data["expected_count"],
-                "activated_count": data["activated_count"],
-                "correct_count": data["correct_count"],
-            }
-            for skill, data in per_skill_metrics.items()
-        },
+    }
+
+    per_skill_artifacts = {
+        skill: {
+            "activation_rate": data["activation_rate"],
+            "expected_count": data["expected_count"],
+            "activated_count": data["activated_count"],
+            "correct_count": data["correct_count"],
+        }
+        for skill, data in per_skill_metrics.items()
     }
 
     meta["total_cost"] = round(total_cost, 6)
@@ -736,6 +751,7 @@ def main() -> int:
             "index_char_count": index_char_count,
             "index_skill_count": skill_count,
             "detection_method_counts": _detection_method_counts(all_case_results),
+            "per_skill": per_skill_artifacts,
         },
     )
 
