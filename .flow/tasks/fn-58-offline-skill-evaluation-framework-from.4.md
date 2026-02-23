@@ -8,10 +8,11 @@ Add a GitHub Actions workflow for scheduled evals (all 4 eval types), implement 
 **Files:**
 - `.github/workflows/skill-evals.yml` (new workflow: weekly schedule + manual trigger ONLY — NOT on PR/push events)
 - `tests/evals/compare_baseline.py` (flesh out skeleton from task .1)
-- `tests/evals/baselines/effectiveness-baseline.json` (initial baseline)
-- `tests/evals/baselines/activation-baseline.json` (initial baseline)
-- `tests/evals/baselines/confusion-baseline.json` (initial baseline)
-- `tests/evals/baselines/size-impact-baseline.json` (initial baseline)
+<!-- Updated by plan-sync: fn-58...from.2 — compare_baseline.py uses f"{eval_type}_baseline.json" (underscores, not hyphens) -->
+- `tests/evals/baselines/effectiveness_baseline.json` (initial baseline)
+- `tests/evals/baselines/activation_baseline.json` (initial baseline)
+- `tests/evals/baselines/confusion_baseline.json` (initial baseline)
+- `tests/evals/baselines/size_impact_baseline.json` (initial baseline)
 - `CONTRIBUTING-SKILLS.md` (new section on skill evals in Section 5)
 - `AGENTS.md` (update file structure and validation commands)
 - `docs/skill-eval-framework.md` (new reference doc)
