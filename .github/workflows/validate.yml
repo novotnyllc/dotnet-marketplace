@@ -315,7 +315,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
         run: |
           set -euo pipefail
-          echo "=== Installing Copilot CLI (${COPILOT_NPM_PACKAGE}@${COPILOT_CLI_VERSION}) ==="
+          echo "=== Installing Copilot CLI ==="
           # Use pinned version only -- no fallback to latest (determinism requirement)
           npm install -g @github/copilot
 
