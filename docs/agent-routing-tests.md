@@ -7,7 +7,11 @@ This document describes the routing test system used to verify that Claude, Code
 - `tests/agent-routing/cases.json`: broad case corpus (same prompts across Claude/Codex/Copilot)
 - `tests/agent-routing/check-skills.cs`: single .NET file-based runner
 - `tests/agent-routing/provider-baseline.json`: per-case per-provider expected status for CI regression gating
+- `tests/copilot-smoke/cases.jsonl`: deterministic Copilot smoke test cases
+- `tests/copilot-smoke/baseline.json`: expected outcomes for smoke tests (regression gate)
+- `tests/copilot-smoke/run_smoke.py`: Copilot smoke test runner (supports `--require-copilot`)
 - `test.sh`: single entrypoint script
+- `.github/workflows/validate.yml`: PR-blocking validation (structural + copilot-smoke)
 - `.github/workflows/agent-live-routing.yml`: manual/scheduled live checks with provider matrix
 
 ## Commands
@@ -22,14 +26,15 @@ This document describes the routing test system used to verify that Claude, Code
 
 - Claude: disables user-scope `dotnet-artisan`, points marketplace `dotnet-artisan` to this repo path, installs local scope plugin.
 - Copilot: repoints marketplace `dotnet-artisan` to this repo path and reinstalls/updates `dotnet-artisan@dotnet-artisan`.
-- Codex: syncs `skills/*/*` from this repo into `~/.codex/skills/<skill-name>`.
+- Codex: syncs `skills/*/` from this repo into `~/.codex/skills/<skill-name>`.
 - Cleanup: removes `apps/` before and after each run to avoid persisted generated app scaffolds.
+- Restore: after each run, Claude/Copilot marketplaces are restored to the public plugin source (`novotnyllc/dotnet-artisan`) and Codex skills are restored to pre-test state.
 
 Use `--skip-source-setup` only for debugging:
 
 - `./test.sh --skip-source-setup --agents claude --case-id advisor-routing-maintainable-app`
-
-Note: source setup updates local plugin/marketplace state in `~/.claude` and `~/.copilot`.
+- `./test.sh --restore-public-marketplaces` restores Claude/Copilot marketplaces to public source and restores/removes Codex local sync state, then exits without running tests.
+- `./test.sh --restore-public-marketplaces --agents codex --purge-codex-skills` force-removes all dotnet-artisan Codex skill dirs even if no snapshot/marker exists.
 
 ## Optional Filters
 
@@ -76,7 +81,7 @@ grep '^ARTIFACT_DIR=' stderr.log | cut -d= -f2-
 ## Runner Behavior
 
 - Expands each case across selected agents.
-- Copilot historically had weaker skill-load evidence for nested `dotnet-*` skills; the harness uses provider-aware Tier 1 signals and CI baselines define expected outcomes per case/provider.
+- Copilot skill-load evidence is now consistent with other providers after the flat layout migration; the harness uses provider-aware Tier 1 signals and CI baselines define expected outcomes per case/provider.
 - Executes agent command templates with timeout.
 - Evaluates evidence from stdout/stderr for tool usage + skill-file reads.
 - Falls back to recent logs from agent home dirs when log scanning is enabled (see Log Fallback Policy below).
@@ -280,7 +285,7 @@ strategy:
 ```
 
 - `fail-fast: false`: All provider jobs run to completion regardless of individual failures.
-- `continue-on-error: true` for copilot: Prevents the copilot matrix job from stopping the workflow early, but the summarize job still enforces the regression gate (including infra/timeouts) based on baselines.
+- All providers (including Copilot) are hard-gated: no `continue-on-error`. Copilot failures surface immediately.
 - Each job uploads artifacts with `if: always()` so the summarize step always has data.
 - Checkout uses `fetch-depth: 0` for full history access during baseline comparison.
 
@@ -357,10 +362,67 @@ Concurrency:
 
 ## GitHub Workflows
 
-- `agent-live-routing.yml` runs live checks via `workflow_dispatch` or `schedule` (weekly Monday 09:30 UTC).
-- Provider matrix: separate jobs for `claude`, `codex`, `copilot`.
+### `validate.yml` (PR-blocking)
+
+Runs on `push` and `pull_request` to `main`. Contains:
+
+- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 131, flat layout guard, Copilot frontmatter safety checks). Runs on both `push` and `pull_request`.
+- **`copilot-smoke` job**: Runs on `pull_request` only (guarded by `if: github.event_name == 'pull_request'`). Deterministic Copilot smoke test subset covering direct activation, one advisor-routed case (smoke-011), and negative controls. Uses explicit `--case-id` list to select only non-flaky cases. Compares results against `tests/copilot-smoke/baseline.json`. Gates PRs on regressions.
+
+### `agent-live-routing.yml` (comprehensive)
+
+Runs via `workflow_dispatch` or `schedule` (weekly Monday 09:30 UTC).
+
+- Provider matrix: separate jobs for `claude`, `codex`, `copilot` (all hard-gated, no `continue-on-error`).
 - `baseline_ref` input (default: `main`) controls regression comparison ref.
-- Summarize job runs `if: always()` and produces a delta report in the job summary.
+- `fail_on_infra` input (default: `true`). Schedule runs hard-code `fail_on_infra=true`.
+- Summarize job runs `if: always()` and produces a delta report in the job summary. `infra_error` results count as "failed" when `fail_on_infra=true`, "skipped" when `fail_on_infra=false` (manual override only).
+
+## Copilot CI Gate
+
+### What "Copilot passes" means
+
+A Copilot test run passes when:
+
+1. **Copilot CLI is installed** and `copilot --version` exits 0 (health check gate).
+2. **Plugin registration succeeds**: `copilot plugin marketplace add` + `copilot plugin install dotnet-artisan@dotnet-artisan` complete, and `copilot plugin marketplace list` contains `dotnet-artisan`.
+3. **Smoke tests produce no regressions**: Results for each deterministic case match the committed `tests/copilot-smoke/baseline.json` (status comparison, not percentage thresholds).
+4. **Evidence patterns**: Each passing case shows `Base directory for this skill:` lines in stdout/stderr containing the expected skill path under `skills/<skill-name>/`.
+
+### `infra_error` deterministic rules
+
+`infra_error` is acceptable in exactly these circumstances:
+
+| Workflow | Condition | `infra_error` acceptable? | Mechanism |
+|----------|-----------|---------------------------|-----------|
+| `validate.yml` (PR) | Fork PR (`head.repo.fork == true`) | Yes | Forks lack access to `COPILOT_TOKEN` secret. Synthetic `infra_error` results produced; exit 0 with annotation. |
+| `validate.yml` (PR) | Non-fork, Copilot install/auth/registration fails | No | Install/health/register steps have no `continue-on-error`; `--require-copilot` flag set on smoke runner. Any failure is a hard stop. |
+| `agent-live-routing.yml` (schedule) | Any | No | Schedule hard-codes `fail_on_infra=true`. Infra outages surface as failures. |
+| `agent-live-routing.yml` (manual) | `fail_on_infra=true` (default) | No | Default is true; infra_error causes failure. |
+| `agent-live-routing.yml` (manual) | `fail_on_infra=false` (explicit override) | Yes | Operator explicitly opted into soft infra mode. |
+
+### How to update baselines when intentional behavior changes
+
+1. **Copilot smoke baseline** (`tests/copilot-smoke/baseline.json`):
+   - Run smoke tests locally: `python tests/copilot-smoke/run_smoke.py --output /tmp/smoke-results.json`
+   - Review results and update `baseline.json` entries for cases with intentional status changes.
+   - Every case ID in `cases.jsonl` must have a corresponding entry in `baseline.json`.
+
+2. **Agent routing baseline** (`tests/agent-routing/provider-baseline.json`):
+   - Run full test suite: `./test.sh --agents copilot`
+   - Update `provider-baseline.json` entries for cases with intentional changes.
+   - Every `(case_id, provider)` tuple must have a baseline entry.
+
+3. **Commit baseline changes**: Baseline updates should be committed alongside the code changes that cause the behavior change, not separately.
+
+### Fork CI behavior
+
+Fork PRs cannot access repository secrets (`COPILOT_TOKEN`), so Copilot tests naturally skip:
+
+- **Detection**: `github.event.pull_request.head.repo.fork == true` check in the `copilot-smoke` job.
+- **Behavior**: The Copilot CLI install, health check, and plugin registration steps are skipped entirely. The smoke runner executes without `--require-copilot`, producing synthetic `infra_error` results for the selected smoke cases. The job exits 0 and adds a `::notice::` annotation explaining the skip.
+- **Result artifacts**: `infra_error` results are still uploaded as artifacts for observability.
+- **Non-fork PRs**: Install, health check, and registration steps run without `continue-on-error` -- any failure is a hard stop. The smoke runner uses `--require-copilot`, so if Copilot is unavailable, the job fails (infra_error is not silently swallowed).
 
 ## Troubleshooting
 

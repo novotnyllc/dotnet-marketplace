@@ -1,5 +1,7 @@
 # Skill Content Migration Map
 
+> **Historical document (fn-53).** Counts in this report reflect the catalog at the time of the fn-53 audit (130 skills). The current canonical skill count is 131 (dotnet-windbg-debugging was added after this audit).
+
 Content-preservation verification for the Skill Routing Language Hardening epic (fn-53).
 Generated as part of T11 (Content-Preservation Verification).
 
@@ -19,7 +21,7 @@ Generated as part of T11 (Content-Preservation Verification).
 
 ## Section Migration Pattern
 
-The normalization applied a consistent structural change across all 130 skills:
+The normalization applied a consistent structural change across all skills in the catalog at the time (130; now 131):
 
 | Change | Count | Migration |
 |--------|-------|-----------|
@@ -36,7 +38,7 @@ All 6 dropped sections (`Overview / Scope Boundary` x5, `Scope Boundary` x1) wer
 
 ## Description Changes
 
-128 of 130 skills had their descriptions reworded to follow the canonical style guide:
+128 of the 130 skills at the time had their descriptions reworded to follow the canonical style guide:
 
 - **Verb-led format**: Descriptions start with a present-tense verb (e.g., "Configures", "Implements", "Routes")
 - **Budget-neutral or budget-negative**: Total description chars decreased from ~12,345 to 11,595

@@ -1,0 +1,9 @@
+{
+  "name": "dotnet-sentinel-fixture",
+  "version": "0.0.1",
+  "description": "Test-only fixture plugin for Copilot sibling file access verification",
+  "license": "MIT",
+  "skills": [
+    "./skills/dotnet-sentinel-test"
+  ]
+}

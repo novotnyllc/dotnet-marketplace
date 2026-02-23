@@ -14,10 +14,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate plugin structure and skills
+  # ── Job 1: Structural lint (no .NET needed, runs in parallel with build-test) ──
+  lint:
+    name: Lint & validate structure
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
 
     env:
       STRICT_REFS: "1"
@@ -26,37 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.nuget/packages
-            ~/.local/share/NuGet/v3-cache
-          key: ${{ runner.os }}-nuget-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore routing runner
-        run: dotnet restore tests/agent-routing/check-skills.cs
-
-      - name: Build routing runner
-        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
-
-      - name: Run routing runner self-tests
-        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
-
-      - name: Validate root marketplace.json
-        run: |
-          set -o pipefail
-          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
-
       - name: Validate plugin JSON files
         run: |
+          set -euo pipefail
           echo "=== Plugin JSON Validation ==="
           jq empty .claude-plugin/plugin.json
           echo "OK: plugin.json"
@@ -64,6 +37,11 @@ jobs:
           echo "OK: hooks.json"
           jq empty .mcp.json
           echo "OK: .mcp.json"
+
+      - name: Validate root marketplace.json
+        run: |
+          set -o pipefail
+          ./scripts/validate-root-marketplace.sh | tee /tmp/root-marketplace-output.txt
 
       - name: Validate skills
         id: validate-skills
@@ -227,6 +205,20 @@ jobs:
 
           echo "OK: All version locations are consistent ($PLUGIN_VERSION)"
 
+      - name: Assert skill count
+        run: |
+          set -euo pipefail
+          echo "=== Skill Count Assertion ==="
+          EXPECTED=131
+          ACTUAL=$(find skills -name SKILL.md -maxdepth 2 | wc -l | tr -d ' ')
+          echo "Expected: $EXPECTED"
+          echo "Actual:   $ACTUAL"
+          if [ "$ACTUAL" -ne "$EXPECTED" ]; then
+            echo "FAIL: Skill count mismatch (expected $EXPECTED, found $ACTUAL)"
+            exit 1
+          fi
+          echo "OK: Skill count matches ($ACTUAL)"
+
       - name: Write job summary
         if: always()
         run: |
@@ -257,3 +249,185 @@ jobs:
           echo "| Max similarity score | ${{ steps.validate-skills.outputs.max_similarity_score }} | informational |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Pairs above WARN (>= 0.55) | ${{ steps.validate-skills.outputs.pairs_above_warn }} | baseline + suppressions |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Pairs above ERROR (>= 0.75) | ${{ steps.validate-skills.outputs.pairs_above_error }} | == 0 (unsuppressed) |" >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 2: .NET routing runner (runs in parallel with lint) ──
+  build-test:
+    name: Build & test routing runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.local/share/NuGet/v3-cache
+          key: nuget-${{ runner.os }}-${{ hashFiles('tests/agent-routing/check-skills.cs') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore tests/agent-routing/check-skills.cs
+
+      - name: Build
+        run: dotnet build tests/agent-routing/check-skills.cs -c Release --no-restore
+
+      - name: Self-test
+        run: dotnet run --file tests/agent-routing/check-skills.cs -- --self-test
+
+  # ── Job 3: Copilot smoke (depends on both lint + build-test) ──
+  copilot-smoke:
+    name: Copilot smoke tests
+    needs: [lint, build-test]
+    # Only run on pull_request events (push to main has no fork context)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Detect fork
+        id: detect-env
+        run: |
+          set -euo pipefail
+          IS_FORK="${{ github.event.pull_request.head.repo.fork }}"
+          echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
+
+      - name: Install Copilot CLI (non-fork only)
+        id: install-copilot
+        if: steps.detect-env.outputs.is_fork != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          echo "=== Installing Copilot CLI ==="
+          npm view @github/copilot version >/dev/null
+          npm install -g @github/copilot
+
+          COPILOT_VERSION="$(copilot --version 2>/dev/null | head -n 1 || true)"
+          if [ -z "$COPILOT_VERSION" ]; then
+            COPILOT_VERSION='unknown'
+          fi
+          echo "Copilot CLI version: $COPILOT_VERSION"
+          echo "copilot_version=$COPILOT_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Health check (copilot --version)
+        id: health-check
+        if: steps.detect-env.outputs.is_fork != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          copilot --version
+
+      - name: Register plugin (non-fork only)
+        id: register-plugin
+        if: steps.detect-env.outputs.is_fork != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          REPO_ROOT="$(pwd)"
+
+          # Use same mechanism as test.sh:prepare_copilot_plugin()
+          copilot plugin marketplace add "$REPO_ROOT"
+          if ! copilot plugin install dotnet-artisan@dotnet-artisan 2>/dev/null; then
+            copilot plugin update dotnet-artisan@dotnet-artisan
+          fi
+
+          # Verify discovery (tighten grep to local source)
+          if ! copilot plugin marketplace list | grep -F "dotnet-artisan" | grep -qF "$REPO_ROOT"; then
+            echo "ERROR: dotnet-artisan not pointing at $REPO_ROOT in marketplace list"
+            copilot plugin marketplace list
+            exit 1
+          fi
+          echo "OK: dotnet-artisan registered from $REPO_ROOT"
+
+      - name: Run Copilot smoke tests
+        id: smoke-run
+        env:
+          GITHUB_TOKEN: ${{ secrets.COPILOT_TOKEN || github.token }}
+        run: |
+          set -uo pipefail
+
+          SMOKE_ARGS=()
+          # Deterministic smoke subset (8 cases, spec: 5-10):
+          #   3 direct activation, 1 advisor-routed (smoke-011, non-flaky),
+          #   2 negative controls, 2 direct (different domains)
+          # Per fn-57.4: "direct activation, advisor routing, and one negative control"
+          SMOKE_ARGS+=(--case-id "smoke-001,smoke-003,smoke-004,smoke-011,smoke-016,smoke-017,smoke-026,smoke-027")
+          SMOKE_ARGS+=(--timeout-seconds 120)
+          SMOKE_ARGS+=(--output "tests/copilot-smoke/ci-results.json")
+
+          IS_FORK="${{ steps.detect-env.outputs.is_fork }}"
+
+          if [ "$IS_FORK" = "true" ]; then
+            echo "::notice::Copilot skipped (fork PR, no access to secrets)"
+
+            # Produce synthetic infra_error results for observability
+            python tests/copilot-smoke/run_smoke.py \
+              "${SMOKE_ARGS[@]}" || true
+
+            echo "smoke_status=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Non-fork: Copilot is required -- infra_error causes failure
+          SMOKE_ARGS+=(--require-copilot)
+
+          set +e
+          python tests/copilot-smoke/run_smoke.py "${SMOKE_ARGS[@]}"
+          SMOKE_EXIT=$?
+          set -e
+
+          if [ "$SMOKE_EXIT" -eq 0 ]; then
+            echo "smoke_status=passed" >> "$GITHUB_OUTPUT"
+          elif [ "$SMOKE_EXIT" -eq 1 ]; then
+            echo "::warning::Copilot smoke functional mismatches detected (non-blocking); see uploaded artifact."
+            echo "smoke_status=soft_failed" >> "$GITHUB_OUTPUT"
+          elif [ "$SMOKE_EXIT" -eq 2 ]; then
+            echo "smoke_status=infra_error" >> "$GITHUB_OUTPUT"
+            exit 1
+          else
+            echo "smoke_status=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Upload smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-smoke-results
+          path: |
+            tests/copilot-smoke/ci-results.json
+            tests/copilot-smoke/results-agent-routing-compat.json
+          if-no-files-found: warn
+
+      - name: Write smoke summary
+        if: always()
+        run: |
+          echo "## Copilot Smoke Tests" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Setting | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Fork PR | ${{ steps.detect-env.outputs.is_fork }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Copilot installed | ${{ steps.install-copilot.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Health check | ${{ steps.health-check.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Plugin registered | ${{ steps.register-plugin.outcome || 'skipped' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Smoke status | ${{ steps.smoke-run.outputs.smoke_status || 'unknown' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Copilot version | ${{ steps.install-copilot.outputs.copilot_version || 'N/A' }} |" >> "$GITHUB_STEP_SUMMARY"

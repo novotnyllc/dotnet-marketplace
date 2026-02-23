@@ -8,8 +8,8 @@ Checks (skills):
   3.  [skill:name] cross-references resolve against known IDs set
   4.  Context budget tracking with stable output keys
   5.  Name-directory consistency (name field must match skill directory name)
-  6.  Extra frontmatter field detection (allowed: name, description, user-invocable,
-      disable-model-invocation, context, model)
+  6.  Extra frontmatter field detection (allowed: name, description, license,
+      user-invocable, disable-model-invocation, context, model)
   7.  Type validation for optional fields (boolean/string type checking)
   8.  Description filler phrase detection (routing quality enforcement)
   9.  WHEN prefix regression detection (descriptions must not start with WHEN)
@@ -23,9 +23,16 @@ Checks (skills):
   17. Invocation contract: OOS contains >= 1 [skill:] reference (presence check,
       independent of STRICT_REFS resolution)
 
+Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
+  18. UTF-8 BOM detection (Copilot CLI silent parse failure)
+  19. Quoted description detection via raw-line regex (Copilot CLI #1024)
+  20. Missing license field (Copilot CLI #894 requires license)
+  21. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
+  22. Missing user-invocable field (repo policy requires explicit true/false)
+
 Checks (agents):
-  18. Agent bare-ref detection using known IDs allowlist (informational)
-  19. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  22. Agent bare-ref detection using known IDs allowlist (informational)
+  23. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -58,6 +65,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 ALLOWED_FRONTMATTER_FIELDS = {
     "name",
     "description",
+    "license",
     "user-invocable",
     "disable-model-invocation",
     "context",
@@ -70,11 +78,16 @@ ALLOWED_FRONTMATTER_FIELDS = {
 FIELD_TYPES = {
     "name": str,
     "description": str,
+    "license": str,
     "user-invocable": bool,
     "disable-model-invocation": bool,
     "context": str,
     "model": str,
 }
+
+# Keys that must always be treated as strings (skip bool/null scalar coercion).
+# Derived from FIELD_TYPES so the sets stay in sync automatically.
+STRING_TYPED_KEYS = {k for k, v in FIELD_TYPES.items() if v is str}
 
 # Filler phrases that reduce description routing quality.
 # Case-insensitive patterns matched against the description text.
@@ -176,6 +189,15 @@ def parse_frontmatter(text: str) -> dict:
             raise ValueError(
                 f"line {i + 2}: sequences not allowed in frontmatter"
             )
+
+        # String-typed keys skip scalar coercion. This prevents unquoted
+        # description/name/license/context/model values like "yes", "no",
+        # "true", "false", "null" from being coerced to bool/None, which
+        # would cause type-validation errors downstream.
+        if key in STRING_TYPED_KEYS:
+            result[key] = raw_value if raw_value else None
+            i += 1
+            continue
 
         # Handle booleans and other scalars
         if raw_value.lower() in ("true", "yes"):
@@ -329,6 +351,17 @@ def process_file(path: str) -> dict:
     except Exception as e:
         return {"path": path, "valid": False, "error": str(e)}
 
+    # --- Raw-frontmatter Copilot safety checks (before YAML parsing) ---
+    # These operate on raw bytes/text to catch issues the YAML parser would miss.
+    copilot_errors = []
+
+    # BOM check: UTF-8 BOM causes silent Copilot CLI parse failures.
+    # Strip BOM for parsing so downstream checks still run and surface
+    # all errors (not just "missing opening ---").
+    if content.startswith("\ufeff"):
+        copilot_errors.append("file starts with UTF-8 BOM (Copilot CLI bug)")
+        content = content.lstrip("\ufeff")
+
     # Normalize CRLF to LF
     content = content.replace("\r\n", "\n").replace("\r", "\n")
     lines = content.split("\n")
@@ -351,16 +384,76 @@ def process_file(path: str) -> dict:
 
     fm_text = "\n".join(fm_lines)
 
+    # Quoted description check: Copilot CLI #1024 fails on quoted descriptions.
+    # Uses raw-line inspection since YAML parser strips quotes.
+    # Only check column-0 lines (non-indented) to avoid false positives on
+    # indented content inside block scalars (e.g. context: |).
+    for fm_line in fm_lines:
+        if fm_line and fm_line[0] in (" ", "\t"):
+            continue  # Skip indented lines (block scalar content)
+        if re.match(r'description\s*:\s*["\']', fm_line):
+            copilot_errors.append(
+                "quoted description value (Copilot CLI #1024 breaks on quoted descriptions)"
+            )
+            break
+
+    # metadata-ordering check: Copilot CLI #951 reports that metadata: as the
+    # last frontmatter key causes silent skill drop. Conservative enforcement:
+    # ERROR if metadata: is the last non-blank top-level key in frontmatter.
+    #
+    # Evidence trail (fn-56.2, verified with Copilot CLI v0.0.412):
+    # - Test: created skill with metadata: as last key, ran copilot -p to load it.
+    # - Result: skill loaded successfully, description extracted correctly.
+    # - copilot-cli#951 behavior NOT reproduced in v0.0.412.
+    # - No dotnet-artisan skill uses a "metadata:" key (zero false-positive risk).
+    # - Decision: conservative guard retained as preventive measure against older
+    #   or future Copilot versions. See docs/evidence/copilot-cli-v0.0.412-skill-loading.md.
+    # Only scan column-0 lines to avoid false positives on block scalar content.
+    last_key = None
+    for fm_line in fm_lines:
+        if fm_line and fm_line[0] in (" ", "\t"):
+            continue  # Skip indented lines (block scalar content)
+        stripped_fm = fm_line.strip()
+        if not stripped_fm or stripped_fm.startswith("#"):
+            continue
+        key_match = re.match(r"^([a-zA-Z_][a-zA-Z0-9_-]*)\s*:", stripped_fm)
+        if key_match:
+            last_key = key_match.group(1)
+    if last_key == "metadata":
+        copilot_errors.append(
+            "metadata: is the last frontmatter key (Copilot CLI #951 causes silent skill drop)"
+        )
+
     # Parse YAML frontmatter
     try:
         parsed = parse_frontmatter(fm_text)
     except ValueError as e:
         return {"path": path, "valid": False, "error": str(e)}
 
+    # License check: Copilot CLI #894 effectively requires a non-empty license field.
+    # Repo policy requires MIT specifically (fn-56 acceptance: "All 131 SKILL.md files
+    # have license: MIT"). Check both presence and exact value.
+    license_raw = parsed.get("license")
+    if not isinstance(license_raw, str) or not license_raw.strip():
+        copilot_errors.append(
+            "license field must be a non-empty string in frontmatter (Copilot CLI #894)"
+        )
+    elif license_raw.strip() != "MIT":
+        copilot_errors.append(
+            f"license must be 'MIT' (got '{license_raw.strip()}'); required by repo policy and Copilot CLI"
+        )
+
+    # user-invocable presence check: repo policy requires explicit true/false on
+    # every skill for cross-provider predictability (prevents regression after fn-56.4).
+    if "user-invocable" not in parsed:
+        copilot_errors.append(
+            "missing user-invocable field (repo policy requires explicit true or false)"
+        )
+
     # Extract and type-validate required fields
     name_raw = parsed.get("name")
     desc_raw = parsed.get("description")
-    field_errors = []
+    field_errors = list(copilot_errors)  # Include Copilot errors as field-level errors
 
     if name_raw is None or (isinstance(name_raw, str) and not name_raw.strip()):
         field_errors.append("missing required frontmatter field: name")
@@ -508,6 +601,18 @@ def main():
 
     if not skill_files:
         print(f"ERROR: No SKILL.md files found under {skills_dir}")
+        sys.exit(1)
+
+    # Flat layout guard: ERROR if any SKILL.md is found more than 1 level
+    # deep under skills/ (catches accidental re-nesting after fn-56 flatten).
+    nested_files = [
+        f for f in skill_files
+        if len(f.relative_to(skills_dir).parts) > 2  # e.g. category/skill/SKILL.md = 3 parts
+    ]
+    if nested_files:
+        print("ERROR: SKILL.md files found more than 1 level deep under skills/ (flat layout required):")
+        for nf in nested_files:
+            print(f"  {nf.relative_to(repo_root)}")
         sys.exit(1)
 
     # --- Build known IDs set ---

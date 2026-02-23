@@ -1,0 +1,83 @@
+name: Copilot CLI Install Proof
+
+# Throwaway workflow to prove copilot CLI binary install + plugin registration
+# works on ubuntu-latest. Created for fn-57.4 Phase 1 validation.
+# This workflow is manual-only (workflow_dispatch) and will be removed once
+# the proven install steps are integrated into validate.yml.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install-proof:
+    name: Prove Copilot CLI install on ubuntu-latest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Copilot CLI
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "=== Installing Copilot CLI ==="
+          npm view @github/copilot version >/dev/null
+          npm install -g @github/copilot
+
+          echo ""
+          echo "=== Copilot CLI Version ==="
+          copilot --version || echo "WARNING: copilot --version failed"
+
+          echo ""
+          echo "=== Copilot Binary Path ==="
+          which copilot || echo "WARNING: copilot not found in PATH"
+
+      - name: Auth status check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          echo "=== Auth Status ==="
+          copilot auth status 2>&1 || {
+            echo "INFO: copilot auth status returned non-zero (may need COPILOT_TOKEN secret)"
+            echo "Falling back to version check as health gate..."
+            copilot --version
+          }
+
+      - name: Register plugin from repo
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPO_ROOT="$(pwd)"
+
+          echo "=== Registering plugin ==="
+          copilot plugin marketplace add "$REPO_ROOT"
+          copilot plugin install dotnet-artisan@dotnet-artisan || \
+            copilot plugin update dotnet-artisan@dotnet-artisan || true
+
+          echo ""
+          echo "=== Plugin Discovery Verification ==="
+          copilot plugin marketplace list
+          copilot plugin marketplace list | grep -F "dotnet-artisan" || {
+            echo "ERROR: dotnet-artisan not found in marketplace list"
+            exit 1
+          }
+          echo "OK: dotnet-artisan registered successfully"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Copilot CLI Install Proof" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Binary install | $(which copilot >/dev/null 2>&1 && echo 'OK' || echo 'FAIL') |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Version | $(copilot --version 2>/dev/null || echo 'N/A') |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Plugin registered | $(copilot plugin marketplace list 2>/dev/null | grep -cF 'dotnet-artisan' || echo '0') |" >> "$GITHUB_STEP_SUMMARY"
