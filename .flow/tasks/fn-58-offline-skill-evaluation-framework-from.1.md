@@ -104,9 +104,8 @@ Scaffold the `tests/evals/` directory structure, define the rubric contract, cre
 - [ ] `requirements.txt` includes only `anthropic` and `pyyaml`
 - [ ] `run_effectiveness.py --dry-run` lists skills with rubrics and exits 0 without API calls
 ## Done summary
-TBD
-
+Scaffolded tests/evals/ directory with shared _common.py infrastructure module (config loading, Anthropic client, retry/backoff, robust JSON extraction via raw_decode, skill content loading with frontmatter stripping, cost tracking, results envelope writing), config.yaml with per-eval-type regression thresholds, rubric schema documentation, rubric validator (custom Python checks, no jsonschema), four skeleton runners (effectiveness L5, activation L3, size_impact L6, confusion_matrix L4) with spec-required CLI args, compare_baseline.py informational comparator, and committed directory structure with .gitkeep files.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5eb2240, 9036792, 17013ac
+- Tests: python3 tests/evals/run_effectiveness.py --dry-run, python3 tests/evals/validate_rubrics.py, python3 tests/evals/compare_baseline.py, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

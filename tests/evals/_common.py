@@ -80,7 +80,7 @@ def get_client(api_key: Optional[str] = None):
         ImportError: If the anthropic package is not installed.
         ValueError: If no API key is available.
     """
-    import anthropic
+    import anthropic  # type: ignore[import-untyped]
 
     key = api_key or load_config().get("api_key", "")
     if not key:
@@ -368,10 +368,9 @@ def write_results(
         Path to the written results file.
     """
     cfg = load_config()
-    if output_dir is None:
-        output_dir = EVALS_DIR / cfg.get("paths", {}).get("results_dir", "results")
+    resolved_dir: Path = output_dir if output_dir is not None else EVALS_DIR / cfg.get("paths", {}).get("results_dir", "results")
 
-    output_dir.mkdir(parents=True, exist_ok=True)
+    resolved_dir.mkdir(parents=True, exist_ok=True)
 
     eval_type = meta.get("eval_type", "unknown")
     run_id = meta.get("run_id", "unknown")
@@ -384,7 +383,7 @@ def write_results(
         "artifacts": artifacts or {},
     }
 
-    output_path = output_dir / filename
+    output_path = resolved_dir / filename
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(envelope, f, indent=2)
 
@@ -406,14 +405,13 @@ def list_skills_with_rubrics(rubrics_dir: Optional[Path] = None) -> list[str]:
         Sorted list of skill name strings.
     """
     cfg = load_config()
-    if rubrics_dir is None:
-        rubrics_dir = EVALS_DIR / cfg.get("paths", {}).get("rubrics_dir", "rubrics")
+    resolved_dir: Path = rubrics_dir if rubrics_dir is not None else EVALS_DIR / cfg.get("paths", {}).get("rubrics_dir", "rubrics")
 
-    if not rubrics_dir.is_dir():
+    if not resolved_dir.is_dir():
         return []
 
     skills = []
-    for p in sorted(rubrics_dir.iterdir()):
+    for p in sorted(resolved_dir.iterdir()):
         if p.suffix == ".yaml" and p.name != ".gitkeep":
             skills.append(p.stem)
     return skills
@@ -430,10 +428,9 @@ def load_rubric(skill_name: str, rubrics_dir: Optional[Path] = None) -> Optional
         Parsed rubric dict, or None if not found.
     """
     cfg = load_config()
-    if rubrics_dir is None:
-        rubrics_dir = EVALS_DIR / cfg.get("paths", {}).get("rubrics_dir", "rubrics")
+    resolved_dir: Path = rubrics_dir if rubrics_dir is not None else EVALS_DIR / cfg.get("paths", {}).get("rubrics_dir", "rubrics")
 
-    rubric_path = rubrics_dir / f"{skill_name}.yaml"
+    rubric_path = resolved_dir / f"{skill_name}.yaml"
     if not rubric_path.is_file():
         return None
 

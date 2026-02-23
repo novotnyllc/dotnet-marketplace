@@ -13,18 +13,19 @@ Exit codes:
     0 - Always (informational only)
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import _common  # noqa: E402
 
 
-def load_latest_result(results_dir: Path, eval_type: str) -> Optional[dict]:
+def load_latest_result(results_dir: Path, eval_type: str) -> dict | None:
     """Find and load the most recent results file for an eval type."""
     candidates = sorted(
         (p for p in results_dir.iterdir() if p.name.startswith(f"{eval_type}_") and p.suffix == ".json"),
@@ -37,7 +38,7 @@ def load_latest_result(results_dir: Path, eval_type: str) -> Optional[dict]:
         return json.load(f)
 
 
-def load_baseline(baselines_dir: Path, eval_type: str) -> Optional[dict]:
+def load_baseline(baselines_dir: Path, eval_type: str) -> dict | None:
     """Load baseline file for an eval type."""
     baseline_path = baselines_dir / f"{eval_type}_baseline.json"
     if not baseline_path.is_file():

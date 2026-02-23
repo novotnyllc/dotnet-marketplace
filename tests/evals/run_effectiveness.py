@@ -75,8 +75,6 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
-    cfg = _common.load_config()
-
     # Determine which skills to evaluate
     if args.skill:
         skills = [args.skill]

@@ -74,10 +74,6 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
-    cfg = _common.load_config()
-    datasets_dir = _common.EVALS_DIR / cfg.get("paths", {}).get("datasets_dir", "datasets")
-    size_impact_dir = datasets_dir / "size_impact"
-
     # Determine candidate skills (those with rubrics)
     if args.skill:
         skills = [args.skill]

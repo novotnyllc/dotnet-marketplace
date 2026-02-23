@@ -417,3 +417,6 @@ GitHub Actions expressions like github.event.pull_request.head.repo.fork are und
 
 ## 2026-02-21 manual [pitfall]
 Heredocs inside GitHub Actions YAML 'run:' blocks break YAML parsing when the delimiter (e.g. PY, EOF) appears at column 1. Use single-line python -c commands or write to a temp script file instead.
+
+## 2026-02-23 manual [pitfall]
+Regex-based JSON extraction from LLM responses fails on nested objects and braces inside strings; use json.JSONDecoder.raw_decode() scanning instead
