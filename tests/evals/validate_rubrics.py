@@ -34,6 +34,9 @@ def validate_rubric(rubric_path: Path, errors: list[str]) -> None:
     except yaml.YAMLError as e:
         errors.append(f"{prefix}: invalid YAML: {e}")
         return
+    except OSError as e:
+        errors.append(f"{prefix}: cannot read file: {e}")
+        return
 
     if not isinstance(data, dict):
         errors.append(f"{prefix}: rubric must be a YAML mapping, got {type(data).__name__}")
