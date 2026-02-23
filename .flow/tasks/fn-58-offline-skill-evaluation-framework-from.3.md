@@ -55,9 +55,8 @@ Implement the A/B effectiveness eval runner (L5) that compares code generated wi
 - [ ] Summary statistics include `mean`, `stddev`, `n` per skill
 - [ ] Run aborts if `max_cost_per_run` exceeded
 ## Done summary
-TBD
-
+Implemented the A/B effectiveness eval runner (L5) with LLM judge in run_effectiveness.py and judge_prompt.py. The runner generates code with and without skill content, randomizes A/B ordering with seeded RNG, scores via structured JSON judge output with retry escalation, caches generations for resume/replay, tracks costs with abort limits, and produces per-skill summary statistics (mean, stddev, n, win_rate).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: e029fb72372e88b120dea51da048d20c9bcdcd3e, eb4e04d, 7b70b38
+- Tests: python3 tests/evals/run_effectiveness.py --dry-run, python3 tests/evals/validate_rubrics.py, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
