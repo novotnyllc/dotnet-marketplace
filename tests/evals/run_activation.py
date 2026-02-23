@@ -58,6 +58,13 @@ def build_routing_index(skills_dir: Optional[Path] = None) -> tuple[str, int, in
         if description is None:
             continue
 
+        # Defensive normalization: ensure string, collapse newlines
+        if not isinstance(description, str):
+            description = str(description)
+        description = " ".join(description.splitlines()).strip()
+        if not description:
+            continue
+
         # Truncate to style guide limit
         if len(description) > _MAX_DESCRIPTION_CHARS:
             description = description[: _MAX_DESCRIPTION_CHARS - 3] + "..."
@@ -506,8 +513,6 @@ def main() -> int:
 
     total_cost = 0.0
     all_case_results: list[dict] = []
-    # For multi-run stats (per-case across runs)
-    run_results_per_case: dict[str, list[dict]] = {}
 
     for run_idx in range(args.runs):
         if args.runs > 1:
@@ -581,10 +586,18 @@ def main() -> int:
                 if activated_skills_opt is not None:
                     activated_skills = activated_skills_opt
                 else:
-                    # Fallback: use LLM to classify per expected skill
-                    detection_method = "fallback"
-                    if should_activate and expected_skills:
-                        for target_skill in expected_skills:
+                    # Fallback: use LLM to classify per expected/acceptable skill
+                    # Only run fallback if there are skills to check; otherwise
+                    # keep detection_method as "parse_failure" (from structured)
+                    fallback_targets = list(
+                        set(expected_skills) | set(acceptable_skills)
+                    )
+                    if should_activate and fallback_targets:
+                        detection_method = "fallback"
+                        fallback_cost = 0.0
+                        fallback_input = 0
+                        fallback_output = 0
+                        for target_skill in fallback_targets:
                             activated, fb_cost = detect_activation_fallback(
                                 client,
                                 response_text,
@@ -592,9 +605,12 @@ def main() -> int:
                                 meta["judge_model"],
                                 temperature,
                             )
+                            fallback_cost += fb_cost
                             total_cost += fb_cost
                             if activated:
                                 activated_skills.append(target_skill)
+                    else:
+                        fallback_cost = 0.0
 
             # Determine pass/fail
             if should_activate:
@@ -602,6 +618,11 @@ def main() -> int:
                 passed = bool(set(activated_skills) & all_valid)
             else:
                 passed = len(activated_skills) == 0
+
+            # Total cost includes both main call and any fallback calls
+            case_total_cost = call_cost + (
+                fallback_cost if api_error is None else 0.0
+            )
 
             case_result = {
                 "id": run_case_id,
@@ -617,7 +638,7 @@ def main() -> int:
                 "run_index": run_idx,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
-                "cost": round(call_cost, 6),
+                "cost": round(case_total_cost, 6),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
@@ -626,11 +647,6 @@ def main() -> int:
                 case_result["passed"] = False
 
             all_case_results.append(case_result)
-
-            # Track for multi-run aggregation
-            if case_id not in run_results_per_case:
-                run_results_per_case[case_id] = []
-            run_results_per_case[case_id].append(case_result)
 
         if total_cost >= max_cost:
             break
@@ -677,9 +693,15 @@ def main() -> int:
 
     summary: dict = {
         "_overall": {
-            "tpr": tpr_stats,
-            "fpr": fpr_stats,
-            "accuracy": accuracy_stats,
+            # Scalar fields for compare_baseline.py compatibility
+            "tpr": tpr_stats["mean"],
+            "fpr": fpr_stats["mean"],
+            "accuracy": accuracy_stats["mean"],
+            "n": overall_metrics["total_cases"],
+            # Rich stats for multi-run analysis
+            "tpr_stats": tpr_stats,
+            "fpr_stats": fpr_stats,
+            "accuracy_stats": accuracy_stats,
             "true_positives": overall_metrics["true_positives"],
             "false_positives": overall_metrics["false_positives"],
             "true_negatives": overall_metrics["true_negatives"],
