@@ -1,0 +1,47 @@
+# Eval framework configuration
+# Environment variable overrides: ANTHROPIC_API_KEY (required for API calls)
+# OPENROUTER_API_KEY is reserved for future use and unused in this epic.
+
+models:
+  generation_model: claude-haiku-4-20250514
+  judge_model: claude-haiku-4-20250514
+
+temperature: 0.0
+
+retry:
+  max_retries: 3
+  backoff_base: 2.0
+  backoff_jitter: 0.5
+
+cost:
+  max_cost_per_run: 15.0
+
+rng:
+  default_seed: 42
+
+paths:
+  results_dir: results
+  baselines_dir: baselines
+  rubrics_dir: rubrics
+  datasets_dir: datasets
+  reports_dir: reports
+
+# Per-eval-type regression thresholds
+regression:
+  effectiveness:
+    mean_drop_threshold: 0.5
+    stddev_multiplier: 2
+    min_cases_before_compare: 3
+
+  activation:
+    tpr_drop_threshold: 0.10
+    fpr_increase_threshold: 0.05
+    min_cases_before_compare: 5
+
+  size_impact:
+    score_change_threshold: 0.5
+    min_cases_before_compare: 3
+
+  confusion:
+    cross_activation_change_threshold: 0.10
+    min_cases_before_compare: 5
