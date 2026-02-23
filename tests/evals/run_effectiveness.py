@@ -52,18 +52,34 @@ production-quality .NET code and clear explanations."""
 # ---------------------------------------------------------------------------
 
 
-def _prompt_hash(skill_name: str, prompt_text: str, run_index: int) -> str:
+def _prompt_hash(
+    skill_name: str,
+    prompt_text: str,
+    run_index: int,
+    model: str,
+    temperature: float,
+    skill_body: str,
+) -> str:
     """Compute a deterministic hash for a generation cache key.
+
+    Includes all inputs that affect generation output to prevent
+    silent stale cache reuse when parameters change.
 
     Args:
         skill_name: Name of the skill being evaluated.
         prompt_text: The user prompt text.
         run_index: The run iteration index (0-based).
+        model: Generation model identifier.
+        temperature: Sampling temperature.
+        skill_body: Injected skill body content (with delimiters).
 
     Returns:
         Hex digest string used as the cache filename stem.
     """
-    key = f"{skill_name}|{prompt_text}|{run_index}"
+    key = (
+        f"{skill_name}|{prompt_text}|{run_index}"
+        f"|{model}|{temperature}|{hashlib.sha256(skill_body.encode()).hexdigest()[:12]}"
+    )
     return hashlib.sha256(key.encode()).hexdigest()[:16]
 
 
@@ -455,7 +471,10 @@ def main() -> int:
                     )
                     break
 
-                phash = _prompt_hash(skill_name, user_prompt, run_idx)
+                phash = _prompt_hash(
+                    skill_name, user_prompt, run_idx,
+                    meta["model"], temperature, skill_body,
+                )
                 case_id = f"{skill_name}/{prompt_idx}/{run_idx}"
 
                 print(

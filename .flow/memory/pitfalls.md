@@ -420,3 +420,6 @@ Heredocs inside GitHub Actions YAML 'run:' blocks break YAML parsing when the de
 
 ## 2026-02-23 manual [pitfall]
 Regex-based JSON extraction from LLM responses fails on nested objects and braces inside strings; use json.JSONDecoder.raw_decode() scanning instead
+
+## 2026-02-23 manual [pitfall]
+Generation cache keys must include ALL inputs that affect output (model, temperature, prompt content hash) -- not just the semantic identifier -- to prevent silent stale reuse when parameters change

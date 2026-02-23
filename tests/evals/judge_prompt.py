@@ -95,14 +95,14 @@ def build_judge_user_prompt(
 {user_prompt}
 
 ## Response A
-<response_a>
+<<<RESPONSE_A_BEGIN_7f3a9c>>>
 {response_a}
-</response_a>
+<<<RESPONSE_A_END_7f3a9c>>>
 
 ## Response B
-<response_b>
+<<<RESPONSE_B_BEGIN_7f3a9c>>>
 {response_b}
-</response_b>
+<<<RESPONSE_B_END_7f3a9c>>>
 
 ## Evaluation Criteria
 {criteria_block}
@@ -216,6 +216,10 @@ def _validate_judge_response(parsed: dict, criteria: list[dict]) -> bool:
     Returns:
         True if the response has valid structure, False otherwise.
     """
+    # Reject if rubric has no criteria (scoring would be meaningless)
+    if not criteria:
+        return False
+
     if "criteria" not in parsed or "overall_winner" not in parsed:
         return False
 
