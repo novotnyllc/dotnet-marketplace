@@ -171,6 +171,7 @@ def _generate_code(
     model: str,
     temperature: float,
     cli: Optional[str] = None,
+    budget_check=None,
 ) -> tuple[str, float, int]:
     """Generate code using CLI-based model invocation.
 
@@ -180,6 +181,9 @@ def _generate_code(
         model: Model to use for generation (CLI-native string).
         temperature: Sampling temperature.
         cli: CLI backend override.
+        budget_check: Optional callable returning True when budget is
+            exceeded.  Passed to retry_with_backoff for per-attempt
+            enforcement.
 
     Returns:
         Tuple of (generated_text, cost, calls).
@@ -194,7 +198,7 @@ def _generate_code(
             cli=cli,
         )
 
-    result = _common.retry_with_backoff(_call)
+    result = _common.retry_with_backoff(_call, budget_check=budget_check)
     return result["text"], result["cost"], result["calls"]
 
 
@@ -497,6 +501,10 @@ def main() -> int:
                     file=sys.stderr,
                 )
 
+                # Budget check closure (captures mutable locals)
+                def _budget_exceeded() -> bool:
+                    return total_cost >= max_cost or total_calls >= max_calls
+
                 # --- Generation phase ---
                 gen_cost = 0.0
                 gen_calls = 0
@@ -523,32 +531,38 @@ def main() -> int:
                             meta["model"],
                             temperature,
                             cli=args.cli,
+                            budget_check=_budget_exceeded,
                         )
                         gen_cost += e_cost
                         gen_calls += e_calls
+                        total_cost += e_cost
+                        total_calls += e_calls
                     except Exception as exc:
                         generation_error = f"enhanced generation failed: {exc}"
                         enhanced_text = ""
 
-                    try:
-                        baseline_text, b_cost, b_calls = _generate_code(
-                            BASELINE_SYSTEM_PROMPT,
-                            user_prompt,
-                            meta["model"],
-                            temperature,
-                            cli=args.cli,
-                        )
-                        gen_cost += b_cost
-                        gen_calls += b_calls
-                    except Exception as exc:
-                        if generation_error:
-                            generation_error += f"; baseline generation failed: {exc}"
-                        else:
-                            generation_error = f"baseline generation failed: {exc}"
-                        baseline_text = ""
+                    # Cap check before baseline generation
+                    if not generation_error and _budget_exceeded():
+                        aborted = True
+                        break
 
-                    total_cost += gen_cost
-                    total_calls += gen_calls
+                    if not generation_error:
+                        try:
+                            baseline_text, b_cost, b_calls = _generate_code(
+                                BASELINE_SYSTEM_PROMPT,
+                                user_prompt,
+                                meta["model"],
+                                temperature,
+                                cli=args.cli,
+                                budget_check=_budget_exceeded,
+                            )
+                            gen_cost += b_cost
+                            gen_calls += b_calls
+                            total_cost += b_cost
+                            total_calls += b_calls
+                        except Exception as exc:
+                            generation_error = f"baseline generation failed: {exc}"
+                            baseline_text = ""
 
                     # Save generations for resume/replay
                     if not generation_error:
@@ -603,8 +617,10 @@ def main() -> int:
                     ab_assignment = "enhanced=B,baseline=A"
 
                 # --- Judge phase ---
-                def _budget_exceeded() -> bool:
-                    return total_cost >= max_cost or total_calls >= max_calls
+                # Cap check before starting judge
+                if _budget_exceeded():
+                    aborted = True
+                    break
 
                 judge_result: Optional[dict] = None
                 try:

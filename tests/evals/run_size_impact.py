@@ -541,6 +541,7 @@ def _generate_code(
     model: str,
     temperature: float,
     cli: Optional[str] = None,
+    budget_check=None,
 ) -> tuple[str, float, int]:
     """Generate code using CLI-based model invocation.
 
@@ -550,6 +551,9 @@ def _generate_code(
         model: Model to use (CLI-native string).
         temperature: Sampling temperature.
         cli: CLI backend override.
+        budget_check: Optional callable returning True when budget is
+            exceeded.  Passed to retry_with_backoff for per-attempt
+            enforcement.
 
     Returns:
         Tuple of (generated_text, cost, calls).
@@ -565,7 +569,7 @@ def _generate_code(
             cli=cli,
         )
 
-    result = _common.retry_with_backoff(_call)
+    result = _common.retry_with_backoff(_call, budget_check=budget_check)
     return result["text"], result["cost"], result["calls"]
 
 
@@ -948,6 +952,10 @@ def main() -> int:
             if aborted:
                 break
 
+            # Budget check closure (captures mutable locals)
+            def _budget_exceeded() -> bool:
+                return total_cost >= max_cost or total_calls_count >= max_calls
+
             # --- Generate all conditions ---
             generations: dict[str, str] = {}
             gen_costs: dict[str, float] = {}
@@ -955,7 +963,7 @@ def main() -> int:
 
             for cond_name, sys_prompt in condition_prompts.items():
                 # Dual abort check
-                if total_cost >= max_cost or total_calls_count >= max_calls:
+                if _budget_exceeded():
                     aborted = True
                     print(
                         f"[size_impact] ABORT: Limit exceeded "
@@ -995,6 +1003,7 @@ def main() -> int:
                             meta["model"],
                             temperature,
                             cli=args.cli,
+                            budget_check=_budget_exceeded,
                         )
                         generations[cond_name] = text
                         gen_costs[cond_name] = cost
@@ -1081,7 +1090,7 @@ def main() -> int:
                     continue
 
                 # Dual abort check
-                if total_cost >= max_cost or total_calls_count >= max_calls:
+                if _budget_exceeded():
                     aborted = True
                     break
 
@@ -1112,9 +1121,6 @@ def main() -> int:
                     f"(run {run_idx}) ...",
                     file=sys.stderr,
                 )
-
-                def _budget_exceeded() -> bool:
-                    return total_cost >= max_cost or total_calls_count >= max_calls
 
                 judge_result: Optional[dict] = None
                 try:

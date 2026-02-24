@@ -192,6 +192,7 @@ def detect_activation_fallback(
     judge_model: str,
     temperature: float,
     cli: Optional[str] = None,
+    budget_check=None,
 ) -> tuple[bool, float, int]:
     """LLM fallback detection for when structured parsing fails.
 
@@ -204,6 +205,8 @@ def detect_activation_fallback(
         judge_model: Model to use for fallback classification.
         temperature: Sampling temperature.
         cli: CLI backend override.
+        budget_check: Optional callable returning True when budget is
+            exceeded.  Passed to retry_with_backoff.
 
     Returns:
         Tuple of (activated_bool, cost, calls).
@@ -223,7 +226,7 @@ def detect_activation_fallback(
             cli=cli,
         )
 
-    result = _common.retry_with_backoff(_call)
+    result = _common.retry_with_backoff(_call, budget_check=budget_check)
     text = result["text"]
     cost = result["cost"]
     calls = result["calls"]
@@ -540,9 +543,13 @@ def main() -> int:
                 file=sys.stderr,
             )
 
+        # Budget check closure (captures mutable locals)
+        def _budget_exceeded() -> bool:
+            return total_cost >= max_cost or total_calls >= max_calls
+
         for case in test_cases:
             # Dual abort check: cost OR call-count
-            if total_cost >= max_cost or total_calls >= max_calls:
+            if _budget_exceeded():
                 print(
                     f"[activation] ABORT: Limit exceeded "
                     f"(cost=${total_cost:.4f}/{max_cost}, "
@@ -583,7 +590,9 @@ def main() -> int:
                         cli=args.cli,
                     )
 
-                result = _common.retry_with_backoff(_call)
+                result = _common.retry_with_backoff(
+                    _call, budget_check=_budget_exceeded
+                )
                 response_text = result["text"]
                 call_cost = result["cost"]
                 call_calls = result["calls"]
@@ -614,7 +623,7 @@ def main() -> int:
                         detection_method = "fallback"
                         for target_skill in fallback_targets:
                             # Per-call cap check before each fallback LLM call
-                            if total_cost >= max_cost or total_calls >= max_calls:
+                            if _budget_exceeded():
                                 aborted = True
                                 break
                             activated, fb_cost, fb_calls = (
@@ -624,6 +633,7 @@ def main() -> int:
                                     meta["judge_model"],
                                     temperature,
                                     cli=args.cli,
+                                    budget_check=_budget_exceeded,
                                 )
                             )
                             fallback_cost += fb_cost

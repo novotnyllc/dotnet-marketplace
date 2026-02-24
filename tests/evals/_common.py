@@ -117,16 +117,15 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
     probe_model = cli_cfg.get(backend, {}).get("model")
 
     # Step 2: probe prompt transport modes in preference order
+    # Transport probe uses plain text (no --output-format json) to avoid
+    # conflating transport failures with JSON support failures.
     prompt_mode = "arg"  # ultimate fallback
-    probe_stdout = ""
 
-    def _build_probe_cmd(backend: str, probe_model: Any, use_json: bool) -> list[str]:
+    def _build_transport_probe_cmd(backend: str, probe_model: Any) -> list[str]:
         if backend == "claude":
             cmd = ["claude", "-p"]
             if probe_model:
                 cmd.extend(["--model", str(probe_model)])
-            if use_json:
-                cmd.extend(["--output-format", "json"])
             cmd.extend([
                 "--tools", "",
                 "--no-session-persistence",
@@ -144,15 +143,14 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             # copilot
             return ["copilot", "-p", "-"]
 
-    # Try stdin first
-    use_json_probe = backend == "claude"
-    probe_cmd = _build_probe_cmd(backend, probe_model, use_json_probe)
+    transport_cmd = _build_transport_probe_cmd(backend, probe_model)
 
-    for mode in ("stdin", "file_stdin"):
+    def _run_probe(cmd: list[str], mode: str) -> Optional[subprocess.CompletedProcess]:
+        """Run a probe in the given mode. Returns CompletedProcess or None."""
         try:
             if mode == "stdin":
-                proc = subprocess.run(
-                    probe_cmd,
+                return subprocess.run(
+                    cmd,
                     input="Reply with exactly: OK",
                     capture_output=True,
                     text=True,
@@ -167,8 +165,8 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                     tf_path = tf.name
                 try:
                     with open(tf_path) as stdin_file:
-                        proc = subprocess.run(
-                            probe_cmd,
+                        return subprocess.run(
+                            cmd,
                             stdin=stdin_file,
                             capture_output=True,
                             text=True,
@@ -176,34 +174,49 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                         )
                 finally:
                     Path(tf_path).unlink(missing_ok=True)
-
-            if proc.returncode == 0:
-                prompt_mode = mode
-                probe_stdout = proc.stdout or ""
-                break
-            else:
-                stderr_preview = (proc.stderr or "")[:200]
-                _emit_warning(
-                    f"{backend}_probe_{mode}_fail",
-                    f"{backend} probe failed in {mode} mode (rc={proc.returncode}): "
-                    f"{stderr_preview}",
-                )
         except (subprocess.TimeoutExpired, OSError):
+            return None
+
+    for mode in ("stdin", "file_stdin"):
+        proc = _run_probe(transport_cmd, mode)
+        if proc is not None and proc.returncode == 0:
+            prompt_mode = mode
+            break
+        elif proc is not None:
+            stderr_preview = (proc.stderr or "")[:200]
+            _emit_warning(
+                f"{backend}_probe_{mode}_fail",
+                f"{backend} probe failed in {mode} mode (rc={proc.returncode}): "
+                f"{stderr_preview}",
+            )
+        else:
             _emit_warning(
                 f"{backend}_probe_{mode}_error",
                 f"{backend} probe timed out or errored in {mode} mode",
             )
 
-    # Step 3: JSON output support (claude only) -- check independently
+    if prompt_mode == "arg":
+        _emit_warning(
+            f"{backend}_no_stdin",
+            f"{backend} CLI does not support stdin or file_stdin; "
+            f"falling back to arg mode (prompts will be truncated).",
+        )
+
+    # Step 3: JSON output support (claude only) -- probe independently
+    # using the working transport mode to avoid false negatives.
     json_output = False
-    if backend == "claude":
-        if probe_stdout.strip():
-            try:
-                parsed = json.loads(probe_stdout)
-                if isinstance(parsed, dict):
-                    json_output = True
-            except json.JSONDecodeError:
-                pass
+    if backend == "claude" and prompt_mode != "arg":
+        json_probe_cmd = list(transport_cmd) + ["--output-format", "json"]
+        json_proc = _run_probe(json_probe_cmd, prompt_mode)
+        if json_proc is not None and json_proc.returncode == 0:
+            stdout = json_proc.stdout or ""
+            if stdout.strip():
+                try:
+                    parsed = json.loads(stdout)
+                    if isinstance(parsed, dict):
+                        json_output = True
+                except json.JSONDecodeError:
+                    pass
 
         if not json_output:
             _emit_warning(
@@ -292,10 +305,10 @@ def _build_cli_command(
 ) -> list[str]:
     """Build the CLI command list for a given backend.
 
-    Passes max_tokens and temperature to backends that support them.
-    claude: --max-tokens flag supported.
-    codex/copilot: best-effort; flags may be silently ignored if not
-    supported by the CLI version.
+    Only claude receives --max-tokens (output bounding).  Temperature
+    and max_tokens are accepted in the signature for forward
+    compatibility but are NOT currently passed to codex or copilot
+    (their CLIs do not expose equivalent flags).
     """
     if backend == "claude":
         cmd = ["claude", "-p"]
@@ -369,8 +382,15 @@ def _execute_cli(
                 Path(tf_path).unlink(missing_ok=True)
         else:
             # arg mode: append prompt as positional arg (short prompts only)
+            if len(prompt) > _SYSTEM_PROMPT_INLINE_LIMIT:
+                raise RuntimeError(
+                    f"{backend} CLI fell back to arg mode but prompt is "
+                    f"{len(prompt)} chars (limit {_SYSTEM_PROMPT_INLINE_LIMIT}). "
+                    f"Ensure the CLI supports stdin or file_stdin piping, "
+                    f"or reduce prompt size."
+                )
             proc = subprocess.run(
-                cmd + [prompt[:_SYSTEM_PROMPT_INLINE_LIMIT]],
+                cmd + [prompt],
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -492,23 +512,33 @@ def retry_with_backoff(
     max_retries: Optional[int] = None,
     backoff_base: Optional[float] = None,
     backoff_jitter: Optional[float] = None,
+    budget_check=None,
 ):
     """Execute fn with exponential backoff and jitter on failure.
 
     Handles both subprocess failures (RuntimeError from call_model)
-    and general exceptions.
+    and general exceptions. Checks budget_check before each attempt
+    and adjusts the ``calls`` field in the returned dict to account
+    for failed retry attempts (each failed attempt consumed a CLI
+    invocation).
 
     Args:
         fn: Callable to execute. Should raise on failure.
         max_retries: Max retry attempts. Defaults to config value.
         backoff_base: Base for exponential backoff. Defaults to config.
         backoff_jitter: Max random jitter added. Defaults to config.
+        budget_check: Optional callable returning True when budget is
+            exceeded. Checked before each attempt; raises RuntimeError
+            if budget is exceeded mid-retry.
 
     Returns:
-        The return value of fn on success.
+        The return value of fn on success. If the return value is a dict
+        with a ``calls`` key, ``calls`` is incremented by the number of
+        failed attempts to give callers accurate call-count accounting.
 
     Raises:
-        The last exception if all retries are exhausted.
+        The last exception if all retries are exhausted, or RuntimeError
+        if budget_check returns True before an attempt.
     """
     cfg = load_config()
     retry_cfg = cfg.get("retry", {})
@@ -517,11 +547,22 @@ def retry_with_backoff(
     jitter = backoff_jitter if backoff_jitter is not None else retry_cfg.get("backoff_jitter", 0.5)
 
     last_exc = None
+    failed_attempts = 0
     for attempt in range(retries + 1):
+        # Check budget before each CLI invocation
+        if budget_check is not None and budget_check():
+            raise RuntimeError(
+                f"Budget exceeded before retry attempt {attempt + 1}"
+            )
         try:
-            return fn()
+            result = fn()
+            # Adjust calls count for failed attempts that consumed CLI calls
+            if isinstance(result, dict) and "calls" in result and failed_attempts > 0:
+                result["calls"] = result["calls"] + failed_attempts
+            return result
         except Exception as exc:
             last_exc = exc
+            failed_attempts += 1
             if attempt < retries:
                 delay = (base ** attempt) + random.uniform(0, jitter)
                 time.sleep(delay)

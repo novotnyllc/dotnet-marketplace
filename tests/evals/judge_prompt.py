@@ -190,7 +190,9 @@ def invoke_judge(
                 cli=cli,
             )
 
-        result = _common.retry_with_backoff(_call)
+        result = _common.retry_with_backoff(
+            _call, budget_check=budget_check
+        )
 
         raw_text = result["text"]
         total_cost += result["cost"]

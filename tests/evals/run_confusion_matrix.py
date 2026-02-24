@@ -813,6 +813,10 @@ def main() -> int:
     all_confusion_results: list[dict] = []
     all_negative_results: list[dict] = []
 
+    # Budget check closure (captures mutable locals)
+    def _budget_exceeded() -> bool:
+        return total_cost >= max_cost or total_calls >= max_calls
+
     for run_idx in range(args.runs):
         if args.runs > 1:
             print(
@@ -823,7 +827,7 @@ def main() -> int:
         # --- Evaluate confusion matrix cases ---
         for case in confusion_cases:
             # Dual abort check
-            if total_cost >= max_cost or total_calls >= max_calls:
+            if _budget_exceeded():
                 print(
                     f"[confusion] ABORT: Limit exceeded "
                     f"(cost=${total_cost:.4f}/{max_cost}, "
@@ -895,7 +899,9 @@ def main() -> int:
                         cli=args.cli,
                     )
 
-                result = _common.retry_with_backoff(_call)
+                result = _common.retry_with_backoff(
+                    _call, budget_check=_budget_exceeded
+                )
                 response_text = result["text"]
                 call_cost = result["cost"]
                 total_cost += call_cost
@@ -970,7 +976,7 @@ def main() -> int:
 
         for case in negative_cases:
             # Dual abort check
-            if total_cost >= max_cost or total_calls >= max_calls:
+            if _budget_exceeded():
                 print(
                     f"[confusion] ABORT: Limit exceeded "
                     f"(cost=${total_cost:.4f}/{max_cost}, "
@@ -1012,7 +1018,9 @@ def main() -> int:
                         cli=args.cli,
                     )
 
-                result = _common.retry_with_backoff(_neg_call)
+                result = _common.retry_with_backoff(
+                    _neg_call, budget_check=_budget_exceeded
+                )
                 response_text = result["text"]
                 call_cost = result["cost"]
                 total_cost += call_cost
