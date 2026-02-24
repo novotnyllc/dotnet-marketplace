@@ -215,6 +215,10 @@ def load_siblings(
     raw_total = 0
 
     for sib_name in sibling_names:
+        # Defense-in-depth: reject path traversal even if loader validated
+        if ".." in sib_name or "/" in sib_name or "\\" in sib_name:
+            continue
+
         sib_path = skill_dir / sib_name
         if not sib_path.is_file():
             continue
@@ -231,7 +235,7 @@ def load_siblings(
             sib_content += "\n[... truncated ...]"
             raw_total += remaining
         else:
-            sib_content = raw.decode("utf-8")
+            sib_content = raw.decode("utf-8", errors="replace")
             raw_total += len(raw)
 
         parts.append(
@@ -327,6 +331,20 @@ def load_candidates(
                     file=sys.stderr,
                 )
                 entry = {k: v for k, v in entry.items() if k != "siblings"}
+            else:
+                # Reject path traversal attempts
+                unsafe = [
+                    s for s in siblings
+                    if ".." in s or "/" in s or "\\" in s
+                ]
+                if unsafe:
+                    print(
+                        f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                        f"siblings contain path separators or '..': {unsafe}, "
+                        f"ignoring siblings",
+                        file=sys.stderr,
+                    )
+                    entry = {k: v for k, v in entry.items() if k != "siblings"}
 
         # Validate optional max_sibling_bytes
         max_sib = entry.get("max_sibling_bytes")
@@ -389,6 +407,10 @@ def classify_size_tier(skill_name: str) -> tuple[str, int]:
 
 def estimate_tokens(text: str) -> int:
     """Estimate token count using the ~4 chars per token heuristic.
+
+    This is an approximation. Results are labeled 'tokens_estimated' in
+    output to distinguish from exact tokenizer counts. Sufficient for
+    cost/budget monitoring but not for precise token accounting.
 
     Args:
         text: Input text.
@@ -867,34 +889,50 @@ def main() -> int:
                 siblings_text, siblings_bytes = sib_result
                 siblings_tokens = estimate_tokens(siblings_text)
 
-        # Build system prompts per condition
+        # Build the exact injected blobs per condition, then derive
+        # system prompts, cache keys, and sizes from those blobs.
+        # This ensures condition_sizes reflect exactly what gets injected.
+        summary_injected = (
+            f"--- BEGIN SKILL SUMMARY ---\n{summary_text}\n--- END SKILL SUMMARY ---"
+        )
+
         condition_prompts = {
             "full": FULL_SYSTEM_TEMPLATE.format(skill_body=full_body),
             "summary": SUMMARY_SYSTEM_TEMPLATE.format(summary=summary_text),
             "baseline": BASELINE_SYSTEM_PROMPT,
         }
+        # condition_content is used for cache hashing -- the semantic content
         condition_content = {
             "full": full_body,
-            "summary": summary_text,
+            "summary": summary_injected,
             "baseline": "",
         }
+        # condition_sizes derived from the exact injected blob
         condition_sizes = {
-            "full": {"bytes": full_bytes, "tokens": full_tokens},
-            "summary": {"bytes": summary_bytes, "tokens": summary_tokens},
-            "baseline": {"bytes": baseline_bytes, "tokens": baseline_tokens},
+            "full": {
+                "bytes": len(full_body.encode("utf-8")),
+                "tokens_estimated": estimate_tokens(full_body),
+            },
+            "summary": {
+                "bytes": len(summary_injected.encode("utf-8")),
+                "tokens_estimated": estimate_tokens(summary_injected),
+            },
+            "baseline": {
+                "bytes": 0,
+                "tokens_estimated": 0,
+            },
         }
 
         if siblings_text is not None:
-            full_siblings_body = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
+            # Match FULL_SIBLINGS_SYSTEM_TEMPLATE spacing: \n\n between blocks
+            full_siblings_injected = full_body + "\n\n" + siblings_text
+            condition_prompts["full_siblings"] = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
                 skill_body=full_body, siblings_body=siblings_text
             )
-            condition_prompts["full_siblings"] = full_siblings_body
-            full_siblings_injected = full_body + "\n" + siblings_text
             condition_content["full_siblings"] = full_siblings_injected
-            # Derive size from the exact injected string for consistency
             condition_sizes["full_siblings"] = {
                 "bytes": len(full_siblings_injected.encode("utf-8")),
-                "tokens": estimate_tokens(full_siblings_injected),
+                "tokens_estimated": estimate_tokens(full_siblings_injected),
             }
 
         for run_idx in range(args.runs):
@@ -1196,9 +1234,9 @@ def main() -> int:
             "size_tier": tier,
             "body_bytes": body_bytes,
             "full_bytes": len(full_body.encode("utf-8")) if full_body else 0,
-            "full_tokens": estimate_tokens(full_body) if full_body else 0,
+            "full_tokens_estimated": estimate_tokens(full_body) if full_body else 0,
             "summary_bytes": summary_result[1] if summary_result else 0,
-            "summary_tokens": estimate_tokens(summary_result[0]) if summary_result else 0,
+            "summary_tokens_estimated": estimate_tokens(summary_result[0]) if summary_result else 0,
             "mean": round(overall_stats["mean"], 4),
             "stddev": round(overall_stats["stddev"], 4),
             "n": overall_stats["n"],
@@ -1221,8 +1259,8 @@ def main() -> int:
         print(
             f"  {skill_name} (tier={stats['size_tier']}, "
             f"body={stats['body_bytes']}B, "
-            f"full={stats['full_bytes']}B/{stats['full_tokens']}tok, "
-            f"summary={stats['summary_bytes']}B/{stats['summary_tokens']}tok):",
+            f"full={stats['full_bytes']}B/~{stats['full_tokens_estimated']}tok, "
+            f"summary={stats['summary_bytes']}B/~{stats['summary_tokens_estimated']}tok):",
             file=sys.stderr,
         )
         for comp_type, comp_stats in stats.get("comparisons", {}).items():

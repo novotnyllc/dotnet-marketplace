@@ -22,7 +22,7 @@ Add size impact evals (L6 runner) that test whether skill content format affects
   3. Strip code fences and contents (regex: triple-backtick blocks)
   4. Strip `[skill:...]` cross-references (keep surrounding text)
   5. Concatenate: frontmatter `description` + newline + extracted scope text
-  6. Record exact bytes and token count per condition in results
+  6. Record exact bytes and estimated token count per condition in results
 
 - Judge all three pairwise via `judge_prompt.invoke_judge()`:
   - Full vs Baseline, Full vs Summary, Summary vs Baseline
@@ -33,7 +33,8 @@ Add size impact evals (L6 runner) that test whether skill content format affects
 <!-- Updated by plan-sync: fn-58...from.3 — judge_prompt.invoke_judge() API finalized with above signature and return shape -->
 
 - **Candidate selection** (8-10 skills in `candidates.yaml`):
-  - Small (<2KB body), Medium (2-5KB), Large (>5KB)
+  - Small (<5KB body), Medium (5-15KB), Large (>15KB)
+  - Note: no skills in the 131-skill catalog have a body under 2KB (min ~3KB), so thresholds are adapted from the original <2KB/2-5KB/>5KB to produce meaningful tier separation
   - Skills with sibling files: define in `candidates.yaml` with explicit allowlist:
     ```yaml
     - skill: dotnet-example
@@ -57,13 +58,13 @@ Add size impact evals (L6 runner) that test whether skill content format affects
 ## Acceptance
 - [ ] `run_size_impact.py` (L6) generates code under Full, Summary, and Baseline conditions
 - [ ] Summary extraction uses deterministic algorithm (strip frontmatter -> extract Scope -> strip fences -> strip cross-refs -> concatenate)
-- [ ] Exact bytes and token count recorded per condition per case
+- [ ] Exact bytes and estimated token count recorded per condition per case
 - [ ] At least 8 candidate skills spanning small, medium, and large sizes
 - [ ] Pairwise comparisons scored by LLM judge via `judge_prompt.py`
 - [ ] `--dry-run` mode supported
 - [ ] `--skill <name>` filters to a single candidate (errors if not in candidates.yaml)
 - [ ] At least 2 skills with sibling files tested; siblings defined via explicit allowlist in `candidates.yaml` with `max_sibling_bytes` cap
-- [ ] Results include per-skill size tier, per-comparison scores, winner, injected bytes/tokens
+- [ ] Results include per-skill size tier, per-comparison scores, winner, injected bytes/estimated tokens
 - [ ] Resume/replay supported: generations cached
 ## Done summary
 TBD

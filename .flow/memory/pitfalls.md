@@ -435,3 +435,6 @@ When a runner computes pass/fail per case AND an aggregator computes TP/FP/TN/FN
 
 ## 2026-02-24 manual [pitfall]
 When reporting 'injected bytes' for content passed to an API, derive the count from the exact final string used (including wrappers/delimiters), not from intermediate raw or pre-formatted values -- otherwise byte counts are inconsistent with actual injection
+
+## 2026-02-24 manual [pitfall]
+File allowlists loaded from YAML must reject entries containing path separators or '..' to prevent path traversal -- validate in the loader, not just at consumption
