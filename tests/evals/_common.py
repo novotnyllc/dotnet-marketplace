@@ -25,6 +25,22 @@ from typing import Any, Optional
 import yaml
 
 # ---------------------------------------------------------------------------
+# Exceptions
+# ---------------------------------------------------------------------------
+
+
+class CLIConfigError(RuntimeError):
+    """Non-retryable error for deterministic CLI configuration problems.
+
+    Raised when the failure is guaranteed to recur on retry (e.g., CLI
+    not installed, unsupported transport mode, prompt exceeds arg limit).
+    ``retry_with_backoff()`` immediately re-raises these without sleeping.
+    """
+
+    pass
+
+
+# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 
@@ -171,7 +187,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                     tf.write("Reply with exactly: OK")
                     tf_path = tf.name
                 try:
-                    with open(tf_path) as stdin_file:
+                    with open(tf_path, encoding="utf-8") as stdin_file:
                         return subprocess.run(
                             cmd,
                             stdin=stdin_file,
@@ -292,7 +308,7 @@ def call_model(
 
     # Fail early with a clear message if the CLI tool is not installed
     if not caps.get("available", True):
-        raise RuntimeError(
+        raise CLIConfigError(
             f"{backend} CLI is not installed or not found in PATH. "
             f"Install {backend} or set cli.default to a different "
             f"backend in config.yaml."
@@ -330,10 +346,12 @@ def _build_cli_command(
 ) -> list[str]:
     """Build the CLI command list for a given backend.
 
-    Only claude receives --max-tokens (output bounding).  Temperature
-    and max_tokens are accepted in the signature for forward
-    compatibility but are NOT currently passed to codex or copilot
-    (their CLIs do not expose equivalent flags).
+    Only claude receives --max-tokens (output bounding).  ``temperature``
+    is accepted in the signature for forward compatibility but is NOT
+    currently passed to any CLI backend -- none of the supported CLIs
+    (claude, codex, copilot) expose a temperature flag.  If a backend
+    adds temperature support in the future, this is the extension point.
+    ``max_tokens`` is only passed to claude.
     """
     if backend == "claude":
         cmd = ["claude", "-p"]
@@ -395,7 +413,7 @@ def _execute_cli(
                 tf.write(prompt)
                 tf_path = tf.name
             try:
-                with open(tf_path) as stdin_file:
+                with open(tf_path, encoding="utf-8") as stdin_file:
                     proc = subprocess.run(
                         cmd,
                         stdin=stdin_file,
@@ -409,13 +427,13 @@ def _execute_cli(
             # arg mode: only supported for claude (which accepts
             # positional prompt after -p). codex/copilot require stdin.
             if backend in ("codex", "copilot"):
-                raise RuntimeError(
+                raise CLIConfigError(
                     f"{backend} CLI requires stdin piping but neither stdin "
                     f"nor file_stdin mode is available. Check that the "
                     f"{backend} CLI is installed and working."
                 )
             if len(prompt) > _SYSTEM_PROMPT_INLINE_LIMIT:
-                raise RuntimeError(
+                raise CLIConfigError(
                     f"{backend} CLI fell back to arg mode but prompt is "
                     f"{len(prompt)} chars (limit {_SYSTEM_PROMPT_INLINE_LIMIT}). "
                     f"Ensure the CLI supports stdin or file_stdin piping, "
@@ -603,6 +621,10 @@ def retry_with_backoff(
             if isinstance(result, dict) and "calls" in result and failed_attempts > 0:
                 result["calls"] = result["calls"] + failed_attempts
             return result
+        except CLIConfigError:
+            # Deterministic config errors are non-retryable -- re-raise
+            # immediately without sleeping or consuming more attempts.
+            raise
         except Exception as exc:
             last_exc = exc
             failed_attempts += 1

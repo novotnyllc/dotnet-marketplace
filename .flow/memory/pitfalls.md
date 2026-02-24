@@ -456,3 +456,6 @@ When probing multiple CLI capabilities, keep probes independent -- do not bundle
 
 ## 2026-02-24 manual [pitfall]
 When passing budget_check closures into nested call sites (e.g. judge retry loops), wrap the closure to include locally-consumed calls -- the outer caller only updates its counters after the nested function returns, so uncorrected checks can overshoot caps
+
+## 2026-02-24 manual [pitfall]
+When retry_with_backoff raises (all retries exhausted), attach consumed-call metadata to the exception so callers can keep accurate resource-usage totals -- otherwise failure-heavy runs silently under-count resource consumption
