@@ -573,6 +573,24 @@ def generate_findings(
                 "rate": round(no_act / total, 4),
             })
 
+    # Index violations: model predicted skills outside the group
+    for group_name, rates_data in sorted(cross_rates.items()):
+        oog = rates_data.get("out_of_group_count", 0)
+        viol_rate = rates_data.get("index_violation_rate", 0.0)
+        if oog > 0:
+            findings.append({
+                "severity": "info" if viol_rate <= 0.10 else "warning",
+                "group": group_name,
+                "type": "index_violation",
+                "description": (
+                    f"Index violations in group '{group_name}': "
+                    f"{oog} prediction(s) outside group index "
+                    f"({viol_rate:.0%} violation rate)"
+                ),
+                "out_of_group_count": oog,
+                "index_violation_rate": viol_rate,
+            })
+
     # Negative control failures
     neg_failures = [r for r in negative_results if not r.get("passed", True)]
     if neg_failures:
@@ -747,6 +765,19 @@ def main() -> int:
             "[confusion] Aborting: cannot build valid routing indices with "
             "missing skills. Add the skills or update DOMAIN_GROUPS.",
             file=sys.stderr,
+        )
+        # Write an invalid-run envelope so scheduled automation sees the failure
+        _common.write_results(
+            meta=meta,
+            summary={"_run_status": {
+                "ok": False,
+                "reason": "missing_skills",
+                "missing_skills": missing_skills,
+                "n": 0,
+            }},
+            cases=[],
+            output_dir=args.output_dir,
+            artifacts={"missing_skills": missing_skills},
         )
         return 0
 
