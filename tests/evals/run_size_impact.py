@@ -147,6 +147,9 @@ def extract_summary(skill_name: str) -> Optional[tuple[str, int]]:
 
     content = skill_path.read_text(encoding="utf-8")
 
+    # Normalize CRLF to LF for cross-platform regex matching
+    content = content.replace("\r\n", "\n")
+
     # Step 1: Parse frontmatter for description
     description = ""
     fm_match = _FRONTMATTER_RE.match(content)
@@ -193,13 +196,19 @@ def load_siblings(
 ) -> Optional[tuple[str, int]]:
     """Load and concatenate sibling file contents with byte cap.
 
+    Truncation operates on raw bytes to avoid splitting multi-byte UTF-8
+    characters and to ensure accurate byte accounting. The reported
+    byte count reflects the actual injected content bytes (excluding
+    delimiter wrappers).
+
     Args:
         skill_name: Name of the skill directory.
         sibling_names: Ordered list of sibling filenames to include.
-        max_bytes: Maximum total bytes to include.
+        max_bytes: Maximum total raw content bytes to include.
 
     Returns:
-        Tuple of (formatted_siblings_text, byte_count) or None if no siblings found.
+        Tuple of (formatted_siblings_text, actual_content_byte_count)
+        or None if no siblings found.
     """
     skill_dir = _common.SKILLS_DIR / skill_name
     parts = []
@@ -210,17 +219,21 @@ def load_siblings(
         if not sib_path.is_file():
             continue
 
-        sib_content = sib_path.read_text(encoding="utf-8")
-        sib_bytes = len(sib_content.encode("utf-8"))
+        raw = sib_path.read_bytes()
 
-        if total_bytes + sib_bytes > max_bytes:
-            # Truncate to fit within cap
+        if total_bytes + len(raw) > max_bytes:
+            # Truncate to fit within byte cap
             remaining = max_bytes - total_bytes
-            if remaining > 100:  # Only include if meaningful amount remains
-                sib_content = sib_content[:remaining] + "\n[... truncated ...]"
-                sib_bytes = remaining
-            else:
+            if remaining <= 100:
                 break
+            # Truncate raw bytes, decode ignoring partial chars at boundary
+            sib_content = raw[:remaining].decode("utf-8", errors="ignore")
+            sib_content += "\n[... truncated ...]"
+        else:
+            sib_content = raw.decode("utf-8")
+
+        # Compute actual injected content bytes (post-decode)
+        sib_bytes = len(sib_content.encode("utf-8"))
 
         parts.append(
             f"--- BEGIN SUPPLEMENTARY: {sib_name} ---\n"
@@ -244,13 +257,17 @@ def load_siblings(
 def load_candidates(
     candidates_path: Optional[Path] = None,
 ) -> list[dict]:
-    """Load candidate skills from the YAML dataset.
+    """Load and validate candidate skills from the YAML dataset.
+
+    Each candidate must have 'skill' (str) and 'test_prompt' (str).
+    Optional fields: 'siblings' (list[str]), 'max_sibling_bytes' (int).
+    Malformed entries are skipped with a warning to stderr.
 
     Args:
         candidates_path: Path to candidates.yaml. Defaults to standard location.
 
     Returns:
-        List of candidate dicts with skill, test_prompt, and optional siblings.
+        List of validated candidate dicts.
     """
     cfg = _common.load_config()
     if candidates_path is None:
@@ -268,11 +285,52 @@ def load_candidates(
     if not isinstance(data, dict) or "candidates" not in data:
         return []
 
-    return data["candidates"]
+    raw = data["candidates"]
+    if not isinstance(raw, list):
+        return []
+
+    validated: list[dict] = []
+    for i, entry in enumerate(raw):
+        if not isinstance(entry, dict):
+            print(
+                f"[size_impact] WARN: candidates[{i}] is not a dict, skipping",
+                file=sys.stderr,
+            )
+            continue
+        if not isinstance(entry.get("skill"), str) or not entry["skill"]:
+            print(
+                f"[size_impact] WARN: candidates[{i}] missing 'skill' string, skipping",
+                file=sys.stderr,
+            )
+            continue
+        if not isinstance(entry.get("test_prompt"), str) or not entry["test_prompt"]:
+            print(
+                f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                f"missing 'test_prompt' string, skipping",
+                file=sys.stderr,
+            )
+            continue
+        # Validate optional siblings shape
+        siblings = entry.get("siblings")
+        if siblings is not None and not isinstance(siblings, list):
+            print(
+                f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                f"'siblings' must be a list, ignoring siblings",
+                file=sys.stderr,
+            )
+            entry = {k: v for k, v in entry.items() if k != "siblings"}
+        validated.append(entry)
+
+    return validated
 
 
 def classify_size_tier(skill_name: str) -> tuple[str, int]:
     """Classify a skill into a size tier based on SKILL.md body size.
+
+    Tier thresholds (per task .6 spec):
+      Small:  < 2KB body
+      Medium: 2-5KB body
+      Large:  > 5KB body
 
     Args:
         skill_name: Skill directory name.
@@ -288,9 +346,9 @@ def classify_size_tier(skill_name: str) -> tuple[str, int]:
     body = _FRONTMATTER_RE.sub("", content, count=1).strip()
     body_bytes = len(body.encode("utf-8"))
 
-    if body_bytes < 5000:
+    if body_bytes < 2000:
         tier = "small"
-    elif body_bytes <= 12000:
+    elif body_bytes <= 5000:
         tier = "medium"
     else:
         tier = "large"
@@ -999,17 +1057,17 @@ def main() -> int:
                     "case_seed": case_seed,
                     "size_tier": tier,
                     "body_bytes": body_bytes,
-                    "injected_sizes": {
-                        cond_a: condition_sizes.get(cond_a, {}),
-                        cond_b: condition_sizes.get(cond_b, {}),
-                    },
+                    "condition_sizes": condition_sizes,
+                    "conditions_present": sorted(condition_prompts.keys()),
                     "model": meta["model"],
                     "judge_model": meta["judge_model"],
                     "run_id": meta["run_id"],
                     "seed": seed,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "cost": sum(gen_costs.get(c, 0.0) for c in (cond_a, cond_b))
-                    + judge_result["cost"],
+                    "cost_judge": judge_result["cost"],
+                    "cost_generation_allocated": sum(
+                        gen_costs.get(c, 0.0) for c in (cond_a, cond_b)
+                    ),
                     "judge_attempts": judge_result["attempts"],
                 }
 

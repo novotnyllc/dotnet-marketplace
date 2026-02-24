@@ -1,15 +1,18 @@
 # Size impact eval candidates for progressive disclosure validation.
 #
-# Skills selected across three size tiers:
-#   Small  (<5KB SKILL.md body after frontmatter strip)
-#   Medium (5-12KB)
-#   Large  (>12KB)
+# Skills selected across three size tiers (body = SKILL.md after frontmatter strip):
+#   Small  (<2KB body)
+#   Medium (2-5KB body)
+#   Large  (>5KB body)
 #
 # Skills with `siblings` get a fourth "full + siblings" condition.
 # max_sibling_bytes caps total sibling content per skill.
 
 candidates:
-  # --- Small tier (<5KB) ---
+  # --- Small tier (<2KB body) ---
+  # Note: very few skills are this small; most are medium or large.
+
+  # --- Medium tier (2-5KB body) ---
   - skill: dotnet-windbg-debugging
     test_prompt: >
       Write a diagnostic report template for analyzing a .NET crash dump
@@ -25,7 +28,7 @@ candidates:
       - examples.md
     max_sibling_bytes: 15000
 
-  # --- Medium tier (5-12KB) ---
+  # --- Large tier (>5KB body) ---
   - skill: dotnet-observability
     test_prompt: >
       Set up OpenTelemetry tracing and metrics for a .NET Minimal API
@@ -52,7 +55,6 @@ candidates:
       including naming conventions, nullable reference types, expression
       bodies, and file-scoped namespaces.
 
-  # --- Large tier (>12KB) ---
   - skill: dotnet-efcore-patterns
     test_prompt: >
       Design an EF Core data access layer with repository pattern,
