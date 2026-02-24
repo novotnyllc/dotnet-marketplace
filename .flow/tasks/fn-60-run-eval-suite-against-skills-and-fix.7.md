@@ -4,14 +4,16 @@
 
 Two infrastructure fixes before running evals:
 
-1. **Auth**: `_common.py:get_client()` hard-requires `ANTHROPIC_API_KEY` env var. This breaks on machines where the Anthropic SDK picks up auth via default mechanisms (e.g., key in shell profile, SDK auto-discovery). Fix: let the SDK handle auth discovery instead of pre-validating.
+1. **Auth**: `_common.py:get_client()` hard-requires `ANTHROPIC_API_KEY` env var via a pre-validation check. This double-validates what the SDK already checks internally. Fix: remove the pre-validation and let the SDK handle auth discovery. The Python Anthropic SDK checks `ANTHROPIC_API_KEY` internally when no explicit key is passed to `Anthropic()` -- removing our check means the SDK surfaces its own auth error if the key is missing, which is more actionable than our generic ValueError.
 
-2. **Skill restore**: Tasks .3 and .4 will modify skill SKILL.md files. Need a safe restore mechanism so originals can be recovered. Approach: git-based -- all modifications happen on a dedicated branch, and `git checkout -- skills/` restores originals. Document this in task specs.
+2. **Config api_key injection**: `load_config()` injects `cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY","")` into the cached config dict. This creates a stale-key risk if the env var changes and obscures debugging with empty strings. Remove this injection entirely -- `get_client()` should handle auth directly, not read from config cache.
+
+3. **Skill restore**: Tasks .3 and .4 will modify skill SKILL.md files. Need a safe restore mechanism so originals can be recovered. Approach: git-based -- all modifications happen on a dedicated branch, and `git checkout -- skills/` restores originals. Document this in task specs.
 
 **Size:** S
 **Files:**
-- `tests/evals/_common.py` -- fix `get_client()` to not hard-require ANTHROPIC_API_KEY
-- `tests/evals/config.yaml` -- update comment about auth
+- `tests/evals/_common.py` -- fix `get_client()` to remove pre-validation; remove `api_key` injection from `load_config()`; update module and function docstrings to match new behavior
+- `tests/evals/config.yaml` -- update comment: "ANTHROPIC_API_KEY (required unless using an explicit key param in code)"
 
 ## Approach
 
@@ -20,12 +22,23 @@ Two infrastructure fixes before running evals:
 Change `get_client()` in `_common.py`:
 - If an explicit `api_key` is passed, use it
 - If `ANTHROPIC_API_KEY` env var is set, use it
-- Otherwise, create `anthropic.Anthropic()` with no key arg -- let the SDK handle auth discovery
-- Remove the pre-validation `ValueError` -- let the SDK raise its own error if auth fails
+- Otherwise, create `anthropic.Anthropic()` with no key arg -- the SDK checks `ANTHROPIC_API_KEY` internally and raises its own exception with a clear message if missing
+- Remove the pre-validation `ValueError`
+
+Change `load_config()` in `_common.py`:
+- Remove `cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY","")` line
+- Do NOT cache auth state in the config dict
+- Any code that previously read `cfg["api_key"]` should use `get_client()` instead
+
+Update docstrings:
+- Module docstring: remove references to API key injection into config
+- `load_config()` docstring: update to reflect that config loading no longer merges auth env vars
+- `get_client()` docstring: document the auth resolution order (explicit param > env var > SDK default)
+
+Update `config.yaml` comment to: "ANTHROPIC_API_KEY (required unless using an explicit key param in code)"
 
 This makes the runners work with:
 - `ANTHROPIC_API_KEY` env var (CI, explicit)
-- SDK default auth (local development)
 - Explicit key parameter (programmatic)
 
 ### Skill Restore Strategy
@@ -42,16 +55,12 @@ Restore mechanism:
 This mirrors test.sh's snapshot/restore pattern but uses git instead of rsync.
 
 ## Acceptance
-- [ ] `get_client()` works without `ANTHROPIC_API_KEY` env var when SDK has default auth
-- [ ] `get_client()` still works WITH `ANTHROPIC_API_KEY` env var (backward compat)
-- [ ] Config comment updated to reflect auth flexibility
+- [ ] `get_client()` works when `ANTHROPIC_API_KEY` env var is set (standard path)
+- [ ] `get_client()` works with explicit key parameter (programmatic path)
+- [ ] `get_client()` without env var or explicit key surfaces an SDK-originated exception (not our custom ValueError pre-check) with an actionable message about missing credentials
+- [ ] `load_config()` no longer injects `api_key` into config dict
+- [ ] No remaining code reads `cfg["api_key"]` -- all auth goes through `get_client()`
+- [ ] Module, `load_config()`, and `get_client()` docstrings updated to match new behavior
+- [ ] Config comment updated to: "ANTHROPIC_API_KEY (required unless using an explicit key param in code)"
 - [ ] `pip install -r tests/evals/requirements.txt` succeeds (anthropic SDK installable)
 - [ ] `python3 tests/evals/run_activation.py --dry-run` still works
-
-## Done summary
-TBD
-
-## Evidence
-- Commits:
-- Tests:
-- PRs:

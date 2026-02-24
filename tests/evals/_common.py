@@ -4,10 +4,13 @@ All eval runners import from this module. Provides config loading,
 Anthropic client wrapper, retry/backoff with jitter, token/cost
 accounting, run_id/timestamps, JSON extraction from LLM responses,
 output writing, and skill content loading with frontmatter stripping.
+
+Auth is handled entirely by get_client(), which delegates to the
+Anthropic SDK's own environment-variable discovery. Config loading
+does not inject or cache auth state.
 """
 
 import json
-import os
 import random
 import re
 import time
@@ -35,13 +38,13 @@ _config_cache: Optional[dict] = None
 
 
 def load_config(config_path: Optional[Path] = None) -> dict:
-    """Load config.yaml and merge environment variable overrides.
+    """Load config.yaml and return the parsed dict.
 
-    Reads ANTHROPIC_API_KEY from the environment and injects it into
-    the returned config dict under the 'api_key' key.
+    Does NOT inject or cache auth credentials. All auth is handled by
+    get_client(), which delegates to the Anthropic SDK.
 
     Returns:
-        Parsed config dict with env overrides applied.
+        Parsed config dict.
     """
     global _config_cache
     path = config_path or CONFIG_PATH
@@ -53,9 +56,6 @@ def load_config(config_path: Optional[Path] = None) -> dict:
 
     if not isinstance(cfg, dict):
         raise ValueError(f"Invalid config at {path}: expected YAML mapping, got {type(cfg).__name__}")
-
-    # Inject API key from environment
-    cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY", "")
 
     if config_path is None:
         _config_cache = cfg
@@ -70,24 +70,31 @@ def load_config(config_path: Optional[Path] = None) -> dict:
 def get_client(api_key: Optional[str] = None):
     """Create an Anthropic client instance.
 
+    Auth resolution order:
+      1. Explicit api_key parameter (if provided)
+      2. ANTHROPIC_API_KEY environment variable (checked by the SDK)
+      3. SDK default -- raises anthropic.AuthenticationError if missing
+
     Args:
-        api_key: Optional API key override. Falls back to config/env.
+        api_key: Optional API key override. If omitted, the Anthropic
+            SDK discovers credentials from the ANTHROPIC_API_KEY env var.
 
     Returns:
         An anthropic.Anthropic client instance.
 
     Raises:
         ImportError: If the anthropic package is not installed.
-        ValueError: If no API key is available.
+        anthropic.AuthenticationError: If no API key is discoverable.
     """
     import anthropic  # type: ignore[import-untyped]
 
-    key = api_key or load_config().get("api_key", "")
-    if not key:
-        raise ValueError(
-            "No Anthropic API key found. Set ANTHROPIC_API_KEY environment variable."
-        )
-    return anthropic.Anthropic(api_key=key)
+    if api_key:
+        return anthropic.Anthropic(api_key=api_key)
+
+    # Let the SDK discover ANTHROPIC_API_KEY from the environment.
+    # If the env var is missing, the SDK raises its own AuthenticationError
+    # with an actionable message about missing credentials.
+    return anthropic.Anthropic()
 
 
 # ---------------------------------------------------------------------------

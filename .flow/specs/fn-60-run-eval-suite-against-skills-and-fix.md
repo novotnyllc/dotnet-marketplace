@@ -18,7 +18,7 @@ These thresholds account for the inherent difficulty of each eval type and the f
 ### L4 Confusion
 - **Per-group accuracy >= 60%** -- overlapping skills are inherently hard
 - **Cross-activation rate <= 35%** -- some confusion is expected within groups
-- **No "never-activated" skills** -- every skill in a group gets predicted at least once
+- **No "never-activated" skills** -- every skill in a group gets predicted at least once (documented exception allowed if the model systematically cannot route to a niche skill within a small case set). Check via `artifacts.findings[]` where `type == "never_activated"`.
 - **Negative control pass rate >= 70%**
 
 ### L5 Effectiveness
@@ -27,8 +27,8 @@ These thresholds account for the inherent difficulty of each eval type and the f
 - **No individual skill has 0% win rate** (every skill should help at least sometimes)
 
 ### L6 Size Impact
-- **full > baseline** in >= 55% of comparisons
-- **No skill where baseline consistently beats full** (that would mean skill content is harmful)
+- **full > baseline** in >= 55% of `full_vs_baseline` comparisons (aggregate across all candidates, excluding errors)
+- **No skill where baseline consistently beats full** -- defined as baseline sweep: `wins_baseline == n` for that candidate's `full_vs_baseline` comparisons (with `--runs 3`, this means baseline wins all 3 runs). This indicates the skill's full content is actively harmful.
 
 These thresholds are deliberately achievable. If initial results are dramatically below them, it signals description/content problems to fix, not unrealistic targets. If results exceed them, great -- the bar may be raised later.
 
@@ -53,7 +53,14 @@ These thresholds are deliberately achievable. If initial results are dramaticall
 
 ### Prerequisites (task .7)
 
-**Auth**: `_common.py:get_client()` currently hard-requires `ANTHROPIC_API_KEY` env var. Fix this to let the Anthropic SDK handle auth discovery -- the local client is already authenticated and doesn't need an explicit key. The SDK checks env vars itself; the pre-validation just gets in the way.
+**Auth**: `_common.py:get_client()` currently hard-requires `ANTHROPIC_API_KEY` env var via a pre-validation check. Fix this to remove the pre-validation and let the Anthropic SDK handle auth itself. The Python Anthropic SDK checks `ANTHROPIC_API_KEY` env var internally when no explicit key is passed to `Anthropic()`. Removing our pre-validation means:
+- The SDK still requires `ANTHROPIC_API_KEY` in the environment (or an explicit key param)
+- But the error comes from the SDK itself, not our pre-check
+- This avoids double-validation and lets the SDK's own auth error messages surface
+
+Additionally, `load_config()` currently injects `cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY","")` into the cached config dict. This should be removed -- `get_client()` should read auth directly, not from the config cache.
+
+Note: `config.yaml` currently says "ANTHROPIC_API_KEY (required for API calls)" -- task .7 updates this comment to match the new behavior.
 
 **Skill loading**: Eval runners already load skills from `REPO_ROOT/skills/` (the local checkout). No plugin installation needed -- skills are read directly from the repo, not from any installed plugin location.
 
@@ -69,21 +76,29 @@ This is an iterative improve-measure loop:
 
 1. **Run** all 4 eval types against current skills
 2. **Analyze** -- identify worst performers, common failure patterns
-3. **Fix** -- targeted description edits, content improvements
-4. **Re-run** -- verify improvement, check for regressions
-5. **Save baselines** once thresholds are met
+3. **Fix routing** (task .3) -- description edits for activation/confusion
+4. **Fix content** (task .4) -- body edits for effectiveness, executed AFTER .3 to isolate attribution
+5. **Re-run** -- verify improvement, check for regressions
+6. **Save baselines** once thresholds are met
+
+**Important**: Tasks .3 and .4 both edit `skills/*/SKILL.md` but target different sections (frontmatter descriptions vs body content). They should be executed sequentially -- .3 first (routing fixes), then .4 (content fixes) -- even though the dependency graph allows parallelism. This isolates attribution ("did the improvement come from description or content?") and avoids merge conflicts on the same files.
 
 Expect 1-3 fix-rerun iterations. Focus on high-leverage fixes first (description clarity for activation/confusion, content quality for effectiveness).
 
 ### Cost Expectations
 
-Using haiku for generation and judging (per config.yaml):
+Using haiku for generation and judging (per config.yaml). `config.yaml:cost.max_cost_per_run` is a per-runner-invocation safety cap, not a suite-level budget.
+
+Per eval runner invocation:
 - Activation: ~73 API calls = ~$0.10-0.20
 - Confusion: ~54 API calls = ~$0.10-0.15
-- Effectiveness: ~24 generations + 24 baselines + 24 judgments = ~$1-2
-- Size impact: ~36 generations + 36 judgments = ~$1-2
-- Total per full run: ~$2-4
-- Budget for 3 iterations: ~$12
+- Effectiveness with `--runs 3`: 12 skills x 2 prompts x 3 runs = 72 cases; each case = 2 generations + 1 judgment = ~216 API calls = ~$3-5
+- Size impact with `--runs 3`: 11 candidates x ~3 comparison types x 3 runs = ~99 comparisons; each = 2 generations + 1 judgment = ~$2-4
+
+Per full suite run (all 4 runners): ~$5-9
+Budget for 3 iterations: ~$25
+
+If `max_cost_per_run` aborts a runner mid-run, either raise the cap in config.yaml or reduce `--runs` so the runner completes all cases.
 
 ### Fix Priority
 
@@ -99,7 +114,7 @@ Using haiku for generation and judging (per config.yaml):
 python3 tests/evals/run_activation.py
 python3 tests/evals/run_confusion_matrix.py
 python3 tests/evals/run_effectiveness.py --runs 3
-python3 tests/evals/run_size_impact.py
+python3 tests/evals/run_size_impact.py --runs 3
 
 # Run a single skill/group
 python3 tests/evals/run_activation.py --skill dotnet-xunit
@@ -116,7 +131,7 @@ python3 tests/evals/run_activation.py --dry-run
 - [ ] Results analyzed and findings documented per task
 - [ ] Skill descriptions fixed where activation/confusion results indicated problems
 - [ ] Skill content improved where effectiveness results showed regression vs baseline
-- [ ] Re-run results meet the quality bar thresholds above (or document rationale for exceptions)
+- [ ] Re-run results meet the quality bar thresholds above (or documented rationale for exceptions)
 - [ ] Initial baseline JSON files saved to `tests/evals/baselines/`
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass
 - [ ] fn-58.4 unblocked (has dependency on this epic's final task)
@@ -125,9 +140,11 @@ python3 tests/evals/run_activation.py --dry-run
 
 | Risk | Mitigation |
 |------|------------|
-| Auth not discoverable | Task .7 fixes `_common.py` to use SDK auth discovery; no explicit key needed |
+| Auth not discoverable | Task .7 removes pre-validation; SDK still requires ANTHROPIC_API_KEY env var but surfaces its own error |
 | Skill modifications need restore | Git-based: commit before fixes, `git checkout -- skills/` to restore |
-| Cost overrun from multiple iterations | Haiku pricing is cheap (~$3/run); generation caching avoids re-generation |
+| Cost overrun from multiple iterations | Haiku pricing is cheap (~$7/run); max_cost_per_run caps each runner invocation independently |
+| max_cost_per_run aborts mid-run | Raise cap or reduce --runs; effectiveness and size impact are the costliest runners |
 | Fixing one skill breaks another | Re-run full suite after each fix batch; baselines track regressions |
-| Quality bar too high for haiku | Thresholds designed for haiku; can lower if systematically unachievable |
+| Quality bar too high for haiku | Thresholds designed for haiku; can lower if systematically unachievable with documented rationale |
 | Description changes break copilot smoke tests | Run `validate-skills.sh` after each change batch |
+| .3/.4 file conflicts | Execute sequentially (.3 first, then .4) even though deps allow parallelism |

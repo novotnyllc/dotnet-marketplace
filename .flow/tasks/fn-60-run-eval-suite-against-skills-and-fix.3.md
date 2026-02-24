@@ -8,6 +8,8 @@ Based on the analysis from task .2, fix skill descriptions (frontmatter) to impr
 **Files:**
 - `skills/*/SKILL.md` -- frontmatter description updates for skills identified in .2
 
+**Execution order**: Run this task BEFORE task .4 (even though deps allow parallelism) to isolate attribution of improvements and avoid file conflicts.
+
 ## Approach
 
 ### Activation Fixes
@@ -29,15 +31,7 @@ Based on the analysis from task .2, fix skill descriptions (frontmatter) to impr
 
 ## Acceptance
 - [ ] All skills identified in .2 analysis have updated descriptions
-- [ ] Descriptions still under 120 characters
-- [ ] Total description budget still under 15,600 characters
+- [ ] Descriptions still under 120 characters each
+- [ ] Total description budget is budget-neutral or reduced (no increase from pre-fix baseline; target staying under 12,000 chars)
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
 - [ ] Changes follow routing style guide conventions
-
-## Done summary
-TBD
-
-## Evidence
-- Commits:
-- Tests:
-- PRs:

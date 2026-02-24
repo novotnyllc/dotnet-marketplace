@@ -1,5 +1,5 @@
 # Eval framework configuration
-# Environment variable overrides: ANTHROPIC_API_KEY (required for API calls)
+# Environment variable overrides: ANTHROPIC_API_KEY (required unless using an explicit key param in code)
 # OPENROUTER_API_KEY is reserved for future use and unused in this epic.
 
 models:

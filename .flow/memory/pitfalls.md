@@ -441,3 +441,6 @@ File allowlists loaded from YAML must reject entries containing path separators 
 
 ## 2026-02-24 manual [pitfall]
 Confusion matrix axes must be locked to declared group definitions, not derived from runtime data (activated/expected skills). Dynamic axes make dimensions unstable across runs and break baseline comparison.
+
+## 2026-02-24 manual [pitfall]
+Eval runners exit 0 even on partial runs or cost-cap aborts; acceptance must check coverage completeness (case counts) not just exit code + file existence
