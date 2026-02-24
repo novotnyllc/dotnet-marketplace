@@ -10,6 +10,7 @@ than the Anthropic SDK. The CLI tools handle their own authentication.
 """
 
 import json
+import os
 import random
 import re
 import shutil
@@ -172,7 +173,6 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             if probe_model:
                 cmd.extend(["--model", str(probe_model)])
             cmd.extend([
-                "--tools", "",
                 "--no-session-persistence",
                 "--disable-slash-commands",
                 "--max-turns", "1",
@@ -249,6 +249,14 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             )
 
     if prompt_mode == "arg":
+        # codex and copilot don't support arg mode, so this is a hard failure
+        if backend in ("codex", "copilot"):
+            stderr_preview = "No stdin/file_stdin support detected during probes"
+            raise CLIConfigError(
+                f"{backend} CLI does not support stdin or file_stdin modes. "
+                f"Cannot proceed with arg mode for {backend}. "
+                f"Install a newer version or switch to 'claude' in config.yaml"
+            )
         _emit_warning(
             f"{backend}_no_stdin",
             f"{backend} CLI does not support stdin or file_stdin; "
@@ -388,7 +396,6 @@ def _build_cli_command(
         # Pass max_tokens to bound output length
         cmd.extend(["--max-tokens", str(max_tokens)])
         cmd.extend([
-            "--tools", "",
             "--no-session-persistence",
             "--disable-slash-commands",
             "--max-turns", "1",
@@ -916,8 +923,18 @@ def write_results(
     }
 
     output_path = resolved_dir / filename
-    with open(output_path, "w", encoding="utf-8") as f:
+    # Write to a temp file in the same directory for atomic commit
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".json", dir=resolved_dir, delete=False, encoding="utf-8"
+    ) as f:
         json.dump(envelope, f, indent=2)
+        temp_path = f.name
+
+    try:
+        os.replace(temp_path, output_path)
+    except Exception:
+        Path(temp_path).unlink(missing_ok=True)
+        raise
 
     return output_path
 

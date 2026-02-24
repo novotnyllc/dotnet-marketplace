@@ -303,9 +303,11 @@ def build_confusion_matrices(
 
             if classification == "multi_activation":
                 multi_activation_count += 1
+                # Don't enter multi-activations into NxN matrix; only count them separately
+                continue
 
-            # Use skills[0] as primary prediction for the matrix
-            if activated and expected in matrix:
+            # Enter single-activation cases into the confusion matrix
+            if classification == "single_activation" and activated and expected in matrix:
                 primary = activated[0]
                 if primary in matrix[expected]:
                     matrix[expected][primary] += 1
@@ -466,6 +468,7 @@ def generate_findings(
                 for r in case_results
                 if r.get("group") == group_name
                 and r.get("expected_skill") == flagged["expected"]
+                and r.get("classification") == "single_activation"
                 and r.get("activated_skills", [None])[0:1] == [flagged["predicted"]]
             ][:3]
 
@@ -933,9 +936,10 @@ def main() -> int:
                     classification = "parse_failure"
 
             # Determine pass/fail
+            # Multi-activation should fail for confusion eval (select ONLY the single most relevant skill)
             all_valid = {expected_skill} | set(acceptable_skills)
             all_valid.discard("")
-            if classification in ("single_activation", "multi_activation"):
+            if classification == "single_activation":
                 passed = activated_skills[0] in all_valid
             else:
                 passed = False

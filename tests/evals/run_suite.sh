@@ -55,16 +55,13 @@ ABORT_DETECTED=0
 RUNNER_FAILURES=0
 
 # Parse stable machine-parseable keys from runner stdout
+# Returns empty string if key is missing (distinguishing from actual "0" value)
 parse_runner_key() {
   local output="$1"
   local key="$2"
   local value
   value=$(echo "$output" | grep "^${key}=" | tail -n 1 | sed "s/^${key}=//")
-  if [ -z "$value" ]; then
-    echo "0"
-  else
-    echo "$value"
-  fi
+  echo "$value"
 }
 
 # Run a runner, capturing stdout (key-value lines) and stderr (logs) separately
@@ -121,6 +118,10 @@ ACT_EXIT=$RUNNER_EXIT_CODE
 ACT_COST=$(parse_runner_key "$ACT_STDOUT" "COST_USD")
 ACT_CALLS=$(parse_runner_key "$ACT_STDOUT" "TOTAL_CALLS")
 ACT_CASES=$(parse_runner_key "$ACT_STDOUT" "N_CASES")
+if [ -z "$ACT_COST" ] || [ -z "$ACT_CALLS" ] || [ -z "$ACT_CASES" ]; then
+  echo "[suite] ERROR: L3 Activation runner missing expected output keys" >&2
+  RUNNER_FAILURES=$((RUNNER_FAILURES + 1))
+fi
 
 # Extract result file path from stderr
 ACT_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
@@ -132,6 +133,10 @@ CONF_EXIT=$RUNNER_EXIT_CODE
 CONF_COST=$(parse_runner_key "$CONF_STDOUT" "COST_USD")
 CONF_CALLS=$(parse_runner_key "$CONF_STDOUT" "TOTAL_CALLS")
 CONF_CASES=$(parse_runner_key "$CONF_STDOUT" "N_CASES")
+if [ -z "$CONF_COST" ] || [ -z "$CONF_CALLS" ] || [ -z "$CONF_CASES" ]; then
+  echo "[suite] ERROR: L4 Confusion runner missing expected output keys" >&2
+  RUNNER_FAILURES=$((RUNNER_FAILURES + 1))
+fi
 CONF_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- L5 Effectiveness (multi-run) ---
@@ -141,6 +146,10 @@ EFF_EXIT=$RUNNER_EXIT_CODE
 EFF_COST=$(parse_runner_key "$EFF_STDOUT" "COST_USD")
 EFF_CALLS=$(parse_runner_key "$EFF_STDOUT" "TOTAL_CALLS")
 EFF_CASES=$(parse_runner_key "$EFF_STDOUT" "N_CASES")
+if [ -z "$EFF_COST" ] || [ -z "$EFF_CALLS" ] || [ -z "$EFF_CASES" ]; then
+  echo "[suite] ERROR: L5 Effectiveness runner missing expected output keys" >&2
+  RUNNER_FAILURES=$((RUNNER_FAILURES + 1))
+fi
 EFF_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- L6 Size Impact (multi-run) ---
@@ -150,6 +159,10 @@ SIZE_EXIT=$RUNNER_EXIT_CODE
 SIZE_COST=$(parse_runner_key "$SIZE_STDOUT" "COST_USD")
 SIZE_CALLS=$(parse_runner_key "$SIZE_STDOUT" "TOTAL_CALLS")
 SIZE_CASES=$(parse_runner_key "$SIZE_STDOUT" "N_CASES")
+if [ -z "$SIZE_COST" ] || [ -z "$SIZE_CALLS" ] || [ -z "$SIZE_CASES" ]; then
+  echo "[suite] ERROR: L6 Size Impact runner missing expected output keys" >&2
+  RUNNER_FAILURES=$((RUNNER_FAILURES + 1))
+fi
 SIZE_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- Suite Summary ---
