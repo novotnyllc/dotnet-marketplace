@@ -66,5 +66,8 @@ This mirrors test.sh's snapshot/restore pattern but uses git instead of rsync.
 - [ ] `python3 tests/evals/run_activation.py --dry-run` still works
 
 ## Done summary
-
+Removed auth pre-validation and api_key config injection from _common.py. get_client() now delegates auth discovery entirely to the Anthropic SDK (explicit param > env var > SDK error). Removed unused os import. Updated all docstrings and config.yaml comment to reflect new auth behavior.
 ## Evidence
+- Commits: 0260bc32887fa618c3324e1a53eaf4c3d1f6fd14
+- Tests: python3 tests/evals/run_activation.py --dry-run, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
+- PRs:
