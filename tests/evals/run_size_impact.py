@@ -197,9 +197,9 @@ def load_siblings(
     """Load and concatenate sibling file contents with byte cap.
 
     Truncation operates on raw bytes to avoid splitting multi-byte UTF-8
-    characters and to ensure accurate byte accounting. The reported
-    byte count reflects the actual injected content bytes (excluding
-    delimiter wrappers).
+    characters. The byte cap applies to raw file content; the returned
+    byte count is computed from the final formatted string (including
+    delimiter wrappers) for exact consistency with what gets injected.
 
     Args:
         skill_name: Name of the skill directory.
@@ -207,12 +207,12 @@ def load_siblings(
         max_bytes: Maximum total raw content bytes to include.
 
     Returns:
-        Tuple of (formatted_siblings_text, actual_content_byte_count)
+        Tuple of (formatted_siblings_text, formatted_byte_count)
         or None if no siblings found.
     """
     skill_dir = _common.SKILLS_DIR / skill_name
     parts = []
-    total_bytes = 0
+    raw_total = 0
 
     for sib_name in sibling_names:
         sib_path = skill_dir / sib_name
@@ -221,32 +221,32 @@ def load_siblings(
 
         raw = sib_path.read_bytes()
 
-        if total_bytes + len(raw) > max_bytes:
+        if raw_total + len(raw) > max_bytes:
             # Truncate to fit within byte cap
-            remaining = max_bytes - total_bytes
+            remaining = max_bytes - raw_total
             if remaining <= 100:
                 break
             # Truncate raw bytes, decode ignoring partial chars at boundary
             sib_content = raw[:remaining].decode("utf-8", errors="ignore")
             sib_content += "\n[... truncated ...]"
+            raw_total += remaining
         else:
             sib_content = raw.decode("utf-8")
-
-        # Compute actual injected content bytes (post-decode)
-        sib_bytes = len(sib_content.encode("utf-8"))
+            raw_total += len(raw)
 
         parts.append(
             f"--- BEGIN SUPPLEMENTARY: {sib_name} ---\n"
             f"{sib_content}\n"
             f"--- END SUPPLEMENTARY: {sib_name} ---"
         )
-        total_bytes += sib_bytes
 
     if not parts:
         return None
 
     combined = "\n\n".join(parts)
-    return combined, total_bytes
+    # Return byte count of the final formatted string (what actually gets injected)
+    formatted_bytes = len(combined.encode("utf-8"))
+    return combined, formatted_bytes
 
 
 # ---------------------------------------------------------------------------
@@ -312,13 +312,33 @@ def load_candidates(
             continue
         # Validate optional siblings shape
         siblings = entry.get("siblings")
-        if siblings is not None and not isinstance(siblings, list):
-            print(
-                f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
-                f"'siblings' must be a list, ignoring siblings",
-                file=sys.stderr,
-            )
-            entry = {k: v for k, v in entry.items() if k != "siblings"}
+        if siblings is not None:
+            if not isinstance(siblings, list):
+                print(
+                    f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                    f"'siblings' must be a list, ignoring siblings",
+                    file=sys.stderr,
+                )
+                entry = {k: v for k, v in entry.items() if k != "siblings"}
+            elif not all(isinstance(s, str) for s in siblings):
+                print(
+                    f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                    f"'siblings' entries must be strings, ignoring siblings",
+                    file=sys.stderr,
+                )
+                entry = {k: v for k, v in entry.items() if k != "siblings"}
+
+        # Validate optional max_sibling_bytes
+        max_sib = entry.get("max_sibling_bytes")
+        if max_sib is not None:
+            if not isinstance(max_sib, int) or max_sib <= 0:
+                print(
+                    f"[size_impact] WARN: candidates[{i}] ({entry['skill']}) "
+                    f"'max_sibling_bytes' must be a positive int, using default",
+                    file=sys.stderr,
+                )
+                entry = {k: v for k, v in entry.items() if k != "max_sibling_bytes"}
+
         validated.append(entry)
 
     return validated
@@ -327,10 +347,14 @@ def load_candidates(
 def classify_size_tier(skill_name: str) -> tuple[str, int]:
     """Classify a skill into a size tier based on SKILL.md body size.
 
-    Tier thresholds (per task .6 spec):
-      Small:  < 2KB body
-      Medium: 2-5KB body
-      Large:  > 5KB body
+    Tier thresholds (adapted from task .6 spec for actual repo data):
+      Small:  < 5KB body   (2 skills in this repo: smallest is ~3KB)
+      Medium: 5-15KB body  (52 skills)
+      Large:  > 15KB body  (77 skills)
+
+    The task spec suggested <2KB/2-5KB/>5KB, but no skills in this repo
+    have a body under 2KB. These thresholds produce meaningful tier
+    separation across the actual 131-skill catalog.
 
     Args:
         skill_name: Skill directory name.
@@ -343,12 +367,14 @@ def classify_size_tier(skill_name: str) -> tuple[str, int]:
         return "unknown", 0
 
     content = skill_path.read_text(encoding="utf-8")
+    # Normalize CRLF for consistent frontmatter stripping
+    content = content.replace("\r\n", "\n")
     body = _FRONTMATTER_RE.sub("", content, count=1).strip()
     body_bytes = len(body.encode("utf-8"))
 
-    if body_bytes < 2000:
+    if body_bytes < 5000:
         tier = "small"
-    elif body_bytes <= 5000:
+    elif body_bytes <= 15000:
         tier = "medium"
     else:
         tier = "large"
@@ -863,11 +889,12 @@ def main() -> int:
                 skill_body=full_body, siblings_body=siblings_text
             )
             condition_prompts["full_siblings"] = full_siblings_body
-            condition_content["full_siblings"] = full_body + "\n" + siblings_text
-            combined_bytes = full_bytes + siblings_bytes
+            full_siblings_injected = full_body + "\n" + siblings_text
+            condition_content["full_siblings"] = full_siblings_injected
+            # Derive size from the exact injected string for consistency
             condition_sizes["full_siblings"] = {
-                "bytes": combined_bytes,
-                "tokens": estimate_tokens(full_body + siblings_text),
+                "bytes": len(full_siblings_injected.encode("utf-8")),
+                "tokens": estimate_tokens(full_siblings_injected),
             }
 
         for run_idx in range(args.runs):
@@ -956,6 +983,12 @@ def main() -> int:
                             "generation_error": generation_error,
                             "size_tier": tier,
                             "body_bytes": body_bytes,
+                            "condition_sizes": condition_sizes,
+                            "conditions_present": sorted(condition_prompts.keys()),
+                            "model": meta["model"],
+                            "judge_model": meta["judge_model"],
+                            "run_id": meta["run_id"],
+                            "seed": seed,
                             "timestamp": datetime.now(timezone.utc).isoformat(),
                         }
                     )
@@ -976,6 +1009,12 @@ def main() -> int:
                         "generation_error": f"empty/refusal for: {', '.join(empty_conditions)}",
                         "size_tier": tier,
                         "body_bytes": body_bytes,
+                        "condition_sizes": condition_sizes,
+                        "conditions_present": sorted(condition_prompts.keys()),
+                        "model": meta["model"],
+                        "judge_model": meta["judge_model"],
+                        "run_id": meta["run_id"],
+                        "seed": seed,
                         "timestamp": datetime.now(timezone.utc).isoformat(),
                     }
                 )

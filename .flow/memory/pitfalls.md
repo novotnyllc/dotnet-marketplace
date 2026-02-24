@@ -432,3 +432,6 @@ When multiple code paths conditionally assign a variable (e.g. fallback_cost ins
 
 ## 2026-02-23 manual [pitfall]
 When a runner computes pass/fail per case AND an aggregator computes TP/FP/TN/FN from cases, the aggregator must use the runner's passed field -- not recompute from raw signals -- otherwise compliance rules (e.g. parse_failure = fail) are silently bypassed
+
+## 2026-02-24 manual [pitfall]
+When reporting 'injected bytes' for content passed to an API, derive the count from the exact final string used (including wrappers/delimiters), not from intermediate raw or pre-formatted values -- otherwise byte counts are inconsistent with actual injection
