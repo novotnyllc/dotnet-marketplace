@@ -81,3 +81,6 @@ When creating metadata files for repo-level discovery, clarify in spec whether t
 
 ## 2026-02-19 manual [convention]
 Task specs that reference audit data should say 'per the baseline report' instead of hardcoding counts -- counts change as detection logic improves
+
+## 2026-02-24 manual [convention]
+Eval runners must record a result for every dataset case including skipped ones (e.g. classification=skipped) so coverage gaps are visible in results and baseline comparisons

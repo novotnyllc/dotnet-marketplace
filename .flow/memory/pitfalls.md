@@ -438,3 +438,6 @@ When reporting 'injected bytes' for content passed to an API, derive the count f
 
 ## 2026-02-24 manual [pitfall]
 File allowlists loaded from YAML must reject entries containing path separators or '..' to prevent path traversal -- validate in the loader, not just at consumption
+
+## 2026-02-24 manual [pitfall]
+Confusion matrix axes must be locked to declared group definitions, not derived from runtime data (activated/expected skills). Dynamic axes make dimensions unstable across runs and break baseline comparison.

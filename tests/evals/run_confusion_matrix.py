@@ -409,8 +409,17 @@ def compute_cross_activation_rates(
             if len(competitors) >= 2:
                 low_disc.append(expected_skill)
 
+        # Index violation rate: predictions outside the group
+        out_of_group = data.get("out_of_group_count", 0)
+        total_predictions = all_predictions + out_of_group
+        index_violation_rate = (
+            out_of_group / total_predictions if total_predictions > 0 else 0.0
+        )
+
         rates[group_name] = {
             "cross_activation_rate": round(overall_cross_rate, 4),
+            "index_violation_rate": round(index_violation_rate, 4),
+            "out_of_group_count": out_of_group,
             "per_skill_cross_activation": per_skill_cross,
             "flagged_cross_activations": sorted(
                 flagged, key=lambda x: x["rate"], reverse=True
@@ -509,6 +518,28 @@ def generate_findings(
                 "activated_skills": r.get("activated_skills", []),
                 "user_prompt": r.get("user_prompt", ""),
             })
+
+    # Never-activated skills: skills that were never predicted in any case
+    for group_name, data in sorted(matrices.items()):
+        matrix = data["matrix"]
+        group_skills = data["skills"]
+        for skill in group_skills:
+            # Check if this skill was ever predicted (column sum)
+            col_sum = sum(
+                matrix[row_skill].get(skill, 0) for row_skill in group_skills
+                if row_skill in matrix
+            )
+            if col_sum == 0 and data["total_cases"] > 0:
+                findings.append({
+                    "severity": "info",
+                    "group": group_name,
+                    "type": "never_activated",
+                    "description": (
+                        f"Skill '{skill}' was never predicted in group "
+                        f"'{group_name}' ({data['total_cases']} cases)"
+                    ),
+                    "skill": skill,
+                })
 
     # High multi_activation rate per group
     for group_name, data in sorted(matrices.items()):
@@ -706,11 +737,18 @@ def main() -> int:
 
     if missing_skills:
         print(
-            "[confusion] WARN: Missing skills in DOMAIN_GROUPS:",
+            "[confusion] ERROR: Missing skills in DOMAIN_GROUPS "
+            "(no description in skills/ directory):",
             file=sys.stderr,
         )
-        for g, skills in sorted(missing_skills.items()):
-            print(f"  {g}: {skills}", file=sys.stderr)
+        for g, skills_list in sorted(missing_skills.items()):
+            print(f"  {g}: {skills_list}", file=sys.stderr)
+        print(
+            "[confusion] Aborting: cannot build valid routing indices with "
+            "missing skills. Add the skills or update DOMAIN_GROUPS.",
+            file=sys.stderr,
+        )
+        return 0
 
     print(
         f"[confusion] Starting eval run {meta['run_id']}", file=sys.stderr
@@ -764,6 +802,24 @@ def main() -> int:
                     f"group '{group}'",
                     file=sys.stderr,
                 )
+                # Record skipped case so coverage gaps are visible
+                all_confusion_results.append({
+                    "id": run_case_id,
+                    "entity_id": group,
+                    "group": group,
+                    "user_prompt": user_prompt,
+                    "expected_skill": expected_skill,
+                    "acceptable_skills": acceptable_skills,
+                    "activated_skills": [],
+                    "classification": "skipped_no_index",
+                    "detection_method": "skipped",
+                    "passed": False,
+                    "run_index": run_idx,
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                    "cost": 0.0,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                })
                 continue
 
             system_prompt = _CONFUSION_SYSTEM_PROMPT.format(index=index_text)
@@ -1079,6 +1135,7 @@ def main() -> int:
             },
             "multi_activation_count": data["multi_activation_count"],
             "no_activation_count": data["no_activation_count"],
+            "out_of_group_count": data["out_of_group_count"],
             "total_cases": data["total_cases"],
             "skills": data["skills"],
         }
