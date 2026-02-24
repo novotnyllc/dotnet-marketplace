@@ -345,8 +345,9 @@ def call_model(
 
     # Fail early with a clear message if the CLI tool is not available
     if not caps.get("available", True):
+        # Read unavailable_reason directly from cache
         reason_key = f"{backend}.unavailable_reason"
-        reason = caps.get(reason_key, "unknown")
+        reason = _cli_caps.get(reason_key, "unknown")
         if reason == "no_stdin_support":
             error_msg = (
                 f"{backend} CLI does not support stdin or file_stdin modes. "
@@ -360,15 +361,15 @@ def call_model(
         raise CLIConfigError(error_msg)
 
     # Build the prompt payload
-    # For claude: preserve system-role semantics by always using --system-prompt with
-    # a small, constant system instruction. Move variable skill content to user prompt.
+    # For claude: always use --system-prompt to preserve system-role semantics.
     # For other backends: combine into single payload (they don't support system role).
+    # This ensures deterministic role semantics across baseline/enhanced conditions:
+    # system_prompt stays in system role regardless of length; user_prompt length variations
+    # don't affect role assignment.
     if backend == "claude":
-        # Use a constant, brief system prompt for determinism
-        constant_system = "You are a helpful assistant."
         combined_prompt = user_prompt
         use_system_flag = True
-        system_prompt_for_cmd = constant_system
+        system_prompt_for_cmd = system_prompt
     else:
         # Combine system + user for non-claude backends (they don't support system role)
         combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
