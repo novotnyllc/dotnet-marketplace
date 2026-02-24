@@ -67,9 +67,8 @@ Add size impact evals (L6 runner) that test whether skill content format affects
 - [ ] Results include per-skill size tier, per-comparison scores, winner, injected bytes/estimated tokens
 - [ ] Resume/replay supported: generations cached
 ## Done summary
-TBD
-
+Implemented L6 size impact eval runner (run_size_impact.py) with deterministic summary extraction, pairwise LLM judge comparisons across Full/Summary/Baseline/Full+Siblings conditions, and a curated candidates.yaml dataset of 11 skills spanning small/medium/large tiers with 3 sibling-tested skills.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 00cb4b3, 9997863, 23533a3, 07c9d71
+- Tests: python tests/evals/run_size_impact.py --dry-run, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
