@@ -559,7 +559,8 @@ def _parse_cli_output(
                     result["input_tokens"] = usage.get("input_tokens", 0)
                     result["output_tokens"] = usage.get("output_tokens", 0)
 
-                cost_usd = data.get("cost_usd", 0.0)
+                # The claude CLI uses "total_cost_usd" in its JSON output
+                cost_usd = data.get("total_cost_usd", data.get("cost_usd", 0.0))
                 if isinstance(cost_usd, (int, float)):
                     result["cost"] = float(cost_usd)
 
