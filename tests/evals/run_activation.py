@@ -613,6 +613,10 @@ def main() -> int:
                     if should_activate and fallback_targets:
                         detection_method = "fallback"
                         for target_skill in fallback_targets:
+                            # Per-call cap check before each fallback LLM call
+                            if total_cost >= max_cost or total_calls >= max_calls:
+                                aborted = True
+                                break
                             activated, fb_cost, fb_calls = (
                                 detect_activation_fallback(
                                     response_text,

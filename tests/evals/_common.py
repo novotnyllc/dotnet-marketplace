@@ -82,10 +82,13 @@ def _emit_warning(key: str, message: str) -> None:
 def _detect_cli_caps(backend: str) -> dict[str, Any]:
     """Detect CLI capabilities for a backend (once per process).
 
-    Checks:
-    1. CLI tool is in PATH (shutil.which)
-    2. Probe stdin piping with a trivial prompt
-    3. For claude: probe --output-format json
+    Probes the CLI tool in order of preference:
+    1. stdin piping
+    2. file_stdin (write prompt to temp file, pipe as stdin)
+    3. arg (append prompt as positional argument -- last resort)
+
+    For claude, also probes --output-format json independently of
+    the prompt transport mode.
 
     Returns:
         Dict with keys: json_output (bool), prompt_mode (str).
@@ -108,55 +111,106 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
         _cli_caps[mode_key] = "arg"
         return {"json_output": False, "prompt_mode": "arg"}
 
-    # Step 2: probe stdin piping
-    prompt_mode = "arg"  # fallback
-    try:
+    # Resolve configured model for probing (avoid hard-coding a model)
+    cfg = load_config()
+    cli_cfg = cfg.get("cli", {})
+    probe_model = cli_cfg.get(backend, {}).get("model")
+
+    # Step 2: probe prompt transport modes in preference order
+    prompt_mode = "arg"  # ultimate fallback
+    probe_stdout = ""
+
+    def _build_probe_cmd(backend: str, probe_model: Any, use_json: bool) -> list[str]:
         if backend == "claude":
-            probe_cmd = [
-                "claude", "-p", "--model", "haiku",
-                "--output-format", "json", "--tools", "",
-                "--no-session-persistence", "--disable-slash-commands",
+            cmd = ["claude", "-p"]
+            if probe_model:
+                cmd.extend(["--model", str(probe_model)])
+            if use_json:
+                cmd.extend(["--output-format", "json"])
+            cmd.extend([
+                "--tools", "",
+                "--no-session-persistence",
+                "--disable-slash-commands",
                 "--max-turns", "1",
-            ]
+            ])
+            return cmd
         elif backend == "codex":
-            probe_cmd = ["codex", "--approval-mode", "full-auto", "-q", "-"]
+            cmd = ["codex", "--approval-mode", "full-auto"]
+            if probe_model:
+                cmd.extend(["-m", str(probe_model)])
+            cmd.extend(["-q", "-"])
+            return cmd
         else:
             # copilot
-            probe_cmd = ["copilot", "-p", "-"]
+            return ["copilot", "-p", "-"]
 
-        probe_proc = subprocess.run(
-            probe_cmd,
-            input="Reply with exactly: OK",
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-        if probe_proc.returncode == 0:
-            prompt_mode = "stdin"
-        else:
-            prompt_mode = "file_stdin"
-    except (subprocess.TimeoutExpired, OSError):
-        prompt_mode = "file_stdin"
+    # Try stdin first
+    use_json_probe = backend == "claude"
+    probe_cmd = _build_probe_cmd(backend, probe_model, use_json_probe)
 
-    # Step 3: JSON output support (claude only)
-    json_output = False
-    if backend == "claude" and prompt_mode == "stdin":
-        # The probe above already used --output-format json
-        # If it succeeded, JSON output is supported
+    for mode in ("stdin", "file_stdin"):
         try:
-            out = probe_proc.stdout  # type: ignore[possibly-undefined]
-            parsed = json.loads(out) if out.strip() else None
-            if isinstance(parsed, dict):
-                json_output = True
-        except (json.JSONDecodeError, AttributeError):
-            pass
+            if mode == "stdin":
+                proc = subprocess.run(
+                    probe_cmd,
+                    input="Reply with exactly: OK",
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+            else:
+                # file_stdin: write to temp file, pipe as stdin
+                with tempfile.NamedTemporaryFile(
+                    mode="w", suffix=".txt", delete=False, encoding="utf-8"
+                ) as tf:
+                    tf.write("Reply with exactly: OK")
+                    tf_path = tf.name
+                try:
+                    with open(tf_path) as stdin_file:
+                        proc = subprocess.run(
+                            probe_cmd,
+                            stdin=stdin_file,
+                            capture_output=True,
+                            text=True,
+                            timeout=30,
+                        )
+                finally:
+                    Path(tf_path).unlink(missing_ok=True)
 
-    if not json_output and backend == "claude":
-        _emit_warning(
-            f"{backend}_no_json",
-            f"claude CLI does not support --output-format json. "
-            f"Falling back to text mode. Upgrade claude or set cli.default: codex in config.yaml",
-        )
+            if proc.returncode == 0:
+                prompt_mode = mode
+                probe_stdout = proc.stdout or ""
+                break
+            else:
+                stderr_preview = (proc.stderr or "")[:200]
+                _emit_warning(
+                    f"{backend}_probe_{mode}_fail",
+                    f"{backend} probe failed in {mode} mode (rc={proc.returncode}): "
+                    f"{stderr_preview}",
+                )
+        except (subprocess.TimeoutExpired, OSError):
+            _emit_warning(
+                f"{backend}_probe_{mode}_error",
+                f"{backend} probe timed out or errored in {mode} mode",
+            )
+
+    # Step 3: JSON output support (claude only) -- check independently
+    json_output = False
+    if backend == "claude":
+        if probe_stdout.strip():
+            try:
+                parsed = json.loads(probe_stdout)
+                if isinstance(parsed, dict):
+                    json_output = True
+            except json.JSONDecodeError:
+                pass
+
+        if not json_output:
+            _emit_warning(
+                f"{backend}_no_json",
+                "claude CLI does not support --output-format json or probe "
+                "returned non-JSON. Falling back to text mode.",
+            )
 
     _cli_caps[json_key] = json_output
     _cli_caps[mode_key] = prompt_mode
@@ -236,7 +290,13 @@ def _build_cli_command(
     use_system_flag: bool,
     system_prompt: str,
 ) -> list[str]:
-    """Build the CLI command list for a given backend."""
+    """Build the CLI command list for a given backend.
+
+    Passes max_tokens and temperature to backends that support them.
+    claude: --max-tokens flag supported.
+    codex/copilot: best-effort; flags may be silently ignored if not
+    supported by the CLI version.
+    """
     if backend == "claude":
         cmd = ["claude", "-p"]
         if use_system_flag:
@@ -245,6 +305,8 @@ def _build_cli_command(
             cmd.extend(["--model", str(model)])
         if caps["json_output"]:
             cmd.extend(["--output-format", "json"])
+        # Pass max_tokens to bound output length
+        cmd.extend(["--max-tokens", str(max_tokens)])
         cmd.extend([
             "--tools", "",
             "--no-session-persistence",
@@ -631,10 +693,10 @@ def build_run_metadata(
     backend = cli or cli_cfg.get("default", "claude")
     backend_cfg = cli_cfg.get(backend, {})
 
-    resolved_model = model or backend_cfg.get("model", "haiku")
+    resolved_model = model or backend_cfg.get("model") or "default"
     resolved_judge = judge_model or cli_cfg.get(
         backend, {}
-    ).get("model", "haiku")
+    ).get("model") or "default"
 
     return {
         "run_id": str(uuid.uuid4()),

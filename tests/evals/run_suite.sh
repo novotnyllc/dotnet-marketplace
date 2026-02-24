@@ -173,16 +173,6 @@ costs = [
 print(round(sum(costs), 4))
 ")
 
-TOTAL_CALLS=$(python3 -c "
-import os
-calls = [
-    int(os.environ.get('_SUITE_ACT_CALLS', '0') or '0'),
-    int(os.environ.get('_SUITE_CONF_CALLS', '0') or '0'),
-    int(os.environ.get('_SUITE_EFF_CALLS', '0') or '0'),
-    int(os.environ.get('_SUITE_SIZE_CALLS', '0') or '0'),
-]
-print(sum(calls))
-")
 export _SUITE_ACT_CALLS="$ACT_CALLS"
 export _SUITE_CONF_CALLS="$CONF_CALLS"
 export _SUITE_EFF_CALLS="$EFF_CALLS"

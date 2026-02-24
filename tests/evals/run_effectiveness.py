@@ -603,6 +603,9 @@ def main() -> int:
                     ab_assignment = "enhanced=B,baseline=A"
 
                 # --- Judge phase ---
+                def _budget_exceeded() -> bool:
+                    return total_cost >= max_cost or total_calls >= max_calls
+
                 judge_result: Optional[dict] = None
                 try:
                     judge_result = judge_prompt.invoke_judge(
@@ -613,6 +616,7 @@ def main() -> int:
                         judge_model=meta["judge_model"],
                         temperature=temperature,
                         cli=args.cli,
+                        budget_check=_budget_exceeded,
                     )
                 except Exception as exc:
                     judge_result = {

@@ -4,7 +4,7 @@ Provides prompt construction for A/B comparison judging and structured
 response parsing with retry escalation on parse failures.
 """
 
-from typing import Optional
+from typing import Callable, Optional
 
 import _common
 
@@ -126,6 +126,7 @@ def invoke_judge(
     temperature: float = 0.0,
     max_retries: int = 2,
     cli: Optional[str] = None,
+    budget_check: Optional[Callable[[], bool]] = None,
 ) -> dict:
     """Invoke the LLM judge and parse the structured JSON response.
 
@@ -142,6 +143,9 @@ def invoke_judge(
         temperature: Sampling temperature (default 0.0).
         max_retries: Max parse-failure retries (default 2).
         cli: CLI backend override.
+        budget_check: Optional callable returning True if budget is
+            exceeded.  Checked before each LLM call to enforce per-call
+            cap limits set by the runner.
 
     Returns:
         Dict with keys:
@@ -162,6 +166,17 @@ def invoke_judge(
     raw_text = ""
 
     for attempt in range(1 + max_retries):
+        # Check budget before each LLM call
+        if budget_check is not None and budget_check():
+            return {
+                "parsed": None,
+                "raw_judge_text": raw_text,
+                "cost": total_cost,
+                "calls": total_calls,
+                "attempts": attempt,
+                "judge_error": "budget exceeded before judge attempt",
+            }
+
         suffix = retry_suffixes[min(attempt, len(retry_suffixes) - 1)]
         current_system = JUDGE_SYSTEM_PROMPT + suffix
 
