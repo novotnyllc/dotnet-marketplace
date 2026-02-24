@@ -181,7 +181,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             cmd.extend([
                 "--no-session-persistence",
                 "--disable-slash-commands",
-                "--max-turns", "1",
+                "--tools", "",
             ])
             return cmd
         elif backend == "codex":
@@ -205,7 +205,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                     input="Reply with exactly: OK",
                     capture_output=True,
                     text=True,
-                    timeout=30,
+                    timeout=120,
                     env=_subprocess_env(),
                     cwd=_SUBPROCESS_CWD,
                 )
@@ -223,7 +223,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                             stdin=stdin_file,
                             capture_output=True,
                             text=True,
-                            timeout=30,
+                            timeout=120,
                             env=_subprocess_env(),
                             cwd=_SUBPROCESS_CWD,
                         )
@@ -404,12 +404,12 @@ def _build_cli_command(
 ) -> list[str]:
     """Build the CLI command list for a given backend.
 
-    Only claude receives --max-tokens (output bounding).  ``temperature``
-    is accepted in the signature for forward compatibility but is NOT
-    currently passed to any CLI backend -- none of the supported CLIs
-    (claude, codex, copilot) expose a temperature flag.  If a backend
-    adds temperature support in the future, this is the extension point.
-    ``max_tokens`` is only passed to claude.
+    ``temperature`` is accepted in the signature for forward
+    compatibility but is NOT currently passed to any CLI backend --
+    none of the supported CLIs (claude, codex, copilot) expose a
+    temperature flag.  ``max_tokens`` is accepted for signature
+    compatibility but the claude CLI does not support output token
+    bounding.
     """
     if backend == "claude":
         cmd = ["claude", "-p"]
@@ -419,12 +419,10 @@ def _build_cli_command(
             cmd.extend(["--model", str(model)])
         if caps["json_output"]:
             cmd.extend(["--output-format", "json"])
-        # Pass max_tokens to bound output length
-        cmd.extend(["--max-tokens", str(max_tokens)])
         cmd.extend([
             "--no-session-persistence",
             "--disable-slash-commands",
-            "--max-turns", "1",
+            "--tools", "",
         ])
     elif backend == "codex":
         cmd = ["codex", "--approval-mode", "full-auto"]
