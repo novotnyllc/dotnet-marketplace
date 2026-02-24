@@ -66,3 +66,5 @@ This mirrors test.sh's snapshot/restore pattern but uses git instead of rsync.
 - [ ] `python3 tests/evals/run_activation.py --dry-run` still works
 
 ## Done summary
+
+## Evidence
