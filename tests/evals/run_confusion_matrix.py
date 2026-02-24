@@ -253,8 +253,9 @@ def build_confusion_matrices(
     """Build per-group NxN confusion matrices from case results.
 
     For each group, builds a matrix where rows are expected skills and
-    columns are predicted skills. Also tracks multi_activation and
-    no_activation counts.
+    columns are predicted skills. Axes are locked to the declared
+    DOMAIN_GROUPS skills to ensure stable NxN dimensions across runs.
+    Out-of-group predictions are tracked separately.
 
     Args:
         case_results: List of evaluated confusion case result dicts.
@@ -264,8 +265,9 @@ def build_confusion_matrices(
             "matrix": {expected: {predicted: count}},
             "multi_activation_count": int,
             "no_activation_count": int,
+            "out_of_group_count": int,
             "total_cases": int,
-            "skills": [sorted skill list],
+            "skills": [sorted skill list from DOMAIN_GROUPS],
         }
     """
     # Group cases by their domain group
@@ -277,24 +279,18 @@ def build_confusion_matrices(
 
     matrices: dict[str, dict] = {}
     for group_name, results in sorted(grouped.items()):
-        # Collect all skills that appear in this group
-        all_skills: set[str] = set()
-        for r in results:
-            all_skills.add(r.get("expected_skill", ""))
-            for s in r.get("acceptable_skills", []):
-                all_skills.add(s)
-            for s in r.get("activated_skills", []):
-                all_skills.add(s)
-        all_skills.discard("")
-        sorted_skills = sorted(all_skills)
+        # Lock axes to declared group skills (stable across runs)
+        group_skills = DOMAIN_GROUPS.get(group_name, [])
+        sorted_skills = sorted(group_skills)
 
-        # Build NxN matrix
+        # Build NxN matrix with fixed axes
         matrix: dict[str, dict[str, int]] = {}
         for skill in sorted_skills:
             matrix[skill] = {s: 0 for s in sorted_skills}
 
         multi_activation_count = 0
         no_activation_count = 0
+        out_of_group_count = 0
 
         for r in results:
             expected = r.get("expected_skill", "")
@@ -313,11 +309,15 @@ def build_confusion_matrices(
                 primary = activated[0]
                 if primary in matrix[expected]:
                     matrix[expected][primary] += 1
+                else:
+                    # Prediction outside the group (hallucination)
+                    out_of_group_count += 1
 
         matrices[group_name] = {
             "matrix": matrix,
             "multi_activation_count": multi_activation_count,
             "no_activation_count": no_activation_count,
+            "out_of_group_count": out_of_group_count,
             "total_cases": len(results),
             "skills": sorted_skills,
         }
@@ -349,7 +349,6 @@ def compute_cross_activation_rates(
     for group_name, data in sorted(matrices.items()):
         matrix = data["matrix"]
         skills = data["skills"]
-        total_cases = data["total_cases"]
 
         # Per-skill cross-activation
         per_skill_cross: dict[str, float] = {}
@@ -431,6 +430,7 @@ def generate_findings(
     matrices: dict[str, dict],
     cross_rates: dict[str, dict],
     negative_results: list[dict],
+    confusion_results: Optional[list[dict]] = None,
 ) -> list[dict]:
     """Generate findings section for the report.
 
@@ -441,15 +441,26 @@ def generate_findings(
         matrices: Per-group confusion matrix data.
         cross_rates: Per-group cross-activation rate data.
         negative_results: Results from negative control cases.
+        confusion_results: Individual case results for prompt-level findings.
 
     Returns:
         List of finding dicts with severity, group, description.
     """
     findings: list[dict] = []
+    case_results = confusion_results or []
 
     # Cross-activation findings (absolute > 20%)
     for group_name, rates in sorted(cross_rates.items()):
         for flagged in rates["flagged_cross_activations"]:
+            # Collect example case IDs for this cross-activation pair
+            example_ids = [
+                r.get("id", "")
+                for r in case_results
+                if r.get("group") == group_name
+                and r.get("expected_skill") == flagged["expected"]
+                and r.get("activated_skills", [None])[0:1] == [flagged["predicted"]]
+            ][:3]  # Top 3 examples
+
             findings.append({
                 "severity": "warning",
                 "group": group_name,
@@ -463,20 +474,40 @@ def generate_findings(
                 "expected": flagged["expected"],
                 "predicted": flagged["predicted"],
                 "rate": flagged["rate"],
+                "example_case_ids": example_ids,
             })
 
-    # Low discrimination findings
+    # Low discrimination: skill-level aggregate
     for group_name, rates in sorted(cross_rates.items()):
         for skill in rates["low_discrimination_skills"]:
             findings.append({
                 "severity": "warning",
                 "group": group_name,
-                "type": "low_discrimination",
+                "type": "low_discrimination_skill",
                 "description": (
                     f"Low discrimination for '{skill}' in group '{group_name}': "
                     f"2+ other skills received equal or more activations"
                 ),
                 "skill": skill,
+            })
+
+    # Low discrimination: prompt-level (multi_activation cases)
+    for r in case_results:
+        if r.get("classification") == "multi_activation":
+            findings.append({
+                "severity": "info",
+                "group": r.get("group", "unknown"),
+                "type": "low_discrimination_prompt",
+                "description": (
+                    f"Low discrimination prompt '{r.get('id', 'unknown')}' "
+                    f"in group '{r.get('group', 'unknown')}': "
+                    f"expected '{r.get('expected_skill', '')}', "
+                    f"got multiple activations: {r.get('activated_skills', [])}"
+                ),
+                "case_id": r.get("id", ""),
+                "expected_skill": r.get("expected_skill", ""),
+                "activated_skills": r.get("activated_skills", []),
+                "user_prompt": r.get("user_prompt", ""),
             })
 
     # High multi_activation rate per group
@@ -598,6 +629,15 @@ def main() -> int:
     )
     confusion_dir = datasets_dir / "confusion"
 
+    # Validate --group if provided
+    if args.group and args.group not in DOMAIN_GROUPS:
+        print(
+            f"[confusion] ERROR: Unknown group '{args.group}'. "
+            f"Valid groups: {', '.join(sorted(DOMAIN_GROUPS.keys()))}",
+            file=sys.stderr,
+        )
+        return 0
+
     # Load datasets
     confusion_cases, negative_cases = load_confusion_cases(
         confusion_dir, group_filter=args.group
@@ -645,15 +685,32 @@ def main() -> int:
     temperature = cfg.get("temperature", 0.0)
     max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
 
-    # Pre-build group indices
+    # Pre-build group indices and validate skills exist
     group_indices: dict[str, tuple[str, int]] = {}
     active_groups = (
         [args.group] if args.group else sorted(DOMAIN_GROUPS.keys())
     )
+
+    # Validate that all declared skills actually exist in the repo
+    missing_skills: dict[str, list[str]] = {}
     for g in active_groups:
         skills = DOMAIN_GROUPS.get(g, [])
+        missing = [
+            s for s in skills
+            if _common.load_skill_description(s) is None
+        ]
+        if missing:
+            missing_skills[g] = missing
         if skills:
             group_indices[g] = build_group_index(skills)
+
+    if missing_skills:
+        print(
+            "[confusion] WARN: Missing skills in DOMAIN_GROUPS:",
+            file=sys.stderr,
+        )
+        for g, skills in sorted(missing_skills.items()):
+            print(f"  {g}: {skills}", file=sys.stderr)
 
     print(
         f"[confusion] Starting eval run {meta['run_id']}", file=sys.stderr
@@ -924,7 +981,9 @@ def main() -> int:
     # --- Build confusion matrices ---
     matrices = build_confusion_matrices(all_confusion_results)
     cross_rates = compute_cross_activation_rates(matrices)
-    findings = generate_findings(matrices, cross_rates, all_negative_results)
+    findings = generate_findings(
+        matrices, cross_rates, all_negative_results, all_confusion_results
+    )
 
     # --- Compute per-group summary with mean/stddev/n ---
     summary: dict[str, dict] = {}
