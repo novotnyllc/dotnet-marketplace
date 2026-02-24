@@ -4,6 +4,7 @@
 
 Based on the analysis from task .2, fix skill descriptions (frontmatter) to improve activation routing accuracy and reduce confusion between overlapping skills.
 
+**Depends on:** fn-60.2
 **Size:** L
 **Files:**
 - `skills/*/SKILL.md` -- frontmatter description updates for skills identified in .2

@@ -17,7 +17,7 @@ Pairwise comparisons scored by LLM judge via judge_prompt.py.
 Usage:
     python tests/evals/run_size_impact.py --dry-run
     python tests/evals/run_size_impact.py --skill dotnet-xunit
-    python tests/evals/run_size_impact.py --model claude-sonnet-4-20250514
+    python tests/evals/run_size_impact.py --cli codex
     python tests/evals/run_size_impact.py --regenerate
 
 Exit codes:
@@ -345,7 +345,6 @@ def load_candidates(
                 )
                 entry = {k: v for k, v in entry.items() if k != "siblings"}
             else:
-                # Reject path traversal attempts
                 unsafe = [
                     s for s in siblings
                     if ".." in s or "/" in s or "\\" in s
@@ -378,14 +377,10 @@ def load_candidates(
 def classify_size_tier(skill_name: str) -> tuple[str, int]:
     """Classify a skill into a size tier based on SKILL.md body size.
 
-    Tier thresholds (adapted from task .6 spec for actual repo data):
-      Small:  < 5KB body   (2 skills in this repo: smallest is ~3KB)
-      Medium: 5-15KB body  (52 skills)
-      Large:  > 15KB body  (77 skills)
-
-    The task spec suggested <2KB/2-5KB/>5KB, but no skills in this repo
-    have a body under 2KB. These thresholds produce meaningful tier
-    separation across the actual 131-skill catalog.
+    Tier thresholds:
+      Small:  < 5KB body
+      Medium: 5-15KB body
+      Large:  > 15KB body
 
     Args:
         skill_name: Skill directory name.
@@ -398,7 +393,6 @@ def classify_size_tier(skill_name: str) -> tuple[str, int]:
         return "unknown", 0
 
     content = skill_path.read_text(encoding="utf-8")
-    # Normalize CRLF for consistent frontmatter stripping
     content = content.replace("\r\n", "\n")
     body = _FRONTMATTER_RE.sub("", content, count=1).strip()
     body_bytes = len(body.encode("utf-8"))
@@ -421,10 +415,6 @@ def classify_size_tier(skill_name: str) -> tuple[str, int]:
 def estimate_tokens(text: str) -> int:
     """Estimate token count using the ~4 chars per token heuristic.
 
-    This is an approximation. Results are labeled 'tokens_estimated' in
-    output to distinguish from exact tokenizer counts. Sufficient for
-    cost/budget monitoring but not for precise token accounting.
-
     Args:
         text: Input text.
 
@@ -440,7 +430,7 @@ def estimate_tokens(text: str) -> int:
 
 # Bump when system prompt template or generation logic changes to
 # invalidate stale cached generations.
-_CACHE_SCHEMA_VERSION = "1"
+_CACHE_SCHEMA_VERSION = "2"
 
 
 def _condition_hash(
@@ -451,6 +441,7 @@ def _condition_hash(
     model: str,
     temperature: float,
     content: str,
+    cli_backend: str,
 ) -> str:
     """Compute a deterministic hash for a generation cache key.
 
@@ -459,16 +450,17 @@ def _condition_hash(
         prompt_text: User prompt text.
         condition: Condition label (full, summary, baseline, full_siblings).
         run_index: Run iteration index.
-        model: Generation model.
+        model: Generation model (CLI-native string).
         temperature: Sampling temperature.
         content: Injected content (affects cache invalidation).
+        cli_backend: CLI backend name.
 
     Returns:
         Hex digest string for cache filename.
     """
     content_digest = hashlib.sha256(content.encode()).hexdigest()[:12]
     key = (
-        f"v{_CACHE_SCHEMA_VERSION}|{skill_name}|{prompt_text}|{condition}"
+        f"v{_CACHE_SCHEMA_VERSION}|{cli_backend}|{skill_name}|{prompt_text}|{condition}"
         f"|{run_index}|{model}|{temperature}|{content_digest}"
     )
     return hashlib.sha256(key.encode()).hexdigest()[:16]
@@ -544,39 +536,37 @@ def _save_generation(
 
 
 def _generate_code(
-    client,
     system_prompt: str,
     user_prompt: str,
     model: str,
     temperature: float,
-) -> tuple[str, float]:
-    """Generate code using the Anthropic API.
+    cli: Optional[str] = None,
+) -> tuple[str, float, int]:
+    """Generate code using CLI-based model invocation.
 
     Args:
-        client: Anthropic client instance.
         system_prompt: System prompt for the generation.
         user_prompt: User prompt to generate code for.
-        model: Model to use.
+        model: Model to use (CLI-native string).
         temperature: Sampling temperature.
+        cli: CLI backend override.
 
     Returns:
-        Tuple of (generated_text, cost).
+        Tuple of (generated_text, cost, calls).
     """
 
     def _call():
-        return client.messages.create(
+        return _common.call_model(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
             model=model,
             max_tokens=4096,
             temperature=temperature,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_prompt}],
+            cli=cli,
         )
 
-    response = _common.retry_with_backoff(_call)
-    text = response.content[0].text if response.content else ""
-    usage = response.usage
-    cost = _common.track_cost(model, usage.input_tokens, usage.output_tokens)
-    return text, cost
+    result = _common.retry_with_backoff(_call)
+    return result["text"], result["cost"], result["calls"]
 
 
 # ---------------------------------------------------------------------------
@@ -682,7 +672,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show candidate skills and exit without API calls",
+        help="Show candidate skills and exit without CLI calls",
     )
     parser.add_argument(
         "--skill",
@@ -694,7 +684,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--model",
         type=str,
         default=None,
-        help="Override generation model",
+        help="Override generation model (CLI-native string)",
     )
     parser.add_argument(
         "--judge-model",
@@ -725,6 +715,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Force re-generation even if cached outputs exist",
     )
+    parser.add_argument(
+        "--cli",
+        type=str,
+        choices=["claude", "codex", "copilot"],
+        default=None,
+        help="Override CLI backend (default: from config.yaml)",
+    )
     return parser
 
 
@@ -745,6 +742,10 @@ def main() -> int:
             "[size_impact] No candidates found in datasets/size_impact/candidates.yaml",
             file=sys.stderr,
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES=0")
         return 0
 
     # Filter to single skill if --skill specified
@@ -756,6 +757,10 @@ def main() -> int:
                 f"Available: {', '.join(c['skill'] for c in candidates)}",
                 file=sys.stderr,
             )
+            print(f"TOTAL_CALLS=0")
+            print(f"COST_USD=0.0")
+            print(f"ABORTED=0")
+            print(f"N_CASES=0")
             return 0
         candidates = matching
 
@@ -805,9 +810,13 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "[size_impact] Dry run complete. No API calls made.",
+            "[size_impact] Dry run complete. No CLI calls made.",
             file=sys.stderr,
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES=0")
         return 0
 
     # --- Full eval execution ---
@@ -816,14 +825,17 @@ def main() -> int:
         model=args.model,
         judge_model=args.judge_model,
         seed=args.seed,
+        cli=args.cli,
     )
     temperature = cfg.get("temperature", 0.0)
-    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
+    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
+    max_calls = cfg.get("cost", {}).get("max_calls_per_run", 500)
     seed = meta["seed"]
+    cli_backend = meta["backend"]
 
     print(f"[size_impact] Starting eval run {meta['run_id']}", file=sys.stderr)
     print(
-        f"[size_impact] Skills: {len(candidates)}, Runs per condition: {args.runs}",
+        f"[size_impact] Backend: {cli_backend}, Skills: {len(candidates)}, Runs per condition: {args.runs}",
         file=sys.stderr,
     )
     print(
@@ -831,8 +843,7 @@ def main() -> int:
         file=sys.stderr,
     )
 
-    # Set up client and output paths
-    client = _common.get_client()
+    # Set up output paths
     results_dir = (
         args.output_dir
         if args.output_dir is not None
@@ -843,14 +854,15 @@ def main() -> int:
     gen_dir = _generations_dir(results_dir)
 
     total_cost = 0.0
+    total_calls_count = 0
+    aborted = False
     cases: list[dict] = []
-    cost_exceeded = False
 
     # Per-skill tracking for summary
     skill_comparisons: dict[str, list[dict]] = {}
 
     for cand in candidates:
-        if cost_exceeded:
+        if aborted:
             break
 
         skill_name = cand["skill"]
@@ -867,7 +879,6 @@ def main() -> int:
             skill_comparisons[skill_name] = []
 
         # --- Prepare condition content ---
-        # Full
         full_body = _common.load_skill_body(skill_name)
         if full_body is None:
             print(
@@ -876,7 +887,6 @@ def main() -> int:
             )
             continue
 
-        # Summary
         summary_result = extract_summary(skill_name)
         if summary_result is None:
             print(
@@ -886,7 +896,6 @@ def main() -> int:
             continue
         summary_text, _summary_bytes = summary_result
 
-        # Siblings (optional)
         siblings_text: Optional[str] = None
         if has_siblings:
             sib_names = cand["siblings"]
@@ -895,9 +904,6 @@ def main() -> int:
             if sib_result:
                 siblings_text, _sib_bytes = sib_result
 
-        # Build the exact injected blobs per condition, then derive
-        # system prompts, cache keys, and sizes from those blobs.
-        # This ensures condition_sizes reflect exactly what gets injected.
         summary_injected = (
             f"--- BEGIN SKILL SUMMARY ---\n{summary_text}\n--- END SKILL SUMMARY ---"
         )
@@ -907,13 +913,11 @@ def main() -> int:
             "summary": SUMMARY_SYSTEM_TEMPLATE.format(summary=summary_text),
             "baseline": BASELINE_SYSTEM_PROMPT,
         }
-        # condition_content is used for cache hashing -- the semantic content
         condition_content = {
             "full": full_body,
             "summary": summary_injected,
             "baseline": "",
         }
-        # condition_sizes derived from the exact injected blob
         condition_sizes = {
             "full": {
                 "bytes": len(full_body.encode("utf-8")),
@@ -930,7 +934,6 @@ def main() -> int:
         }
 
         if siblings_text is not None:
-            # Match FULL_SIBLINGS_SYSTEM_TEMPLATE spacing: \n\n between blocks
             full_siblings_injected = full_body + "\n\n" + siblings_text
             condition_prompts["full_siblings"] = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
                 skill_body=full_body, siblings_body=siblings_text
@@ -942,7 +945,7 @@ def main() -> int:
             }
 
         for run_idx in range(args.runs):
-            if cost_exceeded:
+            if aborted:
                 break
 
             # --- Generate all conditions ---
@@ -951,11 +954,13 @@ def main() -> int:
             generation_error: Optional[str] = None
 
             for cond_name, sys_prompt in condition_prompts.items():
-                if total_cost >= max_cost:
-                    cost_exceeded = True
+                # Dual abort check
+                if total_cost >= max_cost or total_calls_count >= max_calls:
+                    aborted = True
                     print(
-                        f"[size_impact] ABORT: Cost limit ${max_cost:.2f} exceeded "
-                        f"(spent ${total_cost:.4f})",
+                        f"[size_impact] ABORT: Limit exceeded "
+                        f"(cost=${total_cost:.4f}/{max_cost}, "
+                        f"calls={total_calls_count}/{max_calls})",
                         file=sys.stderr,
                     )
                     break
@@ -968,6 +973,7 @@ def main() -> int:
                     meta["model"],
                     temperature,
                     condition_content[cond_name],
+                    cli_backend,
                 )
 
                 cached = None
@@ -983,16 +989,17 @@ def main() -> int:
                     )
                 else:
                     try:
-                        text, cost = _generate_code(
-                            client,
+                        text, cost, calls = _generate_code(
                             sys_prompt,
                             test_prompt,
                             meta["model"],
                             temperature,
+                            cli=args.cli,
                         )
                         generations[cond_name] = text
                         gen_costs[cond_name] = cost
                         total_cost += cost
+                        total_calls_count += calls
 
                         _save_generation(
                             gen_dir,
@@ -1015,7 +1022,7 @@ def main() -> int:
                         )
                         break
 
-            if cost_exceeded or generation_error:
+            if aborted or generation_error:
                 if generation_error:
                     cases.append(
                         {
@@ -1073,8 +1080,9 @@ def main() -> int:
                 if cond_a not in generations or cond_b not in generations:
                     continue
 
-                if total_cost >= max_cost:
-                    cost_exceeded = True
+                # Dual abort check
+                if total_cost >= max_cost or total_calls_count >= max_calls:
+                    aborted = True
                     break
 
                 # A/B randomization with deterministic seed
@@ -1108,24 +1116,26 @@ def main() -> int:
                 judge_result: Optional[dict] = None
                 try:
                     judge_result = judge_prompt.invoke_judge(
-                        client=client,
                         user_prompt=test_prompt,
                         response_a=response_a,
                         response_b=response_b,
                         criteria=SIZE_IMPACT_CRITERIA,
                         judge_model=meta["judge_model"],
                         temperature=temperature,
+                        cli=args.cli,
                     )
                 except Exception as exc:
                     judge_result = {
                         "parsed": None,
                         "raw_judge_text": "",
                         "cost": 0.0,
+                        "calls": 0,
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }
 
                 total_cost += judge_result["cost"]
+                total_calls_count += judge_result.get("calls", 0)
 
                 case_record: dict = {
                     "id": comparison_id,
@@ -1163,7 +1173,7 @@ def main() -> int:
                     continue
 
                 parsed = judge_result["parsed"]
-                assert parsed is not None  # guaranteed if no judge_error
+                assert parsed is not None
 
                 scores = _compute_comparison_scores(
                     parsed,
@@ -1205,7 +1215,6 @@ def main() -> int:
             winners = [c["winner"] for c in type_comps]
             stats = _compute_stats(improvements)
 
-            # Count wins for each side
             parts = comp_type.split("_vs_")
             a_label = parts[0]
             b_label = parts[1]
@@ -1232,7 +1241,6 @@ def main() -> int:
             and (c.get("generation_error") or c.get("judge_error"))
         )
 
-        # Compute injected bytes and tokens for each condition
         summary_result = extract_summary(skill_name)
         full_body = _common.load_skill_body(skill_name)
 
@@ -1259,7 +1267,7 @@ def main() -> int:
         output_dir=args.output_dir,
     )
 
-    # Print summary
+    # Print summary to stderr
     print(f"\n[size_impact] === Summary ===", file=sys.stderr)
     for skill_name, stats in summary.items():
         print(
@@ -1277,9 +1285,16 @@ def main() -> int:
             )
 
     print(f"\n[size_impact] Total cost: ${total_cost:.4f}", file=sys.stderr)
+    print(f"  Total calls: {total_calls_count}", file=sys.stderr)
     print(
         f"[size_impact] Results written to: {output_path}", file=sys.stderr
     )
+
+    # Emit runner output contract on stdout
+    print(f"TOTAL_CALLS={total_calls_count}")
+    print(f"COST_USD={total_cost:.4f}")
+    print(f"ABORTED={'1' if aborted else '0'}")
+    print(f"N_CASES={len(cases)}")
     return 0
 
 

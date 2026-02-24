@@ -4,6 +4,7 @@
 
 Full rerun of all 4 eval types after fixes from tasks .3 and .4. Validate results against the quality bar thresholds defined in the epic spec. If thresholds are not met, do one more targeted fix-and-rerun iteration.
 
+**Depends on:** fn-60.3, fn-60.4
 **Size:** M
 **Files:**
 - `tests/evals/results/` (output directory, gitignored)
@@ -21,7 +22,7 @@ Full rerun of all 4 eval types after fixes from tasks .3 and .4. Validate result
 3. Compare results against ALL quality bar thresholds:
    - L3: TPR>=75%, FPR<=20%, accuracy>=70% (from `summary._overall`)
    - L4: per-group accuracy>=60%, cross-activation<=35%, no never-activated skills (check `artifacts.findings[]` where `type == "never_activated"` -- must be empty or exception documented), negative control pass rate>=70%
-   - L5: overall win rate>=50% (sum wins / sum non-error cases across skills), mean improvement>0 (weighted by n), no skill at 0% win rate
+   - L5: overall win rate>=50% (sum wins / sum non-error cases across skills), mean improvement>0 (weighted by n), no skill at 0% win rate unless variance exception documented (with only 6 cases per skill, 0% can occur by chance; document exception if mean improvement is non-negative)
    - L6 (computed exclusively from `full_vs_baseline` comparisons):
      - Aggregate: `wins_full / (wins_full + wins_baseline + ties)` >= 55% across all candidates
      - Per-skill: no candidate where baseline sweeps all runs (`wins_baseline == n`) -- this indicates harmful skill content
@@ -35,11 +36,11 @@ Full rerun of all 4 eval types after fixes from tasks .3 and .4. Validate result
 5. If a threshold proves systematically unachievable (e.g., haiku consistently can't route to certain skills), document the rationale and adjust the threshold.
 
 ## Acceptance
-- [ ] All 4 eval types re-run with fresh results and verified complete (no cost-cap aborts)
+- [ ] All 4 eval types re-run with fresh results and verified complete (`ABORTED=0` in each runner's stdout)
 - [ ] Results compared against ALL quality bar thresholds including:
   - L4 "no never-activated skills" via `artifacts.findings[]` (or documented exception with rationale)
   - L4 negative control pass rate >= 70%
-  - L5 no skill at 0% win rate
+  - L5 no skill at 0% win rate (unless variance exception: mean improvement non-negative + documented rationale)
   - L5/L6 aggregation uses weighted method (sum wins / sum non-error cases)
   - L6 per-skill guard: no candidate where baseline sweeps all runs in `full_vs_baseline`
 - [ ] All thresholds met OR documented rationale for exceptions

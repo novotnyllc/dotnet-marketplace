@@ -4,6 +4,7 @@
 
 Save the passing eval results as initial baseline JSON files in `tests/evals/baselines/`. These baselines are used by `compare_baseline.py` for future informational regression detection.
 
+**Depends on:** fn-60.5
 **Size:** S
 **Files:**
 - `tests/evals/baselines/effectiveness_baseline.json` (new)

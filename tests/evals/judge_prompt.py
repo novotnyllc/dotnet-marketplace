@@ -4,6 +4,8 @@ Provides prompt construction for A/B comparison judging and structured
 response parsing with retry escalation on parse failures.
 """
 
+from typing import Optional
+
 import _common
 
 # ---------------------------------------------------------------------------
@@ -116,7 +118,6 @@ Score both responses on every criterion (1-5). Output ONLY the JSON object."""
 
 
 def invoke_judge(
-    client,
     user_prompt: str,
     response_a: str,
     response_b: str,
@@ -124,6 +125,7 @@ def invoke_judge(
     judge_model: str,
     temperature: float = 0.0,
     max_retries: int = 2,
+    cli: Optional[str] = None,
 ) -> dict:
     """Invoke the LLM judge and parse the structured JSON response.
 
@@ -132,20 +134,21 @@ def invoke_judge(
     'raw_judge_text' from the last attempt.
 
     Args:
-        client: Anthropic client instance.
         user_prompt: Original user prompt.
         response_a: Output labeled Response A.
         response_b: Output labeled Response B.
         criteria: Rubric criteria list.
-        judge_model: Model to use for judging.
+        judge_model: Model to use for judging (CLI-native string).
         temperature: Sampling temperature (default 0.0).
         max_retries: Max parse-failure retries (default 2).
+        cli: CLI backend override.
 
     Returns:
         Dict with keys:
         - 'parsed': parsed JSON dict or None on failure
         - 'raw_judge_text': raw text from last judge response
         - 'cost': total cost across all judge attempts
+        - 'calls': total CLI calls made
         - 'attempts': number of attempts made
         - 'judge_error': error string if all attempts failed, else None
     """
@@ -155,6 +158,7 @@ def invoke_judge(
 
     retry_suffixes = ["", JUDGE_RETRY_SUFFIX_1, JUDGE_RETRY_SUFFIX_2]
     total_cost = 0.0
+    total_calls = 0
     raw_text = ""
 
     for attempt in range(1 + max_retries):
@@ -162,21 +166,20 @@ def invoke_judge(
         current_system = JUDGE_SYSTEM_PROMPT + suffix
 
         def _call():
-            return client.messages.create(
+            return _common.call_model(
+                system_prompt=current_system,
+                user_prompt=base_user_prompt,
                 model=judge_model,
                 max_tokens=2048,
                 temperature=temperature,
-                system=current_system,
-                messages=[{"role": "user", "content": base_user_prompt}],
+                cli=cli,
             )
 
-        response = _common.retry_with_backoff(_call)
+        result = _common.retry_with_backoff(_call)
 
-        raw_text = response.content[0].text if response.content else ""
-        usage = response.usage
-        total_cost += _common.track_cost(
-            judge_model, usage.input_tokens, usage.output_tokens
-        )
+        raw_text = result["text"]
+        total_cost += result["cost"]
+        total_calls += result["calls"]
 
         parsed = _common.extract_json(raw_text)
         if parsed is not None and _validate_judge_response(parsed, criteria):
@@ -184,6 +187,7 @@ def invoke_judge(
                 "parsed": parsed,
                 "raw_judge_text": raw_text,
                 "cost": total_cost,
+                "calls": total_calls,
                 "attempts": attempt + 1,
                 "judge_error": None,
             }
@@ -193,6 +197,7 @@ def invoke_judge(
         "parsed": None,
         "raw_judge_text": raw_text,
         "cost": total_cost,
+        "calls": total_calls,
         "attempts": 1 + max_retries,
         "judge_error": f"Failed to parse valid judge JSON after {1 + max_retries} attempts",
     }

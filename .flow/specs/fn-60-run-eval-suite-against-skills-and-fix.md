@@ -6,6 +6,14 @@ Epic fn-58 built a comprehensive offline evaluation framework with 4 runners (ac
 
 This epic closes the loop: run all 4 eval types against the current 131-skill catalog, analyze failures, fix skill descriptions and content until they hit a reasonable quality bar, and save initial baselines for future regression tracking.
 
+**Supported platforms:** macOS and Linux. Windows is not supported by the eval framework (bash scripts, subprocess piping).
+
+## Task Execution Order
+
+**Task .7 (CLI migration) is the BLOCKER for all other tasks.** Despite being numbered .7, it MUST execute first. Dependencies are **machine-enforced** via Flow task JSON metadata (each task's `depends_on` array in `.flow/tasks/*.json`): .1 depends on .7, .2 depends on .1, .3/.4 depend on .2, .5 depends on .3+.4, .6 depends on .5. `flowctl ready` reads these dependencies and only surfaces .7 as the first actionable task. Each task spec also has a human-readable `Depends on:` line for redundancy.
+
+Execution order: **.7** -> .1 -> .2 -> .3/.4 (sequential, .3 first) -> .5 -> .6
+
 ## Quality Bar ("Good Enough" Thresholds)
 
 These thresholds account for the inherent difficulty of each eval type and the fact that we're routing across 131 skills with a small (haiku) model. Perfect scores are not expected.
@@ -24,7 +32,7 @@ These thresholds account for the inherent difficulty of each eval type and the f
 ### L5 Effectiveness
 - **Overall win rate >= 50%** -- enhanced beats baseline at least half the time
 - **Mean improvement > 0** -- net positive across all skills
-- **No individual skill has 0% win rate** (every skill should help at least sometimes)
+- **No individual skill has 0% win rate** unless documented as a variance exception. With only 2 prompts x 3 runs = 6 cases per skill, 0% can occur by variance even for mildly helpful skills. Document exception with rationale if a skill's mean improvement is non-negative but wins are 0.
 
 ### L6 Size Impact
 - **full > baseline** in >= 55% of `full_vs_baseline` comparisons (aggregate across all candidates, excluding errors)
@@ -51,7 +59,7 @@ These thresholds are deliberately achievable. If initial results are dramaticall
 
 ## Approach
 
-### Prerequisites (task .7)
+### Prerequisites (task .7 -- EXECUTE FIRST)
 
 **CLI-based API layer**: The eval runners currently use the Anthropic Python SDK (`anthropic.Anthropic().messages.create(...)`) for all LLM calls. This requires `ANTHROPIC_API_KEY` to be set. **This is wrong.** The coding CLI clients (`claude`, `codex`, `copilot`) are already authenticated locally and must be used instead.
 
@@ -60,12 +68,16 @@ Task .7 replaces the entire SDK-based API layer with CLI subprocess invocations:
 - **`_common.py`**: Replace `get_client()` and all `client.messages.create()` patterns with a `call_model()` function that shells out to the configured CLI tool
 - **CLI tools** (all locally installed and already authenticated):
   - `claude -p "prompt" --system-prompt "..." --model haiku --output-format json --tools ""`
-  - `codex exec "prompt" -m model`
+  - `codex --approval-mode full-auto "prompt" -m model`
   - `copilot -p "prompt"`
-- **Config**: `config.yaml` gets a `cli` section specifying which tool to use (default: `claude`). Remove all `ANTHROPIC_API_KEY` references.
+- **Config**: `config.yaml` gets a `cli` section specifying which tool to use (default: `claude`). Model names are CLI-native strings (e.g. `haiku` for claude, `o4-mini` for codex), not SDK model IDs.
 - **No SDK dependency**: Remove `anthropic` from `requirements.txt` for the API call path. Keep `pyyaml` for config parsing.
 
 The `claude` CLI is the primary backend because it supports `--system-prompt`, `--model`, and `--output-format json`. For `codex` and `copilot`, system prompts are prepended to the user message.
+
+**CLI capability detection**: `call_model()` performs one-time capability detection on first invocation to verify the configured CLI tool supports the expected flags (e.g., `--output-format json`, stdin piping). If detection fails, it emits a one-time actionable diagnostic (e.g., "your claude CLI doesn't support --output-format json; upgrade or switch backend") and falls back gracefully: text-only mode with cost/usage fields set to 0.
+
+**CLI override flag**: All 4 runners accept `--cli {claude,codex,copilot}` to override the config default at runtime.
 
 **Skill loading**: Eval runners already load skills from `REPO_ROOT/skills/` (the local checkout). No plugin installation needed -- skills are read directly from the repo, not from any installed plugin location.
 
@@ -102,7 +114,25 @@ Per eval runner invocation (approximate):
 - Effectiveness with `--runs 3`: ~216 CLI calls (12 skills x 2 prompts x 3 runs x 3 calls/case)
 - Size impact with `--runs 3`: ~297 CLI calls (11 candidates x ~3 comparison types x 3 runs x 3 calls/case)
 
-`config.yaml:cost.max_cost_per_run` is retained as a safety cap. If cost tracking is unavailable from a given CLI, the cap is based on call count instead.
+**Safety caps**: Runners enforce a dual abort mechanism -- **(cost OR call-count) caps**, whichever triggers first:
+- `config.yaml:cost.max_cost_per_run` -- dollar-based cap (effective when CLI reports cost)
+- `config.yaml:cost.max_calls_per_run` -- call-count cap (always effective, provides safety when cost data is unavailable)
+
+`call_model()` returns `calls=1` per invocation and runners increment a shared counter for uniform abort logic regardless of backend.
+
+### Runner Output Contract
+
+All runners emit stable machine-parseable summary keys on stdout for `run_suite.sh` to consume:
+- `TOTAL_CALLS=<int>` -- number of CLI calls made
+- `COST_USD=<float>` -- total cost (0.0 if unavailable)
+- `ABORTED=0|1` -- whether the run was cut short by a cap
+- `N_CASES=<int>` -- number of eval cases executed
+
+`run_suite.sh` parses these keys instead of regexing prose lines. This ensures consistent behavior across CLI backends.
+
+### Schema Invariants
+
+**Result envelope `summary` shape is unchanged across the CLI migration.** The `summary` object schema for all 4 eval types must remain stable so that `compare_baseline.py` continues to work without modification. Task .7 acceptance explicitly requires this.
 
 ### Fix Priority
 
@@ -110,6 +140,10 @@ Per eval runner invocation (approximate):
 2. **Confusion cross-activations** -- differentiate overlapping skills
 3. **Effectiveness losses** -- improve content for skills that underperform baseline
 4. **Size impact anomalies** -- investigate skills where baseline beats full
+
+### CI Auth Note
+
+Local eval runs use authenticated CLI tools (no API keys needed). CI-based eval runs (fn-58.4) will need a separate auth story -- likely CLI auth via GitHub Actions secrets. This is explicitly fn-58.4's scope, not this epic's. We are removing SDK coupling here; CI auth is handled downstream.
 
 ## Quick Commands
 
@@ -142,17 +176,21 @@ python3 tests/evals/run_activation.py --cli codex
 - [ ] Initial baseline JSON files saved to `tests/evals/baselines/`
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass
 - [ ] fn-58.4 unblocked (has dependency on this epic's final task)
+- [ ] Result envelope `summary` schema unchanged across CLI migration (compare_baseline.py compatibility)
 
 ## Risks
 
 | Risk | Mitigation |
 |------|------------|
-| CLI tool not in PATH | Task .7 validates `claude`/`codex`/`copilot` availability at startup |
-| CLI output format changes | Parse defensively; extract text from structured output with fallbacks |
+| CLI tool not in PATH | Task .7 validates availability at startup with actionable diagnostics |
+| CLI flags differ by version | Capability detection in `call_model()` with fallback to text-only mode |
 | CLI subprocess overhead | Each call spawns a process -- slower than SDK but acceptable for eval workload |
+| Cost tracking unavailable | Dual cap: dollar-based + call-count-based; abort on whichever triggers first |
 | Skill modifications need restore | Git-based: commit before fixes, `git checkout -- skills/` to restore |
 | Fixing one skill breaks another | Re-run full suite after each fix batch; baselines track regressions |
 | Quality bar too high for haiku | Thresholds designed for haiku; can lower if systematically unachievable with documented rationale |
 | Description changes break copilot smoke tests | Run `validate-skills.sh` after each change batch |
 | .3/.4 file conflicts | Execute sequentially (.3 first, then .4) even though deps allow parallelism |
-| Cost tracking unavailable | Some CLIs don't expose token counts; fall back to call-count-based caps |
+| Summary schema drift breaks baselines | Schema invariant enforced in task .7 acceptance; compare_baseline.py tested after migration |
+| L5 0% win rate by variance | Exception mechanism: 0% allowed with documented rationale if sample size insufficient |
+| CI auth differs from local | fn-58.4 handles CI auth separately; this epic removes SDK coupling only |

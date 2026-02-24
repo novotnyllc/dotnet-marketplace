@@ -4,6 +4,7 @@
 
 Based on the analysis from task .2, improve skill content for skills where the enhanced (with-skill) output loses to or ties with the baseline (without-skill) output in L5 effectiveness evals.
 
+**Depends on:** fn-60.2 (execute AFTER fn-60.3)
 **Size:** M
 **Files:**
 - `skills/*/SKILL.md` -- content improvements for underperforming skills (body, not frontmatter)

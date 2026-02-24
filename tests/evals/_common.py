@@ -1,18 +1,21 @@
 """Shared infrastructure for offline skill evaluation runners.
 
 All eval runners import from this module. Provides config loading,
-Anthropic client wrapper, retry/backoff with jitter, token/cost
+CLI-based model invocation, retry/backoff with jitter, cost
 accounting, run_id/timestamps, JSON extraction from LLM responses,
 output writing, and skill content loading with frontmatter stripping.
 
-Auth is handled entirely by get_client(), which delegates to the
-Anthropic SDK's own environment-variable discovery. Config loading
-does not inject or cache auth state.
+LLM calls are made via CLI subprocess (claude, codex, copilot) rather
+than the Anthropic SDK. The CLI tools handle their own authentication.
 """
 
 import json
 import random
 import re
+import shutil
+import subprocess
+import sys
+import tempfile
 import time
 import uuid
 from datetime import datetime, timezone
@@ -40,9 +43,6 @@ _config_cache: Optional[dict] = None
 def load_config(config_path: Optional[Path] = None) -> dict:
     """Load config.yaml and return the parsed dict.
 
-    Does NOT inject or cache auth credentials. All auth is handled by
-    get_client(), which delegates to the Anthropic SDK.
-
     Returns:
         Parsed config dict.
     """
@@ -63,38 +63,361 @@ def load_config(config_path: Optional[Path] = None) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Anthropic client
+# CLI capability detection
 # ---------------------------------------------------------------------------
 
+# Per-backend capability cache.  Keys: "{backend}.json_output",
+# "{backend}.prompt_mode" (stdin | file_stdin | arg).
+_cli_caps: dict[str, Any] = {}
+_cli_warnings_emitted: set[str] = set()
 
-def get_client(api_key: Optional[str] = None):
-    """Create an Anthropic client instance.
 
-    Auth resolution order:
-      1. Explicit api_key parameter (if provided)
-      2. ANTHROPIC_API_KEY environment variable (checked by the SDK)
-      3. SDK default -- raises anthropic.AuthenticationError if missing
+def _emit_warning(key: str, message: str) -> None:
+    """Emit a one-time warning to stderr, keyed to avoid duplicates."""
+    if key not in _cli_warnings_emitted:
+        _cli_warnings_emitted.add(key)
+        print(f"WARNING: {message}", file=sys.stderr)
 
-    Args:
-        api_key: Optional API key override. If omitted, the Anthropic
-            SDK discovers credentials from the ANTHROPIC_API_KEY env var.
+
+def _detect_cli_caps(backend: str) -> dict[str, Any]:
+    """Detect CLI capabilities for a backend (once per process).
+
+    Checks:
+    1. CLI tool is in PATH (shutil.which)
+    2. Probe stdin piping with a trivial prompt
+    3. For claude: probe --output-format json
 
     Returns:
-        An anthropic.Anthropic client instance.
-
-    Raises:
-        ImportError: If the anthropic package is not installed.
-        anthropic.AuthenticationError: If no API key is discoverable.
+        Dict with keys: json_output (bool), prompt_mode (str).
     """
-    import anthropic  # type: ignore[import-untyped]
+    cache_prefix = backend
+    json_key = f"{cache_prefix}.json_output"
+    mode_key = f"{cache_prefix}.prompt_mode"
 
-    if api_key:
-        return anthropic.Anthropic(api_key=api_key)
+    if json_key in _cli_caps and mode_key in _cli_caps:
+        return {"json_output": _cli_caps[json_key], "prompt_mode": _cli_caps[mode_key]}
 
-    # Let the SDK discover ANTHROPIC_API_KEY from the environment.
-    # If the env var is missing, the SDK raises its own AuthenticationError
-    # with an actionable message about missing credentials.
-    return anthropic.Anthropic()
+    # Step 1: verify in PATH
+    if shutil.which(backend) is None:
+        _emit_warning(
+            f"{backend}_not_found",
+            f"{backend} CLI not found in PATH. Install it or set "
+            f"cli.default to a different backend in config.yaml",
+        )
+        _cli_caps[json_key] = False
+        _cli_caps[mode_key] = "arg"
+        return {"json_output": False, "prompt_mode": "arg"}
+
+    # Step 2: probe stdin piping
+    prompt_mode = "arg"  # fallback
+    try:
+        if backend == "claude":
+            probe_cmd = [
+                "claude", "-p", "--model", "haiku",
+                "--output-format", "json", "--tools", "",
+                "--no-session-persistence", "--disable-slash-commands",
+                "--max-turns", "1",
+            ]
+        elif backend == "codex":
+            probe_cmd = ["codex", "--approval-mode", "full-auto", "-q", "-"]
+        else:
+            # copilot
+            probe_cmd = ["copilot", "-p", "-"]
+
+        probe_proc = subprocess.run(
+            probe_cmd,
+            input="Reply with exactly: OK",
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if probe_proc.returncode == 0:
+            prompt_mode = "stdin"
+        else:
+            prompt_mode = "file_stdin"
+    except (subprocess.TimeoutExpired, OSError):
+        prompt_mode = "file_stdin"
+
+    # Step 3: JSON output support (claude only)
+    json_output = False
+    if backend == "claude" and prompt_mode == "stdin":
+        # The probe above already used --output-format json
+        # If it succeeded, JSON output is supported
+        try:
+            out = probe_proc.stdout  # type: ignore[possibly-undefined]
+            parsed = json.loads(out) if out.strip() else None
+            if isinstance(parsed, dict):
+                json_output = True
+        except (json.JSONDecodeError, AttributeError):
+            pass
+
+    if not json_output and backend == "claude":
+        _emit_warning(
+            f"{backend}_no_json",
+            f"claude CLI does not support --output-format json. "
+            f"Falling back to text mode. Upgrade claude or set cli.default: codex in config.yaml",
+        )
+
+    _cli_caps[json_key] = json_output
+    _cli_caps[mode_key] = prompt_mode
+
+    return {"json_output": json_output, "prompt_mode": prompt_mode}
+
+
+# ---------------------------------------------------------------------------
+# CLI model invocation
+# ---------------------------------------------------------------------------
+
+_SYSTEM_PROMPT_INLINE_LIMIT = 4000
+
+
+def call_model(
+    system_prompt: str,
+    user_prompt: str,
+    model: Optional[str] = None,
+    max_tokens: int = 4096,
+    temperature: float = 0.0,
+    cli: Optional[str] = None,
+) -> dict:
+    """Call an LLM via CLI subprocess.
+
+    Args:
+        system_prompt: System prompt text.
+        user_prompt: User prompt text.
+        model: CLI-native model string override.
+        max_tokens: Max tokens for generation.
+        temperature: Sampling temperature.
+        cli: CLI backend override (claude, codex, copilot).
+
+    Returns:
+        {"text": str, "cost": float, "input_tokens": int,
+         "output_tokens": int, "calls": 1}
+        cost/token fields are 0 if not available from the CLI output.
+        calls is always 1 (used for call-count-based abort logic).
+    """
+    cfg = load_config()
+    cli_cfg = cfg.get("cli", {})
+    backend = cli or cli_cfg.get("default", "claude")
+
+    # Resolve model
+    if model is None:
+        backend_cfg = cli_cfg.get(backend, {})
+        model = backend_cfg.get("model")
+
+    caps = _detect_cli_caps(backend)
+
+    # Build the prompt payload
+    # For large system prompts or non-claude backends: combine into single payload
+    use_system_flag = (
+        backend == "claude"
+        and len(system_prompt) <= _SYSTEM_PROMPT_INLINE_LIMIT
+    )
+
+    if use_system_flag:
+        combined_prompt = user_prompt
+    else:
+        combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
+
+    # Build CLI command
+    cmd = _build_cli_command(backend, model, max_tokens, temperature, caps, use_system_flag, system_prompt)
+
+    # Execute via preferred prompt transport
+    result = _execute_cli(cmd, combined_prompt, caps, backend)
+
+    return result
+
+
+def _build_cli_command(
+    backend: str,
+    model: Optional[str],
+    max_tokens: int,
+    temperature: float,
+    caps: dict,
+    use_system_flag: bool,
+    system_prompt: str,
+) -> list[str]:
+    """Build the CLI command list for a given backend."""
+    if backend == "claude":
+        cmd = ["claude", "-p"]
+        if use_system_flag:
+            cmd.extend(["--system-prompt", system_prompt])
+        if model:
+            cmd.extend(["--model", str(model)])
+        if caps["json_output"]:
+            cmd.extend(["--output-format", "json"])
+        cmd.extend([
+            "--tools", "",
+            "--no-session-persistence",
+            "--disable-slash-commands",
+            "--max-turns", "1",
+        ])
+    elif backend == "codex":
+        cmd = ["codex", "--approval-mode", "full-auto"]
+        if model:
+            cmd.extend(["-m", str(model)])
+        cmd.extend(["-q", "-"])
+    else:
+        # copilot
+        cmd = ["copilot", "-p", "-"]
+
+    return cmd
+
+
+def _execute_cli(
+    cmd: list[str],
+    prompt: str,
+    caps: dict,
+    backend: str,
+) -> dict:
+    """Execute CLI command with the appropriate prompt transport."""
+    prompt_mode = caps.get("prompt_mode", "arg")
+    result_default = {
+        "text": "",
+        "cost": 0.0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "calls": 1,
+    }
+
+    try:
+        if prompt_mode == "stdin":
+            proc = subprocess.run(
+                cmd,
+                input=prompt,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+        elif prompt_mode == "file_stdin":
+            with tempfile.NamedTemporaryFile(
+                mode="w", suffix=".txt", delete=False, encoding="utf-8"
+            ) as tf:
+                tf.write(prompt)
+                tf_path = tf.name
+            try:
+                with open(tf_path) as stdin_file:
+                    proc = subprocess.run(
+                        cmd,
+                        stdin=stdin_file,
+                        capture_output=True,
+                        text=True,
+                        timeout=120,
+                    )
+            finally:
+                Path(tf_path).unlink(missing_ok=True)
+        else:
+            # arg mode: append prompt as positional arg (short prompts only)
+            proc = subprocess.run(
+                cmd + [prompt[:_SYSTEM_PROMPT_INLINE_LIMIT]],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+    except subprocess.TimeoutExpired:
+        result_default["text"] = ""
+        raise RuntimeError(f"{backend} CLI timed out after 120s")
+    except OSError as exc:
+        raise RuntimeError(f"{backend} CLI execution failed: {exc}")
+
+    if proc.returncode != 0:
+        stderr_preview = (proc.stderr or "")[:500]
+        raise RuntimeError(
+            f"{backend} CLI exited with code {proc.returncode}: {stderr_preview}"
+        )
+
+    stdout = proc.stdout or ""
+
+    # Parse response based on backend and capabilities
+    return _parse_cli_output(stdout, caps, backend)
+
+
+def _parse_cli_output(
+    stdout: str,
+    caps: dict,
+    backend: str,
+) -> dict:
+    """Parse CLI stdout into a structured result dict."""
+    result = {
+        "text": "",
+        "cost": 0.0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "calls": 1,
+    }
+
+    if not stdout.strip():
+        return result
+
+    if backend == "claude" and caps.get("json_output"):
+        # Try to parse JSON output from claude
+        try:
+            data = json.loads(stdout)
+            if isinstance(data, dict):
+                # Multi-shape detection
+                text = _extract_text_from_claude_json(data)
+                result["text"] = text
+
+                # Extract usage/cost if available
+                usage = data.get("usage", {})
+                if isinstance(usage, dict):
+                    result["input_tokens"] = usage.get("input_tokens", 0)
+                    result["output_tokens"] = usage.get("output_tokens", 0)
+
+                cost_usd = data.get("cost_usd", 0.0)
+                if isinstance(cost_usd, (int, float)):
+                    result["cost"] = float(cost_usd)
+
+                return result
+        except json.JSONDecodeError:
+            _emit_warning(
+                "claude_json_parse_fail",
+                "Failed to parse claude JSON output. Using raw stdout as text.",
+            )
+
+    # Fallback: use raw stdout as text
+    result["text"] = stdout.strip()
+    return result
+
+
+def _extract_text_from_claude_json(data: dict) -> str:
+    """Extract response text from claude JSON output, supporting multiple shapes.
+
+    Shape A: {"result": "...", ...}
+    Shape B: {"content": [{"text": "..."}], ...}
+    Shape C: {"completion": "..."}
+    Unknown: fall back to raw stdout with warning.
+    """
+    # Shape A: result field (current claude CLI format)
+    if "result" in data:
+        val = data["result"]
+        if isinstance(val, str):
+            return val
+
+    # Shape B: content array (API-like format)
+    if "content" in data:
+        content = data["content"]
+        if isinstance(content, list):
+            for block in content:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    return block.get("text", "")
+            # Try without type check
+            for block in content:
+                if isinstance(block, dict) and "text" in block:
+                    return block["text"]
+
+    # Shape C: completion field (legacy)
+    if "completion" in data:
+        val = data["completion"]
+        if isinstance(val, str):
+            return val
+
+    # Unknown shape: warn and dump
+    keys = sorted(data.keys())
+    _emit_warning(
+        "claude_unknown_json_shape",
+        f"Unknown claude JSON shape, keys: {keys}. Using raw output as text.",
+    )
+    return json.dumps(data)
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +432,9 @@ def retry_with_backoff(
     backoff_jitter: Optional[float] = None,
 ):
     """Execute fn with exponential backoff and jitter on failure.
+
+    Handles both subprocess failures (RuntimeError from call_model)
+    and general exceptions.
 
     Args:
         fn: Callable to execute. Should raise on failure.
@@ -286,6 +612,7 @@ def build_run_metadata(
     model: Optional[str] = None,
     judge_model: Optional[str] = None,
     seed: Optional[int] = None,
+    cli: Optional[str] = None,
 ) -> dict:
     """Generate run metadata for results envelope.
 
@@ -294,18 +621,27 @@ def build_run_metadata(
         model: Generation model override. Defaults to config.
         judge_model: Judge model override. Defaults to config.
         seed: RNG seed override. Defaults to config.
+        cli: CLI backend override. Defaults to config.
 
     Returns:
-        Dict with run_id, timestamp, model info, seed, and eval_type.
+        Dict with run_id, timestamp, backend, model info, seed, and eval_type.
     """
     cfg = load_config()
-    models = cfg.get("models", {})
+    cli_cfg = cfg.get("cli", {})
+    backend = cli or cli_cfg.get("default", "claude")
+    backend_cfg = cli_cfg.get(backend, {})
+
+    resolved_model = model or backend_cfg.get("model", "haiku")
+    resolved_judge = judge_model or cli_cfg.get(
+        backend, {}
+    ).get("model", "haiku")
 
     return {
         "run_id": str(uuid.uuid4()),
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "model": model or models.get("generation_model", "claude-haiku-4-20250514"),
-        "judge_model": judge_model or models.get("judge_model", "claude-haiku-4-20250514"),
+        "backend": backend,
+        "model": resolved_model,
+        "judge_model": resolved_judge,
         "seed": seed if seed is not None else cfg.get("rng", {}).get("default_seed", 42),
         "total_cost": 0.0,
         "eval_type": eval_type,
@@ -316,30 +652,19 @@ def build_run_metadata(
 # Cost tracking
 # ---------------------------------------------------------------------------
 
-# Approximate per-token costs (USD) for common models
-_COST_TABLE = {
-    "claude-haiku-4-20250514": {"input": 0.80 / 1_000_000, "output": 4.00 / 1_000_000},
-    "claude-sonnet-4-20250514": {"input": 3.00 / 1_000_000, "output": 15.00 / 1_000_000},
-}
-
 
 def track_cost(
-    model: str,
-    input_tokens: int,
-    output_tokens: int,
+    cli_reported_cost: float,
 ) -> float:
-    """Estimate API call cost from token counts.
+    """Accept CLI-reported cost directly.
 
     Args:
-        model: Model identifier string.
-        input_tokens: Number of input tokens.
-        output_tokens: Number of output tokens.
+        cli_reported_cost: Cost reported by CLI (0.0 if unavailable).
 
     Returns:
-        Estimated cost in USD.
+        The cost value passed in.
     """
-    costs = _COST_TABLE.get(model, {"input": 1.0 / 1_000_000, "output": 5.0 / 1_000_000})
-    return (input_tokens * costs["input"]) + (output_tokens * costs["output"])
+    return cli_reported_cost
 
 
 # ---------------------------------------------------------------------------
@@ -358,7 +683,7 @@ def write_results(
 
     The output envelope structure:
     {
-        "meta": { run_id, timestamp, model, judge_model, seed, total_cost, eval_type },
+        "meta": { run_id, timestamp, backend, model, judge_model, seed, total_cost, eval_type },
         "summary": { entity_id: { mean, stddev, n, ...per-eval-type scalar metrics } },
         "cases": [ { id, prompt, entity_id, ...per-eval-type details } ],
         "artifacts": { ...optional eval-specific structured data }

@@ -1,10 +1,15 @@
 # Eval framework configuration
-# Environment variable overrides: ANTHROPIC_API_KEY (required unless using an explicit key param in code)
-# OPENROUTER_API_KEY is reserved for future use and unused in this epic.
+# CLI tools (claude, codex, copilot) handle their own authentication.
+# No API keys needed -- the locally installed CLIs are already authenticated.
 
-models:
-  generation_model: claude-haiku-4-20250514
-  judge_model: claude-haiku-4-20250514
+cli:
+  default: claude           # which CLI tool to use (claude | codex | copilot)
+  claude:
+    model: haiku            # CLI-native model string (not SDK model ID)
+  codex:
+    model: o4-mini          # codex model name
+  copilot:
+    model: null             # copilot picks its own model
 
 temperature: 0.0
 
@@ -14,7 +19,8 @@ retry:
   backoff_jitter: 0.5
 
 cost:
-  max_cost_per_run: 15.0
+  max_cost_per_run: 5.00    # dollar-based cap (effective when CLI reports cost)
+  max_calls_per_run: 500    # call-count cap (always effective; safety net when cost unavailable)
 
 rng:
   default_seed: 42

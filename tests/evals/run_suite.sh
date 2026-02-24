@@ -2,12 +2,13 @@
 # run_suite.sh -- Run all 4 eval types and capture results + metrics
 #
 # Usage:
-#   ANTHROPIC_API_KEY=sk-... ./tests/evals/run_suite.sh
+#   ./tests/evals/run_suite.sh
 #   ./tests/evals/run_suite.sh --dry-run
 #   ./tests/evals/run_suite.sh --runs=5
+#   ./tests/evals/run_suite.sh --cli=codex
 #
-# Environment:
-#   ANTHROPIC_API_KEY  Required for real runs (not dry-run)
+# CLI tools (claude, codex, copilot) handle their own authentication.
+# No API keys needed.
 #
 # Run counts follow fn-60.1 spec:
 #   Activation and Confusion: always 1 run (no multi-run)
@@ -17,6 +18,7 @@
 #   - Individual result JSON files in tests/evals/results/
 #   - Summary metrics printed to stderr
 #   - Suite summary JSON written to tests/evals/results/suite_summary.json
+#   - Runners emit TOTAL_CALLS=/COST_USD=/ABORTED=/N_CASES= on stdout
 
 set -uo pipefail
 
@@ -25,32 +27,25 @@ EVALS_DIR="$REPO_ROOT/tests/evals"
 RESULTS_DIR="$EVALS_DIR/results"
 MULTI_RUNS="${RUNS:-3}"
 DRY_RUN=""
+CLI_OVERRIDE=""
 
 # Parse args
 for arg in "$@"; do
   case "$arg" in
     --dry-run) DRY_RUN="--dry-run" ;;
     --runs=*) MULTI_RUNS="${arg#--runs=}" ;;
+    --cli=*) CLI_OVERRIDE="--cli ${arg#--cli=}" ;;
     *) echo "Unknown arg: $arg" >&2; exit 1 ;;
   esac
 done
 
-# Issue #1: Validate MULTI_RUNS is a positive integer
+# Validate MULTI_RUNS is a positive integer
 if ! [[ "$MULTI_RUNS" =~ ^[1-9][0-9]*$ ]]; then
   echo "ERROR: --runs must be a positive integer, got: '$MULTI_RUNS'" >&2
   exit 1
 fi
 
 mkdir -p "$RESULTS_DIR"
-
-# Check API key unless dry-run
-if [ -z "$DRY_RUN" ]; then
-  if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-    echo "ERROR: ANTHROPIC_API_KEY is not set. Set it or use --dry-run." >&2
-    exit 1
-  fi
-  echo "[suite] ANTHROPIC_API_KEY is set (length=${#ANTHROPIC_API_KEY})" >&2
-fi
 
 echo "[suite] Starting eval suite (effectiveness/size_impact runs=$MULTI_RUNS)" >&2
 echo "[suite] Results dir: $RESULTS_DIR" >&2
@@ -59,30 +54,25 @@ SUITE_START=$(date +%s)
 ABORT_DETECTED=0
 RUNNER_FAILURES=0
 
-# Issue #5: Extract cost safely -- take only the last match to handle multi-line output
-extract_cost() {
+# Parse stable machine-parseable keys from runner stdout
+parse_runner_key() {
   local output="$1"
-  local cost
-  cost=$(echo "$output" | grep -o 'Total cost: \$[0-9.]*' | tail -n 1 | grep -o '[0-9.]*' 2>/dev/null || echo "0")
-  # Validate it looks like a number
-  if [[ "$cost" =~ ^[0-9]+\.?[0-9]*$ ]]; then
-    echo "$cost"
-  else
+  local key="$2"
+  local value
+  value=$(echo "$output" | grep "^${key}=" | tail -n 1 | sed "s/^${key}=//")
+  if [ -z "$value" ]; then
     echo "0"
+  else
+    echo "$value"
   fi
 }
 
-# Issue #2: Extract result file path from runner output
-extract_result_path() {
-  local output="$1"
-  echo "$output" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo ""
-}
-
-# Issue #6: Run a runner and capture exit code + output
+# Run a runner, capturing stdout (key-value lines) and stderr (logs) separately
 run_runner() {
   local label="$1"
   shift
-  local output=""
+  local stdout_output=""
+  local stderr_output=""
   local exit_code=0
 
   echo "" >&2
@@ -90,64 +80,83 @@ run_runner() {
   echo "[suite] Running $label eval..." >&2
   echo "============================================" >&2
 
-  output=$("$@" 2>&1) || exit_code=$?
-  echo "$output" >&2
+  # Capture stdout and stderr separately
+  local tmp_stdout
+  tmp_stdout=$(mktemp)
+  local tmp_stderr
+  tmp_stderr=$(mktemp)
+
+  "$@" >"$tmp_stdout" 2>"$tmp_stderr" || exit_code=$?
+
+  stdout_output=$(cat "$tmp_stdout")
+  stderr_output=$(cat "$tmp_stderr")
+  rm -f "$tmp_stdout" "$tmp_stderr"
+
+  # Print stderr logs
+  echo "$stderr_output" >&2
 
   if [ $exit_code -ne 0 ]; then
     echo "[suite] WARNING: $label runner exited with code $exit_code" >&2
     RUNNER_FAILURES=$((RUNNER_FAILURES + 1))
   fi
 
-  if echo "$output" | grep -q "ABORT"; then
-    echo "[suite] WARNING: $label runner aborted (cost cap)" >&2
+  # Parse ABORTED key
+  local runner_aborted
+  runner_aborted=$(parse_runner_key "$stdout_output" "ABORTED")
+  if [ "$runner_aborted" = "1" ]; then
+    echo "[suite] WARNING: $label runner aborted (cap limit)" >&2
     ABORT_DETECTED=1
   fi
 
-  # Return output via a global (bash doesn't support returning strings)
-  RUNNER_OUTPUT="$output"
+  # Return output via globals
+  RUNNER_STDOUT="$stdout_output"
+  RUNNER_STDERR="$stderr_output"
   RUNNER_EXIT_CODE=$exit_code
 }
 
-# Track result files produced by this suite run
-RESULT_FILES=""
-
 # --- L3 Activation (always 1 run per fn-60.1 spec) ---
-run_runner "L3 Activation" python3 "$EVALS_DIR/run_activation.py" $DRY_RUN
-ACT_OUTPUT="$RUNNER_OUTPUT"
+run_runner "L3 Activation" python3 "$EVALS_DIR/run_activation.py" $DRY_RUN $CLI_OVERRIDE
+ACT_STDOUT="$RUNNER_STDOUT"
 ACT_EXIT=$RUNNER_EXIT_CODE
-ACT_COST=$(extract_cost "$ACT_OUTPUT")
-ACT_RESULT=$(extract_result_path "$ACT_OUTPUT")
-if [ -n "$ACT_RESULT" ]; then RESULT_FILES="$RESULT_FILES $ACT_RESULT"; fi
+ACT_COST=$(parse_runner_key "$ACT_STDOUT" "COST_USD")
+ACT_CALLS=$(parse_runner_key "$ACT_STDOUT" "TOTAL_CALLS")
+ACT_CASES=$(parse_runner_key "$ACT_STDOUT" "N_CASES")
+
+# Extract result file path from stderr
+ACT_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- L4 Confusion (always 1 run per fn-60.1 spec) ---
-run_runner "L4 Confusion Matrix" python3 "$EVALS_DIR/run_confusion_matrix.py" $DRY_RUN
-CONF_OUTPUT="$RUNNER_OUTPUT"
+run_runner "L4 Confusion Matrix" python3 "$EVALS_DIR/run_confusion_matrix.py" $DRY_RUN $CLI_OVERRIDE
+CONF_STDOUT="$RUNNER_STDOUT"
 CONF_EXIT=$RUNNER_EXIT_CODE
-CONF_COST=$(extract_cost "$CONF_OUTPUT")
-CONF_RESULT=$(extract_result_path "$CONF_OUTPUT")
-if [ -n "$CONF_RESULT" ]; then RESULT_FILES="$RESULT_FILES $CONF_RESULT"; fi
+CONF_COST=$(parse_runner_key "$CONF_STDOUT" "COST_USD")
+CONF_CALLS=$(parse_runner_key "$CONF_STDOUT" "TOTAL_CALLS")
+CONF_CASES=$(parse_runner_key "$CONF_STDOUT" "N_CASES")
+CONF_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- L5 Effectiveness (multi-run) ---
-run_runner "L5 Effectiveness" python3 "$EVALS_DIR/run_effectiveness.py" --runs "$MULTI_RUNS" $DRY_RUN
-EFF_OUTPUT="$RUNNER_OUTPUT"
+run_runner "L5 Effectiveness" python3 "$EVALS_DIR/run_effectiveness.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE
+EFF_STDOUT="$RUNNER_STDOUT"
 EFF_EXIT=$RUNNER_EXIT_CODE
-EFF_COST=$(extract_cost "$EFF_OUTPUT")
-EFF_RESULT=$(extract_result_path "$EFF_OUTPUT")
-if [ -n "$EFF_RESULT" ]; then RESULT_FILES="$RESULT_FILES $EFF_RESULT"; fi
+EFF_COST=$(parse_runner_key "$EFF_STDOUT" "COST_USD")
+EFF_CALLS=$(parse_runner_key "$EFF_STDOUT" "TOTAL_CALLS")
+EFF_CASES=$(parse_runner_key "$EFF_STDOUT" "N_CASES")
+EFF_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- L6 Size Impact (multi-run) ---
-run_runner "L6 Size Impact" python3 "$EVALS_DIR/run_size_impact.py" --runs "$MULTI_RUNS" $DRY_RUN
-SIZE_OUTPUT="$RUNNER_OUTPUT"
+run_runner "L6 Size Impact" python3 "$EVALS_DIR/run_size_impact.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE
+SIZE_STDOUT="$RUNNER_STDOUT"
 SIZE_EXIT=$RUNNER_EXIT_CODE
-SIZE_COST=$(extract_cost "$SIZE_OUTPUT")
-SIZE_RESULT=$(extract_result_path "$SIZE_OUTPUT")
-if [ -n "$SIZE_RESULT" ]; then RESULT_FILES="$RESULT_FILES $SIZE_RESULT"; fi
+SIZE_COST=$(parse_runner_key "$SIZE_STDOUT" "COST_USD")
+SIZE_CALLS=$(parse_runner_key "$SIZE_STDOUT" "TOTAL_CALLS")
+SIZE_CASES=$(parse_runner_key "$SIZE_STDOUT" "N_CASES")
+SIZE_RESULT=$(echo "$RUNNER_STDERR" | grep -o 'Results written to: .*\.json' | tail -n 1 | sed 's/Results written to: //' || echo "")
 
 # --- Suite Summary ---
 SUITE_END=$(date +%s)
 SUITE_DURATION=$((SUITE_END - SUITE_START))
 
-# Issue #1: Pass values via environment to avoid shell interpolation into Python
+# Compute totals via python (avoids floating point issues in bash)
 export _SUITE_ACT_COST="$ACT_COST"
 export _SUITE_CONF_COST="$CONF_COST"
 export _SUITE_EFF_COST="$EFF_COST"
@@ -164,10 +173,37 @@ costs = [
 print(round(sum(costs), 4))
 ")
 
-# Issue #7: Count only result files from this suite run
+TOTAL_CALLS=$(python3 -c "
+import os
+calls = [
+    int(os.environ.get('_SUITE_ACT_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_CONF_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_EFF_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_SIZE_CALLS', '0') or '0'),
+]
+print(sum(calls))
+")
+export _SUITE_ACT_CALLS="$ACT_CALLS"
+export _SUITE_CONF_CALLS="$CONF_CALLS"
+export _SUITE_EFF_CALLS="$EFF_CALLS"
+export _SUITE_SIZE_CALLS="$SIZE_CALLS"
+
+TOTAL_CALLS=$(python3 -c "
+import os
+calls = [
+    int(os.environ.get('_SUITE_ACT_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_CONF_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_EFF_CALLS', '0') or '0'),
+    int(os.environ.get('_SUITE_SIZE_CALLS', '0') or '0'),
+]
+print(sum(calls))
+")
+
+# Count result files from this run
+RESULT_FILES="$ACT_RESULT $CONF_RESULT $EFF_RESULT $SIZE_RESULT"
 THIS_RUN_COUNT=0
 for f in $RESULT_FILES; do
-  if [ -f "$f" ]; then THIS_RUN_COUNT=$((THIS_RUN_COUNT + 1)); fi
+  if [ -n "$f" ] && [ -f "$f" ]; then THIS_RUN_COUNT=$((THIS_RUN_COUNT + 1)); fi
 done
 
 echo "" >&2
@@ -175,6 +211,7 @@ echo "============================================" >&2
 echo "[suite] === Suite Complete ===" >&2
 echo "  Duration: ${SUITE_DURATION}s" >&2
 echo "  Total cost: \$$TOTAL_COST" >&2
+echo "  Total calls: $TOTAL_CALLS" >&2
 echo "  Abort detected: $ABORT_DETECTED" >&2
 echo "  Runner failures: $RUNNER_FAILURES" >&2
 echo "  Result files (this run): $THIS_RUN_COUNT" >&2
@@ -182,11 +219,10 @@ echo "============================================" >&2
 
 # Write suite summary (only for real runs)
 if [ -z "$DRY_RUN" ]; then
-  # Issue #1, #2, #3: Pass all values via environment, use captured result paths,
-  # and wrap JSON loading in try/except
   export _SUITE_RESULTS_DIR="$RESULTS_DIR"
   export _SUITE_DURATION="$SUITE_DURATION"
   export _SUITE_TOTAL_COST="$TOTAL_COST"
+  export _SUITE_TOTAL_CALLS="$TOTAL_CALLS"
   export _SUITE_ABORT="$ABORT_DETECTED"
   export _SUITE_FAILURES="$RUNNER_FAILURES"
   export _SUITE_MULTI_RUNS="$MULTI_RUNS"
@@ -242,6 +278,7 @@ suite = {
     "timestamp": datetime.now(timezone.utc).isoformat(),
     "duration_seconds": int(os.environ["_SUITE_DURATION"]),
     "total_cost": float(os.environ["_SUITE_TOTAL_COST"]),
+    "total_calls": int(os.environ.get("_SUITE_TOTAL_CALLS", "0") or "0"),
     "abort_detected": os.environ["_SUITE_ABORT"] != "0",
     "runner_failures": int(os.environ["_SUITE_FAILURES"]),
     "multi_runs": int(os.environ["_SUITE_MULTI_RUNS"]),

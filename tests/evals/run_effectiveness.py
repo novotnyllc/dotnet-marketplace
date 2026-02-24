@@ -7,7 +7,7 @@ using rubric criteria to judge quality via an LLM judge.
 Usage:
     python tests/evals/run_effectiveness.py --dry-run
     python tests/evals/run_effectiveness.py --skill dotnet-xunit --runs 3
-    python tests/evals/run_effectiveness.py --model claude-sonnet-4-20250514
+    python tests/evals/run_effectiveness.py --cli codex
     python tests/evals/run_effectiveness.py --regenerate
 
 Exit codes:
@@ -59,6 +59,7 @@ def _prompt_hash(
     model: str,
     temperature: float,
     skill_body: str,
+    cli_backend: str,
 ) -> str:
     """Compute a deterministic hash for a generation cache key.
 
@@ -69,15 +70,16 @@ def _prompt_hash(
         skill_name: Name of the skill being evaluated.
         prompt_text: The user prompt text.
         run_index: The run iteration index (0-based).
-        model: Generation model identifier.
+        model: Generation model identifier (CLI-native string).
         temperature: Sampling temperature.
         skill_body: Injected skill body content (with delimiters).
+        cli_backend: CLI backend name (claude, codex, copilot).
 
     Returns:
         Hex digest string used as the cache filename stem.
     """
     key = (
-        f"{skill_name}|{prompt_text}|{run_index}"
+        f"{cli_backend}|{skill_name}|{prompt_text}|{run_index}"
         f"|{model}|{temperature}|{hashlib.sha256(skill_body.encode()).hexdigest()[:12]}"
     )
     return hashlib.sha256(key.encode()).hexdigest()[:16]
@@ -102,10 +104,6 @@ def _load_cached_generation(
 ) -> Optional[dict]:
     """Load a cached generation from disk if it exists and is valid.
 
-    Validates that the cached data contains the required 'enhanced' and
-    'baseline' keys with string values. Returns None (cache miss) if the
-    file is missing, corrupt, or has an unexpected shape.
-
     Args:
         gen_dir: Generations directory.
         skill_name: Skill name (subdirectory).
@@ -123,7 +121,6 @@ def _load_cached_generation(
     except (json.JSONDecodeError, OSError):
         return None
 
-    # Validate expected shape
     if not isinstance(data, dict):
         return None
     if not isinstance(data.get("enhanced"), str):
@@ -169,38 +166,36 @@ def _save_generation(
 
 
 def _generate_code(
-    client,
     system_prompt: str,
     user_prompt: str,
     model: str,
     temperature: float,
-) -> tuple[str, float]:
-    """Generate code using the Anthropic API.
+    cli: Optional[str] = None,
+) -> tuple[str, float, int]:
+    """Generate code using CLI-based model invocation.
 
     Args:
-        client: Anthropic client instance.
         system_prompt: System prompt for the generation.
         user_prompt: User prompt to generate code for.
-        model: Model to use for generation.
+        model: Model to use for generation (CLI-native string).
         temperature: Sampling temperature.
+        cli: CLI backend override.
 
     Returns:
-        Tuple of (generated_text, cost).
+        Tuple of (generated_text, cost, calls).
     """
     def _call():
-        return client.messages.create(
+        return _common.call_model(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
             model=model,
             max_tokens=4096,
             temperature=temperature,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_prompt}],
+            cli=cli,
         )
 
-    response = _common.retry_with_backoff(_call)
-    text = response.content[0].text if response.content else ""
-    usage = response.usage
-    cost = _common.track_cost(model, usage.input_tokens, usage.output_tokens)
-    return text, cost
+    result = _common.retry_with_backoff(_call)
+    return result["text"], result["cost"], result["calls"]
 
 
 # ---------------------------------------------------------------------------
@@ -230,16 +225,8 @@ def _compute_stats(values: list[float]) -> dict:
 def _compute_case_scores(judge_parsed: dict, criteria: list[dict]) -> dict:
     """Compute weighted scores from judge output.
 
-    Assumes judge output has already been validated by
-    judge_prompt._validate_judge_response(), which ensures all expected
-    criteria are present with valid scores. No normalization is performed;
-    if criteria are missing or weights don't sum to 1.0, that indicates
-    a validation gap upstream.
-
     Args:
         judge_parsed: Parsed judge JSON with 'criteria' and 'overall_winner'.
-            The caller must have already remapped score_a/score_b so that
-            score_a = enhanced and score_b = baseline.
         criteria: Rubric criteria list with 'name' and 'weight'.
 
     Returns:
@@ -300,7 +287,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="List skills with rubrics and exit without API calls",
+        help="List skills with rubrics and exit without CLI calls",
     )
     parser.add_argument(
         "--skill",
@@ -312,7 +299,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--model",
         type=str,
         default=None,
-        help="Override generation model",
+        help="Override generation model (CLI-native string)",
     )
     parser.add_argument(
         "--judge-model",
@@ -343,6 +330,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Force re-generation even if cached outputs exist",
     )
+    parser.add_argument(
+        "--cli",
+        type=str,
+        choices=["claude", "codex", "copilot"],
+        default=None,
+        help="Override CLI backend (default: from config.yaml)",
+    )
     return parser
 
 
@@ -359,13 +353,16 @@ def main() -> int:
     # Determine which skills to evaluate
     if args.skill:
         skills = [args.skill]
-        # Verify rubric exists
         rubric = _common.load_rubric(args.skill)
         if rubric is None:
             print(
                 f"[effectiveness] No rubric found for skill: {args.skill}",
                 file=sys.stderr,
             )
+            print(f"TOTAL_CALLS=0")
+            print(f"COST_USD=0.0")
+            print(f"ABORTED=0")
+            print(f"N_CASES=0")
             return 0
     else:
         skills = _common.list_skills_with_rubrics()
@@ -375,6 +372,10 @@ def main() -> int:
             "[effectiveness] No skills with rubrics found. Nothing to evaluate.",
             file=sys.stderr,
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES=0")
         return 0
 
     if args.dry_run:
@@ -395,9 +396,13 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "[effectiveness] Dry run complete. No API calls made.",
+            "[effectiveness] Dry run complete. No CLI calls made.",
             file=sys.stderr,
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES=0")
         return 0
 
     # --- Full eval execution ---
@@ -406,16 +411,19 @@ def main() -> int:
         model=args.model,
         judge_model=args.judge_model,
         seed=args.seed,
+        cli=args.cli,
     )
     temperature = cfg.get("temperature", 0.0)
-    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
+    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
+    max_calls = cfg.get("cost", {}).get("max_calls_per_run", 500)
     seed = meta["seed"]
+    cli_backend = meta["backend"]
 
     print(
         f"[effectiveness] Starting eval run {meta['run_id']}", file=sys.stderr
     )
     print(
-        f"[effectiveness] Skills: {len(skills)}, Runs per prompt: {args.runs}",
+        f"[effectiveness] Backend: {cli_backend}, Skills: {len(skills)}, Runs per prompt: {args.runs}",
         file=sys.stderr,
     )
     print(
@@ -423,8 +431,7 @@ def main() -> int:
         file=sys.stderr,
     )
 
-    # Set up client and output paths
-    client = _common.get_client()
+    # Set up output paths
     results_dir = (
         args.output_dir
         if args.output_dir is not None
@@ -435,6 +442,8 @@ def main() -> int:
     gen_dir = _generations_dir(results_dir)
 
     total_cost = 0.0
+    total_calls = 0
+    aborted = False
     cases: list[dict] = []
     # Collect per-skill improvement values for summary stats
     skill_improvements: dict[str, list[float]] = {s: [] for s in skills}
@@ -443,6 +452,9 @@ def main() -> int:
     }
 
     for skill_name in skills:
+        if aborted:
+            break
+
         rubric = _common.load_rubric(skill_name)
         if rubric is None:
             continue
@@ -462,18 +474,21 @@ def main() -> int:
 
         for prompt_idx, user_prompt in enumerate(test_prompts):
             for run_idx in range(args.runs):
-                # Check cost limit
-                if total_cost >= max_cost:
+                # Dual abort check
+                if total_cost >= max_cost or total_calls >= max_calls:
                     print(
-                        f"[effectiveness] ABORT: Cost limit ${max_cost:.2f} exceeded "
-                        f"(spent ${total_cost:.4f})",
+                        f"[effectiveness] ABORT: Limit exceeded "
+                        f"(cost=${total_cost:.4f}/{max_cost}, "
+                        f"calls={total_calls}/{max_calls})",
                         file=sys.stderr,
                     )
+                    aborted = True
                     break
 
                 phash = _prompt_hash(
                     skill_name, user_prompt, run_idx,
                     meta["model"], temperature, skill_body,
+                    cli_backend,
                 )
                 case_id = f"{skill_name}/{prompt_idx}/{run_idx}"
 
@@ -484,6 +499,7 @@ def main() -> int:
 
                 # --- Generation phase ---
                 gen_cost = 0.0
+                gen_calls = 0
                 enhanced_text = ""
                 baseline_text = ""
                 generation_error: Optional[str] = None
@@ -501,27 +517,29 @@ def main() -> int:
                     )
                 else:
                     try:
-                        enhanced_text, e_cost = _generate_code(
-                            client,
+                        enhanced_text, e_cost, e_calls = _generate_code(
                             enhanced_system,
                             user_prompt,
                             meta["model"],
                             temperature,
+                            cli=args.cli,
                         )
                         gen_cost += e_cost
+                        gen_calls += e_calls
                     except Exception as exc:
                         generation_error = f"enhanced generation failed: {exc}"
                         enhanced_text = ""
 
                     try:
-                        baseline_text, b_cost = _generate_code(
-                            client,
+                        baseline_text, b_cost, b_calls = _generate_code(
                             BASELINE_SYSTEM_PROMPT,
                             user_prompt,
                             meta["model"],
                             temperature,
+                            cli=args.cli,
                         )
                         gen_cost += b_cost
+                        gen_calls += b_calls
                     except Exception as exc:
                         if generation_error:
                             generation_error += f"; baseline generation failed: {exc}"
@@ -530,6 +548,7 @@ def main() -> int:
                         baseline_text = ""
 
                     total_cost += gen_cost
+                    total_calls += gen_calls
 
                     # Save generations for resume/replay
                     if not generation_error:
@@ -567,9 +586,6 @@ def main() -> int:
                     continue
 
                 # --- A/B randomization ---
-                # Derive case_seed from a stable hash of identifying fields
-                # so A/B assignment is reproducible regardless of iteration
-                # order (--skill X matches the same assignment from a full run)
                 seed_input = f"{seed}|{skill_name}|{prompt_idx}|{run_idx}"
                 case_seed = int(
                     hashlib.sha256(seed_input.encode()).hexdigest()[:8], 16
@@ -590,24 +606,26 @@ def main() -> int:
                 judge_result: Optional[dict] = None
                 try:
                     judge_result = judge_prompt.invoke_judge(
-                        client=client,
                         user_prompt=user_prompt,
                         response_a=response_a,
                         response_b=response_b,
                         criteria=criteria,
                         judge_model=meta["judge_model"],
                         temperature=temperature,
+                        cli=args.cli,
                     )
                 except Exception as exc:
                     judge_result = {
                         "parsed": None,
                         "raw_judge_text": "",
                         "cost": 0.0,
+                        "calls": 0,
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }
 
                 total_cost += judge_result["cost"]
+                total_calls += judge_result.get("calls", 0)
 
                 case_record: dict = {
                     "id": case_id,
@@ -635,9 +653,8 @@ def main() -> int:
 
                 # Remap scores based on A/B assignment
                 parsed = judge_result["parsed"]
-                assert parsed is not None  # guaranteed if no judge_error
+                assert parsed is not None
 
-                # Remap: score_a/score_b in judge output -> enhanced/baseline
                 remapped_criteria = []
                 for jc in parsed.get("criteria", []):
                     if enhanced_is_a:
@@ -655,7 +672,6 @@ def main() -> int:
                         "reasoning": jc.get("reasoning", ""),
                     })
 
-                # Build a remapped parsed dict for scoring
                 remapped_parsed = {
                     "criteria": [
                         {
@@ -684,15 +700,10 @@ def main() -> int:
 
                 cases.append(case_record)
 
-            # Check cost limit after each run batch
-            if total_cost >= max_cost:
-                print(
-                    f"[effectiveness] ABORT: Cost limit exceeded after {skill_name}",
-                    file=sys.stderr,
-                )
+            if aborted:
                 break
 
-        if total_cost >= max_cost:
+        if aborted:
             break
 
     # --- Build summary ---
@@ -726,7 +737,7 @@ def main() -> int:
         output_dir=args.output_dir,
     )
 
-    # Print summary
+    # Print summary to stderr
     print(f"\n[effectiveness] === Summary ===", file=sys.stderr)
     for skill_name, stats in summary.items():
         print(
@@ -737,7 +748,14 @@ def main() -> int:
             file=sys.stderr,
         )
     print(f"\n[effectiveness] Total cost: ${total_cost:.4f}", file=sys.stderr)
+    print(f"  Total calls: {total_calls}", file=sys.stderr)
     print(f"[effectiveness] Results written to: {output_path}", file=sys.stderr)
+
+    # Emit runner output contract on stdout
+    print(f"TOTAL_CALLS={total_calls}")
+    print(f"COST_USD={total_cost:.4f}")
+    print(f"ABORTED={'1' if aborted else '0'}")
+    print(f"N_CASES={len(cases)}")
     return 0
 
 

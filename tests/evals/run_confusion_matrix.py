@@ -11,12 +11,12 @@ Each confusion matrix prompt targets a specific skill within a domain group
 of overlapping skills. The runner presents the prompt with a group-scoped
 routing index and evaluates whether the model selects the correct skill.
 
-Uses the same structured JSON response approach as run_activation.py (task .5).
+Uses CLI-based model invocation via _common.call_model().
 
 Usage:
     python tests/evals/run_confusion_matrix.py --dry-run
     python tests/evals/run_confusion_matrix.py --group testing
-    python tests/evals/run_confusion_matrix.py --model claude-sonnet-4-20250514
+    python tests/evals/run_confusion_matrix.py --cli codex
 
 Exit codes:
     0 - Eval completed (informational, always exit 0)
@@ -461,14 +461,13 @@ def generate_findings(
     # Cross-activation findings (absolute > 20%)
     for group_name, rates in sorted(cross_rates.items()):
         for flagged in rates["flagged_cross_activations"]:
-            # Collect example case IDs for this cross-activation pair
             example_ids = [
                 r.get("id", "")
                 for r in case_results
                 if r.get("group") == group_name
                 and r.get("expected_skill") == flagged["expected"]
                 and r.get("activated_skills", [None])[0:1] == [flagged["predicted"]]
-            ][:3]  # Top 3 examples
+            ][:3]
 
             findings.append({
                 "severity": "warning",
@@ -524,7 +523,6 @@ def generate_findings(
         matrix = data["matrix"]
         group_skills = data["skills"]
         for skill in group_skills:
-            # Check if this skill was ever predicted (column sum)
             col_sum = sum(
                 matrix[row_skill].get(skill, 0) for row_skill in group_skills
                 if row_skill in matrix
@@ -621,7 +619,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show dataset groups and exit without API calls",
+        help="Show dataset groups and exit without CLI calls",
     )
     parser.add_argument(
         "--group",
@@ -633,7 +631,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--model",
         type=str,
         default=None,
-        help="Override generation model",
+        help="Override generation model (CLI-native string)",
     )
     parser.add_argument(
         "--judge-model",
@@ -658,6 +656,13 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=None,
         help="Override output directory for results",
+    )
+    parser.add_argument(
+        "--cli",
+        type=str,
+        choices=["claude", "codex", "copilot"],
+        default=None,
+        help="Override CLI backend (default: from config.yaml)",
     )
     return parser
 
@@ -719,9 +724,14 @@ def main() -> int:
                 f"[confusion] Filter: --group {args.group}", file=sys.stderr
             )
         print(
-            "[confusion] Dry run complete. No API calls made.",
+            "[confusion] Dry run complete. No CLI calls made.",
             file=sys.stderr,
         )
+        # Emit runner output contract
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES={total_confusion + total_negative}")
         return 0
 
     # --- Full eval execution ---
@@ -730,9 +740,11 @@ def main() -> int:
         model=args.model,
         judge_model=args.judge_model,
         seed=args.seed,
+        cli=args.cli,
     )
     temperature = cfg.get("temperature", 0.0)
-    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
+    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
+    max_calls = cfg.get("cost", {}).get("max_calls_per_run", 500)
 
     # Pre-build group indices and validate skills exist
     group_indices: dict[str, tuple[str, int]] = {}
@@ -766,7 +778,6 @@ def main() -> int:
             "missing skills. Add the skills or update DOMAIN_GROUPS.",
             file=sys.stderr,
         )
-        # Write an invalid-run envelope so scheduled automation sees the failure
         _common.write_results(
             meta=meta,
             summary={"_run_status": {
@@ -779,22 +790,26 @@ def main() -> int:
             output_dir=args.output_dir,
             artifacts={"missing_skills": missing_skills},
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=1")
+        print(f"N_CASES=0")
         return 0
 
     print(
         f"[confusion] Starting eval run {meta['run_id']}", file=sys.stderr
     )
     print(
-        f"[confusion] Model: {meta['model']}, "
+        f"[confusion] Backend: {meta['backend']}, Model: {meta['model']}, "
         f"Confusion cases: {len(confusion_cases)}, "
         f"Negative controls: {len(negative_cases)}, "
         f"Runs: {args.runs}",
         file=sys.stderr,
     )
 
-    client = _common.get_client()
-
     total_cost = 0.0
+    total_calls = 0
+    aborted = False
     all_confusion_results: list[dict] = []
     all_negative_results: list[dict] = []
 
@@ -807,12 +822,15 @@ def main() -> int:
 
         # --- Evaluate confusion matrix cases ---
         for case in confusion_cases:
-            if total_cost >= max_cost:
+            # Dual abort check
+            if total_cost >= max_cost or total_calls >= max_calls:
                 print(
-                    f"[confusion] ABORT: Cost limit ${max_cost:.2f} exceeded "
-                    f"(spent ${total_cost:.4f})",
+                    f"[confusion] ABORT: Limit exceeded "
+                    f"(cost=${total_cost:.4f}/{max_cost}, "
+                    f"calls={total_calls}/{max_calls})",
                     file=sys.stderr,
                 )
+                aborted = True
                 break
 
             case_id = case.get("id", "unknown")
@@ -833,7 +851,6 @@ def main() -> int:
                     f"group '{group}'",
                     file=sys.stderr,
                 )
-                # Record skipped case so coverage gaps are visible
                 all_confusion_results.append({
                     "id": run_case_id,
                     "entity_id": group,
@@ -846,8 +863,6 @@ def main() -> int:
                     "detection_method": "skipped",
                     "passed": False,
                     "run_index": run_idx,
-                    "input_tokens": 0,
-                    "output_tokens": 0,
                     "cost": 0.0,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
@@ -861,9 +876,8 @@ def main() -> int:
             )
 
             # Call model
-            input_tokens = 0
-            output_tokens = 0
             response_text = ""
+            call_cost = 0.0
             api_error: Optional[str] = None
 
             try:
@@ -871,27 +885,21 @@ def main() -> int:
                     _sys=system_prompt,
                     _prompt=user_prompt,
                     _model=meta["model"],
-                    _temp=temperature,
                 ):
-                    return client.messages.create(
+                    return _common.call_model(
+                        system_prompt=_sys,
+                        user_prompt=_prompt,
                         model=_model,
                         max_tokens=512,
-                        temperature=_temp,
-                        system=_sys,
-                        messages=[{"role": "user", "content": _prompt}],
+                        temperature=temperature,
+                        cli=args.cli,
                     )
 
-                response = _common.retry_with_backoff(_call)
-                response_text = (
-                    response.content[0].text if response.content else ""
-                )
-                usage = response.usage
-                input_tokens = usage.input_tokens
-                output_tokens = usage.output_tokens
-                call_cost = _common.track_cost(
-                    meta["model"], input_tokens, output_tokens
-                )
+                result = _common.retry_with_backoff(_call)
+                response_text = result["text"]
+                call_cost = result["cost"]
                 total_cost += call_cost
+                total_calls += result["calls"]
             except Exception as exc:
                 api_error = str(exc)
                 call_cost = 0.0
@@ -936,8 +944,6 @@ def main() -> int:
                 "detection_method": detection_method,
                 "passed": passed,
                 "run_index": run_idx,
-                "input_tokens": input_tokens,
-                "output_tokens": output_tokens,
                 "cost": round(call_cost, 6),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -948,11 +954,10 @@ def main() -> int:
 
             all_confusion_results.append(case_result)
 
-        if total_cost >= max_cost:
+        if aborted:
             break
 
         # --- Evaluate expanded negative controls ---
-        # Use the full routing index (all groups combined) for negative controls
         all_group_skills: list[str] = []
         for g in active_groups:
             all_group_skills.extend(DOMAIN_GROUPS.get(g, []))
@@ -964,12 +969,15 @@ def main() -> int:
         )
 
         for case in negative_cases:
-            if total_cost >= max_cost:
+            # Dual abort check
+            if total_cost >= max_cost or total_calls >= max_calls:
                 print(
-                    f"[confusion] ABORT: Cost limit ${max_cost:.2f} exceeded "
-                    f"(spent ${total_cost:.4f})",
+                    f"[confusion] ABORT: Limit exceeded "
+                    f"(cost=${total_cost:.4f}/{max_cost}, "
+                    f"calls={total_calls}/{max_calls})",
                     file=sys.stderr,
                 )
+                aborted = True
                 break
 
             case_id = case.get("id", "unknown")
@@ -985,37 +993,30 @@ def main() -> int:
                 file=sys.stderr,
             )
 
-            input_tokens = 0
-            output_tokens = 0
             response_text = ""
             api_error = None
+            call_cost = 0.0
 
             try:
                 def _neg_call(
                     _sys=neg_system_prompt,
                     _prompt=user_prompt,
                     _model=meta["model"],
-                    _temp=temperature,
                 ):
-                    return client.messages.create(
+                    return _common.call_model(
+                        system_prompt=_sys,
+                        user_prompt=_prompt,
                         model=_model,
                         max_tokens=512,
-                        temperature=_temp,
-                        system=_sys,
-                        messages=[{"role": "user", "content": _prompt}],
+                        temperature=temperature,
+                        cli=args.cli,
                     )
 
-                response = _common.retry_with_backoff(_neg_call)
-                response_text = (
-                    response.content[0].text if response.content else ""
-                )
-                usage = response.usage
-                input_tokens = usage.input_tokens
-                output_tokens = usage.output_tokens
-                call_cost = _common.track_cost(
-                    meta["model"], input_tokens, output_tokens
-                )
+                result = _common.retry_with_backoff(_neg_call)
+                response_text = result["text"]
+                call_cost = result["cost"]
                 total_cost += call_cost
+                total_calls += result["calls"]
             except Exception as exc:
                 api_error = str(exc)
                 call_cost = 0.0
@@ -1032,8 +1033,6 @@ def main() -> int:
                 else:
                     detection_method = "parse_failure"
 
-            # Negative case: pass means no skills activated (or parse failure
-            # treated as non-compliant => fail, consistent with run_activation)
             if detection_method == "parse_failure":
                 passed = False
             else:
@@ -1050,8 +1049,6 @@ def main() -> int:
                 "detection_method": detection_method,
                 "passed": passed,
                 "run_index": run_idx,
-                "input_tokens": input_tokens,
-                "output_tokens": output_tokens,
                 "cost": round(call_cost, 6),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -1062,7 +1059,7 @@ def main() -> int:
 
             all_negative_results.append(neg_result)
 
-        if total_cost >= max_cost:
+        if aborted:
             break
 
     # --- Build confusion matrices ---
@@ -1098,7 +1095,6 @@ def main() -> int:
                     run_acc = passed_count / len(run_cases)
                     run_accuracies.append(run_acc)
 
-                    # Compute run-level cross-activation
                     run_matrices = build_confusion_matrices(run_cases)
                     run_cross = compute_cross_activation_rates(run_matrices)
                     if group_name in run_cross:
@@ -1156,7 +1152,7 @@ def main() -> int:
     # Combine all case results
     all_cases = all_confusion_results + all_negative_results
 
-    # Serialize matrices for JSON output (convert nested defaultdict -> dict)
+    # Serialize matrices for JSON output
     serializable_matrices: dict[str, dict] = {}
     for group_name, data in matrices.items():
         serializable_matrices[group_name] = {
@@ -1190,7 +1186,7 @@ def main() -> int:
         },
     )
 
-    # --- Print summary ---
+    # --- Print summary to stderr ---
     print(f"\n[confusion] === Summary ===", file=sys.stderr)
 
     for group_name, group_summary in sorted(summary.items()):
@@ -1216,7 +1212,6 @@ def main() -> int:
             file=sys.stderr,
         )
 
-    # Print findings
     print(f"\n[confusion] === Findings ===", file=sys.stderr)
     if findings:
         for f in findings:
@@ -1228,9 +1223,16 @@ def main() -> int:
         print("  No findings (all metrics within thresholds).", file=sys.stderr)
 
     print(f"\n[confusion] Total cost: ${total_cost:.4f}", file=sys.stderr)
+    print(f"  Total calls: {total_calls}", file=sys.stderr)
     print(
         f"[confusion] Results written to: {output_path}", file=sys.stderr
     )
+
+    # Emit runner output contract on stdout
+    print(f"TOTAL_CALLS={total_calls}")
+    print(f"COST_USD={total_cost:.4f}")
+    print(f"ABORTED={'1' if aborted else '0'}")
+    print(f"N_CASES={len(all_cases)}")
     return 0
 
 

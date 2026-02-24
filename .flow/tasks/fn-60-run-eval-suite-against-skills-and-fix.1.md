@@ -4,6 +4,7 @@
 
 Run all 4 eval types against the current 131-skill catalog to establish the "before" state. This is the diagnostic baseline -- no fixes yet, just measurement.
 
+**Depends on:** fn-60.7
 **Size:** M
 **Files:**
 - `tests/evals/results/` (output directory, gitignored)
@@ -26,9 +27,10 @@ Save all result JSON files. Record key metrics from each run's summary output fo
 **Dry-run is NOT acceptable**: This task requires real CLI calls producing real results. Dry-run mode is only for verifying dataset/config, not for task completion.
 
 ## Acceptance
-- [ ] All 4 eval runners complete with real CLI calls (not dry-run) without errors (exit 0) AND without cost-cap abort
+- [ ] All 4 eval runners complete with real CLI calls (not dry-run) without errors (exit 0) AND with `ABORTED=0` in stdout
+- [ ] `TOTAL_CALLS` and `COST_USD` (if nonzero) recorded from each runner's stdout
 - [ ] Coverage completeness verified for each runner:
-  - Activation: `summary._overall.n` matches expected dataset case count; no "ABORT" in output
+  - Activation: `summary._overall.n` matches expected dataset case count; `ABORTED=0`
   - Confusion: per-group `summary[group].n` matches expected group case count; `_negative_controls.n` matches expected negative case count
   - Effectiveness: per-skill `summary[skill].total_cases == len(rubric.test_prompts) * runs`; `errors == 0` (or explicitly documented)
   - Size impact: per-skill comparison counts match expected `runs` for each comparison type

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline activation eval runner (L3) -- API-only skill routing test.
+"""Offline activation eval runner (L3) -- CLI-based skill routing test.
 
 Builds a compressed routing index from skill frontmatter and tests
 whether models correctly route prompts to the appropriate skills.
@@ -7,7 +7,7 @@ whether models correctly route prompts to the appropriate skills.
 Usage:
     python tests/evals/run_activation.py --dry-run
     python tests/evals/run_activation.py --skill dotnet-xunit
-    python tests/evals/run_activation.py --model claude-sonnet-4-20250514
+    python tests/evals/run_activation.py --cli codex
 
 Exit codes:
     0 - Eval completed (informational, always exit 0)
@@ -187,26 +187,26 @@ def detect_activation_structured(
 
 
 def detect_activation_fallback(
-    client,
     response_text: str,
     target_skill: str,
     judge_model: str,
     temperature: float,
-) -> tuple[bool, float, int, int]:
+    cli: Optional[str] = None,
+) -> tuple[bool, float, int]:
     """LLM fallback detection for when structured parsing fails.
 
     Asks a fast model whether the response indicates the target skill
     should be used. This is a rare path -- only invoked on parse failures.
 
     Args:
-        client: Anthropic client instance.
         response_text: The original model response that failed to parse.
         target_skill: The skill ID to check for.
         judge_model: Model to use for fallback classification.
         temperature: Sampling temperature.
+        cli: CLI backend override.
 
     Returns:
-        Tuple of (activated_bool, cost, input_tokens, output_tokens).
+        Tuple of (activated_bool, cost, calls).
     """
     user_content = (
         f"Target skill: {target_skill}\n\n"
@@ -214,20 +214,19 @@ def detect_activation_fallback(
     )
 
     def _call():
-        return client.messages.create(
+        return _common.call_model(
+            system_prompt=_FALLBACK_SYSTEM_PROMPT,
+            user_prompt=user_content,
             model=judge_model,
             max_tokens=100,
             temperature=temperature,
-            system=_FALLBACK_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": user_content}],
+            cli=cli,
         )
 
-    response = _common.retry_with_backoff(_call)
-    text = response.content[0].text if response.content else ""
-    usage = response.usage
-    cost = _common.track_cost(judge_model, usage.input_tokens, usage.output_tokens)
-    fb_input = usage.input_tokens
-    fb_output = usage.output_tokens
+    result = _common.retry_with_backoff(_call)
+    text = result["text"]
+    cost = result["cost"]
+    calls = result["calls"]
 
     parsed = _common.extract_json(text)
     if parsed is not None:
@@ -238,8 +237,8 @@ def detect_activation_fallback(
             activated = val.strip().lower() == "true"
         else:
             activated = False
-        return activated, cost, fb_input, fb_output
-    return False, cost, fb_input, fb_output
+        return activated, cost, calls
+    return False, cost, calls
 
 
 # ---------------------------------------------------------------------------
@@ -287,8 +286,6 @@ def compute_metrics(
     false_positives = 0
     true_negatives = 0
     false_negatives = 0
-    total_input_tokens = 0
-    total_output_tokens = 0
     total_cost = 0.0
 
     # Per-skill tracking
@@ -302,8 +299,6 @@ def compute_metrics(
         activated_skills = set(result.get("activated_skills", []))
         passed = bool(result.get("passed", False))
 
-        total_input_tokens += result.get("input_tokens", 0)
-        total_output_tokens += result.get("output_tokens", 0)
         total_cost += result.get("cost", 0.0)
 
         if should_activate:
@@ -346,8 +341,6 @@ def compute_metrics(
         "total_positive_cases": total_positive,
         "total_negative_cases": total_negative,
         "total_cases": total,
-        "total_input_tokens": total_input_tokens,
-        "total_output_tokens": total_output_tokens,
         "total_cost": round(total_cost, 6),
     }
 
@@ -376,12 +369,12 @@ def compute_metrics(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Offline activation eval runner (L3) -- API-only skill routing"
+        description="Offline activation eval runner (L3) -- CLI-based skill routing"
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show dataset stats and exit without API calls",
+        help="Show dataset stats and exit without CLI calls",
     )
     parser.add_argument(
         "--skill",
@@ -393,7 +386,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--model",
         type=str,
         default=None,
-        help="Override generation model",
+        help="Override generation model (CLI-native string)",
     )
     parser.add_argument(
         "--judge-model",
@@ -418,6 +411,13 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=None,
         help="Override output directory for results",
+    )
+    parser.add_argument(
+        "--cli",
+        type=str,
+        choices=["claude", "codex", "copilot"],
+        default=None,
+        help="Override CLI backend (default: from config.yaml)",
     )
     return parser
 
@@ -477,9 +477,14 @@ def main() -> int:
                 file=sys.stderr,
             )
         print(
-            "[activation] Dry run complete. No API calls made.",
+            "[activation] Dry run complete. No CLI calls made.",
             file=sys.stderr,
         )
+        # Emit runner output contract for dry-run
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES={len(test_cases)}")
         return 0
 
     # --- Full eval execution ---
@@ -488,9 +493,11 @@ def main() -> int:
         model=args.model,
         judge_model=args.judge_model,
         seed=args.seed,
+        cli=args.cli,
     )
     temperature = cfg.get("temperature", 0.0)
-    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
+    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
+    max_calls = cfg.get("cost", {}).get("max_calls_per_run", 500)
 
     # Build routing index
     index_text, skill_count, index_char_count = build_routing_index()
@@ -499,6 +506,10 @@ def main() -> int:
             "[activation] ERROR: No skills found in routing index.",
             file=sys.stderr,
         )
+        print(f"TOTAL_CALLS=0")
+        print(f"COST_USD=0.0")
+        print(f"ABORTED=0")
+        print(f"N_CASES=0")
         return 0
 
     system_prompt = _ACTIVATION_SYSTEM_PROMPT.format(index=index_text)
@@ -507,8 +518,8 @@ def main() -> int:
         f"[activation] Starting eval run {meta['run_id']}", file=sys.stderr
     )
     print(
-        f"[activation] Model: {meta['model']}, Cases: {len(test_cases)}, "
-        f"Runs: {args.runs}",
+        f"[activation] Backend: {meta['backend']}, Model: {meta['model']}, "
+        f"Cases: {len(test_cases)}, Runs: {args.runs}",
         file=sys.stderr,
     )
     print(
@@ -517,9 +528,9 @@ def main() -> int:
         file=sys.stderr,
     )
 
-    client = _common.get_client()
-
     total_cost = 0.0
+    total_calls = 0
+    aborted = False
     all_case_results: list[dict] = []
 
     for run_idx in range(args.runs):
@@ -530,12 +541,15 @@ def main() -> int:
             )
 
         for case in test_cases:
-            if total_cost >= max_cost:
+            # Dual abort check: cost OR call-count
+            if total_cost >= max_cost or total_calls >= max_calls:
                 print(
-                    f"[activation] ABORT: Cost limit ${max_cost:.2f} exceeded "
-                    f"(spent ${total_cost:.4f})",
+                    f"[activation] ABORT: Limit exceeded "
+                    f"(cost=${total_cost:.4f}/{max_cost}, "
+                    f"calls={total_calls}/{max_calls})",
                     file=sys.stderr,
                 )
+                aborted = True
                 break
 
             case_id = case.get("id", "unknown")
@@ -553,32 +567,28 @@ def main() -> int:
             )
 
             # Call model with routing index + user prompt
-            input_tokens = 0
-            output_tokens = 0
             response_text = ""
+            call_cost = 0.0
+            call_calls = 0
             api_error: Optional[str] = None
 
             try:
                 def _call():
-                    return client.messages.create(
+                    return _common.call_model(
+                        system_prompt=system_prompt,
+                        user_prompt=user_prompt,
                         model=meta["model"],
                         max_tokens=512,
                         temperature=temperature,
-                        system=system_prompt,
-                        messages=[{"role": "user", "content": user_prompt}],
+                        cli=args.cli,
                     )
 
-                response = _common.retry_with_backoff(_call)
-                response_text = (
-                    response.content[0].text if response.content else ""
-                )
-                usage = response.usage
-                input_tokens = usage.input_tokens
-                output_tokens = usage.output_tokens
-                call_cost = _common.track_cost(
-                    meta["model"], input_tokens, output_tokens
-                )
+                result = _common.retry_with_backoff(_call)
+                response_text = result["text"]
+                call_cost = result["cost"]
+                call_calls = result["calls"]
                 total_cost += call_cost
+                total_calls += call_calls
             except Exception as exc:
                 api_error = str(exc)
                 call_cost = 0.0
@@ -587,8 +597,7 @@ def main() -> int:
             activated_skills: list[str] = []
             detection_method = "error"
             fallback_cost = 0.0
-            fallback_input_tokens = 0
-            fallback_output_tokens = 0
+            fallback_calls = 0
 
             if api_error is None:
                 activated_skills_opt, detection_method = (
@@ -598,48 +607,39 @@ def main() -> int:
                     activated_skills = activated_skills_opt
                 else:
                     # Fallback: use LLM to classify per expected/acceptable skill
-                    # Only run fallback if there are skills to check; otherwise
-                    # keep detection_method as "parse_failure" (from structured)
                     fallback_targets = sorted(
                         set(expected_skills) | set(acceptable_skills)
                     )
                     if should_activate and fallback_targets:
                         detection_method = "fallback"
                         for target_skill in fallback_targets:
-                            activated, fb_cost, fb_in, fb_out = (
+                            activated, fb_cost, fb_calls = (
                                 detect_activation_fallback(
-                                    client,
                                     response_text,
                                     target_skill,
                                     meta["judge_model"],
                                     temperature,
+                                    cli=args.cli,
                                 )
                             )
                             fallback_cost += fb_cost
-                            fallback_input_tokens += fb_in
-                            fallback_output_tokens += fb_out
+                            fallback_calls += fb_calls
                             total_cost += fb_cost
+                            total_calls += fb_calls
                             if activated:
                                 activated_skills.append(target_skill)
-                    # else: detection_method stays "parse_failure"
 
             # Determine pass/fail
             if should_activate:
                 all_valid = set(expected_skills) | set(acceptable_skills)
                 passed = bool(set(activated_skills) & all_valid)
             else:
-                # Negative case: no skills should be activated.
-                # If structured parse failed, treat as non-compliant (fail)
-                # since the model may have indicated skills in non-JSON text.
                 if detection_method == "parse_failure":
                     passed = False
                 else:
                     passed = len(activated_skills) == 0
 
-            # Total cost and tokens include both main call and fallback calls
             case_total_cost = call_cost + fallback_cost
-            case_input_tokens = input_tokens + fallback_input_tokens
-            case_output_tokens = output_tokens + fallback_output_tokens
 
             case_result = {
                 "id": run_case_id,
@@ -653,8 +653,6 @@ def main() -> int:
                 "detection_method": detection_method,
                 "passed": passed,
                 "run_index": run_idx,
-                "input_tokens": case_input_tokens,
-                "output_tokens": case_output_tokens,
                 "cost": round(case_total_cost, 6),
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -665,7 +663,7 @@ def main() -> int:
 
             all_case_results.append(case_result)
 
-        if total_cost >= max_cost:
+        if aborted:
             break
 
     # --- Compute metrics ---
@@ -673,7 +671,6 @@ def main() -> int:
 
     # Build summary with mean/stddev/n for multi-run support
     if args.runs > 1:
-        # Compute per-run metrics for stddev
         run_tprs: list[float] = []
         run_fprs: list[float] = []
         run_accuracies: list[float] = []
@@ -708,17 +705,12 @@ def main() -> int:
             "n": 1,
         }
 
-    # Summary contains only _overall for compare_baseline.py compatibility.
-    # Per-skill activation rates go in artifacts to avoid polluting the
-    # comparator namespace (which iterates all summary keys as entities).
     summary: dict = {
         "_overall": {
-            # Scalar fields for compare_baseline.py compatibility
             "tpr": tpr_stats["mean"],
             "fpr": fpr_stats["mean"],
             "accuracy": accuracy_stats["mean"],
             "n": overall_metrics["total_cases"],
-            # Rich stats for multi-run analysis
             "tpr_stats": tpr_stats,
             "fpr_stats": fpr_stats,
             "accuracy_stats": accuracy_stats,
@@ -731,8 +723,6 @@ def main() -> int:
             "total_cases": overall_metrics["total_cases"],
             "index_char_count": index_char_count,
             "index_skill_count": skill_count,
-            "total_input_tokens": overall_metrics["total_input_tokens"],
-            "total_output_tokens": overall_metrics["total_output_tokens"],
         },
     }
 
@@ -761,7 +751,7 @@ def main() -> int:
         },
     )
 
-    # Print summary
+    # Print summary to stderr
     print(f"\n[activation] === Summary ===", file=sys.stderr)
     print(
         f"  TPR: {tpr_stats['mean']:.2%} (stddev={tpr_stats['stddev']:.4f}, "
@@ -782,13 +772,15 @@ def main() -> int:
         f"  Index: {skill_count} skills, {index_char_count} chars",
         file=sys.stderr,
     )
-    print(
-        f"  Token usage: {overall_metrics['total_input_tokens']} input, "
-        f"{overall_metrics['total_output_tokens']} output",
-        file=sys.stderr,
-    )
     print(f"  Total cost: ${total_cost:.4f}", file=sys.stderr)
+    print(f"  Total calls: {total_calls}", file=sys.stderr)
     print(f"\n[activation] Results written to: {output_path}", file=sys.stderr)
+
+    # Emit runner output contract on stdout
+    print(f"TOTAL_CALLS={total_calls}")
+    print(f"COST_USD={total_cost:.4f}")
+    print(f"ABORTED={'1' if aborted else '0'}")
+    print(f"N_CASES={len(all_case_results)}")
     return 0
 
 
