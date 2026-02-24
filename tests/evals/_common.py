@@ -251,10 +251,12 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
     if prompt_mode == "arg":
         # codex and copilot don't support arg mode, so this is a hard failure
         if backend in ("codex", "copilot"):
-            # Cache the failure before raising, to avoid re-probing on retry
+            # Cache the failure with reason before raising, to avoid re-probing on retry
             _cli_caps[json_key] = False
             _cli_caps[mode_key] = "arg"
             _cli_caps[avail_key] = False
+            reason_key = f"{cache_prefix}.unavailable_reason"
+            _cli_caps[reason_key] = "no_stdin_support"
             raise CLIConfigError(
                 f"{backend} CLI does not support stdin or file_stdin modes. "
                 f"Cannot proceed with arg mode for {backend}. "
@@ -341,23 +343,40 @@ def call_model(
 
     caps = _detect_cli_caps(backend)
 
-    # Fail early with a clear message if the CLI tool is not installed
+    # Fail early with a clear message if the CLI tool is not available
     if not caps.get("available", True):
-        raise CLIConfigError(
-            f"{backend} CLI is not installed or not found in PATH. "
-            f"Install {backend} or set cli.default to a different "
-            f"backend in config.yaml."
-        )
+        reason_key = f"{backend}.unavailable_reason"
+        reason = caps.get(reason_key, "unknown")
+        if reason == "no_stdin_support":
+            error_msg = (
+                f"{backend} CLI does not support stdin or file_stdin modes. "
+                f"Install a newer version or switch to 'claude' in config.yaml."
+            )
+        else:
+            error_msg = (
+                f"{backend} CLI is not installed or not found in PATH. "
+                f"Install {backend} or set cli.default to a different backend in config.yaml."
+            )
+        raise CLIConfigError(error_msg)
 
     # Build the prompt payload
-    # Always combine system and user prompts into a single payload to ensure
-    # deterministic semantics across baseline and enhanced conditions (L5/L6).
-    # This prevents confounding comparisons when skill content changes the total length.
-    combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
-    use_system_flag = False
+    # For claude: preserve system-role semantics by always using --system-prompt with
+    # a small, constant system instruction. Move variable skill content to user prompt.
+    # For other backends: combine into single payload (they don't support system role).
+    if backend == "claude":
+        # Use a constant, brief system prompt for determinism
+        constant_system = "You are a helpful assistant."
+        combined_prompt = user_prompt
+        use_system_flag = True
+        system_prompt_for_cmd = constant_system
+    else:
+        # Combine system + user for non-claude backends (they don't support system role)
+        combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
+        use_system_flag = False
+        system_prompt_for_cmd = system_prompt
 
     # Build CLI command
-    cmd = _build_cli_command(backend, model, max_tokens, temperature, caps, use_system_flag, system_prompt)
+    cmd = _build_cli_command(backend, model, max_tokens, temperature, caps, use_system_flag, system_prompt_for_cmd)
 
     # Execute via preferred prompt transport
     result = _execute_cli(cmd, combined_prompt, caps, backend)
@@ -988,7 +1007,7 @@ def load_rubric(skill_name: str, rubrics_dir: Optional[Path] = None) -> Optional
         # Validate: rubric must be a dict
         if not isinstance(parsed, dict):
             _emit_warning(
-                "invalid_rubric_type",
+                f"invalid_rubric_type:{skill_name}",
                 f"Rubric {skill_name}.yaml is not a mapping (got {type(parsed).__name__}); skipping",
             )
             return None
@@ -996,7 +1015,7 @@ def load_rubric(skill_name: str, rubrics_dir: Optional[Path] = None) -> Optional
         return parsed
     except yaml.YAMLError as e:
         _emit_warning(
-            "rubric_parse_error",
+            f"rubric_parse_error:{skill_name}",
             f"Failed to parse rubric {skill_name}.yaml: {e}",
         )
         return None
