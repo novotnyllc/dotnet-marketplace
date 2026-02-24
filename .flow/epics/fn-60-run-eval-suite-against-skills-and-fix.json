@@ -9,10 +9,10 @@
   "depends_on_epics": [],
   "id": "fn-60-run-eval-suite-against-skills-and-fix",
   "next_task": 1,
-  "plan_review_status": "ship",
-  "plan_reviewed_at": "2026-02-24T02:15:22.185839Z",
+  "plan_review_status": "unknown",
+  "plan_reviewed_at": "2026-02-24T03:36:11.963893Z",
   "spec_path": ".flow/specs/fn-60-run-eval-suite-against-skills-and-fix.md",
   "status": "open",
   "title": "Run Eval Suite Against Skills and Fix to Quality Bar",
-  "updated_at": "2026-02-24T02:15:22.186192Z"
+  "updated_at": "2026-02-24T03:36:11.964438Z"
 }

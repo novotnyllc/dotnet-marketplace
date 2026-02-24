@@ -10,13 +10,13 @@ Full rerun of all 4 eval types after fixes from tasks .3 and .4. Validate result
 
 ## Approach
 
-1. Run all 4 eval types with `--regenerate` flag (where applicable) to ensure fresh generations:
+1. Run all 4 eval types with `--regenerate` flag (where applicable) to ensure fresh generations (CLI clients handle auth -- no API key needed):
    - `python3 tests/evals/run_activation.py`
    - `python3 tests/evals/run_confusion_matrix.py`
    - `python3 tests/evals/run_effectiveness.py --runs 3 --regenerate`
    - `python3 tests/evals/run_size_impact.py --runs 3 --regenerate`
 
-2. Verify coverage completeness (runners exit 0 but may abort on cost cap -- see fn-60.1 acceptance for per-runner completeness checks). Re-run with raised cap if any runner aborted.
+2. Verify coverage completeness (runners exit 0 but may abort on cost/call cap -- see fn-60.1 acceptance for per-runner completeness checks). Re-run with raised cap if any runner aborted.
 
 3. Compare results against ALL quality bar thresholds:
    - L3: TPR>=75%, FPR<=20%, accuracy>=70% (from `summary._overall`)

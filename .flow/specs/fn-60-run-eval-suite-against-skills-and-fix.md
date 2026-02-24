@@ -53,14 +53,19 @@ These thresholds are deliberately achievable. If initial results are dramaticall
 
 ### Prerequisites (task .7)
 
-**Auth**: `_common.py:get_client()` currently hard-requires `ANTHROPIC_API_KEY` env var via a pre-validation check. Fix this to remove the pre-validation and let the Anthropic SDK handle auth itself. The Python Anthropic SDK checks `ANTHROPIC_API_KEY` env var internally when no explicit key is passed to `Anthropic()`. Removing our pre-validation means:
-- The SDK still requires `ANTHROPIC_API_KEY` in the environment (or an explicit key param)
-- But the error comes from the SDK itself, not our pre-check
-- This avoids double-validation and lets the SDK's own auth error messages surface
+**CLI-based API layer**: The eval runners currently use the Anthropic Python SDK (`anthropic.Anthropic().messages.create(...)`) for all LLM calls. This requires `ANTHROPIC_API_KEY` to be set. **This is wrong.** The coding CLI clients (`claude`, `codex`, `copilot`) are already authenticated locally and must be used instead.
 
-Additionally, `load_config()` currently injects `cfg["api_key"] = os.environ.get("ANTHROPIC_API_KEY","")` into the cached config dict. This should be removed -- `get_client()` should read auth directly, not from the config cache.
+Task .7 replaces the entire SDK-based API layer with CLI subprocess invocations:
 
-Note: `config.yaml` currently says "ANTHROPIC_API_KEY (required for API calls)" -- task .7 updates this comment to match the new behavior.
+- **`_common.py`**: Replace `get_client()` and all `client.messages.create()` patterns with a `call_model()` function that shells out to the configured CLI tool
+- **CLI tools** (all locally installed and already authenticated):
+  - `claude -p "prompt" --system-prompt "..." --model haiku --output-format json --tools ""`
+  - `codex exec "prompt" -m model`
+  - `copilot -p "prompt"`
+- **Config**: `config.yaml` gets a `cli` section specifying which tool to use (default: `claude`). Remove all `ANTHROPIC_API_KEY` references.
+- **No SDK dependency**: Remove `anthropic` from `requirements.txt` for the API call path. Keep `pyyaml` for config parsing.
+
+The `claude` CLI is the primary backend because it supports `--system-prompt`, `--model`, and `--output-format json`. For `codex` and `copilot`, system prompts are prepended to the user message.
 
 **Skill loading**: Eval runners already load skills from `REPO_ROOT/skills/` (the local checkout). No plugin installation needed -- skills are read directly from the repo, not from any installed plugin location.
 
@@ -87,18 +92,17 @@ Expect 1-3 fix-rerun iterations. Focus on high-leverage fixes first (description
 
 ### Cost Expectations
 
-Using haiku for generation and judging (per config.yaml). `config.yaml:cost.max_cost_per_run` is a per-runner-invocation safety cap, not a suite-level budget.
+CLI invocations use the CLI's own billing/credits. Token-level cost tracking depends on CLI output format:
+- `claude --output-format json` includes usage metadata -- cost can be extracted
+- `codex`/`copilot` report usage in their own formats -- extraction is best-effort
 
-Per eval runner invocation:
-- Activation: ~73 API calls = ~$0.10-0.20
-- Confusion: ~54 API calls = ~$0.10-0.15
-- Effectiveness with `--runs 3`: 12 skills x 2 prompts x 3 runs = 72 cases; each case = 2 generations + 1 judgment = ~216 API calls = ~$3-5
-- Size impact with `--runs 3`: 11 candidates x ~3 comparison types x 3 runs = ~99 comparisons; each = 2 generations + 1 judgment = ~$2-4
+Per eval runner invocation (approximate):
+- Activation: ~73 CLI calls
+- Confusion: ~54 CLI calls
+- Effectiveness with `--runs 3`: ~216 CLI calls (12 skills x 2 prompts x 3 runs x 3 calls/case)
+- Size impact with `--runs 3`: ~297 CLI calls (11 candidates x ~3 comparison types x 3 runs x 3 calls/case)
 
-Per full suite run (all 4 runners): ~$5-9
-Budget for 3 iterations: ~$25
-
-If `max_cost_per_run` aborts a runner mid-run, either raise the cap in config.yaml or reduce `--runs` so the runner completes all cases.
+`config.yaml:cost.max_cost_per_run` is retained as a safety cap. If cost tracking is unavailable from a given CLI, the cap is based on call count instead.
 
 ### Fix Priority
 
@@ -110,7 +114,7 @@ If `max_cost_per_run` aborts a runner mid-run, either raise the cap in config.ya
 ## Quick Commands
 
 ```bash
-# Run each eval type
+# Run each eval type (CLI clients must be authenticated -- no API key needed)
 python3 tests/evals/run_activation.py
 python3 tests/evals/run_confusion_matrix.py
 python3 tests/evals/run_effectiveness.py --runs 3
@@ -121,13 +125,16 @@ python3 tests/evals/run_activation.py --skill dotnet-xunit
 python3 tests/evals/run_confusion_matrix.py --group testing
 python3 tests/evals/run_effectiveness.py --skill dotnet-xunit --runs 3
 
-# Dry-run (no API calls)
+# Dry-run (no CLI calls)
 python3 tests/evals/run_activation.py --dry-run
+
+# Override CLI tool
+python3 tests/evals/run_activation.py --cli codex
 ```
 
 ## Acceptance
 
-- [ ] All 4 eval types have been run at least once with real API calls
+- [ ] All 4 eval types have been run at least once with real CLI calls (not dry-run)
 - [ ] Results analyzed and findings documented per task
 - [ ] Skill descriptions fixed where activation/confusion results indicated problems
 - [ ] Skill content improved where effectiveness results showed regression vs baseline
@@ -140,11 +147,12 @@ python3 tests/evals/run_activation.py --dry-run
 
 | Risk | Mitigation |
 |------|------------|
-| Auth not discoverable | Task .7 removes pre-validation; SDK still requires ANTHROPIC_API_KEY env var but surfaces its own error |
+| CLI tool not in PATH | Task .7 validates `claude`/`codex`/`copilot` availability at startup |
+| CLI output format changes | Parse defensively; extract text from structured output with fallbacks |
+| CLI subprocess overhead | Each call spawns a process -- slower than SDK but acceptable for eval workload |
 | Skill modifications need restore | Git-based: commit before fixes, `git checkout -- skills/` to restore |
-| Cost overrun from multiple iterations | Haiku pricing is cheap (~$7/run); max_cost_per_run caps each runner invocation independently |
-| max_cost_per_run aborts mid-run | Raise cap or reduce --runs; effectiveness and size impact are the costliest runners |
 | Fixing one skill breaks another | Re-run full suite after each fix batch; baselines track regressions |
 | Quality bar too high for haiku | Thresholds designed for haiku; can lower if systematically unachievable with documented rationale |
 | Description changes break copilot smoke tests | Run `validate-skills.sh` after each change batch |
 | .3/.4 file conflicts | Execute sequentially (.3 first, then .4) even though deps allow parallelism |
+| Cost tracking unavailable | Some CLIs don't expose token counts; fall back to call-count-based caps |

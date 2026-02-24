@@ -54,3 +54,11 @@ For each eval type, extract and document:
 - [ ] Prioritized fix list with classification (description vs content)
 - [ ] Fix list informs task .3 (routing fixes) and task .4 (content fixes)
 - [ ] Any threshold adjustments documented with rationale
+
+## Done summary
+TBD
+
+## Evidence
+- Commits:
+- Tests:
+- PRs:
