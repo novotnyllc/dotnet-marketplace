@@ -64,3 +64,5 @@ This mirrors test.sh's snapshot/restore pattern but uses git instead of rsync.
 - [ ] Config comment updated to: "ANTHROPIC_API_KEY (required unless using an explicit key param in code)"
 - [ ] `pip install -r tests/evals/requirements.txt` succeeds (anthropic SDK installable)
 - [ ] `python3 tests/evals/run_activation.py --dry-run` still works
+
+## Done summary
