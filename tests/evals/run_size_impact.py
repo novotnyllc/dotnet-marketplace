@@ -28,6 +28,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import random
 import re
 import sys
@@ -121,7 +122,7 @@ _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?\n)---\s*\n", re.DOTALL)
 _SCOPE_SECTION_RE = re.compile(
     r"^##\s+Scope\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
 )
-_CODE_FENCE_RE = re.compile(r"```[^\n]*\n.*?```", re.DOTALL)
+_CODE_FENCE_RE = re.compile(r"^[ \t]*```[^\n]*\n.*?^[ \t]*```", re.DOTALL | re.MULTILINE)
 _CROSS_REF_RE = re.compile(r"\[skill:[^\]]+\]")
 
 
@@ -214,22 +215,33 @@ def load_siblings(
     parts = []
     raw_total = 0
 
+    skill_dir_resolved = skill_dir.resolve()
+
     for sib_name in sibling_names:
         # Defense-in-depth: reject path traversal even if loader validated
         if ".." in sib_name or "/" in sib_name or "\\" in sib_name:
             continue
 
         sib_path = skill_dir / sib_name
+        # Reject symlinks to prevent symlink escape
+        if sib_path.is_symlink():
+            continue
         if not sib_path.is_file():
             continue
+        # Enforce resolved path stays within skill directory
+        sib_resolved = sib_path.resolve()
+        if not str(sib_resolved).startswith(str(skill_dir_resolved) + os.sep):
+            continue
 
-        raw = sib_path.read_bytes()
+        remaining = max_bytes - raw_total
+        if remaining <= 100:
+            break
 
-        if raw_total + len(raw) > max_bytes:
-            # Truncate to fit within byte cap
-            remaining = max_bytes - raw_total
-            if remaining <= 100:
-                break
+        # Bounded read: only read up to remaining bytes + 1 to detect overflow
+        with open(sib_path, "rb") as f:
+            raw = f.read(remaining + 1)
+
+        if len(raw) > remaining:
             # Truncate raw bytes, decode ignoring partial chars at boundary
             sib_content = raw[:remaining].decode("utf-8", errors="ignore")
             sib_content += "\n[... truncated ...]"
@@ -275,11 +287,12 @@ def load_candidates(
     """
     cfg = _common.load_config()
     if candidates_path is None:
-        datasets_dir = _common.EVALS_DIR / cfg.get("paths", {}).get(
+        datasets_dir: Path = _common.EVALS_DIR / cfg.get("paths", {}).get(
             "datasets_dir", "datasets"
         )
         candidates_path = datasets_dir / "size_impact" / "candidates.yaml"
 
+    assert candidates_path is not None  # narrowed above
     if not candidates_path.is_file():
         return []
 
@@ -425,6 +438,10 @@ def estimate_tokens(text: str) -> int:
 # Generation helpers
 # ---------------------------------------------------------------------------
 
+# Bump when system prompt template or generation logic changes to
+# invalidate stale cached generations.
+_CACHE_SCHEMA_VERSION = "1"
+
 
 def _condition_hash(
     skill_name: str,
@@ -451,8 +468,8 @@ def _condition_hash(
     """
     content_digest = hashlib.sha256(content.encode()).hexdigest()[:12]
     key = (
-        f"{skill_name}|{prompt_text}|{condition}|{run_index}"
-        f"|{model}|{temperature}|{content_digest}"
+        f"v{_CACHE_SCHEMA_VERSION}|{skill_name}|{prompt_text}|{condition}"
+        f"|{run_index}|{model}|{temperature}|{content_digest}"
     )
     return hashlib.sha256(key.encode()).hexdigest()[:16]
 
@@ -859,9 +876,6 @@ def main() -> int:
             )
             continue
 
-        full_bytes = len(full_body.encode("utf-8"))
-        full_tokens = estimate_tokens(full_body)
-
         # Summary
         summary_result = extract_summary(skill_name)
         if summary_result is None:
@@ -870,24 +884,16 @@ def main() -> int:
                 file=sys.stderr,
             )
             continue
-        summary_text, summary_bytes = summary_result
-        summary_tokens = estimate_tokens(summary_text)
-
-        # Baseline
-        baseline_bytes = 0
-        baseline_tokens = 0
+        summary_text, _summary_bytes = summary_result
 
         # Siblings (optional)
         siblings_text: Optional[str] = None
-        siblings_bytes = 0
-        siblings_tokens = 0
         if has_siblings:
             sib_names = cand["siblings"]
             max_sib = cand.get("max_sibling_bytes", 10000)
             sib_result = load_siblings(skill_name, sib_names, max_sib)
             if sib_result:
-                siblings_text, siblings_bytes = sib_result
-                siblings_tokens = estimate_tokens(siblings_text)
+                siblings_text, _sib_bytes = sib_result
 
         # Build the exact injected blobs per condition, then derive
         # system prompts, cache keys, and sizes from those blobs.
