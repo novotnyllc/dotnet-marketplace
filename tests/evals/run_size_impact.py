@@ -4,22 +4,552 @@
 Tests whether skill content format (full body vs summary vs none)
 affects output quality, validating progressive disclosure decisions.
 
+For each candidate skill, generates code under three conditions:
+  1. Full: Complete SKILL.md body (frontmatter stripped, explicit delimiters)
+  2. Summary: Deterministic summary extraction (description + scope)
+  3. Baseline: No skill content
+
+Skills with sibling files defined in candidates.yaml get a fourth condition:
+  4. Full + Siblings: SKILL.md body + concatenated sibling contents
+
+Pairwise comparisons scored by LLM judge via judge_prompt.py.
+
 Usage:
     python tests/evals/run_size_impact.py --dry-run
     python tests/evals/run_size_impact.py --skill dotnet-xunit
     python tests/evals/run_size_impact.py --model claude-sonnet-4-20250514
+    python tests/evals/run_size_impact.py --regenerate
 
 Exit codes:
     0 - Eval completed (informational, always exit 0)
 """
 
 import argparse
+import hashlib
+import json
+import math
+import random
+import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
+# Ensure evals package is importable
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import _common  # noqa: E402
+import judge_prompt  # noqa: E402
+import yaml  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+FULL_SYSTEM_TEMPLATE = """\
+You are an expert .NET developer. Use the following skill reference material \
+to inform your response.
+
+{skill_body}
+
+Respond with well-structured, production-quality .NET code and clear explanations."""
+
+SUMMARY_SYSTEM_TEMPLATE = """\
+You are an expert .NET developer. Use the following skill summary \
+to inform your response.
+
+--- BEGIN SKILL SUMMARY ---
+{summary}
+--- END SKILL SUMMARY ---
+
+Respond with well-structured, production-quality .NET code and clear explanations."""
+
+FULL_SIBLINGS_SYSTEM_TEMPLATE = """\
+You are an expert .NET developer. Use the following skill reference material \
+and supplementary content to inform your response.
+
+{skill_body}
+
+{siblings_body}
+
+Respond with well-structured, production-quality .NET code and clear explanations."""
+
+BASELINE_SYSTEM_PROMPT = """\
+You are an expert .NET developer. Respond with well-structured, \
+production-quality .NET code and clear explanations."""
+
+# Default judge criteria for size impact comparisons
+SIZE_IMPACT_CRITERIA = [
+    {
+        "name": "technical_accuracy",
+        "weight": 0.30,
+        "description": "Correctness of APIs, patterns, and .NET conventions used.",
+    },
+    {
+        "name": "completeness",
+        "weight": 0.25,
+        "description": "Coverage of the requested scenario including edge cases and error handling.",
+    },
+    {
+        "name": "best_practices",
+        "weight": 0.25,
+        "description": "Adherence to modern .NET best practices and idiomatic patterns.",
+    },
+    {
+        "name": "code_quality",
+        "weight": 0.20,
+        "description": "Readability, structure, naming, and maintainability of the code.",
+    },
+]
+
+# Pairwise comparison definitions
+COMPARISONS = [
+    ("full", "baseline"),
+    ("full", "summary"),
+    ("summary", "baseline"),
+]
+
+SIBLING_COMPARISONS = [
+    ("full_siblings", "full"),
+]
+
+# ---------------------------------------------------------------------------
+# Summary extraction (deterministic algorithm)
+# ---------------------------------------------------------------------------
+
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?\n)---\s*\n", re.DOTALL)
+_SCOPE_SECTION_RE = re.compile(
+    r"^##\s+Scope\s*\n(.*?)(?=^##\s|\Z)", re.MULTILINE | re.DOTALL
+)
+_CODE_FENCE_RE = re.compile(r"```[^\n]*\n.*?```", re.DOTALL)
+_CROSS_REF_RE = re.compile(r"\[skill:[^\]]+\]")
+
+
+def extract_summary(skill_name: str) -> Optional[tuple[str, int]]:
+    """Extract a deterministic summary from a SKILL.md file.
+
+    Algorithm:
+    1. Strip YAML frontmatter (between first/second ---)
+    2. Extract ## Scope section (from heading to next ## or EOF)
+    3. Strip code fences and contents
+    4. Strip [skill:...] cross-references (keep surrounding text)
+    5. Concatenate: frontmatter description + newline + extracted scope text
+
+    Args:
+        skill_name: Name of the skill directory under skills/.
+
+    Returns:
+        Tuple of (summary_text, byte_count) or None if skill not found.
+    """
+    skill_path = _common.SKILLS_DIR / skill_name / "SKILL.md"
+    if not skill_path.is_file():
+        return None
+
+    content = skill_path.read_text(encoding="utf-8")
+
+    # Step 1: Parse frontmatter for description
+    description = ""
+    fm_match = _FRONTMATTER_RE.match(content)
+    if fm_match:
+        try:
+            fm = yaml.safe_load(fm_match.group(1))
+            if isinstance(fm, dict):
+                description = fm.get("description", "")
+        except yaml.YAMLError:
+            pass
+
+    # Step 2: Strip frontmatter from body, then extract Scope section
+    body = _FRONTMATTER_RE.sub("", content, count=1)
+    scope_match = _SCOPE_SECTION_RE.search(body)
+    scope_text = scope_match.group(1).strip() if scope_match else ""
+
+    # Step 3: Strip code fences and their contents
+    scope_text = _CODE_FENCE_RE.sub("", scope_text)
+
+    # Step 4: Strip cross-references
+    scope_text = _CROSS_REF_RE.sub("", scope_text)
+
+    # Clean up whitespace from removals
+    scope_text = re.sub(r"\n{3,}", "\n\n", scope_text).strip()
+
+    # Step 5: Concatenate
+    summary = f"{description}\n\n{scope_text}" if scope_text else description
+    summary = summary.strip()
+
+    if not summary:
+        return None
+
+    byte_count = len(summary.encode("utf-8"))
+    return summary, byte_count
+
+
+# ---------------------------------------------------------------------------
+# Sibling content loading
+# ---------------------------------------------------------------------------
+
+
+def load_siblings(
+    skill_name: str, sibling_names: list[str], max_bytes: int
+) -> Optional[tuple[str, int]]:
+    """Load and concatenate sibling file contents with byte cap.
+
+    Args:
+        skill_name: Name of the skill directory.
+        sibling_names: Ordered list of sibling filenames to include.
+        max_bytes: Maximum total bytes to include.
+
+    Returns:
+        Tuple of (formatted_siblings_text, byte_count) or None if no siblings found.
+    """
+    skill_dir = _common.SKILLS_DIR / skill_name
+    parts = []
+    total_bytes = 0
+
+    for sib_name in sibling_names:
+        sib_path = skill_dir / sib_name
+        if not sib_path.is_file():
+            continue
+
+        sib_content = sib_path.read_text(encoding="utf-8")
+        sib_bytes = len(sib_content.encode("utf-8"))
+
+        if total_bytes + sib_bytes > max_bytes:
+            # Truncate to fit within cap
+            remaining = max_bytes - total_bytes
+            if remaining > 100:  # Only include if meaningful amount remains
+                sib_content = sib_content[:remaining] + "\n[... truncated ...]"
+                sib_bytes = remaining
+            else:
+                break
+
+        parts.append(
+            f"--- BEGIN SUPPLEMENTARY: {sib_name} ---\n"
+            f"{sib_content}\n"
+            f"--- END SUPPLEMENTARY: {sib_name} ---"
+        )
+        total_bytes += sib_bytes
+
+    if not parts:
+        return None
+
+    combined = "\n\n".join(parts)
+    return combined, total_bytes
+
+
+# ---------------------------------------------------------------------------
+# Candidates loading
+# ---------------------------------------------------------------------------
+
+
+def load_candidates(
+    candidates_path: Optional[Path] = None,
+) -> list[dict]:
+    """Load candidate skills from the YAML dataset.
+
+    Args:
+        candidates_path: Path to candidates.yaml. Defaults to standard location.
+
+    Returns:
+        List of candidate dicts with skill, test_prompt, and optional siblings.
+    """
+    cfg = _common.load_config()
+    if candidates_path is None:
+        datasets_dir = _common.EVALS_DIR / cfg.get("paths", {}).get(
+            "datasets_dir", "datasets"
+        )
+        candidates_path = datasets_dir / "size_impact" / "candidates.yaml"
+
+    if not candidates_path.is_file():
+        return []
+
+    with open(candidates_path) as f:
+        data = yaml.safe_load(f)
+
+    if not isinstance(data, dict) or "candidates" not in data:
+        return []
+
+    return data["candidates"]
+
+
+def classify_size_tier(skill_name: str) -> tuple[str, int]:
+    """Classify a skill into a size tier based on SKILL.md body size.
+
+    Args:
+        skill_name: Skill directory name.
+
+    Returns:
+        Tuple of (tier_label, body_byte_count).
+    """
+    skill_path = _common.SKILLS_DIR / skill_name / "SKILL.md"
+    if not skill_path.is_file():
+        return "unknown", 0
+
+    content = skill_path.read_text(encoding="utf-8")
+    body = _FRONTMATTER_RE.sub("", content, count=1).strip()
+    body_bytes = len(body.encode("utf-8"))
+
+    if body_bytes < 5000:
+        tier = "small"
+    elif body_bytes <= 12000:
+        tier = "medium"
+    else:
+        tier = "large"
+
+    return tier, body_bytes
+
+
+# ---------------------------------------------------------------------------
+# Token counting (approximate)
+# ---------------------------------------------------------------------------
+
+
+def estimate_tokens(text: str) -> int:
+    """Estimate token count using the ~4 chars per token heuristic.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Approximate token count.
+    """
+    return max(1, len(text) // 4)
+
+
+# ---------------------------------------------------------------------------
+# Generation helpers
+# ---------------------------------------------------------------------------
+
+
+def _condition_hash(
+    skill_name: str,
+    prompt_text: str,
+    condition: str,
+    run_index: int,
+    model: str,
+    temperature: float,
+    content: str,
+) -> str:
+    """Compute a deterministic hash for a generation cache key.
+
+    Args:
+        skill_name: Skill being evaluated.
+        prompt_text: User prompt text.
+        condition: Condition label (full, summary, baseline, full_siblings).
+        run_index: Run iteration index.
+        model: Generation model.
+        temperature: Sampling temperature.
+        content: Injected content (affects cache invalidation).
+
+    Returns:
+        Hex digest string for cache filename.
+    """
+    content_digest = hashlib.sha256(content.encode()).hexdigest()[:12]
+    key = (
+        f"{skill_name}|{prompt_text}|{condition}|{run_index}"
+        f"|{model}|{temperature}|{content_digest}"
+    )
+    return hashlib.sha256(key.encode()).hexdigest()[:16]
+
+
+def _generations_dir(output_dir: Path) -> Path:
+    """Return the generations cache directory, creating if needed."""
+    d = output_dir / "generations"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _load_cached_generation(
+    gen_dir: Path, skill_name: str, chash: str
+) -> Optional[dict]:
+    """Load a cached generation from disk.
+
+    Args:
+        gen_dir: Generations directory.
+        skill_name: Skill name (subdirectory).
+        chash: Condition hash (filename stem).
+
+    Returns:
+        Parsed dict with 'text' key, or None on cache miss.
+    """
+    cache_path = gen_dir / skill_name / f"{chash}.json"
+    if not cache_path.is_file():
+        return None
+    try:
+        with open(cache_path) as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+
+    if not isinstance(data, dict) or not isinstance(data.get("text"), str):
+        return None
+
+    return data
+
+
+def _save_generation(
+    gen_dir: Path,
+    skill_name: str,
+    chash: str,
+    text: str,
+    cost: float,
+    model: str,
+    condition: str,
+) -> None:
+    """Save generation output to disk for resume/replay.
+
+    Args:
+        gen_dir: Generations directory.
+        skill_name: Skill name (subdirectory).
+        chash: Condition hash (filename stem).
+        text: Generated text.
+        cost: Generation cost.
+        model: Model used.
+        condition: Condition label.
+    """
+    skill_dir = gen_dir / skill_name
+    skill_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_data = {
+        "text": text,
+        "cost": cost,
+        "model": model,
+        "condition": condition,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    with open(skill_dir / f"{chash}.json", "w", encoding="utf-8") as f:
+        json.dump(cache_data, f, indent=2)
+
+
+def _generate_code(
+    client,
+    system_prompt: str,
+    user_prompt: str,
+    model: str,
+    temperature: float,
+) -> tuple[str, float]:
+    """Generate code using the Anthropic API.
+
+    Args:
+        client: Anthropic client instance.
+        system_prompt: System prompt for the generation.
+        user_prompt: User prompt to generate code for.
+        model: Model to use.
+        temperature: Sampling temperature.
+
+    Returns:
+        Tuple of (generated_text, cost).
+    """
+
+    def _call():
+        return client.messages.create(
+            model=model,
+            max_tokens=4096,
+            temperature=temperature,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+
+    response = _common.retry_with_backoff(_call)
+    text = response.content[0].text if response.content else ""
+    usage = response.usage
+    cost = _common.track_cost(model, usage.input_tokens, usage.output_tokens)
+    return text, cost
+
+
+# ---------------------------------------------------------------------------
+# Statistics helpers
+# ---------------------------------------------------------------------------
+
+
+def _compute_stats(values: list[float]) -> dict:
+    """Compute mean, stddev, and n for a list of numeric values."""
+    n = len(values)
+    if n == 0:
+        return {"mean": 0.0, "stddev": 0.0, "n": 0}
+    mean = sum(values) / n
+    if n < 2:
+        return {"mean": mean, "stddev": 0.0, "n": n}
+    variance = sum((x - mean) ** 2 for x in values) / (n - 1)
+    return {"mean": mean, "stddev": math.sqrt(variance), "n": n}
+
+
+# ---------------------------------------------------------------------------
+# Score computation from judge output
+# ---------------------------------------------------------------------------
+
+
+def _compute_comparison_scores(
+    judge_parsed: dict,
+    criteria: list[dict],
+    condition_a_label: str,
+    condition_b_label: str,
+    condition_a_is_judge_a: bool,
+) -> dict:
+    """Compute weighted scores from judge output for a pairwise comparison.
+
+    Remaps judge score_a/score_b to condition labels based on A/B assignment.
+
+    Args:
+        judge_parsed: Parsed judge JSON with 'criteria' and 'overall_winner'.
+        criteria: Evaluation criteria list with 'name' and 'weight'.
+        condition_a_label: Label for the first condition (e.g. "full").
+        condition_b_label: Label for the second condition (e.g. "baseline").
+        condition_a_is_judge_a: Whether condition_a was presented as Response A.
+
+    Returns:
+        Dict with per-condition scores, improvement, winner, and breakdown.
+    """
+    weight_map = {c["name"]: c["weight"] for c in criteria}
+    judge_criteria = judge_parsed.get("criteria", [])
+
+    a_weighted = 0.0
+    b_weighted = 0.0
+    per_criterion = []
+
+    for jc in judge_criteria:
+        name = jc.get("name", "")
+        weight = weight_map.get(name, 0.0)
+
+        if condition_a_is_judge_a:
+            score_a = jc.get("score_a", 0)
+            score_b = jc.get("score_b", 0)
+        else:
+            score_a = jc.get("score_b", 0)
+            score_b = jc.get("score_a", 0)
+
+        per_criterion.append(
+            {
+                "name": name,
+                "weight": weight,
+                f"score_{condition_a_label}": score_a,
+                f"score_{condition_b_label}": score_b,
+                "reasoning": jc.get("reasoning", ""),
+            }
+        )
+
+        a_weighted += score_a * weight
+        b_weighted += score_b * weight
+
+    improvement = a_weighted - b_weighted
+    if a_weighted > b_weighted:
+        winner = condition_a_label
+    elif b_weighted > a_weighted:
+        winner = condition_b_label
+    else:
+        winner = "tie"
+
+    return {
+        f"score_{condition_a_label}": round(a_weighted, 4),
+        f"score_{condition_b_label}": round(b_weighted, 4),
+        "improvement": round(improvement, 4),
+        "winner": winner,
+        "per_criterion": per_criterion,
+    }
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,7 +565,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--skill",
         type=str,
         default=None,
-        help="Evaluate a single skill by name",
+        help="Evaluate a single skill by name (must be in candidates.yaml)",
     )
     parser.add_argument(
         "--model",
@@ -67,45 +597,519 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Override output directory for results",
     )
+    parser.add_argument(
+        "--regenerate",
+        action="store_true",
+        help="Force re-generation even if cached outputs exist",
+    )
     return parser
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
 
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
+    cfg = _common.load_config()
 
-    # Determine candidate skills (those with rubrics)
-    if args.skill:
-        skills = [args.skill]
-    else:
-        skills = _common.list_skills_with_rubrics()
-
-    if args.dry_run:
+    # Load candidates
+    candidates = load_candidates()
+    if not candidates:
         print(
-            f"[size_impact] Dry run -- {len(skills)} candidate skill(s):",
+            "[size_impact] No candidates found in datasets/size_impact/candidates.yaml",
             file=sys.stderr,
         )
-        for skill_name in skills:
-            desc = _common.load_skill_description(skill_name)
-            desc_preview = (desc[:60] + "...") if desc and len(desc) > 60 else (desc or "N/A")
-            print(f"  {skill_name}: {desc_preview}", file=sys.stderr)
-        print("[size_impact] Dry run complete. No API calls made.", file=sys.stderr)
         return 0
 
-    # --- Full eval execution (to be implemented in task .6) ---
+    # Filter to single skill if --skill specified
+    if args.skill:
+        matching = [c for c in candidates if c["skill"] == args.skill]
+        if not matching:
+            print(
+                f"[size_impact] ERROR: Skill '{args.skill}' not found in candidates.yaml. "
+                f"Available: {', '.join(c['skill'] for c in candidates)}",
+                file=sys.stderr,
+            )
+            return 0
+        candidates = matching
+
+    # --- Dry run ---
+    if args.dry_run:
+        print(
+            f"[size_impact] Dry run -- {len(candidates)} candidate skill(s):",
+            file=sys.stderr,
+        )
+        for cand in candidates:
+            skill_name = cand["skill"]
+            tier, body_bytes = classify_size_tier(skill_name)
+            has_siblings = bool(cand.get("siblings"))
+
+            summary_result = extract_summary(skill_name)
+            summary_bytes = summary_result[1] if summary_result else 0
+
+            sibling_info = ""
+            if has_siblings:
+                sib_names = cand["siblings"]
+                max_sib = cand.get("max_sibling_bytes", 10000)
+                sib_result = load_siblings(skill_name, sib_names, max_sib)
+                sib_bytes = sib_result[1] if sib_result else 0
+                sibling_info = f", siblings={sib_names} ({sib_bytes}B)"
+
+            full_body = _common.load_skill_body(skill_name)
+            full_tok = estimate_tokens(full_body) if full_body else 0
+            sum_tok = estimate_tokens(summary_result[0]) if summary_result else 0
+            print(
+                f"  {skill_name}: tier={tier}, body={body_bytes}B (~{full_tok}tok), "
+                f"summary={summary_bytes}B (~{sum_tok}tok)"
+                f"{sibling_info}",
+                file=sys.stderr,
+            )
+
+        conditions_count = sum(
+            4 if cand.get("siblings") else 3 for cand in candidates
+        )
+        comparisons_count = sum(
+            len(COMPARISONS) + (len(SIBLING_COMPARISONS) if cand.get("siblings") else 0)
+            for cand in candidates
+        )
+        print(
+            f"[size_impact] Would generate {conditions_count} conditions, "
+            f"{comparisons_count} comparisons, "
+            f"{args.runs} run(s) each.",
+            file=sys.stderr,
+        )
+        print(
+            "[size_impact] Dry run complete. No API calls made.",
+            file=sys.stderr,
+        )
+        return 0
+
+    # --- Full eval execution ---
     meta = _common.build_run_metadata(
         eval_type="size_impact",
         model=args.model,
         judge_model=args.judge_model,
         seed=args.seed,
     )
+    temperature = cfg.get("temperature", 0.0)
+    max_cost = cfg.get("cost", {}).get("max_cost_per_run", 15.0)
+    seed = meta["seed"]
 
     print(f"[size_impact] Starting eval run {meta['run_id']}", file=sys.stderr)
-    print(f"[size_impact] Skills: {len(skills)}, Runs per condition: {args.runs}", file=sys.stderr)
+    print(
+        f"[size_impact] Skills: {len(candidates)}, Runs per condition: {args.runs}",
+        file=sys.stderr,
+    )
+    print(
+        f"[size_impact] Model: {meta['model']}, Judge: {meta['judge_model']}, Seed: {seed}",
+        file=sys.stderr,
+    )
 
-    # Placeholder: actual size impact eval logic added in task .6
-    summary: dict = {}
+    # Set up client and output paths
+    client = _common.get_client()
+    results_dir = (
+        args.output_dir
+        if args.output_dir is not None
+        else _common.EVALS_DIR
+        / cfg.get("paths", {}).get("results_dir", "results")
+    )
+    results_dir.mkdir(parents=True, exist_ok=True)
+    gen_dir = _generations_dir(results_dir)
+
+    total_cost = 0.0
     cases: list[dict] = []
+    cost_exceeded = False
+
+    # Per-skill tracking for summary
+    skill_comparisons: dict[str, list[dict]] = {}
+
+    for cand in candidates:
+        if cost_exceeded:
+            break
+
+        skill_name = cand["skill"]
+        test_prompt = cand["test_prompt"]
+        tier, body_bytes = classify_size_tier(skill_name)
+        has_siblings = bool(cand.get("siblings"))
+
+        print(
+            f"[size_impact] === {skill_name} (tier={tier}, {body_bytes}B) ===",
+            file=sys.stderr,
+        )
+
+        if skill_name not in skill_comparisons:
+            skill_comparisons[skill_name] = []
+
+        # --- Prepare condition content ---
+        # Full
+        full_body = _common.load_skill_body(skill_name)
+        if full_body is None:
+            print(
+                f"[size_impact] WARN: Skill body not found for {skill_name}, skipping",
+                file=sys.stderr,
+            )
+            continue
+
+        full_bytes = len(full_body.encode("utf-8"))
+        full_tokens = estimate_tokens(full_body)
+
+        # Summary
+        summary_result = extract_summary(skill_name)
+        if summary_result is None:
+            print(
+                f"[size_impact] WARN: Could not extract summary for {skill_name}, skipping",
+                file=sys.stderr,
+            )
+            continue
+        summary_text, summary_bytes = summary_result
+        summary_tokens = estimate_tokens(summary_text)
+
+        # Baseline
+        baseline_bytes = 0
+        baseline_tokens = 0
+
+        # Siblings (optional)
+        siblings_text: Optional[str] = None
+        siblings_bytes = 0
+        siblings_tokens = 0
+        if has_siblings:
+            sib_names = cand["siblings"]
+            max_sib = cand.get("max_sibling_bytes", 10000)
+            sib_result = load_siblings(skill_name, sib_names, max_sib)
+            if sib_result:
+                siblings_text, siblings_bytes = sib_result
+                siblings_tokens = estimate_tokens(siblings_text)
+
+        # Build system prompts per condition
+        condition_prompts = {
+            "full": FULL_SYSTEM_TEMPLATE.format(skill_body=full_body),
+            "summary": SUMMARY_SYSTEM_TEMPLATE.format(summary=summary_text),
+            "baseline": BASELINE_SYSTEM_PROMPT,
+        }
+        condition_content = {
+            "full": full_body,
+            "summary": summary_text,
+            "baseline": "",
+        }
+        condition_sizes = {
+            "full": {"bytes": full_bytes, "tokens": full_tokens},
+            "summary": {"bytes": summary_bytes, "tokens": summary_tokens},
+            "baseline": {"bytes": baseline_bytes, "tokens": baseline_tokens},
+        }
+
+        if siblings_text is not None:
+            full_siblings_body = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
+                skill_body=full_body, siblings_body=siblings_text
+            )
+            condition_prompts["full_siblings"] = full_siblings_body
+            condition_content["full_siblings"] = full_body + "\n" + siblings_text
+            combined_bytes = full_bytes + siblings_bytes
+            condition_sizes["full_siblings"] = {
+                "bytes": combined_bytes,
+                "tokens": estimate_tokens(full_body + siblings_text),
+            }
+
+        for run_idx in range(args.runs):
+            if cost_exceeded:
+                break
+
+            # --- Generate all conditions ---
+            generations: dict[str, str] = {}
+            gen_costs: dict[str, float] = {}
+            generation_error: Optional[str] = None
+
+            for cond_name, sys_prompt in condition_prompts.items():
+                if total_cost >= max_cost:
+                    cost_exceeded = True
+                    print(
+                        f"[size_impact] ABORT: Cost limit ${max_cost:.2f} exceeded "
+                        f"(spent ${total_cost:.4f})",
+                        file=sys.stderr,
+                    )
+                    break
+
+                chash = _condition_hash(
+                    skill_name,
+                    test_prompt,
+                    cond_name,
+                    run_idx,
+                    meta["model"],
+                    temperature,
+                    condition_content[cond_name],
+                )
+
+                cached = None
+                if not args.regenerate:
+                    cached = _load_cached_generation(gen_dir, skill_name, chash)
+
+                if cached is not None:
+                    generations[cond_name] = cached["text"]
+                    gen_costs[cond_name] = 0.0
+                    print(
+                        f"[size_impact]   {cond_name}: cached ({chash})",
+                        file=sys.stderr,
+                    )
+                else:
+                    try:
+                        text, cost = _generate_code(
+                            client,
+                            sys_prompt,
+                            test_prompt,
+                            meta["model"],
+                            temperature,
+                        )
+                        generations[cond_name] = text
+                        gen_costs[cond_name] = cost
+                        total_cost += cost
+
+                        _save_generation(
+                            gen_dir,
+                            skill_name,
+                            chash,
+                            text,
+                            cost,
+                            meta["model"],
+                            cond_name,
+                        )
+                        print(
+                            f"[size_impact]   {cond_name}: generated (${cost:.4f})",
+                            file=sys.stderr,
+                        )
+                    except Exception as exc:
+                        generation_error = f"{cond_name} generation failed: {exc}"
+                        print(
+                            f"[size_impact]   {cond_name}: ERROR - {exc}",
+                            file=sys.stderr,
+                        )
+                        break
+
+            if cost_exceeded or generation_error:
+                if generation_error:
+                    cases.append(
+                        {
+                            "id": f"{skill_name}/run{run_idx}",
+                            "entity_id": skill_name,
+                            "skill_name": skill_name,
+                            "prompt": test_prompt,
+                            "run_index": run_idx,
+                            "generation_error": generation_error,
+                            "size_tier": tier,
+                            "body_bytes": body_bytes,
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                        }
+                    )
+                continue
+
+            # Check for empty/refusal
+            empty_conditions = [
+                c for c, t in generations.items() if not t.strip()
+            ]
+            if empty_conditions:
+                cases.append(
+                    {
+                        "id": f"{skill_name}/run{run_idx}",
+                        "entity_id": skill_name,
+                        "skill_name": skill_name,
+                        "prompt": test_prompt,
+                        "run_index": run_idx,
+                        "generation_error": f"empty/refusal for: {', '.join(empty_conditions)}",
+                        "size_tier": tier,
+                        "body_bytes": body_bytes,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+                continue
+
+            # --- Pairwise judge comparisons ---
+            all_comparisons = list(COMPARISONS)
+            if siblings_text is not None:
+                all_comparisons.extend(SIBLING_COMPARISONS)
+
+            for cond_a, cond_b in all_comparisons:
+                if cond_a not in generations or cond_b not in generations:
+                    continue
+
+                if total_cost >= max_cost:
+                    cost_exceeded = True
+                    break
+
+                # A/B randomization with deterministic seed
+                seed_input = (
+                    f"{seed}|{skill_name}|{cond_a}|{cond_b}|{run_idx}"
+                )
+                case_seed = int(
+                    hashlib.sha256(seed_input.encode()).hexdigest()[:8], 16
+                )
+                case_rng = random.Random(case_seed)
+                a_is_judge_a = case_rng.random() < 0.5
+
+                if a_is_judge_a:
+                    response_a = generations[cond_a]
+                    response_b = generations[cond_b]
+                    ab_assignment = f"{cond_a}=A,{cond_b}=B"
+                else:
+                    response_a = generations[cond_b]
+                    response_b = generations[cond_a]
+                    ab_assignment = f"{cond_a}=B,{cond_b}=A"
+
+                comparison_id = (
+                    f"{skill_name}/{cond_a}_vs_{cond_b}/run{run_idx}"
+                )
+                print(
+                    f"[size_impact]   Judging {cond_a} vs {cond_b} "
+                    f"(run {run_idx}) ...",
+                    file=sys.stderr,
+                )
+
+                judge_result: Optional[dict] = None
+                try:
+                    judge_result = judge_prompt.invoke_judge(
+                        client=client,
+                        user_prompt=test_prompt,
+                        response_a=response_a,
+                        response_b=response_b,
+                        criteria=SIZE_IMPACT_CRITERIA,
+                        judge_model=meta["judge_model"],
+                        temperature=temperature,
+                    )
+                except Exception as exc:
+                    judge_result = {
+                        "parsed": None,
+                        "raw_judge_text": "",
+                        "cost": 0.0,
+                        "attempts": 0,
+                        "judge_error": f"judge invocation failed: {exc}",
+                    }
+
+                total_cost += judge_result["cost"]
+
+                case_record: dict = {
+                    "id": comparison_id,
+                    "entity_id": skill_name,
+                    "skill_name": skill_name,
+                    "prompt": test_prompt,
+                    "run_index": run_idx,
+                    "comparison": f"{cond_a}_vs_{cond_b}",
+                    "condition_a": cond_a,
+                    "condition_b": cond_b,
+                    "ab_assignment": ab_assignment,
+                    "case_seed": case_seed,
+                    "size_tier": tier,
+                    "body_bytes": body_bytes,
+                    "injected_sizes": {
+                        cond_a: condition_sizes.get(cond_a, {}),
+                        cond_b: condition_sizes.get(cond_b, {}),
+                    },
+                    "model": meta["model"],
+                    "judge_model": meta["judge_model"],
+                    "run_id": meta["run_id"],
+                    "seed": seed,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "cost": sum(gen_costs.get(c, 0.0) for c in (cond_a, cond_b))
+                    + judge_result["cost"],
+                    "judge_attempts": judge_result["attempts"],
+                }
+
+                if judge_result["judge_error"]:
+                    case_record["judge_error"] = judge_result["judge_error"]
+                    case_record["raw_judge_text"] = judge_result[
+                        "raw_judge_text"
+                    ]
+                    cases.append(case_record)
+                    continue
+
+                parsed = judge_result["parsed"]
+                assert parsed is not None  # guaranteed if no judge_error
+
+                scores = _compute_comparison_scores(
+                    parsed,
+                    SIZE_IMPACT_CRITERIA,
+                    cond_a,
+                    cond_b,
+                    a_is_judge_a,
+                )
+
+                case_record["scores"] = scores
+                cases.append(case_record)
+
+                skill_comparisons[skill_name].append(
+                    {
+                        "comparison": f"{cond_a}_vs_{cond_b}",
+                        "winner": scores["winner"],
+                        "improvement": scores["improvement"],
+                        "run_index": run_idx,
+                    }
+                )
+
+    # --- Build summary ---
+    summary: dict[str, dict] = {}
+    for cand in candidates:
+        skill_name = cand["skill"]
+        tier, body_bytes = classify_size_tier(skill_name)
+        comps = skill_comparisons.get(skill_name, [])
+
+        # Summarize per comparison type
+        comp_summaries: dict[str, dict] = {}
+        for comp_type in ["full_vs_baseline", "full_vs_summary", "summary_vs_baseline", "full_siblings_vs_full"]:
+            type_comps = [
+                c for c in comps if c["comparison"] == comp_type
+            ]
+            if not type_comps:
+                continue
+
+            improvements = [c["improvement"] for c in type_comps]
+            winners = [c["winner"] for c in type_comps]
+            stats = _compute_stats(improvements)
+
+            # Count wins for each side
+            parts = comp_type.split("_vs_")
+            a_label = parts[0]
+            b_label = parts[1]
+            wins_a = sum(1 for w in winners if w == a_label)
+            wins_b = sum(1 for w in winners if w == b_label)
+            ties = sum(1 for w in winners if w == "tie")
+
+            comp_summaries[comp_type] = {
+                "mean": round(stats["mean"], 4),
+                "stddev": round(stats["stddev"], 4),
+                "n": stats["n"],
+                f"wins_{a_label}": wins_a,
+                f"wins_{b_label}": wins_b,
+                "ties": ties,
+            }
+
+        # Overall skill summary
+        all_improvements = [c["improvement"] for c in comps]
+        overall_stats = _compute_stats(all_improvements)
+        error_count = sum(
+            1
+            for c in cases
+            if c.get("entity_id") == skill_name
+            and (c.get("generation_error") or c.get("judge_error"))
+        )
+
+        # Compute injected bytes and tokens for each condition
+        summary_result = extract_summary(skill_name)
+        full_body = _common.load_skill_body(skill_name)
+
+        summary[skill_name] = {
+            "size_tier": tier,
+            "body_bytes": body_bytes,
+            "full_bytes": len(full_body.encode("utf-8")) if full_body else 0,
+            "full_tokens": estimate_tokens(full_body) if full_body else 0,
+            "summary_bytes": summary_result[1] if summary_result else 0,
+            "summary_tokens": estimate_tokens(summary_result[0]) if summary_result else 0,
+            "mean": round(overall_stats["mean"], 4),
+            "stddev": round(overall_stats["stddev"], 4),
+            "n": overall_stats["n"],
+            "errors": error_count,
+            "comparisons": comp_summaries,
+        }
+
+    meta["total_cost"] = round(total_cost, 6)
 
     output_path = _common.write_results(
         meta=meta,
@@ -113,7 +1117,28 @@ def main() -> int:
         cases=cases,
         output_dir=args.output_dir,
     )
-    print(f"[size_impact] Results written to: {output_path}", file=sys.stderr)
+
+    # Print summary
+    print(f"\n[size_impact] === Summary ===", file=sys.stderr)
+    for skill_name, stats in summary.items():
+        print(
+            f"  {skill_name} (tier={stats['size_tier']}, "
+            f"body={stats['body_bytes']}B, "
+            f"full={stats['full_bytes']}B/{stats['full_tokens']}tok, "
+            f"summary={stats['summary_bytes']}B/{stats['summary_tokens']}tok):",
+            file=sys.stderr,
+        )
+        for comp_type, comp_stats in stats.get("comparisons", {}).items():
+            print(
+                f"    {comp_type}: mean={comp_stats['mean']:+.4f} "
+                f"(stddev={comp_stats['stddev']:.4f}, n={comp_stats['n']})",
+                file=sys.stderr,
+            )
+
+    print(f"\n[size_impact] Total cost: ${total_cost:.4f}", file=sys.stderr)
+    print(
+        f"[size_impact] Results written to: {output_path}", file=sys.stderr
+    )
     return 0
 
 
