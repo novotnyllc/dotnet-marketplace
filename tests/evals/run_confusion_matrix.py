@@ -956,7 +956,7 @@ def main() -> int:
         all_group_skills: list[str] = []
         for g in active_groups:
             all_group_skills.extend(DOMAIN_GROUPS.get(g, []))
-        full_index_text, full_skill_count = build_group_index(
+        full_index_text, _ = build_group_index(
             sorted(set(all_group_skills))
         )
         neg_system_prompt = _CONFUSION_SYSTEM_PROMPT.format(

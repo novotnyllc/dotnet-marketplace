@@ -66,9 +66,8 @@ Expand negative controls and build confusion matrix tests (L4 runner) that valid
 - [ ] Uses structured JSON response approach from task .5
 - [ ] Confusion datasets stored under `datasets/confusion/` (not `datasets/activation/`)
 ## Done summary
-TBD
-
+Implemented L4 confusion matrix eval runner with 36 prompts across 7 domain groups (testing, security, data, performance, api, cicd, blazor), 18 expanded negative controls (non-.NET + temptation), per-group NxN confusion matrices with locked axes, cross-activation flagging (>20%), index violation tracking, never-activated skill detection, prompt-level low-discrimination findings, and --dry-run/--group CLI support.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: fe456770, 1afbf78c, 3ee307d5, d3b61fa7
+- Tests: python3 tests/evals/run_confusion_matrix.py --dry-run, python3 tests/evals/run_confusion_matrix.py --dry-run --group testing, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
