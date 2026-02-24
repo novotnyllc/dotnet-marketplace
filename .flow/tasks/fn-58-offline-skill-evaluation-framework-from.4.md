@@ -63,12 +63,7 @@ Add a GitHub Actions workflow for scheduled evals (all 4 eval types), implement 
 - [ ] `CHANGELOG.md` has `### Added` entry under `## [Unreleased]`
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass
 ## Done summary
-Blocked:
-Blocked on fn-60 (Run Eval Suite Against Skills and Fix to Quality Bar).
-
-There's no point setting up CI for the evals until the evals have been actually run locally, skills have been fixed based on the results, and initial baselines have been saved. CI also won't typically have the right API key secrets available, especially in forks.
-
-Unblock after fn-60.6 (Save initial baselines) is complete.
+Skipped — CI workflow deferred; not needed for eval framework completion.
 ## Evidence
 - Commits:
 - Tests:
