@@ -1025,6 +1025,8 @@ def main() -> int:
                         )
                     except Exception as exc:
                         generation_error = f"{cond_name} generation failed: {exc}"
+                        # Account for CLI calls consumed by failed retries
+                        total_calls_count += int(getattr(exc, "calls_consumed", 0))
                         print(
                             f"[size_impact]   {cond_name}: ERROR - {exc}",
                             file=sys.stderr,
@@ -1139,7 +1141,7 @@ def main() -> int:
                         "parsed": None,
                         "raw_judge_text": "",
                         "cost": 0.0,
-                        "calls": 0,
+                        "calls": int(getattr(exc, "calls_consumed", 0)),
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }

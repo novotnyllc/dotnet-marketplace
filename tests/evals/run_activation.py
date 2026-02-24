@@ -601,6 +601,8 @@ def main() -> int:
             except Exception as exc:
                 api_error = str(exc)
                 call_cost = 0.0
+                # Account for CLI calls consumed by failed retries
+                total_calls += int(getattr(exc, "calls_consumed", 0))
 
             # Detect activation
             activated_skills: list[str] = []

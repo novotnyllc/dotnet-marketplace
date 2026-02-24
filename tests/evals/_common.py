@@ -186,7 +186,13 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
 
     for mode in ("stdin", "file_stdin"):
         proc = _run_probe(transport_cmd, mode)
-        if proc is not None and proc.returncode == 0 and (proc.stdout or "").strip():
+        # Require non-empty stdout containing the expected "OK" sentinel
+        # to avoid false-positives from CLIs that print help/diagnostics.
+        if (
+            proc is not None
+            and proc.returncode == 0
+            and "OK" in (proc.stdout or "")
+        ):
             prompt_mode = mode
             break
         elif proc is not None:
@@ -209,15 +215,15 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             f"falling back to arg mode (large prompts will error).",
         )
 
-    # Step 3: JSON output support (claude only) -- probe independently.
-    # The probe prompt is short enough for arg mode, so allow it even
-    # when prompt_mode is "arg" (only the short probe is sent this way;
-    # real large prompts still use stdin/file_stdin in _execute_cli).
+    # Step 3: JSON output support (claude only) -- probe independently
+    # using the working transport mode to avoid false negatives.
+    # Skip when only arg mode is available: if stdin/file_stdin both
+    # failed during transport probing, the JSON probe would also fail
+    # via the same transport, so there is nothing useful to test.
     json_output = False
-    if backend == "claude":
+    if backend == "claude" and prompt_mode != "arg":
         json_probe_cmd = list(transport_cmd) + ["--output-format", "json"]
-        json_probe_mode = prompt_mode if prompt_mode != "arg" else "stdin"
-        json_proc = _run_probe(json_probe_cmd, json_probe_mode)
+        json_proc = _run_probe(json_probe_cmd, prompt_mode)
         if json_proc is not None and json_proc.returncode == 0:
             stdout = json_proc.stdout or ""
             if stdout.strip():
@@ -569,7 +575,10 @@ def retry_with_backoff(
 
     Raises:
         The last exception if all retries are exhausted, or RuntimeError
-        if budget_check returns True before an attempt.
+        if budget_check returns True before an attempt.  In both cases
+        the raised exception has a ``calls_consumed`` attribute (int)
+        indicating the number of CLI invocations that were made before
+        the failure, so callers can keep their call-count totals accurate.
     """
     cfg = load_config()
     retry_cfg = cfg.get("retry", {})
@@ -583,9 +592,11 @@ def retry_with_backoff(
         # Check budget before each CLI invocation, including pending
         # (not-yet-accounted-for) calls from failed retries.
         if budget_check is not None and budget_check(failed_attempts):
-            raise RuntimeError(
+            exc = RuntimeError(
                 f"Budget exceeded before retry attempt {attempt + 1}"
             )
+            exc.calls_consumed = failed_attempts  # type: ignore[attr-defined]
+            raise exc
         try:
             result = fn()
             # Adjust calls count for failed attempts that consumed CLI calls
@@ -598,6 +609,9 @@ def retry_with_backoff(
             if attempt < retries:
                 delay = (base ** attempt) + random.uniform(0, jitter)
                 time.sleep(delay)
+    # Attach consumed call count so callers can update their totals
+    if last_exc is not None:
+        last_exc.calls_consumed = failed_attempts  # type: ignore[attr-defined]
     raise last_exc  # type: ignore[misc]
 
 

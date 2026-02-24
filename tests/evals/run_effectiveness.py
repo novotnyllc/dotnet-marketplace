@@ -540,6 +540,8 @@ def main() -> int:
                     except Exception as exc:
                         generation_error = f"enhanced generation failed: {exc}"
                         enhanced_text = ""
+                        # Account for CLI calls consumed by failed retries
+                        total_calls += int(getattr(exc, "calls_consumed", 0))
 
                     # Cap check before baseline generation
                     if not generation_error and _budget_exceeded():
@@ -563,6 +565,8 @@ def main() -> int:
                         except Exception as exc:
                             generation_error = f"baseline generation failed: {exc}"
                             baseline_text = ""
+                            # Account for CLI calls consumed by failed retries
+                            total_calls += int(getattr(exc, "calls_consumed", 0))
 
                     # Save generations for resume/replay
                     if not generation_error:
@@ -639,7 +643,7 @@ def main() -> int:
                         "parsed": None,
                         "raw_judge_text": "",
                         "cost": 0.0,
-                        "calls": 0,
+                        "calls": int(getattr(exc, "calls_consumed", 0)),
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }

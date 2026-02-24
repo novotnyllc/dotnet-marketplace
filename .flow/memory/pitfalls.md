@@ -453,3 +453,6 @@ When wrapping CLI calls in retry_with_backoff, the call-count returned must incl
 
 ## 2026-02-24 manual [pitfall]
 When probing multiple CLI capabilities, keep probes independent -- do not bundle capability A (e.g., JSON output) into capability B (e.g., stdin transport) or a failure in A will falsely indicate B is broken
+
+## 2026-02-24 manual [pitfall]
+When passing budget_check closures into nested call sites (e.g. judge retry loops), wrap the closure to include locally-consumed calls -- the outer caller only updates its counters after the nested function returns, so uncorrected checks can overshoot caps
