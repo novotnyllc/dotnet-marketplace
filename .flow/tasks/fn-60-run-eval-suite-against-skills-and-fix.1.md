@@ -38,3 +38,12 @@ Save all result JSON files. Record key metrics from each run's summary output fo
   - L6: size impact `full_vs_baseline` results per candidate
 - [ ] Total cost documented (sum across all 4 runner invocations)
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass (no changes to skills yet)
+
+## Done summary
+
+Created run_suite.sh orchestration script that runs all 4 eval types (activation, confusion, effectiveness, size impact) in sequence with proper input validation, per-spec run counts (1 for activation/confusion, configurable N for effectiveness/size_impact), runner failure tracking, exact result file capture, and resilient suite summary JSON generation. All 4 runners verified working in dry-run mode. Actual API execution requires ANTHROPIC_API_KEY to be set in the environment.
+
+## Evidence
+
+- Commits: 0958c78, a9c371f
+- Tests: validate-skills.sh PASS, validate-marketplace.sh PASS, all 4 runners dry-run PASS, run_suite.sh dry-run PASS, input validation PASS

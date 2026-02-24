@@ -444,3 +444,6 @@ Confusion matrix axes must be locked to declared group definitions, not derived 
 
 ## 2026-02-24 manual [pitfall]
 Eval runners exit 0 even on partial runs or cost-cap aborts; acceptance must check coverage completeness (case counts) not just exit code + file existence
+
+## 2026-02-24 manual [pitfall]
+Shell scripts that embed variables into python3 -c code are injection-prone; pass values via environment variables and read with os.environ inside Python instead
