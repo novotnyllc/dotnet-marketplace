@@ -98,9 +98,15 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
     mode_key = f"{cache_prefix}.prompt_mode"
 
     if json_key in _cli_caps and mode_key in _cli_caps:
-        return {"json_output": _cli_caps[json_key], "prompt_mode": _cli_caps[mode_key]}
+        avail_key = f"{cache_prefix}.available"
+        return {
+            "json_output": _cli_caps[json_key],
+            "prompt_mode": _cli_caps[mode_key],
+            "available": _cli_caps.get(avail_key, True),
+        }
 
     # Step 1: verify in PATH
+    avail_key = f"{cache_prefix}.available"
     if shutil.which(backend) is None:
         _emit_warning(
             f"{backend}_not_found",
@@ -109,7 +115,8 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
         )
         _cli_caps[json_key] = False
         _cli_caps[mode_key] = "arg"
-        return {"json_output": False, "prompt_mode": "arg"}
+        _cli_caps[avail_key] = False
+        return {"json_output": False, "prompt_mode": "arg", "available": False}
 
     # Resolve configured model for probing (avoid hard-coding a model)
     cfg = load_config()
@@ -179,7 +186,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
 
     for mode in ("stdin", "file_stdin"):
         proc = _run_probe(transport_cmd, mode)
-        if proc is not None and proc.returncode == 0:
+        if proc is not None and proc.returncode == 0 and (proc.stdout or "").strip():
             prompt_mode = mode
             break
         elif proc is not None:
@@ -202,12 +209,15 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             f"falling back to arg mode (large prompts will error).",
         )
 
-    # Step 3: JSON output support (claude only) -- probe independently
-    # using the working transport mode to avoid false negatives.
+    # Step 3: JSON output support (claude only) -- probe independently.
+    # The probe prompt is short enough for arg mode, so allow it even
+    # when prompt_mode is "arg" (only the short probe is sent this way;
+    # real large prompts still use stdin/file_stdin in _execute_cli).
     json_output = False
-    if backend == "claude" and prompt_mode != "arg":
+    if backend == "claude":
         json_probe_cmd = list(transport_cmd) + ["--output-format", "json"]
-        json_proc = _run_probe(json_probe_cmd, prompt_mode)
+        json_probe_mode = prompt_mode if prompt_mode != "arg" else "stdin"
+        json_proc = _run_probe(json_probe_cmd, json_probe_mode)
         if json_proc is not None and json_proc.returncode == 0:
             stdout = json_proc.stdout or ""
             if stdout.strip():
@@ -227,8 +237,9 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
 
     _cli_caps[json_key] = json_output
     _cli_caps[mode_key] = prompt_mode
+    _cli_caps[f"{cache_prefix}.available"] = True
 
-    return {"json_output": json_output, "prompt_mode": prompt_mode}
+    return {"json_output": json_output, "prompt_mode": prompt_mode, "available": True}
 
 
 # ---------------------------------------------------------------------------
@@ -272,6 +283,14 @@ def call_model(
         model = backend_cfg.get("model")
 
     caps = _detect_cli_caps(backend)
+
+    # Fail early with a clear message if the CLI tool is not installed
+    if not caps.get("available", True):
+        raise RuntimeError(
+            f"{backend} CLI is not installed or not found in PATH. "
+            f"Install {backend} or set cli.default to a different "
+            f"backend in config.yaml."
+        )
 
     # Build the prompt payload
     # For large system prompts or non-claude backends: combine into single payload

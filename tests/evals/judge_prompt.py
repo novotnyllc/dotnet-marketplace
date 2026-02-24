@@ -166,10 +166,19 @@ def invoke_judge(
     total_calls = 0
     raw_text = ""
 
+    # Wrap the runner's budget_check so it includes calls already
+    # consumed inside this invoke_judge() invocation.  The runner only
+    # increments its counters *after* invoke_judge() returns, so without
+    # this wrapper, multi-attempt judge calls can overshoot max_calls.
+    def _local_budget(pending_calls: int = 0) -> bool:
+        if budget_check is None:
+            return False
+        return budget_check(total_calls + pending_calls)
+
     for attempt in range(1 + max_retries):
-        # Check budget before each judge attempt (0 pending -- runner
-        # has already accounted for prior judge calls via total_calls)
-        if budget_check is not None and budget_check(0):
+        # Check budget before each judge attempt, including calls
+        # already consumed by prior attempts within this invocation.
+        if _local_budget(0):
             return {
                 "parsed": None,
                 "raw_judge_text": raw_text,
@@ -193,7 +202,7 @@ def invoke_judge(
             )
 
         result = _common.retry_with_backoff(
-            _call, budget_check=budget_check
+            _call, budget_check=_local_budget
         )
 
         raw_text = result["text"]
