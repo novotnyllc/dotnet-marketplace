@@ -79,6 +79,28 @@ def load_config(config_path: Optional[Path] = None) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Subprocess environment
+# ---------------------------------------------------------------------------
+
+# Environment variables that must be stripped from child processes to
+# prevent nested-session detection by the Claude Code CLI.  When the
+# eval runners are invoked from within a Claude Code session, these
+# variables cause the child `claude` process to refuse to start.
+_STRIPPED_ENV_VARS = frozenset({"CLAUDECODE", "CLAUDE_CODE_ENTRYPOINT"})
+
+
+def _subprocess_env() -> dict[str, str]:
+    """Return a copy of os.environ with Claude Code session vars removed.
+
+    This allows ``subprocess.run`` calls to launch ``claude`` CLI
+    processes without triggering the nested-session guard.
+    """
+    import os
+
+    return {k: v for k, v in os.environ.items() if k not in _STRIPPED_ENV_VARS}
+
+
+# ---------------------------------------------------------------------------
 # CLI capability detection
 # ---------------------------------------------------------------------------
 
@@ -178,6 +200,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                     capture_output=True,
                     text=True,
                     timeout=30,
+                    env=_subprocess_env(),
                 )
             else:
                 # file_stdin: write to temp file, pipe as stdin
@@ -194,6 +217,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                             capture_output=True,
                             text=True,
                             timeout=30,
+                            env=_subprocess_env(),
                         )
                 finally:
                     Path(tf_path).unlink(missing_ok=True)
@@ -397,6 +421,8 @@ def _execute_cli(
         "calls": 1,
     }
 
+    clean_env = _subprocess_env()
+
     try:
         if prompt_mode == "stdin":
             proc = subprocess.run(
@@ -405,6 +431,7 @@ def _execute_cli(
                 capture_output=True,
                 text=True,
                 timeout=120,
+                env=clean_env,
             )
         elif prompt_mode == "file_stdin":
             with tempfile.NamedTemporaryFile(
@@ -420,6 +447,7 @@ def _execute_cli(
                         capture_output=True,
                         text=True,
                         timeout=120,
+                        env=clean_env,
                     )
             finally:
                 Path(tf_path).unlink(missing_ok=True)
@@ -445,6 +473,7 @@ def _execute_cli(
                 capture_output=True,
                 text=True,
                 timeout=120,
+                env=clean_env,
             )
     except subprocess.TimeoutExpired:
         result_default["text"] = ""

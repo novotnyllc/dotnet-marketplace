@@ -252,9 +252,8 @@ Unchanged from original .7 spec -- git-based restore mechanism remains valid.
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
 
 ## Done summary
-TBD
-
+Replaced the entire Anthropic SDK API layer with CLI-based subprocess invocations (claude/codex/copilot) across all 4 eval runners, judge module, and shared infrastructure. Added per-backend capability detection with actionable diagnostics, dual abort mechanism (cost + call-count caps), machine-parseable runner output contract, non-retryable CLIConfigError for deterministic failures, and accurate call-count tracking through retry failures.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 562a7b0ccc5a54cab643b8c1d9bb707b6b2882d6, bbbfcbc, adf46c9, 0891e39, 820fb80, 4576405, fc99de1, 9843bdd
+- Tests: python3 tests/evals/run_activation.py --dry-run, python3 tests/evals/run_confusion_matrix.py --group testing --dry-run, python3 tests/evals/run_effectiveness.py --dry-run, python3 tests/evals/run_size_impact.py --dry-run, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, grep -r client.messages.create tests/evals/, grep -r 'import anthropic' tests/evals/, grep -r ANTHROPIC_API_KEY tests/evals/
 - PRs:

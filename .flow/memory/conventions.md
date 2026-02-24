@@ -84,3 +84,6 @@ Task specs that reference audit data should say 'per the baseline report' instea
 
 ## 2026-02-24 manual [convention]
 Eval runners must record a result for every dataset case including skipped ones (e.g. classification=skipped) so coverage gaps are visible in results and baseline comparisons
+
+## 2026-02-24 manual [convention]
+Retry logic should distinguish non-retryable config errors (missing binary, bad flags) from transient failures (timeout, rate limit) -- use a custom exception type that retry_with_backoff re-raises immediately to avoid stalling on deterministic failures
