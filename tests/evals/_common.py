@@ -251,7 +251,10 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
     if prompt_mode == "arg":
         # codex and copilot don't support arg mode, so this is a hard failure
         if backend in ("codex", "copilot"):
-            stderr_preview = "No stdin/file_stdin support detected during probes"
+            # Cache the failure before raising, to avoid re-probing on retry
+            _cli_caps[json_key] = False
+            _cli_caps[mode_key] = "arg"
+            _cli_caps[avail_key] = False
             raise CLIConfigError(
                 f"{backend} CLI does not support stdin or file_stdin modes. "
                 f"Cannot proceed with arg mode for {backend}. "
@@ -347,16 +350,11 @@ def call_model(
         )
 
     # Build the prompt payload
-    # For large system prompts or non-claude backends: combine into single payload
-    use_system_flag = (
-        backend == "claude"
-        and len(system_prompt) <= _SYSTEM_PROMPT_INLINE_LIMIT
-    )
-
-    if use_system_flag:
-        combined_prompt = user_prompt
-    else:
-        combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
+    # Always combine system and user prompts into a single payload to ensure
+    # deterministic semantics across baseline and enhanced conditions (L5/L6).
+    # This prevents confounding comparisons when skill content changes the total length.
+    combined_prompt = system_prompt + "\n\n---\n\n" + user_prompt
+    use_system_flag = False
 
     # Build CLI command
     cmd = _build_cli_command(backend, model, max_tokens, temperature, caps, use_system_flag, system_prompt)
@@ -974,7 +972,7 @@ def load_rubric(skill_name: str, rubrics_dir: Optional[Path] = None) -> Optional
         rubrics_dir: Path to rubrics directory. Defaults to config path.
 
     Returns:
-        Parsed rubric dict, or None if not found.
+        Parsed rubric dict, or None if not found or invalid.
     """
     cfg = load_config()
     resolved_dir: Path = rubrics_dir if rubrics_dir is not None else EVALS_DIR / cfg.get("paths", {}).get("rubrics_dir", "rubrics")
@@ -983,5 +981,22 @@ def load_rubric(skill_name: str, rubrics_dir: Optional[Path] = None) -> Optional
     if not rubric_path.is_file():
         return None
 
-    with open(rubric_path) as f:
-        return yaml.safe_load(f)
+    try:
+        with open(rubric_path) as f:
+            parsed = yaml.safe_load(f)
+
+        # Validate: rubric must be a dict
+        if not isinstance(parsed, dict):
+            _emit_warning(
+                "invalid_rubric_type",
+                f"Rubric {skill_name}.yaml is not a mapping (got {type(parsed).__name__}); skipping",
+            )
+            return None
+
+        return parsed
+    except yaml.YAMLError as e:
+        _emit_warning(
+            "rubric_parse_error",
+            f"Failed to parse rubric {skill_name}.yaml: {e}",
+        )
+        return None
