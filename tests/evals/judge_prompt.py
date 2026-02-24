@@ -126,7 +126,7 @@ def invoke_judge(
     temperature: float = 0.0,
     max_retries: int = 2,
     cli: Optional[str] = None,
-    budget_check: Optional[Callable[[], bool]] = None,
+    budget_check: Optional[Callable[[int], bool]] = None,
 ) -> dict:
     """Invoke the LLM judge and parse the structured JSON response.
 
@@ -143,9 +143,10 @@ def invoke_judge(
         temperature: Sampling temperature (default 0.0).
         max_retries: Max parse-failure retries (default 2).
         cli: CLI backend override.
-        budget_check: Optional callable returning True if budget is
-            exceeded.  Checked before each LLM call to enforce per-call
-            cap limits set by the runner.
+        budget_check: Optional callable ``(pending_calls: int) -> bool``
+            returning True if budget is exceeded.  ``pending_calls``
+            counts CLI calls consumed by retries not yet accounted for
+            by the runner.  Checked before each LLM call.
 
     Returns:
         Dict with keys:
@@ -166,8 +167,9 @@ def invoke_judge(
     raw_text = ""
 
     for attempt in range(1 + max_retries):
-        # Check budget before each LLM call
-        if budget_check is not None and budget_check():
+        # Check budget before each judge attempt (0 pending -- runner
+        # has already accounted for prior judge calls via total_calls)
+        if budget_check is not None and budget_check(0):
             return {
                 "parsed": None,
                 "raw_judge_text": raw_text,

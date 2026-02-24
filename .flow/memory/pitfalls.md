@@ -447,3 +447,9 @@ Eval runners exit 0 even on partial runs or cost-cap aborts; acceptance must che
 
 ## 2026-02-24 manual [pitfall]
 Shell scripts that embed variables into python3 -c code are injection-prone; pass values via environment variables and read with os.environ inside Python instead
+
+## 2026-02-24 manual [pitfall]
+When wrapping CLI calls in retry_with_backoff, the call-count returned must include failed attempts, and budget checks must run before each retry attempt -- not just before the outer call
+
+## 2026-02-24 manual [pitfall]
+When probing multiple CLI capabilities, keep probes independent -- do not bundle capability A (e.g., JSON output) into capability B (e.g., stdin transport) or a failure in A will falsely indicate B is broken

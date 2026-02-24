@@ -199,7 +199,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
         _emit_warning(
             f"{backend}_no_stdin",
             f"{backend} CLI does not support stdin or file_stdin; "
-            f"falling back to arg mode (prompts will be truncated).",
+            f"falling back to arg mode (large prompts will error).",
         )
 
     # Step 3: JSON output support (claude only) -- probe independently
@@ -381,7 +381,14 @@ def _execute_cli(
             finally:
                 Path(tf_path).unlink(missing_ok=True)
         else:
-            # arg mode: append prompt as positional arg (short prompts only)
+            # arg mode: only supported for claude (which accepts
+            # positional prompt after -p). codex/copilot require stdin.
+            if backend in ("codex", "copilot"):
+                raise RuntimeError(
+                    f"{backend} CLI requires stdin piping but neither stdin "
+                    f"nor file_stdin mode is available. Check that the "
+                    f"{backend} CLI is installed and working."
+                )
             if len(prompt) > _SYSTEM_PROMPT_INLINE_LIMIT:
                 raise RuntimeError(
                     f"{backend} CLI fell back to arg mode but prompt is "
@@ -389,6 +396,7 @@ def _execute_cli(
                     f"Ensure the CLI supports stdin or file_stdin piping, "
                     f"or reduce prompt size."
                 )
+            # claude -p accepts prompt as positional arg
             proc = subprocess.run(
                 cmd + [prompt],
                 capture_output=True,
@@ -527,9 +535,13 @@ def retry_with_backoff(
         max_retries: Max retry attempts. Defaults to config value.
         backoff_base: Base for exponential backoff. Defaults to config.
         backoff_jitter: Max random jitter added. Defaults to config.
-        budget_check: Optional callable returning True when budget is
-            exceeded. Checked before each attempt; raises RuntimeError
-            if budget is exceeded mid-retry.
+        budget_check: Optional callable ``(pending_calls: int) -> bool``
+            returning True when budget is exceeded.  ``pending_calls``
+            is the number of CLI calls already consumed by failed
+            retries that the runner hasn't accounted for yet.  This
+            lets the checker add those to its running total for an
+            accurate pre-call gate.  Raises RuntimeError if budget is
+            exceeded mid-retry.
 
     Returns:
         The return value of fn on success. If the return value is a dict
@@ -549,8 +561,9 @@ def retry_with_backoff(
     last_exc = None
     failed_attempts = 0
     for attempt in range(retries + 1):
-        # Check budget before each CLI invocation
-        if budget_check is not None and budget_check():
+        # Check budget before each CLI invocation, including pending
+        # (not-yet-accounted-for) calls from failed retries.
+        if budget_check is not None and budget_check(failed_attempts):
             raise RuntimeError(
                 f"Budget exceeded before retry attempt {attempt + 1}"
             )

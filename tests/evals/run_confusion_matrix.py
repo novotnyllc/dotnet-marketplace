@@ -814,8 +814,8 @@ def main() -> int:
     all_negative_results: list[dict] = []
 
     # Budget check closure (captures mutable locals)
-    def _budget_exceeded() -> bool:
-        return total_cost >= max_cost or total_calls >= max_calls
+    def _budget_exceeded(pending_calls: int = 0) -> bool:
+        return total_cost >= max_cost or (total_calls + pending_calls) >= max_calls
 
     for run_idx in range(args.runs):
         if args.runs > 1:

@@ -953,8 +953,8 @@ def main() -> int:
                 break
 
             # Budget check closure (captures mutable locals)
-            def _budget_exceeded() -> bool:
-                return total_cost >= max_cost or total_calls_count >= max_calls
+            def _budget_exceeded(pending_calls: int = 0) -> bool:
+                return total_cost >= max_cost or (total_calls_count + pending_calls) >= max_calls
 
             # --- Generate all conditions ---
             generations: dict[str, str] = {}
