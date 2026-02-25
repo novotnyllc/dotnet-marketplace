@@ -33,33 +33,67 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 
 Use these `mcp-windbg` operations:
 
-1. `mcp_mcp-windbg_open_windbg_remote` -- attach to a live debug server
-2. `mcp_mcp-windbg_open_windbg_dump` -- open a saved dump file
-3. `mcp_mcp-windbg_run_windbg_cmd` -- execute debugger commands
-4. `mcp_mcp-windbg_close_windbg_remote` -- detach from live session
-5. `mcp_mcp-windbg_close_windbg_dump` -- close dump session
+| Operation | Purpose |
+|-----------|---------|
+| `mcp_mcp-windbg_open_windbg_remote` | Attach to a live debug server |
+| `mcp_mcp-windbg_open_windbg_dump` | Open a saved dump file |
+| `mcp_mcp-windbg_run_windbg_cmd` | Execute debugger commands |
+| `mcp_mcp-windbg_close_windbg_remote` | Detach from live session |
+| `mcp_mcp-windbg_close_windbg_dump` | Close dump session |
 
-## Quick Start
+## Diagnostic Workflow
 
-1. Configure and access MCP: see `reference/access-mcp.md`
-2. Choose workflow:
-   - Live attach: see `reference/live-attach.md`
-   - Dump analysis: see `reference/dump-workflow.md`
-3. Choose a task reference: see `reference/scenario-command-packs.md`
-4. Use support references as needed:
-   - Sanity check: `reference/sanity-check.md`
-   - Symbols: `reference/symbols.md`
-   - Common patterns: `reference/common-patterns.md`
-   - Capture playbooks: `reference/capture-playbooks.md`
-5. Return results using `reference/report-template.md`
-6. Close the debug session.
+### Crash Dump Analysis
 
-## Completion Criteria
+1. Open dump: `mcp_mcp-windbg_open_windbg_dump` with dump file path
+2. Load SOS for managed code: `.loadby sos clr` (Framework) or `.loadby sos coreclr` (.NET Core)
+3. Get exception context: `!pe` (print exception), `!analyze -v` (automatic analysis)
+4. Inspect threads: `~*e !clrstack` (all managed stacks), `!threads` (thread list)
+5. Check managed heap: `!dumpheap -stat` (heap summary), `!gcroot <addr>` (object roots)
 
-- Correct mode selected (live or dump)
-- Task reference executed for the symptom
-- Findings reference concrete stacks/threads/modules
-- Session closed cleanly
+### Hang / Deadlock Diagnosis
+
+1. Attach or open dump, load SOS
+2. List all threads: `!threads`, identify waiting threads with `!syncblk` (sync block table)
+3. Detect deadlocks: `!dlk` (SOS deadlock detection)
+4. Inspect thread stacks: `~Ns !clrstack` for specific thread N
+5. Check wait reasons: `!waitchain` for COM/RPC chains, `!mda` for MDA diagnostics
+
+### High CPU Triage
+
+1. Attach to live process or collect multiple dumps 10-30 seconds apart
+2. Use `!runaway` to identify threads consuming the most CPU time
+3. Inspect hot thread stacks: `~Ns kb` (native stack), `~Ns !clrstack` (managed stack)
+4. Look for tight loops, blocked finalizer threads, or excessive GC
+
+### Memory Pressure Investigation
+
+1. Open dump, load SOS
+2. Managed heap: `!dumpheap -stat` (type statistics), `!dumpheap -type <TypeName>` (filter)
+3. Find leaked objects: `!gcroot <address>` (trace GC roots to pinned or static references)
+4. Native heap: `!heap -s` (heap summary), `!heap -l` (leak detection)
+5. LOH fragmentation: `!eeheap -gc` (GC heap segments)
+
+## Report Template
+
+```
+## Diagnostic Report
+
+**Symptom:** [crash/hang/high-cpu/memory-leak]
+**Process:** [name, PID, bitness]
+**Dump type:** [full/mini/live-attach]
+
+### Evidence
+- Exception: [type and message, or N/A]
+- Faulting thread: [ID, managed/native, stack summary]
+- Key stacks: [condensed callstack with module!function]
+
+### Root Cause
+[Concise analysis backed by stack/heap evidence]
+
+### Recommendations
+[Numbered action items]
+```
 
 ## Guardrails
 
