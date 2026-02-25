@@ -48,6 +48,100 @@ class CLIPermanentError(CLIConfigError):
 
 
 # ---------------------------------------------------------------------------
+# Consecutive failure tracking (fail-fast)
+# ---------------------------------------------------------------------------
+
+
+class ConsecutiveFailureTracker:
+    """Track consecutive case-level failures with the same error fingerprint.
+
+    Used by eval runners to detect permanent errors and abort early instead
+    of running hundreds of cases against a broken wall (e.g., auth failure,
+    missing CLI binary).
+
+    The tracker operates at the case level, not individual CLI call level.
+    Multi-call-per-case runners count one failure per case regardless of
+    how many CLI calls that case makes.
+
+    Usage::
+
+        tracker = ConsecutiveFailureTracker(threshold=3)
+        for case in cases:
+            try:
+                run_case(case)
+                tracker.record_success()
+            except Exception as exc:
+                if tracker.record_failure(exc):
+                    # threshold breached -- abort
+                    break
+    """
+
+    def __init__(self, threshold: int = 3) -> None:
+        self._threshold = threshold
+        self._consecutive_count: int = 0
+        self._last_fingerprint: str = ""
+        self._breached: bool = False
+
+    @property
+    def last_fingerprint(self) -> str:
+        """Return the fingerprint of the most recent failure."""
+        return self._last_fingerprint
+
+    @property
+    def breached(self) -> bool:
+        """Return whether the threshold has been breached."""
+        return self._breached
+
+    @staticmethod
+    def _fingerprint(exc: Exception) -> str:
+        """Compute a whitespace-collapsed fingerprint from an exception."""
+        raw = str(exc)[:200]
+        return " ".join(raw.split())
+
+    def record_failure(self, exc: Exception) -> bool:
+        """Record a failure and return True if threshold is breached.
+
+        Args:
+            exc: The exception from the failed case.
+
+        Returns:
+            True when ``threshold`` consecutive failures with the same
+            fingerprint have occurred.
+        """
+        fp = self._fingerprint(exc)
+        if fp == self._last_fingerprint:
+            self._consecutive_count += 1
+        else:
+            self._last_fingerprint = fp
+            self._consecutive_count = 1
+
+        if self._consecutive_count >= self._threshold:
+            self._breached = True
+            return True
+        return False
+
+    def record_success(self) -> None:
+        """Reset the consecutive counter on a successful case."""
+        self._consecutive_count = 0
+        # Keep last_fingerprint for diagnostics; only reset counter
+
+    def reset(self) -> None:
+        """Full reset for multi-run boundaries."""
+        self._consecutive_count = 0
+        self._last_fingerprint = ""
+        self._breached = False
+
+    def is_permanent(self, exc: Exception) -> bool:
+        """Return True if the exception represents a permanent error.
+
+        Permanent errors (CLIConfigError and its subclass CLIPermanentError)
+        will never resolve by retrying. Transient errors (rate limits,
+        timeouts) may resolve for the next runner.
+        """
+        return isinstance(exc, CLIConfigError)
+
+
+# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 

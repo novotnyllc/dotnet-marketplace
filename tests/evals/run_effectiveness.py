@@ -367,6 +367,7 @@ def main() -> int:
             print(f"COST_USD=0.0")
             print(f"ABORTED=0")
             print(f"N_CASES=0")
+            print(f"FAIL_FAST=0")
             return 0
     else:
         skills = _common.list_skills_with_rubrics()
@@ -380,6 +381,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     if args.dry_run:
@@ -407,6 +409,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     # --- Full eval execution ---
@@ -448,12 +451,20 @@ def main() -> int:
     total_cost = 0.0
     total_calls = 0
     aborted = False
+    fail_fast = False
+    fail_fast_reason = ""
     cases: list[dict] = []
     # Collect per-skill improvement values for summary stats
     skill_improvements: dict[str, list[float]] = {s: [] for s in skills}
     skill_wins: dict[str, dict[str, int]] = {
         s: {"enhanced": 0, "baseline": 0, "tie": 0, "error": 0} for s in skills
     }
+
+    # Fail-fast tracker
+    ff_cfg = cfg.get("fail_fast", {})
+    ff_threshold = ff_cfg.get("consecutive_threshold", 3)
+    ff_enabled = ff_cfg.get("enabled", True)
+    tracker = _common.ConsecutiveFailureTracker(threshold=ff_threshold)
 
     for skill_name in skills:
         if aborted:
@@ -542,6 +553,15 @@ def main() -> int:
                         enhanced_text = ""
                         # Account for CLI calls consumed by failed retries
                         total_calls += int(getattr(exc, "calls_consumed", 0))
+                        # Track consecutive failures for fail-fast
+                        if ff_enabled and tracker.record_failure(exc):
+                            fail_fast = True
+                            fail_fast_reason = tracker.last_fingerprint
+                            print(
+                                f"[effectiveness] FAIL_FAST: {ff_threshold} consecutive "
+                                f"same-error failures -- aborting",
+                                file=sys.stderr,
+                            )
 
                     # Cap check before baseline generation
                     if not generation_error and _budget_exceeded():
@@ -567,6 +587,15 @@ def main() -> int:
                             baseline_text = ""
                             # Account for CLI calls consumed by failed retries
                             total_calls += int(getattr(exc, "calls_consumed", 0))
+                            # Track consecutive failures for fail-fast
+                            if ff_enabled and tracker.record_failure(exc):
+                                fail_fast = True
+                                fail_fast_reason = tracker.last_fingerprint
+                                print(
+                                    f"[effectiveness] FAIL_FAST: {ff_threshold} consecutive "
+                                    f"same-error failures -- aborting",
+                                    file=sys.stderr,
+                                )
 
                     # Save generations for resume/replay
                     if not generation_error:
@@ -601,6 +630,9 @@ def main() -> int:
                         "cost": gen_cost,
                     })
                     skill_wins[skill_name]["error"] += 1
+                    if fail_fast:
+                        aborted = True
+                        break
                     continue
 
                 # --- A/B randomization ---
@@ -647,6 +679,15 @@ def main() -> int:
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }
+                    # Track consecutive failures for fail-fast
+                    if ff_enabled and tracker.record_failure(exc):
+                        fail_fast = True
+                        fail_fast_reason = tracker.last_fingerprint
+                        print(
+                            f"[effectiveness] FAIL_FAST: {ff_threshold} consecutive "
+                            f"same-error failures -- aborting",
+                            file=sys.stderr,
+                        )
 
                 total_cost += judge_result["cost"]
                 total_calls += judge_result.get("calls", 0)
@@ -673,6 +714,9 @@ def main() -> int:
                     case_record["raw_judge_text"] = judge_result["raw_judge_text"]
                     skill_wins[skill_name]["error"] += 1
                     cases.append(case_record)
+                    if fail_fast:
+                        aborted = True
+                        break
                     continue
 
                 # Remap scores based on A/B assignment
@@ -722,6 +766,9 @@ def main() -> int:
                 skill_improvements[skill_name].append(scores["improvement"])
                 skill_wins[skill_name][scores["winner"]] += 1
 
+                # Successful case -- reset consecutive failure counter
+                tracker.record_success()
+
                 cases.append(case_record)
 
             if aborted:
@@ -753,6 +800,8 @@ def main() -> int:
         }
 
     meta["total_cost"] = round(total_cost, 6)
+    if fail_fast:
+        meta["fail_fast_reason"] = fail_fast_reason
 
     output_path = _common.write_results(
         meta=meta,
@@ -780,6 +829,9 @@ def main() -> int:
     print(f"COST_USD={total_cost:.4f}")
     print(f"ABORTED={'1' if aborted else '0'}")
     print(f"N_CASES={len(cases)}")
+    print(f"FAIL_FAST={'1' if fail_fast else '0'}")
+    if fail_fast:
+        print(f"FAIL_FAST_REASON={fail_fast_reason}")
     return 0
 
 

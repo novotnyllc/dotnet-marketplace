@@ -750,6 +750,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     # Filter to single skill if --skill specified
@@ -765,6 +766,7 @@ def main() -> int:
             print(f"COST_USD=0.0")
             print(f"ABORTED=0")
             print(f"N_CASES=0")
+            print(f"FAIL_FAST=0")
             return 0
         candidates = matching
 
@@ -821,6 +823,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     # --- Full eval execution ---
@@ -860,7 +863,15 @@ def main() -> int:
     total_cost = 0.0
     total_calls_count = 0
     aborted = False
+    fail_fast = False
+    fail_fast_reason = ""
     cases: list[dict] = []
+
+    # Fail-fast tracker
+    ff_cfg = cfg.get("fail_fast", {})
+    ff_threshold = ff_cfg.get("consecutive_threshold", 3)
+    ff_enabled = ff_cfg.get("enabled", True)
+    tracker = _common.ConsecutiveFailureTracker(threshold=ff_threshold)
 
     # Per-skill tracking for summary
     skill_comparisons: dict[str, list[dict]] = {}
@@ -1027,6 +1038,15 @@ def main() -> int:
                         generation_error = f"{cond_name} generation failed: {exc}"
                         # Account for CLI calls consumed by failed retries
                         total_calls_count += int(getattr(exc, "calls_consumed", 0))
+                        # Track consecutive failures for fail-fast
+                        if ff_enabled and tracker.record_failure(exc):
+                            fail_fast = True
+                            fail_fast_reason = tracker.last_fingerprint
+                            print(
+                                f"[size_impact] FAIL_FAST: {ff_threshold} consecutive "
+                                f"same-error failures -- aborting",
+                                file=sys.stderr,
+                            )
                         print(
                             f"[size_impact]   {cond_name}: ERROR - {exc}",
                             file=sys.stderr,
@@ -1054,6 +1074,8 @@ def main() -> int:
                             "timestamp": datetime.now(timezone.utc).isoformat(),
                         }
                     )
+                if fail_fast:
+                    aborted = True
                 continue
 
             # Check for empty/refusal
@@ -1145,6 +1167,15 @@ def main() -> int:
                         "attempts": 0,
                         "judge_error": f"judge invocation failed: {exc}",
                     }
+                    # Track consecutive failures for fail-fast
+                    if ff_enabled and tracker.record_failure(exc):
+                        fail_fast = True
+                        fail_fast_reason = tracker.last_fingerprint
+                        print(
+                            f"[size_impact] FAIL_FAST: {ff_threshold} consecutive "
+                            f"same-error failures -- aborting",
+                            file=sys.stderr,
+                        )
 
                 total_cost += judge_result["cost"]
                 total_calls_count += judge_result.get("calls", 0)
@@ -1182,6 +1213,9 @@ def main() -> int:
                         "raw_judge_text"
                     ]
                     cases.append(case_record)
+                    if fail_fast:
+                        aborted = True
+                        break
                     continue
 
                 parsed = judge_result["parsed"]
@@ -1196,6 +1230,8 @@ def main() -> int:
                 )
 
                 case_record["scores"] = scores
+                # Successful case -- reset consecutive failure counter
+                tracker.record_success()
                 cases.append(case_record)
 
                 skill_comparisons[skill_name].append(
@@ -1271,6 +1307,8 @@ def main() -> int:
         }
 
     meta["total_cost"] = round(total_cost, 6)
+    if fail_fast:
+        meta["fail_fast_reason"] = fail_fast_reason
 
     output_path = _common.write_results(
         meta=meta,
@@ -1307,6 +1345,9 @@ def main() -> int:
     print(f"COST_USD={total_cost:.4f}")
     print(f"ABORTED={'1' if aborted else '0'}")
     print(f"N_CASES={len(cases)}")
+    print(f"FAIL_FAST={'1' if fail_fast else '0'}")
+    if fail_fast:
+        print(f"FAIL_FAST_REASON={fail_fast_reason}")
     return 0
 
 

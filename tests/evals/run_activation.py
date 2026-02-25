@@ -488,6 +488,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES={len(test_cases)}")
+        print(f"FAIL_FAST=0")
         return 0
 
     # --- Full eval execution ---
@@ -513,6 +514,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     system_prompt = _ACTIVATION_SYSTEM_PROMPT.format(index=index_text)
@@ -534,7 +536,15 @@ def main() -> int:
     total_cost = 0.0
     total_calls = 0
     aborted = False
+    fail_fast = False
+    fail_fast_reason = ""
     all_case_results: list[dict] = []
+
+    # Fail-fast tracker
+    ff_cfg = cfg.get("fail_fast", {})
+    ff_threshold = ff_cfg.get("consecutive_threshold", 3)
+    ff_enabled = ff_cfg.get("enabled", True)
+    tracker = _common.ConsecutiveFailureTracker(threshold=ff_threshold)
 
     for run_idx in range(args.runs):
         if args.runs > 1:
@@ -542,6 +552,9 @@ def main() -> int:
                 f"\n[activation] === Run {run_idx + 1}/{args.runs} ===",
                 file=sys.stderr,
             )
+
+        # Reset tracker at start of each run iteration
+        tracker.reset()
 
         # Budget check closure (captures mutable locals)
         def _budget_exceeded(pending_calls: int = 0) -> bool:
@@ -603,6 +616,15 @@ def main() -> int:
                 call_cost = 0.0
                 # Account for CLI calls consumed by failed retries
                 total_calls += int(getattr(exc, "calls_consumed", 0))
+                # Track consecutive failures for fail-fast
+                if ff_enabled and tracker.record_failure(exc):
+                    fail_fast = True
+                    fail_fast_reason = tracker.last_fingerprint
+                    print(
+                        f"[activation] FAIL_FAST: {ff_threshold} consecutive "
+                        f"same-error failures -- aborting",
+                        file=sys.stderr,
+                    )
 
             # Detect activation
             activated_skills: list[str] = []
@@ -676,8 +698,15 @@ def main() -> int:
             if api_error:
                 case_result["api_error"] = api_error
                 case_result["passed"] = False
+            else:
+                # Successful case -- reset consecutive failure counter
+                tracker.record_success()
 
             all_case_results.append(case_result)
+
+            if fail_fast:
+                aborted = True
+                break
 
         if aborted:
             break
@@ -753,6 +782,8 @@ def main() -> int:
     }
 
     meta["total_cost"] = round(total_cost, 6)
+    if fail_fast:
+        meta["fail_fast_reason"] = fail_fast_reason
 
     output_path = _common.write_results(
         meta=meta,
@@ -797,6 +828,9 @@ def main() -> int:
     print(f"COST_USD={total_cost:.4f}")
     print(f"ABORTED={'1' if aborted else '0'}")
     print(f"N_CASES={len(all_case_results)}")
+    print(f"FAIL_FAST={'1' if fail_fast else '0'}")
+    if fail_fast:
+        print(f"FAIL_FAST_REASON={fail_fast_reason}")
     return 0
 
 

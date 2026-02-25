@@ -735,6 +735,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=0")
         print(f"N_CASES={total_confusion + total_negative}")
+        print(f"FAIL_FAST=0")
         return 0
 
     # --- Full eval execution ---
@@ -797,6 +798,7 @@ def main() -> int:
         print(f"COST_USD=0.0")
         print(f"ABORTED=1")
         print(f"N_CASES=0")
+        print(f"FAIL_FAST=0")
         return 0
 
     print(
@@ -813,8 +815,16 @@ def main() -> int:
     total_cost = 0.0
     total_calls = 0
     aborted = False
+    fail_fast = False
+    fail_fast_reason = ""
     all_confusion_results: list[dict] = []
     all_negative_results: list[dict] = []
+
+    # Fail-fast tracker
+    ff_cfg = cfg.get("fail_fast", {})
+    ff_threshold = ff_cfg.get("consecutive_threshold", 3)
+    ff_enabled = ff_cfg.get("enabled", True)
+    tracker = _common.ConsecutiveFailureTracker(threshold=ff_threshold)
 
     # Budget check closure (captures mutable locals)
     def _budget_exceeded(pending_calls: int = 0) -> bool:
@@ -826,6 +836,9 @@ def main() -> int:
                 f"\n[confusion] === Run {run_idx + 1}/{args.runs} ===",
                 file=sys.stderr,
             )
+
+        # Reset tracker at start of each run iteration
+        tracker.reset()
 
         # --- Evaluate confusion matrix cases ---
         for case in confusion_cases:
@@ -914,6 +927,15 @@ def main() -> int:
                 call_cost = 0.0
                 # Account for CLI calls consumed by failed retries
                 total_calls += int(getattr(exc, "calls_consumed", 0))
+                # Track consecutive failures for fail-fast
+                if ff_enabled and tracker.record_failure(exc):
+                    fail_fast = True
+                    fail_fast_reason = tracker.last_fingerprint
+                    print(
+                        f"[confusion] FAIL_FAST: {ff_threshold} consecutive "
+                        f"same-error failures -- aborting",
+                        file=sys.stderr,
+                    )
 
             # Detect activated skills
             activated_skills: list[str] = []
@@ -963,8 +985,15 @@ def main() -> int:
             if api_error:
                 case_result["api_error"] = api_error
                 case_result["passed"] = False
+            else:
+                # Successful case -- reset consecutive failure counter
+                tracker.record_success()
 
             all_confusion_results.append(case_result)
+
+            if fail_fast:
+                aborted = True
+                break
 
         if aborted:
             break
@@ -1036,6 +1065,15 @@ def main() -> int:
                 call_cost = 0.0
                 # Account for CLI calls consumed by failed retries
                 total_calls += int(getattr(exc, "calls_consumed", 0))
+                # Track consecutive failures for fail-fast
+                if ff_enabled and tracker.record_failure(exc):
+                    fail_fast = True
+                    fail_fast_reason = tracker.last_fingerprint
+                    print(
+                        f"[confusion] FAIL_FAST: {ff_threshold} consecutive "
+                        f"same-error failures (negative controls) -- aborting",
+                        file=sys.stderr,
+                    )
 
             activated_skills = []
             detection_method = "error"
@@ -1072,8 +1110,15 @@ def main() -> int:
             if api_error:
                 neg_result["api_error"] = api_error
                 neg_result["passed"] = False
+            else:
+                # Successful case -- reset consecutive failure counter
+                tracker.record_success()
 
             all_negative_results.append(neg_result)
+
+            if fail_fast:
+                aborted = True
+                break
 
         if aborted:
             break
@@ -1184,6 +1229,8 @@ def main() -> int:
         }
 
     meta["total_cost"] = round(total_cost, 6)
+    if fail_fast:
+        meta["fail_fast_reason"] = fail_fast_reason
 
     output_path = _common.write_results(
         meta=meta,
@@ -1249,6 +1296,9 @@ def main() -> int:
     print(f"COST_USD={total_cost:.4f}")
     print(f"ABORTED={'1' if aborted else '0'}")
     print(f"N_CASES={len(all_cases)}")
+    print(f"FAIL_FAST={'1' if fail_fast else '0'}")
+    if fail_fast:
+        print(f"FAIL_FAST_REASON={fail_fast_reason}")
     return 0
 
 

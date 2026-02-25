@@ -22,6 +22,10 @@ cost:
   max_cost_per_run: 5.00    # dollar-based cap (effective when CLI reports cost)
   max_calls_per_run: 500    # call-count cap (always effective; safety net when cost unavailable)
 
+fail_fast:
+  consecutive_threshold: 3
+  enabled: true
+
 rng:
   default_seed: 42
 
