@@ -1,6 +1,6 @@
 ---
 name: dotnet-messaging-patterns
-description: .NET messaging via MassTransit/Service Bus. Pub/sub, sagas, DLQ, delivery guarantees.
+description: Implements .NET messaging with MassTransit and Azure Service Bus. Pub/sub, sagas, DLQ patterns.
 license: MIT
 user-invocable: false
 ---

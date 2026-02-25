@@ -80,16 +80,16 @@
       "agent": "claude-opus-4-6",
       "run_ids": [
         "activation_3925edef",
-        "activation_1ef0e510"
+        "activation_5fd7c96e"
       ],
-      "notes": "Fixed false positive (neg-004). Removed explicit Kubernetes keyword, qualified with .NET. Targeted re-run shows improvement.",
+      "notes": "Fixed false positive (neg-004). Removed explicit Kubernetes keyword, qualified with .NET. Post-fix re-run (5fd7c96e): neg-004 now passes. Pre-fix run (1ef0e510) showed neg-004 still failing.",
       "fixed_by": "5a00da0",
       "fixed_at": "2026-02-25T05:51:32Z"
     },
     "dotnet-messaging-patterns": {
-      "routing_status": "fixed",
+      "routing_status": "needs-fix",
       "content_status": "untested",
-      "overall_status": "fixed",
+      "overall_status": "needs-fix",
       "fixed_tasks": [".3"],
       "eval_types": [
         "activation"
@@ -97,9 +97,9 @@
       "agent": "claude-opus-4-6",
       "run_ids": [
         "activation_3925edef",
-        "activation_1ef0e510"
+        "activation_5fd7c96e"
       ],
-      "notes": "Fixed false positive (neg-018). Added .NET + MassTransit/Service Bus qualifiers. neg-018 still activates some skills but messaging-patterns is no longer primary trigger.",
+      "notes": "Partial fix (neg-018). Added .NET + MassTransit/Service Bus qualifiers in 5a00da0. Reduced false activations from 4+ skills to 1, but neg-018 still activates dotnet-messaging-patterns alone. Needs further description refinement to distinguish .NET messaging from generic RabbitMQ.",
       "fixed_by": "5a00da0",
       "fixed_at": "2026-02-25T05:51:32Z"
     },
