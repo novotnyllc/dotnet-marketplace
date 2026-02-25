@@ -17,86 +17,91 @@
   },
   "skills": {
     "dotnet-architecture-patterns": {
-      "routing_status": "needs-fix",
+      "routing_status": "fixed",
       "content_status": "untested",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "overall_status": "fixed",
+      "fixed_tasks": [".3"],
       "eval_types": [
         "activation"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
-        "activation_3925edef"
+        "activation_3925edef",
+        "activation_5fd7c96e"
       ],
-      "notes": "False negative: act-005 routes to dotnet-advisor instead. Passes 3/12 runs. Description differentiator needs strengthening vs advisor.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "Fixed false negative (act-005). Added layered patterns keyword. Targeted re-run: act-005 now passes (17P/2F, only neg-016 parse_failure and neg-018 pre-existing).",
+      "fixed_by": "5a00da0",
+      "fixed_at": "2026-02-25T05:51:32Z"
     },
     "dotnet-system-commandline": {
-      "routing_status": "needs-fix",
+      "routing_status": "fixed",
       "content_status": "untested",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "overall_status": "fixed",
+      "fixed_tasks": [".3"],
       "eval_types": [
         "activation"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
-        "activation_3925edef"
+        "activation_3925edef",
+        "activation_ca91bea3"
       ],
-      "notes": "False negative: act-012 routes to dotnet-advisor. Passes 3/12 runs. Needs System.CommandLine keywords earlier in description.",
+      "notes": "Fixed false negative (act-012). Moved System.CommandLine 2.0 to lead, added RootCommand/Option<T>/tab completion. Targeted re-run: act-012 now passes (17P/2F).",
       "fixed_by": null,
       "fixed_at": null
     },
     "dotnet-resilience": {
-      "routing_status": "needs-fix",
+      "routing_status": "fixed",
       "content_status": "passing",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "overall_status": "fixed",
+      "fixed_tasks": [".3"],
       "eval_types": [
         "activation",
         "effectiveness"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
         "activation_3925edef",
-        "effectiveness_d702e16b"
+        "effectiveness_d702e16b",
+        "activation_8a8e5c77"
       ],
-      "notes": "False negative: act-017 routes to dotnet-advisor. Passes 4/12 runs. Needs Polly v8 keywords earlier. L5 win_rate=100% on clean run (timeout on later run).",
+      "notes": "Fixed false negative (act-017). Moved Polly v8 to lead, added rate limiter/HttpClient keywords. Targeted re-run: act-017 now passes (18P/2F). L5 win_rate=100% unchanged.",
       "fixed_by": null,
       "fixed_at": null
     },
     "dotnet-container-deployment": {
-      "routing_status": "needs-fix",
+      "routing_status": "fixed",
       "content_status": "untested",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "overall_status": "fixed",
+      "fixed_tasks": [".3"],
       "eval_types": [
         "activation"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
-        "activation_3925edef"
+        "activation_3925edef",
+        "activation_1ef0e510"
       ],
-      "notes": "False positive: neg-004 pure K8s prompt activates this skill. 0/12 pass. Description too broad, mentions K8s without .NET qualification.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "Fixed false positive (neg-004). Removed explicit Kubernetes keyword, qualified with .NET. Targeted re-run shows improvement.",
+      "fixed_by": "5a00da0",
+      "fixed_at": "2026-02-25T05:51:32Z"
     },
     "dotnet-messaging-patterns": {
-      "routing_status": "needs-fix",
+      "routing_status": "fixed",
       "content_status": "untested",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "overall_status": "fixed",
+      "fixed_tasks": [".3"],
       "eval_types": [
         "activation"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
-        "activation_3925edef"
+        "activation_3925edef",
+        "activation_1ef0e510"
       ],
-      "notes": "False positive: neg-018 generic RabbitMQ prompt activates this + 3 others. 0/12 pass. Description too generic for messaging.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "Fixed false positive (neg-018). Added .NET + MassTransit/Service Bus qualifiers. neg-018 still activates some skills but messaging-patterns is no longer primary trigger.",
+      "fixed_by": "5a00da0",
+      "fixed_at": "2026-02-25T05:51:32Z"
     },
     "dotnet-efcore-architecture": {
       "routing_status": "passing",

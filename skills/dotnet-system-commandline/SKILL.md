@@ -1,6 +1,6 @@
 ---
 name: dotnet-system-commandline
-description: Builds .NET CLI apps with System.CommandLine 2.0. Commands, options, SetAction, parsing, testing.
+description: System.CommandLine 2.0 CLI apps. RootCommand, Option<T>, SetAction, parsing, tab completion.
 license: MIT
 user-invocable: false
 ---
