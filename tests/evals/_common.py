@@ -41,6 +41,12 @@ class CLIConfigError(RuntimeError):
     pass
 
 
+class CLIPermanentError(CLIConfigError):
+    """Non-retryable runtime CLI failure (auth/flags/permissions)."""
+
+    pass
+
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -127,10 +133,11 @@ def _emit_warning(key: str, message: str) -> None:
 def _detect_cli_caps(backend: str) -> dict[str, Any]:
     """Detect CLI capabilities for a backend (once per process).
 
-    Probes the CLI tool in order of preference:
+    For codex/copilot, probes prompt transport in order:
     1. stdin piping
     2. file_stdin (write prompt to temp file, pipe as stdin)
-    3. arg (append prompt as positional argument -- last resort)
+
+    For claude, stdin is the default transport (no transport probe).
 
     For claude, also probes --output-format json independently of
     the prompt transport mode.
@@ -168,10 +175,10 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
     cli_cfg = cfg.get("cli", {})
     probe_model = cli_cfg.get(backend, {}).get("model")
 
-    # Step 2: probe prompt transport modes in preference order
+    # Step 2: prompt transport detection
     # Transport probe uses plain text (no --output-format json) to avoid
     # conflating transport failures with JSON support failures.
-    prompt_mode = "arg"  # ultimate fallback
+    prompt_mode = "arg"
 
     def _build_transport_probe_cmd(backend: str, probe_model: Any) -> list[str]:
         if backend == "claude":
@@ -185,16 +192,18 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             ])
             return cmd
         elif backend == "codex":
-            cmd = ["codex", "--approval-mode", "full-auto"]
+            cmd = ["codex", "--full-auto"]
             if probe_model:
                 cmd.extend(["-m", str(probe_model)])
-            cmd.extend(["-q", "-"])
+            cmd.extend(["-q"])
             return cmd
         else:
             # copilot
             return ["copilot", "-p", "-"]
 
     transport_cmd = _build_transport_probe_cmd(backend, probe_model)
+    if backend == "claude":
+        prompt_mode = "stdin"
 
     def _run_probe(cmd: list[str], mode: str) -> Optional[subprocess.CompletedProcess]:
         """Run a probe in the given mode. Returns CompletedProcess or None."""
@@ -205,7 +214,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                     input="Reply with exactly: OK",
                     capture_output=True,
                     text=True,
-                    timeout=120,
+                    timeout=15,
                     env=_subprocess_env(),
                     cwd=_SUBPROCESS_CWD,
                 )
@@ -223,7 +232,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                             stdin=stdin_file,
                             capture_output=True,
                             text=True,
-                            timeout=120,
+                            timeout=15,
                             env=_subprocess_env(),
                             cwd=_SUBPROCESS_CWD,
                         )
@@ -232,59 +241,57 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
         except (subprocess.TimeoutExpired, OSError):
             return None
 
-    for mode in ("stdin", "file_stdin"):
-        proc = _run_probe(transport_cmd, mode)
-        # Require non-empty stdout containing the expected "OK" sentinel
-        # to avoid false-positives from CLIs that print help/diagnostics.
-        if (
-            proc is not None
-            and proc.returncode == 0
-            and "OK" in (proc.stdout or "")
-        ):
-            prompt_mode = mode
-            break
-        elif proc is not None:
-            stderr_preview = (proc.stderr or "")[:200]
-            _emit_warning(
-                f"{backend}_probe_{mode}_fail",
-                f"{backend} probe failed in {mode} mode (rc={proc.returncode}): "
-                f"{stderr_preview}",
-            )
-        else:
-            _emit_warning(
-                f"{backend}_probe_{mode}_error",
-                f"{backend} probe timed out or errored in {mode} mode",
-            )
+    if backend != "claude":
+        for mode in ("stdin", "file_stdin"):
+            proc = None
+            for attempt in range(3):
+                proc = _run_probe(transport_cmd, mode)
+                # Require non-empty stdout containing the expected "OK" sentinel
+                # to avoid false-positives from CLIs that print help/diagnostics.
+                if (
+                    proc is not None
+                    and proc.returncode == 0
+                    and "OK" in (proc.stdout or "")
+                ):
+                    prompt_mode = mode
+                    break
+                if attempt < 2:
+                    time.sleep(0.25)
+
+            if prompt_mode == mode:
+                break
+
+            if proc is not None:
+                stderr_preview = (proc.stderr or "")[:200]
+                _emit_warning(
+                    f"{backend}_probe_{mode}_fail",
+                    f"{backend} probe failed in {mode} mode (rc={proc.returncode}): "
+                    f"{stderr_preview}",
+                )
+            else:
+                _emit_warning(
+                    f"{backend}_probe_{mode}_error",
+                    f"{backend} probe timed out or errored in {mode} mode",
+                )
 
     if prompt_mode == "arg":
-        # codex and copilot don't support arg mode, so this is a hard failure
-        if backend in ("codex", "copilot"):
-            # Cache the failure with reason before raising, to avoid re-probing on retry
-            _cli_caps[json_key] = False
-            _cli_caps[mode_key] = "arg"
-            _cli_caps[avail_key] = False
-            reason_key = f"{cache_prefix}.unavailable_reason"
-            _cli_caps[reason_key] = "no_stdin_support"
-            raise CLIConfigError(
-                f"{backend} CLI does not support stdin or file_stdin modes. "
-                f"Cannot proceed with arg mode for {backend}. "
-                f"Install a newer version or switch to 'claude' in config.yaml"
-            )
-        _emit_warning(
-            f"{backend}_no_stdin",
-            f"{backend} CLI does not support stdin or file_stdin; "
-            f"falling back to arg mode (large prompts will error).",
+        # Cache the failure with reason before raising, to avoid re-probing on retry
+        _cli_caps[json_key] = False
+        _cli_caps[mode_key] = "arg"
+        _cli_caps[avail_key] = False
+        reason_key = f"{cache_prefix}.unavailable_reason"
+        _cli_caps[reason_key] = "no_stdin_support"
+        raise CLIConfigError(
+            f"{backend} CLI does not support stdin or file_stdin modes. "
+            f"Cannot proceed with arg mode for {backend}. "
+            f"Install a newer version or switch backends in config.yaml"
         )
 
-    # Step 3: JSON output support (claude only) -- probe independently
-    # using the working transport mode to avoid false negatives.
-    # Skip when only arg mode is available: if stdin/file_stdin both
-    # failed during transport probing, the JSON probe would also fail
-    # via the same transport, so there is nothing useful to test.
+    # Step 3: JSON output support (claude only)
     json_output = False
-    if backend == "claude" and prompt_mode != "arg":
+    if backend == "claude":
         json_probe_cmd = list(transport_cmd) + ["--output-format", "json"]
-        json_proc = _run_probe(json_probe_cmd, prompt_mode)
+        json_proc = _run_probe(json_probe_cmd, "stdin")
         if json_proc is not None and json_proc.returncode == 0:
             stdout = json_proc.stdout or ""
             if stdout.strip():
@@ -425,15 +432,35 @@ def _build_cli_command(
             "--tools", "",
         ])
     elif backend == "codex":
-        cmd = ["codex", "--approval-mode", "full-auto"]
+        cmd = ["codex", "--full-auto"]
         if model:
             cmd.extend(["-m", str(model)])
-        cmd.extend(["-q", "-"])
+        cmd.extend(["-q"])
     else:
         # copilot
         cmd = ["copilot", "-p", "-"]
 
     return cmd
+
+
+def _is_permanent_cli_error(return_code: int, stderr_text: str) -> bool:
+    """Return True when a CLI failure is deterministic and non-retryable."""
+    if return_code in (2, 126, 127):
+        return True
+
+    text = stderr_text.lower()
+    permanent_markers = (
+        "authentication_error",
+        "could not resolve authentication",
+        "permission_error",
+        "unknown option",
+        "invalid flag",
+        "unexpected argument",
+        "not authorized",
+    )
+    if "401" in text or "403" in text:
+        return True
+    return any(marker in text for marker in permanent_markers)
 
 
 def _execute_cli(
@@ -513,13 +540,15 @@ def _execute_cli(
         result_default["text"] = ""
         raise RuntimeError(f"{backend} CLI timed out after 120s")
     except OSError as exc:
-        raise RuntimeError(f"{backend} CLI execution failed: {exc}")
+        raise CLIPermanentError(f"{backend} CLI execution failed: {exc}")
 
     if proc.returncode != 0:
         stderr_preview = (proc.stderr or "")[:500]
-        raise RuntimeError(
-            f"{backend} CLI exited with code {proc.returncode}: {stderr_preview}"
-        )
+        if _is_permanent_cli_error(proc.returncode, proc.stderr or ""):
+            raise CLIPermanentError(
+                f"{backend} CLI exited with code {proc.returncode}: {stderr_preview}"
+            )
+        raise RuntimeError(f"{backend} CLI exited with code {proc.returncode}: {stderr_preview}")
 
     stdout = proc.stdout or ""
 

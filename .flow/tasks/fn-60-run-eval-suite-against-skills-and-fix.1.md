@@ -44,8 +44,8 @@ Save all result JSON files. Record key metrics from each run's summary output fo
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass (no changes to skills yet)
 
 ## Done summary
-TBD
-
+Blocked:
+Blocked on .8: CLI probe/transport bugs cause 100% failure under certain conditions
 ## Evidence
 - Commits:
 - Tests:
