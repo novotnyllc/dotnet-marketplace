@@ -1,43 +1,62 @@
-# fn-60.4 Fix effectiveness issues for low-scoring skills
+# fn-60.4 Fix effectiveness content and L6 issues in batches
 
 ## Description
 
-Based on the analysis from task .2, improve skill content for skills where the enhanced (with-skill) output loses to or ties with the baseline (without-skill) output in L5 effectiveness evals.
+Fix skill body content for skills with poor L5 effectiveness scores. Also address L6 size impact issues where baseline beats full. Work in batches of 3-4 skills. Use `--skill X --runs 1 --regenerate` to verify each batch.
 
-**Depends on:** fn-60.2 (execute AFTER fn-60.3)
+**Depends on:** fn-60.3
 **Size:** M
 **Files:**
-- `skills/*/SKILL.md` -- content improvements for underperforming skills (body, not frontmatter)
+- `skills/*/SKILL.md` (body content edits — sections below frontmatter)
+- `tests/evals/results/` (targeted re-run results)
+- `tests/evals/eval-progress.json` (read for batch selection, update after each batch)
 
 ## Approach
 
-### Content Fixes
-- For skills with 0% win rate: investigate what the judge criteria expect vs what the skill provides
-- For skills with <50% win rate: identify which criteria the skill loses on (per_criterion_breakdown)
-- Common patterns to check:
-  - Skill content is too generic (not specific enough for the eval prompts)
-  - Skill content is outdated (references old APIs or patterns)
-  - Skill content lacks concrete examples that would help generation
-  - Scope section doesn't cover the test prompt topic
+### Effectiveness fix workflow (batches of 3-4 skills)
 
-### Fix Strategy
-- Prioritize skills where wins_enhanced=0 (total failures)
-- For partial failures: check which rubric criteria drive the losses
-- Add or improve examples, code patterns, or specific guidance
-- Do NOT rewrite entire skills -- targeted improvements only
+1. **Select batch**: Pick 3-4 skills from the L5 triage priority list (0% win rate skills first)
+2. **Analyze failure mode**: Read the skill's rubric YAML (`tests/evals/rubrics/<skill>.yaml`) to understand what the eval tests. Read the effectiveness result details to see what the baseline does better.
+3. **Edit content**: Improve the skill body in SKILL.md. Focus on the specific rubric criteria the skill is failing on.
+4. **Verify**: `python3 tests/evals/run_effectiveness.py --skill <name> --runs 1 --regenerate`
+   - MUST use `--regenerate` after body edits (cache keys include body hash; stale cache = false results)
+   - With `--runs 1`: 2 prompts per skill = 6 CLI calls (2 generations + 2 baselines + 2 judge calls)
+5. **Validate**: `./scripts/validate-skills.sh` — ensure no structural regressions
+6. **Update eval-progress.json**: For each edited skill, set `status` to `fixed`, record `agent` (use `RALPH_SESSION_ID` env var if set, else `"manual"`), add the re-run `run_ids`, and note what was changed
+7. **Commit batch**: `git add skills/*/SKILL.md tests/evals/eval-progress.json && git commit -m "fix(skills): improve effectiveness for <batch summary>"`
 
-### Validation
-- Spot-check individual skills: `python3 tests/evals/run_effectiveness.py --skill <name> --runs 3 --regenerate`
-- `./scripts/validate-skills.sh` after changes
+### Size impact fix workflow (if flagged in triage)
+
+For candidates where baseline consistently beats full (all 3 runs):
+1. Investigate: is the full content introducing noise that confuses the model?
+2. Fix: trim or restructure the body content
+3. Verify: `python3 tests/evals/run_size_impact.py --skill <name> --runs 1 --regenerate`
+
+### Expected scope
+
+- L5 priority: ~4 skills at 0% win rate, ~3-4 more below 50% = 2-3 batches
+- L6 priority: ~2 candidates flagged = 1 batch
+- Total CLI calls: ~60-90 (6 calls per skill × 10-15 skills)
+
+## Key context
+
+- **MUST use --regenerate after body edits** — effectiveness and size_impact cache generations keyed by body hash. Without --regenerate, stale cached outputs produce meaningless comparisons. (Memory pitfall: generation cache keys must include ALL inputs that affect output.)
+- Description edits from task .3 do NOT invalidate these caches (description is not in the hash). Only body content changes require --regenerate.
+- L5 quality bar: no skill at 0% win rate (unless documented variance exception with n=6 cases). L6: no candidate where baseline sweeps all runs.
 
 ## Acceptance
-- [ ] All skills with 0% win rate from .2 analysis have been investigated and improved
-- [ ] Skills with <50% win rate have targeted content improvements
+
+- [ ] All 0% win rate skills from triage (task .2) have been fixed or documented as variance exceptions
+- [ ] Each batch verified with `--skill X --runs 1 --regenerate` (effectiveness)
+- [ ] L6 flagged candidates addressed (no baseline sweep remaining, or documented rationale)
+- [ ] `--regenerate` used on every re-run after body edits (no stale cache results)
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
-- [ ] Individual skill re-runs show improvement (documented in done summary)
+- [ ] Each batch committed separately with descriptive message
+- [ ] Re-run results saved in `tests/evals/results/`
+- [ ] No NEW 0% win rate skills introduced by the changes
+- [ ] `eval-progress.json` updated after each batch with agent ID, run_ids, and status
 
 ## Done summary
-TBD
 
 ## Evidence
 - Commits:

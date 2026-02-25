@@ -10,6 +10,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-60-run-eval-suite-against-skills-and-fix.1.md",
   "status": "todo",
-  "title": "Run initial eval suite and capture raw results",
-  "updated_at": "2026-02-24T18:41:04.800183Z"
+  "title": "Add --limit flag to eval runners and smoke test pipeline",
+  "updated_at": "2026-02-25T02:17:59.688609Z"
 }

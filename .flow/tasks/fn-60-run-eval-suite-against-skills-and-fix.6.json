@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-60-run-eval-suite-against-skills-and-fix.6.md",
   "status": "todo",
-  "title": "Save initial baselines and unblock fn-58.4",
-  "updated_at": "2026-02-24T02:04:00.205192Z"
+  "title": "Save baselines and unblock fn-58.4",
+  "updated_at": "2026-02-25T02:18:05.155823Z"
 }

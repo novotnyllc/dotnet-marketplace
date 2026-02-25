@@ -1,0 +1,18 @@
+{
+  "_schema": "eval-progress-v1",
+  "_doc": "Tracks which skills have been evaluated, by which agent/session, and their current fix status. Updated by workers during tasks .2-.5. Committed after each batch.",
+  "_example": {
+    "dotnet-example-skill": {
+      "eval_types": ["activation", "confusion", "effectiveness", "size_impact"],
+      "status": "needs-routing-fix",
+      "agent": "ralph-session-abc123",
+      "run_ids": ["f84ba29e-6399-4158-bcfb-cdcf965b2d7d"],
+      "fix_task": ".3",
+      "fixed_by": null,
+      "fixed_at": null,
+      "notes": "0% activation rate, description too generic"
+    }
+  },
+  "_statuses": ["untested", "passing", "needs-routing-fix", "needs-content-fix", "fixed", "verified", "exception"],
+  "skills": {}
+}

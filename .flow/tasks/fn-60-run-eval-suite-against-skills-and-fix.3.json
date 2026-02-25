@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-60-run-eval-suite-against-skills-and-fix.3.md",
   "status": "todo",
-  "title": "Fix activation and confusion routing issues",
-  "updated_at": "2026-02-24T01:56:54.621113Z"
+  "title": "Fix routing descriptions in batches with verification",
+  "updated_at": "2026-02-25T02:18:02.073061Z"
 }

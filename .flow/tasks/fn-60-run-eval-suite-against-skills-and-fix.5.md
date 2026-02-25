@@ -1,49 +1,66 @@
-# fn-60.5 Rerun eval suite and validate against quality bar
+# fn-60.5 Quality bar verification sweep
 
 ## Description
 
-Full rerun of all 4 eval types after fixes from tasks .3 and .4. Validate results against the quality bar thresholds defined in the epic spec. If thresholds are not met, do one more targeted fix-and-rerun iteration.
+Run targeted regression checks on all skills that were fixed in .3/.4, plus a broader sample across L3/L4 to verify quality bar thresholds are met. This is NOT a blind full-suite run — it's a focused verification of fixes plus a representative sample for confidence.
 
 **Depends on:** fn-60.3, fn-60.4
 **Size:** M
 **Files:**
-- `tests/evals/results/` (output directory, gitignored)
+- `tests/evals/results/` (verification results)
+- `tests/evals/eval-progress.json` (read to identify which skills were fixed in .3/.4, update with verification results)
 
 ## Approach
 
-1. Run all 4 eval types with `--regenerate` flag (where applicable) to ensure fresh generations (CLI clients handle auth -- no API key needed):
-   - `python3 tests/evals/run_activation.py`
-   - `python3 tests/evals/run_confusion_matrix.py`
-   - `python3 tests/evals/run_effectiveness.py --runs 3 --regenerate`
-   - `python3 tests/evals/run_size_impact.py --runs 3 --regenerate`
+### Step 1: Targeted re-verification of all fixed skills
 
-2. Verify coverage completeness (runners exit 0 but may abort on cost/call cap -- see fn-60.1 acceptance for per-runner completeness checks). Re-run with raised cap if any runner aborted.
+Read `tests/evals/eval-progress.json` to get the list of skills with `status: "fixed"` from .3 and .4. Re-run each eval type on those skills/groups:
+- L3 activation: `--skill <name>` for each skill edited in .3 (confirm routing improvements held)
+- L4 confusion: `--group <group>` for each group affected in .3
+- L5 effectiveness: `--skill <name> --runs 3 --regenerate` for each skill edited in .4 (multi-run for statistical confidence)
+- L6 size impact: `--skill <name> --runs 3 --regenerate` for each candidate addressed in .4
 
-3. Compare results against ALL quality bar thresholds:
-   - L3: TPR>=75%, FPR<=20%, accuracy>=70% (from `summary._overall`)
-   - L4: per-group accuracy>=60%, cross-activation<=35%, no never-activated skills (check `artifacts.findings[]` where `type == "never_activated"` -- must be empty or exception documented), negative control pass rate>=70%
-   - L5: overall win rate>=50% (sum wins / sum non-error cases across skills), mean improvement>0 (weighted by n), no skill at 0% win rate unless variance exception documented (with only 6 cases per skill, 0% can occur by chance; document exception if mean improvement is non-negative)
-   - L6 (computed exclusively from `full_vs_baseline` comparisons):
-     - Aggregate: `wins_full / (wins_full + wins_baseline + ties)` >= 55% across all candidates
-     - Per-skill: no candidate where baseline sweeps all runs (`wins_baseline == n`) -- this indicates harmful skill content
+### Step 2: Broader representative sample
 
-4. If any threshold is missed:
-   - Identify the specific failures
-   - Make targeted fixes (another iteration of .3/.4 work)
-   - Rerun the failing eval type only
-   - Document the iteration in the summary
+Run a broader sample to check for regressions in un-edited skills:
+- L3 activation: `--limit 40` (~40 proportionally sampled cases) — covers ~55% of cases
+- L4 confusion: `--limit 5` (5 of 7 groups) — covers ~71% of groups
 
-5. If a threshold proves systematically unachievable (e.g., haiku consistently can't route to certain skills), document the rationale and adjust the threshold.
+This provides representative coverage without running the full dataset. If the sample meets thresholds, the full dataset almost certainly does too.
+
+### Step 3: Quality bar check
+
+Verify thresholds against the sample results:
+- L3: TPR >= 75%, FPR <= 20%, Accuracy >= 70%
+- L4: Per-group accuracy >= 60%, negative controls >= 70%
+- L5: Overall win rate >= 50%, no 0% without exception
+- L6: full > baseline in >= 55%, no baseline sweep
+
+If any threshold is missed on the sample: investigate which specific cases fail, determine if they're fixable, and either fix + re-verify or document as exceptions.
+
+### CLI call estimate
+
+- Fixed skills re-runs: ~50-80 calls (depends on .3/.4 scope)
+- L3 sample: ~40 calls
+- L4 sample: ~25 calls
+- Total: ~115-145 calls (spread across targeted and sample runs)
 
 ## Acceptance
-- [ ] All 4 eval types re-run with fresh results and verified complete (`ABORTED=0` in each runner's stdout)
-- [ ] Results compared against ALL quality bar thresholds including:
-  - L4 "no never-activated skills" via `artifacts.findings[]` (or documented exception with rationale)
-  - L4 negative control pass rate >= 70%
-  - L5 no skill at 0% win rate (unless variance exception: mean improvement non-negative + documented rationale)
-  - L5/L6 aggregation uses weighted method (sum wins / sum non-error cases)
-  - L6 per-skill guard: no candidate where baseline sweeps all runs in `full_vs_baseline`
-- [ ] All thresholds met OR documented rationale for exceptions
-- [ ] Before/after comparison documented (initial run vs final run)
-- [ ] Total cost across all iterations documented
-- [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` still pass
+
+- [ ] All skills edited in .3 re-verified with targeted activation/confusion re-runs
+- [ ] All skills edited in .4 re-verified with `--runs 3 --regenerate` for statistical confidence
+- [ ] Broader L3 sample (`--limit 40`) meets quality bar: TPR >= 75%, FPR <= 20%, Accuracy >= 70%
+- [ ] Broader L4 sample (`--limit 5`) meets quality bar: per-group >= 60%, negative controls >= 70%
+- [ ] L5 overall win rate >= 50% (no 0% win rate without documented exception)
+- [ ] L6 no baseline sweep remaining (or documented rationale)
+- [ ] Any threshold misses documented with specific failing cases and rationale
+- [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
+- [ ] Results saved in `tests/evals/results/`
+- [ ] `eval-progress.json` updated with verification results and final status per skill
+
+## Done summary
+
+## Evidence
+- Commits:
+- Tests:
+- PRs:
