@@ -976,6 +976,153 @@ def load_skill_description(skill_name: str) -> Optional[str]:
 
 
 # ---------------------------------------------------------------------------
+# Limit helpers (shared by all runners)
+# ---------------------------------------------------------------------------
+
+
+def add_limit_arg(parser) -> None:
+    """Add a --limit argparse argument to a runner's parser.
+
+    Args:
+        parser: An argparse.ArgumentParser instance.
+    """
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Cap the number of primary iteration units (cases/groups/skills/candidates). "
+        "Must be a positive integer. Exceeding dataset size silently caps.",
+    )
+
+
+def validate_limit(limit: Optional[int]) -> Optional[int]:
+    """Validate and return limit, raising argparse-style error for invalid values.
+
+    Args:
+        limit: The --limit value from argparse (None if not set).
+
+    Returns:
+        Validated limit (None means unlimited).
+
+    Raises:
+        SystemExit: If limit is <= 0 (mimics argparse error).
+    """
+    if limit is not None and limit <= 0:
+        import argparse
+        raise argparse.ArgumentTypeError(
+            f"--limit must be a positive integer, got {limit}"
+        )
+    return limit
+
+
+def apply_limit_warning(limit: Optional[int], runner_name: str) -> None:
+    """Print a warning to stderr when --limit is active.
+
+    Args:
+        limit: The --limit value (None means unlimited).
+        runner_name: Name of the runner for the warning prefix.
+    """
+    if limit is not None:
+        print(
+            f"WARNING: --limit is for development/testing. "
+            f"Full-dataset runs needed for baselines.",
+            file=sys.stderr,
+        )
+
+
+def apply_limit_to_items(
+    items: list,
+    limit: Optional[int],
+    seed: int,
+    salt: str,
+) -> list:
+    """Apply deterministic seeded limit to a list of items.
+
+    Uses seeded shuffle-then-slice for reproducibility.
+
+    Args:
+        items: List of items to limit.
+        limit: Max number of items (None means no limit).
+        seed: Base RNG seed from config.
+        salt: Runner-specific salt string for independent selection.
+
+    Returns:
+        Limited (or original) list of items.
+    """
+    if limit is None or limit >= len(items):
+        return items
+
+    # Combine seed with runner-specific salt for independence
+    combined_seed = seed + hash(salt)
+    rng = random.Random(combined_seed)
+
+    indices = list(range(len(items)))
+    rng.shuffle(indices)
+    selected = sorted(indices[:limit])
+    return [items[i] for i in selected]
+
+
+def apply_stratified_limit(
+    items: list,
+    limit: Optional[int],
+    seed: int,
+    salt: str,
+    pool_fn,
+) -> list:
+    """Apply stratified deterministic limit ensuring both pools are represented.
+
+    Guarantees at least 1 item from each non-empty pool (positive/negative)
+    before filling remaining slots by seeded shuffle-then-slice.
+
+    Args:
+        items: Full list of items.
+        limit: Max number of items (None means no limit).
+        seed: Base RNG seed.
+        salt: Runner-specific salt.
+        pool_fn: Callable that takes an item and returns True for pool A
+            (positive), False for pool B (negative).
+
+    Returns:
+        Limited list with stratification guarantees.
+    """
+    if limit is None or limit >= len(items):
+        return items
+
+    pool_a = [i for i, item in enumerate(items) if pool_fn(item)]
+    pool_b = [i for i, item in enumerate(items) if not pool_fn(item)]
+
+    combined_seed = seed + hash(salt)
+    rng = random.Random(combined_seed)
+
+    selected_indices: list[int] = []
+
+    # Guarantee at least 1 from each non-empty pool
+    if pool_a and pool_b and limit >= 2:
+        rng_a = random.Random(combined_seed + 1)
+        rng_b = random.Random(combined_seed + 2)
+        rng_a.shuffle(pool_a)
+        rng_b.shuffle(pool_b)
+        selected_indices.append(pool_a[0])
+        selected_indices.append(pool_b[0])
+
+        remaining_indices = [
+            i for i in range(len(items))
+            if i not in selected_indices
+        ]
+        rng.shuffle(remaining_indices)
+        remaining_slots = limit - len(selected_indices)
+        selected_indices.extend(remaining_indices[:remaining_slots])
+    else:
+        # Only one pool or limit == 1: simple shuffle-then-slice
+        all_indices = list(range(len(items)))
+        rng.shuffle(all_indices)
+        selected_indices = all_indices[:limit]
+
+    selected_indices.sort()
+    return [items[i] for i in selected_indices]
+
+
+# ---------------------------------------------------------------------------
 # Run metadata
 # ---------------------------------------------------------------------------
 
@@ -986,6 +1133,7 @@ def build_run_metadata(
     judge_model: Optional[str] = None,
     seed: Optional[int] = None,
     cli: Optional[str] = None,
+    limit: Optional[int] = None,
 ) -> dict:
     """Generate run metadata for results envelope.
 
@@ -995,6 +1143,7 @@ def build_run_metadata(
         judge_model: Judge model override. Defaults to config.
         seed: RNG seed override. Defaults to config.
         cli: CLI backend override. Defaults to config.
+        limit: Optional --limit value. Recorded as meta.limit if set.
 
     Returns:
         Dict with run_id, timestamp, backend, model info, seed, and eval_type.
@@ -1009,7 +1158,7 @@ def build_run_metadata(
         backend, {}
     ).get("model") or "default"
 
-    return {
+    meta = {
         "run_id": str(uuid.uuid4()),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "backend": backend,
@@ -1019,6 +1168,11 @@ def build_run_metadata(
         "total_cost": 0.0,
         "eval_type": eval_type,
     }
+
+    if limit is not None:
+        meta["limit"] = limit
+
+    return meta
 
 
 # ---------------------------------------------------------------------------

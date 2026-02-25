@@ -667,6 +667,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Override CLI backend (default: from config.yaml)",
     )
+    _common.add_limit_arg(parser)
     return parser
 
 
@@ -678,6 +679,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
+
+    # Validate --limit
+    try:
+        _common.validate_limit(args.limit)
+    except Exception as exc:
+        parser.error(str(exc))
 
     cfg = _common.load_config()
     datasets_dir = (
@@ -699,6 +706,30 @@ def main() -> int:
     confusion_cases, negative_cases = load_confusion_cases(
         confusion_dir, group_filter=args.group
     )
+
+    # Apply --limit to groups before dry-run (N groups, each retains all cases)
+    if args.limit is not None:
+        seed_val = args.seed if args.seed is not None else cfg.get("rng", {}).get("default_seed", 42)
+        _common.apply_limit_warning(args.limit, "confusion")
+        all_groups_in_data = sorted(set(
+            c.get("group", "unknown") for c in confusion_cases
+        ))
+        limited_groups = _common.apply_limit_to_items(
+            all_groups_in_data, args.limit, seed_val, "confusion"
+        )
+        limited_groups_set = set(limited_groups)
+        confusion_cases = [
+            c for c in confusion_cases
+            if c.get("group", "unknown") in limited_groups_set
+        ]
+        # Proportionally limit negative controls: ceil(total_neg * limit / total_groups)
+        total_groups = len(DOMAIN_GROUPS)
+        if total_groups > 0 and len(negative_cases) > 0:
+            import math as _math
+            neg_limit = _math.ceil(len(negative_cases) * args.limit / total_groups)
+            negative_cases = _common.apply_limit_to_items(
+                negative_cases, neg_limit, seed_val, "confusion_neg"
+            )
 
     if args.dry_run:
         # Summarize dataset contents
@@ -745,6 +776,7 @@ def main() -> int:
         judge_model=args.judge_model,
         seed=args.seed,
         cli=args.cli,
+        limit=args.limit,
     )
     temperature = cfg.get("temperature", 0.0)
     max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
@@ -752,9 +784,13 @@ def main() -> int:
 
     # Pre-build group indices and validate skills exist
     group_indices: dict[str, tuple[str, int]] = {}
-    active_groups = (
-        [args.group] if args.group else sorted(DOMAIN_GROUPS.keys())
-    )
+    # Derive active_groups from the (possibly limited) confusion_cases
+    if args.group:
+        active_groups = [args.group]
+    else:
+        active_groups = sorted(set(
+            c.get("group", "unknown") for c in confusion_cases
+        )) if confusion_cases else sorted(DOMAIN_GROUPS.keys())
 
     # Validate that all declared skills actually exist in the repo
     missing_skills: dict[str, list[str]] = {}
@@ -1229,6 +1265,7 @@ def main() -> int:
         }
 
     meta["total_cost"] = round(total_cost, 6)
+    meta["aborted"] = aborted
     if fail_fast:
         meta["fail_fast_reason"] = fail_fast_reason
 

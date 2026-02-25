@@ -6,6 +6,7 @@
 #   ./tests/evals/run_suite.sh --dry-run
 #   ./tests/evals/run_suite.sh --runs=5
 #   ./tests/evals/run_suite.sh --cli=codex
+#   ./tests/evals/run_suite.sh --limit=2
 #
 # CLI tools (claude, codex, copilot) handle their own authentication.
 # No API keys needed.
@@ -28,6 +29,7 @@ RESULTS_DIR="$EVALS_DIR/results"
 MULTI_RUNS="${RUNS:-3}"
 DRY_RUN=""
 CLI_OVERRIDE=""
+LIMIT_OVERRIDE=""
 
 # Parse args
 for arg in "$@"; do
@@ -35,6 +37,7 @@ for arg in "$@"; do
     --dry-run) DRY_RUN="--dry-run" ;;
     --runs=*) MULTI_RUNS="${arg#--runs=}" ;;
     --cli=*) CLI_OVERRIDE="--cli ${arg#--cli=}" ;;
+    --limit=*) LIMIT_OVERRIDE="--limit ${arg#--limit=}" ;;
     *) echo "Unknown arg: $arg" >&2; exit 1 ;;
   esac
 done
@@ -176,7 +179,7 @@ run_runner() {
 }
 
 # --- L3 Activation (always 1 run per fn-60.1 spec) ---
-run_runner "L3 Activation" python3 "$EVALS_DIR/run_activation.py" $DRY_RUN $CLI_OVERRIDE
+run_runner "L3 Activation" python3 "$EVALS_DIR/run_activation.py" $DRY_RUN $CLI_OVERRIDE $LIMIT_OVERRIDE
 ACT_STDOUT="$RUNNER_STDOUT"
 ACT_EXIT=$RUNNER_EXIT_CODE
 ACT_COST=$(parse_runner_key "$ACT_STDOUT" "COST_USD")
@@ -215,7 +218,7 @@ if [ "$SUITE_SKIP_REMAINING" = "1" ]; then
   echo "[suite] SKIPPING L4 Confusion Matrix (permanent fail-fast from prior runner)" >&2
   echo "============================================" >&2
 else
-  run_runner "L4 Confusion Matrix" python3 "$EVALS_DIR/run_confusion_matrix.py" $DRY_RUN $CLI_OVERRIDE
+  run_runner "L4 Confusion Matrix" python3 "$EVALS_DIR/run_confusion_matrix.py" $DRY_RUN $CLI_OVERRIDE $LIMIT_OVERRIDE
   CONF_STDOUT="$RUNNER_STDOUT"
   CONF_EXIT=$RUNNER_EXIT_CODE
   CONF_COST=$(parse_runner_key "$CONF_STDOUT" "COST_USD")
@@ -254,7 +257,7 @@ if [ "$SUITE_SKIP_REMAINING" = "1" ]; then
   echo "[suite] SKIPPING L5 Effectiveness (permanent fail-fast from prior runner)" >&2
   echo "============================================" >&2
 else
-  run_runner "L5 Effectiveness" python3 "$EVALS_DIR/run_effectiveness.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE
+  run_runner "L5 Effectiveness" python3 "$EVALS_DIR/run_effectiveness.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE $LIMIT_OVERRIDE
   EFF_STDOUT="$RUNNER_STDOUT"
   EFF_EXIT=$RUNNER_EXIT_CODE
   EFF_COST=$(parse_runner_key "$EFF_STDOUT" "COST_USD")
@@ -293,7 +296,7 @@ if [ "$SUITE_SKIP_REMAINING" = "1" ]; then
   echo "[suite] SKIPPING L6 Size Impact (permanent fail-fast from prior runner)" >&2
   echo "============================================" >&2
 else
-  run_runner "L6 Size Impact" python3 "$EVALS_DIR/run_size_impact.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE
+  run_runner "L6 Size Impact" python3 "$EVALS_DIR/run_size_impact.py" --runs "$MULTI_RUNS" $DRY_RUN $CLI_OVERRIDE $LIMIT_OVERRIDE
   SIZE_STDOUT="$RUNNER_STDOUT"
   SIZE_EXIT=$RUNNER_EXIT_CODE
   SIZE_COST=$(parse_runner_key "$SIZE_STDOUT" "COST_USD")

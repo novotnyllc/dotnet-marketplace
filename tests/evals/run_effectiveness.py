@@ -341,6 +341,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Override CLI backend (default: from config.yaml)",
     )
+    _common.add_limit_arg(parser)
     return parser
 
 
@@ -352,6 +353,13 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
+
+    # Validate --limit
+    try:
+        _common.validate_limit(args.limit)
+    except Exception as exc:
+        parser.error(str(exc))
+
     cfg = _common.load_config()
 
     # Determine which skills to evaluate
@@ -383,6 +391,14 @@ def main() -> int:
         print(f"N_CASES=0")
         print(f"FAIL_FAST=0")
         return 0
+
+    # Apply --limit to skills (N skills, each retains all prompts x runs)
+    if args.limit is not None:
+        seed = args.seed if args.seed is not None else cfg.get("rng", {}).get("default_seed", 42)
+        _common.apply_limit_warning(args.limit, "effectiveness")
+        skills = _common.apply_limit_to_items(
+            skills, args.limit, seed, "effectiveness"
+        )
 
     if args.dry_run:
         print(
@@ -419,6 +435,7 @@ def main() -> int:
         judge_model=args.judge_model,
         seed=args.seed,
         cli=args.cli,
+        limit=args.limit,
     )
     temperature = cfg.get("temperature", 0.0)
     max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
@@ -806,6 +823,7 @@ def main() -> int:
         }
 
     meta["total_cost"] = round(total_cost, 6)
+    meta["aborted"] = aborted
     if fail_fast:
         meta["fail_fast_reason"] = fail_fast_reason
 

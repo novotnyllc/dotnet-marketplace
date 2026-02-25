@@ -2,10 +2,10 @@
 
 ## Description
 
-Save verified eval results as baseline files for future regression tracking. Verify `compare_baseline.py` works against them. Unblock fn-58.4 (CI workflow).
+Run a single full-coverage pass per eval type (no `--limit`) to produce clean baseline results, verify they meet quality bars, then save them for future regression tracking. Verify `compare_baseline.py` works against them. Unblock fn-58.4 (CI workflow).
 
 **Depends on:** fn-60.5
-**Size:** S
+**Size:** M
 **Files:**
 - `tests/evals/baselines/activation_baseline.json` (new)
 - `tests/evals/baselines/confusion_baseline.json` (new)
@@ -15,47 +15,78 @@ Save verified eval results as baseline files for future regression tracking. Ver
 
 ## Approach
 
-### Step 1: Select best result files
+### Step 1: Full-coverage baseline runs
 
-For each eval type, select the most representative result file from `tests/evals/results/`:
-- Prefer the latest non-aborted, non-limited result (full coverage if available from .5)
-- If only limited/targeted results exist, use the broadest one and document the coverage in the baseline metadata
-- The result file's `summary` schema must be stable (compare_baseline.py compatibility)
+Run each eval type WITHOUT `--limit` using the canonical config to produce complete results suitable for baselines:
 
-### Step 2: Copy to baselines directory
-
-```
-cp tests/evals/results/<best_activation>.json tests/evals/baselines/activation_baseline.json
-cp tests/evals/results/<best_confusion>.json tests/evals/baselines/confusion_baseline.json
-cp tests/evals/results/<best_effectiveness>.json tests/evals/baselines/effectiveness_baseline.json
-cp tests/evals/results/<best_size_impact>.json tests/evals/baselines/size_impact_baseline.json
+```bash
+python3 tests/evals/run_activation.py
+python3 tests/evals/run_confusion_matrix.py
+python3 tests/evals/run_effectiveness.py --runs 3
+python3 tests/evals/run_size_impact.py --runs 3
 ```
 
-### Step 3: Verify compare_baseline.py
+**Canonical config:** Baselines must be generated using `config.yaml` defaults (`cli.default: claude`, `model` as configured -- typically `haiku`). Record the backend and model in the baseline commit message for future comparability.
+
+Verify each result has `meta.limit` absent or `null` (confirming full coverage).
+
+### CLI call estimate
+
+- Activation: ~73 calls (73 cases)
+- Confusion: ~54 calls (7 groups x ~5 cases + 18 negative controls)
+- Effectiveness: ~72 calls (12 skills x 2 prompts x 3 runs)
+- Size impact: ~99 calls (11 candidates x 3 comparison types x 3 runs)
+- Total: ~298 calls
+
+### Step 2: Verify quality bars on full results
+
+Before saving as baselines, confirm the full-coverage results meet all quality bars:
+
+- **L3**: TPR >= 75%, FPR <= 20%, Accuracy >= 70%
+- **L4**: Per-group >= 60%, cross-activation <= 35%, no never-activated, negative controls >= 70%
+- **L5**: No 0% win rate without exception, per-skill >= 50%
+- **L6**: full > baseline >= 55%, no baseline sweep
+
+**If any threshold fails:** This indicates the sampling-based .5 verification missed a tail failure. Loop back: identify failing skills, fix in a targeted batch (following .3/.4 workflow), re-run full coverage, and re-check. Do not save failing results as baselines.
+
+### Step 3: Copy to baselines directory
+
+```bash
+mkdir -p tests/evals/baselines/
+cp tests/evals/results/<latest_activation>.json tests/evals/baselines/activation_baseline.json
+cp tests/evals/results/<latest_confusion>.json tests/evals/baselines/confusion_baseline.json
+cp tests/evals/results/<latest_effectiveness>.json tests/evals/baselines/effectiveness_baseline.json
+cp tests/evals/results/<latest_size_impact>.json tests/evals/baselines/size_impact_baseline.json
+```
+
+### Step 4: Verify compare_baseline.py
 
 Run `compare_baseline.py` against each baseline to confirm it:
 - Loads the baseline file successfully
 - Parses the summary schema
 - Produces a comparison output (even if "no previous baseline" for first run)
 
-### Step 4: Commit and document
+### Step 5: Commit and document
 
 - Commit baseline files
-- Note in commit message which result files were used as sources
-- Document baseline coverage (full dataset vs partial) in commit message
+- Note in commit message: source result files, backend/model used, full coverage confirmation
+- Document baseline coverage (full dataset, run counts) in commit message
 
 ## Key context
 
 - compare_baseline.py uses "latest result file by mtime" for comparison, and loads baselines from the configured baselines directory
 - fn-58.4 depends on these baseline files existing to set up CI regression gates
 - Memory decision: "CI baseline regression gates must handle schema evolution: new entries absent from the baseline should be treated as 'new coverage', not hard failures"
+- Mixing backends across baseline vs comparison runs can create noise -- canonical config ensures consistency
 
 ## Acceptance
 
+- [ ] Full-coverage runs completed for all 4 eval types (no --limit, `meta.limit` absent)
+- [ ] Full-coverage results meet ALL quality bars (L3, L4, L5, L6) -- verified before saving
 - [ ] All 4 baseline files exist in `tests/evals/baselines/`
 - [ ] `compare_baseline.py` loads each baseline without error
 - [ ] `compare_baseline.py` produces comparison output for each eval type
-- [ ] Baseline files committed with documentation of source result files
+- [ ] Baseline files committed with documentation of source result files, backend/model, and coverage
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
 - [ ] fn-58.4 dependency is satisfied (baseline files in expected location with expected schema)
 

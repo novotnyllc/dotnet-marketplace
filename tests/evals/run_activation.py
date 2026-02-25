@@ -422,6 +422,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Override CLI backend (default: from config.yaml)",
     )
+    _common.add_limit_arg(parser)
     return parser
 
 
@@ -434,6 +435,12 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
+    # Validate --limit
+    try:
+        _common.validate_limit(args.limit)
+    except Exception as exc:
+        parser.error(str(exc))
+
     cfg = _common.load_config()
     datasets_dir = (
         _common.EVALS_DIR
@@ -443,6 +450,18 @@ def main() -> int:
 
     # Load dataset
     test_cases = load_dataset(datasets_dir, skill_filter=args.skill)
+
+    # Apply --limit with stratified sampling (positive/negative pools)
+    if args.limit is not None:
+        seed = args.seed if args.seed is not None else cfg.get("rng", {}).get("default_seed", 42)
+        _common.apply_limit_warning(args.limit, "activation")
+        test_cases = _common.apply_stratified_limit(
+            test_cases,
+            args.limit,
+            seed,
+            "activation",
+            pool_fn=lambda case: case.get("should_activate", True),
+        )
 
     if args.dry_run:
         positive = [c for c in test_cases if c.get("should_activate", True)]
@@ -498,6 +517,7 @@ def main() -> int:
         judge_model=args.judge_model,
         seed=args.seed,
         cli=args.cli,
+        limit=args.limit,
     )
     temperature = cfg.get("temperature", 0.0)
     max_cost = cfg.get("cost", {}).get("max_cost_per_run", 5.0)
@@ -797,6 +817,7 @@ def main() -> int:
     }
 
     meta["total_cost"] = round(total_cost, 6)
+    meta["aborted"] = aborted
     if fail_fast:
         meta["fail_fast_reason"] = fail_fast_reason
 

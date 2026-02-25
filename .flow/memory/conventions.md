@@ -87,3 +87,6 @@ Eval runners must record a result for every dataset case including skipped ones 
 
 ## 2026-02-24 manual [convention]
 Retry logic should distinguish non-retryable config errors (missing binary, bad flags) from transient failures (timeout, rate limit) -- use a custom exception type that retry_with_backoff re-raises immediately to avoid stalling on deterministic failures
+
+## 2026-02-25 manual [convention]
+When a JSON state file drives multi-task workflows, track each status dimension independently (e.g., routing_status + content_status) rather than a single ambiguous status field
