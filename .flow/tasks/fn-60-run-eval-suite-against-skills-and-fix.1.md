@@ -82,8 +82,8 @@ Each should complete with exit 0, produce a result JSON, and emit TOTAL_CALLS/CO
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass (no skill changes yet)
 
 ## Done summary
-
+Added --limit N flag to all 4 eval runners with runner-specific semantics (stratified activation sampling, group-level confusion limiting with proportional negative controls, skill-level effectiveness limiting, candidate-level size impact limiting). All sampling uses deterministic SHA-256-based seeding. Result JSON includes meta.limit and meta.aborted. run_suite.sh parses and passes --limit through to all runners.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c8037fb, 457841b, eec1c1b
+- Tests: python3 tests/evals/run_activation.py --dry-run --limit 2, python3 tests/evals/run_confusion_matrix.py --dry-run --limit 2, python3 tests/evals/run_effectiveness.py --dry-run --limit 2, python3 tests/evals/run_size_impact.py --dry-run --limit 2, bash tests/evals/run_suite.sh --dry-run --limit=2, bash tests/evals/run_suite.sh --dry-run --limit 2, python3 tests/evals/run_activation.py --limit 0, python3 tests/evals/run_activation.py --limit -1, python3 tests/evals/run_activation.py --dry-run --limit 9999, python3 tests/evals/run_activation.py --dry-run --skill dotnet-xunit --limit 2, bash tests/evals/run_suite.sh --limit, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

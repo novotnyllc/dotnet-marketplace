@@ -1,18 +1,374 @@
 {
-  "_schema": "eval-progress-v1",
-  "_doc": "Tracks which skills have been evaluated, by which agent/session, and their current fix status. Updated by workers during tasks .2-.5. Committed after each batch.",
-  "_example": {
-    "dotnet-example-skill": {
-      "eval_types": ["activation", "confusion", "effectiveness", "size_impact"],
-      "status": "needs-routing-fix",
-      "agent": "ralph-session-abc123",
-      "run_ids": ["f84ba29e-6399-4158-bcfb-cdcf965b2d7d"],
-      "fix_task": ".3",
-      "fixed_by": null,
-      "fixed_at": null,
-      "notes": "0% activation rate, description too generic"
-    }
+  "_schema": "eval-progress-v2",
+  "_doc": "Tracks per-skill evaluation status with independent routing and content dimensions. Updated by tasks .2-.5. routing_status tracks L3/L4 routing quality; content_status tracks L5/L6 content quality.",
+  "_statuses": [
+    "untested",
+    "passing",
+    "needs-fix",
+    "fixed",
+    "verified",
+    "exception"
+  ],
+  "_transitions": {
+    ".3": "sets routing_status to fixed",
+    ".4": "sets content_status to fixed",
+    ".5": "sets routing_status/content_status to verified after re-verification",
+    "overall_status": "passing only when all non-untested dimensions are passing/verified/exception"
   },
-  "_statuses": ["untested", "passing", "needs-routing-fix", "needs-content-fix", "fixed", "verified", "exception"],
-  "skills": {}
+  "skills": {
+    "dotnet-architecture-patterns": {
+      "routing_status": "needs-fix",
+      "content_status": "untested",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "activation"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "activation_3925edef"
+      ],
+      "notes": "False negative: act-005 routes to dotnet-advisor instead. Passes 3/12 runs. Description differentiator needs strengthening vs advisor.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-system-commandline": {
+      "routing_status": "needs-fix",
+      "content_status": "untested",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "activation"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "activation_3925edef"
+      ],
+      "notes": "False negative: act-012 routes to dotnet-advisor. Passes 3/12 runs. Needs System.CommandLine keywords earlier in description.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-resilience": {
+      "routing_status": "needs-fix",
+      "content_status": "passing",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "activation",
+        "effectiveness"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "activation_3925edef",
+        "effectiveness_d702e16b"
+      ],
+      "notes": "False negative: act-017 routes to dotnet-advisor. Passes 4/12 runs. Needs Polly v8 keywords earlier. L5 win_rate=100% on clean run (timeout on later run).",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-container-deployment": {
+      "routing_status": "needs-fix",
+      "content_status": "untested",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "activation"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "activation_3925edef"
+      ],
+      "notes": "False positive: neg-004 pure K8s prompt activates this skill. 0/12 pass. Description too broad, mentions K8s without .NET qualification.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-messaging-patterns": {
+      "routing_status": "needs-fix",
+      "content_status": "untested",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "activation"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "activation_3925edef"
+      ],
+      "notes": "False positive: neg-018 generic RabbitMQ prompt activates this + 3 others. 0/12 pass. Description too generic for messaging.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-efcore-architecture": {
+      "routing_status": "passing",
+      "content_status": "untested",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "confusion"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "confusion_e3f1b006"
+      ],
+      "notes": "L4 data group 80% (1 case routed to advisor). Group still above 60% threshold.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-xunit": {
+      "routing_status": "passing",
+      "content_status": "needs-fix",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "confusion",
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "confusion_e3f1b006",
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L4 testing group 83% (1 case to advisor). L5 win_rate=83.3% (passing). L6 BASELINE SWEEP: 0-3 full vs baseline, mean=-1.250. Content needs trimming -- 17.5KB body hurts vs description-only.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-blazor-patterns": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=100%. L6 split 1-1 full/baseline, mean=-0.100. Borderline -- monitor.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-containers": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b"
+      ],
+      "notes": "L5 win_rate=100%. No issues.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-csharp-async-patterns": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=83.3%. L6 full wins 2-1, mean=+0.417. OK.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-csharp-coding-standards": {
+      "routing_status": "passing",
+      "content_status": "needs-fix",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=66.7% (passing but lowest tier). L6 BASELINE WINS 2-0 with 1 tie, mean=-1.067. Content (12.2KB) counterproductive vs baseline.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-efcore-patterns": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=83.3%. L6 full wins 2-0, mean=+1.525. Strong.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-minimal-apis": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b"
+      ],
+      "notes": "L5 win_rate=83.3%. No issues.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-native-aot": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b"
+      ],
+      "notes": "L5 win_rate=100%. No issues.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-observability": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=100%. L6 full wins 3-0, mean=+0.800. Strong.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-security-owasp": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness",
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b",
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L5 win_rate=83.3%. L6 full wins 1-0, mean=+1.250 (low n due to errors). OK.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-testing-strategy": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "effectiveness"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "effectiveness_d702e16b"
+      ],
+      "notes": "L5 win_rate=66.7% (passing but lowest tier). Timeout on later run is infrastructure issue.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-windbg-debugging": {
+      "routing_status": "passing",
+      "content_status": "needs-fix",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L6 baseline wins 2-1, mean=-0.350. Summary (566 bytes) unusually large vs body (2.9KB). Body may not add enough signal.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-ado-patterns": {
+      "routing_status": "passing",
+      "content_status": "needs-fix",
+      "overall_status": "needs-fix",
+      "fixed_tasks": [],
+      "eval_types": [
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L6 baseline wins 2-1, mean=+0.233. Small skill (3.3KB) where summary outperforms. Content density may need improvement.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-csharp-code-smells": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L6 full wins 2-0 with 1 tie, mean=+0.700. OK.",
+      "fixed_by": null,
+      "fixed_at": null
+    },
+    "dotnet-integration-testing": {
+      "routing_status": "passing",
+      "content_status": "passing",
+      "overall_status": "passing",
+      "fixed_tasks": [],
+      "eval_types": [
+        "size_impact"
+      ],
+      "agent": "manual",
+      "run_ids": [
+        "size_impact_e10f5ab2"
+      ],
+      "notes": "L6 full wins 2-1, mean=+0.817. OK.",
+      "fixed_by": null,
+      "fixed_at": null
+    }
+  }
 }
