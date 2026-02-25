@@ -10,16 +10,16 @@
     "exception"
   ],
   "_transitions": {
-    ".3": "sets routing_status to fixed",
-    ".4": "sets content_status to fixed",
-    ".5": "sets routing_status/content_status to verified after re-verification",
+    ".3": "sets routing_status to fixed; promoted to verified when targeted re-run evidence is recorded",
+    ".4": "sets content_status to fixed; promoted to verified when --runs 3 --regenerate re-run confirms",
+    ".5": "performs quality bar sweep, promotes fixed->verified where evidence exists, documents exceptions",
     "overall_status": "passing only when all non-untested dimensions are passing/verified/exception"
   },
   "_quality_bar_summary": {
     "L3_activation": "PASS (TPR=92.7%, FPR=13.3%, Accuracy=91.1% -- error-excluded)",
     "L4_confusion": "PASS (all 7 groups >= 60% accuracy, cross-activation <= 35%, negative controls 88.9%)",
     "L5_effectiveness": "PASS (all skills >= 50% win rate, micro-avg 87.5%)",
-    "L6_size_impact": "PENDING_REVERIFICATION (pre-fix: 51.7% full wins, 2 baseline sweeps; .4 fixes applied but re-run needed from external session)",
+    "L6_size_impact": "PENDING_REVERIFICATION (pre-fix: 51.7% full wins, 1 baseline sweep (xunit) + 1 zero-full-wins (coding-standards with tie); .4 fixes applied but re-run needed from external session)",
     "verification_runs": {
       "L3_activation": "activation_3925edef",
       "L3_activation_fix3_targeted": ["activation_5fd7c96e", "activation_ca91bea3", "activation_8a8e5c77"],
