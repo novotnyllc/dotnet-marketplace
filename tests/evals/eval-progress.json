@@ -96,6 +96,7 @@
       "agent": "claude-opus-4-6",
       "run_ids": [
         "activation_3925edef",
+        "activation_1ef0e510",
         "activation_5fd7c96e"
       ],
       "notes": "Fixed false positive (neg-004). Verified via targeted activation re-run activation_5fd7c96e after commit 5a00da0: neg-004 now passes. Pre-fix run activation_1ef0e510 confirmed neg-004 was failing.",

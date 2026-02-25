@@ -82,7 +82,7 @@ For verified skills, update `skills[skill_name]`:
 - [ ] `eval-progress.json` updated: verified skills have `routing_status`/`content_status` set to `verified`
 
 ## Done summary
-Computed quality bar metrics from existing valid eval results: L3 activation PASS (TPR=92.7%, FPR=13.3%, Accuracy=91.1% error-excluded), L4 confusion PASS (all 7 groups above thresholds), L5 effectiveness PASS (all skills >=50% win rate, micro-avg 87.5%). Verified .3 routing fixes via targeted re-run evidence, documented messaging-patterns as variance exception with provenance. L6 size impact PENDING_REVERIFICATION -- created verify-content-fixes.sh for external .4 content re-runs (nested session constraint prevents CLI execution).
+Computed quality bar metrics from existing valid eval results: L3 activation PASS (TPR=92.7%, FPR=13.3%, Accuracy=91.1% error-excluded), L4 confusion PASS (all 7 groups above thresholds), L5 effectiveness PASS (all skills >=50% win rate, micro-avg 87.5%). Verified .3 routing fixes via targeted re-run evidence, documented messaging-patterns as routing exception with provenance. L6 size impact PENDING_REVERIFICATION -- created verify-content-fixes.sh for external .4 content re-runs (nested session constraint prevents CLI execution).
 ## Evidence
 - Commits: 800007d, 43da949, 21bb501
 - Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
