@@ -13,7 +13,7 @@
     ".3": "sets routing_status to fixed; promoted to verified when targeted re-run evidence is recorded",
     ".4": "sets content_status to fixed; promoted to verified when --runs 3 --regenerate re-run confirms",
     ".5": "performs quality bar sweep, promotes fixed->verified where evidence exists, documents exceptions",
-    "overall_status": "roll-up across routing_status and content_status: uses highest non-untested dimension value (verified > fixed > passing > needs-fix); exception if any dimension is exception"
+    "overall_status": "worst-of roll-up across routing_status and content_status (ignoring untested): needs-fix > fixed > passing > verified; exception overrides if any dimension is exception"
   },
   "_quality_bar_summary": {
     "L3_activation": "PASS (TPR=92.7%, FPR=13.3%, Accuracy=91.1% -- error-excluded)",
@@ -68,7 +68,7 @@
     "dotnet-resilience": {
       "routing_status": "verified",
       "content_status": "passing",
-      "overall_status": "verified",
+      "overall_status": "passing",
       "fixed_tasks": [".3"],
       "eval_types": [
         "activation",

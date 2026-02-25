@@ -15,7 +15,7 @@ Run targeted regression checks on all skills that were fixed in .3/.4, plus a br
 ### Step 1: Targeted re-verification of all fixed skills
 
 Read `tests/evals/eval-progress.json`. Use `fixed_tasks` to determine which verifications to run per skill:
-- Skills with `".3"` in `fixed_tasks` (routing fixes): re-run L3 activation (`--skill <name>`) and L4 confusion (`--group <group>`)
+- Skills with `".3"` in `fixed_tasks` (routing fixes): re-run L3 activation (`--skill <name>`) and L4 confusion (`--group <group>`) if the skill appears in the confusion dataset
 - Skills with `".4"` in `fixed_tasks` (content fixes): re-run L5 effectiveness (`--skill <name> --runs 3 --regenerate`) and L6 size impact if applicable (`--skill <name> --runs 3 --regenerate`)
 
 Multi-run (--runs 3) provides statistical confidence for L5/L6 judgments.
