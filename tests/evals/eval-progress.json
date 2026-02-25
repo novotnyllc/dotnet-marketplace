@@ -20,7 +20,13 @@
     "L4_confusion": "PASS (all 7 groups >= 60% accuracy, cross-activation <= 35%, negative controls 88.9%)",
     "L5_effectiveness": "PASS (all skills >= 50% win rate, micro-avg 87.5%)",
     "L6_size_impact": "PENDING_REVERIFICATION (pre-fix: 51.7% full wins, 2 baseline sweeps; .4 fixes applied but re-run needed from external session)",
-    "verification_run": "verification-sweep.json"
+    "verification_runs": {
+      "L3_activation": "activation_3925edef",
+      "L3_activation_fix3_targeted": ["activation_5fd7c96e", "activation_ca91bea3", "activation_8a8e5c77"],
+      "L4_confusion": "confusion_e3f1b006",
+      "L5_effectiveness": "effectiveness_d702e16b",
+      "L6_size_impact_pre_fix": "size_impact_e10f5ab2"
+    }
   },
   "skills": {
     "dotnet-architecture-patterns": {
@@ -36,7 +42,7 @@
         "activation_3925edef",
         "activation_5fd7c96e"
       ],
-      "notes": "Fixed false negative (act-005). Targeted re-run 5fd7c96e: act-005 passes, 17P/2F (neg-016 parse_failure, neg-018 messaging-patterns known issue). Routing verified in .5 sweep.",
+      "notes": "Fixed false negative (act-005). Verified via targeted activation re-run activation_5fd7c96e after commit 5a00da0: act-005 passes, 17P/2F (neg-016 parse_failure, neg-018 messaging-patterns known issue).",
       "fixed_by": "5a00da0",
       "fixed_at": "2026-02-25T05:51:32Z",
       "verified_at": "2026-02-25T21:30:00Z"
@@ -54,7 +60,7 @@
         "activation_3925edef",
         "activation_ca91bea3"
       ],
-      "notes": "Fixed false negative (act-012). Targeted re-run ca91bea3: act-012 passes, 17P/2F (neg-016 api-security FP, neg-018 messaging-patterns known issue). Routing verified in .5 sweep.",
+      "notes": "Fixed false negative (act-012). Verified via targeted activation re-run activation_ca91bea3 after commit 92fb8b8: act-012 passes, 17P/2F (neg-016 api-security FP, neg-018 messaging-patterns known issue).",
       "fixed_by": "92fb8b8",
       "fixed_at": "2026-02-25T10:30:00Z",
       "verified_at": "2026-02-25T21:30:00Z"
@@ -74,7 +80,7 @@
         "effectiveness_d702e16b",
         "activation_8a8e5c77"
       ],
-      "notes": "Fixed false negative (act-017). Targeted re-run 8a8e5c77: act-017 and act-054 pass, 18P/2F (neg-016 parse_failure, neg-018 multi-activation). L5 win_rate=100%. Routing verified in .5 sweep.",
+      "notes": "Fixed false negative (act-017). Verified via targeted activation re-run activation_8a8e5c77 after commit 92fb8b8: act-017 and act-054 pass, 18P/2F (neg-016 parse_failure, neg-018 multi-activation). L5 win_rate=100%.",
       "fixed_by": "92fb8b8",
       "fixed_at": "2026-02-25T10:30:00Z",
       "verified_at": "2026-02-25T21:30:00Z"
@@ -92,7 +98,7 @@
         "activation_3925edef",
         "activation_5fd7c96e"
       ],
-      "notes": "Fixed false positive (neg-004). Targeted re-run 5fd7c96e: neg-004 now passes. Pre-fix run 1ef0e510 confirmed neg-004 was failing. Routing verified in .5 sweep.",
+      "notes": "Fixed false positive (neg-004). Verified via targeted activation re-run activation_5fd7c96e after commit 5a00da0: neg-004 now passes. Pre-fix run activation_1ef0e510 confirmed neg-004 was failing.",
       "fixed_by": "5a00da0",
       "fixed_at": "2026-02-25T05:51:32Z",
       "verified_at": "2026-02-25T21:30:00Z"
@@ -102,6 +108,8 @@
       "content_status": "untested",
       "overall_status": "exception",
       "fixed_tasks": [],
+      "attempted_tasks": [".3"],
+      "attempted_commits": ["5a00da0", "de9b8e7"],
       "eval_types": [
         "activation"
       ],
@@ -110,7 +118,7 @@
         "activation_3925edef",
         "activation_5fd7c96e"
       ],
-      "notes": "neg-018 (generic RabbitMQ prompt) still activates this skill. Fix attempts in .3 reduced multi-skill FP to single-skill, but could not eliminate without losing .NET messaging coverage. Documented as variance exception: skill correctly activates for .NET messaging prompts; FP is only on deliberately ambiguous negative control. Overall L3 metrics still pass with this exception (2/18 neg controls affected).",
+      "notes": "neg-018 (generic RabbitMQ prompt) still activates this skill. Fix attempts in .3 (commits 5a00da0, de9b8e7) added .NET + MassTransit/Azure Service Bus qualifiers, reducing multi-skill FP to single-skill, but could not eliminate without losing .NET messaging coverage. Documented as variance exception. Overall L3 metrics still pass with this exception (2/18 neg controls affected).",
       "fixed_by": null,
       "fixed_at": null,
       "exception_reason": "neg-018 is deliberately ambiguous (generic RabbitMQ). Skill must activate for .NET messaging use cases. Cannot further narrow description without losing true positive coverage."
@@ -127,7 +135,7 @@
       "run_ids": [
         "confusion_e3f1b006"
       ],
-      "notes": "L4 data group 80% (1 case routed to advisor). Group still above 60% threshold. Verified in .5 sweep.",
+      "notes": "L4 data group 80% (1 case routed to advisor). Group still above 60% threshold per confusion_e3f1b006.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -165,7 +173,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=100%. L6 split 1-1 full/baseline, mean=-0.100. Borderline -- monitor. Verified in .5 sweep.",
+      "notes": "L5 win_rate=100%. L6 split 1-1 full/baseline, mean=-0.100. Borderline -- monitor.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -181,7 +189,7 @@
       "run_ids": [
         "effectiveness_d702e16b"
       ],
-      "notes": "L5 win_rate=100%. No issues. Verified in .5 sweep.",
+      "notes": "L5 win_rate=100% per effectiveness_d702e16b. No issues.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -199,7 +207,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=83.3%. L6 full wins 2-1, mean=+0.417. OK. Verified in .5 sweep.",
+      "notes": "L5 win_rate=83.3%. L6 full wins 2-1, mean=+0.417. OK.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -235,7 +243,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=83.3%. L6 full wins 2-0, mean=+1.525. Strong. Verified in .5 sweep.",
+      "notes": "L5 win_rate=83.3%. L6 full wins 2-0, mean=+1.525. Strong.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -251,7 +259,7 @@
       "run_ids": [
         "effectiveness_d702e16b"
       ],
-      "notes": "L5 win_rate=83.3%. No issues. Verified in .5 sweep.",
+      "notes": "L5 win_rate=83.3% per effectiveness_d702e16b. No issues.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -267,7 +275,7 @@
       "run_ids": [
         "effectiveness_d702e16b"
       ],
-      "notes": "L5 win_rate=100%. No issues. Verified in .5 sweep.",
+      "notes": "L5 win_rate=100% per effectiveness_d702e16b. No issues.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -285,7 +293,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=100%. L6 full wins 3-0, mean=+0.800. Strong. Verified in .5 sweep.",
+      "notes": "L5 win_rate=100%. L6 full wins 3-0, mean=+0.800. Strong.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -303,7 +311,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=83.3%. L6 full wins 1-0, mean=+1.250 (low n due to errors). OK. Verified in .5 sweep.",
+      "notes": "L5 win_rate=83.3%. L6 full wins 1-0, mean=+1.250 (low n due to errors). OK.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -319,7 +327,7 @@
       "run_ids": [
         "effectiveness_d702e16b"
       ],
-      "notes": "L5 win_rate=66.7% (passing but lowest tier). Timeout on later run is infrastructure issue. Verified in .5 sweep.",
+      "notes": "L5 win_rate=66.7% per effectiveness_d702e16b (passing but lowest tier). Timeout on later run is infrastructure issue.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -367,7 +375,7 @@
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 full wins 2-0 with 1 tie, mean=+0.700. OK. Verified in .5 sweep.",
+      "notes": "L6 full wins 2-0 with 1 tie, mean=+0.700 per size_impact_e10f5ab2. OK.",
       "fixed_by": null,
       "fixed_at": null
     },
@@ -383,7 +391,7 @@
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 full wins 2-1, mean=+0.817. OK. Verified in .5 sweep.",
+      "notes": "L6 full wins 2-1, mean=+0.817 per size_impact_e10f5ab2. OK.",
       "fixed_by": null,
       "fixed_at": null
     }

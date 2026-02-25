@@ -16,6 +16,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
+# Fail fast if running inside a nested Claude Code session
+if [[ -n "${CLAUDECODE-}" ]]; then
+  echo "ERROR: CLAUDECODE is set; eval CLI cannot run inside nested Claude Code." >&2
+  echo "Run this outside Claude Code, or: env -u CLAUDECODE $0" >&2
+  exit 2
+fi
+
 echo "=== L5 Effectiveness re-verification (--runs 3 --regenerate) ==="
 echo ""
 
@@ -44,6 +51,11 @@ echo ""
 
 echo "[4/4] dotnet-ado-patterns L6..."
 python3 tests/evals/run_size_impact.py --skill dotnet-ado-patterns --runs 3 --regenerate
+echo ""
+
+echo "=== Skill & marketplace validation ==="
+echo ""
+./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh
 echo ""
 
 echo "=== Done ==="
