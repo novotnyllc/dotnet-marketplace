@@ -242,6 +242,24 @@ public void CreateOrder_ValidRequest_SetsAllProperties()
 
 ---
 
+## xUnit Analyzers
+
+The `xunit.analyzers` package (included with xUnit v3) catches common mistakes at compile time. Key rules:
+
+| Rule | What it catches |
+|------|----------------|
+| `xUnit1025` | Duplicate `[InlineData]` within a `[Theory]` |
+| `xUnit2000` | Constants should be the expected (first) argument in `Assert.Equal` |
+| `xUnit2013` | Do not use equality check to verify collection size (use `Assert.Single`, `Assert.Empty`) |
+
+Suppress per-project in `.editorconfig`:
+```ini
+[tests/**.cs]
+dotnet_diagnostic.xUnit1004.severity = suggestion
+```
+
+---
+
 ## Key Principles
 
 - **One fact per `[Fact]`, one concept per `[Theory]`.** Split fundamentally different scenarios into separate methods.

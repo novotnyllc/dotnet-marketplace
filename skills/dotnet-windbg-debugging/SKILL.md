@@ -43,6 +43,17 @@ Use these `mcp-windbg` operations:
 
 ## Diagnostic Workflow
 
+### Preflight: Symbols
+
+Before any analysis, configure symbols to get meaningful stacks:
+
+1. Set Microsoft symbol server: `.symfix` (sets `srv*` to Microsoft public symbols)
+2. Add application symbols: `.sympath+ C:\path\to\your\pdbs`
+3. Reload modules: `.reload /f`
+4. Verify: `lm` (list modules -- check for "deferred" vs "loaded" status)
+
+Without correct symbols, stacks show raw addresses instead of function names.
+
 ### Crash Dump Analysis
 
 1. Open dump: `mcp_mcp-windbg_open_windbg_dump` with dump file path

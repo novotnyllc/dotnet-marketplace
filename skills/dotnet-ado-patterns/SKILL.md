@@ -113,6 +113,12 @@ Key Vault secrets resolve at runtime via `$(secret-name)`, not template expressi
 
 ---
 
+## Pipeline Decorators
+
+Decorators inject steps into every pipeline in an organization, enforcing policies without modifying individual pipeline files. They are defined via ADO extensions (not YAML) and cannot be overridden by callers. Debug by inspecting the expanded pipeline YAML in ADO run logs. See [skill:dotnet-ado-unique] for implementation details including extension manifests and deployment.
+
+---
+
 ## Conditional Insertion
 
 ```yaml

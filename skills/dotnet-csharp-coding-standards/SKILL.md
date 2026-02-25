@@ -11,7 +11,7 @@ Modern .NET coding standards based on Microsoft Framework Design Guidelines and 
 
 ## Activation Guidance
 
-Load this skill by default for any task that plans, designs, generates, modifies, or reviews C#/.NET code.
+Load this skill by default for any task that plans, designs, generates, modifies, or reviews C#/.NET code. Do not wait for explicit user wording such as "coding standards" or "conventions" -- if C# code will be produced, this skill should be active.
 This skill is a baseline dependency that should be loaded before domain-specific C#/.NET skills.
 
 Cross-references: [skill:dotnet-csharp-modern-patterns] for language feature usage, [skill:dotnet-csharp-async-patterns] for async naming conventions, [skill:dotnet-solid-principles] for SOLID, DRY, and SRP design principles.
