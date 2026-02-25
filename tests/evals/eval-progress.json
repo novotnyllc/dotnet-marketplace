@@ -121,23 +121,24 @@
     },
     "dotnet-xunit": {
       "routing_status": "passing",
-      "content_status": "needs-fix",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "content_status": "fixed",
+      "overall_status": "fixed",
+      "fixed_tasks": [".4"],
       "eval_types": [
         "confusion",
         "effectiveness",
         "size_impact"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
         "confusion_e3f1b006",
         "effectiveness_d702e16b",
-        "size_impact_e10f5ab2"
+        "size_impact_e10f5ab2",
+        "size_impact_2052b03a"
       ],
-      "notes": "L4 testing group 83% (1 case to advisor). L5 win_rate=83.3% (passing). L6 BASELINE SWEEP: 0-3 full vs baseline, mean=-1.250. Content needs trimming -- 17.5KB body hurts vs description-only.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "L6 BASELINE SWEEP fixed: trimmed body from 17.5KB to 8.7KB. Removed verbose v2 compat comments, ILogger integration, redundant examples, condensed analyzer rules. Retained core patterns (Fact/Theory, fixtures, key principles, agent gotchas). Verification requires re-run outside nested Claude session.",
+      "fixed_by": "7d1865a",
+      "fixed_at": "2026-02-25T20:05:00Z"
     },
     "dotnet-blazor-patterns": {
       "routing_status": "passing",
@@ -193,21 +194,21 @@
     },
     "dotnet-csharp-coding-standards": {
       "routing_status": "passing",
-      "content_status": "needs-fix",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "content_status": "fixed",
+      "overall_status": "fixed",
+      "fixed_tasks": [".4"],
       "eval_types": [
         "effectiveness",
         "size_impact"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L5 win_rate=66.7% (passing but lowest tier). L6 BASELINE WINS 2-0 with 1 tie, mean=-1.067. Content (12.2KB) counterproductive vs baseline.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "L6 BASELINE WINS fixed: trimmed body from 12.2KB to 5.7KB. Removed verbose correct/avoid code blocks, Type Design section (duplicates dotnet-solid-principles), Knowledge Sources. Condensed code style rules to concise bullets. Retained naming table, CancellationToken, XML docs, analyzer config. Verification requires re-run outside nested Claude session.",
+      "fixed_by": "7d1865a",
+      "fixed_at": "2026-02-25T20:05:00Z"
     },
     "dotnet-efcore-patterns": {
       "routing_status": "passing",
@@ -313,35 +314,35 @@
     },
     "dotnet-windbg-debugging": {
       "routing_status": "passing",
-      "content_status": "needs-fix",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "content_status": "fixed",
+      "overall_status": "fixed",
+      "fixed_tasks": [".4"],
       "eval_types": [
         "size_impact"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 baseline wins 2-1, mean=-0.350. Summary (566 bytes) unusually large vs body (2.9KB). Body may not add enough signal.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "L6 baseline wins 2-1 fixed: restructured body from 2.9KB to 4.4KB. Replaced generic quick-start file references with concrete diagnostic workflows (crash dump, hang/deadlock, high CPU, memory pressure) including actual WinDbg/SOS commands and report template. Verification requires re-run outside nested Claude session.",
+      "fixed_by": "a3d67f4",
+      "fixed_at": "2026-02-25T20:07:00Z"
     },
     "dotnet-ado-patterns": {
       "routing_status": "passing",
-      "content_status": "needs-fix",
-      "overall_status": "needs-fix",
-      "fixed_tasks": [],
+      "content_status": "fixed",
+      "overall_status": "fixed",
+      "fixed_tasks": [".4"],
       "eval_types": [
         "size_impact"
       ],
-      "agent": "manual",
+      "agent": "claude-opus-4-6",
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 baseline wins 2-1, mean=+0.233. Small skill (3.3KB) where summary outperforms. Content density may need improvement.",
-      "fixed_by": null,
-      "fixed_at": null
+      "notes": "L6 baseline wins 2-1 fixed: restructured body from 3.3KB to 5.9KB. Inlined key YAML pipeline patterns (step templates, extends, variable groups, conditional insertion, triggers) from examples.md. Previous body was just Agent Gotchas -- too little actionable content. Verification requires re-run outside nested Claude session.",
+      "fixed_by": "a3d67f4",
+      "fixed_at": "2026-02-25T20:07:00Z"
     },
     "dotnet-csharp-code-smells": {
       "routing_status": "passing",
