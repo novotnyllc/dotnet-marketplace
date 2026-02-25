@@ -819,6 +819,8 @@ def main() -> int:
             "missing skills. Add the skills or update DOMAIN_GROUPS.",
             file=sys.stderr,
         )
+        meta["aborted"] = True
+        meta["total_cost"] = 0.0
         _common.write_results(
             meta=meta,
             summary={"_run_status": {

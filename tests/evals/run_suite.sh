@@ -51,6 +51,12 @@ for arg in "$@"; do
   esac
 done
 
+# Guard against dangling --limit with no value
+if [ -n "$SKIP_NEXT" ]; then
+  echo "ERROR: --limit requires a value (e.g., --limit 2 or --limit=2)" >&2
+  exit 1
+fi
+
 # Validate MULTI_RUNS is a positive integer
 if ! [[ "$MULTI_RUNS" =~ ^[1-9][0-9]*$ ]]; then
   echo "ERROR: --runs must be a positive integer, got: '$MULTI_RUNS'" >&2

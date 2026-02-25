@@ -462,3 +462,6 @@ When retry_with_backoff raises (all retries exhausted), attach consumed-call met
 
 ## 2026-02-25 manual [pitfall]
 When re-raising exceptions early in retry loops, always attach accounting metadata (e.g. calls_consumed) before re-raising -- callers depend on it for accurate totals
+
+## 2026-02-25 manual [pitfall]
+Python's built-in hash() is randomized per process via PYTHONHASHSEED -- use hashlib.sha256 for deterministic seeding that must be reproducible across separate process invocations
