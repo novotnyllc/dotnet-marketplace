@@ -385,8 +385,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
         _cli_caps[reason_key] = "no_stdin_support"
         raise CLIConfigError(
             f"{backend} CLI does not support stdin or file_stdin modes. "
-            f"Cannot proceed with arg mode for {backend}. "
-            f"Install a newer version or switch backends in config.yaml"
+            f"Install a newer version or switch to 'claude' in config.yaml."
         )
 
     # Step 3: JSON output support (claude only)
@@ -822,9 +821,11 @@ def retry_with_backoff(
             if isinstance(result, dict) and "calls" in result and failed_attempts > 0:
                 result["calls"] = result["calls"] + failed_attempts
             return result
-        except CLIConfigError:
+        except CLIConfigError as cfg_exc:
             # Deterministic config errors are non-retryable -- re-raise
             # immediately without sleeping or consuming more attempts.
+            # Account for the call that just failed plus any prior retries.
+            cfg_exc.calls_consumed = failed_attempts + 1  # type: ignore[attr-defined]
             raise
         except Exception as exc:
             last_exc = exc
