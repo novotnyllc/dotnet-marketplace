@@ -1,6 +1,6 @@
 ---
 name: dotnet-messaging-patterns
-description: Builds event-driven systems. Pub/sub, competing consumers, DLQ, sagas, delivery guarantees.
+description: .NET messaging via MassTransit/Service Bus. Pub/sub, sagas, DLQ, delivery guarantees.
 license: MIT
 user-invocable: false
 ---

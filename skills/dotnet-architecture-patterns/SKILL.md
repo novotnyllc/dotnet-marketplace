@@ -1,6 +1,6 @@
 ---
 name: dotnet-architecture-patterns
-description: Designs ASP.NET Core architecture -- vertical slices, pipelines, caching, errors.
+description: Designs .NET architecture -- vertical slices, layered patterns, pipelines, caching.
 license: MIT
 user-invocable: false
 ---
