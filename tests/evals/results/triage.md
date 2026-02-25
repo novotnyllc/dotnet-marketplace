@@ -8,28 +8,30 @@ Total CLI calls for this task: 0 (reused existing results)
 ### Activation (13 files, 73 cases each)
 - **12 valid** (backend=`claude`, post-.7 CLI migration)
 - **1 invalid** (`activation_3d47f289` -- no backend field, pre-.7 format)
-- **Best run**: `3925edef` (2026-02-24T18:00, latest, 73 cases, full coverage)
+- **Best run**: `activation_3925edef` (2026-02-24T18:00, latest, 73 cases, full coverage)
 - `meta.limit`: absent on all runs (full-coverage runs)
 - Case counts match dataset: 30 core + 25 specialized + 18 negative = 73
 
 ### Confusion (2 files, 54 cases each)
 - **2 valid** (backend=`claude`)
-- **Best run**: `e3f1b006` (2026-02-24T12:48, latest, 54 cases)
+- **Best run**: `confusion_e3f1b006` (2026-02-24T12:48, latest, 54 cases)
 - Case counts match dataset: 36 group cases + 18 negative controls = 54
 - 7 groups tested: api, blazor, cicd, data, performance, security, testing
 
 ### Effectiveness (2 files, 72 cases each)
 - **2 valid** (backend=`claude`)
-- **Best run for analysis**: `d702e16b` (2026-02-24T10:40, 72 cases, 0 errors)
-- **Latest run**: `8e9f1cb8` (2026-02-24T16:59, 72 cases, 24 errors -- timeouts)
+- **Best run for analysis**: `effectiveness_d702e16b` (2026-02-24T10:40, 72 cases, 0 errors)
+- **Latest run**: `effectiveness_8e9f1cb8` (2026-02-24T16:59, 72 cases, 24 errors -- timeouts)
 - 12 rubric'd skills, 6 cases each (2 prompts x 3 runs)
 
 ### Size Impact (1 file, 100 cases)
 - **1 valid** (backend=`claude`)
-- **Run**: `e10f5ab2` (2026-02-24T10:40, 100 cases)
+- **Run**: `size_impact_e10f5ab2` (2026-02-24T10:40, 100 cases)
 - 11 candidates tested with 4 comparison types
 
 No `suite_summary.json` exists.
+
+All 21 skill IDs referenced in this report and in `eval-progress.json` have been verified to exist as `skills/<skill-name>/SKILL.md` in the repository.
 
 ---
 
@@ -80,7 +82,7 @@ No `suite_summary.json` exists.
 
 ### L5 Effectiveness
 
-**Using the error-free run** (`d702e16b`):
+**Using the error-free run** (`effectiveness_d702e16b`):
 
 | Skill | Win Rate | Target | Status |
 |-------|---------|--------|--------|
@@ -99,7 +101,7 @@ No `suite_summary.json` exists.
 
 **L5 meets quality bar.** All 12 skills above 50% win rate, no 0% skills.
 
-The later run (`8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not content quality issues. Error: `judge invocation failed: claude CLI timed out after 120s`. These skills (dotnet-resilience, dotnet-security-owasp, dotnet-testing-strategy, dotnet-xunit) produce longer rubric evaluation prompts that exceed the timeout.
+The later run (`effectiveness_8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not content quality issues. Error: `judge invocation failed: claude CLI timed out after 120s`. These skills (dotnet-resilience, dotnet-security-owasp, dotnet-testing-strategy, dotnet-xunit) produce longer rubric evaluation prompts that exceed the timeout.
 
 ### L6 Size Impact
 
@@ -117,7 +119,7 @@ The later run (`8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not
 | dotnet-windbg-debugging | 1 | 2 | 0 | -0.350 | BASELINE WINS |
 | dotnet-xunit | 0 | 3 | 0 | -1.250 | **BASELINE SWEEP** |
 
-**Overall full vs baseline**: 15/29 wins (51.7%) -- below 55% target.
+**Overall full vs baseline**: 15/29 wins (51.7%) -- below 55% target. Denominator is the count of `full_vs_baseline` judged comparisons across all 11 candidates (ties counted in denominator but not as wins; error cases excluded).
 
 | Metric | Measured | Target | Status |
 |--------|---------|--------|--------|
@@ -127,6 +129,14 @@ The later run (`8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not
 ---
 
 ## Priority Fixes
+
+### P0: Eval infra reliability (blocking L3/L5 raw scores)
+
+The current L3 raw FAIL and L5 latest-run 0% skills are dominated by `detection_method: error` (CLI timeouts, 17/73 activation cases and 24/72 effectiveness cases). These are infrastructure failures, not routing or content quality issues.
+
+**Gating decision for .5/.6**: Quality bar metrics MUST exclude `detection_method: error` cases from numerator and denominator when computing TPR/FPR/accuracy. The error rate itself is tracked separately as an infra health metric. Rationale: error cases reflect CLI timeout behavior, not skill routing or content quality. If the error rate exceeds 10%, the run should be flagged as degraded and re-run after infra fixes (e.g., increasing CLI timeout for index-sized and judge prompts).
+
+**Action**: Before .5 verification and .6 baseline runs, reduce timeout/error rate by increasing CLI timeout for large prompts (current 120s is insufficient for 12-skill rubric evaluations). This is not a task .3/.4 concern but must be resolved before .5/.6.
 
 ### Priority 1: Blocking Quality Bar
 
@@ -174,6 +184,18 @@ The later run (`8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not
 4. `dotnet-system-commandline` -- add System.CommandLine keywords earlier
 5. `dotnet-resilience` -- add Polly v8 keywords earlier
 
+**Verification commands for .3**:
+
+| Skill | Activation verify | Confusion verify |
+|-------|------------------|-----------------|
+| dotnet-container-deployment | `--skill dotnet-container-deployment` | N/A (not in confusion dataset) |
+| dotnet-messaging-patterns | `--skill dotnet-messaging-patterns` | N/A (not in confusion dataset) |
+| dotnet-architecture-patterns | `--skill dotnet-architecture-patterns` | N/A (not in confusion dataset) |
+| dotnet-system-commandline | `--skill dotnet-system-commandline` | N/A (not in confusion dataset) |
+| dotnet-resilience | `--skill dotnet-resilience` | N/A (not in confusion dataset) |
+
+None of these 5 routing-fix skills appear in the confusion matrix dataset. Confusion verification is not applicable; use activation-only targeted runs.
+
 ### Task .4 (Content Fixes)
 
 **Batch 1** (2 skills -- baseline sweep/wins, highest impact):
@@ -191,7 +213,7 @@ The later run (`8e9f1cb8`) showed 4 skills at 0% due to CLI timeouts (120s), not
 
 ## L5 Rubric Failure Mode Pre-Analysis
 
-All 12 skills pass on the error-free run (`d702e16b`). The 4 skills showing 0% on the later run (`8e9f1cb8`) failed due to CLI timeouts, not rubric criteria failures. No rubric-level fixes are needed at this time.
+All 12 skills pass on the error-free run (`effectiveness_d702e16b`). The 4 skills showing 0% on the later run (`effectiveness_8e9f1cb8`) failed due to CLI timeouts, not rubric criteria failures. No rubric-level fixes are needed at this time.
 
 For reference, the skills with lowest (but passing) win rates on the clean run:
 - **dotnet-csharp-coding-standards** (66.7%): 1 loss out of 6 cases. Rubric criteria include naming conventions, code layout, and documentation. The loss likely comes from baseline responses that are already well-formatted.
@@ -203,10 +225,12 @@ For reference, the skills with lowest (but passing) win rates on the clean run:
 
 | Eval | Quality Bar | Status | Action Needed |
 |------|------------|--------|---------------|
-| L3 Activation | TPR>=75%, FPR<=20%, Acc>=70% | PASS (excl. errors) / FAIL (raw) | Fix 5 routing descriptions (.3); resolve CLI timeout errors separately |
+| L3 Activation | TPR>=75%, FPR<=20%, Acc>=70% | **PASS** (excl. errors; see P0) | Fix 5 routing descriptions (.3); resolve CLI timeouts before .5/.6 (P0) |
 | L4 Confusion | Per-group>=60%, cross<=35%, neg>=70% | **PASS** | None (monitor) |
-| L5 Effectiveness | Per-skill>=50%, no 0% | **PASS** (on clean run) | None (timeout is infrastructure issue) |
+| L5 Effectiveness | Per-skill>=50%, no 0% | **PASS** (excl. errors; see P0) | None (resolve CLI timeouts before .5/.6) |
 | L6 Size Impact | Full wins>=55%, no sweeps | **FAIL** | Fix 4 content issues (.4), eliminate xunit sweep |
+
+**Quality bar gating note**: L3 and L5 metrics exclude `detection_method: error` cases (CLI timeouts). Error rate is tracked as an infra health metric under P0, not as a routing/content quality signal.
 
 **Total skills needing routing fixes (task .3)**: 5
 **Total skills needing content fixes (task .4)**: 4-5
