@@ -1,6 +1,6 @@
 ---
 name: dotnet-resilience
-description: Polly v8 resilience pipelines for .NET. Retry, circuit breaker, timeout, rate limiter, HttpClient.
+description: Configures Polly v8 resilience for .NET. Retry, circuit breaker, timeout, rate limiter, HttpClient.
 license: MIT
 user-invocable: false
 ---
