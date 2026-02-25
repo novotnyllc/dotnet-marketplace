@@ -1030,6 +1030,23 @@ def apply_limit_warning(limit: Optional[int], runner_name: str) -> None:
         )
 
 
+def _stable_salt_int(salt: str) -> int:
+    """Compute a stable integer from a salt string using SHA-256.
+
+    Unlike Python's built-in ``hash()``, this is deterministic across
+    processes regardless of ``PYTHONHASHSEED`` settings.
+
+    Args:
+        salt: Runner-specific salt string.
+
+    Returns:
+        Stable integer derived from the salt.
+    """
+    import hashlib as _hashlib
+    digest = _hashlib.sha256(salt.encode("utf-8")).digest()
+    return int.from_bytes(digest[:8], "little", signed=False)
+
+
 def apply_limit_to_items(
     items: list,
     limit: Optional[int],
@@ -1053,7 +1070,8 @@ def apply_limit_to_items(
         return items
 
     # Combine seed with runner-specific salt for independence
-    combined_seed = seed + hash(salt)
+    # Uses _stable_salt_int instead of hash() for cross-process determinism
+    combined_seed = seed + _stable_salt_int(salt)
     rng = random.Random(combined_seed)
 
     indices = list(range(len(items)))
@@ -1091,7 +1109,7 @@ def apply_stratified_limit(
     pool_a = [i for i, item in enumerate(items) if pool_fn(item)]
     pool_b = [i for i, item in enumerate(items) if not pool_fn(item)]
 
-    combined_seed = seed + hash(salt)
+    combined_seed = seed + _stable_salt_int(salt)
     rng = random.Random(combined_seed)
 
     selected_indices: list[int] = []

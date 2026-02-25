@@ -32,12 +32,21 @@ CLI_OVERRIDE=""
 LIMIT_OVERRIDE=""
 
 # Parse args
+SKIP_NEXT=""
 for arg in "$@"; do
+  if [ -n "$SKIP_NEXT" ]; then
+    case "$SKIP_NEXT" in
+      limit) LIMIT_OVERRIDE="--limit $arg" ;;
+    esac
+    SKIP_NEXT=""
+    continue
+  fi
   case "$arg" in
     --dry-run) DRY_RUN="--dry-run" ;;
     --runs=*) MULTI_RUNS="${arg#--runs=}" ;;
     --cli=*) CLI_OVERRIDE="--cli ${arg#--cli=}" ;;
     --limit=*) LIMIT_OVERRIDE="--limit ${arg#--limit=}" ;;
+    --limit) SKIP_NEXT="limit" ;;
     *) echo "Unknown arg: $arg" >&2; exit 1 ;;
   esac
 done

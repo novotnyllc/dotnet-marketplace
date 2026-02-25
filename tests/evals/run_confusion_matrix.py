@@ -722,11 +722,12 @@ def main() -> int:
             c for c in confusion_cases
             if c.get("group", "unknown") in limited_groups_set
         ]
-        # Proportionally limit negative controls: ceil(total_neg * limit / total_groups)
+        # Proportionally limit negative controls using effective (capped) group count
         total_groups = len(DOMAIN_GROUPS)
-        if total_groups > 0 and len(negative_cases) > 0:
+        effective_group_count = len(limited_groups)
+        if total_groups > 0 and len(negative_cases) > 0 and effective_group_count > 0:
             import math as _math
-            neg_limit = _math.ceil(len(negative_cases) * args.limit / total_groups)
+            neg_limit = _math.ceil(len(negative_cases) * effective_group_count / total_groups)
             negative_cases = _common.apply_limit_to_items(
                 negative_cases, neg_limit, seed_val, "confusion_neg"
             )
