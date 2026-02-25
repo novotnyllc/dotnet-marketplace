@@ -459,3 +459,6 @@ When passing budget_check closures into nested call sites (e.g. judge retry loop
 
 ## 2026-02-24 manual [pitfall]
 When retry_with_backoff raises (all retries exhausted), attach consumed-call metadata to the exception so callers can keep accurate resource-usage totals -- otherwise failure-heavy runs silently under-count resource consumption
+
+## 2026-02-25 manual [pitfall]
+When re-raising exceptions early in retry loops, always attach accounting metadata (e.g. calls_consumed) before re-raising -- callers depend on it for accurate totals

@@ -104,9 +104,8 @@ Load with defaults: `cfg.get("fail_fast", {}).get("consecutive_threshold", 3)`.
 - [ ] `./tests/evals/run_suite.sh --dry-run` still works
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
 ## Done summary
-TBD
-
+Added ConsecutiveFailureTracker to _common.py and wired fail-fast behavior into all 4 eval runners (activation, confusion_matrix, effectiveness, size_impact) and run_suite.sh. Runners emit FAIL_FAST/FAIL_FAST_REASON/FAIL_FAST_PERMANENT on stdout; suite uses FAIL_FAST_PERMANENT for robust permanent/transient classification with regex fallback. Restructured effectiveness and size_impact loop order so run_idx is outermost for proper tracker.reset() at --runs boundaries.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 4807a4d, 9b9166c, bf717bf, 54170cf
+- Tests: python3 -c 'import py_compile; ...' (all 5 Python files), python3 tests/evals/run_activation.py --dry-run, python3 tests/evals/run_confusion_matrix.py --dry-run, python3 tests/evals/run_effectiveness.py --dry-run, python3 tests/evals/run_size_impact.py --dry-run, bash tests/evals/run_suite.sh --dry-run, ConsecutiveFailureTracker unit tests, retry_with_backoff calls_consumed tests, ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
