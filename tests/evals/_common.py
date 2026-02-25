@@ -565,7 +565,7 @@ def _is_permanent_cli_error(return_code: int, stderr_text: str) -> bool:
         "does not support",
         "invalid_api_key",
     )
-    if "401" in text or "403" in text or "404" in text or "413" in text:
+    if "401" in text or "403" in text or "404" in text or "413" in text or "400" in text:
         return True
     return any(marker in text for marker in permanent_markers)
 
