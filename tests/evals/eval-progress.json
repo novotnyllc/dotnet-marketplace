@@ -13,12 +13,12 @@
     ".3": "sets routing_status to fixed; promoted to verified when targeted re-run evidence is recorded",
     ".4": "sets content_status to fixed; promoted to verified when --runs 3 --regenerate re-run confirms",
     ".5": "performs quality bar sweep, promotes fixed->verified where evidence exists, documents exceptions",
-    "overall_status": "passing only when all non-untested dimensions are passing/verified/exception"
+    "overall_status": "roll-up across routing_status and content_status: uses highest non-untested dimension value (verified > fixed > passing > needs-fix); exception if any dimension is exception"
   },
   "_quality_bar_summary": {
     "L3_activation": "PASS (TPR=92.7%, FPR=13.3%, Accuracy=91.1% -- error-excluded)",
     "L4_confusion": "PASS (all 7 groups >= 60% accuracy, cross-activation <= 35%, negative controls 88.9%)",
-    "L5_effectiveness": "PASS (all skills >= 50% win rate, micro-avg 87.5%)",
+    "L5_effectiveness": "PASS (all skills >= 50% win rate, micro-avg 87.5%, effectiveness_d702e16b pre-.4). PENDING_REVERIFICATION for .4-edited skills (dotnet-xunit, dotnet-csharp-coding-standards).",
     "L6_size_impact": "PENDING_REVERIFICATION (pre-fix: 51.7% full wins, 1 baseline sweep (xunit) + 1 zero-full-wins (coding-standards with tie); .4 fixes applied but re-run needed from external session)",
     "verification_runs": {
       "L3_activation": "activation_3925edef",
@@ -118,7 +118,7 @@
         "activation_3925edef",
         "activation_5fd7c96e"
       ],
-      "notes": "neg-018 (generic RabbitMQ prompt) still activates this skill. Fix attempts in .3 (commits 5a00da0, de9b8e7) added .NET + MassTransit/Azure Service Bus qualifiers, reducing multi-skill FP to single-skill, but could not eliminate without losing .NET messaging coverage. Documented as variance exception. Overall L3 metrics still pass with this exception (2/18 neg controls affected).",
+      "notes": "neg-018 (generic RabbitMQ prompt) still activates this skill. Fix attempts in .3 (commits 5a00da0, de9b8e7) added .NET + MassTransit/Azure Service Bus qualifiers, but could not eliminate FP without losing .NET messaging coverage. Exception decision based on recorded runs activation_3925edef and activation_5fd7c96e; re-run after de9b8e7 not yet captured in run_ids. Overall L3 metrics still pass with this exception (2/18 neg controls affected).",
       "fixed_by": null,
       "fixed_at": null,
       "exception_reason": "neg-018 is deliberately ambiguous (generic RabbitMQ). Skill must activate for .NET messaging use cases. Cannot further narrow description without losing true positive coverage."
@@ -155,7 +155,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 BASELINE SWEEP fixed: trimmed body from 17.5KB to 8.7KB. L5 pre-fix win_rate=83.3% (already passing). Content fix verification requires external re-run via verify-content-fixes.sh (nested session constraint).",
+      "notes": "L6 baseline sweep addressed by trimming body from 17.5KB to 8.7KB (pending re-verification via verify-content-fixes.sh). L5 pre-fix win_rate=83.3% (already passing).",
       "fixed_by": "7d1865a",
       "fixed_at": "2026-02-25T20:05:00Z"
     },
@@ -225,7 +225,7 @@
         "effectiveness_d702e16b",
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 BASELINE SWEEP fixed: trimmed body from 12.2KB to 5.7KB. L5 pre-fix win_rate=66.7% (already passing >=50%). Content fix verification requires external re-run via verify-content-fixes.sh (nested session constraint).",
+      "notes": "L6 baseline sweep addressed by trimming body from 12.2KB to 5.7KB (pending re-verification via verify-content-fixes.sh). L5 pre-fix win_rate=66.7% (already passing >=50%).",
       "fixed_by": "7d1865a",
       "fixed_at": "2026-02-25T20:05:00Z"
     },
@@ -343,7 +343,7 @@
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 baseline wins 2-1 fixed: restructured body from 2.9KB to 4.4KB with concrete diagnostic workflows. Content fix verification requires external re-run via verify-content-fixes.sh (nested session constraint).",
+      "notes": "L6 baseline wins 2-1 addressed by restructuring body from 2.9KB to 4.4KB with concrete diagnostic workflows (pending re-verification via verify-content-fixes.sh).",
       "fixed_by": "a3d67f4",
       "fixed_at": "2026-02-25T20:07:00Z"
     },
@@ -359,7 +359,7 @@
       "run_ids": [
         "size_impact_e10f5ab2"
       ],
-      "notes": "L6 baseline wins 2-1 fixed: restructured body from 3.3KB to 5.9KB with inlined YAML pipeline patterns. Content fix verification requires external re-run via verify-content-fixes.sh (nested session constraint).",
+      "notes": "L6 baseline wins 2-1 addressed by restructuring body from 3.3KB to 5.9KB with inlined YAML pipeline patterns (pending re-verification via verify-content-fixes.sh).",
       "fixed_by": "a3d67f4",
       "fixed_at": "2026-02-25T20:07:00Z"
     },

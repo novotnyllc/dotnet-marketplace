@@ -474,3 +474,6 @@ When a progress-tracking file defines status transition contracts (e.g. task X s
 
 ## 2026-02-25 manual [pitfall]
 When trimming skill body content, verify that Scope section claims still match the body -- removing a section that Scope advertises creates a promise/delivery mismatch detectable by reviewers and evals
+
+## 2026-02-25 manual [pitfall]
+When a tracking file claims verification status, notes must cite specific run IDs and commit SHAs rather than vague sweep language -- readers need auditable provenance to trace claims back to evidence

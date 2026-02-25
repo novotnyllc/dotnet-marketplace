@@ -19,7 +19,7 @@ cd "$(dirname "$0")/../.."
 # Fail fast if running inside a nested Claude Code session
 if [[ -n "${CLAUDECODE-}" ]]; then
   echo "ERROR: CLAUDECODE is set; eval CLI cannot run inside nested Claude Code." >&2
-  echo "Run this outside Claude Code, or: env -u CLAUDECODE $0" >&2
+  echo "Run this outside Claude Code, or: env -u CLAUDECODE \"$0\"" >&2
   exit 2
 fi
 
