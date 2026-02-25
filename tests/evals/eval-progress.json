@@ -90,7 +90,7 @@
       "routing_status": "needs-fix",
       "content_status": "untested",
       "overall_status": "needs-fix",
-      "fixed_tasks": [".3"],
+      "fixed_tasks": [],
       "eval_types": [
         "activation"
       ],
@@ -99,9 +99,9 @@
         "activation_3925edef",
         "activation_5fd7c96e"
       ],
-      "notes": "Partial fix (neg-018). Added .NET + MassTransit/Service Bus qualifiers in 5a00da0. Reduced false activations from 4+ skills to 1, but neg-018 still activates dotnet-messaging-patterns alone. Needs further description refinement to distinguish .NET messaging from generic RabbitMQ.",
-      "fixed_by": "5a00da0",
-      "fixed_at": "2026-02-25T05:51:32Z"
+      "notes": "Attempted fix in .3 (5a00da0, de9b8e7): added .NET + MassTransit/Azure Service Bus qualifiers. Reduced false activations from 4+ skills to 1, but neg-018 still activates dotnet-messaging-patterns alone. Needs further description refinement to distinguish .NET messaging from generic RabbitMQ.",
+      "fixed_by": null,
+      "fixed_at": null
     },
     "dotnet-efcore-architecture": {
       "routing_status": "passing",
