@@ -471,3 +471,6 @@ When referencing eval run_ids in progress tracking files, verify the run timesta
 
 ## 2026-02-25 manual [pitfall]
 When a progress-tracking file defines status transition contracts (e.g. task X sets field to Y), metadata fields like fixed_tasks must only include a task ID when the status actually matches the contract -- partial/failed attempts should not be recorded as completed fixes
+
+## 2026-02-25 manual [pitfall]
+When trimming skill body content, verify that Scope section claims still match the body -- removing a section that Scope advertises creates a promise/delivery mismatch detectable by reviewers and evals

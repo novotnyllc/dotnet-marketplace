@@ -62,8 +62,8 @@ Fix skill body content for skills with L6 size impact failures where baseline be
 - [ ] `eval-progress.json` updated: `skills[name].content_status = "fixed"`, `fixed_tasks` includes `".4"`, `fixed_by`, `fixed_at`
 
 ## Done summary
-
+Fixed L6 size impact content issues for 4 skills: trimmed xunit (17.5KB to 8.7KB) and coding-standards (12.2KB to 5.7KB) to reduce noise that caused baseline to outperform full body, and restructured windbg (2.9KB to 4.4KB) and ado-patterns (3.3KB to 5.9KB) to add concrete technical content that improves signal density over description-only summaries. Updated eval-progress.json with content_status=fixed for all 4 skills; verification re-runs deferred to task .5.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7d1865a, a3d67f4, 0ef3e1f, aaf807b
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 tests/evals/run_size_impact.py --dry-run
 - PRs:
