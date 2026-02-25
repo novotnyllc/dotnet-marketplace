@@ -29,10 +29,11 @@ Run a broader sample to check for regressions in un-edited skills:
 This provides representative coverage without running the full dataset.
 
 ### Step 3: Quality bar check
+<!-- Updated by plan-sync: fn-60.2 established error exclusion policy for quality bar metrics -->
 
-Verify ALL thresholds against the sample results:
+Verify ALL thresholds against the sample results. **Error exclusion policy** (from triage): quality bar metrics (TPR/FPR/accuracy/win_rate) MUST exclude `detection_method: error` cases from both numerator and denominator. Error rate is tracked separately as an infra health metric. If error rate exceeds 10%, flag the run as degraded and re-run after increasing CLI timeout.
 
-**L3 Activation** (hard gates):
+**L3 Activation** (hard gates, excluding error cases):
 - TPR >= 75%, FPR <= 20%, Accuracy >= 70%
 
 **L4 Confusion** (hard gates -- all four must be checked):

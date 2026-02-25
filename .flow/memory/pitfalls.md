@@ -465,3 +465,9 @@ When re-raising exceptions early in retry loops, always attach accounting metada
 
 ## 2026-02-25 manual [pitfall]
 Python's built-in hash() is randomized per process via PYTHONHASHSEED -- use hashlib.sha256 for deterministic seeding that must be reproducible across separate process invocations
+
+## 2026-02-25 manual [pitfall]
+When referencing eval run_ids in progress tracking files, verify the run timestamp is AFTER the fix commit timestamp -- pre-fix runs will show the old behavior and make status claims unverifiable
+
+## 2026-02-25 manual [pitfall]
+When a progress-tracking file defines status transition contracts (e.g. task X sets field to Y), metadata fields like fixed_tasks must only include a task ID when the status actually matches the contract -- partial/failed attempts should not be recorded as completed fixes

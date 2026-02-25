@@ -133,8 +133,8 @@ Existing results may show: L3 TPR=69%, FPR=28%, Accuracy=70% (below thresholds).
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass (no skill changes yet)
 
 ## Done summary
-
+Analyzed 18 existing eval result files across 4 eval types (activation, confusion, effectiveness, size impact), validated post-.7 backends and case counts, and produced a prioritized triage report identifying 5 skills needing routing fixes and 4 needing content fixes. Initialized eval-progress.json with per-dimension status tracking (routing_status + content_status) for 21 skills to drive downstream tasks .3/.4/.5.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 3203cb9bbb35eb84d0938c5ada4310955e375af0, 337c028, 37fe8bb2fb1de6893118d8c46e87bf032830b8e4
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

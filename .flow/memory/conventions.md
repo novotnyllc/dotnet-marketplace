@@ -90,3 +90,9 @@ Retry logic should distinguish non-retryable config errors (missing binary, bad 
 
 ## 2026-02-25 manual [convention]
 When a JSON state file drives multi-task workflows, track each status dimension independently (e.g., routing_status + content_status) rather than a single ambiguous status field
+
+## 2026-02-25 manual [convention]
+Triage/analysis documents that reference entity IDs should verify those IDs exist in the codebase before shipping, and state the verification was done
+
+## 2026-02-25 manual [convention]
+When metrics exclude error/timeout cases, explicitly define the gating policy (what counts, what is excluded, and why) so downstream consumers do not misinterpret raw vs clean numbers

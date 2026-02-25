@@ -2,7 +2,8 @@
 
 ## Description
 
-Fix skill descriptions (frontmatter) to improve L3 activation routing and L4 confusion disambiguation. Work in batches of 3-5 skills. After each batch: verify with targeted `--skill` re-runs, run `validate-skills.sh` to check budget/similarity, and commit.
+Fix skill descriptions (frontmatter) to improve L3 activation routing. Work in batches of 3-5 skills. After each batch: verify with targeted `--skill` re-runs, run `validate-skills.sh` to check budget/similarity, and commit.
+<!-- Updated by plan-sync: fn-60.2 found L4 confusion already passing (all 7 groups >= 60%). No confusion disambiguation fixes needed; focus is L3 activation only. -->
 
 **Depends on:** fn-60.2
 **Size:** M
@@ -40,8 +41,13 @@ Fix skill descriptions (frontmatter) to improve L3 activation routing and L4 con
 - **Description only**: Do NOT edit skill body content in this task -- that is task .4. Isolating description vs content changes allows attribution of improvements.
 
 ### Expected batch count
+<!-- Updated by plan-sync: fn-60.2 found 5 routing skills, not 6-15 -->
 
-Based on typical triage findings: 2-3 batches of 3-5 skills each (6-15 total edits). The exact count depends on task .2 findings.
+Per triage (task .2): 5 skills in 2 batches:
+- **Batch 1** (3 skills -- false positives, highest impact): `dotnet-container-deployment`, `dotnet-messaging-patterns`, `dotnet-architecture-patterns`
+- **Batch 2** (2 skills -- false negatives, moderate impact): `dotnet-system-commandline`, `dotnet-resilience`
+
+None of these 5 routing-fix skills appear in the confusion matrix dataset. Confusion verification (`--group`) is not applicable; use activation-only targeted runs.
 
 ## Key context
 
@@ -63,8 +69,8 @@ Based on typical triage findings: 2-3 batches of 3-5 skills each (6-15 total edi
 - [ ] `eval-progress.json` updated: `skills[name].routing_status = "fixed"`, `fixed_tasks` includes `".3"`, `fixed_by`, `fixed_at`
 
 ## Done summary
-
+Fixed routing descriptions for 5 skills in 2 batches with targeted verification. Batch 1 (container-deployment, messaging-patterns, architecture-patterns) committed in 5a00da0. Batch 2 (system-commandline, resilience) committed in 92fb8b8/46db510. 4 of 5 skills verified as fixed via targeted activation re-runs; dotnet-messaging-patterns remains needs-fix (neg-018 partially improved but still failing). eval-progress.json updated with accurate status, run_ids referencing post-fix verification runs, and commit evidence. Budget neutral at 11683 chars (OK, under 12000).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5a00da0, 92fb8b8, 2c99165, 46db510, de9b8e7
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

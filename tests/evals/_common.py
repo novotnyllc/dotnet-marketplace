@@ -291,6 +291,8 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                 "--no-session-persistence",
                 "--disable-slash-commands",
                 "--tools", "",
+                "--strict-mcp-config",
+                "--mcp-config", "{}",
             ])
             return cmd
         elif backend == "codex":
@@ -301,7 +303,7 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
             return cmd
         else:
             # copilot
-            return ["copilot", "-p", "-"]
+            return ["copilot", "-p", "-", "--disable-builtin-mcps"]
 
     transport_cmd = _build_transport_probe_cmd(backend, probe_model)
     if backend == "claude":
@@ -531,6 +533,8 @@ def _build_cli_command(
             "--no-session-persistence",
             "--disable-slash-commands",
             "--tools", "",
+            "--strict-mcp-config",
+            "--mcp-config", "{}",
         ])
     elif backend == "codex":
         cmd = ["codex", "--full-auto"]
@@ -539,7 +543,7 @@ def _build_cli_command(
         cmd.extend(["-q"])
     else:
         # copilot
-        cmd = ["copilot", "-p", "-"]
+        cmd = ["copilot", "-p", "-", "--disable-builtin-mcps"]
 
     return cmd
 

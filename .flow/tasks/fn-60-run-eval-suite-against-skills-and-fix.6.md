@@ -39,12 +39,13 @@ Verify each result has `meta.limit` absent or `null` (confirming full coverage).
 - Total: ~298 calls
 
 ### Step 2: Verify quality bars on full results
+<!-- Updated by plan-sync: fn-60.2 established error exclusion policy for quality bar metrics -->
 
-Before saving as baselines, confirm the full-coverage results meet all quality bars:
+Before saving as baselines, confirm the full-coverage results meet all quality bars. Apply the **error exclusion policy** (from triage): exclude `detection_method: error` cases from metric computation. Track error rate separately; if > 10%, flag run as degraded and re-run after increasing CLI timeout.
 
-- **L3**: TPR >= 75%, FPR <= 20%, Accuracy >= 70%
+- **L3**: TPR >= 75%, FPR <= 20%, Accuracy >= 70% (excluding error cases)
 - **L4**: Per-group >= 60%, cross-activation <= 35%, no never-activated, negative controls >= 70%
-- **L5**: No 0% win rate without exception, per-skill >= 50%
+- **L5**: No 0% win rate without exception, per-skill >= 50% (excluding error cases)
 - **L6**: full > baseline >= 55%, no baseline sweep
 
 **If any threshold fails:** This indicates the sampling-based .5 verification missed a tail failure. Loop back: identify failing skills, fix in a targeted batch (following .3/.4 workflow), re-run full coverage, and re-check. Do not save failing results as baselines.
