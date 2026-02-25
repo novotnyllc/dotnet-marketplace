@@ -650,22 +650,37 @@ def main() -> int:
                             if _budget_exceeded():
                                 aborted = True
                                 break
-                            activated, fb_cost, fb_calls = (
-                                detect_activation_fallback(
-                                    response_text,
-                                    target_skill,
-                                    meta["judge_model"],
-                                    temperature,
-                                    cli=args.cli,
-                                    budget_check=_budget_exceeded,
+                            try:
+                                activated, fb_cost, fb_calls = (
+                                    detect_activation_fallback(
+                                        response_text,
+                                        target_skill,
+                                        meta["judge_model"],
+                                        temperature,
+                                        cli=args.cli,
+                                        budget_check=_budget_exceeded,
+                                    )
                                 )
-                            )
-                            fallback_cost += fb_cost
-                            fallback_calls += fb_calls
-                            total_cost += fb_cost
-                            total_calls += fb_calls
-                            if activated:
-                                activated_skills.append(target_skill)
+                                fallback_cost += fb_cost
+                                fallback_calls += fb_calls
+                                total_cost += fb_cost
+                                total_calls += fb_calls
+                                if activated:
+                                    activated_skills.append(target_skill)
+                            except Exception as fb_exc:
+                                total_calls += int(getattr(fb_exc, "calls_consumed", 0))
+                                detection_method = "error"
+                                api_error = f"fallback detection failed: {fb_exc}"
+                                # Track consecutive failures for fail-fast
+                                if ff_enabled and tracker.record_failure(fb_exc):
+                                    fail_fast = True
+                                    fail_fast_reason = tracker.last_fingerprint
+                                    print(
+                                        f"[activation] FAIL_FAST: {ff_threshold} consecutive "
+                                        f"same-error failures -- aborting",
+                                        file=sys.stderr,
+                                    )
+                                break
 
             # Determine pass/fail
             if should_activate:
@@ -831,6 +846,7 @@ def main() -> int:
     print(f"FAIL_FAST={'1' if fail_fast else '0'}")
     if fail_fast:
         print(f"FAIL_FAST_REASON={fail_fast_reason}")
+        print(f"FAIL_FAST_PERMANENT={'1' if tracker.breached_permanent else '0'}")
     return 0
 
 

@@ -876,92 +876,95 @@ def main() -> int:
     # Per-skill tracking for summary
     skill_comparisons: dict[str, list[dict]] = {}
 
-    for cand in candidates:
+    for run_idx in range(args.runs):
         if aborted:
             break
 
-        skill_name = cand["skill"]
-        test_prompt = cand["test_prompt"]
-        tier, body_bytes = classify_size_tier(skill_name)
-        has_siblings = bool(cand.get("siblings"))
+        # Reset tracker at start of each run iteration
+        tracker.reset()
 
-        print(
-            f"[size_impact] === {skill_name} (tier={tier}, {body_bytes}B) ===",
-            file=sys.stderr,
-        )
-
-        if skill_name not in skill_comparisons:
-            skill_comparisons[skill_name] = []
-
-        # --- Prepare condition content ---
-        full_body = _common.load_skill_body(skill_name)
-        if full_body is None:
-            print(
-                f"[size_impact] WARN: Skill body not found for {skill_name}, skipping",
-                file=sys.stderr,
-            )
-            continue
-
-        summary_result = extract_summary(skill_name)
-        if summary_result is None:
-            print(
-                f"[size_impact] WARN: Could not extract summary for {skill_name}, skipping",
-                file=sys.stderr,
-            )
-            continue
-        summary_text, _summary_bytes = summary_result
-
-        siblings_text: Optional[str] = None
-        if has_siblings:
-            sib_names = cand["siblings"]
-            max_sib = cand.get("max_sibling_bytes", 10000)
-            sib_result = load_siblings(skill_name, sib_names, max_sib)
-            if sib_result:
-                siblings_text, _sib_bytes = sib_result
-
-        summary_injected = (
-            f"--- BEGIN SKILL SUMMARY ---\n{summary_text}\n--- END SKILL SUMMARY ---"
-        )
-
-        condition_prompts = {
-            "full": FULL_SYSTEM_TEMPLATE.format(skill_body=full_body),
-            "summary": SUMMARY_SYSTEM_TEMPLATE.format(summary=summary_text),
-            "baseline": BASELINE_SYSTEM_PROMPT,
-        }
-        condition_content = {
-            "full": full_body,
-            "summary": summary_injected,
-            "baseline": "",
-        }
-        condition_sizes = {
-            "full": {
-                "bytes": len(full_body.encode("utf-8")),
-                "tokens_estimated": estimate_tokens(full_body),
-            },
-            "summary": {
-                "bytes": len(summary_injected.encode("utf-8")),
-                "tokens_estimated": estimate_tokens(summary_injected),
-            },
-            "baseline": {
-                "bytes": 0,
-                "tokens_estimated": 0,
-            },
-        }
-
-        if siblings_text is not None:
-            full_siblings_injected = full_body + "\n\n" + siblings_text
-            condition_prompts["full_siblings"] = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
-                skill_body=full_body, siblings_body=siblings_text
-            )
-            condition_content["full_siblings"] = full_siblings_injected
-            condition_sizes["full_siblings"] = {
-                "bytes": len(full_siblings_injected.encode("utf-8")),
-                "tokens_estimated": estimate_tokens(full_siblings_injected),
-            }
-
-        for run_idx in range(args.runs):
+        for cand in candidates:
             if aborted:
                 break
+
+            skill_name = cand["skill"]
+            test_prompt = cand["test_prompt"]
+            tier, body_bytes = classify_size_tier(skill_name)
+            has_siblings = bool(cand.get("siblings"))
+
+            print(
+                f"[size_impact] === {skill_name} (tier={tier}, {body_bytes}B) run {run_idx} ===",
+                file=sys.stderr,
+            )
+
+            if skill_name not in skill_comparisons:
+                skill_comparisons[skill_name] = []
+
+            # --- Prepare condition content ---
+            full_body = _common.load_skill_body(skill_name)
+            if full_body is None:
+                print(
+                    f"[size_impact] WARN: Skill body not found for {skill_name}, skipping",
+                    file=sys.stderr,
+                )
+                continue
+
+            summary_result = extract_summary(skill_name)
+            if summary_result is None:
+                print(
+                    f"[size_impact] WARN: Could not extract summary for {skill_name}, skipping",
+                    file=sys.stderr,
+                )
+                continue
+            summary_text, _summary_bytes = summary_result
+
+            siblings_text: Optional[str] = None
+            if has_siblings:
+                sib_names = cand["siblings"]
+                max_sib = cand.get("max_sibling_bytes", 10000)
+                sib_result = load_siblings(skill_name, sib_names, max_sib)
+                if sib_result:
+                    siblings_text, _sib_bytes = sib_result
+
+            summary_injected = (
+                f"--- BEGIN SKILL SUMMARY ---\n{summary_text}\n--- END SKILL SUMMARY ---"
+            )
+
+            condition_prompts = {
+                "full": FULL_SYSTEM_TEMPLATE.format(skill_body=full_body),
+                "summary": SUMMARY_SYSTEM_TEMPLATE.format(summary=summary_text),
+                "baseline": BASELINE_SYSTEM_PROMPT,
+            }
+            condition_content = {
+                "full": full_body,
+                "summary": summary_injected,
+                "baseline": "",
+            }
+            condition_sizes = {
+                "full": {
+                    "bytes": len(full_body.encode("utf-8")),
+                    "tokens_estimated": estimate_tokens(full_body),
+                },
+                "summary": {
+                    "bytes": len(summary_injected.encode("utf-8")),
+                    "tokens_estimated": estimate_tokens(summary_injected),
+                },
+                "baseline": {
+                    "bytes": 0,
+                    "tokens_estimated": 0,
+                },
+            }
+
+            if siblings_text is not None:
+                full_siblings_injected = full_body + "\n\n" + siblings_text
+                condition_prompts["full_siblings"] = FULL_SIBLINGS_SYSTEM_TEMPLATE.format(
+                    skill_body=full_body, siblings_body=siblings_text
+                )
+                condition_content["full_siblings"] = full_siblings_injected
+                condition_sizes["full_siblings"] = {
+                    "bytes": len(full_siblings_injected.encode("utf-8")),
+                    "tokens_estimated": estimate_tokens(full_siblings_injected),
+                }
 
             # Budget check closure (captures mutable locals)
             def _budget_exceeded(pending_calls: int = 0) -> bool:
@@ -1348,6 +1351,7 @@ def main() -> int:
     print(f"FAIL_FAST={'1' if fail_fast else '0'}")
     if fail_fast:
         print(f"FAIL_FAST_REASON={fail_fast_reason}")
+        print(f"FAIL_FAST_PERMANENT={'1' if tracker.breached_permanent else '0'}")
     return 0
 
 

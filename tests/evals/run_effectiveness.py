@@ -466,29 +466,35 @@ def main() -> int:
     ff_enabled = ff_cfg.get("enabled", True)
     tracker = _common.ConsecutiveFailureTracker(threshold=ff_threshold)
 
-    for skill_name in skills:
+    for run_idx in range(args.runs):
         if aborted:
             break
 
-        rubric = _common.load_rubric(skill_name)
-        if rubric is None:
-            continue
+        # Reset tracker at start of each run iteration
+        tracker.reset()
 
-        skill_body = _common.load_skill_body(skill_name)
-        if skill_body is None:
-            print(
-                f"[effectiveness] WARN: Skill body not found for {skill_name}, skipping",
-                file=sys.stderr,
-            )
-            continue
+        for skill_name in skills:
+            if aborted:
+                break
 
-        test_prompts = rubric.get("test_prompts", [])
-        criteria = rubric.get("criteria", [])
+            rubric = _common.load_rubric(skill_name)
+            if rubric is None:
+                continue
 
-        enhanced_system = ENHANCED_SYSTEM_TEMPLATE.format(skill_body=skill_body)
+            skill_body = _common.load_skill_body(skill_name)
+            if skill_body is None:
+                print(
+                    f"[effectiveness] WARN: Skill body not found for {skill_name}, skipping",
+                    file=sys.stderr,
+                )
+                continue
 
-        for prompt_idx, user_prompt in enumerate(test_prompts):
-            for run_idx in range(args.runs):
+            test_prompts = rubric.get("test_prompts", [])
+            criteria = rubric.get("criteria", [])
+
+            enhanced_system = ENHANCED_SYSTEM_TEMPLATE.format(skill_body=skill_body)
+
+            for prompt_idx, user_prompt in enumerate(test_prompts):
                 # Dual abort check
                 if total_cost >= max_cost or total_calls >= max_calls:
                     print(
@@ -832,6 +838,7 @@ def main() -> int:
     print(f"FAIL_FAST={'1' if fail_fast else '0'}")
     if fail_fast:
         print(f"FAIL_FAST_REASON={fail_fast_reason}")
+        print(f"FAIL_FAST_PERMANENT={'1' if tracker.breached_permanent else '0'}")
     return 0
 
 

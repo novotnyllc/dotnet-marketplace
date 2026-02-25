@@ -81,6 +81,7 @@ class ConsecutiveFailureTracker:
         self._consecutive_count: int = 0
         self._last_fingerprint: str = ""
         self._breached: bool = False
+        self._breached_permanent: bool = False
 
     @property
     def last_fingerprint(self) -> str:
@@ -91,6 +92,11 @@ class ConsecutiveFailureTracker:
     def breached(self) -> bool:
         """Return whether the threshold has been breached."""
         return self._breached
+
+    @property
+    def breached_permanent(self) -> bool:
+        """Return whether the breaching failure was a permanent error."""
+        return self._breached_permanent
 
     @staticmethod
     def _fingerprint(exc: Exception) -> str:
@@ -117,6 +123,7 @@ class ConsecutiveFailureTracker:
 
         if self._consecutive_count >= self._threshold:
             self._breached = True
+            self._breached_permanent = self.is_permanent(exc)
             return True
         return False
 
@@ -130,6 +137,7 @@ class ConsecutiveFailureTracker:
         self._consecutive_count = 0
         self._last_fingerprint = ""
         self._breached = False
+        self._breached_permanent = False
 
     def is_permanent(self, exc: Exception) -> bool:
         """Return True if the exception represents a permanent error.
@@ -551,8 +559,14 @@ def _is_permanent_cli_error(return_code: int, stderr_text: str) -> bool:
         "invalid flag",
         "unexpected argument",
         "not authorized",
+        "invalid_request_error",
+        "request_too_large",
+        "not_found_error",
+        "model_not_found",
+        "does not support",
+        "invalid_api_key",
     )
-    if "401" in text or "403" in text:
+    if "401" in text or "403" in text or "404" in text or "413" in text:
         return True
     return any(marker in text for marker in permanent_markers)
 

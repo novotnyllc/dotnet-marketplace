@@ -1299,6 +1299,7 @@ def main() -> int:
     print(f"FAIL_FAST={'1' if fail_fast else '0'}")
     if fail_fast:
         print(f"FAIL_FAST_REASON={fail_fast_reason}")
+        print(f"FAIL_FAST_PERMANENT={'1' if tracker.breached_permanent else '0'}")
     return 0
 
 

@@ -64,6 +64,7 @@ ACT_RESULT=""
 ACT_STDOUT=""
 ACT_FAIL_FAST="0"
 ACT_FAIL_FAST_REASON=""
+ACT_FAIL_FAST_PERMANENT="0"
 
 CONF_COST="0"
 CONF_CALLS="0"
@@ -73,6 +74,7 @@ CONF_RESULT=""
 CONF_STDOUT=""
 CONF_FAIL_FAST="0"
 CONF_FAIL_FAST_REASON=""
+CONF_FAIL_FAST_PERMANENT="0"
 
 EFF_COST="0"
 EFF_CALLS="0"
@@ -82,6 +84,7 @@ EFF_RESULT=""
 EFF_STDOUT=""
 EFF_FAIL_FAST="0"
 EFF_FAIL_FAST_REASON=""
+EFF_FAIL_FAST_PERMANENT="0"
 
 SIZE_COST="0"
 SIZE_CALLS="0"
@@ -91,6 +94,7 @@ SIZE_RESULT=""
 SIZE_STDOUT=""
 SIZE_FAIL_FAST="0"
 SIZE_FAIL_FAST_REASON=""
+SIZE_FAIL_FAST_PERMANENT="0"
 
 # Track which runners triggered fail-fast
 FAIL_FAST_RUNNERS=""
@@ -191,9 +195,11 @@ ACT_FAIL_FAST=$(parse_runner_key "$ACT_STDOUT" "FAIL_FAST")
 ACT_FAIL_FAST="${ACT_FAIL_FAST:-0}"
 if [ "$ACT_FAIL_FAST" = "1" ]; then
   ACT_FAIL_FAST_REASON=$(parse_runner_key "$ACT_STDOUT" "FAIL_FAST_REASON")
+  ACT_FAIL_FAST_PERMANENT=$(parse_runner_key "$ACT_STDOUT" "FAIL_FAST_PERMANENT")
+  ACT_FAIL_FAST_PERMANENT="${ACT_FAIL_FAST_PERMANENT:-0}"
   FAIL_FAST_RUNNERS="${FAIL_FAST_RUNNERS:+$FAIL_FAST_RUNNERS,}activation"
   echo "[suite] WARNING: L3 Activation triggered fail-fast: $ACT_FAIL_FAST_REASON" >&2
-  if is_permanent_fail_fast "$ACT_FAIL_FAST_REASON"; then
+  if [ "$ACT_FAIL_FAST_PERMANENT" = "1" ] || is_permanent_fail_fast "$ACT_FAIL_FAST_REASON"; then
     echo "[suite] Permanent error detected -- skipping remaining runners" >&2
     SUITE_SKIP_REMAINING=1
   fi
@@ -228,9 +234,11 @@ else
   CONF_FAIL_FAST="${CONF_FAIL_FAST:-0}"
   if [ "$CONF_FAIL_FAST" = "1" ]; then
     CONF_FAIL_FAST_REASON=$(parse_runner_key "$CONF_STDOUT" "FAIL_FAST_REASON")
+    CONF_FAIL_FAST_PERMANENT=$(parse_runner_key "$CONF_STDOUT" "FAIL_FAST_PERMANENT")
+    CONF_FAIL_FAST_PERMANENT="${CONF_FAIL_FAST_PERMANENT:-0}"
     FAIL_FAST_RUNNERS="${FAIL_FAST_RUNNERS:+$FAIL_FAST_RUNNERS,}confusion"
     echo "[suite] WARNING: L4 Confusion triggered fail-fast: $CONF_FAIL_FAST_REASON" >&2
-    if is_permanent_fail_fast "$CONF_FAIL_FAST_REASON"; then
+    if [ "$CONF_FAIL_FAST_PERMANENT" = "1" ] || is_permanent_fail_fast "$CONF_FAIL_FAST_REASON"; then
       echo "[suite] Permanent error detected -- skipping remaining runners" >&2
       SUITE_SKIP_REMAINING=1
     fi
@@ -265,9 +273,11 @@ else
   EFF_FAIL_FAST="${EFF_FAIL_FAST:-0}"
   if [ "$EFF_FAIL_FAST" = "1" ]; then
     EFF_FAIL_FAST_REASON=$(parse_runner_key "$EFF_STDOUT" "FAIL_FAST_REASON")
+    EFF_FAIL_FAST_PERMANENT=$(parse_runner_key "$EFF_STDOUT" "FAIL_FAST_PERMANENT")
+    EFF_FAIL_FAST_PERMANENT="${EFF_FAIL_FAST_PERMANENT:-0}"
     FAIL_FAST_RUNNERS="${FAIL_FAST_RUNNERS:+$FAIL_FAST_RUNNERS,}effectiveness"
     echo "[suite] WARNING: L5 Effectiveness triggered fail-fast: $EFF_FAIL_FAST_REASON" >&2
-    if is_permanent_fail_fast "$EFF_FAIL_FAST_REASON"; then
+    if [ "$EFF_FAIL_FAST_PERMANENT" = "1" ] || is_permanent_fail_fast "$EFF_FAIL_FAST_REASON"; then
       echo "[suite] Permanent error detected -- skipping remaining runners" >&2
       SUITE_SKIP_REMAINING=1
     fi
