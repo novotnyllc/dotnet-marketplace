@@ -983,14 +983,14 @@ Always invoke [skill:dotnet-csharp] for code paths to ensure coding standards co
 
 Total source skills: 131
 - dotnet-csharp: 22
-- dotnet-api: 28
+- dotnet-api: 27
 - dotnet-ui: 18
-- dotnet-testing: 11
+- dotnet-testing: 12
 - dotnet-devops: 18
 - dotnet-tooling: 32
-- dotnet-debugging: 1 (identity)
+- dotnet-debugging: 1 (single-source rename from dotnet-windbg-debugging)
 - dotnet-advisor: 1 (identity)
-- **Total: 131** (verified -- no skill left unassigned)
+- **Total: 131** (22 + 27 + 18 + 12 + 18 + 32 + 1 + 1 -- verified, no skill left unassigned)
 
 ### Full assignment roster (alphabetical by source skill)
 
