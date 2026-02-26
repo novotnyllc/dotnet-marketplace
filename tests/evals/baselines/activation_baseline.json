@@ -1,0 +1,1866 @@
+{
+  "meta": {
+    "run_id": "1a21d627-bbfd-445c-b2c6-3066bd8be7cd",
+    "timestamp": "2026-02-26T00:47:26.437096+00:00",
+    "backend": "claude",
+    "model": "haiku",
+    "judge_model": "haiku",
+    "seed": 42,
+    "total_cost": 0.431269,
+    "eval_type": "activation",
+    "aborted": false
+  },
+  "summary": {
+    "_overall": {
+      "tpr": 1.0,
+      "fpr": 0.1667,
+      "accuracy": 0.9589,
+      "n": 73,
+      "tpr_stats": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "n": 1
+      },
+      "fpr_stats": {
+        "mean": 0.1667,
+        "stddev": 0.0,
+        "n": 1
+      },
+      "accuracy_stats": {
+        "mean": 0.9589,
+        "stddev": 0.0,
+        "n": 1
+      },
+      "true_positives": 55,
+      "false_positives": 3,
+      "true_negatives": 15,
+      "false_negatives": 0,
+      "total_positive_cases": 55,
+      "total_negative_cases": 18,
+      "total_cases": 73,
+      "index_char_count": 15155,
+      "index_skill_count": 131
+    }
+  },
+  "cases": [
+    {
+      "id": "act-001",
+      "entity_id": "act-001",
+      "user_prompt": "Detect which .NET target framework this project uses by checking csproj files and global.json.",
+      "expected_skills": [
+        "dotnet-version-detection"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-version-detection"
+      ],
+      "should_activate": true,
+      "category": "foundation",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00755,
+      "timestamp": "2026-02-26T00:47:33.892197+00:00"
+    },
+    {
+      "id": "act-002",
+      "entity_id": "act-002",
+      "user_prompt": "Build me unit tests for my order processing service using xUnit with Theory data, mocking, and assertion patterns.",
+      "expected_skills": [
+        "dotnet-xunit"
+      ],
+      "acceptable_skills": [
+        "dotnet-testing-strategy"
+      ],
+      "activated_skills": [
+        "dotnet-xunit",
+        "dotnet-testing-strategy"
+      ],
+      "should_activate": true,
+      "category": "testing",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.010338,
+      "timestamp": "2026-02-26T00:47:50.933123+00:00"
+    },
+    {
+      "id": "act-003",
+      "entity_id": "act-003",
+      "user_prompt": "Set up GitHub Actions CI that restores, builds, tests, and caches NuGet packages on every pull request.",
+      "expected_skills": [
+        "dotnet-gha-build-test"
+      ],
+      "acceptable_skills": [
+        "dotnet-gha-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-gha-build-test",
+        "dotnet-add-ci"
+      ],
+      "should_activate": true,
+      "category": "ci-cd",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00814,
+      "timestamp": "2026-02-26T00:48:04.889663+00:00"
+    },
+    {
+      "id": "act-004",
+      "entity_id": "act-004",
+      "user_prompt": "Create minimal API endpoints for a product catalog with route groups, validation, and typed results.",
+      "expected_skills": [
+        "dotnet-minimal-apis"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-minimal-apis",
+        "dotnet-input-validation"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.009157,
+      "timestamp": "2026-02-26T00:48:20.482542+00:00"
+    },
+    {
+      "id": "act-005",
+      "entity_id": "act-005",
+      "user_prompt": "Design a layered backend architecture for an e-commerce system with separation of concerns.",
+      "expected_skills": [
+        "dotnet-architecture-patterns"
+      ],
+      "acceptable_skills": [
+        "dotnet-solid-principles"
+      ],
+      "activated_skills": [
+        "dotnet-architecture-patterns",
+        "dotnet-domain-modeling",
+        "dotnet-csharp-dependency-injection",
+        "dotnet-efcore-architecture",
+        "dotnet-csharp-api-design",
+        "dotnet-data-access-strategy",
+        "dotnet-middleware-patterns",
+        "dotnet-input-validation",
+        "dotnet-solid-principles"
+      ],
+      "should_activate": true,
+      "category": "architecture",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006795,
+      "timestamp": "2026-02-26T00:48:32.347752+00:00"
+    },
+    {
+      "id": "act-006",
+      "entity_id": "act-006",
+      "user_prompt": "Harden my ASP.NET API against OWASP Top 10 vulnerabilities including injection, XSS, and broken auth.",
+      "expected_skills": [
+        "dotnet-security-owasp"
+      ],
+      "acceptable_skills": [
+        "dotnet-api-security"
+      ],
+      "activated_skills": [
+        "dotnet-security-owasp",
+        "dotnet-api-security",
+        "dotnet-input-validation"
+      ],
+      "should_activate": true,
+      "category": "security",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004588,
+      "timestamp": "2026-02-26T00:48:40.337168+00:00"
+    },
+    {
+      "id": "act-007",
+      "entity_id": "act-007",
+      "user_prompt": "Write BenchmarkDotNet benchmarks comparing two JSON serializer implementations with memory diagnostics.",
+      "expected_skills": [
+        "dotnet-benchmarkdotnet"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-benchmarkdotnet",
+        "dotnet-serialization"
+      ],
+      "should_activate": true,
+      "category": "performance",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004219,
+      "timestamp": "2026-02-26T00:48:48.277160+00:00"
+    },
+    {
+      "id": "act-008",
+      "entity_id": "act-008",
+      "user_prompt": "Build a reusable Blazor component with parameters, event callbacks, and form validation.",
+      "expected_skills": [
+        "dotnet-blazor-components"
+      ],
+      "acceptable_skills": [
+        "dotnet-blazor-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-blazor-components",
+        "dotnet-validation-patterns"
+      ],
+      "should_activate": true,
+      "category": "ui",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006553,
+      "timestamp": "2026-02-26T00:49:00.213112+00:00"
+    },
+    {
+      "id": "act-009",
+      "entity_id": "act-009",
+      "user_prompt": "Design EF Core queries for reporting with AsNoTracking, query splitting, compiled queries, and pagination.",
+      "expected_skills": [
+        "dotnet-efcore-patterns"
+      ],
+      "acceptable_skills": [
+        "dotnet-efcore-architecture"
+      ],
+      "activated_skills": [
+        "dotnet-efcore-patterns",
+        "dotnet-linq-optimization",
+        "dotnet-efcore-architecture"
+      ],
+      "should_activate": true,
+      "category": "data",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004867,
+      "timestamp": "2026-02-26T00:49:08.711244+00:00"
+    },
+    {
+      "id": "act-010",
+      "entity_id": "act-010",
+      "user_prompt": "Create custom MSBuild targets for version stamping and resource embedding that only run when inputs change.",
+      "expected_skills": [
+        "dotnet-msbuild-authoring"
+      ],
+      "acceptable_skills": [
+        "dotnet-msbuild-tasks"
+      ],
+      "activated_skills": [
+        "dotnet-msbuild-authoring",
+        "dotnet-msbuild-tasks"
+      ],
+      "should_activate": true,
+      "category": "build",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004239,
+      "timestamp": "2026-02-26T00:49:16.745439+00:00"
+    },
+    {
+      "id": "act-011",
+      "entity_id": "act-011",
+      "user_prompt": "Publish a small fast-starting command-line tool as a self-contained trimmed binary for Linux.",
+      "expected_skills": [
+        "dotnet-trimming"
+      ],
+      "acceptable_skills": [
+        "dotnet-native-aot"
+      ],
+      "activated_skills": [
+        "dotnet-cli-distribution",
+        "dotnet-native-aot",
+        "dotnet-trimming"
+      ],
+      "should_activate": true,
+      "category": "deployment",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005812,
+      "timestamp": "2026-02-26T00:49:27.521555+00:00"
+    },
+    {
+      "id": "act-012",
+      "entity_id": "act-012",
+      "user_prompt": "Build a CLI app with System.CommandLine featuring subcommands for add, list, and remove operations.",
+      "expected_skills": [
+        "dotnet-system-commandline"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-system-commandline",
+        "dotnet-cli-architecture"
+      ],
+      "should_activate": true,
+      "category": "cli",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006637,
+      "timestamp": "2026-02-26T00:49:39.868716+00:00"
+    },
+    {
+      "id": "act-013",
+      "entity_id": "act-013",
+      "user_prompt": "Show me how to properly propagate CancellationToken through async call chains in my ASP.NET service.",
+      "expected_skills": [
+        "dotnet-csharp-async-patterns"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-csharp-async-patterns"
+      ],
+      "should_activate": true,
+      "category": "core-csharp",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004334,
+      "timestamp": "2026-02-26T00:49:50.044784+00:00"
+    },
+    {
+      "id": "act-014",
+      "entity_id": "act-014",
+      "user_prompt": "Configure dependency injection with proper service lifetimes, options pattern, and HttpClientFactory for my ASP.NET app.",
+      "expected_skills": [
+        "dotnet-csharp-dependency-injection"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-configuration"
+      ],
+      "activated_skills": [
+        "dotnet-csharp-dependency-injection",
+        "dotnet-csharp-configuration",
+        "dotnet-http-client"
+      ],
+      "should_activate": true,
+      "category": "core-csharp",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00248,
+      "timestamp": "2026-02-26T00:49:55.299724+00:00"
+    },
+    {
+      "id": "act-015",
+      "entity_id": "act-015",
+      "user_prompt": "Build integration tests using WebApplicationFactory with in-memory database replacement and HTTP response assertions.",
+      "expected_skills": [
+        "dotnet-integration-testing"
+      ],
+      "acceptable_skills": [
+        "dotnet-testing-strategy"
+      ],
+      "activated_skills": [
+        "dotnet-integration-testing",
+        "dotnet-snapshot-testing"
+      ],
+      "should_activate": true,
+      "category": "testing",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006812,
+      "timestamp": "2026-02-26T00:50:09.333280+00:00"
+    },
+    {
+      "id": "act-016",
+      "entity_id": "act-016",
+      "user_prompt": "Set up structured logging with correlation IDs and PII filtering across my distributed .NET microservices.",
+      "expected_skills": [
+        "dotnet-structured-logging"
+      ],
+      "acceptable_skills": [
+        "dotnet-observability"
+      ],
+      "activated_skills": [
+        "dotnet-structured-logging",
+        "dotnet-observability"
+      ],
+      "should_activate": true,
+      "category": "observability",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.01193,
+      "timestamp": "2026-02-26T00:50:31.601643+00:00"
+    },
+    {
+      "id": "act-017",
+      "entity_id": "act-017",
+      "user_prompt": "Design a Polly resilience pipeline with retry, circuit breaker, timeout, and rate limiting for my HttpClient calls.",
+      "expected_skills": [
+        "dotnet-resilience"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-resilience",
+        "dotnet-http-client"
+      ],
+      "should_activate": true,
+      "category": "patterns",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003142,
+      "timestamp": "2026-02-26T00:50:38.024479+00:00"
+    },
+    {
+      "id": "act-018",
+      "entity_id": "act-018",
+      "user_prompt": "Set up Playwright end-to-end tests for my Blazor Server application with page object model and CI integration.",
+      "expected_skills": [
+        "dotnet-playwright"
+      ],
+      "acceptable_skills": [
+        "dotnet-blazor-testing"
+      ],
+      "activated_skills": [
+        "dotnet-playwright",
+        "dotnet-ui-testing-core",
+        "dotnet-gha-build-test"
+      ],
+      "should_activate": true,
+      "category": "testing",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.016955,
+      "timestamp": "2026-02-26T00:51:06.670164+00:00"
+    },
+    {
+      "id": "act-019",
+      "entity_id": "act-019",
+      "user_prompt": "Configure Native AOT publishing for my console app with proper trimming, reflection handling, and platform targeting.",
+      "expected_skills": [
+        "dotnet-native-aot"
+      ],
+      "acceptable_skills": [
+        "dotnet-trimming",
+        "dotnet-aot-architecture"
+      ],
+      "activated_skills": [
+        "dotnet-native-aot",
+        "dotnet-trimming",
+        "dotnet-aot-architecture",
+        "dotnet-cli-distribution"
+      ],
+      "should_activate": true,
+      "category": "deployment",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006735,
+      "timestamp": "2026-02-26T00:51:18.011731+00:00"
+    },
+    {
+      "id": "act-020",
+      "entity_id": "act-020",
+      "user_prompt": "Build a custom MSBuild task that validates project references and emits build warnings for circular dependencies.",
+      "expected_skills": [
+        "dotnet-msbuild-tasks"
+      ],
+      "acceptable_skills": [
+        "dotnet-msbuild-authoring"
+      ],
+      "activated_skills": [
+        "dotnet-msbuild-tasks",
+        "dotnet-msbuild-authoring"
+      ],
+      "should_activate": true,
+      "category": "build",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004384,
+      "timestamp": "2026-02-26T00:51:26.862109+00:00"
+    },
+    {
+      "id": "act-021",
+      "entity_id": "act-021",
+      "user_prompt": "Add OpenTelemetry tracing, metrics, and logging to my ASP.NET Core microservice with Jaeger and Prometheus exporters.",
+      "expected_skills": [
+        "dotnet-observability"
+      ],
+      "acceptable_skills": [
+        "dotnet-structured-logging"
+      ],
+      "activated_skills": [
+        "dotnet-observability"
+      ],
+      "should_activate": true,
+      "category": "observability",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004239,
+      "timestamp": "2026-02-26T00:51:35.185157+00:00"
+    },
+    {
+      "id": "act-022",
+      "entity_id": "act-022",
+      "user_prompt": "Implement the repository and unit of work patterns for my Entity Framework Core data access layer.",
+      "expected_skills": [
+        "dotnet-efcore-architecture"
+      ],
+      "acceptable_skills": [
+        "dotnet-efcore-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-efcore-architecture",
+        "dotnet-csharp-dependency-injection",
+        "dotnet-domain-modeling"
+      ],
+      "should_activate": true,
+      "category": "data",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005627,
+      "timestamp": "2026-02-26T00:51:47.492836+00:00"
+    },
+    {
+      "id": "act-023",
+      "entity_id": "act-023",
+      "user_prompt": "Modernize my .NET Framework 4.8 WCF service to ASP.NET Core with gRPC for the internal API.",
+      "expected_skills": [
+        "dotnet-modernize"
+      ],
+      "acceptable_skills": [
+        "dotnet-grpc"
+      ],
+      "activated_skills": [
+        "dotnet-modernize",
+        "dotnet-version-upgrade",
+        "dotnet-grpc",
+        "dotnet-api-security",
+        "dotnet-csharp-dependency-injection",
+        "dotnet-csharp-async-patterns"
+      ],
+      "should_activate": true,
+      "category": "migration",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.012608,
+      "timestamp": "2026-02-26T00:52:06.838568+00:00"
+    },
+    {
+      "id": "act-024",
+      "entity_id": "act-024",
+      "user_prompt": "Create a NuGet package with proper metadata, source link, symbol packages, and deterministic builds.",
+      "expected_skills": [
+        "dotnet-nuget-authoring"
+      ],
+      "acceptable_skills": [
+        "dotnet-library-api-compat"
+      ],
+      "activated_skills": [
+        "dotnet-nuget-authoring"
+      ],
+      "should_activate": true,
+      "category": "packaging",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.018055,
+      "timestamp": "2026-02-26T00:52:36.047642+00:00"
+    },
+    {
+      "id": "act-025",
+      "entity_id": "act-025",
+      "user_prompt": "Implement background job processing with IHostedService and BackgroundService for email queue processing.",
+      "expected_skills": [
+        "dotnet-background-services"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-background-services",
+        "dotnet-channels",
+        "dotnet-csharp-dependency-injection",
+        "dotnet-csharp-async-patterns",
+        "dotnet-resilience"
+      ],
+      "should_activate": true,
+      "category": "patterns",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006178,
+      "timestamp": "2026-02-26T00:52:46.945677+00:00"
+    },
+    {
+      "id": "act-026",
+      "entity_id": "act-026",
+      "user_prompt": "Design a gRPC service definition with streaming, interceptors, and deadline propagation for my microservices.",
+      "expected_skills": [
+        "dotnet-grpc"
+      ],
+      "acceptable_skills": [
+        "dotnet-service-communication"
+      ],
+      "activated_skills": [
+        "dotnet-grpc"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006508,
+      "timestamp": "2026-02-26T00:52:59.155343+00:00"
+    },
+    {
+      "id": "act-027",
+      "entity_id": "act-027",
+      "user_prompt": "Set up System.Text.Json source generators for AOT-safe serialization with custom converters and polymorphism.",
+      "expected_skills": [
+        "dotnet-serialization"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-serialization",
+        "dotnet-native-aot",
+        "dotnet-aot-architecture"
+      ],
+      "should_activate": true,
+      "category": "core-csharp",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004675,
+      "timestamp": "2026-02-26T00:53:08.884002+00:00"
+    },
+    {
+      "id": "act-028",
+      "entity_id": "act-028",
+      "user_prompt": "Build a containerized .NET API with multi-stage Docker builds, health checks, and Kubernetes manifests.",
+      "expected_skills": [
+        "dotnet-containers"
+      ],
+      "acceptable_skills": [
+        "dotnet-container-deployment"
+      ],
+      "activated_skills": [
+        "dotnet-containers",
+        "dotnet-container-deployment"
+      ],
+      "should_activate": true,
+      "category": "deployment",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.007153,
+      "timestamp": "2026-02-26T00:53:21.077408+00:00"
+    },
+    {
+      "id": "act-029",
+      "entity_id": "act-029",
+      "user_prompt": "Implement proper nullable reference type annotations across my existing codebase to eliminate NullReferenceExceptions.",
+      "expected_skills": [
+        "dotnet-csharp-nullable-reference-types"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-coding-standards"
+      ],
+      "activated_skills": [
+        "dotnet-csharp-nullable-reference-types",
+        "dotnet-add-analyzers"
+      ],
+      "should_activate": true,
+      "category": "core-csharp",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.011438,
+      "timestamp": "2026-02-26T00:53:41.453415+00:00"
+    },
+    {
+      "id": "act-030",
+      "entity_id": "act-030",
+      "user_prompt": "Generate OpenAPI documentation for my ASP.NET Minimal API with schema annotations, examples, and Swagger UI.",
+      "expected_skills": [
+        "dotnet-openapi"
+      ],
+      "acceptable_skills": [
+        "dotnet-api-docs"
+      ],
+      "activated_skills": [
+        "dotnet-openapi",
+        "dotnet-minimal-apis"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005034,
+      "timestamp": "2026-02-26T00:53:52.176106+00:00"
+    },
+    {
+      "id": "neg-001",
+      "entity_id": "neg-001",
+      "user_prompt": "Write me a Python Flask REST API for managing a book library with SQLite.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002019,
+      "timestamp": "2026-02-26T00:53:56.218429+00:00"
+    },
+    {
+      "id": "neg-002",
+      "entity_id": "neg-002",
+      "user_prompt": "Explain the difference between TCP and UDP protocols and when to use each.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-domain",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003908,
+      "timestamp": "2026-02-26T00:54:04.369059+00:00"
+    },
+    {
+      "id": "neg-003",
+      "entity_id": "neg-003",
+      "user_prompt": "Build a React frontend with TypeScript, Tailwind CSS, and Vite for a dashboard application.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002767,
+      "timestamp": "2026-02-26T00:54:11.904520+00:00"
+    },
+    {
+      "id": "neg-004",
+      "entity_id": "neg-004",
+      "user_prompt": "Write a Kubernetes deployment manifest with resource limits, health checks, and horizontal pod autoscaling.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-infra",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003974,
+      "timestamp": "2026-02-26T00:54:19.557152+00:00"
+    },
+    {
+      "id": "neg-005",
+      "entity_id": "neg-005",
+      "user_prompt": "Explain how Git rebase works compared to merge and when each strategy is appropriate.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-domain",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002835,
+      "timestamp": "2026-02-26T00:54:25.553315+00:00"
+    },
+    {
+      "id": "neg-006",
+      "entity_id": "neg-006",
+      "user_prompt": "Build a Node.js Express API with TypeScript, Prisma ORM, and JWT authentication.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002425,
+      "timestamp": "2026-02-26T00:54:31.105356+00:00"
+    },
+    {
+      "id": "neg-007",
+      "entity_id": "neg-007",
+      "user_prompt": "Design a PostgreSQL schema with partitioning, indexes, and materialized views for an analytics workload.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-database",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003147,
+      "timestamp": "2026-02-26T00:54:37.683756+00:00"
+    },
+    {
+      "id": "neg-008",
+      "entity_id": "neg-008",
+      "user_prompt": "Write Terraform modules for provisioning AWS VPC, ECS Fargate, and RDS PostgreSQL infrastructure.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-infra",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002359,
+      "timestamp": "2026-02-26T00:54:42.125091+00:00"
+    },
+    {
+      "id": "neg-009",
+      "entity_id": "neg-009",
+      "user_prompt": "Build a Rust CLI tool that parses CSV files and outputs JSON with serde and clap argument parsing.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002063,
+      "timestamp": "2026-02-26T00:54:46.137931+00:00"
+    },
+    {
+      "id": "neg-010",
+      "entity_id": "neg-010",
+      "user_prompt": "Create a Swift iOS app with SwiftUI views, Core Data persistence, and push notification handling.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.001939,
+      "timestamp": "2026-02-26T00:54:49.792079+00:00"
+    },
+    {
+      "id": "neg-011",
+      "entity_id": "neg-011",
+      "user_prompt": "Explain the CAP theorem and how it applies to distributed database design decisions.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-data-access-strategy"
+      ],
+      "should_activate": false,
+      "category": "negative-theory",
+      "detection_method": "structured",
+      "passed": false,
+      "run_index": 0,
+      "cost": 0.008934,
+      "timestamp": "2026-02-26T00:55:06.373044+00:00"
+    },
+    {
+      "id": "neg-012",
+      "entity_id": "neg-012",
+      "user_prompt": "Write a Go microservice with Chi router, GORM, and structured logging using zap.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.001974,
+      "timestamp": "2026-02-26T00:55:10.349448+00:00"
+    },
+    {
+      "id": "neg-013",
+      "entity_id": "neg-013",
+      "user_prompt": "Design a CI/CD pipeline in Jenkins with Groovy scripted pipelines for a Java Maven multi-module project.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002375,
+      "timestamp": "2026-02-26T00:55:15.006586+00:00"
+    },
+    {
+      "id": "neg-014",
+      "entity_id": "neg-014",
+      "user_prompt": "Build a machine learning model training pipeline in Python with scikit-learn, feature engineering, and cross-validation.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-domain",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002848,
+      "timestamp": "2026-02-26T00:55:19.839328+00:00"
+    },
+    {
+      "id": "neg-015",
+      "entity_id": "neg-015",
+      "user_prompt": "Write a Bash script that monitors disk usage, rotates log files, and sends Slack alerts when thresholds are exceeded.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002588,
+      "timestamp": "2026-02-26T00:55:25.097129+00:00"
+    },
+    {
+      "id": "neg-016",
+      "entity_id": "neg-016",
+      "user_prompt": "Explain the differences between OAuth 2.0 authorization code flow and PKCE and when to use each.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-api-security"
+      ],
+      "should_activate": false,
+      "category": "negative-theory",
+      "detection_method": "structured",
+      "passed": false,
+      "run_index": 0,
+      "cost": 0.006819,
+      "timestamp": "2026-02-26T00:55:38.825385+00:00"
+    },
+    {
+      "id": "neg-017",
+      "entity_id": "neg-017",
+      "user_prompt": "Build an Android app with Kotlin, Jetpack Compose, and Room database for offline-first task management.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [],
+      "should_activate": false,
+      "category": "negative-language",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.002354,
+      "timestamp": "2026-02-26T00:55:43.478719+00:00"
+    },
+    {
+      "id": "neg-018",
+      "entity_id": "neg-018",
+      "user_prompt": "Design a message queue architecture using RabbitMQ with exchanges, routing keys, and dead letter handling.",
+      "expected_skills": [],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-messaging-patterns"
+      ],
+      "should_activate": false,
+      "category": "negative-infra",
+      "detection_method": "structured",
+      "passed": false,
+      "run_index": 0,
+      "cost": 0.009187,
+      "timestamp": "2026-02-26T00:56:00.160068+00:00"
+    },
+    {
+      "id": "act-031",
+      "entity_id": "act-031",
+      "user_prompt": "Build an Uno Platform cross-platform app and fetch current Uno docs via MCP before proposing the architecture.",
+      "expected_skills": [
+        "dotnet-uno-mcp"
+      ],
+      "acceptable_skills": [
+        "dotnet-uno-platform"
+      ],
+      "activated_skills": [
+        "dotnet-uno-mcp",
+        "dotnet-uno-platform",
+        "dotnet-architecture-patterns"
+      ],
+      "should_activate": true,
+      "category": "ui",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004484,
+      "timestamp": "2026-02-26T00:56:07.951534+00:00"
+    },
+    {
+      "id": "act-032",
+      "entity_id": "act-032",
+      "user_prompt": "Implement a Roslyn analyzer that flags when ConfigureAwait(false) is missing in library code paths.",
+      "expected_skills": [
+        "dotnet-roslyn-analyzers"
+      ],
+      "acceptable_skills": [
+        "dotnet-add-analyzers"
+      ],
+      "activated_skills": [
+        "dotnet-roslyn-analyzers",
+        "dotnet-csharp-async-patterns"
+      ],
+      "should_activate": true,
+      "category": "tooling",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006944,
+      "timestamp": "2026-02-26T00:56:20.682345+00:00"
+    },
+    {
+      "id": "act-033",
+      "entity_id": "act-033",
+      "user_prompt": "Build a C# source generator that creates strongly-typed wrappers for configuration sections.",
+      "expected_skills": [
+        "dotnet-csharp-source-generators"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-csharp-source-generators",
+        "dotnet-csharp-configuration",
+        "dotnet-csharp-api-design",
+        "dotnet-csharp-modern-patterns"
+      ],
+      "should_activate": true,
+      "category": "tooling",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.007012,
+      "timestamp": "2026-02-26T00:56:34.128948+00:00"
+    },
+    {
+      "id": "act-034",
+      "entity_id": "act-034",
+      "user_prompt": "Design a domain model with value objects, aggregates, and invariant enforcement for an order management system.",
+      "expected_skills": [
+        "dotnet-domain-modeling"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-type-design-performance"
+      ],
+      "activated_skills": [
+        "dotnet-domain-modeling",
+        "dotnet-csharp-modern-patterns",
+        "dotnet-validation-patterns"
+      ],
+      "should_activate": true,
+      "category": "architecture",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005905,
+      "timestamp": "2026-02-26T00:56:54.399420+00:00"
+    },
+    {
+      "id": "act-035",
+      "entity_id": "act-035",
+      "user_prompt": "Set up Azure DevOps build pipelines with restore, build, test, and artifact publishing for my .NET solution.",
+      "expected_skills": [
+        "dotnet-ado-build-test"
+      ],
+      "acceptable_skills": [
+        "dotnet-ado-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-ado-patterns",
+        "dotnet-ado-build-test",
+        "dotnet-ado-publish"
+      ],
+      "should_activate": true,
+      "category": "ci-cd",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00511,
+      "timestamp": "2026-02-26T00:57:02.841706+00:00"
+    },
+    {
+      "id": "act-036",
+      "entity_id": "act-036",
+      "user_prompt": "Implement SignalR hubs for real-time dashboard updates with strongly-typed hub methods and reconnection handling.",
+      "expected_skills": [
+        "dotnet-realtime-communication"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-realtime-communication"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.018244,
+      "timestamp": "2026-02-26T00:57:31.888994+00:00"
+    },
+    {
+      "id": "act-037",
+      "entity_id": "act-037",
+      "user_prompt": "Design a secrets management strategy using user secrets in dev, Key Vault in production, and environment-based config providers.",
+      "expected_skills": [
+        "dotnet-secrets-management"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-configuration"
+      ],
+      "activated_skills": [
+        "dotnet-secrets-management",
+        "dotnet-csharp-configuration"
+      ],
+      "should_activate": true,
+      "category": "security",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003389,
+      "timestamp": "2026-02-26T00:57:38.087805+00:00"
+    },
+    {
+      "id": "act-038",
+      "entity_id": "act-038",
+      "user_prompt": "Configure .editorconfig with C# code style rules, naming conventions, and severity levels for my team.",
+      "expected_skills": [
+        "dotnet-editorconfig"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-coding-standards"
+      ],
+      "activated_skills": [
+        "dotnet-editorconfig",
+        "dotnet-csharp-coding-standards"
+      ],
+      "should_activate": true,
+      "category": "tooling",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004142,
+      "timestamp": "2026-02-26T00:57:45.181869+00:00"
+    },
+    {
+      "id": "act-039",
+      "entity_id": "act-039",
+      "user_prompt": "Build high-throughput data pipelines using System.IO.Pipelines with proper memory management and backpressure.",
+      "expected_skills": [
+        "dotnet-io-pipelines"
+      ],
+      "acceptable_skills": [
+        "dotnet-channels"
+      ],
+      "activated_skills": [
+        "dotnet-io-pipelines",
+        "dotnet-gc-memory",
+        "dotnet-performance-patterns"
+      ],
+      "should_activate": true,
+      "category": "performance",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004467,
+      "timestamp": "2026-02-26T00:57:52.869857+00:00"
+    },
+    {
+      "id": "act-040",
+      "entity_id": "act-040",
+      "user_prompt": "Implement producer-consumer patterns using System.Threading.Channels for decoupled async processing.",
+      "expected_skills": [
+        "dotnet-channels"
+      ],
+      "acceptable_skills": [
+        "dotnet-csharp-concurrency-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-channels",
+        "dotnet-csharp-async-patterns"
+      ],
+      "should_activate": true,
+      "category": "patterns",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005359,
+      "timestamp": "2026-02-26T00:58:02.869336+00:00"
+    },
+    {
+      "id": "act-041",
+      "entity_id": "act-041",
+      "user_prompt": "Set up snapshot testing with Verify to test complex object serialization and approval-based workflow.",
+      "expected_skills": [
+        "dotnet-snapshot-testing"
+      ],
+      "acceptable_skills": [
+        "dotnet-test-quality"
+      ],
+      "activated_skills": [
+        "dotnet-snapshot-testing"
+      ],
+      "should_activate": true,
+      "category": "testing",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.006273,
+      "timestamp": "2026-02-26T00:58:14.364310+00:00"
+    },
+    {
+      "id": "act-042",
+      "entity_id": "act-042",
+      "user_prompt": "Profile my .NET application memory allocations and CPU hotspots using dotnet-trace and dotnet-counters.",
+      "expected_skills": [
+        "dotnet-profiling"
+      ],
+      "acceptable_skills": [
+        "dotnet-gc-memory",
+        "dotnet-performance-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-profiling"
+      ],
+      "should_activate": true,
+      "category": "performance",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003675,
+      "timestamp": "2026-02-26T00:58:21.002934+00:00"
+    },
+    {
+      "id": "act-043",
+      "entity_id": "act-043",
+      "user_prompt": "Migrate my WPF desktop application to use modern .NET with updated controls, MSIX packaging, and Windows App SDK interop.",
+      "expected_skills": [
+        "dotnet-wpf-modern"
+      ],
+      "acceptable_skills": [
+        "dotnet-wpf-migration"
+      ],
+      "activated_skills": [
+        "dotnet-wpf-migration",
+        "dotnet-wpf-modern",
+        "dotnet-msix"
+      ],
+      "should_activate": true,
+      "category": "desktop",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.008425,
+      "timestamp": "2026-02-26T00:58:35.159203+00:00"
+    },
+    {
+      "id": "act-044",
+      "entity_id": "act-044",
+      "user_prompt": "Build a MAUI cross-platform mobile app with platform-specific implementations and dependency injection.",
+      "expected_skills": [
+        "dotnet-maui-development"
+      ],
+      "acceptable_skills": [
+        "dotnet-maui-aot",
+        "dotnet-maui-testing"
+      ],
+      "activated_skills": [
+        "dotnet-maui-development",
+        "dotnet-csharp-dependency-injection"
+      ],
+      "should_activate": true,
+      "category": "mobile",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.010263,
+      "timestamp": "2026-02-26T00:58:51.972247+00:00"
+    },
+    {
+      "id": "act-045",
+      "entity_id": "act-045",
+      "user_prompt": "Configure multi-targeting for a library that supports net8.0, net9.0, and netstandard2.0 with conditional compilation.",
+      "expected_skills": [
+        "dotnet-multi-targeting"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-multi-targeting"
+      ],
+      "should_activate": true,
+      "category": "build",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.007668,
+      "timestamp": "2026-02-26T00:59:04.779707+00:00"
+    },
+    {
+      "id": "act-046",
+      "entity_id": "act-046",
+      "user_prompt": "Build a Spectre.Console rich CLI with tables, progress bars, and interactive prompts for a data migration tool.",
+      "expected_skills": [
+        "dotnet-spectre-console"
+      ],
+      "acceptable_skills": [
+        "dotnet-terminal-gui"
+      ],
+      "activated_skills": [
+        "dotnet-spectre-console",
+        "dotnet-system-commandline",
+        "dotnet-cli-architecture"
+      ],
+      "should_activate": true,
+      "category": "cli",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00481,
+      "timestamp": "2026-02-26T00:59:13.853395+00:00"
+    },
+    {
+      "id": "act-047",
+      "entity_id": "act-047",
+      "user_prompt": "Implement request validation using FluentValidation with async validators, custom rules, and dependency injection.",
+      "expected_skills": [
+        "dotnet-validation-patterns"
+      ],
+      "acceptable_skills": [
+        "dotnet-input-validation"
+      ],
+      "activated_skills": [
+        "dotnet-input-validation",
+        "dotnet-csharp-dependency-injection",
+        "dotnet-csharp-async-patterns"
+      ],
+      "should_activate": true,
+      "category": "patterns",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.004194,
+      "timestamp": "2026-02-26T00:59:20.935243+00:00"
+    },
+    {
+      "id": "act-048",
+      "entity_id": "act-048",
+      "user_prompt": "Set up ASP.NET Core middleware for request/response logging, exception handling, and correlation ID propagation.",
+      "expected_skills": [
+        "dotnet-middleware-patterns"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-middleware-patterns",
+        "dotnet-structured-logging"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003403,
+      "timestamp": "2026-02-26T00:59:27.140282+00:00"
+    },
+    {
+      "id": "act-049",
+      "entity_id": "act-049",
+      "user_prompt": "Design an API versioning strategy with URL path, header, and query string approaches using Asp.Versioning.",
+      "expected_skills": [
+        "dotnet-api-versioning"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-api-versioning"
+      ],
+      "should_activate": true,
+      "category": "api",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.003524,
+      "timestamp": "2026-02-26T00:59:33.218848+00:00"
+    },
+    {
+      "id": "act-050",
+      "entity_id": "act-050",
+      "user_prompt": "Implement encryption, hashing, and digital signatures using .NET cryptography APIs with proper key management.",
+      "expected_skills": [
+        "dotnet-cryptography"
+      ],
+      "acceptable_skills": [
+        "dotnet-security-owasp"
+      ],
+      "activated_skills": [
+        "dotnet-cryptography"
+      ],
+      "should_activate": true,
+      "category": "security",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00469,
+      "timestamp": "2026-02-26T00:59:41.715899+00:00"
+    },
+    {
+      "id": "act-051",
+      "entity_id": "act-051",
+      "user_prompt": "Optimize my LINQ queries to reduce allocations using spans, value tuples, and avoiding materializing intermediate collections.",
+      "expected_skills": [
+        "dotnet-linq-optimization"
+      ],
+      "acceptable_skills": [
+        "dotnet-performance-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-linq-optimization",
+        "dotnet-performance-patterns"
+      ],
+      "should_activate": true,
+      "category": "performance",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005359,
+      "timestamp": "2026-02-26T00:59:52.371752+00:00"
+    },
+    {
+      "id": "act-052",
+      "entity_id": "act-052",
+      "user_prompt": "Build a GitHub Actions workflow for deploying my .NET app to Azure App Service with staging slots and approval gates.",
+      "expected_skills": [
+        "dotnet-gha-deploy"
+      ],
+      "acceptable_skills": [
+        "dotnet-gha-patterns"
+      ],
+      "activated_skills": [
+        "dotnet-gha-deploy",
+        "dotnet-gha-patterns",
+        "dotnet-gha-build-test"
+      ],
+      "should_activate": true,
+      "category": "ci-cd",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005053,
+      "timestamp": "2026-02-26T01:00:01.061274+00:00"
+    },
+    {
+      "id": "act-053",
+      "entity_id": "act-053",
+      "user_prompt": "Set up .NET Aspire for local development orchestration with service defaults, dashboard, and integrations.",
+      "expected_skills": [
+        "dotnet-aspire-patterns"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-aspire-patterns"
+      ],
+      "should_activate": true,
+      "category": "architecture",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005582,
+      "timestamp": "2026-02-26T01:00:11.376261+00:00"
+    },
+    {
+      "id": "act-054",
+      "entity_id": "act-054",
+      "user_prompt": "Implement the HttpClient factory pattern with typed clients, Polly handlers, and DelegatingHandler for auth tokens.",
+      "expected_skills": [
+        "dotnet-http-client"
+      ],
+      "acceptable_skills": [
+        "dotnet-resilience"
+      ],
+      "activated_skills": [
+        "dotnet-http-client",
+        "dotnet-resilience",
+        "dotnet-csharp-dependency-injection"
+      ],
+      "should_activate": true,
+      "category": "patterns",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.00648,
+      "timestamp": "2026-02-26T01:00:22.219632+00:00"
+    },
+    {
+      "id": "act-055",
+      "entity_id": "act-055",
+      "user_prompt": "Configure P/Invoke and CsWin32 for calling native Windows APIs from my .NET application.",
+      "expected_skills": [
+        "dotnet-native-interop"
+      ],
+      "acceptable_skills": [],
+      "activated_skills": [
+        "dotnet-native-interop"
+      ],
+      "should_activate": true,
+      "category": "interop",
+      "detection_method": "structured",
+      "passed": true,
+      "run_index": 0,
+      "cost": 0.005113,
+      "timestamp": "2026-02-26T01:00:31.429837+00:00"
+    }
+  ],
+  "artifacts": {
+    "index_char_count": 15155,
+    "index_skill_count": 131,
+    "detection_method_counts": {
+      "structured": 73
+    },
+    "per_skill": {
+      "dotnet-ado-build-test": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-api-versioning": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-architecture-patterns": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-aspire-patterns": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-background-services": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-benchmarkdotnet": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-blazor-components": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-channels": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-containers": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-cryptography": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-csharp-async-patterns": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-csharp-dependency-injection": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-csharp-nullable-reference-types": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-csharp-source-generators": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-domain-modeling": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-editorconfig": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-efcore-architecture": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-efcore-patterns": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-gha-build-test": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-gha-deploy": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-grpc": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-http-client": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-integration-testing": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-io-pipelines": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-linq-optimization": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-maui-development": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-middleware-patterns": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-minimal-apis": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-modernize": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-msbuild-authoring": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-msbuild-tasks": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-multi-targeting": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-native-aot": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-native-interop": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-nuget-authoring": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-observability": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-openapi": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-playwright": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-profiling": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-realtime-communication": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-resilience": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-roslyn-analyzers": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-secrets-management": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-security-owasp": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-serialization": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-snapshot-testing": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-spectre-console": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-structured-logging": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-system-commandline": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-trimming": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-uno-mcp": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-validation-patterns": {
+        "activation_rate": 0.0,
+        "expected_count": 1,
+        "activated_count": 0,
+        "correct_count": 0
+      },
+      "dotnet-version-detection": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-wpf-modern": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      },
+      "dotnet-xunit": {
+        "activation_rate": 1.0,
+        "expected_count": 1,
+        "activated_count": 1,
+        "correct_count": 1
+      }
+    }
+  }
+}
