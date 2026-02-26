@@ -480,3 +480,6 @@ When a tracking file claims verification status, notes must cite specific run ID
 
 ## 2026-02-26 manual [pitfall]
 When parallel tasks delete/create files but CI gates enforce counts, explicitly state the merge strategy (single PR / stacked PRs) so intermediate states don't break CI.
+
+## 2026-02-26 manual [pitfall]
+When a document repeats summary counts in multiple sections (e.g. assignment completeness check + count verification + summary table), update ALL instances together -- stale duplicates break verification authority

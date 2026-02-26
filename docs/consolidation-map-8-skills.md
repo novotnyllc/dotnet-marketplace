@@ -779,7 +779,7 @@ Debugs Windows applications using WinDbg and crash dump analysis. Covers MCP ser
 
 | # | Source Skill | References/ Topic | Notes |
 |---|-------------|-------------------|-------|
-| 1 | `dotnet-windbg-debugging` | (identity -- stays as-is with rename) | Existing `reference/` dir (16 files) -> rename to `references/` |
+| 1 | `dotnet-windbg-debugging` | (single-source rename; rename `reference/` -> `references/`) | Existing `reference/` dir (16 files) |
 
 ### Existing Companion Files (migrate reference/ -> references/)
 
@@ -871,6 +871,9 @@ Always invoke [skill:dotnet-csharp] for code paths to ensure coding standards co
 
 ## Out of scope
 - Direct implementation (delegates to domain skills)
+
+## Companion Files
+None. dotnet-advisor is routing-only with no `references/` directory.
 ```
 
 ---
@@ -1140,6 +1143,5 @@ dotnet-tooling:   32 (project-structure, scaffold-project, csproj-reading, msbui
 dotnet-debugging: 1  (windbg-debugging)
 dotnet-advisor:   1  (advisor)
 TOTAL:           131 (22 + 27 + 18 + 12 + 18 + 32 + 1 + 1)
-```
 
 All 131 source skills have exactly one assignment. No duplicates, no gaps.
