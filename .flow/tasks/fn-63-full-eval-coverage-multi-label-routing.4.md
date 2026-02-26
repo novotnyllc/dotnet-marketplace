@@ -39,8 +39,7 @@ Progress checkpoint: ~72 skills should have rubrics (12 original + ~30 from .3 +
 - [ ] eval-progress.json updated for all processed skills
 - [ ] Progress: ~72 skills with rubrics total
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

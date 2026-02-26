@@ -49,8 +49,7 @@ Process ~20-25 skills (the highest-priority half). Task .3 handles the rest.
 - [ ] Each sub-batch committed separately with descriptive message
 - [ ] eval-progress.json updated: fixed skills have routing_status = "fixed", fixed_by commit SHA, fixed_at timestamp
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

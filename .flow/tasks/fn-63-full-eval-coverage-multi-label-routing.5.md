@@ -38,8 +38,7 @@ Review eval-progress.json: every skill should now have both `routing_status` and
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass
 - [ ] eval-progress.json fully populated for all 131 skills
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

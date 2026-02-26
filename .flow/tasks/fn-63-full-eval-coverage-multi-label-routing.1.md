@@ -67,8 +67,7 @@ The confusion matrix forces single-skill selection ("Select ONLY the single most
 - [ ] `--dry-run` validates all generated cases without CLI calls
 - [ ] `./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh` pass
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

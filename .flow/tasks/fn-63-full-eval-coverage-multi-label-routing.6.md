@@ -56,8 +56,7 @@ Run size impact on expanded candidate list (add candidates for newly rubric'd sk
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass
 - [ ] fn-58.4 unblocked (baselines exist for CI regression gate)
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

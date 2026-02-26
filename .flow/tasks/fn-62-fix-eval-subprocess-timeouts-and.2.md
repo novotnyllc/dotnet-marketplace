@@ -51,8 +51,7 @@ Add a per-runner wall-clock timeout to `run_suite.sh` so that if a Python runner
 - [ ] Shim invocation preserves argv (no `eval` or flattened strings)
 - [ ] `./tests/evals/run_suite.sh --runs 1 --limit 3` completes within bounded time
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

@@ -92,8 +92,17 @@ Run `compare_baseline.py` against each baseline to confirm it:
 - [ ] fn-58.4 dependency is satisfied (baseline files in expected location with expected schema)
 
 ## Done summary
+Fixed `--mcp-config "{}"` bug in `_common.py` that caused all eval CLI calls to return empty responses (the `{}` JSON lacks the required `mcpServers` key). `--strict-mcp-config` alone blocks MCP server loading. Also cleaned stale generation cache entries left by buggy runs.
 
+Ran full-coverage eval suites (no `--limit`) for all 4 types with backend=claude, model=haiku, seed=42:
+
+- **L3 Activation**: TPR=100%, FPR=16.67%, Accuracy=95.89% — PASS
+- **L4 Confusion**: 100% accuracy all 7 groups, 100% negative controls — PASS
+- **L5 Effectiveness**: all 12 skills ≥83.3% win rate, 0% errors — PASS
+- **L6 Size Impact**: no baseline sweeps, all skills n≥2 — PASS
+
+Saved baselines to `tests/evals/baselines/`, verified `compare_baseline.py` loads all 4 without error, validated with `validate-skills.sh` and `validate-marketplace.sh`.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: bc86e97, ee10c46
+- Tests: compare_baseline.py: all 4 types = no regressions
 - PRs:

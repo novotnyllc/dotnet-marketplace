@@ -100,8 +100,7 @@ Each runner computes `case_deadline = time.monotonic() + budget_s` **once per ca
 - [ ] `_subprocess_env()` sets `DISABLE_TELEMETRY=1` and `DISABLE_ERROR_REPORTING=1`
 - [ ] `python3 tests/evals/run_activation.py --limit 3` completes without hanging
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:

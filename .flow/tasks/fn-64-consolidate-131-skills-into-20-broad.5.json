@@ -1,0 +1,16 @@
+{
+  "assignee": null,
+  "claim_note": "",
+  "claimed_at": null,
+  "created_at": "2026-02-26T20:22:36.562944Z",
+  "depends_on": [
+    "fn-64-consolidate-131-skills-into-20-broad.1"
+  ],
+  "epic": "fn-64-consolidate-131-skills-into-20-broad",
+  "id": "fn-64-consolidate-131-skills-into-20-broad.5",
+  "priority": null,
+  "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.5.md",
+  "status": "todo",
+  "title": "Consolidate UI framework skills: dotnet-blazor, dotnet-uno, dotnet-maui, dotnet-desktop",
+  "updated_at": "2026-02-26T20:23:58.667884Z"
+}

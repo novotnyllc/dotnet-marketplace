@@ -44,8 +44,7 @@ For each newly rubric'd skill: run `--skill X --runs 1 --regenerate`, check win_
 - [ ] `validate-skills.sh && validate-marketplace.sh` pass
 - [ ] eval-progress.json updated: content_status set for rubric'd skills
 ## Done summary
-TBD
-
+Cancelled — superseded by skill consolidation effort.
 ## Evidence
 - Commits:
 - Tests:
