@@ -806,6 +806,13 @@ The existing `reference/` directory contains 16 files that must be renamed to `r
 
 ### SKILL.md Content Outline
 
+Migrated from existing `dotnet-windbg-debugging/SKILL.md` with these changes:
+- Rename frontmatter `name` from `dotnet-windbg-debugging` to `dotnet-debugging`
+- Update `description` to routing description above (~350 chars)
+- Update all `reference/` path references to `references/` (plural)
+- Ensure ToC explicitly lists all 16 companion files in `references/`
+- Retain existing Scope, Out of scope, and workflow sections
+
 ```
 ---
 name: dotnet-debugging
@@ -816,8 +823,38 @@ user-invocable: true
 
 # dotnet-debugging
 
-(Mostly identical to current dotnet-windbg-debugging SKILL.md,
- with reference/ paths updated to references/)
+## Overview
+WinDbg debugging and crash dump analysis for .NET Windows applications.
+
+## Scope
+- MCP server integration for WinDbg
+- Live process attach and dump file triage
+- Crash, hang, high-CPU, memory leak diagnosis
+- Kernel debugging and symbol configuration
+- SOS extension workflows
+
+## Out of scope
+- Application-level logging -> [skill:dotnet-devops]
+- Performance profiling (dotnet-counters/trace) -> [skill:dotnet-tooling]
+- Unit/integration test debugging -> [skill:dotnet-testing]
+
+## Companion Files
+- `references/mcp-setup.md` -- MCP server configuration
+- `references/access-mcp.md` -- MCP access patterns
+- `references/common-patterns.md` -- Common debugging patterns
+- `references/dump-workflow.md` -- Dump file analysis workflow
+- `references/live-attach.md` -- Live process attach guide
+- `references/symbols.md` -- Symbol configuration
+- `references/sanity-check.md` -- Sanity check procedures
+- `references/scenario-command-packs.md` -- Scenario command packs
+- `references/capture-playbooks.md` -- Capture playbooks
+- `references/report-template.md` -- Diagnostic report template
+- `references/task-crash.md` -- Crash triage
+- `references/task-hang.md` -- Hang triage
+- `references/task-high-cpu.md` -- High-CPU triage
+- `references/task-memory.md` -- Memory leak triage
+- `references/task-kernel.md` -- Kernel debugging
+- `references/task-unknown.md` -- Unknown issue triage
 ```
 
 ---
@@ -908,7 +945,7 @@ None. dotnet-advisor is routing-only with no `references/` directory.
 | Source Skill (user-invocable) | Target Skill | Target Gets user-invocable? |
 |------------------------------|-------------|---------------------------|
 | `dotnet-advisor` | dotnet-advisor | **Yes** (identity) |
-| `dotnet-windbg-debugging` | dotnet-debugging | **Yes** (identity) |
+| `dotnet-windbg-debugging` | dotnet-debugging | **Yes** (single-source rename) |
 | `dotnet-ui-chooser` | dotnet-ui | **Yes** |
 | `dotnet-scaffold-project` | dotnet-tooling | **Yes** |
 | `dotnet-version-upgrade` | dotnet-tooling | (already Yes via scaffold-project) |
