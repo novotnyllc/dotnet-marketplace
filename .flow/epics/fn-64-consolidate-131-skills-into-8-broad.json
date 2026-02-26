@@ -7,12 +7,12 @@
   "default_review": null,
   "default_sync": null,
   "depends_on_epics": [],
-  "id": "fn-64-consolidate-131-skills-into-20-broad",
+  "id": "fn-64-consolidate-131-skills-into-8-broad",
   "next_task": 1,
-  "plan_review_status": "unknown",
-  "plan_reviewed_at": null,
-  "spec_path": ".flow/specs/fn-64-consolidate-131-skills-into-20-broad.md",
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-26T22:53:25.598336Z",
+  "spec_path": ".flow/specs/fn-64-consolidate-131-skills-into-8-broad.md",
   "status": "open",
-  "title": "Consolidate 131 skills into ~20 broad skills",
-  "updated_at": "2026-02-26T22:28:00.287645Z"
+  "title": "Consolidate 131 skills into 8 broad skills",
+  "updated_at": "2026-02-26T22:53:25.598479Z"
 }

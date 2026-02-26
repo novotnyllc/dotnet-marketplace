@@ -1,10 +1,10 @@
-# fn-64-consolidate-131-skills-into-20-broad.4 Consolidate API and data skills: dotnet-api, dotnet-efcore
+# fn-64.4 Consolidate dotnet-ui + dotnet-debugging (~20 source skills)
 
 ## Description
-Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge ~18 UI framework skills into `dotnet-ui` with companion files. Update `dotnet-debugging` to absorb `dotnet-windbg-debugging` content and its 16 reference/ files. Remove source skill directories and update `plugin.json`.
+Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge ~18 UI framework skills into `dotnet-ui` with companion files. Create `dotnet-debugging` by absorbing `dotnet-windbg-debugging` content and its 16 reference/ files. Delete source skill directories. Do NOT edit `plugin.json` (deferred to task .9).
 
 **Size:** M
-**Files:** `skills/dotnet-ui/SKILL.md` + `references/*.md` (new), `skills/dotnet-debugging/SKILL.md` + `references/*.md` (updated), `.claude-plugin/plugin.json`, ~20 source skill dirs (delete)
+**Files:** `skills/dotnet-ui/SKILL.md` + `references/*.md` (new), `skills/dotnet-debugging/SKILL.md` + `references/*.md` (new), ~20 source skill dirs (delete)
 
 ## Approach
 
@@ -29,9 +29,10 @@ Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge 
   - (exact list per task .1 output)
 
 **dotnet-debugging (~2 source skills):**
-- Update existing SKILL.md or create new one with overview + ToC
-- `dotnet-windbg-debugging` already has `reference/` dir with 16 files — rename to `references/` to match convention
+- Create new SKILL.md with overview + ToC
+- Rename `dotnet-windbg-debugging/reference/` to `dotnet-debugging/references/` (singular → plural convention)
 - Absorb any other debugging-related content per task .1 map
+- **Cross-reference repair**: all out-of-scope references in WinDbg content (e.g., `dotnet-profiling`, `dotnet-gc-memory`) must be remapped to the new 8-skill names (e.g., `[skill:dotnet-tooling]` with "read references/performance.md" hints). No `[skill:old-name]` allowed.
 
 ## Key context
 
@@ -40,21 +41,19 @@ Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge 
 - `dotnet-accessibility` is cross-cutting but primarily UI-relevant — place in dotnet-ui
 - `dotnet-localization` is cross-cutting but UI-adjacent — place in dotnet-ui
 - Each UI framework specialist agent (blazor, maui, uno) preloads from this group
-## Approach
+- `reference/` → `references/` rename: grep for `/reference/` path assumptions in scripts/tests before renaming
 
-- Follow consolidation map from task .1
-- `dotnet-api` SKILL.md: ASP.NET Core API development overview, minimal APIs vs controllers, security, validation, versioning
-- `dotnet-efcore` SKILL.md: EF Core patterns, architecture, data access strategy selection
-- Include architecture-adjacent skills per mapping (architecture-patterns, resilience, http-client, etc. — exact placement from task .1)
 ## Acceptance
 - [ ] `skills/dotnet-ui/SKILL.md` exists with overview, framework decision tree, routing table, scope, out-of-scope, ToC
 - [ ] `skills/dotnet-ui/references/` contains companion files for all UI frameworks
 - [ ] `skills/dotnet-debugging/SKILL.md` exists (standalone per user requirement)
-- [ ] `skills/dotnet-debugging/references/` has migrated windbg reference/ content (renamed to references/)
+- [ ] `skills/dotnet-debugging/references/` has migrated windbg content (renamed from `reference/` to `references/`)
+- [ ] All cross-references in debugging content remapped to 8-skill names (no `[skill:old-name]`)
 - [ ] All ~20 source UI/debugging skill directories deleted
-- [ ] `plugin.json` updated
+- [ ] `plugin.json` NOT edited (deferred to task .9)
 - [ ] Valid frontmatter on both SKILL.md files
 - [ ] No content lost from source skills
+
 ## Done summary
 TBD
 

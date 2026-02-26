@@ -477,3 +477,6 @@ When trimming skill body content, verify that Scope section claims still match t
 
 ## 2026-02-25 manual [pitfall]
 When a tracking file claims verification status, notes must cite specific run IDs and commit SHAs rather than vague sweep language -- readers need auditable provenance to trace claims back to evidence
+
+## 2026-02-26 manual [pitfall]
+When parallel tasks delete/create files but CI gates enforce counts, explicitly state the merge strategy (single PR / stacked PRs) so intermediate states don't break CI.

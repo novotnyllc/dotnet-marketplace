@@ -1,10 +1,10 @@
-# fn-64-consolidate-131-skills-into-20-broad.6 Consolidate DevOps skills: dotnet-cicd-gha, dotnet-cicd-ado, dotnet-containers, dotnet-packaging
+# fn-64.6 Consolidate dotnet-tooling (~34 source skills)
 
 ## Description
-Create consolidated `dotnet-tooling` skill directory. Merge ~34 build, performance, AOT, CLI, project setup, docs generation, and meta-skills into one skill with companion files. This is the largest consolidation group. Remove source skill directories and update `plugin.json`.
+Create consolidated `dotnet-tooling` skill directory. Merge ~34 build, performance, AOT, CLI, project setup, docs generation, and meta-skills into one skill with companion files. This is the largest consolidation group. Delete source skill directories. Do NOT edit `plugin.json` (deferred to task .9).
 
 **Size:** M
-**Files:** `skills/dotnet-tooling/SKILL.md` + `references/*.md` (new), `.claude-plugin/plugin.json`, ~34 source skill dirs (delete)
+**Files:** `skills/dotnet-tooling/SKILL.md` + `references/*.md` (new), ~34 source skill dirs (delete)
 
 ## Approach
 
@@ -22,6 +22,8 @@ Create consolidated `dotnet-tooling` skill directory. Merge ~34 build, performan
   - `references/version-management.md` — version detection, version upgrade, multi-targeting
   - `references/agent-meta.md` — agent gotchas, slopwatch, build-analysis tips
   - (exact list per task .1 output)
+- Delete old skill directories after content is migrated
+- **Do NOT edit plugin.json** — manifest update deferred to task .9
 
 ## Key context
 
@@ -30,21 +32,16 @@ Create consolidated `dotnet-tooling` skill directory. Merge ~34 build, performan
 - Several source skills are user-invocable (scaffold-project, add-analyzers, add-ci, add-testing, modernize, slopwatch, version-upgrade) — decide per task .1 which user-invocable designation the consolidated skill gets
 - `dotnet-version-detection` and `dotnet-project-analysis` are shared foundations used by 5 agents — companion file must be prominent in ToC
 - If post-implementation this feels too broad, splitting into build/performance/cli is a single-task change (epic decision #9)
-## Approach
 
-- Follow consolidation map from task .1
-- `dotnet-cicd-gha` merges: gha-patterns, gha-build-test, gha-publish, gha-deploy
-- `dotnet-cicd-ado` merges: ado-patterns, ado-build-test, ado-publish, ado-unique
-- `dotnet-containers` merges: containers, container-deployment
-- `dotnet-packaging` merges: nuget-authoring, msix, github-releases, release-management
 ## Acceptance
 - [ ] `skills/dotnet-tooling/SKILL.md` exists with overview, routing table, scope, out-of-scope, ToC
 - [ ] `skills/dotnet-tooling/references/` contains ~10 companion files covering all sub-domains
 - [ ] All ~34 source tooling skill directories deleted
-- [ ] `plugin.json` updated
+- [ ] `plugin.json` NOT edited (deferred to task .9)
 - [ ] Valid frontmatter
 - [ ] No content lost from source skills
 - [ ] User-invocable designation decided and set correctly
+
 ## Done summary
 TBD
 
