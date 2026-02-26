@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.6.md",
   "status": "todo",
-  "title": "Consolidate DevOps skills: dotnet-cicd-gha, dotnet-cicd-ado, dotnet-containers, dotnet-packaging",
-  "updated_at": "2026-02-26T20:23:58.803580Z"
+  "title": "Consolidate dotnet-tooling (~34 source skills)",
+  "updated_at": "2026-02-26T22:29:31.645309Z"
 }

@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.2.md",
   "status": "todo",
-  "title": "Consolidate core language skills: dotnet-csharp, dotnet-debugging, dotnet-project-setup",
-  "updated_at": "2026-02-26T20:23:22.402286Z"
+  "title": "Consolidate dotnet-csharp (~22 source skills)",
+  "updated_at": "2026-02-26T22:28:35.198647Z"
 }

@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.4.md",
   "status": "todo",
-  "title": "Consolidate API and data skills: dotnet-api, dotnet-efcore",
-  "updated_at": "2026-02-26T20:23:41.896059Z"
+  "title": "Consolidate dotnet-ui + dotnet-debugging (~20 source skills)",
+  "updated_at": "2026-02-26T22:29:03.361931Z"
 }

@@ -11,6 +11,6 @@
   "priority": null,
   "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.5.md",
   "status": "todo",
-  "title": "Consolidate UI framework skills: dotnet-blazor, dotnet-uno, dotnet-maui, dotnet-desktop",
-  "updated_at": "2026-02-26T20:23:58.667884Z"
+  "title": "Consolidate dotnet-testing + dotnet-devops (~29 source skills)",
+  "updated_at": "2026-02-26T22:29:16.673131Z"
 }

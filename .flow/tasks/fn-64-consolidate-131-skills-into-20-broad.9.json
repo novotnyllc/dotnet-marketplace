@@ -8,15 +8,13 @@
     "fn-64-consolidate-131-skills-into-20-broad.3",
     "fn-64-consolidate-131-skills-into-20-broad.4",
     "fn-64-consolidate-131-skills-into-20-broad.5",
-    "fn-64-consolidate-131-skills-into-20-broad.6",
-    "fn-64-consolidate-131-skills-into-20-broad.7",
-    "fn-64-consolidate-131-skills-into-20-broad.8"
+    "fn-64-consolidate-131-skills-into-20-broad.6"
   ],
   "epic": "fn-64-consolidate-131-skills-into-20-broad",
   "id": "fn-64-consolidate-131-skills-into-20-broad.9",
   "priority": null,
   "spec_path": ".flow/tasks/fn-64-consolidate-131-skills-into-20-broad.9.md",
   "status": "todo",
-  "title": "Update agents, advisor and hooks for consolidated skills",
-  "updated_at": "2026-02-26T20:24:54.074789Z"
+  "title": "Update agents, advisor, and hooks for 8 skills",
+  "updated_at": "2026-02-26T22:29:55.812236Z"
 }
