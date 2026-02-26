@@ -292,7 +292,6 @@ def _detect_cli_caps(backend: str) -> dict[str, Any]:
                 "--disable-slash-commands",
                 "--tools", "",
                 "--strict-mcp-config",
-                "--mcp-config", "{}",
             ])
             return cmd
         elif backend == "codex":
@@ -534,7 +533,6 @@ def _build_cli_command(
             "--disable-slash-commands",
             "--tools", "",
             "--strict-mcp-config",
-            "--mcp-config", "{}",
         ])
     elif backend == "codex":
         cmd = ["codex", "--full-auto"]
@@ -574,6 +572,19 @@ def _is_permanent_cli_error(return_code: int, stderr_text: str) -> bool:
     return any(marker in text for marker in permanent_markers)
 
 
+def _wrap_for_login_shell(cmd: list[str]) -> list[str]:
+    """Wrap a command to run under a login shell.
+
+    When invoked from environments that lack full shell initialization
+    (e.g. subprocess calls from within Claude Code), CLI tools may fail
+    because PATH, auth tokens, or other profile-level config is missing.
+    Wrapping in ``bash -lc`` ensures the user's profile is sourced.
+    """
+    import shlex
+
+    return ["bash", "-lc", shlex.join(cmd)]
+
+
 def _execute_cli(
     cmd: list[str],
     prompt: str,
@@ -591,6 +602,7 @@ def _execute_cli(
     }
 
     clean_env = _subprocess_env()
+    cmd = _wrap_for_login_shell(cmd)
 
     try:
         if prompt_mode == "stdin":
