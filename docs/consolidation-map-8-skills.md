@@ -27,16 +27,16 @@
 | # | Target Skill | Source Count | User-Invocable |
 |---|-------------|:-----------:|:--------------:|
 | 1 | **dotnet-csharp** | 22 | false |
-| 2 | **dotnet-api** | 28 | false |
+| 2 | **dotnet-api** | 27 | false |
 | 3 | **dotnet-ui** | 18 | true |
-| 4 | **dotnet-testing** | 11 | false |
+| 4 | **dotnet-testing** | 12 | false |
 | 5 | **dotnet-devops** | 18 | false |
 | 6 | **dotnet-tooling** | 32 | true |
 | 7 | **dotnet-debugging** | 1 | true |
 | 8 | **dotnet-advisor** | 1 | true |
 | | **TOTAL** | **131** | |
 
-Note: dotnet-debugging and dotnet-advisor are identity mappings (source skill = target skill). Every one of the 131 source skills has exactly one assignment.
+Note: dotnet-advisor is an identity mapping (source skill = target skill). dotnet-debugging is a single-source rename from `dotnet-windbg-debugging`. Every one of the 131 source skills has exactly one assignment.
 
 ---
 
@@ -92,10 +92,28 @@ performant code.
 ## Routing Table
 | Topic | Keywords | Companion File |
 |-------|----------|----------------|
-| Coding standards | naming, file layout, style | references/coding-standards.md |
+| Coding standards | naming, file layout, style rules | references/coding-standards.md |
 | Async/await | async, Task, ConfigureAwait, cancellation | references/async-patterns.md |
 | Dependency injection | DI, services, scopes, keyed, lifetimes | references/dependency-injection.md |
-| ... (all 22 topics) | | |
+| Configuration | Options pattern, user secrets, feature flags | references/configuration.md |
+| Source generators | IIncrementalGenerator, GeneratedRegex, LoggerMessage | references/source-generators.md |
+| Nullable reference types | annotations, migration, agent mistakes | references/nullable-reference-types.md |
+| Serialization | System.Text.Json, Protobuf, MessagePack, AOT | references/serialization.md |
+| Channels | Channel<T>, bounded/unbounded, backpressure | references/channels.md |
+| LINQ optimization | IQueryable vs IEnumerable, compiled queries | references/linq-optimization.md |
+| Domain modeling | aggregates, value objects, domain events | references/domain-modeling.md |
+| SOLID principles | SRP, DRY, anti-patterns, compliance checks | references/solid-principles.md |
+| Concurrency | lock, SemaphoreSlim, Interlocked, concurrent collections | references/concurrency-patterns.md |
+| Roslyn analyzers | DiagnosticAnalyzer, CodeFixProvider, multi-version | references/roslyn-analyzers.md |
+| Editorconfig | IDE/CA severity, AnalysisLevel, globalconfig | references/editorconfig.md |
+| File I/O | FileStream, RandomAccess, FileSystemWatcher, paths | references/file-io.md |
+| Native interop | P/Invoke, LibraryImport, marshalling | references/native-interop.md |
+| Input validation | .NET 10 AddValidation, FluentValidation | references/input-validation.md |
+| Validation patterns | DataAnnotations, IValidatableObject, IValidateOptions | references/validation-patterns.md |
+| Modern patterns | records, pattern matching, primary constructors | references/modern-patterns.md |
+| API design | naming, parameter ordering, return types, extensions | references/api-design.md |
+| Type design/perf | struct vs class, sealed, Span/Memory, collections | references/type-design-performance.md |
+| Code smells | anti-patterns, async misuse, DI mistakes, fixes | references/code-smells.md |
 
 ## Scope
 - C# language features (C# 8-15)
@@ -106,17 +124,35 @@ performant code.
 - Input validation (model and options validation)
 
 ## Out of scope
-- ASP.NET Core / web API patterns → [skill:dotnet-api]
-- UI framework patterns → [skill:dotnet-ui]
-- Testing patterns → [skill:dotnet-testing]
-- Build/MSBuild/project setup → [skill:dotnet-tooling]
-- Performance profiling tools → [skill:dotnet-tooling]
+- ASP.NET Core / web API patterns -> [skill:dotnet-api]
+- UI framework patterns -> [skill:dotnet-ui]
+- Testing patterns -> [skill:dotnet-testing]
+- Build/MSBuild/project setup -> [skill:dotnet-tooling]
+- Performance profiling tools -> [skill:dotnet-tooling]
 
 ## Companion Files
-Read these on demand for deep guidance:
 - `references/coding-standards.md` -- Baseline C# conventions (naming, layout, style rules)
 - `references/async-patterns.md` -- async/await, Task patterns, ConfigureAwait, cancellation
-- ... (full ToC of all 22 reference files)
+- `references/dependency-injection.md` -- MS DI, keyed services, scopes, decoration, lifetimes
+- `references/configuration.md` -- Options pattern, user secrets, feature flags, IOptions<T>
+- `references/source-generators.md` -- IIncrementalGenerator, GeneratedRegex, LoggerMessage, STJ
+- `references/nullable-reference-types.md` -- Annotation strategies, migration, agent mistakes
+- `references/serialization.md` -- System.Text.Json source generators, Protobuf, MessagePack
+- `references/channels.md` -- Channel<T>, bounded/unbounded, backpressure, drain
+- `references/linq-optimization.md` -- IQueryable vs IEnumerable, compiled queries, allocations
+- `references/domain-modeling.md` -- Aggregates, value objects, domain events, repositories
+- `references/solid-principles.md` -- SOLID and DRY principles, C# anti-patterns, fixes
+- `references/concurrency-patterns.md` -- lock, SemaphoreSlim, Interlocked, concurrent collections
+- `references/roslyn-analyzers.md` -- DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring
+- `references/editorconfig.md` -- IDE/CA severity, AnalysisLevel, globalconfig, enforcement
+- `references/file-io.md` -- FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile
+- `references/native-interop.md` -- P/Invoke, LibraryImport, marshalling, cross-platform
+- `references/input-validation.md` -- .NET 10 AddValidation, FluentValidation, ProblemDetails
+- `references/validation-patterns.md` -- DataAnnotations, IValidatableObject, IValidateOptions<T>
+- `references/modern-patterns.md` -- Records, pattern matching, primary constructors, C# 12-15
+- `references/api-design.md` -- Naming, parameter ordering, return types, error patterns
+- `references/type-design-performance.md` -- struct vs class, sealed, Span/Memory, collections
+- `references/code-smells.md` -- Anti-patterns, async misuse, DI mistakes, fixes
 ```
 
 ---
@@ -125,9 +161,9 @@ Read these on demand for deep guidance:
 
 ### Routing Description (~390 chars)
 
-Builds ASP.NET Core APIs, data access, and backend services. Covers minimal APIs, middleware, EF Core (patterns and architecture), gRPC, SignalR/SSE, resilience (Polly), HTTP client, API versioning, OpenAPI, security (OWASP, secrets, crypto, auth), background services, Aspire orchestration, Semantic Kernel AI integration, architecture patterns, messaging, service communication, data access strategy, and API surface validation.
+Builds ASP.NET Core APIs, data access, and backend services. Covers minimal APIs, middleware, EF Core (patterns and architecture), gRPC, SignalR/SSE, resilience (Polly), HTTP client, API versioning, OpenAPI, security (OWASP, secrets, crypto), background services, Aspire orchestration, Semantic Kernel AI integration, architecture patterns, messaging, service communication, data access strategy, API surface validation, and API documentation.
 
-### Source Skills (28)
+### Source Skills (27)
 
 | # | Source Skill | References/ Topic | Notes |
 |---|-------------|-------------------|-------|
@@ -155,14 +191,12 @@ Builds ASP.NET Core APIs, data access, and backend services. Covers minimal APIs
 | 22 | `dotnet-api-surface-validation` | `references/api-surface-validation.md` | |
 | 23 | `dotnet-library-api-compat` | `references/library-api-compat.md` | |
 | 24 | `dotnet-io-pipelines` | `references/io-pipelines.md` | PipeReader/PipeWriter |
-| 25 | `dotnet-blazor-auth` | `references/blazor-auth.md` | Server-side auth flows for APIs |
-| 26 | `dotnet-agent-gotchas` | `references/agent-gotchas.md` | Cross-cutting but API-heavy |
-| 27 | `dotnet-file-based-apps` | `references/file-based-apps.md` | .NET 10 feature |
-| 28 | `dotnet-api-docs` | `references/api-docs.md` | DocFX, OpenAPI-as-docs |
+| 25 | `dotnet-agent-gotchas` | `references/agent-gotchas.md` | Cross-cutting but API-heavy |
+| 26 | `dotnet-file-based-apps` | `references/file-based-apps.md` | .NET 10 feature |
+| 27 | `dotnet-api-docs` | `references/api-docs.md` | DocFX, OpenAPI-as-docs |
 
 ### Edge Case Rationale
 
-- **dotnet-blazor-auth** -> dotnet-api (not dotnet-ui): Auth flows (Identity, OIDC, JWT) are server-side API concerns. Blazor-specific UI auth patterns (AuthorizeView) are documented in dotnet-ui's Blazor references, but the backend auth config belongs with API security.
 - **dotnet-agent-gotchas** -> dotnet-api: Most agent gotchas are API/backend concerns (async misuse, NuGet errors, DI). The content is cross-cutting but best routed with API patterns since that is where agents make the most mistakes.
 - **dotnet-file-based-apps** -> dotnet-api: .NET 10 file-based apps are a new app model closely aligned with Minimal APIs.
 - **dotnet-api-docs** -> dotnet-api: DocFX and OpenAPI docs are API documentation concerns.
@@ -189,7 +223,31 @@ ASP.NET Core APIs, data access, backend services, security, and cloud-native pat
 |-------|----------|----------------|
 | Minimal APIs | endpoint, route group, filter, TypedResults | references/minimal-apis.md |
 | EF Core patterns | DbContext, migrations, AsNoTracking | references/efcore-patterns.md |
-| ... (all 28 topics) | | |
+| EF Core architecture | read/write split, aggregate boundaries, N+1 | references/efcore-architecture.md |
+| Data access strategy | EF Core vs Dapper vs ADO.NET decision | references/data-access-strategy.md |
+| Middleware | pipeline ordering, short-circuit, exception | references/middleware-patterns.md |
+| gRPC | proto, code-gen, streaming, auth | references/grpc.md |
+| Real-time | SignalR, SSE, JSON-RPC, gRPC streaming | references/realtime-communication.md |
+| Resilience | Polly v8, retry, circuit breaker, timeout | references/resilience.md |
+| HTTP client | IHttpClientFactory, typed/named, DelegatingHandler | references/http-client.md |
+| API versioning | Asp.Versioning, URL/header/query, sunset | references/api-versioning.md |
+| OpenAPI | MS.AspNetCore.OpenApi, Swashbuckle, NSwag | references/openapi.md |
+| API security | Identity, OAuth/OIDC, JWT, CORS, rate limiting | references/api-security.md |
+| OWASP | injection, auth, XSS, deprecated APIs | references/security-owasp.md |
+| Secrets | user secrets, env vars, rotation | references/secrets-management.md |
+| Cryptography | AES-GCM, RSA, ECDSA, hashing, key derivation | references/cryptography.md |
+| Background services | BackgroundService, IHostedService, lifecycle | references/background-services.md |
+| Aspire | AppHost, service discovery, dashboard | references/aspire-patterns.md |
+| Semantic Kernel | AI/LLM plugins, prompts, memory, agents | references/semantic-kernel.md |
+| Architecture | vertical slices, layered, pipelines, caching | references/architecture-patterns.md |
+| Messaging | MassTransit, Azure Service Bus, pub/sub, sagas | references/messaging-patterns.md |
+| Service communication | REST vs gRPC vs SignalR decision matrix | references/service-communication.md |
+| API surface validation | PublicApiAnalyzers, Verify, ApiCompat | references/api-surface-validation.md |
+| Library API compat | binary/source compat, type forwarders | references/library-api-compat.md |
+| I/O pipelines | PipeReader/PipeWriter, backpressure, Kestrel | references/io-pipelines.md |
+| Agent gotchas | async misuse, NuGet errors, DI mistakes | references/agent-gotchas.md |
+| File-based apps | .NET 10, directives, csproj migration | references/file-based-apps.md |
+| API docs | DocFX, OpenAPI-as-docs, versioned docs | references/api-docs.md |
 
 ## Scope
 - ASP.NET Core web APIs (minimal and controller-based)
@@ -201,14 +259,40 @@ ASP.NET Core APIs, data access, backend services, security, and cloud-native pat
 - Architecture patterns
 
 ## Out of scope
-- C# language features → [skill:dotnet-csharp]
-- UI rendering → [skill:dotnet-ui]
-- Test authoring → [skill:dotnet-testing]
-- CI/CD pipelines → [skill:dotnet-devops]
-- Build tooling → [skill:dotnet-tooling]
+- C# language features -> [skill:dotnet-csharp]
+- UI rendering -> [skill:dotnet-ui]
+- Test authoring -> [skill:dotnet-testing]
+- CI/CD pipelines -> [skill:dotnet-devops]
+- Build tooling -> [skill:dotnet-tooling]
 
 ## Companion Files
-(full ToC of all 28 reference files)
+- `references/minimal-apis.md` -- Minimal API route groups, filters, TypedResults, OpenAPI
+- `references/middleware-patterns.md` -- Pipeline ordering, short-circuit, exception handling
+- `references/efcore-patterns.md` -- DbContext, AsNoTracking, query splitting
+- `references/efcore-architecture.md` -- Read/write split, aggregate boundaries, N+1
+- `references/data-access-strategy.md` -- EF Core vs Dapper vs ADO.NET decision matrix
+- `references/grpc.md` -- Proto definition, code-gen, ASP.NET Core host, streaming
+- `references/realtime-communication.md` -- SignalR hubs, SSE, JSON-RPC 2.0, scaling
+- `references/resilience.md` -- Polly v8 retry, circuit breaker, timeout, rate limiter
+- `references/http-client.md` -- IHttpClientFactory, typed/named clients, DelegatingHandlers
+- `references/api-versioning.md` -- Asp.Versioning.Http/Mvc, URL/header/query, sunset
+- `references/openapi.md` -- MS.AspNetCore.OpenApi, Swashbuckle migration, NSwag
+- `references/api-security.md` -- Identity, OAuth/OIDC, JWT bearer, CORS, rate limiting
+- `references/security-owasp.md` -- OWASP Top 10 hardening for .NET
+- `references/secrets-management.md` -- User secrets, environment variables, rotation
+- `references/cryptography.md` -- AES-GCM, RSA, ECDSA, hashing, PQC key derivation
+- `references/background-services.md` -- BackgroundService, IHostedService, lifecycle
+- `references/aspire-patterns.md` -- AppHost, service discovery, components, dashboard
+- `references/semantic-kernel.md` -- AI/LLM plugins, prompt templates, memory, agents
+- `references/architecture-patterns.md` -- Vertical slices, layered, pipelines, caching
+- `references/messaging-patterns.md` -- MassTransit, Azure Service Bus, pub/sub, sagas
+- `references/service-communication.md` -- REST vs gRPC vs SignalR decision matrix
+- `references/api-surface-validation.md` -- PublicApiAnalyzers, Verify snapshots, ApiCompat
+- `references/library-api-compat.md` -- Binary/source compat, type forwarders, SemVer
+- `references/io-pipelines.md` -- PipeReader/PipeWriter, backpressure, Kestrel
+- `references/agent-gotchas.md` -- Common agent mistakes in .NET code
+- `references/file-based-apps.md` -- .NET 10 file-based C# apps
+- `references/api-docs.md` -- DocFX, OpenAPI-as-docs, versioned documentation
 ```
 
 ---
@@ -217,7 +301,7 @@ ASP.NET Core APIs, data access, backend services, security, and cloud-native pat
 
 ### Routing Description (~370 chars)
 
-Builds .NET UI applications across all frameworks. Covers Blazor (patterns, components, testing), MAUI (development, AOT, testing), Uno Platform (core, targets, MCP, testing), WPF (modern and migration), WinUI 3, WinForms, accessibility, localization, UI framework selection, and cross-framework UI testing patterns. Includes XAML, MVVM, render modes, and platform-specific deployment.
+Builds .NET UI applications across all frameworks. Covers Blazor (patterns, components, auth, testing), MAUI (development, AOT, testing), Uno Platform (core, targets, MCP, testing), WPF (modern and migration), WinUI 3, WinForms, accessibility, localization, and UI framework selection. Includes XAML, MVVM, render modes, and platform-specific deployment.
 
 ### Source Skills (18)
 
@@ -225,28 +309,28 @@ Builds .NET UI applications across all frameworks. Covers Blazor (patterns, comp
 |---|-------------|-------------------|-------|
 | 1 | `dotnet-blazor-patterns` | `references/blazor-patterns.md` | |
 | 2 | `dotnet-blazor-components` | `references/blazor-components.md` | |
-| 3 | `dotnet-blazor-testing` | `references/blazor-testing.md` | |
-| 4 | `dotnet-maui-development` | `references/maui-development.md` | Has existing `examples.md` |
-| 5 | `dotnet-maui-aot` | `references/maui-aot.md` | |
-| 6 | `dotnet-maui-testing` | `references/maui-testing.md` | |
-| 7 | `dotnet-uno-platform` | `references/uno-platform.md` | |
-| 8 | `dotnet-uno-targets` | `references/uno-targets.md` | |
-| 9 | `dotnet-uno-mcp` | `references/uno-mcp.md` | |
-| 10 | `dotnet-uno-testing` | `references/uno-testing.md` | |
-| 11 | `dotnet-wpf-modern` | `references/wpf-modern.md` | |
-| 12 | `dotnet-wpf-migration` | `references/wpf-migration.md` | |
-| 13 | `dotnet-winui` | `references/winui.md` | |
-| 14 | `dotnet-winforms-basics` | `references/winforms-basics.md` | |
-| 15 | `dotnet-accessibility` | `references/accessibility.md` | |
-| 16 | `dotnet-localization` | `references/localization.md` | |
-| 17 | `dotnet-ui-chooser` | `references/ui-chooser.md` | Was user-invocable |
-| 18 | `dotnet-ui-testing-core` | `references/ui-testing-core.md` | Cross-framework UI test patterns |
+| 3 | `dotnet-blazor-auth` | `references/blazor-auth.md` | Blazor auth flows (per epic spec grouping) |
+| 4 | `dotnet-blazor-testing` | `references/blazor-testing.md` | |
+| 5 | `dotnet-maui-development` | `references/maui-development.md` | Has existing `examples.md` |
+| 6 | `dotnet-maui-aot` | `references/maui-aot.md` | |
+| 7 | `dotnet-maui-testing` | `references/maui-testing.md` | |
+| 8 | `dotnet-uno-platform` | `references/uno-platform.md` | |
+| 9 | `dotnet-uno-targets` | `references/uno-targets.md` | |
+| 10 | `dotnet-uno-mcp` | `references/uno-mcp.md` | |
+| 11 | `dotnet-uno-testing` | `references/uno-testing.md` | |
+| 12 | `dotnet-wpf-modern` | `references/wpf-modern.md` | |
+| 13 | `dotnet-wpf-migration` | `references/wpf-migration.md` | |
+| 14 | `dotnet-winui` | `references/winui.md` | |
+| 15 | `dotnet-winforms-basics` | `references/winforms-basics.md` | |
+| 16 | `dotnet-accessibility` | `references/accessibility.md` | |
+| 17 | `dotnet-localization` | `references/localization.md` | |
+| 18 | `dotnet-ui-chooser` | `references/ui-chooser.md` | Was user-invocable |
 
 ### Edge Case Rationale
 
-- **dotnet-blazor-auth** NOT here (-> dotnet-api): Auth plumbing is server-side. UI-side auth rendering (AuthorizeView) is mentioned in blazor-patterns companion.
+- **dotnet-blazor-auth** here (per epic spec): The epic groups Blazor auth under dotnet-ui ("Blazor: patterns, components, auth, testing"). Auth UI patterns (AuthorizeView, login/logout flows) are Blazor-specific; server-side auth middleware config is cross-referenced from [skill:dotnet-api].
 - **dotnet-blazor-testing**, **dotnet-maui-testing**, **dotnet-uno-testing** here (not dotnet-testing): Framework-specific test setup belongs with the framework. dotnet-testing covers strategy and framework-agnostic patterns.
-- **dotnet-ui-testing-core** here: Cross-framework UI test selectors, page objects, and async waits are UI concerns.
+- **dotnet-ui-testing-core** NOT here (-> dotnet-testing): Per epic spec, "UI testing core" is listed under dotnet-testing. Cross-framework test patterns (page objects, selectors, async waits) are testing methodology.
 - **dotnet-localization** here: Resource files and IStringLocalizer are primarily UI-facing.
 
 ### SKILL.md Content Outline
@@ -269,8 +353,22 @@ user-invocable: true
 |-------|----------|----------------|
 | Blazor patterns | hosting model, render mode, routing | references/blazor-patterns.md |
 | Blazor components | lifecycle, state, JS interop, EditForm | references/blazor-components.md |
-| UI chooser | framework selection, decision tree | references/ui-chooser.md |
-| ... (all 18 topics) | | |
+| Blazor auth | AuthorizeView, Identity UI, OIDC flows | references/blazor-auth.md |
+| Blazor testing | bUnit, rendering, events, JS mocking | references/blazor-testing.md |
+| MAUI development | project structure, XAML, MVVM, platform | references/maui-development.md |
+| MAUI AOT | iOS/Catalyst, Native AOT, trimming | references/maui-aot.md |
+| MAUI testing | Appium, XHarness, platform validation | references/maui-testing.md |
+| Uno Platform | Extensions, MVUX, Toolkit, Hot Reload | references/uno-platform.md |
+| Uno targets | WASM, iOS, Android, macOS, Windows, Linux | references/uno-targets.md |
+| Uno MCP | tool detection, search-then-fetch, init | references/uno-mcp.md |
+| Uno testing | Playwright WASM, platform patterns | references/uno-testing.md |
+| WPF modern | Host builder, MVVM Toolkit, Fluent theme | references/wpf-modern.md |
+| WPF migration | WPF/WinForms to .NET 8+, UWP to WinUI | references/wpf-migration.md |
+| WinUI | Windows App SDK, XAML, MSIX/unpackaged | references/winui.md |
+| WinForms | high-DPI, dark mode, DI, modernization | references/winforms-basics.md |
+| Accessibility | SemanticProperties, ARIA, AutomationPeer | references/accessibility.md |
+| Localization | .resx, IStringLocalizer, pluralization, RTL | references/localization.md |
+| UI chooser | framework selection decision tree | references/ui-chooser.md |
 
 ## Scope
 - Blazor (Server, WASM, Hybrid, Auto)
@@ -281,12 +379,29 @@ user-invocable: true
 - UI testing (bUnit, Appium, Playwright WASM)
 
 ## Out of scope
-- Server-side auth plumbing → [skill:dotnet-api]
-- Non-UI testing (unit, integration) → [skill:dotnet-testing]
-- Backend patterns → [skill:dotnet-api]
+- Server-side auth middleware config -> [skill:dotnet-api]
+- Non-UI testing (unit, integration) -> [skill:dotnet-testing]
+- Backend patterns -> [skill:dotnet-api]
 
 ## Companion Files
-(full ToC of all 18 reference files)
+- `references/blazor-patterns.md` -- Hosting models, render modes, routing, streaming, prerender
+- `references/blazor-components.md` -- Lifecycle, state management, JS interop, EditForm, QuickGrid
+- `references/blazor-auth.md` -- Login/logout, AuthorizeView, Identity UI, OIDC
+- `references/blazor-testing.md` -- bUnit rendering, events, cascading params, JS interop mocking
+- `references/maui-development.md` -- Project structure, XAML/MVVM, platform services
+- `references/maui-aot.md` -- iOS/Catalyst Native AOT, size/startup gains, library gaps
+- `references/maui-testing.md` -- Appium device automation, XHarness, platform validation
+- `references/uno-platform.md` -- Extensions, MVUX, Toolkit controls, Hot Reload
+- `references/uno-targets.md` -- Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux
+- `references/uno-mcp.md` -- Tool detection, search-then-fetch workflow, init rules
+- `references/uno-testing.md` -- Playwright for WASM, platform-specific patterns
+- `references/wpf-modern.md` -- Host builder, MVVM Toolkit, Fluent theme, performance
+- `references/wpf-migration.md` -- WPF/WinForms to .NET 8+, WPF to WinUI or Uno
+- `references/winui.md` -- Windows App SDK, XAML patterns, MSIX/unpackaged, UWP migration
+- `references/winforms-basics.md` -- High-DPI, dark mode, DI patterns, modernization
+- `references/accessibility.md` -- SemanticProperties, ARIA, AutomationPeer, testing per platform
+- `references/localization.md` -- .resx resources, IStringLocalizer, source generators, pluralization
+- `references/ui-chooser.md` -- Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms
 ```
 
 ### User-Invocable Rationale
@@ -299,9 +414,9 @@ user-invocable: true
 
 ### Routing Description (~360 chars)
 
-Defines .NET testing strategy and practices. Covers test architecture (unit vs integration vs E2E decision tree), xUnit v3 authoring, integration testing (WebApplicationFactory, Testcontainers, Aspire), snapshot testing (Verify), Playwright browser automation, BenchmarkDotNet microbenchmarks, CI benchmark gating, test quality metrics (Coverlet, Stryker.NET), and test doubles patterns.
+Defines .NET testing strategy and practices. Covers test architecture (unit vs integration vs E2E decision tree), xUnit v3 authoring, integration testing (WebApplicationFactory, Testcontainers, Aspire), snapshot testing (Verify), Playwright browser automation, BenchmarkDotNet microbenchmarks, CI benchmark gating, test quality metrics (Coverlet, Stryker.NET), UI testing core patterns, and test doubles patterns.
 
-### Source Skills (11)
+### Source Skills (12)
 
 | # | Source Skill | References/ Topic | Notes |
 |---|-------------|-------------------|-------|
@@ -316,11 +431,13 @@ Defines .NET testing strategy and practices. Covers test architecture (unit vs i
 | 9 | `dotnet-add-testing` | `references/add-testing.md` | Was user-invocable (scaffold) |
 | 10 | `dotnet-slopwatch` | `references/slopwatch.md` | Was user-invocable |
 | 11 | `dotnet-aot-wasm` | `references/aot-wasm.md` | WASM AOT testing context |
+| 12 | `dotnet-ui-testing-core` | `references/ui-testing-core.md` | Per epic spec: UI testing core in testing |
 
 ### Edge Case Rationale
 
 - **dotnet-blazor-testing** NOT here (-> dotnet-ui): Blazor component testing (bUnit) is framework-specific, belongs with UI.
 - **dotnet-maui-testing**, **dotnet-uno-testing** NOT here (-> dotnet-ui): Same reasoning as above.
+- **dotnet-ui-testing-core** here (per epic spec): The epic explicitly lists "UI testing core" under dotnet-testing. Cross-framework test patterns (page objects, selectors, async waits) are testing methodology, not UI-framework-specific.
 - **dotnet-add-testing** here: Scaffolding test infrastructure is a testing concern.
 - **dotnet-slopwatch** here: Quality analysis tool, natural fit with test quality.
 - **dotnet-aot-wasm** here (not dotnet-tooling): While AOT is tooling-adjacent, WASM AOT compilation is specifically about testing Blazor/Uno WASM size and startup, closely tied to test/benchmark context. However, this is a borderline call -- see Edge Cases section.
@@ -345,7 +462,16 @@ Testing strategy, frameworks, and quality tooling for .NET applications.
 |-------|----------|----------------|
 | Strategy | unit vs integration vs E2E, test doubles | references/testing-strategy.md |
 | xUnit | Facts, Theories, fixtures, parallelism | references/xunit.md |
-| ... (all 11 topics) | | |
+| Integration | WebApplicationFactory, Testcontainers, Aspire | references/integration-testing.md |
+| Snapshot | Verify, scrubbing, API responses | references/snapshot-testing.md |
+| Playwright | E2E browser, CI caching, trace viewer | references/playwright.md |
+| BenchmarkDotNet | microbenchmarks, memory diagnosers | references/benchmarkdotnet.md |
+| CI benchmarking | threshold alerts, baseline tracking | references/ci-benchmarking.md |
+| Test quality | Coverlet, Stryker.NET, flaky tests | references/test-quality.md |
+| Add testing | scaffold xUnit project, coverlet, layout | references/add-testing.md |
+| Slopwatch | LLM reward hacking detection | references/slopwatch.md |
+| AOT WASM | Blazor/Uno WASM AOT, size, lazy loading | references/aot-wasm.md |
+| UI testing core | page objects, selectors, async waits | references/ui-testing-core.md |
 
 ## Scope
 - Test strategy and architecture
@@ -355,15 +481,27 @@ Testing strategy, frameworks, and quality tooling for .NET applications.
 - Snapshot testing (Verify)
 - Benchmarking (BenchmarkDotNet, CI gating)
 - Quality (coverage, mutation testing)
+- Cross-framework UI testing patterns
 - Test scaffolding
 
 ## Out of scope
-- UI framework-specific testing → [skill:dotnet-ui]
-- CI/CD pipeline configuration → [skill:dotnet-devops]
-- Performance profiling → [skill:dotnet-tooling]
+- UI framework-specific testing (bUnit, Appium) -> [skill:dotnet-ui]
+- CI/CD pipeline configuration -> [skill:dotnet-devops]
+- Performance profiling -> [skill:dotnet-tooling]
 
 ## Companion Files
-(full ToC of all 11 reference files)
+- `references/testing-strategy.md` -- Unit vs integration vs E2E decision tree, test doubles
+- `references/xunit.md` -- xUnit v3 Facts, Theories, fixtures, parallelism, IAsyncLifetime
+- `references/integration-testing.md` -- WebApplicationFactory, Testcontainers, Aspire, fixtures
+- `references/snapshot-testing.md` -- Verify complex outputs, scrubbing non-deterministic values
+- `references/playwright.md` -- Playwright E2E, CI browser caching, trace viewer, codegen
+- `references/benchmarkdotnet.md` -- Setup, memory diagnosers, baselines, result analysis
+- `references/ci-benchmarking.md` -- Automated threshold alerts, baseline tracking, trend reports
+- `references/test-quality.md` -- Coverlet code coverage, Stryker.NET mutation testing, flaky tests
+- `references/add-testing.md` -- Scaffold xUnit project, coverlet, test layout
+- `references/slopwatch.md` -- Slopwatch CLI for LLM reward hacking detection
+- `references/aot-wasm.md` -- Blazor/Uno WASM AOT compilation, size vs speed, lazy loading
+- `references/ui-testing-core.md` -- Page objects, test selectors, async waits, accessibility
 ```
 
 ---
@@ -424,8 +562,23 @@ CI/CD, packaging, release management, and operational tooling for .NET.
 | Topic | Keywords | Companion File |
 |-------|----------|----------------|
 | GHA build/test | setup-dotnet, NuGet cache, reporting | references/gha-build-test.md |
-| Containers | Dockerfile, SDK publish, rootless | references/containers.md |
-| ... (all 18 topics) | | |
+| GHA deploy | Azure Web Apps, GitHub Pages, containers | references/gha-deploy.md |
+| GHA publish | NuGet push, container images, signing, SBOM | references/gha-publish.md |
+| GHA patterns | reusable workflows, composite, matrix, cache | references/gha-patterns.md |
+| ADO build/test | DotNetCoreCLI, Artifacts, test results | references/ado-build-test.md |
+| ADO publish | NuGet push, containers to ACR | references/ado-publish.md |
+| ADO patterns | templates, variable groups, multi-stage | references/ado-patterns.md |
+| ADO unique | environments, approvals, service connections | references/ado-unique.md |
+| Containers | multi-stage Dockerfiles, SDK publish, rootless | references/containers.md |
+| Container deployment | Compose, health probes, CI/CD pipelines | references/container-deployment.md |
+| NuGet authoring | SDK-style, source generators, multi-TFM | references/nuget-authoring.md |
+| MSIX | creation, signing, Store, sideload, auto-update | references/msix.md |
+| GitHub Releases | creation, assets, notes, pre-release | references/github-releases.md |
+| Release management | NBGV, SemVer, changelogs, branching | references/release-management.md |
+| Observability | OpenTelemetry, health checks, custom metrics | references/observability.md |
+| Structured logging | aggregation, sampling, PII, correlation | references/structured-logging.md |
+| Add CI | CI/CD scaffold, GHA vs ADO detection | references/add-ci.md |
+| GitHub docs | README badges, CONTRIBUTING, templates | references/github-docs.md |
 
 ## Scope
 - GitHub Actions workflows
@@ -438,12 +591,29 @@ CI/CD, packaging, release management, and operational tooling for .NET.
 - GitHub repository documentation
 
 ## Out of scope
-- API/backend code patterns → [skill:dotnet-api]
-- Build system authoring → [skill:dotnet-tooling]
-- Test authoring → [skill:dotnet-testing]
+- API/backend code patterns -> [skill:dotnet-api]
+- Build system authoring -> [skill:dotnet-tooling]
+- Test authoring -> [skill:dotnet-testing]
 
 ## Companion Files
-(full ToC of all 18 reference files)
+- `references/gha-build-test.md` -- GitHub Actions .NET build/test, setup-dotnet, NuGet cache
+- `references/gha-deploy.md` -- Deploy from GHA to Azure, GitHub Pages, container registries
+- `references/gha-publish.md` -- NuGet push, container images, signing, SBOM from GHA
+- `references/gha-patterns.md` -- Reusable workflows, composite actions, matrix, caching
+- `references/ado-build-test.md` -- Azure DevOps .NET build/test, DotNetCoreCLI task
+- `references/ado-publish.md` -- NuGet push, containers to ACR from ADO
+- `references/ado-patterns.md` -- YAML pipelines, templates, variable groups, multi-stage
+- `references/ado-unique.md` -- Environments, approvals, service connections, pipelines
+- `references/containers.md` -- Multi-stage Dockerfiles, SDK container publish, rootless
+- `references/container-deployment.md` -- Compose, health probes, CI/CD image pipelines
+- `references/nuget-authoring.md` -- SDK-style csproj, source generators, multi-TFM, symbols
+- `references/msix.md` -- MSIX creation, signing, Store submission, sideload, auto-update
+- `references/github-releases.md` -- Release creation, assets, notes, pre-release management
+- `references/release-management.md` -- NBGV versioning, SemVer, changelogs, branching
+- `references/observability.md` -- OpenTelemetry traces/metrics/logs, health checks
+- `references/structured-logging.md` -- Aggregation, queries, sampling, PII scrubbing, correlation
+- `references/add-ci.md` -- CI/CD scaffold, GitHub Actions vs Azure DevOps detection
+- `references/github-docs.md` -- README badges, CONTRIBUTING, issue/PR templates
 ```
 
 ---
@@ -509,10 +679,38 @@ user-invocable: true
 ## Routing Table
 | Topic | Keywords | Companion File |
 |-------|----------|----------------|
-| Project setup | solution, .slnx, CPM, analyzers | references/project-structure.md |
-| MSBuild | targets, props, conditions | references/msbuild-authoring.md |
-| Native AOT | PublishAot, ILLink, size | references/native-aot.md |
-| ... (all 32 topics) | | |
+| Project structure | solution, .slnx, CPM, analyzers | references/project-structure.md |
+| Scaffold project | dotnet new, CPM, SourceLink, editorconfig | references/scaffold-project.md |
+| Csproj reading | PropertyGroup, ItemGroup, CPM, props | references/csproj-reading.md |
+| MSBuild authoring | targets, props, conditions, Directory.Build | references/msbuild-authoring.md |
+| MSBuild tasks | ITask, ToolTask, inline tasks, UsingTask | references/msbuild-tasks.md |
+| Build analysis | MSBuild output, NuGet errors, analyzer warnings | references/build-analysis.md |
+| Build optimization | slow builds, binary logs, parallel, restore | references/build-optimization.md |
+| Artifacts output | UseArtifactsOutput, ArtifactsPath, CI/Docker | references/artifacts-output.md |
+| Multi-targeting | multiple TFMs, polyfills, conditional compilation | references/multi-targeting.md |
+| Performance patterns | Span, ArrayPool, ref struct, sealed, stackalloc | references/performance-patterns.md |
+| Profiling | dotnet-counters, dotnet-trace, flame graphs | references/profiling.md |
+| Native AOT | PublishAot, ILLink, P/Invoke, size optimization | references/native-aot.md |
+| AOT architecture | source gen, AOT-safe DI, serialization | references/aot-architecture.md |
+| Trimming | annotations, ILLink, IL2xxx warnings, IsTrimmable | references/trimming.md |
+| GC/memory | GC modes, LOH/POH, Span/Memory, ArrayPool | references/gc-memory.md |
+| CLI architecture | command/handler/service, clig.dev, exit codes | references/cli-architecture.md |
+| System.CommandLine | RootCommand, Option<T>, SetAction, parsing | references/system-commandline.md |
+| Spectre.Console | tables, trees, progress, prompts, live displays | references/spectre-console.md |
+| Terminal.Gui | views, layout, menus, dialogs, bindings, themes | references/terminal-gui.md |
+| CLI distribution | AOT vs framework-dependent, RID matrix | references/cli-distribution.md |
+| CLI packaging | Homebrew, apt/deb, winget, Scoop, Chocolatey | references/cli-packaging.md |
+| CLI release pipeline | GHA build matrix, artifact staging, checksums | references/cli-release-pipeline.md |
+| Documentation strategy | Starlight, Docusaurus, DocFX decision tree | references/documentation-strategy.md |
+| XML docs | tags, inheritdoc, GenerateDocumentationFile | references/xml-docs.md |
+| Tool management | global, local, manifests, restore, pinning | references/tool-management.md |
+| Version detection | TFM/SDK from .csproj, global.json | references/version-detection.md |
+| Version upgrade | LTS-to-LTS, staged, preview, upgrade paths | references/version-upgrade.md |
+| Solution navigation | entry points, .sln/.slnx, dependency graphs | references/solution-navigation.md |
+| Project analysis | solution layout, build config analysis | references/project-analysis.md |
+| Modernize | outdated TFMs, deprecated packages, patterns | references/modernize.md |
+| Add analyzers | nullable, trimming, AOT compat, severity config | references/add-analyzers.md |
+| Mermaid diagrams | architecture, sequence, class, ER, flowcharts | references/mermaid-diagrams.md |
 
 ## Scope
 - Solution structure and project scaffolding
@@ -526,12 +724,43 @@ user-invocable: true
 - Code modernization
 
 ## Out of scope
-- Web API patterns → [skill:dotnet-api]
-- Test authoring → [skill:dotnet-testing]
-- CI/CD pipelines → [skill:dotnet-devops]
+- Web API patterns -> [skill:dotnet-api]
+- Test authoring -> [skill:dotnet-testing]
+- CI/CD pipelines -> [skill:dotnet-devops]
 
 ## Companion Files
-(full ToC of all 32 reference files)
+- `references/project-structure.md` -- .slnx, Directory.Build.props, CPM, analyzers
+- `references/scaffold-project.md` -- dotnet new with CPM, analyzers, editorconfig, SourceLink
+- `references/csproj-reading.md` -- SDK-style .csproj, PropertyGroup, ItemGroup, CPM
+- `references/msbuild-authoring.md` -- Targets, props, conditions, Directory.Build patterns
+- `references/msbuild-tasks.md` -- ITask, ToolTask, IIncrementalTask, inline tasks
+- `references/build-analysis.md` -- MSBuild output, NuGet errors, analyzer warnings
+- `references/build-optimization.md` -- Slow builds, binary logs, parallel, restore
+- `references/artifacts-output.md` -- UseArtifactsOutput, ArtifactsPath, CI/Docker impact
+- `references/multi-targeting.md` -- Multiple TFMs, PolySharp, conditional compilation
+- `references/performance-patterns.md` -- Span, ArrayPool, ref struct, sealed, stackalloc
+- `references/profiling.md` -- dotnet-counters, dotnet-trace, dotnet-dump, flame graphs
+- `references/native-aot.md` -- PublishAot, ILLink descriptors, P/Invoke, size optimization
+- `references/aot-architecture.md` -- Source gen over reflection, AOT-safe DI, factories
+- `references/trimming.md` -- Annotations, ILLink, IL2xxx warnings, IsTrimmable
+- `references/gc-memory.md` -- GC modes, LOH/POH, Gen0/1/2, Span/Memory, ArrayPool
+- `references/cli-architecture.md` -- Command/handler/service, clig.dev, exit codes
+- `references/system-commandline.md` -- System.CommandLine 2.0, RootCommand, Option<T>
+- `references/spectre-console.md` -- Tables, trees, progress, prompts, live displays
+- `references/terminal-gui.md` -- Terminal.Gui v2, views, layout, menus, dialogs
+- `references/cli-distribution.md` -- AOT vs framework-dependent, RID matrix, single-file
+- `references/cli-packaging.md` -- Homebrew, apt/deb, winget, Scoop, Chocolatey
+- `references/cli-release-pipeline.md` -- GHA build matrix, artifact staging, checksums
+- `references/documentation-strategy.md` -- Starlight, Docusaurus, DocFX decision tree
+- `references/xml-docs.md` -- XML doc comments, inheritdoc, warning suppression
+- `references/tool-management.md` -- Global/local tools, manifests, restore, pinning
+- `references/version-detection.md` -- TFM/SDK from .csproj, global.json, Directory.Build
+- `references/version-upgrade.md` -- LTS-to-LTS, staged through STS, preview paths
+- `references/solution-navigation.md` -- Entry points, .sln/.slnx, dependency graphs
+- `references/project-analysis.md` -- Solution layout, build config, .csproj analysis
+- `references/modernize.md` -- Outdated TFMs, deprecated packages, superseded patterns
+- `references/add-analyzers.md` -- Nullable, trimming, AOT compat analyzers, severity
+- `references/mermaid-diagrams.md` -- Architecture, sequence, class, deployment, ER diagrams
 ```
 
 ### User-Invocable Rationale
@@ -653,7 +882,8 @@ Always invoke [skill:dotnet-csharp] for code paths to ensure coding standards co
 | Skill | Could fit in | Assigned to | Rationale |
 |-------|-------------|-------------|-----------|
 | `dotnet-agent-gotchas` | csharp, api, tooling | **dotnet-api** | Most gotchas are API/backend (async, DI, NuGet). C# is language-only. |
-| `dotnet-blazor-auth` | api, ui | **dotnet-api** | Auth plumbing (Identity, OIDC, JWT) is server-side. UI auth rendering in blazor-patterns. |
+| `dotnet-blazor-auth` | api, ui | **dotnet-ui** | Epic spec groups under "Blazor (patterns, components, auth, testing)". Auth UI patterns are Blazor-specific. |
+| `dotnet-ui-testing-core` | ui, testing | **dotnet-testing** | Epic spec lists "UI testing core" under dotnet-testing. Cross-framework test methodology. |
 | `dotnet-aot-wasm` | testing, tooling, ui | **dotnet-testing** | WASM AOT is about size/startup benchmarking. UI has maui-aot separately. |
 | `dotnet-file-based-apps` | api, tooling, csharp | **dotnet-api** | .NET 10 app model, closely aligned with Minimal APIs. |
 | `dotnet-io-pipelines` | api, csharp | **dotnet-api** | High-perf Kestrel I/O is server/API territory. |
@@ -787,7 +1017,7 @@ Total source skills: 131
 | dotnet-aspire-patterns | dotnet-api |
 | dotnet-background-services | dotnet-api |
 | dotnet-benchmarkdotnet | dotnet-testing |
-| dotnet-blazor-auth | dotnet-api |
+| dotnet-blazor-auth | dotnet-ui |
 | dotnet-blazor-components | dotnet-ui |
 | dotnet-blazor-patterns | dotnet-ui |
 | dotnet-blazor-testing | dotnet-ui |
@@ -882,7 +1112,7 @@ Total source skills: 131
 | dotnet-tool-management | dotnet-tooling |
 | dotnet-trimming | dotnet-tooling |
 | dotnet-ui-chooser | dotnet-ui |
-| dotnet-ui-testing-core | dotnet-ui |
+| dotnet-ui-testing-core | dotnet-testing |
 | dotnet-uno-mcp | dotnet-ui |
 | dotnet-uno-platform | dotnet-ui |
 | dotnet-uno-targets | dotnet-ui |
@@ -902,14 +1132,14 @@ Total source skills: 131
 
 ```
 dotnet-csharp:    22 (coding-standards, async-patterns, dependency-injection, configuration, source-generators, nullable-reference-types, serialization, channels, linq-optimization, domain-modeling, solid-principles, concurrency-patterns, roslyn-analyzers, editorconfig, file-io, native-interop, input-validation, validation-patterns, modern-patterns, api-design, type-design-performance, code-smells)
-dotnet-api:       28 (minimal-apis, middleware-patterns, efcore-patterns, efcore-architecture, data-access-strategy, grpc, realtime-communication, resilience, http-client, api-versioning, openapi, api-security, security-owasp, secrets-management, cryptography, background-services, aspire-patterns, semantic-kernel, architecture-patterns, messaging-patterns, service-communication, api-surface-validation, library-api-compat, io-pipelines, blazor-auth, agent-gotchas, file-based-apps, api-docs)
-dotnet-ui:        18 (blazor-patterns, blazor-components, blazor-testing, maui-development, maui-aot, maui-testing, uno-platform, uno-targets, uno-mcp, uno-testing, wpf-modern, wpf-migration, winui, winforms-basics, accessibility, localization, ui-chooser, ui-testing-core)
-dotnet-testing:   11 (testing-strategy, xunit, integration-testing, snapshot-testing, playwright, benchmarkdotnet, ci-benchmarking, test-quality, add-testing, slopwatch, aot-wasm)
+dotnet-api:       27 (minimal-apis, middleware-patterns, efcore-patterns, efcore-architecture, data-access-strategy, grpc, realtime-communication, resilience, http-client, api-versioning, openapi, api-security, security-owasp, secrets-management, cryptography, background-services, aspire-patterns, semantic-kernel, architecture-patterns, messaging-patterns, service-communication, api-surface-validation, library-api-compat, io-pipelines, agent-gotchas, file-based-apps, api-docs)
+dotnet-ui:        18 (blazor-patterns, blazor-components, blazor-auth, blazor-testing, maui-development, maui-aot, maui-testing, uno-platform, uno-targets, uno-mcp, uno-testing, wpf-modern, wpf-migration, winui, winforms-basics, accessibility, localization, ui-chooser)
+dotnet-testing:   12 (testing-strategy, xunit, integration-testing, snapshot-testing, playwright, benchmarkdotnet, ci-benchmarking, test-quality, add-testing, slopwatch, aot-wasm, ui-testing-core)
 dotnet-devops:    18 (gha-build-test, gha-deploy, gha-publish, gha-patterns, ado-build-test, ado-publish, ado-patterns, ado-unique, containers, container-deployment, nuget-authoring, msix, github-releases, release-management, observability, structured-logging, add-ci, github-docs)
 dotnet-tooling:   32 (project-structure, scaffold-project, csproj-reading, msbuild-authoring, msbuild-tasks, build-analysis, build-optimization, artifacts-output, multi-targeting, performance-patterns, profiling, native-aot, aot-architecture, trimming, gc-memory, cli-architecture, system-commandline, spectre-console, terminal-gui, cli-distribution, cli-packaging, cli-release-pipeline, documentation-strategy, xml-docs, tool-management, version-detection, version-upgrade, solution-navigation, project-analysis, modernize, add-analyzers, mermaid-diagrams)
 dotnet-debugging: 1  (windbg-debugging)
 dotnet-advisor:   1  (advisor)
-TOTAL:           131 (22 + 28 + 18 + 11 + 18 + 32 + 1 + 1)
+TOTAL:           131 (22 + 27 + 18 + 12 + 18 + 32 + 1 + 1)
 ```
 
 All 131 source skills have exactly one assignment. No duplicates, no gaps.
