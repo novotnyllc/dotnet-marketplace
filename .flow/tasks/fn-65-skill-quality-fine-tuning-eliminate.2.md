@@ -69,9 +69,8 @@ Note: This quick check may flag legitimate agent refs. The full validator (Task 
 - [ ] `grep -r '^\# dotnet-' skills/*/references/*.md` returns zero matches
 
 ## Done summary
-TBD
-
+Normalized all 145 reference files: converted 115 slug-style titles to human-readable Title Case with acronym preservation, removed Scope/OOS sections from 121 files (eliminating 372 stale skill refs and ~2,500 lines), fixed stale cross-references in body text, moved code fences below H1 titles, and stripped leading blank lines. Modern standalone cross-reference lines in dotnet-csharp files preserved. Review feedback addressed (double blank lines, duplicate skill ref).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 28c0d84, 1ac2622
+- Tests: ./scripts/validate-skills.sh && ./scripts/validate-marketplace.sh, grep -r '^# dotnet-' skills/*/references/*.md (0 matches), grep -rl '## Scope' skills/*/references/*.md (0 matches), grep -rl '## Out of scope' skills/*/references/*.md (0 matches)
 - PRs:
