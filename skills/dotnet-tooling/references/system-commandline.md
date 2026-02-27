@@ -20,15 +20,15 @@ System.CommandLine 2.0 stable API for building .NET CLI applications. Covers Roo
 
 ## Out of scope
 
-- CLI application architecture patterns (layered design, exit codes, stdin/stdout/stderr) -- see [skill:dotnet-cli-architecture]
-- Native AOT compilation -- see [skill:dotnet-native-aot]
-- CLI distribution strategy -- see [skill:dotnet-cli-distribution]
-- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
-- DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
-- General coding standards -- see [skill:dotnet-csharp-coding-standards]
-- CLI packaging for Homebrew, apt, winget -- see [skill:dotnet-cli-packaging]
+- CLI application architecture patterns (layered design, exit codes, stdin/stdout/stderr) -- see `references/cli-architecture.md`
+- Native AOT compilation -- see `references/native-aot.md`
+- CLI distribution strategy -- see `references/cli-distribution.md`
+- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
+- DI container mechanics -- see [skill:dotnet-csharp]
+- General coding standards -- see [skill:dotnet-csharp]
+- CLI packaging for Homebrew, apt, winget -- see `references/cli-packaging.md`
 
-Cross-references: [skill:dotnet-cli-architecture] for CLI design patterns, [skill:dotnet-native-aot] for AOT publishing CLI tools, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-csharp-configuration] for configuration integration, [skill:dotnet-csharp-coding-standards] for naming and style conventions.
+Cross-references: `references/cli-architecture.md` for CLI design patterns, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI fundamentals, [skill:dotnet-csharp] for configuration integration, [skill:dotnet-csharp] for naming and style conventions.
 
 
 ## Package Reference
@@ -248,7 +248,7 @@ FileInfo? file = parseResult.GetValue(fileOption);
 
 
 
-For detailed examples (custom parsing, validation, configuration, tab completion, DI, testing, migration), see `examples.md` in this skill directory.
+For detailed examples (custom parsing, validation, configuration, tab completion, DI, testing, migration), see the Detailed Examples section below.
 
 ## Agent Gotchas
 

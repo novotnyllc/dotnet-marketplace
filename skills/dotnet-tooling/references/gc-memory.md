@@ -14,12 +14,12 @@ Garbage collection and memory management for .NET applications. Covers GC modes 
 
 ## Out of scope
 
-- Span<T>/Memory<T> syntax introduction and basic usage -- see [skill:dotnet-performance-patterns]
-- Microbenchmarking setup -- see [skill:dotnet-benchmarkdotnet]
-- CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
-- Channel<T> producer/consumer patterns -- see [skill:dotnet-channels]
+- Span<T>/Memory<T> syntax introduction and basic usage -- see `references/performance-patterns.md`
+- Microbenchmarking setup -- see [skill:dotnet-testing]
+- CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see `references/profiling.md`
+- Channel<T> producer/consumer patterns -- see [skill:dotnet-csharp]
 
-Cross-references: [skill:dotnet-performance-patterns] for Span<T>/Memory<T> basics and sealed devirtualization, [skill:dotnet-profiling] for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-channels] for backpressure patterns that interact with memory management, [skill:dotnet-file-io] for MemoryMappedFile usage and POH buffer patterns in file I/O.
+Cross-references: `references/performance-patterns.md` for Span<T>/Memory<T> basics and sealed devirtualization, `references/profiling.md` for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-csharp] for backpressure patterns that interact with memory management, [skill:dotnet-csharp] for MemoryMappedFile usage and POH buffer patterns in file I/O.
 
 
 ## GC Modes and Configuration
@@ -188,7 +188,7 @@ Use POH for:
 
 ## Span<T>/Memory<T> Deep Ownership Patterns
 
-See [skill:dotnet-performance-patterns] for Span<T>/Memory<T> introduction and basic slicing. This section covers ownership semantics and lifetime management for shared buffers.
+See `references/performance-patterns.md` for Span<T>/Memory<T> introduction and basic slicing. This section covers ownership semantics and lifetime management for shared buffers.
 
 ### IMemoryOwner<T> for Pooled Buffers
 
@@ -542,11 +542,11 @@ PerfView.exe /ClrEvents:GC+Stack /MaxCollectSec:30 collect
 ### Profiling Workflow
 
 1. **Identify the symptom** -- high memory usage, growing Gen2, frequent Gen2 collections, LOH fragmentation
-2. **Monitor with dotnet-counters** (see [skill:dotnet-profiling]) to confirm GC metrics match the symptom
+2. **Monitor with dotnet-counters** (see `references/profiling.md`) to confirm GC metrics match the symptom
 3. **Profile with dotMemory or PerfView** to identify the objects and allocation sites
 4. **Apply fixes** -- pool buffers, use Span<T>, reduce allocations, fix leaks
-5. **Validate with BenchmarkDotNet** (see [skill:dotnet-benchmarkdotnet]) `[MemoryDiagnoser]` to confirm improvement
-6. **Monitor in production** via OpenTelemetry runtime metrics (see [skill:dotnet-observability])
+5. **Validate with BenchmarkDotNet** (see [skill:dotnet-testing]) `[MemoryDiagnoser]` to confirm improvement
+6. **Monitor in production** via OpenTelemetry runtime metrics (see [skill:dotnet-devops])
 
 
 ## Agent Gotchas

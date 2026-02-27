@@ -3,7 +3,7 @@
 
 Scaffolds a new .NET project with all modern best practices applied. Generates the full solution structure including Central Package Management, analyzers, .editorconfig, SourceLink, and deterministic builds.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine available SDK version — this affects which features and templates are available.
+**Prerequisites:** Run `references/version-detection.md` first to determine available SDK version — this affects which features and templates are available.
 
 ## Scope
 
@@ -13,11 +13,11 @@ Scaffolds a new .NET project with all modern best practices applied. Generates t
 
 ## Out of scope
 
-- Solution layout rationale and conventions -- see [skill:dotnet-project-structure]
-- Analyzer configuration details -- see [skill:dotnet-add-analyzers]
-- CI workflow generation -- see [skill:dotnet-add-ci]
+- Solution layout rationale and conventions -- see `references/project-structure.md`
+- Analyzer configuration details -- see `references/add-analyzers.md`
+- CI workflow generation -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-project-structure] for layout rationale, [skill:dotnet-add-analyzers] for analyzer configuration, [skill:dotnet-add-ci] for adding CI after scaffolding.
+Cross-references: `references/project-structure.md` for layout rationale, `references/add-analyzers.md` for analyzer configuration, [skill:dotnet-devops] for adding CI after scaffolding.
 
 
 ## Step 1: Create Solution Structure
@@ -151,7 +151,7 @@ Apply shared package references (SourceLink, analyzers) to all projects. Items g
 </Project>
 ```
 
-The built-in Roslyn analyzers are already enabled by the `AnalysisLevel` and `EnforceCodeStyleInBuild` properties in Directory.Build.props (Step 3). For additional third-party analyzers, see [skill:dotnet-add-analyzers].
+The built-in Roslyn analyzers are already enabled by the `AnalysisLevel` and `EnforceCodeStyleInBuild` properties in Directory.Build.props (Step 3). For additional third-party analyzers, see `references/add-analyzers.md`.
 
 
 ## Step 5: Set Up Central Package Management
@@ -183,7 +183,7 @@ After creating this, **remove** `Version` attributes from all `<PackageReference
 
 ## Step 6: Add .editorconfig
 
-Create at the repo root. See [skill:dotnet-project-structure] for the full recommended config.
+Create at the repo root. See `references/project-structure.md` for the full recommended config.
 
 Minimal starter:
 

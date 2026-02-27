@@ -16,9 +16,9 @@ Guidance for authoring custom MSBuild tasks: implementing the `ITask` interface,
 
 ## Out of scope
 
-- MSBuild project system authoring (targets, props, items, conditions) -- see [skill:dotnet-msbuild-authoring]
+- MSBuild project system authoring (targets, props, items, conditions) -- see `references/msbuild-authoring.md`
 
-Cross-references: [skill:dotnet-msbuild-authoring] for custom targets, import ordering, items, conditions, and property functions.
+Cross-references: `references/msbuild-authoring.md` for custom targets, import ordering, items, conditions, and property functions.
 
 
 ## ITask Interface
@@ -78,7 +78,7 @@ The `Task` base class exposes a `Log` property (`TaskLoggingHelper`) with conven
 
 
 
-For detailed code examples (ToolTask, IIncrementalTask, task parameters, inline tasks, UsingTask, debugging, NuGet packaging), see `examples.md` in this skill directory.
+For detailed code examples (ToolTask, IIncrementalTask, task parameters, inline tasks, UsingTask, debugging, NuGet packaging), see the Detailed Examples section below.
 
 ## Agent Gotchas
 
@@ -216,7 +216,7 @@ MSBuild creates the response file, passes `@responsefile.rsp` to the tool, and c
 - MSBuild 17.8+ (ships with VS 2022 17.8+)
 - .NET 8.0 SDK or later
 
-Tasks targeting older MSBuild versions must not reference this interface. Use target-level `Inputs`/`Outputs` for incrementality on older versions. See [skill:dotnet-msbuild-authoring] for target-level incremental patterns.
+Tasks targeting older MSBuild versions must not reference this interface. Use target-level `Inputs`/`Outputs` for incrementality on older versions. See `references/msbuild-authoring.md` for target-level incremental patterns.
 
 ### How It Works
 

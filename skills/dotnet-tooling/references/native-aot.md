@@ -17,16 +17,16 @@ Full Native AOT compilation pipeline for .NET 8+ applications: `PublishAot` conf
 
 ## Out of scope
 
-- MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-maui-aot]
-- AOT-first design patterns (source gen, DI, serialization) -- see [skill:dotnet-aot-architecture]
-- Trim-safe library authoring -- see [skill:dotnet-trimming]
-- WASM AOT for Blazor/Uno -- see [skill:dotnet-aot-wasm]
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
-- DI container patterns -- see [skill:dotnet-csharp-dependency-injection]
-- Serialization depth -- see [skill:dotnet-serialization]
-- Container deployment orchestration -- see [skill:dotnet-containers]
+- MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-ui]
+- AOT-first design patterns (source gen, DI, serialization) -- see `references/aot-architecture.md`
+- Trim-safe library authoring -- see `references/trimming.md`
+- WASM AOT for Blazor/Uno -- see [skill:dotnet-ui]
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
+- DI container patterns -- see [skill:dotnet-csharp]
+- Serialization depth -- see [skill:dotnet-csharp]
+- Container deployment orchestration -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-aot-architecture] for AOT-first design patterns, [skill:dotnet-trimming] for trim-safe library authoring, [skill:dotnet-aot-wasm] for WebAssembly AOT, [skill:dotnet-maui-aot] for MAUI-specific AOT, [skill:dotnet-containers] for `runtime-deps` base images, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-csharp-dependency-injection] for AOT-safe DI, [skill:dotnet-native-interop] for general P/Invoke patterns and cross-platform library resolution.
+Cross-references: `references/aot-architecture.md` for AOT-first design patterns, `references/trimming.md` for trim-safe library authoring, [skill:dotnet-ui] for WebAssembly AOT, [skill:dotnet-ui] for MAUI-specific AOT, [skill:dotnet-devops] for `runtime-deps` base images, [skill:dotnet-csharp] for AOT-safe serialization, [skill:dotnet-csharp] for source gen as AOT enabler, [skill:dotnet-csharp] for AOT-safe DI, [skill:dotnet-csharp] for general P/Invoke patterns and cross-platform library resolution.
 
 
 ## PublishAot Configuration
@@ -183,7 +183,7 @@ Native AOT works best with code that avoids runtime reflection entirely. Replace
 | `JsonSerializer.Deserialize<T>(json)` | `JsonSerializer.Deserialize(json, Context.Default.T)` |
 | `MethodInfo.Invoke()` for dispatch | `switch` on type or interface dispatch |
 
-See [skill:dotnet-aot-architecture] for comprehensive AOT-first design patterns.
+See `references/aot-architecture.md` for comprehensive AOT-first design patterns.
 
 
 ## P/Invoke Considerations
@@ -296,7 +296,7 @@ COPY --from=build /app/publish .
 ENTRYPOINT ["./MyApp"]
 ```
 
-The `runtime-deps` image contains only OS-level dependencies (libc, OpenSSL, etc.) -- no .NET runtime. This is the smallest possible base image for AOT-published apps (~30 MB). See [skill:dotnet-containers] for full container patterns.
+The `runtime-deps` image contains only OS-level dependencies (libc, OpenSSL, etc.) -- no .NET runtime. This is the smallest possible base image for AOT-published apps (~30 MB). See [skill:dotnet-devops] for full container patterns.
 
 
 ## ASP.NET Core Native AOT
@@ -355,7 +355,7 @@ Use `CreateSlimBuilder` for Native AOT applications. It excludes features that r
 
 **Runtime NativeAOT code generation:** The .NET 10 runtime improves AOT code generation for struct arguments, enhances loop inversion optimizations, and improves method devirtualization -- resulting in better throughput for AOT-published applications without code changes.
 
-**Blazor Server and SignalR:** Blazor Server and SignalR remain **not supported** with Native AOT in .NET 10. Blazor WebAssembly AOT (client-side compilation) is a separate concern covered by [skill:dotnet-aot-wasm]. For Blazor Server apps, continue using JIT deployment.
+**Blazor Server and SignalR:** Blazor Server and SignalR remain **not supported** with Native AOT in .NET 10. Blazor WebAssembly AOT (client-side compilation) is a separate concern covered by [skill:dotnet-ui]. For Blazor Server apps, continue using JIT deployment.
 
 **Compatibility snapshot (.NET 10):**
 

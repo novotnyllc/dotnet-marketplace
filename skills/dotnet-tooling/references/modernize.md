@@ -12,12 +12,12 @@ Analyze existing .NET code for modernization opportunities. Identifies outdated 
 
 ## Out of scope
 
-- Actual migration paths and polyfill strategies -- see [skill:dotnet-version-upgrade]
-- Multi-targeting guidance -- see [skill:dotnet-multi-targeting]
+- Actual migration paths and polyfill strategies -- see `references/version-upgrade.md`
+- Multi-targeting guidance -- see `references/multi-targeting.md`
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine the current SDK, TFM, and language version. Run [skill:dotnet-project-analysis] to understand solution structure and dependencies.
+**Prerequisites:** Run `references/version-detection.md` first to determine the current SDK, TFM, and language version. Run `references/project-analysis.md` to understand solution structure and dependencies.
 
-Cross-references: [skill:dotnet-project-structure] for modern layout conventions, [skill:dotnet-add-analyzers] for analyzer-based detection of deprecated patterns, [skill:dotnet-scaffold-project] for the target state of a fully modernized project.
+Cross-references: `references/project-structure.md` for modern layout conventions, `references/add-analyzers.md` for analyzer-based detection of deprecated patterns, `references/scaffold-project.md` for the target state of a fully modernized project.
 
 
 ## Modernization Checklist
@@ -166,14 +166,14 @@ Check for the absence of recommended build infrastructure:
 
 | Missing | Check | Recommendation |
 |---------|-------|----------------|
-| Central Package Management | No `Directory.Packages.props` | See [skill:dotnet-project-structure] |
+| Central Package Management | No `Directory.Packages.props` | See `references/project-structure.md` |
 | Directory.Build.props | Properties scattered across `.csproj` files | Centralize shared properties |
-| .editorconfig | No `.editorconfig` at repo root | See [skill:dotnet-project-structure] |
+| .editorconfig | No `.editorconfig` at repo root | See `references/project-structure.md` |
 | global.json | No SDK pinning | Add for reproducible builds |
 | NuGet audit | No `NuGetAudit` property | Enable in `Directory.Build.props` |
 | Lock files | No `RestorePackagesWithLockFile` | Enable for deterministic restores |
 | Package source mapping | No `packageSourceMapping` in `nuget.config` | Add for supply-chain security |
-| Analyzers | No `AnalysisLevel` or `EnforceCodeStyleInBuild` | See [skill:dotnet-add-analyzers] |
+| Analyzers | No `AnalysisLevel` or `EnforceCodeStyleInBuild` | See `references/add-analyzers.md` |
 | SourceLink | No SourceLink package reference | Add for debugger source navigation |
 | Nullable reference types | `<Nullable>` not enabled | Enable globally |
 | .slnx | Still using `.sln` with .NET 9+ SDK | Migrate with `dotnet sln migrate` |
@@ -265,12 +265,12 @@ Not all modernization is equally urgent. Prioritize by impact:
 ## What's Next
 
 This skill flags modernization opportunities. For executing upgrades:
-- **TFM version upgrades and migration paths** -- [skill:dotnet-version-upgrade]
-- **Multi-targeting strategies** -- [skill:dotnet-multi-targeting]
-- **Polyfill packages for cross-version support** -- [skill:dotnet-multi-targeting]
-- **Adding missing build infrastructure** -- [skill:dotnet-project-structure], [skill:dotnet-scaffold-project]
-- **Configuring analyzers** -- [skill:dotnet-add-analyzers]
-- **Adding CI/CD** -- [skill:dotnet-add-ci]
+- **TFM version upgrades and migration paths** -- `references/version-upgrade.md`
+- **Multi-targeting strategies** -- `references/multi-targeting.md`
+- **Polyfill packages for cross-version support** -- `references/multi-targeting.md`
+- **Adding missing build infrastructure** -- `references/project-structure.md`, `references/scaffold-project.md`
+- **Configuring analyzers** -- `references/add-analyzers.md`
+- **Adding CI/CD** -- [skill:dotnet-devops]
 
 
 ## References

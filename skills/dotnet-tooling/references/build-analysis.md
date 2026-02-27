@@ -12,15 +12,15 @@ Help agents interpret and act on MSBuild build output. Covers error code prefixe
 
 ## Out of scope
 
-- Writing or modifying .csproj files -- see [skill:dotnet-csproj-reading]
-- Project structure decisions -- see [skill:dotnet-project-structure]
-- Common agent code mistakes -- see [skill:dotnet-agent-gotchas]
+- Writing or modifying .csproj files -- see `references/csproj-reading.md`
+- Project structure decisions -- see `references/project-structure.md`
+- Common agent code mistakes -- see [skill:dotnet-api]
 
 ## Prerequisites
 
 .NET 8.0+ SDK. MSBuild (included with .NET SDK). Understanding of SDK-style project format.
 
-Cross-references: [skill:dotnet-agent-gotchas] for common code mistakes that cause build errors, [skill:dotnet-csproj-reading] for project file structure and modification, [skill:dotnet-project-structure] for project organization and SDK selection.
+Cross-references: [skill:dotnet-api] for common code mistakes that cause build errors, `references/csproj-reading.md` for project file structure and modification, `references/project-structure.md` for project organization and SDK selection.
 
 
 ## Error Code Prefixes
@@ -473,7 +473,7 @@ CI:    error CS8602: Dereference of a possibly null reference.
 
 ## Slopwatch Anti-Patterns
 
-These patterns indicate an agent is hiding build problems rather than fixing them. Flag these during code review. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
+These patterns indicate an agent is hiding build problems rather than fixing them. Flag these during code review. See [skill:dotnet-testing] for the automated quality gate that detects these patterns.
 
 ### Warning Suppressions
 
@@ -522,9 +522,9 @@ dotnet_diagnostic.CA5358.severity = none
 
 ## Cross-References
 
-- [skill:dotnet-agent-gotchas] -- common agent coding mistakes that produce build errors
-- [skill:dotnet-csproj-reading] -- project file structure, PropertyGroup/ItemGroup conventions
-- [skill:dotnet-project-structure] -- SDK selection, project organization, multi-project solutions
+- [skill:dotnet-api] -- common agent coding mistakes that produce build errors
+- `references/csproj-reading.md` -- project file structure, PropertyGroup/ItemGroup conventions
+- `references/project-structure.md` -- SDK selection, project organization, multi-project solutions
 
 ## References
 

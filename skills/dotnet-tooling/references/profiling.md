@@ -14,13 +14,13 @@ Diagnostic tool guidance for investigating .NET performance problems. Covers rea
 
 ## Out of scope
 
-- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-observability]
-- Microbenchmarking setup (BenchmarkDotNet) -- see [skill:dotnet-benchmarkdotnet]
-- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-performance-patterns]
-- Continuous benchmark regression detection in CI -- see [skill:dotnet-ci-benchmarking]
-- Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]
+- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-devops]
+- Microbenchmarking setup (BenchmarkDotNet) -- see [skill:dotnet-testing]
+- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see `references/performance-patterns.md`
+- Continuous benchmark regression detection in CI -- see [skill:dotnet-testing]
+- Architecture patterns (caching, resilience) -- see [skill:dotnet-api]
 
-Cross-references: [skill:dotnet-observability] for GC/threadpool metrics interpretation and OpenTelemetry correlation, [skill:dotnet-benchmarkdotnet] for structured benchmarking after profiling identifies hot paths, [skill:dotnet-performance-patterns] for optimization patterns to apply based on profiling results.
+Cross-references: [skill:dotnet-devops] for GC/threadpool metrics interpretation and OpenTelemetry correlation, [skill:dotnet-testing] for structured benchmarking after profiling identifies hot paths, `references/performance-patterns.md` for optimization patterns to apply based on profiling results.
 
 
 ## dotnet-counters -- Real-Time Metric Monitoring
@@ -116,7 +116,7 @@ dotnet-counters monitor --process-id <PID> --counters MyApp.Orders
 
 ### Interpreting Counter Data
 
-Use counter values to direct further investigation. See [skill:dotnet-observability] for correlating these runtime metrics with OpenTelemetry traces:
+Use counter values to direct further investigation. See [skill:dotnet-devops] for correlating these runtime metrics with OpenTelemetry traces:
 
 | Symptom | Counter Evidence | Next Step |
 |---------|------------------|-----------|
@@ -234,7 +234,7 @@ This produces a trace that shows:
 - Which types are allocated most frequently
 - Allocation sizes and the call stacks that trigger them
 
-Correlate allocation data with GC counter evidence from dotnet-counters. If `gen-2-gc-count` is high, the allocation trace shows which code paths produce long-lived objects that survive to Gen 2. See [skill:dotnet-performance-patterns] for zero-allocation patterns to apply once hot allocation sites are identified.
+Correlate allocation data with GC counter evidence from dotnet-counters. If `gen-2-gc-count` is high, the allocation trace shows which code paths produce long-lived objects that survive to Gen 2. See `references/performance-patterns.md` for zero-allocation patterns to apply once hot allocation sites are identified.
 
 ### Custom Trace Providers
 
@@ -245,7 +245,7 @@ Target specific event providers for focused tracing:
 dotnet-trace collect --process-id <PID> \
   --providers "Microsoft-Diagnostics-DiagnosticSource:::FilterAndPayloadSpecs=[AS]System.Net.Http"
 
-# Trace EF Core queries (useful with [skill:dotnet-efcore-patterns])
+# Trace EF Core queries (useful with [skill:dotnet-api])
 dotnet-trace collect --process-id <PID> \
   --providers Microsoft.EntityFrameworkCore
 
@@ -421,13 +421,13 @@ Use the diagnostic tools in a structured investigation workflow:
    │                       → Fix retention + verify with second dump
    ├── GC pressure?      → dotnet-trace --profile gc-collect
    │                       → Identify allocation hot paths
-   │                       → Apply zero-alloc patterns [skill:dotnet-performance-patterns]
+   │                       → Apply zero-alloc patterns `references/performance-patterns.md`
    └── Thread starvation? → dotnet-dump analyze
                             → threads (list all managed threads)
                             → clrstack (check for blocking calls)
 ```
 
-After profiling identifies the bottleneck, use [skill:dotnet-benchmarkdotnet] to create targeted benchmarks that quantify the improvement from fixes.
+After profiling identifies the bottleneck, use [skill:dotnet-testing] to create targeted benchmarks that quantify the improvement from fixes.
 
 
 ## Agent Gotchas
@@ -437,5 +437,5 @@ After profiling identifies the bottleneck, use [skill:dotnet-benchmarkdotnet] to
 3. **Always convert traces to flame graphs for analysis** -- reading raw `.nettrace` event logs is impractical. Use `dotnet-trace convert --format Speedscope` and open in https://www.speedscope.app/ for visual analysis.
 4. **Capture two dumps for leak investigation** -- a single dump shows current state but cannot distinguish normal resident objects from leaked ones. Compare heap statistics across two dumps taken before and after the suspected leak scenario.
 5. **Filter dumpheap by `-min 85000` to find LOH objects** -- objects >= 85,000 bytes go to the Large Object Heap, which is only collected in Gen 2 GC. Large LOH counts indicate potential fragmentation.
-6. **Interpret GC counter data with [skill:dotnet-observability]** -- runtime GC/threadpool counters overlap with OpenTelemetry metrics. Use the observability skill for correlating profiling findings with distributed trace context.
+6. **Interpret GC counter data with [skill:dotnet-devops]** -- runtime GC/threadpool counters overlap with OpenTelemetry metrics. Use the observability skill for correlating profiling findings with distributed trace context.
 7. **Do not confuse dotnet-trace gc-collect with dotnet-dump** -- gc-collect traces allocation events over time (which methods allocate); dotnet-dump captures a point-in-time heap snapshot (what objects exist). Use gc-collect for allocation rate analysis; use dotnet-dump for retention/leak analysis.

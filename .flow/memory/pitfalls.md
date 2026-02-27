@@ -492,3 +492,6 @@ When merging skills with existing companion files (examples.md), update internal
 
 ## 2026-02-27 manual [pitfall]
 When merging companion files that reference each other (e.g., SKILL.md says 'see examples.md'), update those internal cross-references to reflect the new merged file structure -- stale pointers to deleted files survive sed-based cross-ref remapping
+
+## 2026-02-27 manual [pitfall]
+When consolidating skills, all [skill:old-name] cross-references in migrated content become broken pointers -- must bulk-replace with intra-skill references or new broad skill names before committing

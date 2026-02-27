@@ -1,7 +1,7 @@
 
 # dotnet-multi-targeting
 
-Comprehensive guide for .NET multi-targeting strategies with a polyfill-first approach. This skill consumes the structured output from [skill:dotnet-version-detection] (TFM, C# version, preview flags) and provides actionable guidance on backporting language features, handling runtime gaps, and validating API compatibility across target frameworks.
+Comprehensive guide for .NET multi-targeting strategies with a polyfill-first approach. This skill consumes the structured output from `references/version-detection.md` (TFM, C# version, preview flags) and provides actionable guidance on backporting language features, handling runtime gaps, and validating API compatibility across target frameworks.
 
 ## Scope
 
@@ -14,12 +14,12 @@ Comprehensive guide for .NET multi-targeting strategies with a polyfill-first ap
 
 ## Out of scope
 
-- TFM detection logic -- see [skill:dotnet-version-detection]
-- Version upgrade lane selection -- see [skill:dotnet-version-upgrade]
+- TFM detection logic -- see `references/version-detection.md`
+- Version upgrade lane selection -- see `references/version-upgrade.md`
 - Platform-specific UI frameworks (MAUI, Blazor) -- see respective framework skills
 - Cloud deployment configuration
 
-Cross-references: [skill:dotnet-version-detection] for TFM resolution and version matrix, [skill:dotnet-version-upgrade] for upgrade lane guidance and migration strategies.
+Cross-references: `references/version-detection.md` for TFM resolution and version matrix, `references/version-upgrade.md` for upgrade lane guidance and migration strategies.
 
 
 ## Decision Matrix: Polyfill vs Conditional Compilation
@@ -478,7 +478,7 @@ dotnet tool run apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
 
 6. **Do not use `$(TargetFramework)` string equality for range checks in MSBuild conditions.** Use `$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))` for forward-compatible range checks. String equality (e.g., `== 'net10.0'`) misses net11.0 and higher.
 
-7. **Do not re-implement TFM detection.** This skill consumes the structured output from [skill:dotnet-version-detection]. Never parse `.csproj` files to determine TFMs -- use the detection skill's output (TFM, C# version, SDK version, warnings).
+7. **Do not re-implement TFM detection.** This skill consumes the structured output from `references/version-detection.md`. Never parse `.csproj` files to determine TFMs -- use the detection skill's output (TFM, C# version, SDK version, warnings).
 
 8. **Do not assume polyfills cover runtime behavior.** PolySharp and Polyfill provide compile-time stubs and source-generated implementations. Features that require runtime changes (e.g., runtime-async, GC improvements, JIT optimizations) cannot be polyfilled -- use `#if` for these.
 
@@ -491,7 +491,7 @@ dotnet tool run apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
 - `PolySharp` NuGet package (for language feature polyfills)
 - `Polyfill` NuGet package by Simon Cropp (for BCL API polyfills)
 - `Microsoft.DotNet.ApiCompat.Tool` (optional, for standalone API compatibility checks)
-- Output from [skill:dotnet-version-detection] (TFM, C# version, SDK version)
+- Output from `references/version-detection.md` (TFM, C# version, SDK version)
 
 
 ## References

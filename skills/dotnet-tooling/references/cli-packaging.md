@@ -16,13 +16,13 @@ Multi-platform packaging for .NET CLI tools: Homebrew formula authoring (binary 
 
 ## Out of scope
 
-- CLI distribution strategy (AOT vs framework-dependent decision) -- see [skill:dotnet-cli-distribution]
-- Release CI/CD pipeline that automates packaging -- see [skill:dotnet-cli-release-pipeline]
-- Native AOT compilation -- see [skill:dotnet-native-aot]
-- Container-based distribution -- see [skill:dotnet-containers]
-- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
+- CLI distribution strategy (AOT vs framework-dependent decision) -- see `references/cli-distribution.md`
+- Release CI/CD pipeline that automates packaging -- see `references/cli-release-pipeline.md`
+- Native AOT compilation -- see `references/native-aot.md`
+- Container-based distribution -- see [skill:dotnet-devops]
+- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-cli-distribution] for distribution strategy and RID matrix, [skill:dotnet-cli-release-pipeline] for automated package publishing, [skill:dotnet-native-aot] for AOT binary production, [skill:dotnet-containers] for container-based distribution, [skill:dotnet-tool-management] for consumer-side tool installation and manifest management.
+Cross-references: `references/cli-distribution.md` for distribution strategy and RID matrix, `references/cli-release-pipeline.md` for automated package publishing, `references/native-aot.md` for AOT binary production, [skill:dotnet-devops] for container-based distribution, `references/tool-management.md` for consumer-side tool installation and manifest management.
 
 
 ## Homebrew (macOS / Linux)
@@ -261,7 +261,7 @@ ManifestVersion: 1.9.0
 4. Submit a PR -- automated checks run against the manifest
 5. Microsoft team reviews and merges
 
-See [skill:dotnet-cli-release-pipeline] for automating winget PR creation.
+See `references/cli-release-pipeline.md` for automating winget PR creation.
 
 
 ## Scoop (Windows)

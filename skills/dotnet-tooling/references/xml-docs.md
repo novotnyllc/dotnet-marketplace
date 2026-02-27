@@ -15,11 +15,11 @@ XML documentation comments for .NET: all standard tags (`<summary>`, `<param>`, 
 
 ## Out of scope
 
-- API documentation site generation (DocFX, Starlight) -- see [skill:dotnet-api-docs]
-- General C# coding conventions and naming standards -- see [skill:dotnet-csharp-coding-standards]
-- CI/CD deployment of documentation sites -- see [skill:dotnet-gha-deploy]
+- API documentation site generation (DocFX, Starlight) -- see [skill:dotnet-api]
+- General C# coding conventions and naming standards -- see [skill:dotnet-csharp]
+- CI/CD deployment of documentation sites -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-api-docs] for downstream API documentation generation from XML comments, [skill:dotnet-csharp-coding-standards] for general C# coding conventions, [skill:dotnet-gha-deploy] for doc site deployment.
+Cross-references: [skill:dotnet-api] for downstream API documentation generation from XML comments, [skill:dotnet-csharp] for general C# coding conventions, [skill:dotnet-devops] for doc site deployment.
 
 
 ## Enabling XML Documentation Generation
@@ -90,7 +90,7 @@ This forces documentation for every public member. Use this for NuGet packages w
 
 
 
-For complete tag examples (summary, param, returns, exception, remarks, example, inheritdoc, see/seealso, comprehensive class example, library conventions), see `examples.md` in this skill directory.
+For complete tag examples (summary, param, returns, exception, remarks, example, inheritdoc, see/seealso, comprehensive class example, library conventions), see the Detailed Examples section below.
 
 ## Agent Gotchas
 
@@ -110,7 +110,7 @@ For complete tag examples (summary, param, returns, exception, remarks, example,
 
 8. **In `<code>` blocks, use `&lt;` and `&gt;` for angle brackets** -- XML doc comments are XML, so `<` and `>` in code examples must be escaped. Alternatively, use `<![CDATA[...]]>` to avoid escaping.
 
-9. **Do not generate API documentation sites from XML comments** -- API doc site generation (DocFX, OpenAPI-as-docs) belongs to [skill:dotnet-api-docs]. This skill covers the XML comment authoring side only.
+9. **Do not generate API documentation sites from XML comments** -- API doc site generation (DocFX, OpenAPI-as-docs) belongs to [skill:dotnet-api]. This skill covers the XML comment authoring side only.
 
 10. **Document cancellation tokens with a single standard line** -- use "A token to cancel the asynchronous operation." for all `CancellationToken` parameters. Do not over-document the cancellation pattern.
 

@@ -16,11 +16,11 @@ Consumer-side management of .NET CLI tools: installing global and local tools, c
 
 ## Out of scope
 
-- Tool authoring and packaging (PackAsTool, NuGet packaging) -- see [skill:dotnet-cli-packaging]
-- Distribution strategy (AOT vs framework-dependent decision) -- see [skill:dotnet-cli-distribution]
-- Release CI/CD pipeline -- see [skill:dotnet-cli-release-pipeline]
+- Tool authoring and packaging (PackAsTool, NuGet packaging) -- see `references/cli-packaging.md`
+- Distribution strategy (AOT vs framework-dependent decision) -- see `references/cli-distribution.md`
+- Release CI/CD pipeline -- see `references/cli-release-pipeline.md`
 
-Cross-references: [skill:dotnet-cli-packaging] for tool authoring and NuGet packaging, [skill:dotnet-cli-distribution] for distribution strategy and RID matrix, [skill:dotnet-cli-release-pipeline] for automated release workflows, [skill:dotnet-project-analysis] for detecting existing tool manifests.
+Cross-references: `references/cli-packaging.md` for tool authoring and NuGet packaging, `references/cli-distribution.md` for distribution strategy and RID matrix, `references/cli-release-pipeline.md` for automated release workflows, `references/project-analysis.md` for detecting existing tool manifests.
 
 
 ## Global Tool Installation
@@ -233,7 +233,7 @@ dotnet tool install -g <package-id>
 
 The .NET CLI detects your platform and downloads the appropriate RID-specific package. If no RID-specific package matches your platform, the CLI falls back to a framework-dependent package (if the tool author provided one).
 
-For details on authoring and packaging RID-specific tools, see [skill:dotnet-cli-packaging].
+For details on authoring and packaging RID-specific tools, see `references/cli-packaging.md`.
 
 
 ## Troubleshooting

@@ -15,14 +15,14 @@ CLI distribution strategy for .NET tools: choosing between Native AOT single-fil
 
 ## Out of scope
 
-- Native AOT MSBuild configuration (PublishAot, ILLink descriptors) -- see [skill:dotnet-native-aot]
-- AOT-first application design patterns -- see [skill:dotnet-aot-architecture]
-- Multi-platform packaging formats (Homebrew, apt/deb, winget, Scoop) -- see [skill:dotnet-cli-packaging]
-- Release CI/CD pipeline -- see [skill:dotnet-cli-release-pipeline]
-- Container-based distribution -- see [skill:dotnet-containers]
-- General CI/CD patterns -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
+- Native AOT MSBuild configuration (PublishAot, ILLink descriptors) -- see `references/native-aot.md`
+- AOT-first application design patterns -- see `references/aot-architecture.md`
+- Multi-platform packaging formats (Homebrew, apt/deb, winget, Scoop) -- see `references/cli-packaging.md`
+- Release CI/CD pipeline -- see `references/cli-release-pipeline.md`
+- Container-based distribution -- see [skill:dotnet-devops]
+- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-cli-architecture] for CLI layered architecture, [skill:dotnet-cli-packaging] for platform-specific package formats, [skill:dotnet-cli-release-pipeline] for automated release workflows, [skill:dotnet-containers] for container-based distribution, [skill:dotnet-tool-management] for consumer-side tool installation and manifest management.
+Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, `references/cli-architecture.md` for CLI layered architecture, `references/cli-packaging.md` for platform-specific package formats, `references/cli-release-pipeline.md` for automated release workflows, [skill:dotnet-devops] for container-based distribution, `references/tool-management.md` for consumer-side tool installation and manifest management.
 
 
 ## Distribution Strategy Decision Matrix
@@ -43,7 +43,7 @@ Choose the distribution model based on target audience and deployment constraint
 - Fastest startup (~10ms vs ~100ms+ for JIT)
 - Smallest binary when combined with trimming
 - Trade-off: longer build times, no reflection unless preserved
-- See [skill:dotnet-native-aot] for PublishAot MSBuild configuration
+- See `references/native-aot.md` for PublishAot MSBuild configuration
 
 **Framework-dependent deployment:**
 - Smallest artifact size (only app code, no runtime)
@@ -62,7 +62,7 @@ Choose the distribution model based on target audience and deployment constraint
 - Users install with `dotnet tool install -g mytool`
 - Requires .NET SDK on target (not just runtime)
 - Best for developer-facing tools in the .NET ecosystem
-- See [skill:dotnet-cli-packaging] for NuGet distribution details
+- See `references/cli-packaging.md` for NuGet distribution details
 
 
 ## Runtime Identifier (RID) Matrix
@@ -140,7 +140,7 @@ When combined with Native AOT, single-file is implicit -- AOT always produces a 
 </PropertyGroup>
 ```
 
-See [skill:dotnet-native-aot] for the full AOT publish configuration including ILLink, type preservation, and analyzer setup.
+See `references/native-aot.md` for the full AOT publish configuration including ILLink, type preservation, and analyzer setup.
 
 ### Publish Command
 
@@ -174,7 +174,7 @@ Trimming removes unused code from the published output. For self-contained non-A
 
 ### AOT Size Optimization
 
-For Native AOT builds, size is controlled by AOT-specific MSBuild properties. See [skill:dotnet-native-aot] for the full configuration. Key CLI-relevant properties include `StripSymbols`, `OptimizationPreference`, `InvariantGlobalization`, and `StackTraceSupport`.
+For Native AOT builds, size is controlled by AOT-specific MSBuild properties. See `references/native-aot.md` for the full configuration. Key CLI-relevant properties include `StripSymbols`, `OptimizationPreference`, `InvariantGlobalization`, and `StackTraceSupport`.
 
 ### Size Comparison (Typical CLI Tool)
 
@@ -192,7 +192,7 @@ For Native AOT builds, size is controlled by AOT-specific MSBuild properties. Se
 1. **Enable invariant globalization** if the tool does not need locale-specific formatting (`InvariantGlobalization=true`)
 2. **Strip symbols** on Linux/macOS (`StripSymbols=true`) -- keep separate symbol files for crash analysis
 3. **Optimize for size** (`OptimizationPreference=Size`) -- minimal runtime performance impact for I/O-bound CLI tools
-4. **Disable reflection** where possible -- use source generators for JSON serialization ([skill:dotnet-aot-architecture])
+4. **Disable reflection** where possible -- use source generators for JSON serialization (`references/aot-architecture.md`)
 5. **Audit NuGet dependencies** -- each dependency adds to the binary; remove unused packages
 
 
@@ -256,7 +256,7 @@ OUTPUT_DIR="artifacts"
 
 RIDS=("linux-x64" "linux-arm64" "osx-arm64" "win-x64")
 # Note: Native AOT cross-compilation for ARM64 on x64 requires platform toolchain
-# See [skill:dotnet-cli-release-pipeline] for CI-based cross-compilation setup
+# See `references/cli-release-pipeline.md` for CI-based cross-compilation setup
 
 for rid in "${RIDS[@]}"; do
   echo "Publishing for $rid..."
@@ -289,7 +289,7 @@ cd artifacts
 shasum -a 256 *.tar.gz *.zip > checksums-sha256.txt
 ```
 
-See [skill:dotnet-cli-release-pipeline] for automating this in GitHub Actions.
+See `references/cli-release-pipeline.md` for automating this in GitHub Actions.
 
 
 ## Agent Gotchas
@@ -298,7 +298,7 @@ See [skill:dotnet-cli-release-pipeline] for automating this in GitHub Actions.
 2. **Do not use PublishSingleFile with PublishAot.** Native AOT output is inherently single-file. Setting both is redundant and may cause confusing build warnings.
 3. **Do not skip InvariantGlobalization for size-sensitive CLI tools.** Globalization data adds ~25 MB to AOT binaries. Most CLI tools that do not format locale-specific dates/currencies should enable `InvariantGlobalization=true`.
 4. **Do not distribute self-contained non-trimmed binaries.** A 60-80 MB CLI tool is unacceptable for end users. Either trim (PublishTrimmed), use AOT, or distribute as framework-dependent.
-5. **Do not forget to produce checksums for release artifacts.** Users and package managers need SHA-256 checksums to verify download integrity. See [skill:dotnet-cli-release-pipeline] for automated checksum generation.
+5. **Do not forget to produce checksums for release artifacts.** Users and package managers need SHA-256 checksums to verify download integrity. See `references/cli-release-pipeline.md` for automated checksum generation.
 6. **Do not hardcode secrets in publish scripts.** Use environment variable placeholders (`${SIGNING_KEY}`) with a comment about CI secret storage for any signing or upload credentials.
 
 

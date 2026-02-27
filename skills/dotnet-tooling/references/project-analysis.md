@@ -1,12 +1,13 @@
 
-```! find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -20
+```bash
+find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -20
 ```
 
 # dotnet-project-analysis
 
 Analyzes .NET solution structure, project references, and build configuration. This skill is foundational -- agents need to understand project layout before doing any meaningful .NET development work.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-file-based-apps] instead.
+**Prerequisites:** Run `references/version-detection.md` first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-csharp] instead.
 
 ## Scope
 
@@ -17,9 +18,9 @@ Analyzes .NET solution structure, project references, and build configuration. T
 
 ## Out of scope
 
-- Reading and modifying individual .csproj files -- see [skill:dotnet-csproj-reading]
-- Project organization and SDK selection decisions -- see [skill:dotnet-project-structure]
-- TFM/SDK version detection -- see [skill:dotnet-version-detection]
+- Reading and modifying individual .csproj files -- see `references/csproj-reading.md`
+- Project organization and SDK selection decisions -- see `references/project-structure.md`
+- TFM/SDK version detection -- see `references/version-detection.md`
 
 
 ## Step 1: Find the Solution Root
@@ -158,7 +159,7 @@ Flag issues:
 Search for `Directory.Build.props` starting from each project directory up to the solution root. These files set shared MSBuild properties across all projects in their directory subtree.
 
 Common shared properties to report:
-- `<TargetFramework>` / `<TargetFrameworks>` -- shared TFM (see [skill:dotnet-version-detection])
+- `<TargetFramework>` / `<TargetFrameworks>` -- shared TFM (see `references/version-detection.md`)
 - `<LangVersion>` -- C# language version
 - `<Nullable>enable</Nullable>` -- nullable reference types
 - `<ImplicitUsings>enable</ImplicitUsings>` -- implicit global usings
@@ -221,7 +222,7 @@ Report:
 
 If no `Directory.Packages.props` is found in the upward search and `ManagePackageVersionsCentrally` is not set in any `Directory.Build.props`:
 - Report: "Central Package Management is not configured. Each project defines its own package versions."
-- Suggest: "Consider enabling CPM for version consistency. See [skill:dotnet-project-structure] for setup guidance."
+- Suggest: "Consider enabling CPM for version consistency. See `references/project-structure.md` for setup guidance."
 
 
 ## Step 6: Detect Additional Configuration Files
@@ -243,7 +244,7 @@ Search for `nuget.config` (case-insensitive) starting from the solution root and
 
 ### global.json
 
-Already read by [skill:dotnet-version-detection]. Report relevant details here:
+Already read by `references/version-detection.md`. Report relevant details here:
 - `sdk.version` and `sdk.rollForward` policy
 - `msbuild-sdks` section if present (custom SDK versions)
 

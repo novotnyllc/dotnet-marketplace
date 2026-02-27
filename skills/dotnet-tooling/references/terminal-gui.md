@@ -5,7 +5,7 @@ Terminal.Gui v2 for building full terminal user interfaces with windows, menus, 
 
 **Version assumptions:** .NET 8.0+ baseline. Terminal.Gui 2.0.0-alpha (v2 Alpha is the active development line for new projects -- API is stable with comprehensive features; breaking changes possible before Beta but core architecture is solid). v1.x (1.19.0) is in maintenance mode with no new features.
 
-For detailed code examples (views, menus, dialogs, events, themes, complete editor), see `examples.md` in this skill directory.
+For detailed code examples (views, menus, dialogs, events, themes, complete editor), see the Detailed Examples section below.
 
 ## Scope
 
@@ -15,11 +15,11 @@ For detailed code examples (views, menus, dialogs, events, themes, complete edit
 
 ## Out of scope
 
-- Rich console output (tables, progress bars, prompts) -- see [skill:dotnet-spectre-console]
-- CLI command-line parsing -- see [skill:dotnet-system-commandline]
-- CLI application architecture and distribution -- see [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution]
+- Rich console output (tables, progress bars, prompts) -- see `references/spectre-console.md`
+- CLI command-line parsing -- see `references/system-commandline.md`
+- CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
 
-Cross-references: [skill:dotnet-spectre-console] for rich console output alternative, [skill:dotnet-csharp-async-patterns] for async TUI patterns, [skill:dotnet-native-aot] for AOT compilation considerations, [skill:dotnet-system-commandline] for CLI parsing, [skill:dotnet-csharp-dependency-injection] for DI in TUI apps, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
+Cross-references: `references/spectre-console.md` for rich console output alternative, [skill:dotnet-csharp] for async TUI patterns, `references/native-aot.md` for AOT compilation considerations, `references/system-commandline.md` for CLI parsing, [skill:dotnet-csharp] for DI in TUI apps, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
 
 
 ## Package Reference

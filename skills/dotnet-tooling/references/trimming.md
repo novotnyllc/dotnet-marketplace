@@ -17,16 +17,16 @@ Trim-safe development for .NET 8+ applications and libraries: trimming annotatio
 
 ## Out of scope
 
-- Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]
-- AOT-first design patterns -- see [skill:dotnet-aot-architecture]
-- WASM AOT compilation -- see [skill:dotnet-aot-wasm]
-- MAUI-specific AOT and trimming -- see [skill:dotnet-maui-aot]
-- Source generator authoring -- see [skill:dotnet-csharp-source-generators]
-- Serialization depth -- see [skill:dotnet-serialization]
-- Container deployment -- see [skill:dotnet-containers]
-- Performance patterns (Span, pooling) -- see [skill:dotnet-performance-patterns]
+- Native AOT publish pipeline and MSBuild configuration -- see `references/native-aot.md`
+- AOT-first design patterns -- see `references/aot-architecture.md`
+- WASM AOT compilation -- see [skill:dotnet-ui]
+- MAUI-specific AOT and trimming -- see [skill:dotnet-ui]
+- Source generator authoring -- see [skill:dotnet-csharp]
+- Serialization depth -- see [skill:dotnet-csharp]
+- Container deployment -- see [skill:dotnet-devops]
+- Performance patterns (Span, pooling) -- see `references/performance-patterns.md`
 
-Cross-references: [skill:dotnet-native-aot] for AOT compilation pipeline, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as trimming enabler.
+Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] for AOT-safe serialization, [skill:dotnet-csharp] for source gen as trimming enabler.
 
 
 ## MSBuild Properties: Apps vs Libraries

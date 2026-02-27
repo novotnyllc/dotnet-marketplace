@@ -15,12 +15,12 @@ Documentation tooling recommendation for .NET projects: decision tree for select
 
 ## Out of scope
 
-- CI/CD deployment pipelines for doc sites -- see [skill:dotnet-gha-deploy]
-- API documentation generation (DocFX API reference, OpenAPI-as-docs) -- see [skill:dotnet-api-docs]
-- XML documentation comment authoring -- see [skill:dotnet-xml-docs]
-- Mermaid diagram syntax and .NET-specific patterns -- see [skill:dotnet-mermaid-diagrams]
+- CI/CD deployment pipelines for doc sites -- see [skill:dotnet-devops]
+- API documentation generation (DocFX API reference, OpenAPI-as-docs) -- see [skill:dotnet-api]
+- XML documentation comment authoring -- see `references/xml-docs.md`
+- Mermaid diagram syntax and .NET-specific patterns -- see `references/mermaid-diagrams.md`
 
-Cross-references: [skill:dotnet-gha-deploy] for doc site deployment pipelines, [skill:dotnet-api-docs] for API reference generation, [skill:dotnet-xml-docs] for XML doc comment authoring, [skill:dotnet-mermaid-diagrams] for .NET-specific Mermaid diagrams.
+Cross-references: [skill:dotnet-devops] for doc site deployment pipelines, [skill:dotnet-api] for API reference generation, `references/xml-docs.md` for XML doc comment authoring, `references/mermaid-diagrams.md` for .NET-specific Mermaid diagrams.
 
 
 ## Documentation Tooling Decision Tree
@@ -171,7 +171,7 @@ export default defineConfig({
 });
 ```
 
-After configuration, use standard Mermaid fenced code blocks in any Markdown file. See [skill:dotnet-mermaid-diagrams] for .NET-specific diagram patterns.
+After configuration, use standard Mermaid fenced code blocks in any Markdown file. See `references/mermaid-diagrams.md` for .NET-specific diagram patterns.
 
 ### Versioned Documentation
 
@@ -381,7 +381,7 @@ docfx metadata docfx.json
 # representing all public types, methods, and properties
 ```
 
-The generated API reference automatically links to conceptual articles via `uid` cross-references. See [skill:dotnet-xml-docs] for XML documentation comment authoring best practices.
+The generated API reference automatically links to conceptual articles via `uid` cross-references. See `references/xml-docs.md` for XML documentation comment authoring best practices.
 
 ### Mermaid Support in DocFX
 
@@ -508,7 +508,7 @@ graph LR
 ```
 ````
 
-See [skill:dotnet-mermaid-diagrams] for .NET-specific diagram types (C4 architecture, async patterns, EF Core models, DI graphs).
+See `references/mermaid-diagrams.md` for .NET-specific diagram types (C4 architecture, async patterns, EF Core models, DI graphs).
 
 
 ## Migration Paths
@@ -561,9 +561,9 @@ grep -rn "^\s*uid:" articles/             # UID metadata
 
 3. **MarkdownSnippets runs BEFORE the doc platform build** -- it is a pre-processing step that modifies Markdown files in place. Always run `dotnet tool run mdsnippets` before `npm run build` (Starlight/Docusaurus) or `docfx build` (DocFX).
 
-4. **Do not generate CI deployment YAML** -- doc site deployment workflows belong to [skill:dotnet-gha-deploy]. This skill covers tooling selection and local authoring setup only.
+4. **Do not generate CI deployment YAML** -- doc site deployment workflows belong to [skill:dotnet-devops]. This skill covers tooling selection and local authoring setup only.
 
-5. **Do not generate API reference configuration** -- DocFX API reference setup, OpenAPI-as-documentation patterns, and doc-code sync belong to [skill:dotnet-api-docs]. This skill helps choose the platform, not configure API reference generation.
+5. **Do not generate API reference configuration** -- DocFX API reference setup, OpenAPI-as-documentation patterns, and doc-code sync belong to [skill:dotnet-api]. This skill helps choose the platform, not configure API reference generation.
 
 6. **Mermaid fenced code blocks work identically across GitHub, Starlight, and Docusaurus** -- use the same `mermaid` language identifier everywhere. Only DocFX requires additional template configuration.
 

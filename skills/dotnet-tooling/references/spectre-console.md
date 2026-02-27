@@ -12,11 +12,11 @@ Spectre.Console for building rich console output (tables, trees, progress bars, 
 
 ## Out of scope
 
-- Full TUI applications (windows, menus, dialogs, views) -- see [skill:dotnet-terminal-gui]
-- System.CommandLine parsing -- see [skill:dotnet-system-commandline]
-- CLI application architecture and distribution -- see [skill:dotnet-cli-architecture] and [skill:dotnet-cli-distribution]
+- Full TUI applications (windows, menus, dialogs, views) -- see `references/terminal-gui.md`
+- System.CommandLine parsing -- see `references/system-commandline.md`
+- CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
 
-Cross-references: [skill:dotnet-terminal-gui] for full TUI alternative, [skill:dotnet-system-commandline] for System.CommandLine scope boundary, [skill:dotnet-cli-architecture] for CLI structure, [skill:dotnet-csharp-async-patterns] for async patterns, [skill:dotnet-csharp-dependency-injection] for DI with Spectre.Console.Cli, [skill:dotnet-accessibility] for TUI accessibility limitations and screen reader considerations.
+Cross-references: `references/terminal-gui.md` for full TUI alternative, `references/system-commandline.md` for System.CommandLine scope boundary, `references/cli-architecture.md` for CLI structure, [skill:dotnet-csharp] for async patterns, [skill:dotnet-csharp] for DI with Spectre.Console.Cli, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
 
 
 ## Package References
@@ -557,12 +557,12 @@ console.Write(new Table().AddColumn("Col").AddRow("Val"));
 
 ## Agent Gotchas
 
-1. **Do not use `AnsiConsole.Markup*` in redirected output.** When stdout is redirected (piped to a file or another process), ANSI escape codes corrupt the output. Check `AnsiConsole.Profile.Capabilities.Ansi` before using markup, or use `IAnsiConsole` with appropriate settings. See [skill:dotnet-csharp-async-patterns] for async pipeline patterns.
+1. **Do not use `AnsiConsole.Markup*` in redirected output.** When stdout is redirected (piped to a file or another process), ANSI escape codes corrupt the output. Check `AnsiConsole.Profile.Capabilities.Ansi` before using markup, or use `IAnsiConsole` with appropriate settings. See [skill:dotnet-csharp] for async pipeline patterns.
 2. **Do not assume ANSI support in CI environments.** CI runners (GitHub Actions, Azure Pipelines) may not support ANSI escape codes. Set `TERM=dumb` or use `AnsiConsole.Create()` with `ColorSystemSupport.NoColors` for CI-safe output. Spectre.Console auto-detects capabilities, but explicit configuration prevents flaky rendering.
 3. **Do not mix `AnsiConsole` static calls with `IAnsiConsole` instance calls.** Static `AnsiConsole.Write()` always targets the real console. When using DI with `IAnsiConsole`, consistently use the injected instance. Mixing the two produces duplicated or interleaved output.
 4. **Do not modify a renderable from a background thread during `Live()`.** Live displays are not thread-safe. Mutate the target renderable only inside the `Start`/`StartAsync` callback, then call `ctx.Refresh()`. Concurrent mutations cause corrupted terminal output.
 5. **Do not use prompts in non-interactive contexts.** `TextPrompt`, `SelectionPrompt`, and `ConfirmationPrompt` block waiting for user input. In CI or automated scripts, use environment variables or command-line arguments for input instead of prompts. Check `AnsiConsole.Profile.Capabilities.Interactive` before prompting.
-6. **Do not confuse Spectre.Console.Cli with System.CommandLine.** They are independent frameworks with different APIs. Spectre.Console.Cli uses `CommandSettings` classes with `[CommandArgument]`/`[CommandOption]` attributes, while System.CommandLine uses `Option<T>` and `Argument<T>` builder pattern. Do not mix APIs. For System.CommandLine, see [skill:dotnet-system-commandline].
+6. **Do not confuse Spectre.Console.Cli with System.CommandLine.** They are independent frameworks with different APIs. Spectre.Console.Cli uses `CommandSettings` classes with `[CommandArgument]`/`[CommandOption]` attributes, while System.CommandLine uses `Option<T>` and `Argument<T>` builder pattern. Do not mix APIs. For System.CommandLine, see `references/system-commandline.md`.
 7. **Do not forget `ctx.Refresh()` after modifying live display content.** Changes to tables, trees, or panels inside a `Live()` callback are not rendered until `ctx.Refresh()` is called. Omitting it produces stale displays.
 8. **Do not hardcode color values without fallback.** Terminals with limited color support silently degrade TrueColor values. Use named colors (`Color.Green`) when possible and test with `NO_COLOR=1` environment variable to verify graceful degradation.
 

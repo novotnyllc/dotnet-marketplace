@@ -5,7 +5,7 @@ Mermaid diagram reference for .NET projects: architecture diagrams (C4-style con
 
 **Version assumptions:** Mermaid v10+ (supported by GitHub, Starlight, Docusaurus natively). GitHub renders Mermaid in Markdown files, issues, PRs, and discussions. .NET 8.0+ baseline for code examples.
 
-For complete diagram examples, see `examples.md` in this skill directory.
+For complete diagram examples, see the Detailed Examples section below.
 
 ## Scope
 
@@ -18,11 +18,11 @@ For complete diagram examples, see `examples.md` in this skill directory.
 
 ## Out of scope
 
-- Documentation platform configuration for Mermaid rendering -- see [skill:dotnet-documentation-strategy]
-- GitHub-native doc structure and README patterns -- see [skill:dotnet-github-docs]
-- CI/CD pipeline deployment of doc sites -- see [skill:dotnet-gha-deploy]
+- Documentation platform configuration for Mermaid rendering -- see `references/documentation-strategy.md`
+- GitHub-native doc structure and README patterns -- see [skill:dotnet-devops]
+- CI/CD pipeline deployment of doc sites -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-documentation-strategy] for Mermaid rendering setup across doc platforms, [skill:dotnet-github-docs] for embedding diagrams in GitHub-native docs, [skill:dotnet-gha-deploy] for doc site deployment.
+Cross-references: `references/documentation-strategy.md` for Mermaid rendering setup across doc platforms, [skill:dotnet-devops] for embedding diagrams in GitHub-native docs, [skill:dotnet-devops] for doc site deployment.
 
 
 ## Supported Diagram Types
@@ -138,7 +138,7 @@ Cross-references: [skill:dotnet-documentation-strategy] for Mermaid rendering se
 
 9. **Do not use Font Awesome icon syntax (`fa:fa-user`) in diagrams intended for GitHub** -- GitHub's native Mermaid renderer does not load Font Awesome CSS. Icons render as literal text. Use plain text labels instead.
 
-10. **Do not configure Mermaid rendering in doc platforms** -- platform setup (Starlight remark plugin, Docusaurus theme, DocFX template) belongs to [skill:dotnet-documentation-strategy]. This skill provides the diagram content only.
+10. **Do not configure Mermaid rendering in doc platforms** -- platform setup (Starlight remark plugin, Docusaurus theme, DocFX template) belongs to `references/documentation-strategy.md`. This skill provides the diagram content only.
 
 ---
 

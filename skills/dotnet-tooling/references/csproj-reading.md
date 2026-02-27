@@ -12,15 +12,15 @@ Teaches agents to read and safely modify SDK-style .csproj files. Covers project
 
 ## Out of scope
 
-- Project organization and SDK selection -- see [skill:dotnet-project-structure]
-- Build error interpretation -- see [skill:dotnet-build-analysis]
-- Common agent coding mistakes -- see [skill:dotnet-agent-gotchas]
+- Project organization and SDK selection -- see `references/project-structure.md`
+- Build error interpretation -- see `references/build-analysis.md`
+- Common agent coding mistakes -- see [skill:dotnet-api]
 
 ## Prerequisites
 
 .NET 8.0+ SDK. SDK-style projects only (legacy .csproj format is not covered). MSBuild (included with .NET SDK).
 
-Cross-references: [skill:dotnet-project-structure] for project organization and SDK selection, [skill:dotnet-build-analysis] for interpreting build errors from project misconfiguration, [skill:dotnet-agent-gotchas] for common project structure mistakes agents make.
+Cross-references: `references/project-structure.md` for project organization and SDK selection, `references/build-analysis.md` for interpreting build errors from project misconfiguration, [skill:dotnet-api] for common project structure mistakes agents make.
 
 
 ## Subsection 1: SDK-Style Project Structure
@@ -488,7 +488,7 @@ dotnet list src/MyApp.sln package --format json
 
 ## Slopwatch Anti-Patterns
 
-These patterns in project files indicate an agent is hiding problems rather than fixing them. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
+These patterns in project files indicate an agent is hiding problems rather than fixing them. See [skill:dotnet-testing] for the automated quality gate that detects these patterns.
 
 ### NoWarn in .csproj
 
@@ -529,9 +529,9 @@ Disabling analyzers in `Directory.Build.props` silences them across every projec
 
 ## Cross-References
 
-- [skill:dotnet-project-structure] -- SDK selection, project organization, solution layout
-- [skill:dotnet-build-analysis] -- interpreting build errors caused by project misconfiguration
-- [skill:dotnet-agent-gotchas] -- common project structure mistakes agents make (wrong SDK, broken refs)
+- `references/project-structure.md` -- SDK selection, project organization, solution layout
+- `references/build-analysis.md` -- interpreting build errors caused by project misconfiguration
+- [skill:dotnet-api] -- common project structure mistakes agents make (wrong SDK, broken refs)
 
 ## References
 

@@ -17,11 +17,11 @@ Guidance for authoring MSBuild project system elements: custom targets with `Bef
 
 ## Out of scope
 
-- Solution layout and shared configuration (CPM, .editorconfig) -- see [skill:dotnet-project-structure]
-- MSBuild error interpretation and CI drift diagnosis -- see [skill:dotnet-build-analysis]
-- Reading and modifying .csproj files -- see [skill:dotnet-csproj-reading]
+- Solution layout and shared configuration (CPM, .editorconfig) -- see `references/project-structure.md`
+- MSBuild error interpretation and CI drift diagnosis -- see `references/build-analysis.md`
+- Reading and modifying .csproj files -- see `references/csproj-reading.md`
 
-Cross-references: [skill:dotnet-project-structure] for solution layout and basic Directory.Build.props structure, [skill:dotnet-build-analysis] for interpreting MSBuild errors and CI drift.
+Cross-references: `references/project-structure.md` for solution layout and basic Directory.Build.props structure, `references/build-analysis.md` for interpreting MSBuild errors and CI drift.
 
 
 ## Custom Targets
@@ -362,7 +362,7 @@ MSBuild properties can call .NET static methods and MSBuild intrinsic functions 
 
 ## Directory.Build.props/targets Advanced Patterns
 
-Basic Directory.Build layout is covered in [skill:dotnet-project-structure]. This section covers advanced patterns for multi-repo and monorepo scenarios.
+Basic Directory.Build layout is covered in `references/project-structure.md`. This section covers advanced patterns for multi-repo and monorepo scenarios.
 
 ### Import Chain with GetPathOfFileAbove
 

@@ -3,7 +3,7 @@
 
 Reference guide for the .NET SDK artifacts output layout, which centralizes build outputs (`bin/`, `obj/`, `publish/`, `package/`) into a single `artifacts/` directory at the repo root. Available since .NET 8 as an opt-in feature. Recommended for new projects; evaluate tradeoffs before migrating existing projects.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to confirm .NET 8+ SDK -- artifacts output layout is not available in earlier SDK versions.
+**Prerequisites:** Run `references/version-detection.md` first to confirm .NET 8+ SDK -- artifacts output layout is not available in earlier SDK versions.
 
 ## Scope
 
@@ -14,9 +14,9 @@ Reference guide for the .NET SDK artifacts output layout, which centralizes buil
 
 ## Out of scope
 
-- Source tree organization (.sln, .csproj, src/, tests/) -- see [skill:dotnet-project-structure]
+- Source tree organization (.sln, .csproj, src/, tests/) -- see `references/project-structure.md`
 
-Cross-references: [skill:dotnet-project-structure] for solution layout, [skill:dotnet-containers] for Dockerfile path adjustments, [skill:dotnet-gha-build-test] for CI artifact upload paths, [skill:dotnet-scaffold-project] for generating new projects with artifacts output enabled.
+Cross-references: `references/project-structure.md` for solution layout, [skill:dotnet-devops] for Dockerfile path adjustments, [skill:dotnet-devops] for CI artifact upload paths, `references/scaffold-project.md` for generating new projects with artifacts output enabled.
 
 
 ## Why Use Artifacts Output
@@ -160,7 +160,7 @@ If using a custom `ArtifactsPath`, update the `.gitignore` entry to match.
 
 ## Impact on Dockerfiles
 
-Multi-stage Dockerfiles that copy build output must reference the new path structure. See [skill:dotnet-containers] for full Dockerfile patterns.
+Multi-stage Dockerfiles that copy build output must reference the new path structure. See [skill:dotnet-devops] for full Dockerfile patterns.
 
 **Traditional paths:**
 
@@ -183,7 +183,7 @@ Key differences in Dockerfile paths:
 
 ## Impact on CI Pipelines
 
-CI workflows that upload build artifacts or reference output paths must be updated. See [skill:dotnet-gha-build-test] for full CI workflow patterns.
+CI workflows that upload build artifacts or reference output paths must be updated. See [skill:dotnet-devops] for full CI workflow patterns.
 
 **GitHub Actions -- upload build output:**
 

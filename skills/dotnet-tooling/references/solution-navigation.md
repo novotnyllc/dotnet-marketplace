@@ -1,5 +1,6 @@
 
-```! find . -maxdepth 2 \( -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -5
+```bash
+find . -maxdepth 2 \( -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -5
 ```
 
 # dotnet-solution-navigation
@@ -15,15 +16,15 @@ Teaches agents to orient in .NET solutions: finding entry points, parsing soluti
 
 ## Out of scope
 
-- Project file structure and modification -- see [skill:dotnet-csproj-reading]
-- Project organization decisions and SDK selection -- see [skill:dotnet-project-structure]
-- Test framework configuration and test type decisions -- see [skill:dotnet-testing-strategy]
+- Project file structure and modification -- see `references/csproj-reading.md`
+- Project organization decisions and SDK selection -- see `references/project-structure.md`
+- Test framework configuration and test type decisions -- see [skill:dotnet-testing]
 
 ## Prerequisites
 
 .NET 8.0+ SDK. `dotnet` CLI available on PATH. Familiarity with SDK-style projects.
 
-Cross-references: [skill:dotnet-project-structure] for project organization guidance, [skill:dotnet-csproj-reading] for reading and modifying .csproj files found during navigation, [skill:dotnet-testing-strategy] for test project identification and test type decisions.
+Cross-references: `references/project-structure.md` for project organization guidance, `references/csproj-reading.md` for reading and modifying .csproj files found during navigation, [skill:dotnet-testing] for test project identification and test type decisions.
 
 
 ## Subsection 1: Entry Point Discovery
@@ -377,7 +378,7 @@ find . -name "Directory.Build.props" -o -name "Directory.Build.targets" | sort
 ./tests/Directory.Build.props
 ```
 
-**Key behavior:** MSBuild imports the nearest file found walking upward from the project directory. Nested files shadow parent files unless they explicitly import the parent (see [skill:dotnet-csproj-reading] for chaining).
+**Key behavior:** MSBuild imports the nearest file found walking upward from the project directory. Nested files shadow parent files unless they explicitly import the parent (see `references/csproj-reading.md` for chaining).
 
 ### Other Configuration Files
 
@@ -551,7 +552,7 @@ grep -rn "Module\|AddModule\|RegisterModule" --include="*.cs" . | grep -v "obj/"
 
 ## Slopwatch Anti-Patterns
 
-These patterns in test project discovery indicate an agent is hiding testing gaps rather than addressing them. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
+These patterns in test project discovery indicate an agent is hiding testing gaps rather than addressing them. See [skill:dotnet-testing] for the automated quality gate that detects these patterns.
 
 ### Disabled or Skipped Tests in Test Project Discovery
 
@@ -594,9 +595,9 @@ grep -rEn '//[[:space:]]*\[(Fact|Theory|Test)\]' --include="*.cs" . | grep -v "o
 
 ## Cross-References
 
-- [skill:dotnet-project-structure] -- project organization, SDK selection, solution layout decisions
-- [skill:dotnet-csproj-reading] -- reading and modifying .csproj files found during navigation
-- [skill:dotnet-testing-strategy] -- test project identification, test types, test organization
+- `references/project-structure.md` -- project organization, SDK selection, solution layout decisions
+- `references/csproj-reading.md` -- reading and modifying .csproj files found during navigation
+- [skill:dotnet-testing] -- test project identification, test types, test organization
 
 ## References
 

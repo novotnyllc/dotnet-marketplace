@@ -3,7 +3,7 @@
 
 Reference guide for modern .NET project structure and solution layout. Use when creating new solutions, reviewing existing structure, or recommending improvements.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 9+ SDK).
+**Prerequisites:** Run `references/version-detection.md` first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 9+ SDK).
 
 ## Scope
 
@@ -15,10 +15,10 @@ Reference guide for modern .NET project structure and solution layout. Use when 
 
 ## Out of scope
 
-- Build output organization (UseArtifactsOutput) -- see [skill:dotnet-artifacts-output]
-- MSBuild authoring (custom targets, conditions) -- see [skill:dotnet-msbuild-authoring]
+- Build output organization (UseArtifactsOutput) -- see `references/artifacts-output.md`
+- MSBuild authoring (custom targets, conditions) -- see `references/msbuild-authoring.md`
 
-Cross-references: [skill:dotnet-project-analysis] for analyzing existing projects, [skill:dotnet-scaffold-project] for generating a new project from scratch, [skill:dotnet-artifacts-output] for centralized build output layout (`UseArtifactsOutput`).
+Cross-references: `references/project-analysis.md` for analyzing existing projects, `references/scaffold-project.md` for generating a new project from scratch, `references/artifacts-output.md` for centralized build output layout (`UseArtifactsOutput`).
 
 
 ## Recommended Solution Layout
@@ -263,7 +263,7 @@ dotnet_naming_style.camel_case_underscore.required_prefix = _
 dotnet_naming_style.camel_case_underscore.capitalization = camel_case
 ```
 
-See [skill:dotnet-add-analyzers] for full analyzer rule configuration.
+See `references/add-analyzers.md` for full analyzer rule configuration.
 
 
 ## global.json

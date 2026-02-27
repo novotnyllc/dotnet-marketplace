@@ -1,12 +1,13 @@
 
-```! dotnet --version 2>/dev/null
+```bash
+dotnet --version 2>/dev/null
 ```
 
 # dotnet-version-detection
 
 Detects .NET version information from project files and provides version-specific guidance. This skill runs **first** before any .NET development work. All other skills depend on the detected version to adapt their guidance.
 
-Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-file-based-apps] for .NET 10+ file-based apps that run without a `.csproj`.
+Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-csharp] for .NET 10+ file-based apps that run without a `.csproj`.
 
 ## Scope
 
@@ -18,10 +19,10 @@ Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all speci
 
 ## Out of scope
 
-- Project structure analysis beyond TFM -- see [skill:dotnet-project-analysis]
-- .NET 10 file-based apps without .csproj -- see [skill:dotnet-file-based-apps]
-- Framework upgrade migration steps -- see [skill:dotnet-version-upgrade]
-- Multi-targeting polyfills and conditional compilation -- see [skill:dotnet-multi-targeting]
+- Project structure analysis beyond TFM -- see `references/project-analysis.md`
+- .NET 10 file-based apps without .csproj -- see [skill:dotnet-csharp]
+- Framework upgrade migration steps -- see `references/version-upgrade.md`
+- Multi-targeting polyfills and conditional compilation -- see `references/multi-targeting.md`
 
 
 ## Fast Repository Scan (Optional)
@@ -29,7 +30,7 @@ Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all speci
 For large repos, run the bundled scanner first to quickly inventory TFM/SDK signals before applying the precedence algorithm below:
 
 ```bash
-python3 skills/dotnet-version-detection/scripts/scan-dotnet-targets.py --root . --json
+python3 skills/dotnet-tooling/scripts/scan-dotnet-targets.py --root . --json
 ```
 
 Use the script output (`project_target_frameworks`, `global_json.sdk_version`, `workflow_dotnet_versions`) as discovery input. The precedence rules below remain authoritative for final TFM selection.
@@ -64,7 +65,7 @@ If the value is an MSBuild property expression (starts with `$(`), skip to **Ste
 If found:
 - Report **all** TFMs (semicolon-delimited)
 - Guide based on the **highest** TFM (e.g., net10.0)
-- Note polyfill needs for lower TFMs: "Consider [skill:dotnet-multi-targeting] for PolySharp/Polyfill to backport language features to net8.0"
+- Note polyfill needs for lower TFMs: "Consider `references/multi-targeting.md` for PolySharp/Polyfill to backport language features to net8.0"
 - Proceed to additional detection (Step 5)
 
 ### 3. `Directory.Build.props` shared TFM
@@ -167,7 +168,7 @@ Note: runtime-async requires `<EnablePreviewFeatures>true</EnablePreviewFeatures
 If multi-targeting was detected (Step 2), also note:
 - Which TFMs are LTS vs STS vs Preview
 - Which TFMs are approaching end-of-support
-- Suggest [skill:dotnet-multi-targeting] for polyfill guidance
+- Suggest `references/multi-targeting.md` for polyfill guidance
 
 
 ## Structured Output Format
@@ -204,7 +205,7 @@ Warnings:         net8.0 reaches end of support Nov 2026
 
 Guidance: Multi-targeting net8.0 and net10.0. Guide on net10.0 patterns.
 For net8.0 compatibility, use PolySharp/Polyfill for language features.
-See [skill:dotnet-multi-targeting] for detailed polyfill guidance.
+See `references/multi-targeting.md` for detailed polyfill guidance.
 ```
 
 
@@ -314,7 +315,7 @@ These features are available when `net11.0` TFM is detected with preview feature
 ### Support Lifecycle Guidance
 
 When reporting version information, include lifecycle context:
-- **End-of-support approaching** (within 6 months): Warn and suggest [skill:dotnet-version-upgrade]
+- **End-of-support approaching** (within 6 months): Warn and suggest `references/version-upgrade.md`
 - **Preview/RC**: Warn "not for production use" unless user explicitly opted in
 - **STS reaching end**: Note shorter support window compared to LTS
 - **Current LTS**: Confirm as recommended target for new projects

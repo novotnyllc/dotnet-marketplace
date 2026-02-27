@@ -15,12 +15,12 @@ Guidance for diagnosing and fixing build performance problems: incremental build
 
 ## Out of scope
 
-- MSBuild error interpretation and CI drift diagnosis -- see [skill:dotnet-build-analysis]
-- MSBuild authoring (targets, props, items, conditions) -- see [skill:dotnet-msbuild-authoring]
-- Custom MSBuild task development -- see [skill:dotnet-msbuild-tasks]
-- NuGet lock files and Central Package Management -- see [skill:dotnet-project-structure]
+- MSBuild error interpretation and CI drift diagnosis -- see `references/build-analysis.md`
+- MSBuild authoring (targets, props, items, conditions) -- see `references/msbuild-authoring.md`
+- Custom MSBuild task development -- see `references/msbuild-tasks.md`
+- NuGet lock files and Central Package Management -- see `references/project-structure.md`
 
-Cross-references: [skill:dotnet-msbuild-authoring] for custom targets, import ordering, and incremental build authoring patterns. [skill:dotnet-msbuild-tasks] for custom task development. [skill:dotnet-build-analysis] for interpreting MSBuild errors, NuGet restore failures, and CI drift diagnosis. [skill:dotnet-project-structure] for lock files, CPM, and nuget.config configuration.
+Cross-references: `references/msbuild-authoring.md` for custom targets, import ordering, and incremental build authoring patterns. `references/msbuild-tasks.md` for custom task development. `references/build-analysis.md` for interpreting MSBuild errors, NuGet restore failures, and CI drift diagnosis. `references/project-structure.md` for lock files, CPM, and nuget.config configuration.
 
 
 ## Incremental Build Failure Diagnosis
@@ -107,7 +107,7 @@ In the Structured Log Viewer, search for the target name and check its result. A
 </Target>
 ```
 
-See [skill:dotnet-msbuild-authoring] for full Inputs/Outputs patterns and batching.
+See `references/msbuild-authoring.md` for full Inputs/Outputs patterns and batching.
 
 ### File Copy Timestamp Corruption
 
@@ -295,7 +295,7 @@ dotnet restore --use-lock-file
 </PropertyGroup>
 ```
 
-Lock file restore (`--locked-mode`) skips the dependency resolution algorithm entirely, reading the exact versions from `packages.lock.json`. This is faster and ensures CI uses the same versions that were tested locally. For lock file and CPM configuration details, see [skill:dotnet-project-structure].
+Lock file restore (`--locked-mode`) skips the dependency resolution algorithm entirely, reading the exact versions from `packages.lock.json`. This is faster and ensures CI uses the same versions that were tested locally. For lock file and CPM configuration details, see `references/project-structure.md`.
 
 ### SDK Build Caching
 
@@ -343,14 +343,14 @@ Build-level warning configuration affects build time when analyzers are involved
 - Enable `TreatWarningsAsErrors` in `Directory.Build.props` so local and CI builds behave identically
 - Use `NoWarn` sparingly and always with inline justification comments
 - Prefer `.editorconfig` severity rules over `NoWarn` for per-rule control
-- For detecting misuse of warning suppression, see [skill:dotnet-build-analysis]
+- For detecting misuse of warning suppression, see `references/build-analysis.md`
 
 
 ## Agent Gotchas
 
 1. **Running `dotnet build` without `/bl` when diagnosing build issues.** Console output at default verbosity omits critical information about why targets ran. Always capture a binary log (`/bl`) for diagnosis -- it records everything regardless of console verbosity level.
 
-2. **Assuming incremental build works without Inputs/Outputs.** A target without `Inputs`/`Outputs` runs on every build unconditionally. There is no implicit incrementality in MSBuild -- you must declare what files the target reads and writes. See [skill:dotnet-msbuild-authoring] for the full pattern.
+2. **Assuming incremental build works without Inputs/Outputs.** A target without `Inputs`/`Outputs` runs on every build unconditionally. There is no implicit incrementality in MSBuild -- you must declare what files the target reads and writes. See `references/msbuild-authoring.md` for the full pattern.
 
 3. **Forgetting `SkipUnchangedFiles="true"` on Copy tasks.** Without this flag, `Copy` always updates the destination timestamp, which triggers downstream targets to re-run even when file content is identical.
 

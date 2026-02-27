@@ -3,7 +3,7 @@
 
 Add and configure .NET code analyzers to an existing project. Covers built-in Roslyn CA rules, nullable reference types enforcement, trimming/AOT compatibility analyzers, and third-party analyzer packages.
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first — analyzer features vary by SDK version. Run [skill:dotnet-project-analysis] to understand the current project layout.
+**Prerequisites:** Run `references/version-detection.md` first — analyzer features vary by SDK version. Run `references/project-analysis.md` to understand the current project layout.
 
 ## Scope
 
@@ -14,11 +14,11 @@ Add and configure .NET code analyzers to an existing project. Covers built-in Ro
 
 ## Out of scope
 
-- EditorConfig hierarchy and IDE code style preferences -- see [skill:dotnet-editorconfig]
-- Solution layout and Directory.Build.props -- see [skill:dotnet-project-structure]
-- New project scaffolding with analyzers -- see [skill:dotnet-scaffold-project]
+- EditorConfig hierarchy and IDE code style preferences -- see [skill:dotnet-csharp]
+- Solution layout and Directory.Build.props -- see `references/project-structure.md`
+- New project scaffolding with analyzers -- see `references/scaffold-project.md`
 
-Cross-references: [skill:dotnet-project-structure] for where build props/targets live, [skill:dotnet-scaffold-project] which includes analyzer setup in new projects, [skill:dotnet-editorconfig] for EditorConfig hierarchy/precedence, IDE code style preferences, naming rules, and global AnalyzerConfig files.
+Cross-references: `references/project-structure.md` for where build props/targets live, `references/scaffold-project.md` which includes analyzer setup in new projects, [skill:dotnet-csharp] for EditorConfig hierarchy/precedence, IDE code style preferences, naming rules, and global AnalyzerConfig files.
 
 
 ## Built-in Roslyn Analyzers
@@ -124,7 +124,7 @@ For gradual adoption in existing codebases, enable per-file:
 #nullable enable
 ```
 
-See [skill:dotnet-csharp-nullable-reference-types] for annotation strategies and patterns.
+See [skill:dotnet-csharp] for annotation strategies and patterns.
 
 
 ## Trimming and AOT Compatibility Analyzers

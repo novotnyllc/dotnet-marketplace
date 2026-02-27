@@ -1,7 +1,7 @@
 
 # dotnet-version-upgrade
 
-Comprehensive guide for .NET version upgrade planning and execution. This skill consumes the structured output from [skill:dotnet-version-detection] (current TFM, SDK version, preview flags) and provides actionable upgrade guidance based on three defined upgrade lanes. Covers TFM migration, package updates, breaking change detection, deprecated API replacement, and test validation.
+Comprehensive guide for .NET version upgrade planning and execution. This skill consumes the structured output from `references/version-detection.md` (current TFM, SDK version, preview flags) and provides actionable upgrade guidance based on three defined upgrade lanes. Covers TFM migration, package updates, breaking change detection, deprecated API replacement, and test validation.
 
 ## Scope
 
@@ -13,12 +13,12 @@ Comprehensive guide for .NET version upgrade planning and execution. This skill 
 
 ## Out of scope
 
-- TFM detection logic -- see [skill:dotnet-version-detection]
-- Multi-targeting project setup and polyfill strategies -- see [skill:dotnet-multi-targeting]
+- TFM detection logic -- see `references/version-detection.md`
+- Multi-targeting project setup and polyfill strategies -- see `references/multi-targeting.md`
 - Cloud deployment configuration
 - CI/CD pipeline changes
 
-Cross-references: [skill:dotnet-version-detection] for TFM resolution and version matrix, [skill:dotnet-multi-targeting] for polyfill-first multi-targeting strategies when maintaining backward compatibility during migration.
+Cross-references: `references/version-detection.md` for TFM resolution and version matrix, `references/multi-targeting.md` for polyfill-first multi-targeting strategies when maintaining backward compatibility during migration.
 
 
 ## Upgrade Lanes
@@ -354,7 +354,7 @@ apicompat --left-assembly bin/Release/net8.0/MyLib.dll \
           --right-assembly bin/Release/net10.0/MyLib.dll
 ```
 
-See [skill:dotnet-multi-targeting] for detailed API compatibility validation workflows including suppression files and CI integration.
+See `references/multi-targeting.md` for detailed API compatibility validation workflows including suppression files and CI integration.
 
 
 ## Package Update Strategies
@@ -431,7 +431,7 @@ Pinned versions are recommended for deterministic CI; floating versions are usef
 
 4. **Ensure ASP.NET shared framework package major versions match the TFM.** Packages like `Microsoft.AspNetCore.Mvc.Testing` must have their major version aligned with the project TFM (e.g., `10.x` for `net10.0`). Pin exact versions for deterministic CI or float with wildcards (e.g., `10.*`) during exploratory upgrades.
 
-5. **Do not re-implement TFM detection.** This skill consumes the structured output from [skill:dotnet-version-detection]. Never parse `.csproj` files to determine the current version -- use the detection skill's output (TFM, C# version, SDK version, warnings).
+5. **Do not re-implement TFM detection.** This skill consumes the structured output from `references/version-detection.md`. Never parse `.csproj` files to determine the current version -- use the detection skill's output (TFM, C# version, SDK version, warnings).
 
 6. **Do not treat `dotnet-outdated --upgrade` as a complete solution.** It updates package versions but does not handle breaking API changes within those packages. Always build, test, and review changelogs after upgrading packages.
 
@@ -447,7 +447,7 @@ Pinned versions are recommended for deterministic CI; floating versions are usef
 - .NET SDK for the target TFM installed (e.g., .NET 10 SDK for net10.0 upgrade)
 - `dotnet-outdated-tool` (for package staleness detection): `dotnet tool install -g dotnet-outdated-tool`
 - `upgrade-assistant` (optional, for automated migration): `dotnet tool install -g upgrade-assistant`
-- Output from [skill:dotnet-version-detection] (current TFM, SDK version, preview flags)
+- Output from `references/version-detection.md` (current TFM, SDK version, preview flags)
 
 
 ## References

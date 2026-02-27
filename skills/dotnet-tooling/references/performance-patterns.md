@@ -16,21 +16,21 @@ Performance-oriented architecture patterns for .NET applications. Covers zero-al
 
 ## Out of scope
 
-- C# language syntax for Span, records, pattern matching -- see [skill:dotnet-csharp-modern-patterns]
-- Coding standards and naming conventions -- see [skill:dotnet-csharp-coding-standards]
-- Microbenchmarking setup and measurement -- see [skill:dotnet-benchmarkdotnet]
-- Native AOT compilation and trimming -- see [skill:dotnet-native-aot]
-- Serialization format performance -- see [skill:dotnet-serialization]
-- Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-architecture-patterns]
+- C# language syntax for Span, records, pattern matching -- see [skill:dotnet-csharp]
+- Coding standards and naming conventions -- see [skill:dotnet-csharp]
+- Microbenchmarking setup and measurement -- see [skill:dotnet-testing]
+- Native AOT compilation and trimming -- see `references/native-aot.md`
+- Serialization format performance -- see [skill:dotnet-csharp]
+- Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-api]
 
-Cross-references: [skill:dotnet-benchmarkdotnet] for measuring the impact of these patterns, [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax foundation, [skill:dotnet-csharp-coding-standards] for sealed class style conventions, [skill:dotnet-native-aot] for AOT performance characteristics and trimming impact on pattern choices, [skill:dotnet-serialization] for serialization performance context.
+Cross-references: [skill:dotnet-testing] for measuring the impact of these patterns, [skill:dotnet-csharp] for Span/Memory syntax foundation, [skill:dotnet-csharp] for sealed class style conventions, `references/native-aot.md` for AOT performance characteristics and trimming impact on pattern choices, [skill:dotnet-csharp] for serialization performance context.
 
 
 ## Span\<T\> and Memory\<T\> for Zero-Allocation Scenarios
 
 ### Why Span\<T\> Matters for Performance
 
-`Span<T>` provides a safe, bounds-checked view over contiguous memory without allocating. It enables slicing arrays, strings, and stack memory without copying. For syntax details see [skill:dotnet-csharp-modern-patterns]; this section focuses on performance rationale.
+`Span<T>` provides a safe, bounds-checked view over contiguous memory without allocating. It enables slicing arrays, strings, and stack memory without copying. For syntax details see [skill:dotnet-csharp]; this section focuses on performance rationale.
 
 ### Zero-Allocation String Processing
 
@@ -51,7 +51,7 @@ public static (ReadOnlySpan<char> Key, ReadOnlySpan<char> Value) ParseHeader_Zer
 }
 ```
 
-Performance impact: for high-throughput parsing (HTTP headers, log lines, CSV rows), Span-based parsing eliminates GC pressure entirely. Measure with `[MemoryDiagnoser]` in [skill:dotnet-benchmarkdotnet] -- the `Allocated` column should read `0 B`.
+Performance impact: for high-throughput parsing (HTTP headers, log lines, CSV rows), Span-based parsing eliminates GC pressure entirely. Measure with `[MemoryDiagnoser]` in [skill:dotnet-testing] -- the `Allocated` column should read `0 B`.
 
 ### Memory\<T\> for Async and Storage Scenarios
 
@@ -223,7 +223,7 @@ public sealed class SealedService : IProcessor
 public interface IProcessor { int Process(int x); }
 ```
 
-Verify devirtualization with `[DisassemblyDiagnoser]` in [skill:dotnet-benchmarkdotnet]. See [skill:dotnet-csharp-coding-standards] for the project convention of defaulting to sealed classes.
+Verify devirtualization with `[DisassemblyDiagnoser]` in [skill:dotnet-testing]. See [skill:dotnet-csharp] for the project convention of defaulting to sealed classes.
 
 ### Performance Impact
 
@@ -346,10 +346,10 @@ public static string FormatId(int category, int item)
 
 Before applying any optimization pattern, measure first. Premature optimization without data leads to complex code with no measurable benefit.
 
-1. **Identify the hot path** -- use [skill:dotnet-benchmarkdotnet] to establish a baseline
+1. **Identify the hot path** -- use [skill:dotnet-testing] to establish a baseline
 2. **Measure allocations** -- enable `[MemoryDiagnoser]` and check the `Allocated` column
 3. **Apply one pattern at a time** -- change one thing, re-measure, compare to baseline
-4. **Check AOT impact** -- if targeting Native AOT ([skill:dotnet-native-aot]), verify patterns are trim-safe
+4. **Check AOT impact** -- if targeting Native AOT (`references/native-aot.md`), verify patterns are trim-safe
 5. **Verify with production-like data** -- synthetic benchmarks can miss real-world allocation patterns
 6. **Document the tradeoff** -- every optimization trades readability or flexibility for speed; record the measured gain
 
@@ -362,7 +362,7 @@ Before applying any optimization pattern, measure first. Premature optimization 
 4. **Return rented ArrayPool buffers in finally blocks** -- forgetting to return starves the pool and causes fallback allocations that negate the benefit.
 5. **Use `StringComparison.Ordinal` for internal comparisons** -- omitting the comparison parameter defaults to culture-aware comparison, which is slower and produces surprising results for technical strings (file paths, identifiers).
 6. **Sealed classes help performance only when the JIT can see the concrete type** -- if the object is accessed through an interface variable in a non-devirtualizable call site, sealing provides no benefit. Verify with `[DisassemblyDiagnoser]`.
-7. **Do not re-teach language syntax** -- reference [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax details. This skill focuses on when and why to use these patterns for performance.
+7. **Do not re-teach language syntax** -- reference [skill:dotnet-csharp] for Span/Memory syntax details. This skill focuses on when and why to use these patterns for performance.
 
 
 ## Knowledge Sources

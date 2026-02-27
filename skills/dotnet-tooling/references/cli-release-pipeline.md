@@ -16,13 +16,13 @@ Unified release CI/CD pipeline for .NET CLI tools: GitHub Actions workflow produ
 
 ## Out of scope
 
-- General CI/CD patterns (branch strategies, matrix testing) -- see [skill:dotnet-gha-patterns] and [skill:dotnet-ado-patterns]
-- Native AOT compilation configuration -- see [skill:dotnet-native-aot]
-- Distribution strategy decisions -- see [skill:dotnet-cli-distribution]
-- Package format details -- see [skill:dotnet-cli-packaging]
-- Container image publishing -- see [skill:dotnet-containers]
+- General CI/CD patterns (branch strategies, matrix testing) -- see [skill:dotnet-devops] and [skill:dotnet-devops]
+- Native AOT compilation configuration -- see `references/native-aot.md`
+- Distribution strategy decisions -- see `references/cli-distribution.md`
+- Package format details -- see `references/cli-packaging.md`
+- Container image publishing -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-cli-distribution] for RID matrix and publish strategy, [skill:dotnet-cli-packaging] for package format authoring, [skill:dotnet-native-aot] for AOT publish configuration, [skill:dotnet-containers] for container-based distribution.
+Cross-references: `references/cli-distribution.md` for RID matrix and publish strategy, `references/cli-packaging.md` for package format authoring, `references/native-aot.md` for AOT publish configuration, [skill:dotnet-devops] for container-based distribution.
 
 
 ## Versioning Strategy
@@ -254,7 +254,7 @@ strategy:
 
 ### Cross-Compilation Notes
 
-- **linux-arm64 on ubuntu-latest:** .NET supports cross-compilation for managed (non-AOT) builds. `dotnet publish -r linux-arm64` on an x64 runner produces a valid ARM64 binary without QEMU. For Native AOT, cross-compiling ARM64 on an x64 runner requires the ARM64 cross-compilation toolchain (`gcc-aarch64-linux-gnu` or equivalent). See [skill:dotnet-native-aot] for cross-compile prerequisites.
+- **linux-arm64 on ubuntu-latest:** .NET supports cross-compilation for managed (non-AOT) builds. `dotnet publish -r linux-arm64` on an x64 runner produces a valid ARM64 binary without QEMU. For Native AOT, cross-compiling ARM64 on an x64 runner requires the ARM64 cross-compilation toolchain (`gcc-aarch64-linux-gnu` or equivalent). See `references/native-aot.md` for cross-compile prerequisites.
 - **osx-arm64:** Use `macos-latest` (which provides ARM64 runners) for native compilation. Cross-compiling macOS ARM64 from Linux is not supported.
 - **win-x64 on windows-latest:** Native compilation on Windows runner.
 

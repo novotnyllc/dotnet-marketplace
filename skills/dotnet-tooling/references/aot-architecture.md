@@ -16,15 +16,15 @@ AOT-first application design patterns for .NET 8+: preferring source generators 
 
 ## Out of scope
 
-- Native AOT publish pipeline and MSBuild configuration -- see [skill:dotnet-native-aot]
-- Trim-safe library authoring and annotations -- see [skill:dotnet-trimming]
-- WASM AOT compilation -- see [skill:dotnet-aot-wasm]
-- MAUI-specific AOT -- see [skill:dotnet-maui-aot]
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
-- DI container internals -- see [skill:dotnet-csharp-dependency-injection]
-- Serialization depth -- see [skill:dotnet-serialization]
+- Native AOT publish pipeline and MSBuild configuration -- see `references/native-aot.md`
+- Trim-safe library authoring and annotations -- see `references/trimming.md`
+- WASM AOT compilation -- see [skill:dotnet-ui]
+- MAUI-specific AOT -- see [skill:dotnet-ui]
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
+- DI container internals -- see [skill:dotnet-csharp]
+- Serialization depth -- see [skill:dotnet-csharp]
 
-Cross-references: [skill:dotnet-native-aot] for the AOT publish pipeline, [skill:dotnet-trimming] for trim annotations and library authoring, [skill:dotnet-serialization] for serialization patterns, [skill:dotnet-csharp-source-generators] for source gen mechanics, [skill:dotnet-csharp-dependency-injection] for DI fundamentals, [skill:dotnet-containers] for `runtime-deps` deployment, [skill:dotnet-native-interop] for general P/Invoke patterns and marshalling.
+Cross-references: `references/native-aot.md` for the AOT publish pipeline, `references/trimming.md` for trim annotations and library authoring, [skill:dotnet-csharp] for serialization patterns, [skill:dotnet-csharp] for source gen mechanics, [skill:dotnet-csharp] for DI fundamentals, [skill:dotnet-devops] for `runtime-deps` deployment, [skill:dotnet-csharp] for general P/Invoke patterns and marshalling.
 
 
 ## Source Generators Over Reflection
@@ -64,7 +64,7 @@ public partial class OrderService
 LogOrderCreated(_logger, order.Id, order.CustomerId);
 ```
 
-See [skill:dotnet-csharp-source-generators] for source generator mechanics and authoring patterns.
+See [skill:dotnet-csharp] for source generator mechanics and authoring patterns.
 
 
 ## AOT-Safe DI Patterns
@@ -123,7 +123,7 @@ app.MapPost("/notify", ([FromKeyedServices("email")] INotificationSender sender)
     sender.SendAsync("Hello"));
 ```
 
-See [skill:dotnet-csharp-dependency-injection] for full DI patterns.
+See [skill:dotnet-csharp] for full DI patterns.
 
 
 ## Serialization Choices for AOT
@@ -156,7 +156,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 ```
 
-See [skill:dotnet-serialization] for comprehensive serialization patterns.
+See [skill:dotnet-csharp] for comprehensive serialization patterns.
 
 
 ## Factory Patterns Replacing Activator.CreateInstance
