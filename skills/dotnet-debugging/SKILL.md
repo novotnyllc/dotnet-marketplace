@@ -35,7 +35,7 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 
 ## MCP Tool Contract
 
-Use these `mcp-windbg` operations:
+These tool IDs are the WinDbg MCP server's exported names (single-underscore `mcp_...`), not the `mcp__...` dispatch prefix used by some hosts.
 
 | Operation | Purpose |
 |-----------|---------|
