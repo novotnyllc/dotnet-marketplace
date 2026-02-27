@@ -1,0 +1,18 @@
+{
+  "branch_name": "fn-65-skill-quality-fine-tuning-eliminate",
+  "completion_review_status": "unknown",
+  "completion_reviewed_at": null,
+  "created_at": "2026-02-27T05:26:30.497978Z",
+  "default_impl": null,
+  "default_review": null,
+  "default_sync": null,
+  "depends_on_epics": [],
+  "id": "fn-65-skill-quality-fine-tuning-eliminate",
+  "next_task": 1,
+  "plan_review_status": "ship",
+  "plan_reviewed_at": "2026-02-27T05:45:51.116774Z",
+  "spec_path": ".flow/specs/fn-65-skill-quality-fine-tuning-eliminate.md",
+  "status": "open",
+  "title": "Skill quality fine-tuning: eliminate redundancy and normalize references",
+  "updated_at": "2026-02-27T05:45:51.122325Z"
+}
