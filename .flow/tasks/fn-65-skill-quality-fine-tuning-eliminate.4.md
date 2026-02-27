@@ -72,9 +72,8 @@ Add checks to `scripts/_validate_skills.py` for files matching `skills/*/referen
 - [ ] Running validator against a reference file with `[skill:dotnet-minimal-apis]` inside a code fence does NOT report an error
 
 ## Done summary
-TBD
-
+Updated CONTRIBUTING-SKILLS.md to replace all details.md references with references/ pattern, fixed stale references in the style guide (removed T5--T10, dotnet-version-detection, 130+ skills), added new sections for references/ companion file convention and [skill:] syntax for skills and agents, and extended the validator with fence-aware H1 title checks, fence-aware cross-ref resolution, no-Scope/OOS enforcement, and routing table companion file existence checks for reference files.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5cb0f3bb99bc2e8b3a43576dedf55f936463b208
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:
