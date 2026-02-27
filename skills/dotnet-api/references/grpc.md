@@ -3,7 +3,7 @@
 
 Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, code generation, ASP.NET Core gRPC server implementation and endpoint hosting, `Grpc.Net.Client` client patterns, all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
-For detailed code examples (server implementation, client patterns, streaming, auth, interceptors, gRPC-Web), see `examples.md` in this skill directory.
+For detailed code examples (server implementation, client patterns, streaming, auth, interceptors, gRPC-Web), see the "Detailed Examples" section below.
 
 ## Scope
 
@@ -34,6 +34,8 @@ gRPC uses Protocol Buffers as its interface definition language. The `Grpc.Tools
 ```xml
 <ItemGroup>
   <PackageReference Include="Grpc.AspNetCore" Version="2.*" />
+  <PackageReference Include="Google.Protobuf" Version="3.*" />
+  <PackageReference Include="Grpc.Tools" Version="2.*" PrivateAssets="All" />
 </ItemGroup>
 
 <ItemGroup>

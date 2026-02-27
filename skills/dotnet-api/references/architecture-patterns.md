@@ -24,7 +24,7 @@ Cross-references: [skill:dotnet-csharp-dependency-injection] for service registr
 ---
 
 
-For detailed code examples (vertical slices, minimal API organization, pipeline composition, error handling, caching, idempotency, outbox), see `examples.md` in this skill directory.
+For detailed code examples (vertical slices, minimal API organization, pipeline composition, error handling, caching, idempotency, outbox), see the "Detailed Examples" section below.
 
 ## Agent Gotchas
 
