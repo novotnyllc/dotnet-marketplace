@@ -1,29 +1,8 @@
-
-# dotnet-api-docs
+# API Docs
 
 API documentation generation for .NET projects: DocFX setup for API reference from assemblies (`docfx.json` configuration, metadata extraction, template customization, cross-referencing), OpenAPI spec as living API documentation (Scalar and Swagger UI embedding, versioned OpenAPI documents), documentation-code synchronization (CI validation with `-warnaserror:CS1591`, broken link detection, automated doc builds on PR), API changelog patterns (breaking change documentation, migration guides, deprecated API tracking), and versioned API documentation (version selectors, multi-version maintenance, URL patterns).
 
 **Version assumptions:** DocFX v2.x (community-maintained). OpenAPI 3.x via `Microsoft.AspNetCore.OpenApi` (.NET 9+ built-in). Scalar UI for modern OpenAPI visualization. .NET 8.0+ baseline for code examples.
-
-## Scope
-
-- DocFX setup for API reference (metadata extraction, template customization, cross-referencing)
-- OpenAPI spec as living documentation (Scalar and Swagger UI embedding)
-- Documentation-code synchronization (CI validation, broken link detection)
-- API changelog patterns (breaking changes, migration guides, deprecated API tracking)
-- Versioned API documentation (version selectors, multi-version maintenance)
-
-## Out of scope
-
-- XML documentation comment syntax and authoring -- see [skill:dotnet-xml-docs]
-- OpenAPI spec generation and configuration -- see [skill:dotnet-openapi]
-- CI/CD deployment pipelines for documentation sites -- see [skill:dotnet-gha-deploy]
-- Documentation platform selection and initial setup -- see [skill:dotnet-documentation-strategy]
-- Changelog generation tooling and SemVer versioning -- see [skill:dotnet-release-management]
-
-Cross-references: [skill:dotnet-xml-docs] for XML doc comment authoring, [skill:dotnet-openapi] for OpenAPI generation, [skill:dotnet-gha-deploy] for doc site deployment pipelines, [skill:dotnet-documentation-strategy] for platform selection, [skill:dotnet-release-management] for changelog tooling and versioning.
-
----
 
 ## DocFX Setup for .NET API Reference
 
@@ -203,7 +182,7 @@ references:
 
 ## OpenAPI Spec as Documentation
 
-Generated OpenAPI specifications serve as living API documentation that stays in sync with the code. This section covers using OpenAPI output as documentation; for OpenAPI generation and configuration, see [skill:dotnet-openapi].
+Generated OpenAPI specifications serve as living API documentation that stays in sync with the code. This section covers using OpenAPI output as documentation; for OpenAPI generation and configuration, see [skill:dotnet-api].
 
 ### Scalar UI Embedding
 
@@ -310,7 +289,7 @@ Alternatively, use the `Microsoft.Extensions.ApiDescription.Server` package to g
 </PropertyGroup>
 ```
 
-For OpenAPI generation setup and Swashbuckle migration details, see [skill:dotnet-openapi].
+For OpenAPI generation setup and Swashbuckle migration details, see [skill:dotnet-api].
 
 ---
 
@@ -345,7 +324,7 @@ docfx build (generates HTML)
 Static HTML Site (_site/)
 ```
 
-For XML documentation comment authoring best practices, see [skill:dotnet-xml-docs].
+For XML documentation comment authoring best practices, see [skill:dotnet-tooling].
 
 ### XML Docs to Starlight (via Markdown Extraction)
 
@@ -436,7 +415,7 @@ npx broken-link-checker-local ./_site --recursive
 
 ### Automated Doc Builds on PR
 
-Validate documentation builds on every pull request without deploying. For the deployment workflow configuration, see [skill:dotnet-gha-deploy]. The validation step typically runs as part of the CI workflow:
+Validate documentation builds on every pull request without deploying. For the deployment workflow configuration, see [skill:dotnet-devops]. The validation step typically runs as part of the CI workflow:
 
 ```bash
 # In CI: verify docs build without errors
@@ -556,7 +535,7 @@ Track deprecated APIs in a dedicated document:
 | `WidgetOptions.EnableCache` | v3.1 | v5.0 (planned) | `WidgetOptions.CachePolicy` |
 ```
 
-For changelog format conventions and SemVer versioning strategy, see [skill:dotnet-release-management].
+For changelog format conventions and SemVer versioning strategy, see [skill:dotnet-devops].
 
 ---
 
@@ -595,11 +574,11 @@ git checkout main
 
 **Starlight versioned docs:**
 
-Use directory-based versioning or the `@lorenzo_lewis/starlight-utils` plugin. See [skill:dotnet-documentation-strategy] for Starlight versioning setup.
+Use directory-based versioning or the `@lorenzo_lewis/starlight-utils` plugin. See [skill:dotnet-tooling] for Starlight versioning setup.
 
 **Docusaurus versioned docs:**
 
-Docusaurus has built-in versioning with `npx docusaurus docs:version`. See [skill:dotnet-documentation-strategy] for Docusaurus versioning setup.
+Docusaurus has built-in versioning with `npx docusaurus docs:version`. See [skill:dotnet-tooling] for Docusaurus versioning setup.
 
 ### Maintaining Docs for Multiple Active Versions
 
@@ -627,15 +606,15 @@ Configure redirects so unversioned URLs point to the latest stable version. This
 
 ## Agent Gotchas
 
-1. **Do not generate OpenAPI spec configuration** -- OpenAPI generation setup (`builder.Services.AddOpenApi()`, document transformers, Swashbuckle migration) belongs to [skill:dotnet-openapi]. This skill covers using the generated OpenAPI output as documentation.
+1. **Do not generate OpenAPI spec configuration** -- OpenAPI generation setup (`builder.Services.AddOpenApi()`, document transformers, Swashbuckle migration) belongs to [skill:dotnet-api]. This skill covers using the generated OpenAPI output as documentation.
 
-2. **Do not write XML doc comment syntax guidance** -- XML tag syntax, conventions, `<inheritdoc>`, and `GenerateDocumentationFile` belong to [skill:dotnet-xml-docs]. This skill covers the pipeline from XML docs to generated documentation sites.
+2. **Do not write XML doc comment syntax guidance** -- XML tag syntax, conventions, `<inheritdoc>`, and `GenerateDocumentationFile` belong to [skill:dotnet-tooling]. This skill covers the pipeline from XML docs to generated documentation sites.
 
-3. **Do not generate CI deployment YAML** -- doc site deployment workflows (GitHub Pages actions, DocFX deploy) belong to [skill:dotnet-gha-deploy]. This skill covers doc build validation and local generation.
+3. **Do not generate CI deployment YAML** -- doc site deployment workflows (GitHub Pages actions, DocFX deploy) belong to [skill:dotnet-devops]. This skill covers doc build validation and local generation.
 
 4. **`docfx metadata` requires a buildable project** -- the project must compile successfully for DocFX to extract API metadata. Always run `dotnet build` before `docfx metadata` in CI pipelines.
 
-5. **DocFX is community-maintained since November 2022** -- Microsoft transferred the repository. It remains actively maintained and widely used. For new projects evaluating alternatives, see [skill:dotnet-documentation-strategy].
+5. **DocFX is community-maintained since November 2022** -- Microsoft transferred the repository. It remains actively maintained and widely used. For new projects evaluating alternatives, see [skill:dotnet-tooling].
 
 6. **DocFX `modern` template requires v2.75+** -- earlier versions use the `default` template which does not include Mermaid support or modern styling. Check the installed version with `docfx --version`.
 

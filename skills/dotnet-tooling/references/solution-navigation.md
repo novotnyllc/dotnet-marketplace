@@ -1,24 +1,11 @@
+# Solution Navigation
 
 ```bash
 find . -maxdepth 2 \( -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -5
 ```
 
-# dotnet-solution-navigation
 
 Teaches agents to orient in .NET solutions: finding entry points, parsing solution files, traversing project dependencies, locating configuration files, and recognizing common solution layouts. Each subsection includes discovery commands/heuristics and example output.
-
-## Scope
-
-- Entry point discovery (Program.cs, top-level statements, worker services)
-- Solution file parsing (.sln, .slnx)
-- Project dependency graph traversal
-- Configuration file location (appsettings.json, launchSettings.json)
-
-## Out of scope
-
-- Project file structure and modification -- see `references/csproj-reading.md`
-- Project organization decisions and SDK selection -- see `references/project-structure.md`
-- Test framework configuration and test type decisions -- see [skill:dotnet-testing]
 
 ## Prerequisites
 

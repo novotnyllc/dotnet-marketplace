@@ -1,25 +1,6 @@
-
-# dotnet-http-client
+# HTTP Client
 
 Best practices for consuming HTTP APIs in .NET applications using `IHttpClientFactory`. Covers named and typed clients, resilience pipeline integration, `DelegatingHandler` chains for cross-cutting concerns, and testing strategies.
-
-## Scope
-
-- IHttpClientFactory patterns (named and typed clients)
-- DelegatingHandler chains for cross-cutting concerns
-- Resilience pipeline integration with HTTP clients
-- Testing strategies for HTTP client code
-
-## Out of scope
-
-- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
-- Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
-- Resilience pipeline configuration (Polly v8, retry, circuit breaker) -- see [skill:dotnet-resilience]
-- Integration testing frameworks -- see [skill:dotnet-integration-testing]
-
-Cross-references: [skill:dotnet-resilience] for resilience pipeline configuration, [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async HTTP patterns.
-
----
 
 ## Why IHttpClientFactory
 
@@ -170,7 +151,7 @@ builder.Services.AddHttpClient<ICatalogApiClient, CatalogApiClient>(client =>
 
 ## Resilience Pipelines
 
-Apply resilience to HTTP clients using `Microsoft.Extensions.Http.Resilience`. See [skill:dotnet-resilience] for detailed pipeline configuration, strategy options, and migration guidance.
+Apply resilience to HTTP clients using `Microsoft.Extensions.Http.Resilience`. See [skill:dotnet-api] for detailed pipeline configuration, strategy options, and migration guidance.
 
 ### Standard Resilience Handler (Recommended)
 
@@ -217,7 +198,7 @@ builder.Services
     });
 ```
 
-See [skill:dotnet-resilience] for when to use hedging vs standard retry.
+See [skill:dotnet-api] for when to use hedging vs standard retry.
 
 ---
 
@@ -556,7 +537,7 @@ Test the full HTTP client pipeline including DI registration:
 
 - **Always use IHttpClientFactory** -- never `new HttpClient()` in application code
 - **Prefer typed clients** -- encapsulate HTTP logic behind a strongly-typed interface
-- **Apply resilience via pipeline** -- use `AddStandardResilienceHandler()` (see [skill:dotnet-resilience]) rather than manual retry loops
+- **Apply resilience via pipeline** -- use `AddStandardResilienceHandler()` (see [skill:dotnet-api]) rather than manual retry loops
 - **Keep handlers focused** -- each `DelegatingHandler` should do one thing (auth, logging, correlation)
 - **Register handlers as Transient** -- DelegatingHandlers are created per-client-instance and should not hold state across requests
 - **Pass CancellationToken everywhere** -- from endpoint to typed client to HTTP call

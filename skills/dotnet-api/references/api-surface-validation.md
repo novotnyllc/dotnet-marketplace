@@ -1,29 +1,8 @@
-
-# dotnet-api-surface-validation
+# API Surface Validation
 
 Tools and workflows for validating and tracking the public API surface of .NET libraries. Covers three complementary approaches: **PublicApiAnalyzers** for text-file tracking of shipped/unshipped APIs with Roslyn diagnostics, the **Verify snapshot pattern** for reflection-based API surface snapshot testing, and **ApiCompat CI enforcement** for gating pull requests on API surface changes.
 
 **Version assumptions:** .NET 8.0+ baseline. PublicApiAnalyzers 3.3+ (ships with `Microsoft.CodeAnalysis.Analyzers` or standalone `Microsoft.CodeAnalysis.PublicApiAnalyzers`). ApiCompat tooling included in .NET 8+ SDK.
-
-## Scope
-
-- PublicApiAnalyzers text-file tracking of shipped/unshipped APIs
-- Verify snapshot pattern for reflection-based API surface testing
-- ApiCompat CI enforcement for gating PRs on breaking changes
-- Multi-TFM and monorepo API tracking strategies
-- PR labeling and suppression file workflows
-
-## Out of scope
-
-- Binary vs source compatibility rules, type forwarders, SemVer impact -- see [skill:dotnet-library-api-compat]
-- NuGet packaging, `EnablePackageValidation` basics, and suppression file mechanics -- see [skill:dotnet-nuget-authoring] and [skill:dotnet-multi-targeting]
-- Verify library fundamentals (setup, scrubbing, converters) -- see [skill:dotnet-snapshot-testing]
-- General Roslyn analyzer configuration (EditorConfig, severity levels) -- see [skill:dotnet-roslyn-analyzers]
-- HTTP API versioning -- see [skill:dotnet-api-versioning]
-
-Cross-references: [skill:dotnet-library-api-compat] for binary/source compatibility rules, [skill:dotnet-nuget-authoring] for `EnablePackageValidation` and NuGet SemVer, [skill:dotnet-multi-targeting] for multi-TFM ApiCompat tool mechanics, [skill:dotnet-snapshot-testing] for Verify fundamentals, [skill:dotnet-roslyn-analyzers] for general analyzer configuration, [skill:dotnet-api-versioning] for HTTP API versioning.
-
----
 
 ## PublicApiAnalyzers
 
@@ -155,7 +134,7 @@ To enable per-TFM files, add to the `.csproj`:
 </PropertyGroup>
 ```
 
-See [skill:dotnet-multi-targeting] for multi-TFM packaging mechanics.
+See [skill:dotnet-tooling] for multi-TFM packaging mechanics.
 
 ### Integrating with CI
 
@@ -178,7 +157,7 @@ Use the Verify library to snapshot-test the entire public API surface of an asse
 
 This pattern complements PublicApiAnalyzers -- the analyzer catches changes at build time within the project, while the Verify snapshot catches changes from the perspective of a compiled assembly consumer.
 
-For Verify fundamentals (setup, scrubbing, converters, diff tool integration, CI configuration), see [skill:dotnet-snapshot-testing].
+For Verify fundamentals (setup, scrubbing, converters, diff tool integration, CI configuration), see [skill:dotnet-testing].
 
 ### Extracting the Public API Surface
 
@@ -313,7 +292,7 @@ Use both for maximum coverage: PublicApiAnalyzers catches changes during develop
 
 ApiCompat compares two assemblies (or a baseline NuGet package against the current build) and reports API differences. When integrated into CI, it gates pull requests on API surface changes -- any breaking change produces a build error that the author must explicitly acknowledge.
 
-For `EnablePackageValidation` basics and suppression file mechanics, see [skill:dotnet-nuget-authoring] and [skill:dotnet-multi-targeting].
+For `EnablePackageValidation` basics and suppression file mechanics, see [skill:dotnet-devops] and [skill:dotnet-tooling].
 
 ### Package Validation in CI
 
@@ -516,8 +495,8 @@ This ensures every packable project in the repository has both PublicApiAnalyzer
 - `Microsoft.CodeAnalysis.PublicApiAnalyzers` NuGet package (for RS0016/RS0017 diagnostics)
 - `EnablePackageValidation` MSBuild property (for baseline API comparison during `dotnet pack`)
 - `Microsoft.DotNet.ApiCompat.Tool` (optional, for standalone assembly comparison outside of `dotnet pack`)
-- Verify test library and test framework integration package (for API surface snapshot testing) -- see [skill:dotnet-snapshot-testing] for setup
-- Understanding of binary vs source compatibility rules -- see [skill:dotnet-library-api-compat]
+- Verify test library and test framework integration package (for API surface snapshot testing) -- see [skill:dotnet-testing] for setup
+- Understanding of binary vs source compatibility rules -- see [skill:dotnet-api]
 
 ---
 

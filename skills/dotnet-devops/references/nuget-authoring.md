@@ -1,29 +1,8 @@
-# dotnet-nuget-authoring
+# NuGet Authoring
 
 NuGet package authoring for .NET library authors: SDK-style `.csproj` package properties (`PackageId`, `PackageTags`, `PackageReadmeFile`, `PackageLicenseExpression`), source generator NuGet packaging with `analyzers/dotnet/cs/` folder layout and `buildTransitive` targets, multi-TFM packages, symbol packages (snupkg) with deterministic builds, package signing (author signing with certificates, repository signing), package validation (`EnablePackageValidation`, `Microsoft.DotNet.ApiCompat.Task` for API compatibility), and NuGet versioning strategies (SemVer 2.0, pre-release suffixes, NBGV integration).
 
 **Version assumptions:** .NET 8.0+ baseline. NuGet client bundled with .NET 8+ SDK. `Microsoft.DotNet.ApiCompat.Task` 8.0+ for API compatibility validation.
-
-## Scope
-
-- SDK-style csproj package properties and metadata
-- Source generator NuGet packaging with analyzers folder layout
-- Multi-TFM packages and symbol packages (snupkg)
-- Package signing (author and repository signing)
-- Package validation (EnablePackageValidation, API compatibility)
-- NuGet versioning strategies (SemVer 2.0, NBGV)
-
-## Out of scope
-
-- Central Package Management, SourceLink, nuget.config -- see [skill:dotnet-project-structure]
-- CI/CD NuGet push workflows -- see [skill:dotnet-devops] `references/gha-publish.md` and `references/ado-publish.md`
-- CLI tool packaging and distribution -- see [skill:dotnet-cli-packaging]
-- Roslyn analyzer authoring -- see [skill:dotnet-roslyn-analyzers]
-- Release lifecycle and NBGV setup -- see [skill:dotnet-devops] `references/release-management.md`
-
-Cross-references: [skill:dotnet-project-structure] for CPM, SourceLink, nuget.config, [skill:dotnet-devops] `references/gha-publish.md` for CI NuGet push workflows, [skill:dotnet-devops] `references/ado-publish.md` for ADO NuGet push workflows, [skill:dotnet-cli-packaging] for CLI tool distribution formats, [skill:dotnet-csharp-source-generators] for Roslyn source generator authoring, [skill:dotnet-devops] `references/release-management.md` for release lifecycle and NBGV setup, [skill:dotnet-roslyn-analyzers] for Roslyn analyzer authoring.
-
----
 
 ## SDK-Style Package Properties
 
@@ -109,7 +88,7 @@ Individual `.csproj` files then only set package-specific properties (`PackageId
 
 ## Source Generator NuGet Packaging
 
-Source generators and analyzers require a specific NuGet package layout. The generator DLL must be placed in the `analyzers/dotnet/cs/` folder, not the `lib/` folder. For Roslyn source generator authoring (IIncrementalGenerator, syntax/semantic analysis), see [skill:dotnet-csharp-source-generators]. This section covers NuGet *packaging* of generators only.
+Source generators and analyzers require a specific NuGet package layout. The generator DLL must be placed in the `analyzers/dotnet/cs/` folder, not the `lib/` folder. For Roslyn source generator authoring (IIncrementalGenerator, syntax/semantic analysis), see [skill:dotnet-csharp]. This section covers NuGet *packaging* of generators only.
 
 ### Project Setup for Source Generator Package
 
@@ -308,7 +287,7 @@ dotnet nuget push "bin/Release/*.nupkg" \
   --api-key "$NUGET_API_KEY"
 ```
 
-**SourceLink integration:** For source-level debugging with links to the actual source repository, configure SourceLink in your project. See [skill:dotnet-project-structure] for SourceLink setup -- do not duplicate that configuration here.
+**SourceLink integration:** For source-level debugging with links to the actual source repository, configure SourceLink in your project. See [skill:dotnet-tooling] for SourceLink setup -- do not duplicate that configuration here.
 
 ### Embedded PDB Alternative
 

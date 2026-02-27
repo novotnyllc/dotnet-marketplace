@@ -1,26 +1,6 @@
-
-# dotnet-multi-targeting
+# Multi-Targeting
 
 Comprehensive guide for .NET multi-targeting strategies with a polyfill-first approach. This skill consumes the structured output from `references/version-detection.md` (TFM, C# version, preview flags) and provides actionable guidance on backporting language features, handling runtime gaps, and validating API compatibility across target frameworks.
-
-## Scope
-
-- Decision matrix: polyfill vs conditional compilation
-- PolySharp for compiler-synthesized polyfills
-- SimonCropp/Polyfill for BCL API backporting
-- Conditional compilation with TFM-based preprocessor symbols
-- Multi-targeting .csproj patterns and TFM-specific source files
-- API compatibility validation (EnablePackageValidation, ApiCompat tool)
-
-## Out of scope
-
-- TFM detection logic -- see `references/version-detection.md`
-- Version upgrade lane selection -- see `references/version-upgrade.md`
-- Platform-specific UI frameworks (MAUI, Blazor) -- see respective framework skills
-- Cloud deployment configuration
-
-Cross-references: `references/version-detection.md` for TFM resolution and version matrix, `references/version-upgrade.md` for upgrade lane guidance and migration strategies.
-
 
 ## Decision Matrix: Polyfill vs Conditional Compilation
 

@@ -1,30 +1,6 @@
-
-# dotnet-architecture-patterns
+# Architecture Patterns
 
 Modern architecture patterns for .NET applications. Covers practical approaches to organizing minimal APIs at scale, vertical slice architecture, request pipeline composition, validation strategies, caching, error handling, and idempotency/outbox patterns.
-
-## Scope
-
-- Vertical slice architecture and feature-folder organization
-- Request pipeline composition and MediatR patterns
-- Caching strategies (memory, distributed, output caching, HybridCache)
-- Error handling and problem details (RFC 9457)
-- Idempotency and outbox patterns
-- Result pattern for business logic error flow
-
-## Out of scope
-
-- DI container mechanics and async/await patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]
-- Project scaffolding and file layout -- see [skill:dotnet-scaffold-project]
-- Testing strategies -- see [skill:dotnet-testing-strategy] and [skill:dotnet-integration-testing]
-- SOLID principles and design pattern foundations -- see [skill:dotnet-solid-principles]
-
-Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration and lifetimes, [skill:dotnet-csharp-async-patterns] for async pipeline patterns, [skill:dotnet-csharp-configuration] for Options pattern in configuration, [skill:dotnet-solid-principles] for SOLID/DRY design principles governing class and interface design.
-
----
-
-
-For detailed code examples (vertical slices, minimal API organization, pipeline composition, error handling, caching, idempotency, outbox), see the "Detailed Examples" section below.
 
 ## Agent Gotchas
 
@@ -60,7 +36,7 @@ Architecture patterns in this skill are grounded in publicly available content f
 
 ---
 
-# dotnet-architecture-patterns -- Detailed Examples
+# Architecture Patterns -- Detailed Examples
 
 Extended code examples for vertical slices, minimal API organization, request pipeline, error handling, validation, caching, idempotency, and outbox patterns.
 
@@ -321,11 +297,11 @@ return result switch
 
 ## Validation Strategy
 
-Choose validation based on complexity. Prefer built-in mechanisms as the default; reserve FluentValidation for complex business rules that outgrow declarative attributes. For detailed framework guidance, see [skill:dotnet-input-validation]. For SOLID principles governing where validation belongs in your architecture, see [skill:dotnet-solid-principles].
+Choose validation based on complexity. Prefer built-in mechanisms as the default; reserve FluentValidation for complex business rules that outgrow declarative attributes. For detailed framework guidance, see [skill:dotnet-csharp]. For SOLID principles governing where validation belongs in your architecture, see [skill:dotnet-csharp].
 
 ### Built-in: Data Annotations + MiniValidation (Default)
 
-Start with Data Annotations for simple property-level constraints. Use `MiniValidation` for lightweight validation in Minimal APIs without MVC model binding overhead. For .NET 10+ projects, prefer the built-in `AddValidation()` source-generator pipeline (see [skill:dotnet-input-validation]).
+Start with Data Annotations for simple property-level constraints. Use `MiniValidation` for lightweight validation in Minimal APIs without MVC model binding overhead. For .NET 10+ projects, prefer the built-in `AddValidation()` source-generator pipeline (see [skill:dotnet-csharp]).
 
 ```csharp
 public sealed record CreateProductRequest(
@@ -667,7 +643,7 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 
 ## Key Principles
 
-- **Apply SOLID principles** -- Single Responsibility (one reason to change per class), Open/Closed (extend via new types, not modifying existing code), Dependency Inversion (depend on abstractions at module boundaries). See [skill:dotnet-solid-principles] for anti-patterns, fixes, and compliance tests.
+- **Apply SOLID principles** -- Single Responsibility (one reason to change per class), Open/Closed (extend via new types, not modifying existing code), Dependency Inversion (depend on abstractions at module boundaries). See [skill:dotnet-csharp] for anti-patterns, fixes, and compliance tests.
 - **Prefer composition over inheritance** -- use endpoint filters, middleware, and pipeline composition rather than base classes
 - **Keep slices independent** -- avoid shared abstractions that couple features together; DRY applies to knowledge duplication, not code similarity across bounded contexts
 - **Validate early, fail fast** -- validate at the boundary (endpoint filters) before entering business logic

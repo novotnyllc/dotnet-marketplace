@@ -1,28 +1,6 @@
-
-# dotnet-security-owasp
+# OWASP Security
 
 OWASP Top 10 (2021) security guidance for .NET applications. Each category includes the vulnerability description, .NET-specific risk, mitigation code examples, and common pitfalls. This skill is the canonical owner of deprecated security pattern warnings (CAS, APTCA, .NET Remoting, DCOM, BinaryFormatter).
-
-## Scope
-
-- OWASP Top 10 (2021) vulnerability categories with .NET-specific mitigations
-- Injection, broken access control, XSS, SSRF prevention patterns
-- Deprecated security API warnings (CAS, APTCA, BinaryFormatter, .NET Remoting)
-- Security header configuration and CORS hardening
-- Rate limiting and anti-forgery middleware patterns
-- NuGet package audit and dependency vulnerability scanning
-
-## Out of scope
-
-- Authentication/authorization implementation -- see [skill:dotnet-api-security]
-- Blazor auth UI -- see [skill:dotnet-blazor-auth]
-- Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
-- Configuration binding and Options pattern -- see [skill:dotnet-csharp-configuration]
-- Secrets storage and management -- see [skill:dotnet-secrets-management]
-
-Cross-references: [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices, [skill:dotnet-csharp-coding-standards] for secure coding conventions.
-
----
 
 ## A01: Broken Access Control
 
@@ -132,7 +110,7 @@ public sealed class TokenProtector(IDataProtectionProvider provider)
 }
 ```
 
-See [skill:dotnet-cryptography] for algorithm selection (AES-GCM, RSA, ECDSA) and key derivation.
+See [skill:dotnet-api] for algorithm selection (AES-GCM, RSA, ECDSA) and key derivation.
 
 ---
 
@@ -573,7 +551,7 @@ The `[AllowPartiallyTrustedCallers]` attribute has **no effect** in .NET Core/.N
 ### .NET Remoting
 
 .NET Remoting is **not available** in .NET Core/.NET 5+. It was inherently insecure due to unrestricted deserialization of remote objects. Replace with:
-- gRPC for cross-process/cross-machine RPC (see [skill:dotnet-cryptography] for transport security)
+- gRPC for cross-process/cross-machine RPC (see [skill:dotnet-api] for transport security)
 - Named pipes for same-machine IPC
 - HTTP APIs for service-to-service communication
 
@@ -599,7 +577,7 @@ Do **not** set `System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerializ
 3. **Do not log raw request bodies** -- they may contain credentials, tokens, or PII. Use `HttpLoggingFields` to select safe fields.
 4. **Do not rely solely on client-side validation** -- always validate on the server. Razor form validation is for UX, not security.
 5. **Do not use `FromSqlRaw` with string interpolation** -- use `FromSqlInterpolated` which auto-parameterizes.
-6. **Do not store secrets in `appsettings.json`** -- use user secrets for development and environment variables or managed identity for production. See [skill:dotnet-secrets-management].
+6. **Do not store secrets in `appsettings.json`** -- use user secrets for development and environment variables or managed identity for production. See [skill:dotnet-api].
 7. **Do not generate security-sensitive code using deprecated patterns** -- CAS, APTCA, .NET Remoting, DCOM, and BinaryFormatter are all unsupported in modern .NET. See the Deprecated Security Patterns section above.
 
 ---

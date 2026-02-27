@@ -1,29 +1,13 @@
+# Version Detection
 
 ```bash
 dotnet --version 2>/dev/null
 ```
 
-# dotnet-version-detection
 
 Detects .NET version information from project files and provides version-specific guidance. This skill runs **first** before any .NET development work. All other skills depend on the detected version to adapt their guidance.
 
 Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-csharp] for .NET 10+ file-based apps that run without a `.csproj`.
-
-## Scope
-
-- Reading TFM from .csproj, Directory.Build.props, and global.json
-- Multi-targeting detection and highest-TFM selection
-- SDK version detection and preview feature gating
-- Version-specific API availability guidance
-- C# language version mapping and support lifecycle reporting
-
-## Out of scope
-
-- Project structure analysis beyond TFM -- see `references/project-analysis.md`
-- .NET 10 file-based apps without .csproj -- see [skill:dotnet-csharp]
-- Framework upgrade migration steps -- see `references/version-upgrade.md`
-- Multi-targeting polyfills and conditional compilation -- see `references/multi-targeting.md`
-
 
 ## Fast Repository Scan (Optional)
 

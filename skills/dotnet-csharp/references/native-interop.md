@@ -4,23 +4,6 @@ Platform Invoke (P/Invoke) patterns for calling native C/C++ libraries from .NET
 
 **Version assumptions:** .NET 7.0+ baseline for `[LibraryImport]`. `[DllImport]` available in all .NET versions. `NativeLibrary` API available since .NET Core 3.0.
 
-## Scope
-
-- LibraryImport (.NET 7+) and DllImport declarations
-- Struct and string marshalling patterns
-- Function pointer callbacks and delegates
-- NativeLibrary.SetDllImportResolver for cross-platform resolution
-
-## Out of scope
-
-- AOT-specific P/Invoke concerns (direct pinvoke) -- see [skill:dotnet-tooling]
-- COM interop and CsWin32 source generator -- see [skill:dotnet-ui]
-- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-ui]
-
-Cross-references: [skill:dotnet-tooling] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-tooling] for AOT-first design patterns including source-generated interop, [skill:dotnet-ui] for CsWin32 source generator, COM interop, and WASM JavaScript interop.
-
----
-
 ## LibraryImport vs DllImport
 
 `[LibraryImport]` (.NET 7+) is the preferred attribute for new P/Invoke declarations. It uses source generation to produce marshalling code at compile time, making it fully AOT-compatible and eliminating runtime codegen overhead.

@@ -1,28 +1,8 @@
-# dotnet-playwright
+# Playwright
 
 Playwright for .NET: browser automation and end-to-end testing. Covers browser lifecycle management, page interactions, assertions, CI caching of browser binaries, trace viewer for debugging failures, and codegen for rapid test scaffolding.
 
 **Version assumptions:** Playwright 1.40+ for .NET, .NET 8.0+ baseline. Playwright supports Chromium, Firefox, and WebKit browsers.
-
-## Scope
-
-- Browser lifecycle management (Chromium, Firefox, WebKit)
-- Page interactions and locator-based assertions
-- CI caching of browser binaries
-- Trace viewer for debugging test failures
-- Codegen for rapid test scaffolding
-
-## Out of scope
-
-- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-testing] `references/ui-testing-core.md`
-- Testing strategy (when E2E vs unit vs integration) -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- Test project scaffolding -- see [skill:dotnet-testing] `references/add-testing.md`
-
-**Prerequisites:** Test project scaffolded via [skill:dotnet-testing] `references/add-testing.md` with Playwright packages referenced. Browsers installed via `pwsh bin/Debug/net8.0/playwright.ps1 install` or `dotnet tool run playwright install`.
-
-Cross-references: [skill:dotnet-testing] `references/ui-testing-core.md` for page object model and selector strategies, [skill:dotnet-testing] `references/testing-strategy.md` for deciding when E2E tests are appropriate.
-
----
 
 ## Package Setup
 

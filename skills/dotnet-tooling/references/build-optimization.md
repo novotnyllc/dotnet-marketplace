@@ -1,27 +1,8 @@
-
-# dotnet-build-optimization
+# Build Optimization
 
 Guidance for diagnosing and fixing build performance problems: incremental build failure diagnosis workflows, binary log analysis with MSBuild Structured Log Viewer, parallel build configuration, build caching, and restore optimization. Covers the diagnostic workflow from symptom (full rebuild on every build) through root cause (missing Inputs/Outputs, timestamp corruption, generator side effects) to fix.
 
 **Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). All examples use SDK-style projects.
-
-## Scope
-
-- Incremental build failure diagnosis workflows
-- Binary log capture and analysis with MSBuild Structured Log Viewer
-- Parallel build configuration and graph build mode
-- Build caching and NuGet restore optimization
-- CI build optimization (NuGet cache, locked restore)
-
-## Out of scope
-
-- MSBuild error interpretation and CI drift diagnosis -- see `references/build-analysis.md`
-- MSBuild authoring (targets, props, items, conditions) -- see `references/msbuild-authoring.md`
-- Custom MSBuild task development -- see `references/msbuild-tasks.md`
-- NuGet lock files and Central Package Management -- see `references/project-structure.md`
-
-Cross-references: `references/msbuild-authoring.md` for custom targets, import ordering, and incremental build authoring patterns. `references/msbuild-tasks.md` for custom task development. `references/build-analysis.md` for interpreting MSBuild errors, NuGet restore failures, and CI drift diagnosis. `references/project-structure.md` for lock files, CPM, and nuget.config configuration.
-
 
 ## Incremental Build Failure Diagnosis
 

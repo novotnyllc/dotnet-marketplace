@@ -1,29 +1,10 @@
-
-# dotnet-mermaid-diagrams
+# Mermaid Diagrams
 
 Mermaid diagram reference for .NET projects: architecture diagrams (C4-style context, container, component views, layered architecture, microservice topology), sequence diagrams (API request flows, async/await patterns, middleware pipeline, authentication flows), class diagrams (domain models, DI registration graphs, inheritance hierarchies, interface implementations), deployment diagrams (container deployment, Kubernetes pod layout, CI/CD pipeline flow), ER diagrams (EF Core model relationships, database schema visualization), state diagrams (workflow states, order processing, saga patterns, state machine patterns), and flowcharts (decision trees, framework selection, architecture choices). Includes diagram-as-code conventions for naming, grouping, GitHub rendering, and dark mode considerations.
 
 **Version assumptions:** Mermaid v10+ (supported by GitHub, Starlight, Docusaurus natively). GitHub renders Mermaid in Markdown files, issues, PRs, and discussions. .NET 8.0+ baseline for code examples.
 
 For complete diagram examples, see the Detailed Examples section below.
-
-## Scope
-
-- Architecture diagrams (C4-style, layered, microservice topology)
-- Sequence diagrams (API flows, async/await, middleware pipeline)
-- Class diagrams (domain models, DI graphs, inheritance)
-- Deployment diagrams (containers, Kubernetes, CI/CD flow)
-- ER diagrams (EF Core models, database schema)
-- Diagram-as-code conventions (naming, grouping, dark mode)
-
-## Out of scope
-
-- Documentation platform configuration for Mermaid rendering -- see `references/documentation-strategy.md`
-- GitHub-native doc structure and README patterns -- see [skill:dotnet-devops]
-- CI/CD pipeline deployment of doc sites -- see [skill:dotnet-devops]
-
-Cross-references: `references/documentation-strategy.md` for Mermaid rendering setup across doc platforms, [skill:dotnet-devops] for embedding diagrams in GitHub-native docs and doc site deployment.
-
 
 ## Supported Diagram Types
 
@@ -142,7 +123,7 @@ Cross-references: `references/documentation-strategy.md` for Mermaid rendering s
 
 ---
 
-# dotnet-mermaid-diagrams -- Diagram Examples
+# Mermaid Diagrams -- Diagram Examples
 
 Complete Mermaid diagram examples for .NET projects. Each section provides ready-to-use diagram templates with .NET-specific content.
 

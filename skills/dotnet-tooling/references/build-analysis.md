@@ -1,20 +1,6 @@
-
-# dotnet-build-analysis
+# Build Analysis
 
 Help agents interpret and act on MSBuild build output. Covers error code prefixes, NuGet restore failures, analyzer warning interpretation, multi-targeting build differences, and "works locally, fails in CI" diagnosis patterns. Each subsection includes example output, diagnosis steps, and a fix pattern.
-
-## Scope
-
-- MSBuild error code prefix interpretation (CS, MSB, NU, CA, IDE, NETSDK)
-- NuGet restore failure diagnosis and resolution
-- Analyzer warning triage and suppression guidance
-- CI vs local build drift diagnosis
-
-## Out of scope
-
-- Writing or modifying .csproj files -- see `references/csproj-reading.md`
-- Project structure decisions -- see `references/project-structure.md`
-- Common agent code mistakes -- see [skill:dotnet-api]
 
 ## Prerequisites
 

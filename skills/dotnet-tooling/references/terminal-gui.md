@@ -1,26 +1,10 @@
-
-# dotnet-terminal-gui
+# Terminal.Gui
 
 Terminal.Gui v2 for building full terminal user interfaces with windows, menus, dialogs, views, layout, event handling, color themes, and mouse support. Cross-platform across Windows, macOS, and Linux terminals.
 
 **Version assumptions:** .NET 8.0+ baseline. Terminal.Gui 2.0.0-alpha (v2 Alpha is the active development line for new projects -- API is stable with comprehensive features; breaking changes possible before Beta but core architecture is solid). v1.x (1.19.0) is in maintenance mode with no new features.
 
 For detailed code examples (views, menus, dialogs, events, themes, complete editor), see the Detailed Examples section below.
-
-## Scope
-
-- Terminal.Gui v2 application lifecycle and initialization
-- Views, layout (Pos/Dim), menus, dialogs, event handling
-- Data binding, color themes, mouse support
-
-## Out of scope
-
-- Rich console output (tables, progress bars, prompts) -- see `references/spectre-console.md`
-- CLI command-line parsing -- see `references/system-commandline.md`
-- CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
-
-Cross-references: `references/spectre-console.md` for rich console output alternative, [skill:dotnet-csharp] for async TUI patterns and DI in TUI apps, `references/native-aot.md` for AOT compilation considerations, `references/system-commandline.md` for CLI parsing, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
-
 
 ## Package Reference
 
@@ -145,7 +129,7 @@ view.Width = Dim.Func(() => CalculateWidth());
 
 ---
 
-# dotnet-terminal-gui -- Detailed Examples
+# Terminal.Gui -- Detailed Examples
 
 Extended code examples for Terminal.Gui v2 views, layout, menus, dialogs, event handling, themes, and complete application patterns.
 

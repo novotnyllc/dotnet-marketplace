@@ -1,30 +1,8 @@
-
-# dotnet-performance-patterns
+# Performance Patterns
 
 Performance-oriented architecture patterns for .NET applications. Covers zero-allocation coding with Span\<T\> and Memory\<T\>, buffer pooling with ArrayPool\<T\>, struct design for performance (readonly struct, ref struct, in parameters), sealed class devirtualization by the JIT, stack-based allocation with stackalloc, and string handling performance. Focuses on the **why** (performance rationale and measurement) rather than the **how** (language syntax).
 
 **Version assumptions:** .NET 8.0+ baseline. Span\<T\> and Memory\<T\> are available from .NET Core 2.1+ but this skill targets modern usage patterns on .NET 8+.
-
-## Scope
-
-- Zero-allocation coding with Span<T> and Memory<T>
-- Buffer pooling with ArrayPool<T>
-- Struct design for performance (readonly struct, ref struct, in parameters)
-- Sealed class devirtualization by the JIT
-- Stack-based allocation with stackalloc
-- String handling performance patterns
-
-## Out of scope
-
-- C# language syntax for Span, records, pattern matching -- see [skill:dotnet-csharp]
-- Coding standards and naming conventions -- see [skill:dotnet-csharp]
-- Microbenchmarking setup and measurement -- see [skill:dotnet-testing]
-- Native AOT compilation and trimming -- see `references/native-aot.md`
-- Serialization format performance -- see [skill:dotnet-csharp]
-- Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-api]
-
-Cross-references: [skill:dotnet-testing] for measuring the impact of these patterns, [skill:dotnet-csharp] for Span/Memory syntax, sealed class conventions, and serialization performance, `references/native-aot.md` for AOT performance characteristics and trimming impact on pattern choices.
-
 
 ## Span\<T\> and Memory\<T\> for Zero-Allocation Scenarios
 

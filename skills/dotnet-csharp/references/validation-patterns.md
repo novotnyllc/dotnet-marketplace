@@ -2,23 +2,6 @@
 
 Built-in .NET validation patterns that do not require third-party packages. Covers DataAnnotations attributes, `IValidatableObject` for cross-property validation, `IValidateOptions<T>` for options validation at startup, custom `ValidationAttribute` authoring, and `Validator.TryValidateObject` for manual validation. Prefer these built-in mechanisms as the default; reserve FluentValidation for complex domain rules that outgrow declarative attributes.
 
-## Scope
-
-- DataAnnotations attributes and Validator.TryValidateObject
-- IValidatableObject for cross-property validation
-- IValidateOptions<T> for options validation at startup
-- Custom ValidationAttribute authoring
-
-## Out of scope
-
-- API pipeline integration (endpoint filters, ProblemDetails, AddValidation) -- see `references/input-validation.md`
-- Options pattern binding and ValidateOnStart registration -- see `references/configuration.md`
-- Architectural placement of validation in layers -- see [skill:dotnet-api]
-
-Cross-references: `references/input-validation.md` for API pipeline validation and FluentValidation, `references/configuration.md` for Options pattern binding and `ValidateOnStart()`, [skill:dotnet-api] for validation placement in architecture layers, `references/coding-standards.md` for naming conventions.
-
----
-
 ## Validation Approach Decision Tree
 
 Choose the validation approach based on complexity:

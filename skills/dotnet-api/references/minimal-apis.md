@@ -1,29 +1,6 @@
-
-# dotnet-minimal-apis
+# Minimal APIs
 
 Minimal APIs are Microsoft's recommended approach for new ASP.NET Core HTTP API projects. They provide a lightweight, lambda-based programming model with first-class OpenAPI support, endpoint filters for cross-cutting concerns, and route groups for organization at scale.
-
-## Scope
-
-- Route groups and endpoint organization
-- Endpoint filters for cross-cutting concerns
-- TypedResults for compile-time response type safety
-- Parameter binding (route, query, body, services)
-- JSON configuration with ConfigureHttpJsonOptions
-- Carter library integration for auto-discovery modules
-
-## Out of scope
-
-- API versioning strategies -- see [skill:dotnet-api-versioning]
-- Input validation frameworks -- see [skill:dotnet-input-validation]
-- Architectural patterns (vertical slices, CQRS) -- see [skill:dotnet-architecture-patterns]
-- Authentication and authorization -- see [skill:dotnet-api-security]
-- OpenAPI document generation -- see [skill:dotnet-openapi]
-- gRPC and real-time communication -- see [skill:dotnet-grpc] and [skill:dotnet-realtime-communication]
-
-Cross-references: [skill:dotnet-architecture-patterns] for organizing large APIs, [skill:dotnet-input-validation] for request validation, [skill:dotnet-api-versioning] for versioning strategies, [skill:dotnet-openapi] for OpenAPI customization.
-
----
 
 ## Route Groups
 
@@ -217,7 +194,7 @@ products.MapGet("/{id:int}", GetProductById)
     .ProducesProblem(StatusCodes.Status404NotFound);
 ```
 
-For advanced OpenAPI customization (document transformers, operation transformers, schema customization), see [skill:dotnet-openapi].
+For advanced OpenAPI customization (document transformers, operation transformers, schema customization), see [skill:dotnet-api].
 
 ---
 
@@ -323,7 +300,7 @@ app.MapCarter(); // Auto-discovers and registers all ICarterModule implementatio
 
 ### Vertical Slice Organization
 
-For projects using vertical slice architecture (see [skill:dotnet-architecture-patterns]), each feature owns its endpoints, handlers, and models in a single directory:
+For projects using vertical slice architecture (see [skill:dotnet-api]), each feature owns its endpoints, handlers, and models in a single directory:
 
 ```
 Features/
@@ -390,7 +367,7 @@ public record ProductQuery(
 
 1. **Do not use `Results` when `TypedResults` is available** -- `Results.Ok(value)` returns `IResult` and the OpenAPI generator cannot infer response schemas. Use `TypedResults.Ok(value)` to enable automatic schema generation.
 2. **Do not forget `ConfigureHttpJsonOptions` only applies to Minimal APIs** -- MVC controllers need `.AddControllers().AddJsonOptions()` separately.
-3. **Do not apply validation logic inline in every endpoint** -- use endpoint filters or cross-reference [skill:dotnet-input-validation] for centralized validation patterns.
+3. **Do not apply validation logic inline in every endpoint** -- use endpoint filters or cross-reference [skill:dotnet-csharp] for centralized validation patterns.
 4. **Do not register filters in the wrong order** -- first-registered filter is outermost. Put broad filters (logging) first, specific filters (validation) closer to the handler.
 5. **Do not put all endpoints in `Program.cs`** -- organize into extension method classes or Carter modules once you have more than a handful of endpoints.
 

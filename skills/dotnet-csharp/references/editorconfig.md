@@ -2,23 +2,6 @@
 
 Comprehensive guide to configuring .NET code analysis rules via `.editorconfig` and global AnalyzerConfig files. Covers code style rules (IDE*), code quality rules (CA*), severity levels, `AnalysisLevel`, `EnforceCodeStyleInBuild`, directory hierarchy precedence, and `.globalconfig` files.
 
-## Scope
-
-- Code style rules (IDE*) and code quality rules (CA*) configuration
-- Severity levels and AnalysisLevel settings
-- Directory hierarchy precedence and .globalconfig files
-- EnforceCodeStyleInBuild integration
-
-## Out of scope
-
-- Adding analyzer packages to a project -- see [skill:dotnet-tooling]
-- Authoring custom Roslyn analyzers -- see `references/roslyn-analyzers.md`
-- Project-level build configuration (Directory.Build.props) -- see [skill:dotnet-tooling]
-
-Cross-references: [skill:dotnet-tooling] for adding analyzer packages and AnalysisLevel setup, `references/roslyn-analyzers.md` for authoring custom analyzers, [skill:dotnet-tooling] for Directory.Build.props and solution layout, `references/coding-standards.md` for naming and formatting conventions enforced by EditorConfig rules.
-
----
-
 ## EditorConfig Overview
 
 `.editorconfig` is the standard configuration file for controlling code style and analysis rule behavior in .NET projects. The .NET compiler (Roslyn) reads `.editorconfig` to determine:

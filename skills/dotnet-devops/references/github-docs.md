@@ -1,29 +1,8 @@
-# dotnet-github-docs
+# GitHub Documentation
 
 GitHub-native documentation patterns for .NET projects: README structure with NuGet/CI/coverage badges and installation instructions, CONTRIBUTING.md with fork-PR workflow and development setup, issue templates (bug report with .NET version and repro steps, feature request with problem/solution/alternatives), PR templates with testing checklist and breaking changes section, GitHub Pages setup for documentation sites, repository metadata (CODEOWNERS, FUNDING.yml, social preview, topics/tags), and Mermaid diagram embedding in README files.
 
 **Version assumptions:** .NET 8.0+ baseline for code examples. GitHub Actions for CI badges. NuGet.org for package badges.
-
-## Scope
-
-- README structure with NuGet/CI/coverage badges
-- CONTRIBUTING.md with fork-PR workflow
-- Issue templates (bug report, feature request)
-- PR templates with testing checklist
-- Repository metadata (CODEOWNERS, FUNDING.yml, topics/tags)
-- Mermaid diagram embedding in README files
-
-## Out of scope
-
-- CI/CD deployment workflows for GitHub Pages -- see [skill:dotnet-devops] `references/gha-deploy.md`
-- Changelog generation and release versioning -- see [skill:dotnet-devops] `references/release-management.md`
-- Documentation platform selection -- see [skill:dotnet-documentation-strategy]
-- Mermaid diagram syntax details -- see [skill:dotnet-mermaid-diagrams]
-- Project file structure and solution organization -- see [skill:dotnet-project-structure]
-
-Cross-references: [skill:dotnet-devops] `references/gha-deploy.md` for GitHub Pages deployment pipelines, [skill:dotnet-devops] `references/release-management.md` for changelog format and versioning, [skill:dotnet-mermaid-diagrams] for .NET-specific Mermaid diagrams in READMEs, [skill:dotnet-project-structure] for project metadata context, [skill:dotnet-documentation-strategy] for doc platform selection.
-
----
 
 ## README Structure for .NET Projects
 
@@ -135,7 +114,7 @@ graph TB
 ```
 ````
 
-See [skill:dotnet-mermaid-diagrams] for .NET-specific diagram patterns including C4-style architecture, sequence diagrams for API flows, and class diagrams for domain models.
+See [skill:dotnet-tooling] for .NET-specific diagram patterns including C4-style architecture, sequence diagrams for API flows, and class diagrams for domain models.
 
 ---
 
@@ -459,7 +438,7 @@ Content in the `CNAME` file:
 docs.mylibrary.dev
 ```
 
-For documentation platform selection and configuration, see [skill:dotnet-documentation-strategy]. For deployment workflow YAML, see [skill:dotnet-devops] `references/gha-deploy.md`.
+For documentation platform selection and configuration, see [skill:dotnet-tooling]. For deployment workflow YAML, see [skill:dotnet-devops] `references/gha-deploy.md`.
 
 ---
 
@@ -554,4 +533,4 @@ Example: "High-performance JSON serialization library for .NET 8+ with source ge
 
 9. **Include `.NET Version` in bug report templates** -- .NET version is critical for reproducing bugs. Use `dotnet --version` output as the expected format. Include OS as a dropdown since behavior often varies across platforms.
 
-10. **Mermaid diagrams in README render natively on GitHub** -- no special configuration is needed. Use standard fenced code blocks with the `mermaid` language identifier. See [skill:dotnet-mermaid-diagrams] for .NET-specific diagram patterns to embed in architecture sections.
+10. **Mermaid diagrams in README render natively on GitHub** -- no special configuration is needed. Use standard fenced code blocks with the `mermaid` language identifier. See [skill:dotnet-tooling] for .NET-specific diagram patterns to embed in architecture sections.

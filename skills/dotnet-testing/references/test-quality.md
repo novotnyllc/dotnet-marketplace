@@ -1,28 +1,8 @@
-# dotnet-test-quality
+# Test Quality
 
 Test quality analysis for .NET projects. Covers code coverage collection with coverlet, human-readable coverage reports with ReportGenerator, CRAP (Change Risk Anti-Patterns) score analysis to identify undertested complex code, mutation testing with Stryker.NET to evaluate test suite effectiveness, and strategies for detecting and managing flaky tests.
 
 **Version assumptions:** Coverlet 6.x+, ReportGenerator 5.x+, Stryker.NET 4.x+ (.NET 8.0+ baseline). Coverlet supports both the MSBuild integration (`coverlet.msbuild`) and the `coverlet.collector` data collector; examples use `coverlet.collector` as the recommended approach.
-
-## Scope
-
-- Coverlet code coverage collection and configuration
-- ReportGenerator for human-readable coverage reports
-- CRAP score analysis for undertested complex code
-- Stryker.NET mutation testing for test suite evaluation
-- Flaky test detection and management strategies
-
-## Out of scope
-
-- Test project scaffolding (creating projects, package references, coverlet setup) -- see [skill:dotnet-testing] `references/add-testing.md`
-- Testing strategy and test type decisions -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- CI test reporting and pipeline integration -- see [skill:dotnet-devops] `references/gha-build-test.md` and `references/ado-build-test.md`
-
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with coverlet packages referenced. .NET 8.0+ baseline required.
-
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding what to test and coverage target guidance, [skill:dotnet-testing] `references/xunit.md` for xUnit test framework features and configuration.
-
----
 
 ## Code Coverage with Coverlet
 

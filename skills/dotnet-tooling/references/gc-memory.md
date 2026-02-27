@@ -1,26 +1,6 @@
-
-# dotnet-gc-memory
+# GC and Memory
 
 Garbage collection and memory management for .NET applications. Covers GC modes (workstation vs server, concurrent vs non-concurrent), Large Object Heap (LOH) and Pinned Object Heap (POH), generational tuning (Gen0/1/2), memory pressure notifications, deep Span<T>/Memory<T> ownership patterns beyond basics, buffer pooling with ArrayPool<T> and MemoryPool<T>, weak references, finalizers vs IDisposable, and memory profiling with dotMemory and PerfView.
-
-## Scope
-
-- GC modes (workstation vs server, concurrent vs non-concurrent)
-- Large Object Heap (LOH) and Pinned Object Heap (POH)
-- Generational tuning (Gen0/1/2) and memory pressure
-- Deep Span<T>/Memory<T> ownership patterns
-- Buffer pooling with ArrayPool<T> and MemoryPool<T>
-- Memory profiling with dotMemory and PerfView
-
-## Out of scope
-
-- Span<T>/Memory<T> syntax introduction and basic usage -- see `references/performance-patterns.md`
-- Microbenchmarking setup -- see [skill:dotnet-testing]
-- CLI diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see `references/profiling.md`
-- Channel<T> producer/consumer patterns -- see [skill:dotnet-csharp]
-
-Cross-references: `references/performance-patterns.md` for Span<T>/Memory<T> basics and sealed devirtualization, `references/profiling.md` for runtime diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump), [skill:dotnet-csharp] for backpressure patterns that interact with memory management, [skill:dotnet-csharp] for MemoryMappedFile usage and POH buffer patterns in file I/O.
-
 
 ## GC Modes and Configuration
 

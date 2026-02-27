@@ -1,27 +1,6 @@
-
-# dotnet-uno-platform
+# Uno Platform
 
 Uno Platform core development: Extensions ecosystem (Navigation, DI, Configuration, Serialization, Localization, Logging, HTTP, Authentication), MVUX reactive pattern, Toolkit controls, Theme resources (Material/Cupertino/Fluent), Hot Reload, and single-project structure. Covers Uno Platform 5.x+ on .NET 8.0+ baseline.
-
-## Scope
-
-- Uno Platform single-project structure with conditional TFMs
-- Extensions ecosystem (Navigation, DI, Configuration, Serialization, HTTP, Auth)
-- MVUX reactive pattern
-- Toolkit controls and theme resources (Material/Cupertino/Fluent)
-- Hot Reload
-
-## Out of scope
-
-- Per-target deployment (WASM, iOS, Android, Desktop) -- see `references/uno-targets.md`
-- MCP server integration for live documentation -- see `references/uno-mcp.md`
-- Uno Platform testing -- see `references/uno-testing.md`
-- General serialization patterns -- see [skill:dotnet-csharp]
-- AOT/trimming for WASM -- see [skill:dotnet-tooling]
-- UI framework selection decision tree -- see `references/ui-chooser.md`
-
-Cross-references: `references/uno-targets.md` for per-target deployment, `references/uno-mcp.md` for MCP integration, `references/uno-testing.md` for testing patterns, [skill:dotnet-csharp] for serialization depth, [skill:dotnet-tooling] for WASM AOT, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (AutomationProperties, ARIA mapping on WASM).
-
 
 ## Single-Project Structure
 

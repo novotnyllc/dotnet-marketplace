@@ -1,23 +1,8 @@
-
-# dotnet-artifacts-output
+# Artifacts Output
 
 Reference guide for the .NET SDK artifacts output layout, which centralizes build outputs (`bin/`, `obj/`, `publish/`, `package/`) into a single `artifacts/` directory at the repo root. Available since .NET 8 as an opt-in feature. Recommended for new projects; evaluate tradeoffs before migrating existing projects.
 
 **Prerequisites:** Run `references/version-detection.md` first to confirm .NET 8+ SDK -- artifacts output layout is not available in earlier SDK versions.
-
-## Scope
-
-- UseArtifactsOutput opt-in and ArtifactsPath configuration
-- Centralized build output layout (artifacts/bin/, artifacts/obj/, artifacts/publish/)
-- Impact on CI artifact upload paths and Docker builds
-- Migration tradeoffs for existing projects
-
-## Out of scope
-
-- Source tree organization (.sln, .csproj, src/, tests/) -- see `references/project-structure.md`
-
-Cross-references: `references/project-structure.md` for solution layout, [skill:dotnet-devops] for Dockerfile path adjustments, [skill:dotnet-devops] for CI artifact upload paths, `references/scaffold-project.md` for generating new projects with artifacts output enabled.
-
 
 ## Why Use Artifacts Output
 

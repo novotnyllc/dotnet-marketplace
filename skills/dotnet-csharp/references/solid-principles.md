@@ -2,23 +2,6 @@
 
 Foundational design principles for .NET applications. Covers each SOLID principle with concrete C# anti-patterns and fixes, plus DRY guidance with nuance on when duplication is acceptable. These principles guide class design, interface contracts, and dependency management across all .NET project types.
 
-## Scope
-
-- SOLID principles with C# anti-patterns and fixes
-- DRY guidance and when duplication is acceptable
-- SRP compliance tests and class design heuristics
-- Interface segregation and dependency inversion patterns
-
-## Out of scope
-
-- Architectural patterns (vertical slices, request pipelines, caching) -- see [skill:dotnet-api]
-- DI container mechanics (registration, lifetimes, keyed services) -- see `references/dependency-injection.md`
-- Code smells and anti-pattern detection -- see `references/code-smells.md`
-
-Cross-references: [skill:dotnet-api] for clean architecture and vertical slices, `references/dependency-injection.md` for DI registration patterns and lifetime management, `references/code-smells.md` for anti-pattern detection, `references/coding-standards.md` for naming and style conventions.
-
----
-
 ## Single Responsibility Principle (SRP)
 
 A class should have only one reason to change. Apply the "describe in one sentence" test: if you cannot describe what a class does in one sentence without using "and" or "or", it likely violates SRP.

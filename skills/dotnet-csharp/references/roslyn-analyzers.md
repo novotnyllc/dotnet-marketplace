@@ -4,24 +4,6 @@ Guidance for **authoring** custom Roslyn analyzers, code fix providers, code ref
 
 For extended code examples (CodeRefactoringProvider implementation, multi-version project structure, test matrix configuration), see the **Extended Examples** section at the end of this file.
 
-## Scope
-
-- DiagnosticAnalyzer authoring and analysis context registration
-- CodeFixProvider and CodeRefactoringProvider implementation
-- Multi-Roslyn-version targeting (3.8 through 4.14)
-- Testing with Microsoft.CodeAnalysis.Testing
-- NuGet packaging for analyzer assemblies
-
-## Out of scope
-
-- Consuming and configuring existing analyzers (CA rules, severity) -- see [skill:dotnet-tooling]
-- Authoring source generators (IIncrementalGenerator) -- see `references/source-generators.md`
-- Naming conventions -- see `references/coding-standards.md`
-
-Cross-references: `references/source-generators.md` for shared Roslyn packaging concepts and IIncrementalGenerator patterns, [skill:dotnet-tooling] for consuming and configuring analyzers, [skill:dotnet-testing] for general test organization and framework selection, `references/coding-standards.md` for naming conventions applied to analyzer code.
-
----
-
 ## Project Setup
 
 Analyzer projects **must** target `netstandard2.0`. The compiler loads analyzers into various host processes (Visual Studio on .NET Framework/Mono, MSBuild on .NET Core, `dotnet build` CLI) -- targeting `net8.0+` breaks compatibility with hosts that do not run on that runtime.

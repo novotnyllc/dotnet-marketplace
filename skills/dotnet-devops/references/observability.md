@@ -1,24 +1,6 @@
-# dotnet-observability
+# Observability
 
 Modern observability for .NET applications using OpenTelemetry, structured logging, health checks, and custom metrics. Covers the three pillars of observability (traces, metrics, logs), integration with `Microsoft.Extensions.Diagnostics` and `System.Diagnostics`, and production-ready health check patterns.
-
-## Scope
-
-- OpenTelemetry traces, metrics, and logs setup
-- Health check endpoints and liveness/readiness patterns
-- Custom metrics with System.Diagnostics.Metrics
-- Structured logging integration with OTel export
-
-## Out of scope
-
-- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
-- Async/await patterns -- see [skill:dotnet-csharp-async-patterns]
-- Testing observability output -- see [skill:dotnet-integration-testing]
-- Middleware pipeline patterns (request logging, exception handling) -- see [skill:dotnet-middleware-patterns]
-
-Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async patterns in background exporters, [skill:dotnet-resilience] for Polly telemetry integration, [skill:dotnet-middleware-patterns] for request/exception logging middleware.
-
----
 
 ## OpenTelemetry Setup
 

@@ -1,23 +1,8 @@
-
-# dotnet-spectre-console
+# Spectre.Console
 
 Spectre.Console for building rich console output (tables, trees, progress bars, prompts, markup, live displays) and Spectre.Console.Cli for structured command-line application parsing. Cross-platform across Windows, macOS, and Linux terminals.
 
 **Version assumptions:** .NET 8.0+ baseline. Spectre.Console 0.54.0 (latest stable). Spectre.Console.Cli 0.53.1 (latest stable). Both packages target net8.0+ and netstandard2.0.
-
-## Scope
-
-- Spectre.Console rich output: markup, tables, trees, progress bars, prompts, live displays
-- Spectre.Console.Cli command-line application framework
-
-## Out of scope
-
-- Full TUI applications (windows, menus, dialogs, views) -- see `references/terminal-gui.md`
-- System.CommandLine parsing -- see `references/system-commandline.md`
-- CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
-
-Cross-references: `references/terminal-gui.md` for full TUI alternative, `references/system-commandline.md` for System.CommandLine scope boundary, `references/cli-architecture.md` for CLI structure, [skill:dotnet-csharp] for async patterns and DI with Spectre.Console.Cli, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
-
 
 ## Package References
 

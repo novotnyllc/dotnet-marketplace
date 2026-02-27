@@ -1,29 +1,8 @@
-# dotnet-msix
+# MSIX Packaging
 
 MSIX packaging pipeline for .NET desktop applications: package creation from csproj (`WindowsPackageType`) and WAP projects, certificate signing (self-signed for development, trusted CA for production, Microsoft Store signing), distribution channels (Microsoft Store submission, App Installer sideloading, enterprise deployment via SCCM/Intune), auto-update configuration (App Installer XML, version checking, differential updates), MSIX bundle format for multi-architecture (`.msixbundle`), and CI/CD MSIX build steps.
 
 **Version assumptions:** Windows App SDK 1.6+ (current stable). Windows 10 build 19041+ minimum for MSIX with Windows App SDK. Windows 10 build 1709+ for App Installer auto-update protocol. .NET 8.0+ baseline.
-
-## Scope
-
-- Package creation from csproj and WAP projects
-- Certificate signing (self-signed, trusted CA, Store signing)
-- Microsoft Store submission workflow
-- App Installer sideloading and auto-update configuration
-- MSIX bundle format for multi-architecture
-- CI/CD MSIX build steps
-
-## Out of scope
-
-- WinUI 3 project setup and MSIX vs unpackaged comparison -- see [skill:dotnet-winui]
-- Native AOT MSBuild configuration -- see [skill:dotnet-native-aot]
-- General CI/CD pipeline patterns -- see [skill:dotnet-devops] `references/gha-patterns.md` and `references/ado-patterns.md`
-- General NuGet packaging -- see [skill:dotnet-devops] `references/nuget-authoring.md`
-- Container-based deployment -- see [skill:dotnet-devops] `references/containers.md`
-
-Cross-references: [skill:dotnet-winui] for WinUI project setup and packaging mode comparison, [skill:dotnet-native-aot] for AOT + MSIX scenarios, [skill:dotnet-devops] `references/gha-patterns.md` for CI pipeline structure, [skill:dotnet-devops] `references/ado-patterns.md` for ADO pipeline structure, [skill:dotnet-devops] `references/nuget-authoring.md` for NuGet packaging.
-
----
 
 ## MSIX Package Creation
 
@@ -481,7 +460,7 @@ MSIX packages can contain AOT-compiled binaries for faster startup and smaller r
 </PropertyGroup>
 ```
 
-For AOT MSBuild configuration details (ILLink descriptors, trimming options, platform considerations), see [skill:dotnet-native-aot].
+For AOT MSBuild configuration details (ILLink descriptors, trimming options, platform considerations), see [skill:dotnet-tooling].
 
 ---
 

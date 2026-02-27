@@ -1,30 +1,8 @@
-
-# dotnet-library-api-compat
+# Library API Compatibility
 
 Binary and source compatibility rules for .NET library authors. Covers which API changes break consumers at the binary level (assembly loading, JIT resolution) versus at the source level (compilation), how to use type forwarders for assembly reorganization without breaking consumers, and how versioning decisions map to SemVer major/minor/patch increments.
 
 **Version assumptions:** .NET 8.0+ baseline. Compatibility rules apply to all .NET versions but examples target modern SDK-style projects.
-
-## Scope
-
-- Binary compatibility rules (safe vs breaking changes, runtime failures)
-- Source compatibility rules (overload resolution, extension method conflicts)
-- Type forwarders for assembly reorganization
-- SemVer impact mapping (change category to major/minor/patch)
-- Deprecation lifecycle with [Obsolete]
-- EnablePackageValidation and ApiCompat verification
-
-## Out of scope
-
-- HTTP API versioning -- see [skill:dotnet-api-versioning]
-- NuGet package metadata, signing, and publish workflows -- see [skill:dotnet-nuget-authoring]
-- Multi-TFM packaging mechanics (polyfill strategy, conditional compilation) -- see [skill:dotnet-multi-targeting]
-- PublicApiAnalyzers and API surface validation tooling -- see [skill:dotnet-api-surface-validation]
-- Roslyn analyzer configuration -- see [skill:dotnet-roslyn-analyzers]
-
-Cross-references: [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for NuGet packaging and SemVer rules, [skill:dotnet-multi-targeting] for multi-TFM packaging and ApiCompat tooling.
-
----
 
 ## Binary Compatibility
 
@@ -201,13 +179,13 @@ When restructuring assemblies in a multi-TFM library, the forwarding assembly mu
 </Project>
 ```
 
-See [skill:dotnet-multi-targeting] for multi-TFM packaging mechanics and [skill:dotnet-nuget-authoring] for NuGet packaging of forwarding shims.
+See [skill:dotnet-tooling] for multi-TFM packaging mechanics and [skill:dotnet-devops] for NuGet packaging of forwarding shims.
 
 ---
 
 ## SemVer Impact Summary
 
-Map API changes to Semantic Versioning increments. For full SemVer rules and NuGet versioning strategies, see [skill:dotnet-nuget-authoring].
+Map API changes to Semantic Versioning increments. For full SemVer rules and NuGet versioning strategies, see [skill:dotnet-devops].
 
 | Change Category | SemVer | Reason |
 |----------------|--------|--------|
@@ -261,7 +239,7 @@ Adding or removing target frameworks affects binary compatibility for consumers:
 - **Removing a TFM** (e.g., dropping `netstandard2.0`): **Major** version bump. Consumers targeting the removed TFM can no longer resolve a compatible assembly.
 - **Changing the lowest supported TFM** (e.g., `net6.0` to `net8.0`): **Major** version bump. Consumers on the dropped TFM lose compatibility.
 
-See [skill:dotnet-multi-targeting] for practical guidance on managing TFM additions and removals.
+See [skill:dotnet-tooling] for practical guidance on managing TFM additions and removals.
 
 ---
 
@@ -300,7 +278,7 @@ This produces a `CompatibilitySuppressions.xml` file that can be checked in. If 
 
 Note: `ApiCompatSuppressionFile` is an **ItemGroup item**, not a PropertyGroup property. Multiple suppression files can be included.
 
-For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workflows, see [skill:dotnet-api-surface-validation].
+For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workflows, see [skill:dotnet-api].
 
 ---
 
@@ -321,7 +299,7 @@ For deeper API surface tracking with PublicApiAnalyzers and CI enforcement workf
 
 - .NET 8.0+ SDK
 - `EnablePackageValidation` MSBuild property for automated compatibility checking
-- Understanding of SemVer 2.0 conventions (see [skill:dotnet-nuget-authoring])
+- Understanding of SemVer 2.0 conventions (see [skill:dotnet-devops])
 - Familiarity with assembly loading and binding (strong naming concepts)
 
 ---

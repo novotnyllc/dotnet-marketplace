@@ -1,28 +1,6 @@
-
-# dotnet-blazor-patterns
+# Blazor Patterns
 
 Blazor hosting models, render modes, project setup, routing, enhanced navigation, streaming rendering, and AOT-safe patterns. Covers all five hosting models (InteractiveServer, InteractiveWebAssembly, InteractiveAuto, Static SSR, Hybrid) with trade-off analysis for each.
-
-## Scope
-
-- Blazor Web App project setup and configuration
-- Hosting model selection (Server, WASM, Auto, SSR, Hybrid)
-- Render mode configuration (global, per-page, per-component)
-- Routing and enhanced navigation
-- Streaming rendering and prerendering
-- AOT-safe Blazor patterns
-
-## Out of scope
-
-- Component architecture (lifecycle, state, JS interop) -- see `references/blazor-components.md`
-- Authentication across hosting models -- see `references/blazor-auth.md`
-- bUnit component testing -- see `references/blazor-testing.md`
-- Standalone SignalR patterns -- see [skill:dotnet-api]
-- Browser-based E2E testing -- see [skill:dotnet-testing]
-- UI framework selection decision tree -- see `references/ui-chooser.md`
-
-Cross-references: `references/blazor-components.md` for component architecture, `references/blazor-auth.md` for authentication, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-api] for standalone SignalR, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (ARIA, keyboard nav, screen readers).
-
 
 ## Hosting Models & Render Modes
 

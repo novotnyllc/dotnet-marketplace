@@ -1,20 +1,6 @@
-
-# dotnet-csproj-reading
+# Csproj Reading
 
 Teaches agents to read and safely modify SDK-style .csproj files. Covers project structure, PropertyGroup conventions, ItemGroup patterns, conditional expressions, Directory.Build.props/.targets, and central package management (Directory.Packages.props). Each subsection provides annotated XML examples and common modification patterns.
-
-## Scope
-
-- SDK-style .csproj structure and SDK attribute conventions
-- PropertyGroup and ItemGroup reading and modification
-- Conditional expressions and TFM-based conditions
-- Directory.Build.props/.targets and Central Package Management
-
-## Out of scope
-
-- Project organization and SDK selection -- see `references/project-structure.md`
-- Build error interpretation -- see `references/build-analysis.md`
-- Common agent coding mistakes -- see [skill:dotnet-api]
 
 ## Prerequisites
 

@@ -1,24 +1,8 @@
-
-# dotnet-scaffold-project
+# Scaffold Project
 
 Scaffolds a new .NET project with all modern best practices applied. Generates the full solution structure including Central Package Management, analyzers, .editorconfig, SourceLink, and deterministic builds.
 
 **Prerequisites:** Run `references/version-detection.md` first to determine available SDK version — this affects which features and templates are available.
-
-## Scope
-
-- Full solution structure generation (src/, tests/, .sln)
-- Central Package Management and Directory.Build.props
-- Analyzers, .editorconfig, SourceLink, deterministic builds
-
-## Out of scope
-
-- Solution layout rationale and conventions -- see `references/project-structure.md`
-- Analyzer configuration details -- see `references/add-analyzers.md`
-- CI workflow generation -- see [skill:dotnet-devops]
-
-Cross-references: `references/project-structure.md` for layout rationale, `references/add-analyzers.md` for analyzer configuration, [skill:dotnet-devops] for adding CI after scaffolding.
-
 
 ## Step 1: Create Solution Structure
 

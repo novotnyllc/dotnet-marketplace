@@ -1,25 +1,8 @@
-
-# dotnet-project-structure
+# Project Structure
 
 Reference guide for modern .NET project structure and solution layout. Use when creating new solutions, reviewing existing structure, or recommending improvements.
 
 **Prerequisites:** Run `references/version-detection.md` first to determine TFM and SDK version — this affects which features are available (e.g., .slnx requires .NET 9+ SDK).
-
-## Scope
-
-- Solution layout conventions (.sln, src/, tests/)
-- Directory.Build.props and Directory.Build.targets shared config
-- Central Package Management (CPM) and lock files
-- .editorconfig and analyzer configuration
-- SourceLink, NuGet Audit, and nuget.config
-
-## Out of scope
-
-- Build output organization (UseArtifactsOutput) -- see `references/artifacts-output.md`
-- MSBuild authoring (custom targets, conditions) -- see `references/msbuild-authoring.md`
-
-Cross-references: `references/project-analysis.md` for analyzing existing projects, `references/scaffold-project.md` for generating a new project from scratch, `references/artifacts-output.md` for centralized build output layout (`UseArtifactsOutput`).
-
 
 ## Recommended Solution Layout
 

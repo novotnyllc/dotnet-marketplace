@@ -1,24 +1,8 @@
-# dotnet-ado-publish
+# ADO Publish
 
 Publishing pipelines for .NET projects in Azure DevOps: NuGet package push to Azure Artifacts and nuget.org, container image build and push to Azure Container Registry (ACR) using `Docker@2`, artifact staging with `PublishBuildArtifacts@1` and `PublishPipelineArtifact@1`, and pipeline artifacts for multi-stage release pipelines.
 
 **Version assumptions:** `DotNetCoreCLI@2` for pack/push operations. `Docker@2` for container image builds. `NuGetCommand@2` for NuGet push to external feeds. `PublishPipelineArtifact@1` (preferred over `PublishBuildArtifacts@1`).
-
-## Scope
-
-- NuGet package push to Azure Artifacts and nuget.org
-- Container image build and push to ACR using Docker@2
-- Artifact staging with PublishPipelineArtifact@1
-- Pipeline artifacts for multi-stage release pipelines
-
-## Out of scope
-
-- Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-devops] `references/containers.md`
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- GitHub Actions publishing -- see [skill:dotnet-devops] `references/gha-publish.md`
-- ADO-unique features (environments, service connections) -- see [skill:dotnet-devops] `references/ado-unique.md`
-
----
 
 ## NuGet Push to Azure Artifacts
 

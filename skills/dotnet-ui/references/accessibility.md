@@ -1,24 +1,6 @@
-
-# dotnet-accessibility
+# Accessibility
 
 Cross-platform accessibility patterns for .NET UI frameworks: semantic markup, keyboard navigation, focus management, color contrast, and screen reader integration. In-depth coverage for Blazor (HTML ARIA), MAUI (SemanticProperties), and WinUI (AutomationProperties / UI Automation). Brief guidance with cross-references for WPF, Uno Platform, and TUI frameworks.
-
-## Scope
-
-- Cross-platform accessibility principles (semantic markup, keyboard nav, focus, contrast)
-- Blazor accessibility (HTML ARIA attributes, screen reader patterns)
-- MAUI accessibility (SemanticProperties, platform-specific setup)
-- WinUI accessibility (AutomationProperties, UI Automation, AutomationPeer)
-- WPF, Uno Platform, and TUI accessibility guidance with cross-references
-
-## Out of scope
-
-- Framework project setup -- see individual framework skills
-- Legal compliance advice (references WCAG but not legal guidance)
-- UI framework selection -- see `references/ui-chooser.md`
-
-Cross-references: `references/blazor-patterns.md` for Blazor hosting and render modes, `references/blazor-components.md` for Blazor component lifecycle, `references/maui-development.md` for MAUI patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-modern.md` for WPF on .NET 8+, `references/uno-platform.md` for Uno Platform patterns, [skill:dotnet-tooling] for Terminal.Gui, [skill:dotnet-tooling] for Spectre.Console, `references/ui-chooser.md` for framework selection.
-
 
 ## Cross-Platform Principles
 

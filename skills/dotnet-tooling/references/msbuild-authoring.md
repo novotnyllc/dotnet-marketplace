@@ -1,28 +1,8 @@
-
-# dotnet-msbuild-authoring
+# MSBuild Authoring
 
 Guidance for authoring MSBuild project system elements: custom targets with `BeforeTargets`/`AfterTargets`/`DependsOnTargets`, incremental build with `Inputs`/`Outputs`, props vs targets import ordering, items and item metadata (`Include`/`Exclude`/`Update`/`Remove`), conditions, property functions, well-known metadata, and advanced `Directory.Build.props`/`Directory.Build.targets` patterns.
 
 **Version assumptions:** .NET 8.0+ SDK (MSBuild 17.8+). All examples use SDK-style projects.
-
-## Scope
-
-- Custom targets with BeforeTargets/AfterTargets/DependsOnTargets
-- Incremental build with Inputs/Outputs
-- Props vs targets import ordering
-- Items and item metadata (Include/Exclude/Update/Remove)
-- Conditions and property functions
-- Advanced Directory.Build.props/targets patterns
-- MSBuild well-known metadata and item batching
-
-## Out of scope
-
-- Solution layout and shared configuration (CPM, .editorconfig) -- see `references/project-structure.md`
-- MSBuild error interpretation and CI drift diagnosis -- see `references/build-analysis.md`
-- Reading and modifying .csproj files -- see `references/csproj-reading.md`
-
-Cross-references: `references/project-structure.md` for solution layout and basic Directory.Build.props structure, `references/build-analysis.md` for interpreting MSBuild errors and CI drift.
-
 
 ## Custom Targets
 

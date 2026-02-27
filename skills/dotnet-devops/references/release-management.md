@@ -1,27 +1,8 @@
-# dotnet-release-management
+# Release Management
 
 Release lifecycle management for .NET projects: Nerdbank.GitVersioning (NBGV) setup with `version.json` configuration, version height calculation, and public release vs pre-release modes; SemVer 2.0 strategy for .NET libraries (when to bump major/minor/patch, API compatibility considerations) and applications (build metadata, deployment versioning); changelog generation (Keep a Changelog format, auto-generation with git-cliff and conventional commits); pre-release version workflows (alpha, beta, rc, stable progression); and release branching patterns (release branches, hotfix branches, trunk-based releases with tags).
 
 **Version assumptions:** .NET 8.0+ baseline. `Nerdbank.GitVersioning` 3.6+ (current stable). SemVer 2.0 specification.
-
-## Scope
-
-- Nerdbank.GitVersioning (NBGV) setup and version height
-- SemVer 2.0 strategy for libraries and applications
-- Changelog generation (Keep a Changelog, git-cliff)
-- Pre-release version workflows (alpha, beta, rc, stable)
-- Release branching patterns (release branches, trunk-based)
-
-## Out of scope
-
-- CI/CD NuGet push and deployment workflows -- see [skill:dotnet-devops] `references/gha-publish.md` and `references/ado-publish.md`
-- GitHub Release creation and asset attachment -- see [skill:dotnet-devops] `references/github-releases.md`
-- NuGet package metadata and signing -- see [skill:dotnet-devops] `references/nuget-authoring.md`
-- Project-level configuration (SourceLink, CPM) -- see [skill:dotnet-project-structure]
-
-Cross-references: [skill:dotnet-devops] `references/gha-publish.md` for CI publish workflows, [skill:dotnet-devops] `references/ado-publish.md` for ADO publish workflows, [skill:dotnet-devops] `references/nuget-authoring.md` for NuGet package versioning properties.
-
----
 
 ## NBGV (Nerdbank.GitVersioning)
 

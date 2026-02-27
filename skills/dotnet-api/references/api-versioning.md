@@ -1,25 +1,6 @@
-
-# dotnet-api-versioning
+# API Versioning
 
 API versioning strategies for ASP.NET Core using the `Asp.Versioning` library family. URL segment versioning (`/api/v1/`) is the preferred approach for simplicity and discoverability. This skill covers URL, header, and query string versioning with configuration for both Minimal APIs and MVC controllers, sunset policy enforcement, and migration from legacy packages.
-
-## Scope
-
-- URL segment, header, and query string versioning strategies
-- Asp.Versioning configuration for Minimal APIs and MVC controllers
-- Sunset policies and version deprecation (RFC 8594)
-- Combining version readers for migration scenarios
-- Legacy package migration guidance
-
-## Out of scope
-
-- Minimal API endpoint patterns (route groups, filters, TypedResults) -- see [skill:dotnet-minimal-apis]
-- OpenAPI document generation per API version -- see [skill:dotnet-openapi]
-- Authentication and authorization per version -- see [skill:dotnet-api-security]
-
-Cross-references: [skill:dotnet-minimal-apis] for Minimal API endpoint patterns, [skill:dotnet-openapi] for versioned OpenAPI documents.
-
----
 
 ## Package Landscape
 

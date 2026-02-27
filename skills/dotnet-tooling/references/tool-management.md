@@ -1,27 +1,8 @@
-
-# dotnet-tool-management
+# Tool Management
 
 Consumer-side management of .NET CLI tools: installing global and local tools, creating and maintaining `.config/dotnet-tools.json` manifests, version pinning for team reproducibility, `dotnet tool restore` in CI pipelines, updating and uninstalling tools, and troubleshooting common tool issues.
 
 **Version assumptions:** .NET 8.0+ baseline. Local tools and tool manifests available since .NET Core 3.0. RID-specific tool packaging available since .NET 10.
-
-## Scope
-
-- Global tool installation and management
-- Local tool manifests (.config/dotnet-tools.json)
-- Version pinning and team workflow reproducibility
-- CI integration with dotnet tool restore
-- RID-specific tool installation (.NET 10+)
-- Troubleshooting common tool issues
-
-## Out of scope
-
-- Tool authoring and packaging (PackAsTool, NuGet packaging) -- see `references/cli-packaging.md`
-- Distribution strategy (AOT vs framework-dependent decision) -- see `references/cli-distribution.md`
-- Release CI/CD pipeline -- see `references/cli-release-pipeline.md`
-
-Cross-references: `references/cli-packaging.md` for tool authoring and NuGet packaging, `references/cli-distribution.md` for distribution strategy and RID matrix, `references/cli-release-pipeline.md` for automated release workflows, `references/project-analysis.md` for detecting existing tool manifests.
-
 
 ## Global Tool Installation
 

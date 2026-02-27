@@ -1,28 +1,8 @@
-# dotnet-snapshot-testing
+# Snapshot Testing
 
 Snapshot (approval) testing with the Verify library for .NET. Covers verifying API responses, serialized objects, rendered emails, and other complex outputs by comparing them against approved baseline files. Includes scrubbing and filtering patterns to handle non-deterministic values (dates, GUIDs, timestamps), custom converters for domain-specific types, and strategies for organizing and reviewing snapshot files.
 
 **Version assumptions:** Verify 20.x+ (.NET 8.0+ baseline). Examples use the `Verify.Xunit` integration package; equivalent packages exist for NUnit (`Verify.NUnit`) and MSTest (`Verify.MSTest`). Verify auto-discovers the test framework from the referenced package.
-
-## Scope
-
-- Verify library setup and snapshot lifecycle
-- Scrubbing and filtering non-deterministic values (dates, GUIDs)
-- Custom converters for domain-specific types
-- Organizing and reviewing snapshot files
-- Integration with xUnit, NUnit, and MSTest
-
-## Out of scope
-
-- Test project scaffolding (creating projects, package references) -- see [skill:dotnet-testing] `references/add-testing.md`
-- Testing strategy and test type decisions -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- Integration test infrastructure (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-testing] `references/integration-testing.md`
-
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with Verify packages referenced. .NET 8.0+ baseline required.
-
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when snapshot tests are appropriate, [skill:dotnet-testing] `references/integration-testing.md` for combining Verify with WebApplicationFactory and Testcontainers.
-
----
 
 ## Setup
 

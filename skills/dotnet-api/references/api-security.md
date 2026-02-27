@@ -1,27 +1,6 @@
-
-# dotnet-api-security
+# API Security
 
 API-level authentication, authorization, and security patterns for ASP.NET Core. This skill owns API auth implementation: ASP.NET Core Identity configuration, OAuth 2.0/OIDC integration, JWT bearer token handling, passkey (WebAuthn) authentication, CORS policies, Content Security Policy headers, and rate limiting.
-
-## Scope
-
-- ASP.NET Core Identity configuration and Identity API endpoints
-- OAuth 2.0 / OpenID Connect integration with external providers
-- JWT bearer token authentication and policy-based authorization
-- Passkey / WebAuthn authentication (.NET 10)
-- CORS policies and Content Security Policy headers
-- Rate limiting middleware (fixed window, sliding window, token bucket, concurrency)
-
-## Out of scope
-
-- OWASP Top 10 mitigations and deprecated security patterns -- see [skill:dotnet-security-owasp]
-- Secrets management and secure configuration -- see [skill:dotnet-secrets-management]
-- Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
-- Blazor auth UI components -- see [skill:dotnet-blazor-auth]
-
-Cross-references: [skill:dotnet-security-owasp] for OWASP security principles, [skill:dotnet-secrets-management] for secrets handling, [skill:dotnet-cryptography] for cryptographic best practices.
-
----
 
 ## ASP.NET Core Identity
 
@@ -364,9 +343,9 @@ builder.Services.AddRateLimiter(options =>
 
 ## Agent Gotchas
 
-1. **Do not use `AllowAnyOrigin()` in production CORS policies** -- always specify explicit origins. See [skill:dotnet-security-owasp] for CORS security implications.
+1. **Do not use `AllowAnyOrigin()` in production CORS policies** -- always specify explicit origins. See [skill:dotnet-api] for CORS security implications.
 2. **Do not forget `MapInboundClaims = false`** when using external OIDC providers -- without it, claim types are remapped to long XML namespace URIs, breaking role and name lookups.
-3. **Do not hardcode JWT signing keys in source code or `appsettings.json`** -- use user secrets for development and environment variables or managed identity for production. See [skill:dotnet-secrets-management].
+3. **Do not hardcode JWT signing keys in source code or `appsettings.json`** -- use user secrets for development and environment variables or managed identity for production. See [skill:dotnet-api].
 4. **Do not set `ClockSkew` to `TimeSpan.Zero`** -- small clock differences between token issuer and validator will cause spurious 401 errors. Use 1-2 minutes.
 5. **Do not forget middleware order** -- `UseAuthentication()` must come before `UseAuthorization()`, and `UseCors()` must come before `UseAuthorization()`.
 6. **Do not use `AllowAnyMethod()` and `AllowAnyHeader()` together in production** -- explicitly list allowed methods and headers to follow the principle of least privilege.

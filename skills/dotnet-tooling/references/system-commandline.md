@@ -1,34 +1,10 @@
-
-# dotnet-system-commandline
+# System.CommandLine
 
 System.CommandLine 2.0 stable API for building .NET CLI applications. Covers RootCommand, Command, Option\<T\>, Argument\<T\>, SetAction for handler binding, ParseResult-based value access, custom type parsing, validation, tab completion, and testing with TextWriter capture.
 
 **Version assumptions:** .NET 8.0+ baseline. System.CommandLine 2.0.0+ (stable NuGet package, GA since November 2025). All examples target the 2.0.0 GA API surface.
 
 **Breaking change note:** System.CommandLine 2.0.0 GA differs significantly from the pre-release beta4 API. Key changes: `SetHandler` replaced by `SetAction`, `ICommandHandler` removed in favor of `SynchronousCommandLineAction`/`AsynchronousCommandLineAction`, `InvocationContext` removed (ParseResult passed directly), `CommandLineBuilder` and `AddMiddleware` removed, `IConsole` removed in favor of TextWriter properties, and the `System.CommandLine.Hosting`/`System.CommandLine.NamingConventionBinder` packages discontinued. Do not use beta-era patterns.
-
-## Scope
-
-- RootCommand, Command, Option<T>, Argument<T> hierarchy
-- SetAction handler binding (sync and async)
-- ParseResult-based value access
-- Custom type parsing and validation
-- Tab completion and directives
-- Testing with InvocationConfiguration and TextWriter capture
-- Migration from beta4 to 2.0.0 GA
-- Dependency injection integration without System.CommandLine.Hosting
-
-## Out of scope
-
-- CLI application architecture patterns (layered design, exit codes, stdin/stdout/stderr) -- see `references/cli-architecture.md`
-- Native AOT compilation -- see `references/native-aot.md`
-- CLI distribution strategy -- see `references/cli-distribution.md`
-- General CI/CD patterns -- see [skill:dotnet-devops]
-- DI container mechanics and coding standards -- see [skill:dotnet-csharp]
-- CLI packaging for Homebrew, apt, winget -- see `references/cli-packaging.md`
-
-Cross-references: `references/cli-architecture.md` for CLI design patterns, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI fundamentals, configuration integration, and naming conventions.
-
 
 ## Package Reference
 
@@ -246,7 +222,6 @@ FileInfo? file = parseResult.GetValue(fileOption);
 ```
 
 
-
 For detailed examples (custom parsing, validation, configuration, tab completion, DI, testing, migration), see the Detailed Examples section below.
 
 ## Agent Gotchas
@@ -276,7 +251,7 @@ Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotn
 
 ---
 
-# dotnet-system-commandline -- Detailed Examples
+# System.CommandLine -- Detailed Examples
 
 Extended code examples for custom type parsing, validation, configuration, tab completion, DI integration, testing, response files, and migration from beta4.
 

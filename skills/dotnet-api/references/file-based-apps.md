@@ -1,27 +1,11 @@
-
-# dotnet-file-based-apps
+# File-Based Apps
 
 .NET 10 SDK file-based apps let you build, run, and publish C# applications from a single `.cs` file without creating a `.csproj` project file. The SDK auto-generates project configuration from `#:` directives embedded in the source file. This feature targets scripts, utilities, and small applications where traditional project scaffolding is unnecessary.
 
-**This is NOT file I/O.** For FileStream, RandomAccess, FileSystemWatcher, and path handling, see [skill:dotnet-file-io].
+**This is NOT file I/O.** For FileStream, RandomAccess, FileSystemWatcher, and path handling, see [skill:dotnet-csharp].
 
-**Prerequisites:** Requires .NET 10 SDK or later. Run [skill:dotnet-version-detection] to confirm SDK version.
+**Prerequisites:** Requires .NET 10 SDK or later. Run [skill:dotnet-tooling] to confirm SDK version.
 
-Cross-references: [skill:dotnet-version-detection] for SDK version gating, [skill:dotnet-project-analysis] for project-based analysis (file-based apps have no `.csproj`), [skill:dotnet-scaffold-project] for csproj-based project scaffolding.
-
-## Scope
-
-- #: directives (package, sdk, property, project)
-- CLI commands for file-based apps (dotnet run, dotnet publish)
-- Migration from file-based to .csproj project format
-
-## Out of scope
-
-- File I/O (FileStream, RandomAccess, paths) -- see [skill:dotnet-file-io]
-- Project-based .csproj scaffolding -- see [skill:dotnet-scaffold-project]
-- Solution structure analysis -- see [skill:dotnet-project-analysis]
-
----
 
 ## Directives Overview
 
@@ -336,7 +320,7 @@ File-based apps differ from project-based apps in several default settings:
 
 ## Agent Gotchas
 
-1. **Do not confuse file-based apps with file I/O** -- `dotnet-file-based-apps` covers running C# without a project file (`.NET 10 SDK feature`). For FileStream, RandomAccess, and path handling, use [skill:dotnet-file-io].
+1. **Do not confuse file-based apps with file I/O** -- `dotnet-file-based-apps` covers running C# without a project file (`.NET 10 SDK feature`). For FileStream, RandomAccess, and path handling, use [skill:dotnet-csharp].
 2. **Do not use `#:` directives after C# code** -- all directives must appear at the top of the file, before any C# statements, `using` directives, or namespace declarations. The SDK ignores directives placed later in the file.
 3. **Do not omit package versions without CPM** -- `#:package SomePackage` without a version only works when Central Package Management is configured via `Directory.Packages.props`. Without CPM, use `#:package SomePackage@1.0.0` or `#:package SomePackage@*`.
 4. **Do not assume `dotnet build` and `dotnet test` work the same** -- `dotnet build app.cs` compiles via a virtual project, but `dotnet test` does not apply to file-based apps. Convert to a project for test framework support.

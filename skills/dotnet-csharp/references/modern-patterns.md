@@ -2,22 +2,6 @@
 
 Modern C# language feature guidance adapted to the project's target framework. Always run [skill:dotnet-tooling] first to determine TFM and C# version.
 
-## Scope
-
-- Records, pattern matching, primary constructors, collection expressions
-- C# 12-15 feature usage mapped to TFM
-- Language feature adoption guidance
-
-## Out of scope
-
-- Naming and style conventions -- see `references/coding-standards.md`
-- Async/await patterns -- see `references/async-patterns.md`
-- Source generator usage (GeneratedRegex, LoggerMessage) -- see `references/source-generators.md`
-
-Cross-references: `references/coding-standards.md` for naming/style conventions, `references/async-patterns.md` for async-specific patterns.
-
----
-
 ## Quick Reference: TFM to C# Version
 
 | TFM | C# | Key Language Features |

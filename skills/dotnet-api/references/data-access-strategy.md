@@ -1,26 +1,6 @@
-
-# dotnet-data-access-strategy
+# Data Access Strategy
 
 Decision framework for choosing between Entity Framework Core, Dapper, and raw ADO.NET in .NET applications. Covers performance tradeoffs, feature comparisons, AOT/trimming compatibility, hybrid approaches, and migration paths. Use this skill to make an informed technology decision before writing data access code.
-
-## Scope
-
-- EF Core vs Dapper vs ADO.NET decision matrix
-- Performance and feature tradeoffs across data access approaches
-- AOT/trimming compatibility comparison
-- Hybrid approach patterns and migration paths
-
-## Out of scope
-
-- Tactical EF Core usage (DbContext lifecycle, migrations, interceptors) -- see [skill:dotnet-efcore-patterns]
-- Strategic EF Core architecture (read/write split, aggregate boundaries) -- see [skill:dotnet-efcore-architecture]
-- DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
-- Async patterns -- see [skill:dotnet-csharp-async-patterns]
-- Testing data access layers -- see [skill:dotnet-integration-testing]
-
-Cross-references: [skill:dotnet-efcore-patterns] for tactical EF Core usage, [skill:dotnet-efcore-architecture] for strategic EF Core patterns, [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async query patterns.
-
----
 
 ## Decision Matrix
 

@@ -1,25 +1,6 @@
-
-# dotnet-version-upgrade
+# Version Upgrade
 
 Comprehensive guide for .NET version upgrade planning and execution. This skill consumes the structured output from `references/version-detection.md` (current TFM, SDK version, preview flags) and provides actionable upgrade guidance based on three defined upgrade lanes. Covers TFM migration, package updates, breaking change detection, deprecated API replacement, and test validation.
-
-## Scope
-
-- Upgrade lane selection (Production LTS-to-LTS, Staged STS, Experimental preview)
-- TFM migration checklists per lane
-- Package update strategies (dotnet-outdated, Central Package Management)
-- Breaking change detection (build-time, analyzer diagnostics, API diff tools)
-- .NET Upgrade Assistant usage
-
-## Out of scope
-
-- TFM detection logic -- see `references/version-detection.md`
-- Multi-targeting project setup and polyfill strategies -- see `references/multi-targeting.md`
-- Cloud deployment configuration
-- CI/CD pipeline changes
-
-Cross-references: `references/version-detection.md` for TFM resolution and version matrix, `references/multi-targeting.md` for polyfill-first multi-targeting strategies when maintaining backward compatibility during migration.
-
 
 ## Upgrade Lanes
 

@@ -1,28 +1,8 @@
-
-# dotnet-maui-development
+# MAUI Development
 
 .NET MAUI cross-platform development: single-project structure with platform folders, XAML data binding with MVVM (CommunityToolkit.Mvvm), Shell navigation, platform services via partial classes and conditional compilation, dependency injection, Hot Reload per platform, and .NET 11 improvements (XAML source gen, CoreCLR for Android, `dotnet run` device selection). Includes honest current-state assessment and migration options.
 
 **Version assumptions:** .NET 8.0+ baseline (MAUI ships with .NET 8+). .NET 11 Preview 1 content explicitly marked. Examples use the latest stable APIs.
-
-## Scope
-
-- Single-project structure with platform folders
-- XAML data binding with MVVM (CommunityToolkit.Mvvm)
-- Shell navigation and platform services
-- Dependency injection and Hot Reload
-- Current-state assessment and migration options
-- .NET 11 improvements (XAML source gen, CoreCLR for Android)
-
-## Out of scope
-
-- MAUI Native AOT on iOS/Mac Catalyst -- see `references/maui-aot.md`
-- MAUI testing (Appium, XHarness) -- see `references/maui-testing.md`
-- General Native AOT patterns -- see [skill:dotnet-tooling]
-- UI framework selection decision tree -- see `references/ui-chooser.md`
-
-Cross-references: `references/maui-aot.md` for Native AOT on iOS/Mac Catalyst, `references/maui-testing.md` for testing patterns, [skill:dotnet-tooling] for TFM detection, [skill:dotnet-tooling] for general AOT patterns, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (SemanticProperties, screen readers).
-
 
 ## Project Structure
 
@@ -103,7 +83,6 @@ MAUI handles resource files declaratively. Images are auto-resized per platform 
 ```
 
 
-
 For detailed code examples (XAML data binding, MVVM, Shell navigation, platform services, .NET 11 improvements, Hot Reload), see the "Detailed Examples" section below.
 
 ## Agent Gotchas
@@ -137,7 +116,7 @@ For detailed code examples (XAML data binding, MVVM, Shell navigation, platform 
 
 ---
 
-# dotnet-maui-development -- Detailed Examples
+# MAUI Development -- Detailed Examples
 
 Extended code examples for XAML data binding, MVVM with CommunityToolkit, Shell navigation, platform services, current state assessment, migration options, .NET 11 improvements, and Hot Reload.
 
@@ -459,4 +438,3 @@ dotnet run --project MyApp/MyApp.csproj -f net8.0-android
 - XAML Hot Reload may not reflect changes to custom renderers or handlers until rebuild
 - On Android, Hot Reload uses the `MetadataUpdateHandler` mechanism; changes to static fields or constructors require restart
 - On iOS simulator, Hot Reload works but physical device Hot Reload requires a stable USB/WiFi connection
-

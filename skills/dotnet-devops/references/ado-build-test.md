@@ -1,24 +1,8 @@
-# dotnet-ado-build-test
+# ADO Build and Test
 
 .NET build and test pipeline patterns for Azure DevOps: `DotNetCoreCLI@2` task for build, test, and pack operations, NuGet restore with Azure Artifacts feeds using `NuGetAuthenticate@1`, test result publishing with `PublishTestResults@2` for TRX and JUnit formats, code coverage with `PublishCodeCoverageResults@2` for Cobertura and JaCoCo formats, and multi-TFM matrix strategy across net8.0 and net9.0.
 
 **Version assumptions:** `DotNetCoreCLI@2` task (current). `UseDotNet@2` for SDK installation. `NuGetAuthenticate@1` for Azure Artifacts. `PublishTestResults@2` and `PublishCodeCoverageResults@2` for reporting.
-
-## Scope
-
-- DotNetCoreCLI@2 task for build, test, pack, and custom commands
-- NuGet restore with Azure Artifacts feeds (NuGetAuthenticate@1)
-- Test result publishing with PublishTestResults@2 (TRX, JUnit)
-- Code coverage with PublishCodeCoverageResults@2 (Cobertura)
-- Multi-TFM matrix strategy across TFMs and operating systems
-
-## Out of scope
-
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- Publishing and deployment -- see [skill:dotnet-devops] `references/ado-publish.md` and `references/ado-unique.md`
-- GitHub Actions build/test workflows -- see [skill:dotnet-devops] `references/gha-build-test.md`
-
----
 
 ## `DotNetCoreCLI@2` Task
 

@@ -1,26 +1,8 @@
-# dotnet-gha-deploy
+# GitHub Actions Deploy
 
 Deployment patterns for .NET applications in GitHub Actions: GitHub Pages deployment for documentation sites (Starlight/Docusaurus), container registry push patterns for GHCR and ACR, Azure Web Apps deployment via `azure/webapps-deploy`, GitHub Environments with protection rules for staged rollouts, and rollback strategies for failed deployments.
 
 **Version assumptions:** GitHub Actions workflow syntax v2. `azure/webapps-deploy@v3` for Azure App Service. `azure/login@v2` for Azure credential management. GitHub Environments for deployment gates.
-
-## Scope
-
-- Azure Web Apps deployment via azure/webapps-deploy
-- GitHub Pages deployment for documentation sites
-- Container registry push patterns for GHCR and ACR
-- GitHub Environments with protection rules
-- Rollback strategies for failed deployments
-
-## Out of scope
-
-- Container orchestration (Kubernetes, Docker Compose) -- see [skill:dotnet-devops] `references/container-deployment.md`
-- Container image authoring -- see [skill:dotnet-devops] `references/containers.md`
-- NuGet publishing and container builds -- see [skill:dotnet-devops] `references/gha-publish.md`
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- Azure DevOps deployment -- see [skill:dotnet-devops] `references/ado-unique.md` and `references/ado-publish.md`
-
----
 
 ## GitHub Pages Deployment for Documentation
 

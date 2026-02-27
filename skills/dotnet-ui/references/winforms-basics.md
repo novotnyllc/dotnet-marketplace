@@ -1,28 +1,8 @@
-
-# dotnet-winforms-basics
+# WinForms Basics
 
 WinForms on .NET 8+: updated project templates with Host builder and DI, high-DPI support with `PerMonitorV2`, dark mode via `Application.SetColorMode` (experimental in .NET 9, targeting finalization in .NET 11), when to use WinForms, modernization tips for migrating from .NET Framework, and common agent pitfalls.
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). TFM `net8.0-windows`. .NET 9 features (dark mode experimental) explicitly marked. .NET 11 finalization targets noted.
-
-## Scope
-
-- WinForms .NET 8+ project setup (SDK-style)
-- High-DPI support with PerMonitorV2
-- Dark mode via Application.SetColorMode (experimental)
-- Host builder and DI patterns
-- Modernization tips from .NET Framework
-
-## Out of scope
-
-- WinForms .NET Framework patterns (legacy)
-- Migration guidance -- see `references/wpf-migration.md`
-- Desktop testing -- see [skill:dotnet-testing]
-- General Native AOT patterns -- see [skill:dotnet-tooling]
-- UI framework selection -- see `references/ui-chooser.md`
-
-Cross-references: [skill:dotnet-testing] for desktop testing, `references/wpf-modern.md` for WPF patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection.
-
 
 ## .NET 8+ Differences
 

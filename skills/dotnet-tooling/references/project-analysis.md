@@ -1,27 +1,13 @@
+# Project Analysis
 
 ```bash
 find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -20
 ```
 
-# dotnet-project-analysis
 
 Analyzes .NET solution structure, project references, and build configuration. This skill is foundational -- agents need to understand project layout before doing any meaningful .NET development work.
 
 **Prerequisites:** Run `references/version-detection.md` first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-csharp] instead.
-
-## Scope
-
-- Finding solution root (.sln, .slnx)
-- Parsing project references and dependency graphs
-- Detecting Central Package Management (CPM) configuration
-- Identifying build configuration files (Directory.Build.props, Directory.Build.targets)
-
-## Out of scope
-
-- Reading and modifying individual .csproj files -- see `references/csproj-reading.md`
-- Project organization and SDK selection decisions -- see `references/project-structure.md`
-- TFM/SDK version detection -- see `references/version-detection.md`
-
 
 ## Step 1: Find the Solution Root
 

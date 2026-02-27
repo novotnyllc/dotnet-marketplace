@@ -1,26 +1,8 @@
-
-# dotnet-xml-docs
+# XML Docs
 
 XML documentation comments for .NET: all standard tags (`<summary>`, `<param>`, `<returns>`, `<exception>`, `<remarks>`, `<example>`, `<value>`, `<typeparam>`, `<typeparamref>`, `<paramref>`), advanced tags (`<inheritdoc>` for interface and base class inheritance, `<see cref="..."/>`, `<seealso>`, `<c>` and `<code>`), enabling XML doc generation with `<GenerateDocumentationFile>` MSBuild property, warning suppression strategies for internal APIs (`CS1591`, `<NoWarn>`, `InternalsVisibleTo`), XML doc conventions for public NuGet libraries, auto-generation tooling (IDE quick-fix `///` trigger, GhostDoc-style patterns), and IntelliSense integration showing XML docs in IDE tooltips and autocomplete.
 
 **Version assumptions:** .NET 8.0+ baseline. XML documentation comments are a C# language feature available in all .NET versions. `<GenerateDocumentationFile>` MSBuild property works with .NET SDK 6+. `<inheritdoc>` fully supported since C# 9.0 / .NET 5+.
-
-## Scope
-
-- Standard XML doc tags (summary, param, returns, exception, remarks, example)
-- Advanced tags (inheritdoc, see cref, seealso, c, code)
-- GenerateDocumentationFile MSBuild configuration
-- Warning suppression strategies for internal APIs (CS1591)
-- Conventions for public NuGet library documentation
-
-## Out of scope
-
-- API documentation site generation (DocFX, Starlight) -- see [skill:dotnet-api]
-- General C# coding conventions and naming standards -- see [skill:dotnet-csharp]
-- CI/CD deployment of documentation sites -- see [skill:dotnet-devops]
-
-Cross-references: [skill:dotnet-api] for downstream API documentation generation from XML comments, [skill:dotnet-csharp] for general C# coding conventions, [skill:dotnet-devops] for doc site deployment.
-
 
 ## Enabling XML Documentation Generation
 
@@ -89,7 +71,6 @@ internal class ServiceHelper
 This forces documentation for every public member. Use this for NuGet packages where consumers depend on IntelliSense documentation.
 
 
-
 For complete tag examples (summary, param, returns, exception, remarks, example, inheritdoc, see/seealso, comprehensive class example, library conventions), see the Detailed Examples section below.
 
 ## Agent Gotchas
@@ -116,7 +97,7 @@ For complete tag examples (summary, param, returns, exception, remarks, example,
 
 ---
 
-# dotnet-xml-docs -- Detailed Examples
+# XML Docs -- Detailed Examples
 
 Complete XML documentation comment examples for all tag types, comprehensive class documentation, and conventions for public libraries.
 

@@ -2,26 +2,6 @@
 
 Comprehensive input validation patterns for .NET APIs. Covers the .NET 10 built-in validation system, FluentValidation for complex business rules, Data Annotations for simple models, endpoint filters for Minimal API integration, ProblemDetails error responses, and security-focused validation techniques.
 
-## Scope
-
-- .NET 10 built-in validation (AddValidation, ValidatableType, source generators)
-- FluentValidation validators, DI registration, endpoint filters
-- Data Annotations attributes, custom ValidationAttribute, IValidatableObject
-- Endpoint filters for validation as a cross-cutting concern
-- ProblemDetails error responses (RFC 9457)
-- Security-focused validation (ReDoS prevention, allowlist, file upload)
-
-## Out of scope
-
-- Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-ui]
-- OWASP injection prevention principles -- see [skill:dotnet-api]
-- Architectural patterns for validation placement -- see [skill:dotnet-api]
-- Options pattern ValidateDataAnnotations -- see `references/configuration.md`
-
-Cross-references: [skill:dotnet-api] for OWASP injection prevention, [skill:dotnet-api] for architectural validation strategy, [skill:dotnet-api] for Minimal API pipeline integration, `references/configuration.md` for Options pattern validation.
-
----
-
 ## Validation Framework Decision Tree
 
 Choose the validation framework based on project requirements:

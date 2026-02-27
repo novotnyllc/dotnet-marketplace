@@ -2,24 +2,6 @@
 
 LINQ performance patterns for .NET applications. Covers the critical distinction between `IQueryable<T>` server-side evaluation and `IEnumerable<T>` client-side materialization, compiled queries for EF Core hot paths, deferred execution pitfalls, LINQ-to-Objects allocation patterns and when to drop to manual loops, and Span-based alternatives for zero-allocation processing.
 
-## Scope
-
-- IQueryable vs IEnumerable materialization pitfalls
-- Compiled queries for EF Core hot paths
-- Deferred execution and multiple enumeration detection
-- LINQ-to-Objects allocation patterns and manual loop alternatives
-
-## Out of scope
-
-- EF Core DbContext lifecycle and migrations -- see [skill:dotnet-api]
-- Strategic data architecture (N+1 governance, read/write split) -- see [skill:dotnet-api]
-- Span<T> and Memory<T> fundamentals -- see [skill:dotnet-tooling]
-- Microbenchmarking setup -- see [skill:dotnet-testing]
-
-Cross-references: [skill:dotnet-api] for compiled queries in EF Core context and DbContext usage, [skill:dotnet-tooling] for Span<T>/Memory<T> foundations and ArrayPool patterns, [skill:dotnet-testing] for measuring LINQ optimization impact.
-
----
-
 ## IQueryable vs IEnumerable Materialization
 
 The most impactful LINQ performance decision is where evaluation happens: on the database server (`IQueryable<T>`) or in application memory (`IEnumerable<T>`).

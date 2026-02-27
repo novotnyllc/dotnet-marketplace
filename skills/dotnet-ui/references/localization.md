@@ -1,29 +1,8 @@
-
-# dotnet-localization
+# Localization
 
 Comprehensive .NET internationalization and localization: .resx resource files and satellite assemblies, modern alternatives (JSON resources, source generators for AOT), IStringLocalizer patterns, date/number/currency formatting with CultureInfo, RTL layout support, pluralization engines, and per-framework localization integration for Blazor, MAUI, Uno Platform, and WPF.
 
 **Version assumptions:** .NET 8.0+ baseline. IStringLocalizer stable since .NET Core 1.0; localization APIs stable since .NET 5. .NET 9+ features explicitly marked.
-
-## Scope
-
-- .resx resource files, satellite assemblies, culture fallback chains
-- IStringLocalizer patterns and DI registration
-- Modern alternatives: JSON resources, source generators for AOT
-- Date/number/currency formatting with CultureInfo
-- RTL layout support per framework (Blazor, MAUI, Uno, WPF)
-- Pluralization engines (MessageFormat.NET, SmartFormat.NET)
-
-## Out of scope
-
-- Deep Blazor component patterns -- see `references/blazor-components.md`
-- Deep MAUI development patterns -- see `references/maui-development.md`
-- Uno Platform project structure and Extensions ecosystem -- see `references/uno-platform.md`
-- WPF Host builder and MVVM patterns -- see `references/wpf-modern.md`
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
-
-Cross-references: `references/blazor-components.md` for Blazor component lifecycle, `references/maui-development.md` for MAUI app structure, `references/uno-platform.md` for Uno Extensions and x:Uid, `references/wpf-modern.md` for WPF on modern .NET.
-
 
 ## .resx Resource Files
 
@@ -581,4 +560,3 @@ For WPF Host builder, MVVM Toolkit, and theming patterns, see `references/wpf-mo
 6. **Do not add translation keys absent from the default `.resx` file.** The default resource is the single source of truth; satellite assemblies must be a subset.
 7. **Do not use `ResourceManager` directly in AOT/trimmed apps.** It relies on reflection. Use a source generator (ResXGenerator) for compile-time resource access.
 8. **Do not forget platform-specific setup for MAUI.** iOS/Mac Catalyst need `CFBundleLocalizations` in `Info.plist`; Windows needs `Resource Language` entries.
-

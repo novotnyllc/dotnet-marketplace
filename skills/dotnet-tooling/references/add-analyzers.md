@@ -1,25 +1,8 @@
-
-# dotnet-add-analyzers
+# Add Analyzers
 
 Add and configure .NET code analyzers to an existing project. Covers built-in Roslyn CA rules, nullable reference types enforcement, trimming/AOT compatibility analyzers, and third-party analyzer packages.
 
 **Prerequisites:** Run `references/version-detection.md` first — analyzer features vary by SDK version. Run `references/project-analysis.md` to understand the current project layout.
-
-## Scope
-
-- Built-in Roslyn CA rules and AnalysisLevel configuration
-- Nullable reference types enforcement
-- Trimming and AOT compatibility analyzers
-- Third-party analyzer packages and severity configuration
-
-## Out of scope
-
-- EditorConfig hierarchy and IDE code style preferences -- see [skill:dotnet-csharp]
-- Solution layout and Directory.Build.props -- see `references/project-structure.md`
-- New project scaffolding with analyzers -- see `references/scaffold-project.md`
-
-Cross-references: `references/project-structure.md` for where build props/targets live, `references/scaffold-project.md` which includes analyzer setup in new projects, [skill:dotnet-csharp] for EditorConfig hierarchy/precedence, IDE code style preferences, naming rules, and global AnalyzerConfig files.
-
 
 ## Built-in Roslyn Analyzers
 

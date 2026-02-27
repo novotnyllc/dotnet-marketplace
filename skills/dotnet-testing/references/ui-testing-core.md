@@ -1,29 +1,8 @@
-# dotnet-ui-testing-core
+# UI Testing Core
 
 Core UI testing patterns applicable across .NET UI frameworks (Blazor, MAUI, Uno Platform). Covers the page object model for maintainable test structure, test selector strategies for reliable element identification, async wait patterns for non-deterministic UI, and accessibility testing approaches.
 
 **Version assumptions:** .NET 8.0+ baseline. Framework-specific details are delegated to dedicated skills.
-
-## Scope
-
-- Page object model for maintainable test structure
-- Test selector strategies for reliable element identification
-- Async wait patterns for non-deterministic UI
-- Accessibility testing approaches
-
-## Out of scope
-
-- Blazor component testing (bUnit) -- see [skill:dotnet-ui] `references/blazor-testing.md`
-- MAUI UI testing (Appium/XHarness) -- see [skill:dotnet-ui] `references/maui-testing.md`
-- Uno Platform WASM testing -- see [skill:dotnet-ui] `references/uno-testing.md`
-- Browser automation specifics -- see [skill:dotnet-testing] `references/playwright.md`
-- Test project scaffolding -- see [skill:dotnet-testing] `references/add-testing.md`
-
-**Prerequisites:** A test project scaffolded via [skill:dotnet-testing] `references/add-testing.md`. Familiarity with test strategy decisions from [skill:dotnet-testing] `references/testing-strategy.md`.
-
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when UI tests are appropriate, [skill:dotnet-testing] `references/playwright.md` for browser-based E2E automation, [skill:dotnet-ui] `references/blazor-testing.md` for Blazor component testing, [skill:dotnet-ui] `references/maui-testing.md` for mobile/desktop UI testing, [skill:dotnet-ui] `references/uno-testing.md` for Uno Platform testing.
-
----
 
 ## Page Object Model
 

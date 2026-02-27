@@ -1,25 +1,6 @@
-
-# dotnet-uno-mcp
+# Uno MCP
 
 MCP (Model Context Protocol) server integration for Uno Platform live documentation lookups. Covers tool detection (`mcp__uno__` prefix), search-then-fetch workflow, initialization rules invocation, graceful fallback when MCP is unavailable, citation requirements, and safety guidelines for external data. Includes inline documentation that provides useful guidance without MCP server availability.
-
-## Scope
-
-- MCP tool detection (mcp__uno__ prefix)
-- Search-then-fetch workflow for Uno Platform documentation
-- Initialization rules invocation
-- Graceful fallback when MCP is unavailable
-- Citation requirements and safety guidelines
-- Uno SDK UnoFeatures reference for project configuration
-
-## Out of scope
-
-- General protocol and streaming communication patterns (not MCP-specific) -- see [skill:dotnet-api]
-- Uno Platform testing -- see `references/uno-testing.md`
-- Uno development patterns without MCP -- see `references/uno-platform.md` and `references/uno-targets.md`
-
-Cross-references: `references/uno-platform.md` for core development patterns, `references/uno-targets.md` for deployment guidance, `references/uno-testing.md` for testing.
-
 
 ## MCP Tool Detection
 

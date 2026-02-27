@@ -1,27 +1,6 @@
-
-# dotnet-secrets-management
+# Secrets Management
 
 Cloud-agnostic secrets management for .NET applications. Covers the full lifecycle: user secrets for local development, environment variables for production, IConfiguration binding patterns, secret rotation, and managed identity as a production best practice. Includes anti-patterns to avoid (secrets in source, appsettings.json, hardcoded connection strings).
-
-## Scope
-
-- User secrets for local development
-- Environment variables for production
-- IConfiguration binding patterns for secrets
-- Secret rotation strategies
-- Managed identity as a production best practice
-- Anti-patterns to avoid (secrets in source, appsettings.json)
-
-## Out of scope
-
-- Cloud-provider-specific vault services (Azure Key Vault, AWS Secrets Manager, GCP Secret Manager) -- see [skill:dotnet-advisor]
-- Authentication/authorization implementation (OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]
-- Cryptographic algorithm selection -- see [skill:dotnet-cryptography]
-- General Options pattern and configuration sources -- see [skill:dotnet-csharp-configuration]
-
-Cross-references: [skill:dotnet-security-owasp] for OWASP A02 (Cryptographic Failures) and deprecated pattern warnings, [skill:dotnet-csharp-configuration] for Options pattern and configuration source precedence.
-
----
 
 ## Secrets Lifecycle
 

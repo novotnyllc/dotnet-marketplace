@@ -1,25 +1,6 @@
-
-# dotnet-uno-targets
+# Uno Targets
 
 Per-target deployment guidance for Uno Platform applications: Web/WASM, iOS, Android, macOS (Catalyst), Windows, Linux (Skia/GTK), and Embedded (Skia/Framebuffer). Each target section covers project setup, debugging workflow, packaging/distribution, platform-specific gotchas, AOT/trimming implications, and behavior differences from other targets.
-
-## Scope
-
-- Per-target project setup: WASM, iOS, Android, macOS (Catalyst), Windows, Linux, Embedded
-- Debugging workflow per target platform
-- Packaging and distribution (App Store, Play Store, MSIX, Flatpak)
-- Platform-specific gotchas and AOT/trimming implications
-
-## Out of scope
-
-- Core Uno Platform development (Extensions, MVUX, Toolkit) -- see `references/uno-platform.md`
-- MCP integration for live docs -- see `references/uno-mcp.md`
-- Uno Platform testing -- see `references/uno-testing.md`
-- General AOT/trimming patterns -- see [skill:dotnet-tooling]
-- UI framework selection -- see `references/ui-chooser.md`
-
-Cross-references: `references/uno-platform.md` for core development, `references/uno-mcp.md` for MCP integration, `references/uno-testing.md` for testing, [skill:dotnet-tooling] for general WASM AOT patterns, `references/ui-chooser.md` for framework selection.
-
 
 ## Target Platform Overview
 

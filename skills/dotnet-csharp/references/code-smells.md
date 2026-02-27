@@ -2,24 +2,6 @@
 
 Proactive code-smell and anti-pattern detection for C# code. This skill triggers during all workflow modes -- planning, implementation, and review. Each entry identifies the smell, explains why it is harmful, provides the correct fix, and references the relevant CA rule or cross-reference.
 
-## Scope
-
-- Resource management (IDisposable misuse)
-- Async anti-patterns and deadlock detection
-- DI lifetime misuse and captive dependencies
-- Null-handling mistakes and NRT violations
-- LINQ pitfalls and string handling issues
-
-## Out of scope
-
-- LLM-specific generation mistakes (wrong NuGet packages, MSBuild errors) -- see [skill:dotnet-api]
-- SOLID/DRY design principles -- see `references/solid-principles.md`
-- Naming and style conventions -- see `references/coding-standards.md`
-
-Cross-references: `references/async-patterns.md` for async gotchas, `references/coding-standards.md` for naming and style, `references/dependency-injection.md` for DI lifetime misuse, `references/nullable-reference-types.md` for NRT annotation mistakes.
-
----
-
 ## 1. Resource Management (IDisposable Misuse)
 
 | Smell | Why Harmful | Fix | Rule |

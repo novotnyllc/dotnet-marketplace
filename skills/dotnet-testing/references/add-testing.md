@@ -1,22 +1,6 @@
-# dotnet-add-testing
+# Add Testing
 
 Add test infrastructure scaffolding to an existing .NET project. Creates test projects with xUnit, configures code coverage with coverlet, and sets up the conventional directory structure.
-
-## Scope
-
-- Test project creation with xUnit and coverlet
-- Conventional directory structure (tests/ mirroring src/)
-- Project reference wiring and test SDK configuration
-
-## Out of scope
-
-- In-depth testing patterns (xUnit v3, WebApplicationFactory, UI testing) -- see [skill:dotnet-testing] `references/testing-strategy.md`
-
-**Prerequisites:** Run [skill:dotnet-tooling] `references/version-detection.md` first to determine SDK version and TFM. Run [skill:dotnet-tooling] `references/project-analysis.md` to understand existing solution structure.
-
-Cross-references: [skill:dotnet-tooling] `references/project-structure.md` for overall solution layout conventions, [skill:dotnet-tooling] `references/scaffold-project.md` which includes test scaffolding in new projects, [skill:dotnet-tooling] `references/add-analyzers.md` for test-specific analyzer suppressions.
-
----
 
 ## Test Project Structure
 

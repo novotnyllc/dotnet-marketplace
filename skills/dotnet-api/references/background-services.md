@@ -1,26 +1,6 @@
-
-# dotnet-background-services
+# Background Services
 
 Patterns for long-running background work in .NET applications. Covers `BackgroundService`, `IHostedService`, hosted service lifecycle, and graceful shutdown handling.
-
-## Scope
-
-- BackgroundService and IHostedService patterns
-- Hosted service lifecycle and startup ordering
-- Graceful shutdown and cancellation handling
-- Periodic work, polling, and queue-draining loops
-
-## Out of scope
-
-- DI registration mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
-- Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
-- Project scaffolding -- see [skill:dotnet-scaffold-project]
-- Testing strategies for background services -- see [skill:dotnet-testing-strategy] and [skill:dotnet-integration-testing]
-- Channel<T> fundamentals and drain patterns -- see [skill:dotnet-channels]
-
-Cross-references: [skill:dotnet-csharp-async-patterns] for async patterns in background workers, [skill:dotnet-csharp-dependency-injection] for hosted service registration and scope management, [skill:dotnet-channels] for Channel<T> patterns used in background work queues.
-
----
 
 ## BackgroundService vs IHostedService
 
@@ -200,7 +180,7 @@ public sealed class MyWorker : BackgroundService
 
 ## Channels Integration
 
-See [skill:dotnet-channels] for comprehensive `Channel<T>` guidance including bounded/unbounded options, `BoundedChannelFullMode`, backpressure strategies, `itemDropped` callbacks, multiple consumers, performance tuning, and drain patterns.
+See [skill:dotnet-csharp] for comprehensive `Channel<T>` guidance including bounded/unbounded options, `BoundedChannelFullMode`, backpressure strategies, `itemDropped` callbacks, multiple consumers, performance tuning, and drain patterns.
 
 The most common integration is a channel-backed background task queue consumed by a `BackgroundService`:
 

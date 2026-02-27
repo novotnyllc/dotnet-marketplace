@@ -1,28 +1,8 @@
-# dotnet-integration-testing
+# Integration Testing
 
 Integration testing patterns for .NET applications using WebApplicationFactory, Testcontainers, and .NET Aspire testing. Covers in-process API testing, disposable infrastructure via containers, database fixture management, and test isolation strategies.
 
 **Version assumptions:** .NET 8.0+ baseline, Testcontainers 3.x+, .NET Aspire 9.0+. Package versions for `Microsoft.AspNetCore.Mvc.Testing` must match the project's target framework major version (e.g., 8.x for net8.0, 9.x for net9.0, 10.x for net10.0). Examples below use Testcontainers 4.x APIs; the patterns apply equally to 3.x with minor namespace differences.
-
-## Scope
-
-- In-process API testing with WebApplicationFactory
-- Disposable infrastructure via Testcontainers
-- .NET Aspire distributed application testing
-- Database fixture management and test isolation
-- Authentication and authorization test setup
-
-## Out of scope
-
-- Test project scaffolding (creating projects, package references) -- see [skill:dotnet-testing] `references/add-testing.md`
-- Testing strategy and test type selection -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- Snapshot testing for verifying API response structures -- see [skill:dotnet-testing] `references/snapshot-testing.md`
-
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with integration test packages referenced. Docker daemon running (required by Testcontainers). Run [skill:dotnet-tooling] `references/version-detection.md` to confirm .NET 8.0+ baseline.
-
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when integration tests are appropriate, [skill:dotnet-testing] `references/xunit.md` for xUnit fixtures and parallel execution configuration, [skill:dotnet-testing] `references/snapshot-testing.md` for verifying API response structures with Verify.
-
----
 
 ## WebApplicationFactory
 

@@ -1,30 +1,8 @@
-
-# dotnet-cli-architecture
+# CLI Architecture
 
 Layered CLI application architecture for .NET: command/handler/service separation following clig.dev principles, configuration precedence (appsettings → environment variables → CLI arguments), structured logging in CLI context, exit code conventions, stdin/stdout/stderr patterns, and testing CLI applications via in-process invocation with output capture.
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to CLI tools built with System.CommandLine 2.0 and generic host.
-
-## Scope
-
-- Layered command/handler/service architecture for CLI apps
-- clig.dev principles for .NET (stdout/stderr, exit codes, NO_COLOR)
-- Configuration precedence (appsettings, env vars, CLI args)
-- Structured logging in CLI context
-- Stdin/stdout/stderr patterns and machine-readable output
-- Testing CLI applications via in-process invocation
-
-## Out of scope
-
-- System.CommandLine API details (RootCommand, Option<T>, SetAction) -- see `references/system-commandline.md`
-- Native AOT compilation and publish pipeline -- see `references/native-aot.md`
-- CLI distribution and packaging -- see `references/cli-distribution.md` and `references/cli-packaging.md`
-- General CI/CD patterns -- see [skill:dotnet-devops]
-- DI container internals -- see [skill:dotnet-csharp]
-- General testing strategies -- see [skill:dotnet-testing]
-
-Cross-references: `references/system-commandline.md` for System.CommandLine 2.0 API, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI patterns and configuration integration, [skill:dotnet-testing] for general testing patterns.
-
 
 ## clig.dev Principles for .NET CLI Tools
 

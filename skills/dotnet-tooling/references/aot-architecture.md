@@ -1,31 +1,8 @@
-
-# dotnet-aot-architecture
+# AOT Architecture
 
 AOT-first application design patterns for .NET 8+: preferring source generators over reflection, explicit DI registration over assembly scanning, AOT-safe serialization choices, library compatibility assessment, and factory patterns replacing `Activator.CreateInstance`.
 
 **Version assumptions:** .NET 8.0+ baseline. Patterns apply to all AOT-capable project types (console, ASP.NET Core Minimal APIs, worker services).
-
-## Scope
-
-- Source generator replacements for reflection patterns
-- AOT-safe DI patterns (explicit registration, keyed services)
-- Serialization choices for AOT (STJ source gen, Protobuf, MessagePack)
-- Factory patterns replacing Activator.CreateInstance
-- Library compatibility assessment for AOT
-- AOT application architecture template
-
-## Out of scope
-
-- Native AOT publish pipeline and MSBuild configuration -- see `references/native-aot.md`
-- Trim-safe library authoring and annotations -- see `references/trimming.md`
-- WASM AOT compilation -- see [skill:dotnet-ui]
-- MAUI-specific AOT -- see [skill:dotnet-ui]
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
-- DI container internals -- see [skill:dotnet-csharp]
-- Serialization depth -- see [skill:dotnet-csharp]
-
-Cross-references: `references/native-aot.md` for the AOT publish pipeline, `references/trimming.md` for trim annotations and library authoring, [skill:dotnet-csharp] for serialization, source generators, DI fundamentals, and P/Invoke patterns, [skill:dotnet-devops] for `runtime-deps` deployment.
-
 
 ## Source Generators Over Reflection
 

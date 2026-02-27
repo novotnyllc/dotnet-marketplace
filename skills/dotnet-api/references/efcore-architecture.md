@@ -1,26 +1,6 @@
+# EF Core Architecture
 
-# dotnet-efcore-architecture
-
-Strategic architectural patterns for EF Core data layers. Covers read/write model separation, aggregate boundary design, repository vs direct DbContext policy, N+1 query governance, row limit enforcement, and projection patterns. These patterns guide how to structure a data layer -- not how to write individual queries (see [skill:dotnet-efcore-patterns] for tactical usage).
-
-## Scope
-
-- Read/write model separation and CQRS patterns
-- Aggregate boundary design and repository policy
-- N+1 query governance and row limit enforcement
-- Projection patterns and query optimization strategy
-
-## Out of scope
-
-- Tactical EF Core usage (DbContext lifecycle, AsNoTracking, migrations, interceptors) -- see [skill:dotnet-efcore-patterns]
-- Data access technology selection (EF Core vs Dapper vs ADO.NET) -- see [skill:dotnet-data-access-strategy]
-- DI container mechanics -- see [skill:dotnet-csharp-dependency-injection]
-- Async patterns -- see [skill:dotnet-csharp-async-patterns]
-- Integration testing data layers -- see [skill:dotnet-integration-testing]
-
-Cross-references: [skill:dotnet-efcore-patterns] for tactical DbContext usage and migrations, [skill:dotnet-data-access-strategy] for technology selection, [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for async query patterns.
-
----
+Strategic architectural patterns for EF Core data layers. Covers read/write model separation, aggregate boundary design, repository vs direct DbContext policy, N+1 query governance, row limit enforcement, and projection patterns. These patterns guide how to structure a data layer -- not how to write individual queries (see [skill:dotnet-api] for tactical usage).
 
 ## Package Prerequisites
 

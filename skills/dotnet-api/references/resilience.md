@@ -1,27 +1,8 @@
-
-# dotnet-resilience
+# Resilience
 
 Modern resilience patterns for .NET applications using Polly v8 and `Microsoft.Extensions.Http.Resilience`. Covers the standard resilience pipeline (rate limiter, total timeout, retry, circuit breaker, attempt timeout), custom pipeline configuration, and integration with the .NET dependency injection system.
 
 **Superseded package:** `Microsoft.Extensions.Http.Polly` is superseded by `Microsoft.Extensions.Http.Resilience`. Do not use `Microsoft.Extensions.Http.Polly` for new projects. See the [migration guide](https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/resilience/migration-guide) for upgrading existing code.
-
-## Scope
-
-- Standard resilience pipeline (rate limiter, timeout, retry, circuit breaker)
-- Custom resilience pipeline configuration with Polly v8
-- DI integration via MS.Extensions.Http.Resilience
-- Resilience telemetry and Polly metering
-
-## Out of scope
-
-- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
-- Async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
-- HTTP client factory patterns (typed clients, DelegatingHandlers) -- see [skill:dotnet-http-client]
-- Testing resilience policies -- see [skill:dotnet-integration-testing] and [skill:dotnet-xunit]
-
-Cross-references: [skill:dotnet-csharp-dependency-injection] for service registration, [skill:dotnet-csharp-async-patterns] for cancellation token propagation, [skill:dotnet-http-client] for applying resilience to HTTP clients.
-
----
 
 ## Package Landscape
 
@@ -359,7 +340,7 @@ The `Microsoft.Extensions.Resilience` package automatically reports:
 | `polly.strategy.pipeline.duration` | Duration of the entire pipeline execution |
 | `polly.strategy.attempt.count` | Count of attempts (including retries) |
 
-These integrate with OpenTelemetry automatically when the OpenTelemetry SDK is configured in your application -- see [skill:dotnet-observability] for collector setup.
+These integrate with OpenTelemetry automatically when the OpenTelemetry SDK is configured in your application -- see [skill:dotnet-devops] for collector setup.
 
 ### Enabling Telemetry
 

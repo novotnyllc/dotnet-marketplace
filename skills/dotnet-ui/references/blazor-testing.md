@@ -1,28 +1,8 @@
-
-# dotnet-blazor-testing
+# Blazor Testing
 
 bUnit testing for Blazor components. Covers component rendering and markup assertions, event handling, cascading parameters and cascading values, JavaScript interop mocking, and async component lifecycle testing. bUnit provides an in-memory Blazor renderer that executes components without a browser.
 
 **Version assumptions:** .NET 8.0+ baseline, bUnit 1.x (stable). Examples use the latest bUnit APIs. bUnit supports both Blazor Server and Blazor WebAssembly components.
-
-## Scope
-
-- bUnit component rendering and markup assertions
-- Event handling and user interaction simulation
-- Cascading parameters and cascading values
-- JavaScript interop mocking
-- Async component lifecycle testing
-
-## Out of scope
-
-- Browser-based E2E testing of Blazor apps -- see [skill:dotnet-testing]
-- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-testing]
-- Test project scaffolding -- see [skill:dotnet-testing]
-
-**Prerequisites:** A Blazor test project scaffolded via [skill:dotnet-testing] with bUnit packages referenced. The component under test must be in a referenced Blazor project.
-
-Cross-references: [skill:dotnet-testing] for shared UI testing patterns (POM, selectors, wait strategies), [skill:dotnet-testing] for xUnit fixtures and test organization, `references/blazor-patterns.md` for hosting models and render modes, `references/blazor-components.md` for component architecture and state management.
-
 
 ## Package Setup
 

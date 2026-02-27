@@ -4,24 +4,6 @@ Upfront type design choices that affect performance throughout an application's 
 
 **Version assumptions:** .NET 8.0+ baseline. FrozenDictionary (requires .NET 8+) is in-scope by default.
 
-## Scope
-
-- struct vs class decision matrix
-- sealed by default for library types
-- readonly struct for defensive copy elimination
-- ref struct and Span<T>/Memory<T> selection
-- Collection type selection (FrozenDictionary, ImmutableArray)
-
-## Out of scope
-
-- Runtime optimization techniques (pooling, caching, stackalloc) -- see [skill:dotnet-tooling]
-- Language syntax for records and collection expressions -- see `references/modern-patterns.md`
-- GC behavior and memory management -- see [skill:dotnet-tooling]
-
-Cross-references: [skill:dotnet-tooling] for optimization techniques, `references/modern-patterns.md` for language syntax, [skill:dotnet-tooling] for GC behavior and memory management.
-
----
-
 ## Struct vs Class Decision Matrix
 
 Choosing between `struct` and `class` at design time has cascading effects on allocation, GC pressure, copying cost, and API shape. Make the decision once, correctly.

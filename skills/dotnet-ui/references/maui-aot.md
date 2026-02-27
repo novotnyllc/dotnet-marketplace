@@ -1,28 +1,8 @@
-
-# dotnet-maui-aot
+# MAUI AOT
 
 Native AOT compilation for .NET MAUI on iOS and Mac Catalyst: compilation pipeline, publish profiles, up to 50% app size reduction and up to 50% startup improvement, library compatibility gaps, opt-out mechanisms, trimming interplay (RD.xml, source generators), and testing AOT builds on device.
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for MAUI is available on iOS and Mac Catalyst. Android uses a different compilation model (CoreCLR in .NET 11, Mono/AOT in .NET 8-10).
-
-## Scope
-
-- iOS/Mac Catalyst AOT compilation pipeline
-- Publish profile configuration for MAUI AOT
-- Size/startup improvement measurements
-- Library compatibility gaps for MAUI AOT apps
-- Opt-out mechanisms and trimming interplay
-- Testing AOT builds on device
-
-## Out of scope
-
-- MAUI development patterns (project structure, XAML, MVVM) -- see `references/maui-development.md`
-- MAUI testing -- see `references/maui-testing.md`
-- WASM AOT (Blazor/Uno) -- see [skill:dotnet-tooling]
-- General AOT architecture -- see [skill:dotnet-tooling]
-
-Cross-references: `references/maui-development.md` for MAUI patterns, `references/maui-testing.md` for testing AOT builds, [skill:dotnet-tooling] for general AOT patterns, [skill:dotnet-tooling] for WASM AOT, `references/ui-chooser.md` for framework selection.
-
 
 ## iOS/Mac Catalyst AOT Compilation Pipeline
 

@@ -1,23 +1,6 @@
-# dotnet-container-deployment
+# Container Deployment
 
 Deploying .NET containers to Kubernetes and local development environments. Covers Kubernetes Deployment + Service + probe YAML, Docker Compose for local dev workflows, and CI/CD integration for building and pushing container images.
-
-## Scope
-
-- Kubernetes Deployment, Service, and probe YAML for .NET apps
-- Docker Compose for local development workflows
-- CI/CD integration for building and pushing container images
-
-## Out of scope
-
-- Dockerfile authoring, multi-stage builds, and base image selection -- see [skill:dotnet-devops] `references/containers.md`
-- Advanced CI/CD pipeline patterns (matrix builds, deploy pipelines) -- see [skill:dotnet-devops] `references/gha-deploy.md` and `references/ado-patterns.md`
-- DI and async patterns -- see [skill:dotnet-csharp-dependency-injection] and [skill:dotnet-csharp-async-patterns]
-- Testing container deployments -- see [skill:dotnet-integration-testing] and [skill:dotnet-playwright]
-
-Cross-references: [skill:dotnet-devops] `references/containers.md` for Dockerfile and image best practices, [skill:dotnet-observability] for health check endpoint patterns used by Kubernetes probes.
-
----
 
 ## Kubernetes Deployment
 
@@ -161,7 +144,7 @@ In production, use an external secrets operator (e.g., External Secrets Operator
 
 ## Kubernetes Probes
 
-Probes tell Kubernetes how to check application health. They map to the health check endpoints defined in your .NET application (see [skill:dotnet-observability]).
+Probes tell Kubernetes how to check application health. They map to the health check endpoints defined in your .NET application (see [skill:dotnet-devops]).
 
 ### Probe Types
 
@@ -449,7 +432,7 @@ steps:
 ## Key Principles
 
 - **Use startup probes** to decouple initialization time from liveness detection -- without a startup probe, slow-starting apps get killed before they are ready
-- **Separate liveness from readiness** -- liveness checks should not include dependency health (see [skill:dotnet-observability] for endpoint patterns)
+- **Separate liveness from readiness** -- liveness checks should not include dependency health (see [skill:dotnet-devops] for endpoint patterns)
 - **Set resource requests and limits** -- without them, pods can starve other workloads or get OOM-killed unpredictably
 - **Run as non-root** -- set `runAsNonRoot: true` in the pod security context and use chiseled images (see [skill:dotnet-devops] `references/containers.md`)
 - **Use `depends_on` with health checks** in Docker Compose -- prevents app startup before dependencies are ready
@@ -461,7 +444,7 @@ steps:
 ## Agent Gotchas
 
 1. **Do not omit the startup probe** -- without it, the liveness probe runs during initialization and may restart slow-starting apps. Calculate startup budget as `failureThreshold * periodSeconds`.
-2. **Do not include dependency checks in liveness probes** -- a database outage should not restart your app. Liveness endpoints must only check the process itself. See [skill:dotnet-observability] for the liveness vs readiness pattern.
+2. **Do not include dependency checks in liveness probes** -- a database outage should not restart your app. Liveness endpoints must only check the process itself. See [skill:dotnet-devops] for the liveness vs readiness pattern.
 3. **Do not use `latest` tag in Kubernetes manifests** -- `latest` is mutable and `imagePullPolicy: IfNotPresent` may serve stale images. Use immutable tags (semver or SHA).
 4. **Do not hardcode connection strings in Kubernetes manifests** -- use Secrets or ConfigMaps referenced via `secretKeyRef`/`configMapRef`.
 5. **Do not set `terminationGracePeriodSeconds` lower than `Host.ShutdownTimeout`** -- the app needs time to drain in-flight requests before Kubernetes sends SIGKILL.

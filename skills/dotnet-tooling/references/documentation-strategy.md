@@ -1,27 +1,8 @@
-
-# dotnet-documentation-strategy
+# Documentation Strategy
 
 Documentation tooling recommendation for .NET projects: decision tree for selecting Starlight (Astro-based, modern default), Docusaurus (React-based, plugin-rich), or DocFX (community-maintained, .NET-native XML doc integration). Covers MarkdownSnippets for verified code inclusion from source files, Mermaid rendering support across all platforms, migration paths between tools, and project-context-driven recommendation based on team size, project type, and existing ecosystem.
 
 **Version assumptions:** Starlight v0.x+ (Astro 4+). Docusaurus v3.x (React 18+). DocFX v2.x (community-maintained). MarkdownSnippets as `dotnet tool` (.NET 8.0+ baseline). Mermaid v10+ (GitHub, Starlight, Docusaurus render natively).
-
-## Scope
-
-- Decision tree for selecting Starlight, Docusaurus, or DocFX
-- Initial setup and configuration for each platform
-- MarkdownSnippets for verified code inclusion
-- Mermaid rendering support across platforms
-- Migration paths between documentation tools
-
-## Out of scope
-
-- CI/CD deployment pipelines for doc sites -- see [skill:dotnet-devops]
-- API documentation generation (DocFX API reference, OpenAPI-as-docs) -- see [skill:dotnet-api]
-- XML documentation comment authoring -- see `references/xml-docs.md`
-- Mermaid diagram syntax and .NET-specific patterns -- see `references/mermaid-diagrams.md`
-
-Cross-references: [skill:dotnet-devops] for doc site deployment pipelines, [skill:dotnet-api] for API reference generation, `references/xml-docs.md` for XML doc comment authoring, `references/mermaid-diagrams.md` for .NET-specific Mermaid diagrams.
-
 
 ## Documentation Tooling Decision Tree
 

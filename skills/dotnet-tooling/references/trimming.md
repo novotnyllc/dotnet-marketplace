@@ -1,33 +1,8 @@
-
-# dotnet-trimming
+# Trimming
 
 Trim-safe development for .NET 8+ applications and libraries: trimming annotations (`[RequiresUnreferencedCode]`, `[DynamicallyAccessedMembers]`, `[DynamicDependency]`), ILLink descriptor XML for type preservation, `TrimmerSingleWarn` for granular diagnostics, testing trimmed output, fixing IL2xxx/IL3xxx warnings, and library authoring with `IsTrimmable`.
 
 **Version assumptions:** .NET 8.0+ baseline. Trimming shipped in .NET 6, but .NET 8 provides the most complete annotation surface and analyzer coverage. .NET 9 improved warning accuracy and library compat.
-
-## Scope
-
-- MSBuild properties for trimming (apps vs libraries)
-- Trimming annotations (RequiresUnreferencedCode, DynamicallyAccessedMembers, DynamicDependency)
-- ILLink descriptor XML for type preservation
-- TrimmerSingleWarn for granular diagnostics
-- IL2xxx/IL3xxx warning reference and fixes
-- Testing trimmed output and CI gates
-- Library authoring with IsTrimmable and IsAotCompatible
-
-## Out of scope
-
-- Native AOT publish pipeline and MSBuild configuration -- see `references/native-aot.md`
-- AOT-first design patterns -- see `references/aot-architecture.md`
-- WASM AOT compilation -- see [skill:dotnet-ui]
-- MAUI-specific AOT and trimming -- see [skill:dotnet-ui]
-- Source generator authoring -- see [skill:dotnet-csharp]
-- Serialization depth -- see [skill:dotnet-csharp]
-- Container deployment -- see [skill:dotnet-devops]
-- Performance patterns (Span, pooling) -- see `references/performance-patterns.md`
-
-Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] for AOT-safe serialization and source generators as trimming enabler.
-
 
 ## MSBuild Properties: Apps vs Libraries
 

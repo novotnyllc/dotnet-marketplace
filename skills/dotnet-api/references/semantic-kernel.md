@@ -1,27 +1,6 @@
-
-# dotnet-semantic-kernel
+# Semantic Kernel
 
 Microsoft Semantic Kernel for AI and LLM orchestration in .NET applications. Covers kernel setup and configuration, plugin/function calling, prompt templates with Handlebars and Liquid syntax, memory and vector store integration, planners, the agents framework, and integration with Azure OpenAI, OpenAI, and local models.
-
-## Scope
-
-- Kernel setup and DI integration for AI services (Azure OpenAI, OpenAI, Ollama)
-- Plugin/function calling with automatic invocation and filters
-- Prompt templates (inline, Handlebars, YAML)
-- Vector store abstractions and RAG patterns
-- Agents framework (ChatCompletionAgent, group chat, OpenAI Assistant)
-- Streaming responses
-
-## Out of scope
-
-- General async/await patterns and cancellation token propagation -- see [skill:dotnet-csharp-async-patterns]
-- DI container mechanics and service lifetime management -- see [skill:dotnet-csharp-dependency-injection]
-- HTTP client resilience and retry policies -- see [skill:dotnet-resilience]
-- Configuration binding (options pattern, secrets) -- see [skill:dotnet-csharp-configuration]
-
-Cross-references: [skill:dotnet-csharp-async-patterns] for async streaming patterns used with chat completions, [skill:dotnet-csharp-dependency-injection] for kernel service registration in ASP.NET Core, [skill:dotnet-resilience] for retry policies on AI service calls, [skill:dotnet-csharp-configuration] for managing API keys and model configuration.
-
----
 
 ## Kernel Setup
 
@@ -588,7 +567,7 @@ await foreach (var chunk in chatService.GetStreamingChatMessageContentsAsync(
 - **Use function calling over prompt stuffing** -- let the model call plugins to retrieve real-time data rather than injecting everything into the prompt
 - **Keep plugins focused** -- each plugin should represent a single domain; use `[Description]` attributes on functions and parameters so the model knows when and how to call them
 - **Use YAML prompts for production** -- separate prompt content from code for easier iteration and non-developer editing
-- **Do not store API keys in code** -- use environment variables, Azure Key Vault, or the .NET secrets manager (see [skill:dotnet-csharp-configuration])
+- **Do not store API keys in code** -- use environment variables, Azure Key Vault, or the .NET secrets manager (see [skill:dotnet-csharp])
 - **Prefer vector store abstractions** -- code against `IVectorStore` to allow switching between Qdrant, Azure AI Search, and other providers
 - **Handle experimental APIs explicitly** -- suppress `SKEXP*` warnings per-call, not globally, so you notice when APIs graduate to stable
 

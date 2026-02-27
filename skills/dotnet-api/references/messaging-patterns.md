@@ -1,26 +1,6 @@
-
-# dotnet-messaging-patterns
+# Messaging Patterns
 
 Durable messaging patterns for .NET event-driven architectures. Covers publish/subscribe, competing consumers, dead-letter queues, saga/process manager orchestration, and delivery guarantee strategies using Azure Service Bus, RabbitMQ, and MassTransit.
-
-## Scope
-
-- Publish/subscribe and competing consumer patterns
-- Dead-letter queues and poison message handling
-- Saga/process manager orchestration
-- Delivery guarantee strategies (at-least-once, exactly-once)
-- Azure Service Bus, RabbitMQ, and MassTransit integration
-
-## Out of scope
-
-- Background service lifecycle and IHostedService registration -- see [skill:dotnet-background-services]
-- Resilience pipelines and retry policies -- see [skill:dotnet-resilience]
-- JSON/binary serialization configuration -- see [skill:dotnet-serialization]
-- In-process producer/consumer queues with Channel<T> -- see [skill:dotnet-channels]
-
-Cross-references: [skill:dotnet-background-services] for hosting message consumers, [skill:dotnet-resilience] for fault tolerance around message handlers, [skill:dotnet-serialization] for message envelope serialization, [skill:dotnet-channels] for in-process queuing patterns.
-
----
 
 ## Messaging Fundamentals
 

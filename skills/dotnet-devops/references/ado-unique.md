@@ -1,30 +1,8 @@
-# dotnet-ado-unique
+# ADO Unique Features
 
 Azure DevOps-exclusive features not available in GitHub Actions: Environments with approvals and gates (pre-deployment checks, business hours restrictions), deployment groups vs environments (when to use each), service connections (Azure Resource Manager, Docker Registry, NuGet), classic release pipelines (legacy migration guidance to YAML), variable groups and library (linked to Azure Key Vault), pipeline decorators for organization-wide policy, and Azure Artifacts universal packages.
 
 **Version assumptions:** Azure DevOps Services (cloud). YAML pipelines with multi-stage support. Classic release pipelines for legacy migration context only.
-
-## Scope
-
-- Environments with approvals and gates (pre-deployment checks)
-- Service connections (Azure Resource Manager, Docker Registry, NuGet)
-- Classic release pipelines (legacy migration guidance to YAML)
-- Variable groups and library linked to Azure Key Vault
-- Pipeline decorators for organization-wide policy
-- Azure Artifacts universal packages
-
-## Out of scope
-
-- Composable pipeline patterns (templates, triggers) -- see [skill:dotnet-devops] `references/ado-patterns.md`
-- Build/test pipeline configuration -- see [skill:dotnet-devops] `references/ado-build-test.md`
-- Publishing pipelines -- see [skill:dotnet-devops] `references/ado-publish.md`
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- GitHub Actions equivalents -- see [skill:dotnet-devops] `references/gha-patterns.md`, `references/gha-build-test.md`, `references/gha-publish.md`, `references/gha-deploy.md`
-- CLI release pipelines -- see [skill:dotnet-cli-release-pipeline]
-
-Cross-references: [skill:dotnet-devops] `references/add-ci.md` for starter CI templates, [skill:dotnet-cli-release-pipeline] for CLI-specific release automation.
-
----
 
 ## Environments with Approvals and Gates
 

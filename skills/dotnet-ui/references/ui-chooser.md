@@ -1,22 +1,6 @@
-
-# dotnet-ui-chooser
+# UI Chooser
 
 UI framework selection decision tree for .NET applications. Covers Web (Blazor Server, Blazor WebAssembly, Blazor Hybrid), cross-platform (MAUI, Uno Platform, Avalonia), and Windows-only (WinUI 3, WPF, WinForms) frameworks. Presents structured trade-off analysis across five decision factors to help teams evaluate options based on their specific constraints.
-
-## Scope
-
-- Framework selection decision tree (target platforms, team skills, performance, ecosystem)
-- Cross-framework comparison tables
-- Trade-off analysis for Web, cross-platform, and Windows-only frameworks
-
-## Out of scope
-
-- Framework-specific implementation patterns -- see individual skills listed below
-- Migration paths between frameworks -- see `references/wpf-migration.md`
-- Desktop UI testing -- see [skill:dotnet-testing]
-
-Cross-references: `references/blazor-patterns.md` for Blazor hosting and render modes, `references/maui-development.md` for MAUI patterns, `references/uno-platform.md` for Uno Platform patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-modern.md` for modern WPF on .NET 8+, `references/winforms-basics.md` for WinForms modernization.
-
 
 ## Decision Tree
 

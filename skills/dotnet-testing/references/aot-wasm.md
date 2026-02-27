@@ -1,33 +1,10 @@
-# dotnet-aot-wasm
+# AOT and WASM Testing
 
 WebAssembly AOT compilation for Blazor WASM and Uno WASM applications: compilation pipeline, download size vs runtime speed tradeoffs, trimming interplay, lazy loading assemblies, and Brotli pre-compression for download optimization.
 
 **Version assumptions:** .NET 8.0+ baseline. Blazor WASM AOT shipped in .NET 6 and has been refined through .NET 8-10. Uno WASM uses a similar compilation pipeline with Uno-specific tooling.
 
 **Important tradeoff:** Trimming and AOT have **opposite effects** on WASM artifact size. Trimming reduces download size by removing unused code. AOT **increases** artifact size (native WASM code is larger than IL) but **improves** runtime execution speed. Use both together for the best balance.
-
-## Scope
-
-- Download size vs runtime speed tradeoff analysis
-- Blazor WASM AOT (RunAOTCompilation, selective AOT)
-- Uno WASM AOT (.NET 8+ standard workload)
-- Lazy loading assemblies for size reduction
-- Brotli pre-compression for download optimization
-- WASM size optimization checklist
-
-## Out of scope
-
-- Native AOT for server-side .NET -- see [skill:dotnet-tooling] `references/native-aot.md`
-- AOT-first design patterns -- see [skill:dotnet-tooling] `references/aot-architecture.md`
-- Trim-safe library authoring -- see [skill:dotnet-tooling] `references/trimming.md`
-- MAUI-specific AOT -- see [skill:dotnet-ui] `references/maui-aot.md`
-- Blazor hosting models and render modes -- see [skill:dotnet-ui] `references/blazor-patterns.md`
-- Blazor component lifecycle and JS interop -- see [skill:dotnet-ui] `references/blazor-components.md`
-- Uno Platform architecture -- see [skill:dotnet-ui] `references/uno-platform.md`
-
-Cross-references: [skill:dotnet-tooling] `references/native-aot.md` for general AOT pipeline, [skill:dotnet-tooling] `references/trimming.md` for trimming annotations, [skill:dotnet-tooling] `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] `references/serialization.md` for AOT-safe serialization, [skill:dotnet-csharp] `references/source-generators.md` for source gen as AOT enabler, [skill:dotnet-ui] `references/blazor-patterns.md` for Blazor architecture (soft), [skill:dotnet-ui] `references/uno-platform.md` for Uno Platform patterns (soft).
-
----
 
 ## Download Size vs Runtime Speed
 

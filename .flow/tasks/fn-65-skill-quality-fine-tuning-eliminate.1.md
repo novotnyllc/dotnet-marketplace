@@ -38,9 +38,8 @@ For each of the 7 domain SKILL.md files:
 - [ ] Total description chars remain under 15600 budget
 
 ## Done summary
-TBD
-
+Restructured all 7 domain SKILL.md files to eliminate triple redundancy: merged Routing Table and Companion Files into a single 4-column Routing Table (Topic, Keywords, Description, Companion File), removed all Companion Files sections, trimmed Scope to 6-10 high-level bullets, fixed 5 "Covers" filler phrases in descriptions, and added a Routing Table to dotnet-debugging. Budget reduced from 2584 to 2525 chars.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: e78347ec27f43affaa180430b6ec38e382b894c1
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh
 - PRs:

@@ -1,29 +1,8 @@
-
-# dotnet-cli-distribution
+# CLI Distribution
 
 CLI distribution strategy for .NET tools: choosing between Native AOT single-file publish, framework-dependent deployment, and `dotnet tool` packaging. Runtime Identifier (RID) matrix planning for cross-platform targets (linux-x64, osx-arm64, win-x64, linux-arm64), single-file publish configuration, and binary size optimization techniques for CLI applications.
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for console apps is fully supported since .NET 8. Single-file publish has been mature since .NET 6.
-
-## Scope
-
-- Distribution strategy decision matrix (AOT, framework-dependent, self-contained, dotnet tool)
-- Runtime Identifier (RID) matrix planning for cross-platform targets
-- Single-file publish configuration
-- Binary size optimization for CLI tools
-- Publishing workflow (local and release artifacts)
-
-## Out of scope
-
-- Native AOT MSBuild configuration (PublishAot, ILLink descriptors) -- see `references/native-aot.md`
-- AOT-first application design patterns -- see `references/aot-architecture.md`
-- Multi-platform packaging formats (Homebrew, apt/deb, winget, Scoop) -- see `references/cli-packaging.md`
-- Release CI/CD pipeline -- see `references/cli-release-pipeline.md`
-- Container-based distribution -- see [skill:dotnet-devops]
-- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
-
-Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, `references/cli-architecture.md` for CLI layered architecture, `references/cli-packaging.md` for platform-specific package formats, `references/cli-release-pipeline.md` for automated release workflows, [skill:dotnet-devops] for container-based distribution, `references/tool-management.md` for consumer-side tool installation and manifest management.
-
 
 ## Distribution Strategy Decision Matrix
 

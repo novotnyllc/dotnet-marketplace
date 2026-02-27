@@ -1,30 +1,8 @@
-
-# dotnet-wpf-migration
+# WPF Migration
 
 Context-dependent migration guidance for Windows desktop applications. Covers WPF .NET Framework to .NET 8+, WPF to WinUI 3 (Windows-only modernization), WPF to Uno Platform (cross-platform), WinForms .NET Framework to .NET 8+, UWP to WinUI 3, UWP to Uno Platform (cross-ref), and a decision matrix for choosing the right migration target based on project constraints.
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). `dotnet-upgrade-assistant` for automated migration. .NET 9 features explicitly marked where applicable.
-
-## Scope
-
-- Migration decision matrix (current framework to target framework)
-- WPF .NET Framework to .NET 8+ migration
-- WPF to WinUI 3 (Windows-only modernization)
-- WPF to Uno Platform (cross-platform)
-- WinForms .NET Framework to .NET 8+
-- UWP to WinUI 3 and UWP to Uno Platform
-
-## Out of scope
-
-- WPF .NET 8+ development patterns -- see `references/wpf-modern.md`
-- WinUI 3 development patterns -- see `references/winui.md`
-- WinForms .NET 8+ development patterns -- see `references/winforms-basics.md`
-- Uno Platform development patterns -- see `references/uno-platform.md`
-- Framework selection decision tree -- see `references/ui-chooser.md`
-- Desktop testing -- see [skill:dotnet-testing]
-
-Cross-references: `references/wpf-modern.md` for WPF .NET 8+ patterns, `references/winui.md` for WinUI 3 patterns, `references/winforms-basics.md` for WinForms .NET 8+ patterns, `references/uno-platform.md` for Uno Platform patterns, `references/ui-chooser.md` for framework selection, [skill:dotnet-testing] for desktop testing.
-
 
 ## Migration Path Overview
 

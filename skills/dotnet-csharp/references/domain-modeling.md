@@ -2,26 +2,6 @@
 
 Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, value objects, domain events, integration events, domain services, repository contract design, and the distinction between rich and anemic domain models. These patterns apply to the domain layer itself -- the pure C# model that encapsulates business rules -- independent of any persistence technology.
 
-## Scope
-
-- Aggregate roots, entities, and value objects
-- Domain events and integration events
-- Domain services and rich vs anemic model design
-- Repository contract design (persistence-agnostic)
-
-## Out of scope
-
-- EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-api]
-- Tactical EF Core usage (DbContext lifecycle, migrations) -- see [skill:dotnet-api]
-- Input validation at API boundaries -- see `references/validation-patterns.md`
-- Data access technology selection -- see [skill:dotnet-api]
-- Vertical slice architecture and request pipelines -- see [skill:dotnet-api]
-- Messaging infrastructure and saga orchestration -- see [skill:dotnet-api]
-
-Cross-references: [skill:dotnet-api] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-api] for DbContext configuration and migrations, [skill:dotnet-api] for vertical slices and request pipeline design, `references/validation-patterns.md` for input validation patterns, [skill:dotnet-api] for integration event infrastructure.
-
----
-
 ## Aggregate Roots and Entities
 
 An aggregate is a cluster of domain objects treated as a single unit for data changes. The aggregate root is the entry point -- all modifications to the aggregate pass through it.

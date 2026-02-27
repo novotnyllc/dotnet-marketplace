@@ -1,28 +1,8 @@
-
-# dotnet-winui
+# WinUI
 
 WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows 10 TFM, XAML patterns with compiled bindings (`x:Bind`) and deferred loading (`x:Load`), MVVM with CommunityToolkit.Mvvm, MSIX and unpackaged deployment modes, Windows integration (lifecycle, notifications, widgets), UWP migration guidance, and common agent pitfalls.
 
 **Version assumptions:** .NET 8.0+ baseline. Windows App SDK 1.6+ (current stable). TFM `net8.0-windows10.0.19041.0`. .NET 9 features explicitly marked.
-
-## Scope
-
-- WinUI 3 project setup (UseWinUI, Windows 10 TFM)
-- XAML patterns (x:Bind compiled bindings, x:Load deferred loading)
-- MVVM with CommunityToolkit.Mvvm
-- MSIX and unpackaged deployment modes
-- Windows integration (lifecycle, notifications, widgets)
-- UWP migration guidance
-
-## Out of scope
-
-- Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-testing]
-- General Native AOT patterns -- see [skill:dotnet-tooling]
-- UI framework selection decision tree -- see `references/ui-chooser.md`
-- WPF patterns -- see `references/wpf-modern.md`
-
-Cross-references: [skill:dotnet-testing] for desktop testing, `references/wpf-modern.md` for WPF patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection, [skill:dotnet-csharp] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations), `references/accessibility.md` for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
-
 
 ## Project Setup
 

@@ -1,24 +1,6 @@
-
-# dotnet-modernize
+# Modernize
 
 Analyze existing .NET code for modernization opportunities. Identifies outdated target frameworks, deprecated packages, superseded API patterns, and missing modern best practices. Provides actionable recommendations for each finding.
-
-## Scope
-
-- Outdated target framework detection
-- Deprecated package identification
-- Superseded API pattern flagging
-- Actionable modernization recommendations
-
-## Out of scope
-
-- Actual migration paths and polyfill strategies -- see `references/version-upgrade.md`
-- Multi-targeting guidance -- see `references/multi-targeting.md`
-
-**Prerequisites:** Run `references/version-detection.md` first to determine the current SDK, TFM, and language version. Run `references/project-analysis.md` to understand solution structure and dependencies.
-
-Cross-references: `references/project-structure.md` for modern layout conventions, `references/add-analyzers.md` for analyzer-based detection of deprecated patterns, `references/scaffold-project.md` for the target state of a fully modernized project.
-
 
 ## Modernization Checklist
 

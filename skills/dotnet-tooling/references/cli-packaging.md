@@ -1,29 +1,8 @@
-
-# dotnet-cli-packaging
+# CLI Packaging
 
 Multi-platform packaging for .NET CLI tools: Homebrew formula authoring (binary tap and cask), apt/deb packaging with `dpkg-deb`, winget manifest YAML schema and PR submission to `winget-pkgs`, Scoop manifest JSON, Chocolatey package creation, `dotnet tool` global/local packaging, and NuGet distribution.
 
 **Version assumptions:** .NET 8.0+ baseline. Package manager formats are stable across .NET versions.
-
-## Scope
-
-- Homebrew formula authoring (binary tap and cask)
-- apt/deb packaging with dpkg-deb
-- winget manifest YAML schema and PR submission
-- Scoop manifest JSON for Windows
-- Chocolatey package creation
-- dotnet tool global/local packaging and NuGet distribution
-
-## Out of scope
-
-- CLI distribution strategy (AOT vs framework-dependent decision) -- see `references/cli-distribution.md`
-- Release CI/CD pipeline that automates packaging -- see `references/cli-release-pipeline.md`
-- Native AOT compilation -- see `references/native-aot.md`
-- Container-based distribution -- see [skill:dotnet-devops]
-- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
-
-Cross-references: `references/cli-distribution.md` for distribution strategy and RID matrix, `references/cli-release-pipeline.md` for automated package publishing, `references/native-aot.md` for AOT binary production, [skill:dotnet-devops] for container-based distribution, `references/tool-management.md` for consumer-side tool installation and manifest management.
-
 
 ## Homebrew (macOS / Linux)
 

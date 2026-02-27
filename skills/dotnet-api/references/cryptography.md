@@ -1,29 +1,6 @@
-
-# dotnet-cryptography
+# Cryptography
 
 Modern .NET cryptography covering hashing (SHA-256/384/512), symmetric encryption (AES-GCM), asymmetric cryptography (RSA, ECDSA), key derivation (PBKDF2, Argon2), and post-quantum algorithms (ML-KEM, ML-DSA, SLH-DSA) for .NET 10+. Includes TFM-aware guidance: what's available on net10.0 vs fallback strategies for net8.0/net9.0.
-
-## Scope
-
-- Algorithm selection and correct usage of System.Security.Cryptography APIs
-- Hashing for integrity (SHA-256/384/512)
-- Symmetric encryption (AES-GCM)
-- Asymmetric cryptography (RSA, ECDSA)
-- Key derivation (PBKDF2, Argon2)
-- Post-quantum cryptography (ML-KEM, ML-DSA, SLH-DSA) for .NET 10+
-- Deprecated algorithm warnings
-
-## Out of scope
-
-- Secrets management and configuration binding -- see [skill:dotnet-secrets-management]
-- OWASP vulnerability categories and deprecated security patterns -- see [skill:dotnet-security-owasp]
-- Authentication/authorization implementation (JWT, OAuth, Identity) -- see [skill:dotnet-api-security] and [skill:dotnet-blazor-auth]
-- Cloud-specific key management (Azure Key Vault, AWS KMS) -- see [skill:dotnet-advisor]
-- TLS/HTTPS configuration -- see [skill:dotnet-advisor]
-
-Cross-references: [skill:dotnet-security-owasp] for OWASP A02 (Cryptographic Failures) and deprecated pattern warnings, [skill:dotnet-secrets-management] for storing keys and secrets securely.
-
----
 
 ## Prerequisites
 
@@ -421,7 +398,7 @@ The following cryptographic algorithms are broken or obsolete. Do not use them i
 | RC2 | AES-GCM | Weak key schedule; effective key length < advertised |
 | RSA PKCS#1 v1.5 encryption | RSA-OAEP | Bleichenbacher padding oracle attacks |
 
-For the full list of deprecated security patterns beyond cryptography (CAS, APTCA, .NET Remoting, DCOM, BinaryFormatter), see [skill:dotnet-security-owasp] which is the canonical owner of deprecated security pattern warnings.
+For the full list of deprecated security patterns beyond cryptography (CAS, APTCA, .NET Remoting, DCOM, BinaryFormatter), see [skill:dotnet-api] which is the canonical owner of deprecated security pattern warnings.
 
 ---
 
@@ -431,7 +408,7 @@ For the full list of deprecated security patterns beyond cryptography (CAS, APTC
 2. **Never use ECB mode** -- ECB encrypts identical plaintext blocks to identical ciphertext blocks, leaking patterns. .NET's `Aes.Create()` defaults to CBC, but prefer AES-GCM for authenticated encryption.
 3. **Never compare hashes with `==`** -- use `CryptographicOperations.FixedTimeEquals` to prevent timing side-channel attacks.
 4. **Never use MD5 or SHA-1 for security purposes** -- they are broken. SHA-1 is acceptable only for non-security checksums (e.g., git object hashes) where collision resistance is not a security requirement.
-5. **Never hardcode encryption keys** -- use [skill:dotnet-secrets-management] for key storage. Generate keys with `RandomNumberGenerator.GetBytes`.
+5. **Never hardcode encryption keys** -- use [skill:dotnet-api] for key storage. Generate keys with `RandomNumberGenerator.GetBytes`.
 6. **Minimum RSA key size is 2048 bits** -- NIST deprecated 1024-bit RSA keys. Use 4096 for new systems.
 7. **PBKDF2 iteration count must be high** -- OWASP recommends 600,000 iterations with SHA-256 (as of 2023). Lower counts are brute-forceable.
 8. **PQC `IsSupported` checks are mandatory** -- calling PQC APIs on unsupported platforms throws `PlatformNotSupportedException`. Always check before use.

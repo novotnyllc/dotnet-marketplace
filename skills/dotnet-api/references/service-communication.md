@@ -1,22 +1,6 @@
-
-# dotnet-service-communication
+# Service Communication
 
 Higher-level routing skill for choosing the right service communication protocol. Provides a decision matrix mapping requirements (latency, direction, client type, payload format, browser support) to the five primary .NET communication protocols: gRPC, SignalR, SSE, JSON-RPC 2.0, and REST. Routes to specialized skills for implementation depth.
-
-## Scope
-
-- Decision matrix for gRPC, SignalR, SSE, JSON-RPC, REST
-- Requirements mapping (latency, direction, client type, format)
-- Routing to specialized implementation skills
-
-## Out of scope
-
-- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
-- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
-
-Cross-references: [skill:dotnet-grpc] for gRPC implementation, [skill:dotnet-realtime-communication] for SignalR/SSE/JSON-RPC details, [skill:dotnet-http-client] for REST/HTTP client patterns. See [skill:dotnet-integration-testing] for testing service communication patterns.
-
----
 
 ## Decision Matrix
 
@@ -73,7 +57,7 @@ Special cases:
 
 **When NOT to use:** Direct browser communication (requires gRPC-Web proxy), simple CRUD APIs consumed by external clients, scenarios where human-readable payloads are required.
 
-See [skill:dotnet-grpc] for full implementation details.
+See [skill:dotnet-api] for full implementation details.
 
 ### SignalR
 
@@ -87,7 +71,7 @@ See [skill:dotnet-grpc] for full implementation details.
 
 **When NOT to use:** Server-to-client-only push (use SSE instead), service-to-service (use gRPC instead), scenarios where the SignalR client library cannot be included.
 
-See [skill:dotnet-realtime-communication] for SignalR patterns and hub implementation.
+See [skill:dotnet-api] for SignalR patterns and hub implementation.
 
 ### Server-Sent Events (SSE)
 
@@ -101,7 +85,7 @@ See [skill:dotnet-realtime-communication] for SignalR patterns and hub implement
 
 **When NOT to use:** Bidirectional communication (use SignalR), high-throughput binary streaming (use gRPC), client-to-server messages needed.
 
-See [skill:dotnet-realtime-communication] for SSE implementation details.
+See [skill:dotnet-api] for SSE implementation details.
 
 ### JSON-RPC 2.0
 
@@ -114,7 +98,7 @@ See [skill:dotnet-realtime-communication] for SSE implementation details.
 
 **When NOT to use:** Real-time streaming (use SignalR or gRPC), high-throughput service-to-service (use gRPC), standard web APIs (use REST).
 
-See [skill:dotnet-realtime-communication] for JSON-RPC 2.0 patterns.
+See [skill:dotnet-api] for JSON-RPC 2.0 patterns.
 
 ### REST (HTTP APIs)
 
@@ -128,7 +112,7 @@ See [skill:dotnet-realtime-communication] for JSON-RPC 2.0 patterns.
 
 **When NOT to use:** Real-time push (use SSE or SignalR), high-throughput service-to-service (use gRPC), bidirectional streaming (use SignalR or gRPC).
 
-See [skill:dotnet-http-client] for HTTP client patterns, resilience, and `IHttpClientFactory`.
+See [skill:dotnet-api] for HTTP client patterns, resilience, and `IHttpClientFactory`.
 
 ---
 
@@ -187,7 +171,7 @@ app.MapGet("/events/orders", (OrderEventService svc, CancellationToken ct) =>
 - **Mix protocols when appropriate** -- a single ASP.NET Core host can serve gRPC, REST, SignalR, and SSE simultaneously
 - **Route based on client type** -- browser clients get REST/SignalR/SSE; internal services get gRPC
 
-See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible communication patterns.
+See [skill:dotnet-tooling] for AOT compilation pipeline and [skill:dotnet-tooling] for AOT-compatible communication patterns.
 
 ---
 
@@ -197,7 +181,7 @@ See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot
 2. **Do not use SignalR for service-to-service** -- gRPC provides better performance, code generation, and streaming for backend communication.
 3. **Do not add SignalR when SSE suffices** -- if you only need server-to-client push, SSE is simpler, requires no client library, and has automatic reconnection built into browsers.
 4. **Do not use REST for high-throughput internal communication** -- JSON text serialization and per-request connections add overhead vs gRPC's binary format and persistent HTTP/2 connections.
-5. **Do not forget AOT considerations** -- REST endpoints using System.Text.Json need source-generated contexts for AOT. See [skill:dotnet-serialization] for details.
+5. **Do not forget AOT considerations** -- REST endpoints using System.Text.Json need source-generated contexts for AOT. See [skill:dotnet-csharp] for details.
 6. **Do not expose gRPC services to untrusted clients without gRPC-Web** -- raw gRPC requires HTTP/2, which is not universally available in all environments (e.g., some proxies, older browsers).
 
 ---

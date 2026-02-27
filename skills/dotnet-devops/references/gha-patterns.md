@@ -1,27 +1,8 @@
-# dotnet-gha-patterns
+# GitHub Actions Patterns
 
 Composable GitHub Actions workflow patterns for .NET projects: reusable workflows with `workflow_call`, composite actions for shared step sequences, matrix builds across TFMs and operating systems, path-based triggers, concurrency groups for duplicate run cancellation, environment protection rules, NuGet and SDK caching strategies, and `workflow_dispatch` inputs for manual triggers.
 
 **Version assumptions:** GitHub Actions workflow syntax v2. `actions/setup-dotnet@v4` for .NET 8/9/10 support. `actions/cache@v4` for dependency caching.
-
-## Scope
-
-- Reusable workflows with workflow_call
-- Composite actions for shared step sequences
-- Matrix builds across TFMs and operating systems
-- Path-based triggers and concurrency groups
-- NuGet and SDK caching strategies
-- workflow_dispatch inputs for manual triggers
-
-## Out of scope
-
-- Starter CI/CD templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- Azure DevOps pipeline patterns -- see [skill:dotnet-devops] `references/ado-patterns.md`
-- Build/test specifics -- see [skill:dotnet-devops] `references/gha-build-test.md`
-- Publishing workflows -- see [skill:dotnet-devops] `references/gha-publish.md`
-- Deployment patterns -- see [skill:dotnet-devops] `references/gha-deploy.md`
-
----
 
 ## Reusable Workflows (`workflow_call`)
 

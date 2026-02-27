@@ -1,19 +1,8 @@
-# dotnet-slopwatch
+# Slopwatch
 
 Slopwatch: LLM Anti-Cheat Quality Gate for .NET
 
 Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modifications to detect "slop" -- shortcuts that make builds/tests pass without fixing real problems.
-
-## Scope
-
-- Slopwatch CLI installation and configuration
-- Running quality gate checks (disabled tests, suppressed warnings, empty catches)
-- Hook integration and CI/CD pipeline usage
-- Detection rule reference
-
-## Out of scope
-
-- Pattern recognition and manual code review for slop -- see [skill:dotnet-api] `references/agent-gotchas.md` for Slopwatch anti-patterns
 
 ## Prerequisites
 

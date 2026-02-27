@@ -1,25 +1,6 @@
-# dotnet-containers
+# Containers
 
 Best practices for containerizing .NET applications. Covers multi-stage Dockerfile patterns, the `dotnet publish` container image feature (.NET 8+), rootless container configuration, optimized layer caching, and container health checks.
-
-## Scope
-
-- Multi-stage Dockerfile patterns for .NET
-- SDK container publish (`dotnet publish /t:PublishContainer`)
-- Rootless container configuration and security
-- Optimized layer caching and base image selection
-- Container health checks
-
-## Out of scope
-
-- DI container mechanics and service lifetimes -- see [skill:dotnet-csharp-dependency-injection]
-- Kubernetes deployment manifests and Docker Compose -- see [skill:dotnet-devops] `references/container-deployment.md`
-- CI/CD pipeline integration for building and pushing images -- see [skill:dotnet-devops] `references/gha-publish.md` and `references/ado-publish.md`
-- Testing containerized applications -- see [skill:dotnet-integration-testing]
-
-Cross-references: [skill:dotnet-observability] for health check patterns, [skill:dotnet-devops] `references/container-deployment.md` for deploying containers to Kubernetes and local dev with Compose, [skill:dotnet-artifacts-output] for Dockerfile path adjustments when using centralized build output layout.
-
----
 
 ## Multi-Stage Dockerfiles
 
@@ -234,7 +215,7 @@ EXPOSE 5000
 
 ## Container Health Checks
 
-Health checks allow container runtimes to monitor application readiness. The application-level health check endpoints (see [skill:dotnet-observability]) are consumed by Docker and Kubernetes probes.
+Health checks allow container runtimes to monitor application readiness. The application-level health check endpoints (see [skill:dotnet-devops]) are consumed by Docker and Kubernetes probes.
 
 ### Docker HEALTHCHECK
 
@@ -265,7 +246,7 @@ ENTRYPOINT ["dotnet", "MyApi.dll"]
 
 ### Health Check Endpoints
 
-Register health check endpoints in your application (see [skill:dotnet-observability] for full guidance):
+Register health check endpoints in your application (see [skill:dotnet-devops] for full guidance):
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
@@ -356,7 +337,7 @@ ENV DOTNET_EnableDiagnostics=0
 - **Prefer chiseled images** for production -- no shell, no root, minimal attack surface
 - **Use `dotnet publish /t:PublishContainer`** for simple projects -- skip Dockerfile boilerplate
 - **Run as non-root** -- use `USER` directive or chiseled images (non-root by default)
-- **Set health check endpoints** -- enable orchestrators to monitor application state (see [skill:dotnet-observability])
+- **Set health check endpoints** -- enable orchestrators to monitor application state (see [skill:dotnet-devops])
 - **Include `.dockerignore`** -- keep build context small and exclude secrets
 
 ---

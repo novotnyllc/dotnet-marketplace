@@ -1,26 +1,8 @@
-# dotnet-gha-build-test
+# GitHub Actions Build and Test
 
 .NET build and test workflow patterns for GitHub Actions: `actions/setup-dotnet@v4` configuration with multi-version installs and NuGet authentication, NuGet restore caching for fast CI, `dotnet test` with result publishing via `dorny/test-reporter`, code coverage upload to Codecov and Coveralls, multi-TFM matrix testing across net8.0 and net9.0, and test sharding strategies for large projects.
 
 **Version assumptions:** `actions/setup-dotnet@v4` for .NET 8/9/10 support. `dorny/test-reporter@v1` for test result visualization. Codecov and Coveralls GitHub Apps for coverage reporting.
-
-## Scope
-
-- setup-dotnet action configuration with multi-version installs
-- NuGet restore caching for fast CI
-- dotnet test with result publishing and coverage upload
-- Multi-TFM matrix testing and test sharding
-- NuGet authentication for private feeds in GitHub Actions
-
-## Out of scope
-
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- Test architecture and strategy -- see [skill:dotnet-testing]
-- Publishing and deployment -- see [skill:dotnet-devops] `references/gha-publish.md` and `references/gha-deploy.md`
-- Azure DevOps build/test pipelines -- see [skill:dotnet-devops] `references/ado-build-test.md`
-- Reusable workflow and composite action patterns -- see [skill:dotnet-devops] `references/gha-patterns.md`
-
----
 
 ## `actions/setup-dotnet@v4` Configuration
 

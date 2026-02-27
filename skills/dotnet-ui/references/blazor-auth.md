@@ -1,31 +1,6 @@
-
-# dotnet-blazor-auth
+# Blazor Authentication
 
 Authentication and authorization across all Blazor hosting models. Covers AuthorizeView, CascadingAuthenticationState, Identity UI scaffolding, role/policy-based authorization, per-hosting-model auth flow differences (cookie vs token), and external identity providers.
-
-## Scope
-
-- Auth flow per Blazor hosting model (Server, WASM, Auto, SSR, Hybrid)
-- AuthorizeView and CascadingAuthenticationState patterns
-- Identity UI scaffolding and customization
-- Role/policy-based authorization in Blazor
-- Client-side token handling and external identity providers
-- Explicit login/logout/auth UI implementation tasks for Blazor apps
-
-## Out of scope
-
-- JWT token generation and validation -- see [skill:dotnet-api]
-- OWASP security principles -- see [skill:dotnet-api]
-- CSRF/XSS/CSP/rate-limiting hardening without auth-flow work -- see [skill:dotnet-api]
-- Hardening-only reviews of existing login pages without auth-flow implementation changes -- see [skill:dotnet-api]
-- bUnit testing of auth components -- see `references/blazor-testing.md`
-- E2E auth testing -- see [skill:dotnet-testing]
-- UI framework selection -- see `references/ui-chooser.md`
-
-Cross-references: [skill:dotnet-api] for API-level auth, [skill:dotnet-api] for OWASP principles, `references/blazor-patterns.md` for hosting models, `references/blazor-components.md` for component architecture, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection.
-
-Routing note: do not load this skill for OWASP hardening reviews unless the task explicitly includes Blazor auth flow/UI implementation.
-
 
 ## Auth Flow per Hosting Model
 

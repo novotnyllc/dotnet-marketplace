@@ -1,25 +1,8 @@
-# dotnet-gha-publish
+# GitHub Actions Publish
 
 Publishing workflows for .NET projects in GitHub Actions: NuGet package push to nuget.org and GitHub Packages, container image build and push to GHCR/DockerHub/ACR, artifact signing with NuGet signing and sigstore, SBOM generation with Microsoft SBOM tool, and conditional publishing triggered by tags and releases.
 
 **Version assumptions:** `actions/setup-dotnet@v4` for .NET 8/9/10. `docker/build-push-action@v6` for container image builds. `docker/login-action@v3` for registry authentication. .NET SDK container publish (`dotnet publish` with `PublishContainer`) for Dockerfile-free container builds.
-
-## Scope
-
-- NuGet package push to nuget.org and GitHub Packages
-- Container image build and push to GHCR/DockerHub/ACR
-- Artifact signing with NuGet signing and sigstore
-- SBOM generation with Microsoft SBOM tool
-- Conditional publishing triggered by tags and releases
-
-## Out of scope
-
-- Container image authoring (Dockerfile, base image selection) -- see [skill:dotnet-devops] `references/containers.md`
-- Starter CI templates -- see [skill:dotnet-devops] `references/add-ci.md`
-- Azure DevOps publishing -- see [skill:dotnet-devops] `references/ado-publish.md`
-- Deployment to target environments -- see [skill:dotnet-devops] `references/gha-deploy.md`
-
----
 
 ## NuGet Push to nuget.org
 

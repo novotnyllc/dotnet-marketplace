@@ -1,27 +1,8 @@
-# dotnet-ci-benchmarking
+# CI Benchmarking
 
 Continuous benchmarking guidance for detecting performance regressions in CI pipelines. Covers baseline file management with BenchmarkDotNet JSON exporters, GitHub Actions workflows for artifact-based baseline comparison, regression detection patterns with configurable thresholds, and alerting strategies for performance degradation.
 
 **Version assumptions:** BenchmarkDotNet v0.14+ for JSON export, GitHub Actions runner environment. Examples use `actions/upload-artifact@v4` and `actions/download-artifact@v4`.
-
-## Scope
-
-- Baseline file management with BenchmarkDotNet JSON exporters
-- GitHub Actions workflows for artifact-based baseline comparison
-- Regression detection with configurable thresholds
-- Alerting strategies for performance degradation
-
-## Out of scope
-
-- BenchmarkDotNet setup and benchmark class design -- see [skill:dotnet-testing] `references/benchmarkdotnet.md`
-- Performance architecture patterns -- see [skill:dotnet-tooling] `references/performance-patterns.md`
-- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] `references/profiling.md`
-- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-devops] `references/observability.md`
-- Composable CI/CD workflow design -- see [skill:dotnet-devops] `references/gha-patterns.md`
-
-Cross-references: [skill:dotnet-testing] `references/benchmarkdotnet.md` for benchmark class setup and JSON exporter configuration, [skill:dotnet-devops] `references/observability.md` for correlating benchmark regressions with runtime metrics changes, [skill:dotnet-devops] `references/gha-patterns.md` for composable workflow patterns (reusable workflows, composite actions, matrix builds).
-
----
 
 ## Baseline File Management
 

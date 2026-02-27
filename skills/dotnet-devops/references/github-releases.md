@@ -1,28 +1,8 @@
-# dotnet-github-releases
+# GitHub Releases
 
 GitHub Releases for .NET projects: release creation via `gh release create` CLI and GitHub API, asset attachment patterns (NuGet packages, binaries, SBOMs, checksums), `softprops/action-gh-release` GitHub Actions usage, release notes generation strategies (GitHub auto-generated, changelog-based, conventional commits), pre-release management (draft releases, pre-release flag, promoting pre-release to stable), and tag-triggered vs release-triggered workflow concepts.
 
 **Version assumptions:** GitHub CLI (`gh`) 2.x+. `softprops/action-gh-release@v2`. GitHub REST API v3 / GraphQL API v4. .NET 8.0+ baseline.
-
-## Scope
-
-- Release creation via gh CLI and GitHub API
-- Asset attachment (NuGet packages, binaries, SBOMs, checksums)
-- softprops/action-gh-release GitHub Actions usage
-- Release notes generation strategies
-- Pre-release management (draft, pre-release flag, promotion)
-
-## Out of scope
-
-- CLI-specific release automation (build matrix, RID artifacts) -- see [skill:dotnet-cli-release-pipeline]
-- CI/CD NuGet push and container publish workflows -- see [skill:dotnet-devops] `references/gha-publish.md`
-- CI pipeline structure and reusable workflows -- see [skill:dotnet-devops] `references/gha-patterns.md`
-- Release lifecycle strategy (NBGV, SemVer, changelogs) -- see [skill:dotnet-devops] `references/release-management.md`
-- NuGet package authoring -- see [skill:dotnet-devops] `references/nuget-authoring.md`
-
-Cross-references: [skill:dotnet-cli-release-pipeline] for CLI-specific release pipelines with checksums, [skill:dotnet-devops] `references/gha-publish.md` for CI publish workflows, [skill:dotnet-devops] `references/gha-patterns.md` for CI pipeline structure, [skill:dotnet-devops] `references/nuget-authoring.md` for NuGet package creation.
-
----
 
 ## Release Creation with GitHub CLI
 
@@ -138,7 +118,7 @@ sha256sum *.nupkg *.tar.gz *.zip > SHA256SUMS.txt
 shasum -a 256 *.nupkg *.tar.gz *.zip > SHA256SUMS.txt
 ```
 
-For CLI-specific release pipelines with per-RID checksums and automated package manager PRs, see [skill:dotnet-cli-release-pipeline].
+For CLI-specific release pipelines with per-RID checksums and automated package manager PRs, see [skill:dotnet-tooling].
 
 ---
 

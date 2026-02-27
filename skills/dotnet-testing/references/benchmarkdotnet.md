@@ -1,31 +1,8 @@
-# dotnet-benchmarkdotnet
+# BenchmarkDotNet
 
 Microbenchmarking guidance for .NET using BenchmarkDotNet v0.14+. Covers benchmark class setup, memory and disassembly diagnosers, exporters for CI artifact collection, baseline comparisons, and common pitfalls that invalidate measurements.
 
 **Version assumptions:** BenchmarkDotNet v0.14+ on .NET 8.0+ baseline. Examples use current stable APIs.
-
-## Scope
-
-- Benchmark class setup and configuration
-- Memory and disassembly diagnosers
-- Exporters for CI artifact collection
-- Baseline comparisons and result analysis
-- Common pitfalls that invalidate measurements
-- Parameterized benchmarks with [Params] and benchmark categories
-
-## Out of scope
-
-- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-tooling] `references/performance-patterns.md`
-- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] `references/profiling.md`
-- CI benchmark regression detection -- see [skill:dotnet-testing] `references/ci-benchmarking.md`
-- Native AOT compilation and performance -- see [skill:dotnet-tooling] `references/native-aot.md`
-- Serialization format performance -- see [skill:dotnet-csharp] `references/serialization.md`
-- Architecture patterns (caching, resilience) -- see [skill:dotnet-api] `references/architecture-patterns.md`
-- GC tuning and memory management -- see [skill:dotnet-tooling] `references/gc-memory.md`
-
-Cross-references: [skill:dotnet-tooling] `references/performance-patterns.md` for zero-allocation patterns measured by benchmarks, [skill:dotnet-csharp] `references/modern-patterns.md` for Span/Memory syntax foundation, [skill:dotnet-csharp] `references/coding-standards.md` for sealed class style conventions, [skill:dotnet-tooling] `references/native-aot.md` for AOT performance characteristics and benchmark considerations, [skill:dotnet-csharp] `references/serialization.md` for serialization format performance tradeoffs.
-
----
 
 ## Package Setup
 

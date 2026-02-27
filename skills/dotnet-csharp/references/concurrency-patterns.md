@@ -4,23 +4,6 @@ Thread synchronization primitives, concurrent data structures, and a decision fr
 
 **Version assumptions:** .NET 8.0+ baseline. All primitives covered are available from .NET Core 1.0+ but examples use modern C# idioms.
 
-## Scope
-
-- lock/Monitor, SemaphoreSlim, and Interlocked patterns
-- ConcurrentDictionary, ConcurrentQueue, and concurrent collections
-- ReaderWriterLockSlim and SpinLock for advanced scenarios
-- Concurrency primitive decision framework
-
-## Out of scope
-
-- Async/await and Task-based patterns -- see `references/async-patterns.md`
-- Producer/consumer with Channel<T> -- see `references/channels.md`
-- Naming and style conventions -- see `references/coding-standards.md`
-
-Cross-references: `references/async-patterns.md` for async/await patterns, `references/channels.md` for producer/consumer, `references/coding-standards.md` for naming conventions.
-
----
-
 ## Concurrency Primitive Decision Framework
 
 Choose the simplest primitive that meets the requirement. Complexity increases downward:

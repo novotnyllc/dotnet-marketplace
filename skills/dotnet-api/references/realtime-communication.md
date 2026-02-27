@@ -1,25 +1,6 @@
-
-# dotnet-realtime-communication
+# Real-Time Communication
 
 Real-time communication patterns for .NET applications. Compares SignalR (full-duplex over WebSockets with automatic fallback), Server-Sent Events (SSE, built-in to ASP.NET Core in .NET 10), JSON-RPC 2.0 (structured request-response over any transport), and gRPC streaming (high-performance binary streaming). Provides decision guidance for choosing the right protocol based on requirements.
-
-## Scope
-
-- SignalR hubs (WebSocket, auto-fallback, scaling)
-- Server-Sent Events (SSE, built-in .NET 10)
-- JSON-RPC 2.0 over any transport
-- gRPC streaming for high-performance binary
-- Protocol comparison and decision guidance
-
-## Out of scope
-
-- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
-- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
-- Blazor-specific SignalR usage -- see [skill:dotnet-blazor-patterns]
-
-Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details and all four streaming patterns. See [skill:dotnet-integration-testing] for testing real-time communication endpoints. See [skill:dotnet-blazor-patterns] for Blazor-specific SignalR circuit management and render mode interaction.
-
----
 
 ## Protocol Comparison
 
@@ -35,7 +16,7 @@ Cross-references: [skill:dotnet-grpc] for gRPC streaming implementation details 
 - **SignalR**: You need bidirectional real-time communication with browser clients. SignalR handles transport negotiation automatically (WebSocket preferred, falls back to SSE, then Long Polling). Use when clients need to both send and receive in real time.
 - **SSE (.NET 10 built-in)**: You only need server-to-client push. Simpler than SignalR when bidirectional communication is not required. Built into ASP.NET Core in .NET 10 -- no additional packages needed. Works with the browser's native `EventSource` API.
 - **JSON-RPC 2.0**: You need structured request-response semantics over a simple transport. Used by Language Server Protocol (LSP) and some .NET tooling. Not a streaming protocol -- use when you need named methods with typed parameters over WebSocket or stdio.
-- **gRPC streaming**: Service-to-service streaming with maximum performance. Supports all four streaming patterns (unary, server streaming, client streaming, bidirectional). Best when both endpoints are .NET services or gRPC-compatible. See [skill:dotnet-grpc] for implementation details.
+- **gRPC streaming**: Service-to-service streaming with maximum performance. Supports all four streaming patterns (unary, server streaming, client streaming, bidirectional). Best when both endpoints are .NET services or gRPC-compatible. See [skill:dotnet-api] for implementation details.
 
 ---
 
@@ -503,7 +484,7 @@ var result = await rpc.InvokeAsync<int>("Add", 2, 3);
 
 ## gRPC Streaming
 
-See [skill:dotnet-grpc] for complete gRPC implementation details including all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
+See [skill:dotnet-api] for complete gRPC implementation details including all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
 ### Quick Decision: gRPC Streaming vs SignalR vs SSE
 
@@ -527,7 +508,7 @@ See [skill:dotnet-grpc] for complete gRPC implementation details including all f
 - **Use strongly-typed hubs** -- `Hub<T>` catches method name typos at compile time instead of runtime
 - **Scale SignalR with a backplane** -- Redis or Azure SignalR Service for multi-server deployments
 
-See [skill:dotnet-native-aot] for AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible real-time communication patterns.
+See [skill:dotnet-tooling] for AOT compilation pipeline and [skill:dotnet-tooling] for AOT-compatible real-time communication patterns.
 
 ---
 

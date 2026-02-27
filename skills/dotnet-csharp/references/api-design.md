@@ -4,27 +4,6 @@ Design-time principles for creating public .NET APIs that are intuitive, consist
 
 **Version assumptions:** .NET 8.0+ baseline. Examples use modern C# features (primary constructors, collection expressions) where appropriate.
 
-## Scope
-
-- Naming conventions for public API types, methods, and parameters
-- Parameter ordering and overload progression
-- Return type selection (nullable, IReadOnlyList, IAsyncEnumerable, ValueTask)
-- Error reporting strategies (exceptions, Try pattern, result objects)
-- Extension points (interfaces, delegates, builder patterns)
-- Wire compatibility for serialized types
-
-## Out of scope
-
-- Binary/source compatibility enforcement and tooling -- see [skill:dotnet-api]
-- PublicApiAnalyzers, Verify snapshots, and CI validation of API surface -- see [skill:dotnet-api]
-- General C# naming conventions and file layout -- see `references/coding-standards.md`
-- HTTP API versioning and URL design -- see [skill:dotnet-api]
-- NuGet packaging and SemVer mechanics -- see [skill:dotnet-devops]
-
-Cross-references: [skill:dotnet-api] for compatibility enforcement, [skill:dotnet-api] for CI detection, `references/coding-standards.md` for general naming rules, [skill:dotnet-api] for HTTP API versioning, [skill:dotnet-devops] for SemVer and packaging.
-
----
-
 ## Naming Conventions for API Surface
 
 ### Type Naming

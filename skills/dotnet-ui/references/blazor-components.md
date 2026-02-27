@@ -1,29 +1,6 @@
-
-# dotnet-blazor-components
+# Blazor Components
 
 Blazor component architecture: lifecycle methods, state management (cascading values, DI, browser storage), JavaScript interop (AOT-safe), EditForm validation, and QuickGrid. Covers per-render-mode behavior differences where relevant.
-
-## Scope
-
-- Component lifecycle methods (SetParametersAsync, OnInitialized, OnAfterRender)
-- State management (cascading values, DI, browser storage)
-- JavaScript interop (AOT-safe module imports)
-- EditForm validation and input components
-- QuickGrid data binding and virtualization
-- Per-render-mode behavior differences (Static SSR, InteractiveServer, WASM)
-
-## Out of scope
-
-- Hosting model selection and render modes -- see `references/blazor-patterns.md`
-- Auth components (AuthorizeView, CascadingAuthenticationState) -- see `references/blazor-auth.md`
-- bUnit testing -- see `references/blazor-testing.md`
-- Standalone SignalR hub patterns -- see [skill:dotnet-api]
-- E2E testing -- see [skill:dotnet-testing]
-- UI framework selection -- see `references/ui-chooser.md`
-- Accessibility patterns (ARIA, keyboard navigation) -- see `references/accessibility.md`
-
-Cross-references: `references/blazor-patterns.md` for hosting models and render modes, `references/blazor-auth.md` for authentication, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-api] for standalone SignalR, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (ARIA, keyboard nav, screen readers).
-
 
 ## Component Lifecycle
 

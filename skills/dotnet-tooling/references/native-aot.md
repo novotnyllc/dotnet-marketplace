@@ -1,33 +1,8 @@
-
-# dotnet-native-aot
+# Native AOT
 
 Full Native AOT compilation pipeline for .NET 8+ applications: `PublishAot` configuration, ILLink descriptor XML for type preservation, reflection-free coding patterns, P/Invoke considerations, binary size optimization, self-contained deployment with `runtime-deps` base images, and diagnostic analyzers (`EnableAotAnalyzer`/`EnableTrimAnalyzer`).
 
 **Version assumptions:** .NET 8.0+ baseline. Native AOT for ASP.NET Core Minimal APIs and console apps shipped in .NET 8. .NET 9 improved trimming warnings and library compat. .NET 10 enhanced request delegate generator and expanded Minimal API AOT support.
-
-## Scope
-
-- PublishAot MSBuild configuration (apps vs libraries)
-- Diagnostic analyzers (EnableAotAnalyzer, EnableTrimAnalyzer)
-- ILLink descriptor XML for type preservation
-- Reflection-free coding patterns
-- P/Invoke with LibraryImport source generation
-- Binary size optimization and self-contained deployment
-- ASP.NET Core Native AOT (Minimal APIs, CreateSlimBuilder)
-
-## Out of scope
-
-- MAUI iOS/Mac Catalyst AOT pipeline -- see [skill:dotnet-ui]
-- AOT-first design patterns (source gen, DI, serialization) -- see `references/aot-architecture.md`
-- Trim-safe library authoring -- see `references/trimming.md`
-- WASM AOT for Blazor/Uno -- see [skill:dotnet-ui]
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
-- DI container patterns -- see [skill:dotnet-csharp]
-- Serialization depth -- see [skill:dotnet-csharp]
-- Container deployment orchestration -- see [skill:dotnet-devops]
-
-Cross-references: `references/aot-architecture.md` for AOT-first design patterns, `references/trimming.md` for trim-safe library authoring, [skill:dotnet-ui] for WebAssembly AOT and MAUI-specific AOT, [skill:dotnet-devops] for `runtime-deps` base images, [skill:dotnet-csharp] for AOT-safe serialization, source generators, DI, and P/Invoke patterns.
-
 
 ## PublishAot Configuration
 

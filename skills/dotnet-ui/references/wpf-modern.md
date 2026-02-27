@@ -1,29 +1,8 @@
-
-# dotnet-wpf-modern
+# Modern WPF
 
 WPF on .NET 8+: Host builder and dependency injection, MVVM with CommunityToolkit.Mvvm source generators, hardware-accelerated rendering improvements, modern C# patterns (records, primary constructors, pattern matching), Fluent theme (.NET 9+), system theme detection, and what changed from .NET Framework WPF.
 
 **Version assumptions:** .NET 8.0+ baseline (current LTS). TFM `net8.0-windows`. .NET 9 features (Fluent theme) explicitly marked.
-
-## Scope
-
-- WPF .NET 8+ project setup (SDK-style)
-- Host builder and dependency injection
-- MVVM with CommunityToolkit.Mvvm source generators
-- Fluent theme (.NET 9+) and system theme detection
-- Hardware-accelerated rendering improvements
-- Modern C# patterns (records, primary constructors, pattern matching)
-
-## Out of scope
-
-- WPF .NET Framework patterns (legacy)
-- Migration guidance -- see `references/wpf-migration.md`
-- Desktop testing -- see [skill:dotnet-testing]
-- General Native AOT patterns -- see [skill:dotnet-tooling]
-- UI framework selection -- see `references/ui-chooser.md`
-
-Cross-references: [skill:dotnet-testing] for desktop testing, `references/winui.md` for WinUI 3 patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
-
 
 ## .NET 8+ Differences
 

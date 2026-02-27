@@ -1,29 +1,8 @@
-
-# dotnet-cli-release-pipeline
+# CLI Release Pipeline
 
 Unified release CI/CD pipeline for .NET CLI tools: GitHub Actions workflow producing all distribution formats from a single version tag trigger, build matrix per Runtime Identifier (RID), artifact staging between jobs, GitHub Releases with SHA-256 checksums, automated Homebrew formula and winget manifest PR creation, and SemVer versioning strategy with git tags.
 
 **Version assumptions:** .NET 8.0+ baseline. GitHub Actions workflow syntax v2. Patterns apply to any CI system but examples use GitHub Actions.
-
-## Scope
-
-- Tag-triggered GitHub Actions release workflow
-- Build matrix per Runtime Identifier (RID)
-- Artifact staging between CI jobs
-- GitHub Releases with SHA-256 checksums
-- Automated Homebrew formula and winget manifest PR creation
-- SemVer versioning with git tags
-
-## Out of scope
-
-- General CI/CD patterns (branch strategies, matrix testing) -- see [skill:dotnet-devops] and [skill:dotnet-devops]
-- Native AOT compilation configuration -- see `references/native-aot.md`
-- Distribution strategy decisions -- see `references/cli-distribution.md`
-- Package format details -- see `references/cli-packaging.md`
-- Container image publishing -- see [skill:dotnet-devops]
-
-Cross-references: `references/cli-distribution.md` for RID matrix and publish strategy, `references/cli-packaging.md` for package format authoring, `references/native-aot.md` for AOT publish configuration, [skill:dotnet-devops] for container-based distribution.
-
 
 ## Versioning Strategy
 

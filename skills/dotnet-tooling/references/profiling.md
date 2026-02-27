@@ -1,27 +1,8 @@
-
-# dotnet-profiling
+# Profiling
 
 Diagnostic tool guidance for investigating .NET performance problems. Covers real-time metric monitoring with dotnet-counters, event tracing and flame graph generation with dotnet-trace, and memory dump capture and analysis with dotnet-dump. Focuses on interpreting profiling data (reading flame graphs, analyzing heap dumps, correlating GC metrics) rather than just invoking tools.
 
 **Version assumptions:** .NET SDK 8.0+ baseline. All three diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) ship with the .NET SDK -- no separate installation required.
-
-## Scope
-
-- Real-time metric monitoring with dotnet-counters
-- Event tracing and flame graph generation with dotnet-trace
-- Memory dump capture and analysis with dotnet-dump
-- Interpreting profiling data (flame graphs, heap dumps, GC metrics)
-
-## Out of scope
-
-- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-devops]
-- Microbenchmarking setup (BenchmarkDotNet) -- see [skill:dotnet-testing]
-- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see `references/performance-patterns.md`
-- Continuous benchmark regression detection in CI -- see [skill:dotnet-testing]
-- Architecture patterns (caching, resilience) -- see [skill:dotnet-api]
-
-Cross-references: [skill:dotnet-devops] for GC/threadpool metrics interpretation and OpenTelemetry correlation, [skill:dotnet-testing] for structured benchmarking after profiling identifies hot paths, `references/performance-patterns.md` for optimization patterns to apply based on profiling results.
-
 
 ## dotnet-counters -- Real-Time Metric Monitoring
 

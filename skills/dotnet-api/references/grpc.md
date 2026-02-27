@@ -1,27 +1,8 @@
-
-# dotnet-grpc
+# gRPC
 
 Full gRPC lifecycle for .NET applications. Covers `.proto` service definition, code generation, ASP.NET Core gRPC server implementation and endpoint hosting, `Grpc.Net.Client` client patterns, all four streaming patterns (unary, server streaming, client streaming, bidirectional streaming), authentication, load balancing, and health checks.
 
 For detailed code examples (server implementation, client patterns, streaming, auth, interceptors, gRPC-Web), see the "Detailed Examples" section below.
-
-## Scope
-
-- Proto service definition and code generation
-- ASP.NET Core gRPC server implementation
-- Grpc.Net.Client client patterns
-- All four streaming patterns (unary, server, client, bidirectional)
-- Authentication, load balancing, and health checks
-
-## Out of scope
-
-- Source generator authoring patterns -- see [skill:dotnet-csharp-source-generators]
-- HTTP client factory and resilience pipelines -- see [skill:dotnet-http-client] and [skill:dotnet-resilience]
-- Native AOT architecture and trimming -- see [skill:dotnet-native-aot] and [skill:dotnet-trimming]
-
-Cross-references: [skill:dotnet-resilience] for retry/circuit-breaker on gRPC channels, [skill:dotnet-serialization] for Protobuf wire format details. See [skill:dotnet-integration-testing] for testing gRPC services.
-
----
 
 ## Proto Definition and Code Generation
 
@@ -132,7 +113,7 @@ The `Grpc.Tools` package runs the Protobuf compiler (`protoc`) and C# gRPC plugi
 3. Build the project -- generated C# types and service stubs appear in `obj/Debug/net10.0/Protos/`
 4. Implement the generated abstract base class (server) or use the generated client class
 
-The gRPC code-gen toolchain uses source generation to produce the C# stubs from `.proto` definitions. This is conceptually similar to [skill:dotnet-csharp-source-generators] but uses `protoc` rather than Roslyn incremental generators.
+The gRPC code-gen toolchain uses source generation to produce the C# stubs from `.proto` definitions. This is conceptually similar to [skill:dotnet-csharp] but uses `protoc` rather than Roslyn incremental generators.
 
 ---
 
@@ -173,7 +154,7 @@ Map domain errors to gRPC status codes:
 - **Unary and server streaming only** -- client streaming and bidirectional streaming are not supported by gRPC-Web
 - **No HTTP/2 trailers** -- status and trailing metadata are encoded in the response body
 - **CORS required** -- cross-origin requests need explicit CORS configuration on the server
-- **Consider SignalR for full-duplex browser communication** -- see [skill:dotnet-realtime-communication] for alternatives when bidirectional streaming is required
+- **Consider SignalR for full-duplex browser communication** -- see [skill:dotnet-api] for alternatives when bidirectional streaming is required
 
 ---
 
@@ -188,7 +169,7 @@ Map domain errors to gRPC status codes:
 - **Implement the gRPC health check protocol** -- enables Kubernetes probes and load balancers to monitor service health
 - **Use gRPC-Web for browser clients** -- native gRPC requires HTTP/2 trailers which browsers do not support; gRPC-Web bridges this gap
 
-See [skill:dotnet-native-aot] for Native AOT compilation pipeline and [skill:dotnet-aot-architecture] for AOT-compatible patterns when building gRPC services with ahead-of-time compilation.
+See [skill:dotnet-tooling] for Native AOT compilation pipeline and [skill:dotnet-tooling] for AOT-compatible patterns when building gRPC services with ahead-of-time compilation.
 
 ---
 
@@ -226,7 +207,7 @@ Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotn
 
 ---
 
-# dotnet-grpc -- Detailed Examples
+# gRPC -- Detailed Examples
 
 Extended code examples for gRPC server implementation, client patterns, streaming, authentication, load balancing, health checks, interceptors, error handling, deadlines, and gRPC-Web.
 
@@ -394,7 +375,7 @@ builder.Services
     });
 ```
 
-Apply resilience via [skill:dotnet-resilience]:
+Apply resilience via [skill:dotnet-api]:
 
 ```csharp
 builder.Services

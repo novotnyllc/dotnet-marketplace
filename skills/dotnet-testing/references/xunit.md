@@ -1,30 +1,8 @@
-# dotnet-xunit
+# xUnit
 
 xUnit v3 testing framework features for .NET. Covers `[Fact]` and `[Theory]` attributes, test fixtures (`IClassFixture`, `ICollectionFixture`), parallel execution configuration, `IAsyncLifetime` for async setup/teardown, custom assertions, and xUnit analyzers.
 
 **Version assumptions:** xUnit v3 primary (.NET 8.0+ baseline). Where v3 behavior differs from v2, compatibility notes are provided inline.
-
-## Scope
-
-- [Fact] and [Theory] test attributes and data sources
-- Test fixtures (IClassFixture, ICollectionFixture) and shared context
-- Parallel execution configuration and collection ordering
-- IAsyncLifetime for async setup/teardown
-- xUnit analyzers and custom assertions
-- xUnit v3 migration from v2 (TheoryDataRow, ValueTask lifecycle)
-
-## Out of scope
-
-- Test project scaffolding -- see [skill:dotnet-testing] `references/add-testing.md`
-- Testing strategy and test type decisions -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- Integration testing patterns (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-testing] `references/integration-testing.md`
-- Snapshot testing with Verify -- see [skill:dotnet-testing] `references/snapshot-testing.md`
-
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with xUnit packages referenced. Run [skill:dotnet-tooling] `references/version-detection.md` to confirm .NET 8.0+ baseline for xUnit v3 support.
-
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding what to test and how, [skill:dotnet-testing] `references/integration-testing.md` for combining xUnit with WebApplicationFactory and Testcontainers.
-
----
 
 ## Facts and Theories
 

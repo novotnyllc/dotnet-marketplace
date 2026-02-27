@@ -1,28 +1,11 @@
-
-# dotnet-agent-gotchas
+# Agent Gotchas
 
 Common mistakes AI agents make when generating or modifying .NET code, organized by category. Each category provides a brief warning, anti-pattern code, corrected code, and a cross-reference to the canonical skill that owns the deep guidance. This skill does NOT provide full implementation walkthroughs -- it surfaces the mistake and points to the right skill.
-
-## Scope
-
-- Common async/await, NuGet, deprecated API, and DI mistakes agents make
-- Anti-pattern / corrected-code pairs per category
-- Cross-references to canonical skills for deep guidance
-
-## Out of scope
-
-- Deep async/await patterns -- see [skill:dotnet-csharp-async-patterns]
-- Full dependency injection guidance -- see [skill:dotnet-csharp-dependency-injection]
-- NRT usage patterns -- see [skill:dotnet-csharp-nullable-reference-types]
-- Source generator authoring -- see [skill:dotnet-csharp-source-generators]
-- Test framework features -- see [skill:dotnet-testing-strategy]
-- Security vulnerability mitigation -- see [skill:dotnet-security-owasp]
 
 ## Prerequisites
 
 .NET 8.0+ SDK. Familiarity with SDK-style projects and C# language features.
 
-Cross-references: [skill:dotnet-csharp-async-patterns], [skill:dotnet-csharp-dependency-injection], [skill:dotnet-csharp-nullable-reference-types], [skill:dotnet-csharp-source-generators], [skill:dotnet-testing-strategy], [skill:dotnet-security-owasp].
 
 ---
 
@@ -64,7 +47,7 @@ public async Task ProcessOrderAsync(Order order, CancellationToken ct = default)
 }
 ```
 
-See [skill:dotnet-csharp-async-patterns] for full async/await guidance including `ValueTask`, `ConfigureAwait`, and cancellation propagation.
+See [skill:dotnet-csharp] for full async/await guidance including `ValueTask`, `ConfigureAwait`, and cancellation propagation.
 
 ---
 
@@ -102,7 +85,7 @@ See [skill:dotnet-csharp-async-patterns] for full async/await guidance including
 <!-- Swashbuckle remains a valid choice when Swagger UI features are needed -->
 ```
 
-See [skill:dotnet-csproj-reading] for project file conventions and central package management guidance.
+See [skill:dotnet-tooling] for project file conventions and central package management guidance.
 
 ---
 
@@ -144,7 +127,7 @@ public class MyService(HttpClient httpClient)
 RandomNumberGenerator.Fill(buffer);
 ```
 
-See [skill:dotnet-security-owasp] for the full deprecated security pattern catalog and OWASP mitigations.
+See [skill:dotnet-api] for the full deprecated security pattern catalog and OWASP mitigations.
 
 ---
 
@@ -190,7 +173,7 @@ See [skill:dotnet-security-owasp] for the full deprecated security pattern catal
 <ProjectReference Include="..\MyApp.Core\MyApp.Core.csproj" />
 ```
 
-See [skill:dotnet-project-structure] for SDK types, project organization, and project reference conventions.
+See [skill:dotnet-tooling] for SDK types, project organization, and project reference conventions.
 
 ---
 
@@ -236,7 +219,7 @@ public string GetUserName(int id)
 </PropertyGroup>
 ```
 
-See [skill:dotnet-csharp-nullable-reference-types] for full NRT usage patterns and annotation strategies.
+See [skill:dotnet-csharp] for full NRT usage patterns and annotation strategies.
 
 ---
 
@@ -277,7 +260,7 @@ public static partial class Log
 }
 ```
 
-See [skill:dotnet-csharp-source-generators] for source generator configuration, diagnostics, and debugging.
+See [skill:dotnet-csharp] for source generator configuration, diagnostics, and debugging.
 
 ---
 
@@ -326,7 +309,7 @@ public object CreateInstance(
 <!-- IsTrimmable auto-enables trim analyzer for libraries -->
 ```
 
-See [skill:dotnet-csproj-reading] for MSBuild property guidance on trimming and AOT configuration.
+See [skill:dotnet-tooling] for MSBuild property guidance on trimming and AOT configuration.
 
 ---
 
@@ -381,7 +364,7 @@ public class OrderServiceTests
 </Project>
 ```
 
-See [skill:dotnet-testing-strategy] for test organization, naming conventions, and test type decision guidance.
+See [skill:dotnet-testing] for test organization, naming conventions, and test type decision guidance.
 
 ---
 
@@ -430,13 +413,13 @@ public class OrderProcessor(IServiceScopeFactory scopeFactory)
 }
 ```
 
-See [skill:dotnet-csharp-dependency-injection] for lifetime rules, registration patterns, and service scope management.
+See [skill:dotnet-csharp] for lifetime rules, registration patterns, and service scope management.
 
 ---
 
 ## Slopwatch Anti-Patterns
 
-These are patterns that indicate an agent is hiding problems rather than fixing them. Every code review should check for these. See [skill:dotnet-slopwatch] for the automated quality gate that detects these patterns.
+These are patterns that indicate an agent is hiding problems rather than fixing them. Every code review should check for these. See [skill:dotnet-testing] for the automated quality gate that detects these patterns.
 
 ### 1. Disabled or Skipped Tests
 
@@ -524,12 +507,12 @@ public async Task CreateOrder_Succeeds()
 
 ## Cross-References
 
-- [skill:dotnet-csharp-async-patterns] -- async/await deep patterns, `ValueTask`, cancellation
-- [skill:dotnet-csharp-dependency-injection] -- DI lifetime rules, registration patterns, scope management
-- [skill:dotnet-csharp-nullable-reference-types] -- NRT annotations, nullable context, flow analysis
-- [skill:dotnet-csharp-source-generators] -- generator configuration, partial class requirements, diagnostics
-- [skill:dotnet-testing-strategy] -- test type decisions, organization, naming conventions
-- [skill:dotnet-security-owasp] -- OWASP mitigations, deprecated security API catalog
+- [skill:dotnet-csharp] -- async/await deep patterns, `ValueTask`, cancellation
+- [skill:dotnet-csharp] -- DI lifetime rules, registration patterns, scope management
+- [skill:dotnet-csharp] -- NRT annotations, nullable context, flow analysis
+- [skill:dotnet-csharp] -- generator configuration, partial class requirements, diagnostics
+- [skill:dotnet-testing] -- test type decisions, organization, naming conventions
+- [skill:dotnet-api] -- OWASP mitigations, deprecated security API catalog
 
 ## References
 
