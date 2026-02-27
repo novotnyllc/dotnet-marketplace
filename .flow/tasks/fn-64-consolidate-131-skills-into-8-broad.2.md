@@ -10,16 +10,29 @@ Create consolidated `dotnet-csharp` skill directory. Merge ~22 C# language skill
 
 - Follow consolidation map from task .1
 - Write SKILL.md: overview, routing table with keyword hints, scope/out-of-scope, ToC to companion files (~3-5KB)
-- Create `references/` dir with topic-named companion files. Expected files (per map from .1):
-  - `references/modern-patterns.md` — records, pattern matching, init-only, file-scoped
-  - `references/async-patterns.md` — async/await, ValueTask, ConfigureAwait
-  - `references/dependency-injection.md` — DI registration, lifetime, Options pattern
-  - `references/source-generators.md` — Roslyn incremental generators
-  - `references/coding-standards.md` — conventions, code smells, analyzers, editorconfig
-  - `references/serialization.md` — System.Text.Json, polymorphic, source generation
-  - `references/concurrency.md` — threading, locks, channels, LINQ optimization
-  - `references/domain-modeling.md` — aggregates, SOLID, validation, file I/O, native interop
-  - (exact list per task .1 output)
+- Create `references/` dir with one companion file per source skill (22 files total, per consolidation map from .1):
+  - `references/coding-standards.md` — naming, file layout, style rules
+  - `references/async-patterns.md` — async/await, Task, ConfigureAwait, cancellation
+  - `references/dependency-injection.md` — MS DI, keyed services, scopes, lifetimes
+  - `references/configuration.md` — Options pattern, user secrets, feature flags
+  - `references/source-generators.md` — IIncrementalGenerator, GeneratedRegex, LoggerMessage
+  - `references/nullable-reference-types.md` — annotations, migration, agent mistakes
+  - `references/serialization.md` — System.Text.Json, Protobuf, MessagePack, AOT
+  - `references/channels.md` — Channel<T>, bounded/unbounded, backpressure
+  - `references/linq-optimization.md` — IQueryable vs IEnumerable, compiled queries
+  - `references/domain-modeling.md` — aggregates, value objects, domain events
+  - `references/solid-principles.md` — SRP, DRY, anti-patterns, compliance checks
+  - `references/concurrency-patterns.md` — lock, SemaphoreSlim, Interlocked, concurrent collections
+  - `references/roslyn-analyzers.md` — DiagnosticAnalyzer, CodeFixProvider (merge existing details.md)
+  - `references/editorconfig.md` — IDE/CA severity, AnalysisLevel, globalconfig
+  - `references/file-io.md` — FileStream, RandomAccess, FileSystemWatcher, paths
+  - `references/native-interop.md` — P/Invoke, LibraryImport, marshalling
+  - `references/input-validation.md` — .NET 10 AddValidation, FluentValidation
+  - `references/validation-patterns.md` — DataAnnotations, IValidatableObject, IValidateOptions
+  - `references/modern-patterns.md` — records, pattern matching, primary constructors, C# 12-15
+  - `references/api-design.md` — naming, parameter ordering, return types, extensions
+  - `references/type-design-performance.md` — struct vs class, sealed, Span/Memory, collections
+  - `references/code-smells.md` — anti-patterns, async misuse, DI mistakes (merge existing details.md)
 - Delete old skill directories after content is migrated
 - **Do NOT edit plugin.json** — manifest update deferred to task .9
 

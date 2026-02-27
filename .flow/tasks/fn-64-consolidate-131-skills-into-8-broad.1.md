@@ -42,9 +42,8 @@ Read all 131 SKILL.md files and produce a definitive 8-skill consolidation map: 
 - [ ] Companion file naming convention documented (references/<topic>.md)
 
 ## Done summary
-TBD
-
+Produced the definitive 8-skill consolidation map (docs/consolidation-map-8-skills.md) mapping all 131 source skills to 8 target skills with routing descriptions, SKILL.md content outlines, explicit references/ companion file lists, edge case resolutions, user-invocable assignments, and diff-verified 1:1 assignment roster.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 1b75dfe, 91c65ee, 5a85922, ff8f914, 72042ee
+- Tests: diff verification: all 131 skill directories matched roster with zero diff, per-target count verification: 22+27+18+12+18+32+1+1=131
 - PRs:

@@ -1,38 +1,42 @@
-# fn-64.4 Consolidate dotnet-ui + dotnet-debugging (~20 source skills)
+# fn-64.4 Consolidate dotnet-ui + dotnet-debugging (19 source skills)
+<!-- Updated by plan-sync: fn-64.1 mapped 18 UI + 1 debugging = 19 total, not ~20 -->
 
 ## Description
-Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge ~18 UI framework skills into `dotnet-ui` with companion files. Create `dotnet-debugging` by absorbing `dotnet-windbg-debugging` content and its 16 reference/ files. Delete source skill directories. Do NOT edit `plugin.json` (deferred to task .9).
+Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge 18 UI framework skills into `dotnet-ui` with companion files. Create `dotnet-debugging` by renaming `dotnet-windbg-debugging` (single source skill) and its 16 reference/ files. Delete source skill directories. Do NOT edit `plugin.json` (deferred to task .9).
 
 **Size:** M
-**Files:** `skills/dotnet-ui/SKILL.md` + `references/*.md` (new), `skills/dotnet-debugging/SKILL.md` + `references/*.md` (new), ~20 source skill dirs (delete)
+**Files:** `skills/dotnet-ui/SKILL.md` + `references/*.md` (new), `skills/dotnet-debugging/SKILL.md` + `references/*.md` (new), 19 source skill dirs (delete)
 
 ## Approach
 
 **dotnet-ui (~18 source skills):**
 - Write SKILL.md: UI framework overview, framework decision tree, routing table, scope/out-of-scope, ToC
-- Create `references/` dir. Expected companion files:
-  - `references/blazor-patterns.md` — components, render modes, state management
-  - `references/blazor-auth.md` — authentication flows, AuthorizeView
-  - `references/blazor-testing.md` — bUnit patterns
-  - `references/maui.md` — development, platform-specific, Xamarin migration
-  - `references/maui-aot.md` — Native AOT on iOS/Catalyst
-  - `references/maui-testing.md` — Appium patterns
-  - `references/uno-platform.md` — setup, Extensions, MVUX, Toolkit, theming
-  - `references/uno-targets.md` — deployment, target configuration
-  - `references/uno-mcp.md` — MCP server integration
-  - `references/uno-testing.md` — Playwright patterns
-  - `references/desktop.md` — WPF modern, WinUI 3, WinForms
-  - `references/wpf-migration.md` — WPF/WinForms to .NET 8+ migration
-  - `references/accessibility.md` — cross-framework accessibility patterns
-  - `references/localization.md` — .resx, cultures, resource management
+- Create `references/` dir with one companion file per source skill (18 files total, per consolidation map from .1):
+  - `references/blazor-patterns.md` — hosting model, render mode, routing, streaming
+  - `references/blazor-components.md` — lifecycle, state, JS interop, EditForm, QuickGrid
+  - `references/blazor-auth.md` — AuthorizeView, Identity UI, OIDC flows
+  - `references/blazor-testing.md` — bUnit rendering, events, JS mocking
+  - `references/maui-development.md` — project structure, XAML, MVVM, platform (merge existing examples.md)
+  - `references/maui-aot.md` — iOS/Catalyst Native AOT, size/startup gains
+  - `references/maui-testing.md` — Appium, XHarness, platform validation
+  - `references/uno-platform.md` — Extensions, MVUX, Toolkit, Hot Reload
+  - `references/uno-targets.md` — WASM, iOS, Android, macOS, Windows, Linux
+  - `references/uno-mcp.md` — tool detection, search-then-fetch, init
+  - `references/uno-testing.md` — Playwright WASM, platform patterns
+  - `references/wpf-modern.md` — Host builder, MVVM Toolkit, Fluent theme
+  - `references/wpf-migration.md` — WPF/WinForms to .NET 8+, UWP to WinUI
+  - `references/winui.md` — Windows App SDK, XAML, MSIX/unpackaged
+  - `references/winforms-basics.md` — high-DPI, dark mode, DI, modernization
+  - `references/accessibility.md` — SemanticProperties, ARIA, AutomationPeer
+  - `references/localization.md` — .resx, IStringLocalizer, pluralization, RTL
   - `references/ui-chooser.md` — framework selection decision tree
-  - (exact list per task .1 output)
 
-**dotnet-debugging (~2 source skills):**
-- Create new SKILL.md with overview + ToC
-- Rename `dotnet-windbg-debugging/reference/` to `dotnet-debugging/references/` (singular → plural convention)
-- Absorb any other debugging-related content per task .1 map
-- **Cross-reference repair**: all out-of-scope references in WinDbg content (e.g., `dotnet-profiling`, `dotnet-gc-memory`) must be remapped to the new 8-skill names (e.g., `[skill:dotnet-tooling]` with "read references/performance.md" hints). No `[skill:old-name]` allowed.
+**dotnet-debugging (1 source skill: `dotnet-windbg-debugging`):**
+<!-- Updated by plan-sync: fn-64.1 mapped only 1 source skill to dotnet-debugging, not ~2 -->
+- Rename skill directory from `dotnet-windbg-debugging` to `dotnet-debugging`
+- Create new SKILL.md with overview + ToC (rewrite frontmatter: name `dotnet-debugging`, description ~350 chars)
+- Rename `dotnet-windbg-debugging/reference/` to `dotnet-debugging/references/` (singular -> plural convention)
+- **Cross-reference repair**: all out-of-scope references in WinDbg content (e.g., `dotnet-profiling`, `dotnet-gc-memory`) must be remapped to the new 8-skill names (e.g., `[skill:dotnet-tooling]` with "read references/profiling.md" or "read references/gc-memory.md" hints). No `[skill:old-name]` allowed.
 
 ## Key context
 
@@ -49,7 +53,7 @@ Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge 
 - [ ] `skills/dotnet-debugging/SKILL.md` exists (standalone per user requirement)
 - [ ] `skills/dotnet-debugging/references/` has migrated windbg content (renamed from `reference/` to `references/`)
 - [ ] All cross-references in debugging content remapped to 8-skill names (no `[skill:old-name]`)
-- [ ] All ~20 source UI/debugging skill directories deleted
+- [ ] All 19 source UI/debugging skill directories deleted (18 UI + 1 debugging)
 - [ ] `plugin.json` NOT edited (deferred to task .9)
 - [ ] Valid frontmatter on both SKILL.md files
 - [ ] No content lost from source skills
