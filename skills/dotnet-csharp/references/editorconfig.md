@@ -11,11 +11,11 @@ Comprehensive guide to configuring .NET code analysis rules via `.editorconfig` 
 
 ## Out of scope
 
-- Adding analyzer packages to a project -- see [skill:dotnet-add-analyzers]
+- Adding analyzer packages to a project -- see [skill:dotnet-tooling]
 - Authoring custom Roslyn analyzers -- see `references/roslyn-analyzers.md`
-- Project-level build configuration (Directory.Build.props) -- see [skill:dotnet-project-structure]
+- Project-level build configuration (Directory.Build.props) -- see [skill:dotnet-tooling]
 
-Cross-references: [skill:dotnet-add-analyzers] for adding analyzer packages and AnalysisLevel setup, `references/roslyn-analyzers.md` for authoring custom analyzers, [skill:dotnet-project-structure] for Directory.Build.props and solution layout, `references/coding-standards.md` for naming and formatting conventions enforced by EditorConfig rules.
+Cross-references: [skill:dotnet-tooling] for adding analyzer packages and AnalysisLevel setup, `references/roslyn-analyzers.md` for authoring custom analyzers, [skill:dotnet-tooling] for Directory.Build.props and solution layout, `references/coding-standards.md` for naming and formatting conventions enforced by EditorConfig rules.
 
 ---
 
@@ -137,7 +137,7 @@ dotnet_diagnostic.IDE0003.severity = none
 
 ## Code Quality Rules (CA*)
 
-CA rules detect design, performance, security, reliability, and usage issues. They are shipped with the .NET SDK and controlled by `AnalysisLevel`. For a complete CA rule category table and `AnalysisLevel` setup guidance, see [skill:dotnet-add-analyzers].
+CA rules detect design, performance, security, reliability, and usage issues. They are shipped with the .NET SDK and controlled by `AnalysisLevel`. For a complete CA rule category table and `AnalysisLevel` setup guidance, see [skill:dotnet-tooling].
 
 The main CA categories are: Design (CA1000s), Globalization (CA1300s), Interoperability (CA1400s), Maintainability (CA1500s), Naming (CA1700s), Performance (CA1800s), Reliability (CA2000s), Security (CA2100s, CA3xxx, CA5xxx), and Usage (CA2200s).
 
@@ -202,7 +202,7 @@ Per-rule entries override category-level settings. Category-level settings overr
 
 ## AnalysisLevel and EnforceCodeStyleInBuild
 
-`AnalysisLevel` controls which built-in CA rules are enabled and their default severities. Values range from `latest` (default, correctness only) through `latest-all` (all rules). Pin to a specific .NET SDK major version (e.g., `8-all`, `10-all`) to lock the rule set across SDK upgrades. Use `preview-all` for the broadest coverage including experimental rules. For the full AnalysisLevel values table and setup guidance, see [skill:dotnet-add-analyzers].
+`AnalysisLevel` controls which built-in CA rules are enabled and their default severities. Values range from `latest` (default, correctness only) through `latest-all` (all rules). Pin to a specific .NET SDK major version (e.g., `8-all`, `10-all`) to lock the rule set across SDK upgrades. Use `preview-all` for the broadest coverage including experimental rules. For the full AnalysisLevel values table and setup guidance, see [skill:dotnet-tooling].
 
 ### EnforceCodeStyleInBuild
 
@@ -353,7 +353,7 @@ dotnet_diagnostic.CA2016.severity = warning
 
 ### Test Project Overrides (tests/.editorconfig)
 
-Place a separate `.editorconfig` in the `tests/` directory to relax rules that conflict with test readability. For common per-project-type suppression patterns (ASP.NET Core apps, libraries, test projects), see [skill:dotnet-add-analyzers].
+Place a separate `.editorconfig` in the `tests/` directory to relax rules that conflict with test readability. For common per-project-type suppression patterns (ASP.NET Core apps, libraries, test projects), see [skill:dotnet-tooling].
 
 ```ini
 [*.cs]

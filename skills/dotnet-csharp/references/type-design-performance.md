@@ -14,11 +14,11 @@ Upfront type design choices that affect performance throughout an application's 
 
 ## Out of scope
 
-- Runtime optimization techniques (pooling, caching, stackalloc) -- see [skill:dotnet-performance-patterns]
+- Runtime optimization techniques (pooling, caching, stackalloc) -- see [skill:dotnet-tooling]
 - Language syntax for records and collection expressions -- see `references/modern-patterns.md`
-- GC behavior and memory management -- see [skill:dotnet-gc-memory]
+- GC behavior and memory management -- see [skill:dotnet-tooling]
 
-Cross-references: [skill:dotnet-performance-patterns] for optimization techniques, `references/modern-patterns.md` for language syntax, [skill:dotnet-gc-memory] for GC behavior and memory management.
+Cross-references: [skill:dotnet-tooling] for optimization techniques, `references/modern-patterns.md` for language syntax, [skill:dotnet-tooling] for GC behavior and memory management.
 
 ---
 
@@ -67,7 +67,7 @@ The 16-byte threshold comes from x64 calling conventions: two register-sized val
 
 For library types (code consumed by other assemblies), seal classes by default:
 
-1. **JIT devirtualization** -- sealed classes enable the JIT to replace virtual calls with direct calls, enabling inlining. See [skill:dotnet-performance-patterns] for benchmarking this effect.
+1. **JIT devirtualization** -- sealed classes enable the JIT to replace virtual calls with direct calls, enabling inlining. See [skill:dotnet-tooling] for benchmarking this effect.
 2. **Simpler contracts** -- unsealed classes imply a promise to support inheritance, which constrains future changes.
 3. **Fewer breaking changes** -- sealing a class later is a binary-breaking change. Starting sealed and unsealing later is safe.
 
@@ -295,7 +295,7 @@ public readonly record struct Money(decimal Amount, string Currency);
 3. **Do not use `Span<T>` in async methods** -- `Span<T>` is a `ref struct` and cannot cross `await` boundaries. Use `Memory<T>` for async code and convert to `Span<T>` via `.Span` for synchronous processing sections.
 4. **Do not use `FrozenDictionary` for mutable data** -- it has no add/remove APIs. It is designed for build-once-read-many scenarios. Use `Dictionary<K,V>` or `ConcurrentDictionary<K,V>` for data that changes at runtime.
 5. **Do not seal abstract classes or classes designed as extension points** -- sealing is a design-time decision for concrete types. Abstract classes and intentional base classes must remain unsealed.
-6. **Do not make large structs (> 64 bytes) without measuring** -- large structs are expensive to copy. If passed by value (no `in` modifier), they may be slower than a heap-allocated class. Benchmark with [skill:dotnet-performance-patterns].
+6. **Do not make large structs (> 64 bytes) without measuring** -- large structs are expensive to copy. If passed by value (no `in` modifier), they may be slower than a heap-allocated class. Benchmark with [skill:dotnet-tooling].
 7. **Do not use `Dictionary<K,V>` for static lookup tables in hot paths** -- if the dictionary is populated at startup and never modified, use `FrozenDictionary` for optimized read performance. Requires .NET 8+.
 8. **Do not forget `in` parameter for large readonly structs** -- without `in`, the struct is copied on every method call. With `in` on a `readonly struct`, the JIT passes by reference with no defensive copy.
 
@@ -304,8 +304,8 @@ public readonly record struct Money(decimal Amount, string Currency);
 ## Prerequisites
 
 - .NET 8.0+ SDK (required for `FrozenDictionary`, `FrozenSet`)
-- Understanding of GC generations and heap behavior (see [skill:dotnet-gc-memory])
-- Familiarity with performance measurement (see [skill:dotnet-performance-patterns])
+- Understanding of GC generations and heap behavior (see [skill:dotnet-tooling])
+- Familiarity with performance measurement (see [skill:dotnet-tooling])
 - `System.Collections.Frozen` namespace (.NET 8+)
 - `System.Collections.Immutable` namespace
 

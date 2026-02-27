@@ -11,12 +11,12 @@ LINQ performance patterns for .NET applications. Covers the critical distinction
 
 ## Out of scope
 
-- EF Core DbContext lifecycle and migrations -- see [skill:dotnet-efcore-patterns]
-- Strategic data architecture (N+1 governance, read/write split) -- see [skill:dotnet-efcore-architecture]
-- Span<T> and Memory<T> fundamentals -- see [skill:dotnet-performance-patterns]
-- Microbenchmarking setup -- see [skill:dotnet-benchmarkdotnet]
+- EF Core DbContext lifecycle and migrations -- see [skill:dotnet-api]
+- Strategic data architecture (N+1 governance, read/write split) -- see [skill:dotnet-api]
+- Span<T> and Memory<T> fundamentals -- see [skill:dotnet-tooling]
+- Microbenchmarking setup -- see [skill:dotnet-testing]
 
-Cross-references: [skill:dotnet-efcore-patterns] for compiled queries in EF Core context and DbContext usage, [skill:dotnet-performance-patterns] for Span<T>/Memory<T> foundations and ArrayPool patterns, [skill:dotnet-benchmarkdotnet] for measuring LINQ optimization impact.
+Cross-references: [skill:dotnet-api] for compiled queries in EF Core context and DbContext usage, [skill:dotnet-tooling] for Span<T>/Memory<T> foundations and ArrayPool patterns, [skill:dotnet-testing] for measuring LINQ optimization impact.
 
 ---
 
@@ -318,7 +318,7 @@ bool match = input.Trim().SequenceEqual("hello");
 | Processing byte buffers from I/O | `ReadOnlySpan<byte>` slicing |
 | General business logic on collections | LINQ (readability over micro-optimization) |
 
-See [skill:dotnet-performance-patterns] for comprehensive Span<T>/Memory<T> patterns and ArrayPool<T> usage.
+See [skill:dotnet-tooling] for comprehensive Span<T>/Memory<T> patterns and ArrayPool<T> usage.
 
 ---
 
@@ -396,7 +396,7 @@ await dbContext.Orders
 
 1. **Do not cast IQueryable<T> to IEnumerable<T> before filtering** -- this silently switches from server-side SQL evaluation to client-side in-memory evaluation, potentially loading entire tables. Check for `AsEnumerable()`, explicit casts, or method signatures that accept `IEnumerable<T>`.
 2. **Do not return IQueryable<T> from repository methods** -- callers can compose additional operators, but the DbContext may be disposed before enumeration. Return materialized collections (`List<T>`) or use `IAsyncEnumerable<T>`.
-3. **Do not optimize LINQ allocations without benchmarks** -- LINQ iterator overhead is negligible for most business logic. Use [skill:dotnet-benchmarkdotnet] `[MemoryDiagnoser]` to prove allocations matter before replacing LINQ with manual loops.
+3. **Do not optimize LINQ allocations without benchmarks** -- LINQ iterator overhead is negligible for most business logic. Use [skill:dotnet-testing] `[MemoryDiagnoser]` to prove allocations matter before replacing LINQ with manual loops.
 4. **Do not use compiled queries with dynamic predicates** -- compiled queries cache the expression tree shape. If the query shape changes per call (conditional includes, dynamic filters), the compiled query throws or produces wrong results.
 5. **Do not enumerate a deferred query multiple times** -- each enumeration re-executes the underlying source (database query, network call). Materialize with `ToList()` when the result will be consumed more than once.
 6. **Do not use `Skip()`/`Take()` for deep pagination** -- offset pagination is O(N) on the database. Use keyset (seek) pagination with a `Where` clause on the last-seen key for consistent performance regardless of page depth.

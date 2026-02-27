@@ -12,7 +12,7 @@ Proactive code-smell and anti-pattern detection for C# code. This skill triggers
 
 ## Out of scope
 
-- LLM-specific generation mistakes (wrong NuGet packages, MSBuild errors) -- see [skill:dotnet-agent-gotchas]
+- LLM-specific generation mistakes (wrong NuGet packages, MSBuild errors) -- see [skill:dotnet-api]
 - SOLID/DRY design principles -- see `references/solid-principles.md`
 - Naming and style conventions -- see `references/coding-standards.md`
 
@@ -30,7 +30,7 @@ Cross-references: `references/async-patterns.md` for async gotchas, `references/
 | Disposable created in one method, stored in field | Ownership unclear; easy to forget disposal | Document ownership; make the containing class `IDisposable` | CA2000 |
 | `using` on non-owned resource | Premature disposal of shared resource (e.g., injected `HttpClient`) | Only dispose resources you create; let DI manage injected services | -- |
 
-See `details.md` for code examples of each pattern.
+See the **Detailed Examples and Fixes** section below for code examples of each pattern.
 
 ---
 
@@ -43,7 +43,7 @@ See `details.md` for code examples of each pattern.
 | Blanket `#pragma warning disable` without restore | Suppresses ALL warnings for rest of file | Always pair with `#pragma warning restore`; suppress specific codes only | -- |
 | `[SuppressMessage]` without justification | Future maintainers cannot evaluate if suppression is still valid | Always include `Justification = "reason"` | CA1303 |
 
-See `details.md` for the CS0067 motivating example (bad pattern to correct fix).
+See the **Detailed Examples and Fixes** section below for the CS0067 motivating example (bad pattern to correct fix).
 
 ---
 

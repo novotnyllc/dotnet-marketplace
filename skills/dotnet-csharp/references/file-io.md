@@ -12,13 +12,13 @@ File I/O patterns for .NET applications. Covers FileStream construction with asy
 
 ## Out of scope
 
-- PipeReader/PipeWriter and network I/O -- see [skill:dotnet-io-pipelines]
+- PipeReader/PipeWriter and network I/O -- see [skill:dotnet-api]
 - Async/await fundamentals -- see `references/async-patterns.md`
-- Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-performance-patterns]
+- Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-tooling]
 - JSON and Protobuf serialization -- see `references/serialization.md`
-- GC implications of memory-mapped backing arrays -- see [skill:dotnet-gc-memory]
+- GC implications of memory-mapped backing arrays -- see [skill:dotnet-tooling]
 
-Cross-references: [skill:dotnet-io-pipelines] for PipeReader/PipeWriter network I/O, [skill:dotnet-gc-memory] for POH and memory-mapped backing array GC implications, [skill:dotnet-performance-patterns] for Span/Memory basics and ArrayPool usage, `references/async-patterns.md` for async/await patterns used with file streams.
+Cross-references: [skill:dotnet-api] for PipeReader/PipeWriter network I/O, [skill:dotnet-tooling] for POH and memory-mapped backing array GC implications, [skill:dotnet-tooling] for Span/Memory basics and ArrayPool usage, `references/async-patterns.md` for async/await patterns used with file streams.
 
 ---
 
@@ -311,7 +311,7 @@ using var accessor2 = mmf2.CreateViewAccessor(
 int value = accessor2.ReadInt32(0);  // 42
 ```
 
-For GC implications of memory-mapped backing arrays and POH usage, see [skill:dotnet-gc-memory].
+For GC implications of memory-mapped backing arrays and POH usage, see [skill:dotnet-tooling].
 
 ---
 

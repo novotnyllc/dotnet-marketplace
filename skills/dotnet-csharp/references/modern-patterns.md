@@ -1,6 +1,6 @@
 # Modern Patterns
 
-Modern C# language feature guidance adapted to the project's target framework. Always run [skill:dotnet-version-detection] first to determine TFM and C# version.
+Modern C# language feature guidance adapted to the project's target framework. Always run [skill:dotnet-tooling] first to determine TFM and C# version.
 
 ## Scope
 
@@ -368,7 +368,7 @@ When targeting multiple TFMs, newer language features may not compile on older t
 #endif
 ```
 
-See [skill:dotnet-multi-targeting] for comprehensive polyfill guidance.
+See [skill:dotnet-tooling] for comprehensive polyfill guidance.
 
 ---
 

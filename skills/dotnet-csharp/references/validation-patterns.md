@@ -13,9 +13,9 @@ Built-in .NET validation patterns that do not require third-party packages. Cove
 
 - API pipeline integration (endpoint filters, ProblemDetails, AddValidation) -- see `references/input-validation.md`
 - Options pattern binding and ValidateOnStart registration -- see `references/configuration.md`
-- Architectural placement of validation in layers -- see [skill:dotnet-architecture-patterns]
+- Architectural placement of validation in layers -- see [skill:dotnet-api]
 
-Cross-references: `references/input-validation.md` for API pipeline validation and FluentValidation, `references/configuration.md` for Options pattern binding and `ValidateOnStart()`, [skill:dotnet-architecture-patterns] for validation placement in architecture layers, `references/coding-standards.md` for naming conventions.
+Cross-references: `references/input-validation.md` for API pipeline validation and FluentValidation, `references/configuration.md` for Options pattern binding and `ValidateOnStart()`, [skill:dotnet-api] for validation placement in architecture layers, `references/coding-standards.md` for naming conventions.
 
 ---
 

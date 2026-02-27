@@ -13,11 +13,11 @@ Platform Invoke (P/Invoke) patterns for calling native C/C++ libraries from .NET
 
 ## Out of scope
 
-- AOT-specific P/Invoke concerns (direct pinvoke) -- see [skill:dotnet-native-aot]
-- COM interop and CsWin32 source generator -- see [skill:dotnet-winui]
-- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-aot-wasm]
+- AOT-specific P/Invoke concerns (direct pinvoke) -- see [skill:dotnet-tooling]
+- COM interop and CsWin32 source generator -- see [skill:dotnet-ui]
+- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-testing]
 
-Cross-references: [skill:dotnet-native-aot] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-aot-architecture] for AOT-first design patterns including source-generated interop, [skill:dotnet-winui] for CsWin32 source generator and COM interop, [skill:dotnet-aot-wasm] for WASM JavaScript interop (not native P/Invoke).
+Cross-references: [skill:dotnet-tooling] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-tooling] for AOT-first design patterns including source-generated interop, [skill:dotnet-ui] for CsWin32 source generator and COM interop, [skill:dotnet-testing] for WASM JavaScript interop (not native P/Invoke).
 
 ---
 
@@ -190,7 +190,7 @@ Include platform-specific `.so` files for each target ABI in the project:
 
 ### WASM
 
-WebAssembly does not support traditional P/Invoke. Native C/C++ code cannot be called via `[LibraryImport]` or `[DllImport]` in browser WASM. For JavaScript interop, see [skill:dotnet-aot-wasm].
+WebAssembly does not support traditional P/Invoke. Native C/C++ code cannot be called via `[LibraryImport]` or `[DllImport]` in browser WASM. For JavaScript interop, see [skill:dotnet-testing].
 
 ---
 
@@ -479,7 +479,7 @@ Do not use C# `long` for C/C++ `long` -- they have different sizes on Unix 64-bi
 2. **Do not assume `bool` marshals as 1 byte.** .NET marshals `bool` as a 4-byte Windows `BOOL` by default. Use `[MarshalAs(UnmanagedType.U1)]` for C `_Bool`/`bool`, or `[MarshalAs(UnmanagedType.Bool)]` for Windows `BOOL` explicitly.
 3. **Do not use C# `long` to interop with C/C++ `long`.** C `long` is 4 bytes on Windows but 8 bytes on 64-bit Unix. Use `CLong`/`CULong` (.NET 6+) for cross-platform correctness.
 4. **Do not use `StringBuilder` for output string buffers.** `[LibraryImport]` does not support `StringBuilder` at all, and with `[DllImport]` it allocates multiple intermediate copies. Use `char[]` or `byte[]` from `ArrayPool` instead.
-5. **Do not use `[LibraryImport]` or `[DllImport]` for WASM.** WebAssembly does not support traditional P/Invoke. For JavaScript interop in WASM, see [skill:dotnet-aot-wasm].
+5. **Do not use `[LibraryImport]` or `[DllImport]` for WASM.** WebAssembly does not support traditional P/Invoke. For JavaScript interop in WASM, see [skill:dotnet-testing].
 6. **Do not use dynamic library loading on iOS.** iOS prohibits loading dynamic libraries at runtime. Use `"__Internal"` as the library name for statically linked native code.
 7. **Do not use `System.Delegate` fields in interop structs.** Use typed delegates or unmanaged function pointers (`delegate* unmanaged`). Untyped delegates can destabilize the runtime during marshalling.
 8. **Do not forget to keep delegate instances alive during native use.** The GC may collect a delegate that native code still references. Store delegates in a static field or use `GCHandle` for the duration of native callbacks.

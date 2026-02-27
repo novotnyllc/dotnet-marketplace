@@ -103,7 +103,7 @@ dotnet_style_require_accessibility_modifiers = always:warning
 csharp_style_prefer_pattern_matching = true:suggestion
 ```
 
-See `references/editorconfig.md` for full editorconfig configuration. See [skill:dotnet-add-analyzers] for analyzer package setup.
+See `references/editorconfig.md` for full editorconfig configuration. See [skill:dotnet-tooling] for analyzer package setup.
 
 ---
 

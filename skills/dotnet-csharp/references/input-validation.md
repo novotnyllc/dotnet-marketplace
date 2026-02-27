@@ -13,12 +13,12 @@ Comprehensive input validation patterns for .NET APIs. Covers the .NET 10 built-
 
 ## Out of scope
 
-- Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-blazor-components]
-- OWASP injection prevention principles -- see [skill:dotnet-security-owasp]
-- Architectural patterns for validation placement -- see [skill:dotnet-architecture-patterns]
+- Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-ui]
+- OWASP injection prevention principles -- see [skill:dotnet-api]
+- Architectural patterns for validation placement -- see [skill:dotnet-api]
 - Options pattern ValidateDataAnnotations -- see `references/configuration.md`
 
-Cross-references: [skill:dotnet-security-owasp] for OWASP injection prevention, [skill:dotnet-architecture-patterns] for architectural validation strategy, [skill:dotnet-minimal-apis] for Minimal API pipeline integration, `references/configuration.md` for Options pattern validation.
+Cross-references: [skill:dotnet-api] for OWASP injection prevention, [skill:dotnet-api] for architectural validation strategy, [skill:dotnet-api] for Minimal API pipeline integration, `references/configuration.md` for Options pattern validation.
 
 ---
 
@@ -29,7 +29,7 @@ Choose the validation framework based on project requirements:
 1. **.NET 10 Built-in Validation (`AddValidation`)** -- default for new .NET 10+ projects. Source-generator-based, AOT-compatible, auto-discovers types from Minimal API handlers. Best for: greenfield projects targeting .NET 10+.
 2. **FluentValidation** -- when validation rules are complex (cross-property, conditional, database-dependent). Rich fluent API with testable validator classes. Best for: complex business rules, domain validation.
 3. **Data Annotations** -- when models need simple declarative validation (`[Required]`, `[Range]`). Widely understood, works with MVC model binding and `IValidatableObject` for cross-property checks. Best for: simple DTOs, shared models.
-4. **MiniValidation** -- lightweight Data Annotations runner without MVC model binding overhead. Best for: micro-services with simple validation (see [skill:dotnet-architecture-patterns] for details).
+4. **MiniValidation** -- lightweight Data Annotations runner without MVC model binding overhead. Best for: micro-services with simple validation (see [skill:dotnet-api] for details).
 
 General guidance: prefer .NET 10 built-in validation for new projects. Use FluentValidation when rules outgrow annotations. Do not mix multiple frameworks in the same request DTO -- pick one per model type and stay consistent.
 
@@ -159,7 +159,7 @@ app.MapPost("/api/orders", async (
 
 ### FluentValidation Endpoint Filter
 
-For reusable validation across multiple endpoints, create a generic endpoint filter (see also [skill:dotnet-minimal-apis] for filter pipeline details):
+For reusable validation across multiple endpoints, create a generic endpoint filter (see also [skill:dotnet-api] for filter pipeline details):
 
 ```csharp
 public sealed class FluentValidationFilter<T>(IValidator<T> validator) : IEndpointFilter
@@ -334,7 +334,7 @@ products.MapPut("/{id:int}", UpdateProduct)
 
 ### Combining with Route Groups
 
-Apply validation filters at the route group level for consistent validation across all endpoints in a group (see [skill:dotnet-minimal-apis] for route group patterns):
+Apply validation filters at the route group level for consistent validation across all endpoints in a group (see [skill:dotnet-api] for route group patterns):
 
 ```csharp
 var orders = app.MapGroup("/api/orders")
@@ -420,7 +420,7 @@ app.UseExceptionHandler(exceptionApp =>
 
 ## Security-Focused Validation
 
-Input validation is a first line of defense against injection and abuse. These patterns complement the OWASP security principles in [skill:dotnet-security-owasp] with practical validation techniques.
+Input validation is a first line of defense against injection and abuse. These patterns complement the OWASP security principles in [skill:dotnet-api] with practical validation techniques.
 
 ### ReDoS Prevention
 
@@ -586,7 +586,7 @@ static bool IsValidImageHeader(ReadOnlySpan<byte> header) =>
     || (header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8));      // WebP
 ```
 
-For OWASP injection prevention beyond input validation (SQL injection, XSS, command injection), see [skill:dotnet-security-owasp].
+For OWASP injection prevention beyond input validation (SQL injection, XSS, command injection), see [skill:dotnet-api].
 
 ---
 

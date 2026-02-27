@@ -15,13 +15,13 @@ Design-time principles for creating public .NET APIs that are intuitive, consist
 
 ## Out of scope
 
-- Binary/source compatibility enforcement and tooling -- see [skill:dotnet-library-api-compat]
-- PublicApiAnalyzers, Verify snapshots, and CI validation of API surface -- see [skill:dotnet-api-surface-validation]
+- Binary/source compatibility enforcement and tooling -- see [skill:dotnet-api]
+- PublicApiAnalyzers, Verify snapshots, and CI validation of API surface -- see [skill:dotnet-api]
 - General C# naming conventions and file layout -- see `references/coding-standards.md`
-- HTTP API versioning and URL design -- see [skill:dotnet-api-versioning]
-- NuGet packaging and SemVer mechanics -- see [skill:dotnet-nuget-authoring]
+- HTTP API versioning and URL design -- see [skill:dotnet-api]
+- NuGet packaging and SemVer mechanics -- see [skill:dotnet-devops]
 
-Cross-references: [skill:dotnet-library-api-compat] for compatibility enforcement, [skill:dotnet-api-surface-validation] for CI detection, `references/coding-standards.md` for general naming rules, [skill:dotnet-api-versioning] for HTTP API versioning, [skill:dotnet-nuget-authoring] for SemVer and packaging.
+Cross-references: [skill:dotnet-api] for compatibility enforcement, [skill:dotnet-api] for CI detection, `references/coding-standards.md` for general naming rules, [skill:dotnet-api] for HTTP API versioning, [skill:dotnet-devops] for SemVer and packaging.
 
 ---
 
@@ -342,7 +342,7 @@ Before shipping a new public API, verify each concern:
 4. **Error handling** -- clear exception types, argument validation at entry points, Try pattern where failure is expected
 5. **Extension points** -- interfaces or delegates, not virtual methods on concrete classes
 6. **Wire safety** -- serialized types use explicit property names, additive-only evolution, enum strategy documented
-7. **Compatibility** -- changes reviewed against [skill:dotnet-library-api-compat] rules before release
+7. **Compatibility** -- changes reviewed against [skill:dotnet-api] rules before release
 
 ---
 
@@ -363,7 +363,7 @@ Before shipping a new public API, verify each concern:
 
 - .NET 8.0+ SDK
 - Familiarity with C# naming conventions (see `references/coding-standards.md`)
-- Understanding of binary/source compatibility concepts (see [skill:dotnet-library-api-compat])
+- Understanding of binary/source compatibility concepts (see [skill:dotnet-api])
 - System.Text.Json for wire compatibility examples
 
 ---

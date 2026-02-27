@@ -2,7 +2,7 @@
 
 AOT-friendly serialization patterns for .NET applications. Covers System.Text.Json source generators for compile-time serialization, Protocol Buffers (Protobuf) for efficient binary serialization, and MessagePack for high-performance compact binary format. Includes performance tradeoff guidance for choosing the right serializer and warnings about reflection-based serialization in AOT scenarios.
 
-Cross-references: `references/source-generators.md` for understanding how STJ source generators work under the hood. See [skill:dotnet-testing-strategy] for testing serialization round-trip correctness.
+Cross-references: `references/source-generators.md` for understanding how STJ source generators work under the hood. See [skill:dotnet-testing] for testing serialization round-trip correctness.
 
 ---
 

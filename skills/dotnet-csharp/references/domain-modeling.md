@@ -11,14 +11,14 @@ Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, 
 
 ## Out of scope
 
-- EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-efcore-architecture]
-- Tactical EF Core usage (DbContext lifecycle, migrations) -- see [skill:dotnet-efcore-patterns]
+- EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-api]
+- Tactical EF Core usage (DbContext lifecycle, migrations) -- see [skill:dotnet-api]
 - Input validation at API boundaries -- see `references/validation-patterns.md`
-- Data access technology selection -- see [skill:dotnet-data-access-strategy]
-- Vertical slice architecture and request pipelines -- see [skill:dotnet-architecture-patterns]
-- Messaging infrastructure and saga orchestration -- see [skill:dotnet-messaging-patterns]
+- Data access technology selection -- see [skill:dotnet-api]
+- Vertical slice architecture and request pipelines -- see [skill:dotnet-api]
+- Messaging infrastructure and saga orchestration -- see [skill:dotnet-api]
 
-Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, `references/validation-patterns.md` for input validation patterns, [skill:dotnet-messaging-patterns] for integration event infrastructure.
+Cross-references: [skill:dotnet-api] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-api] for DbContext configuration and migrations, [skill:dotnet-api] for vertical slices and request pipeline design, `references/validation-patterns.md` for input validation patterns, [skill:dotnet-api] for integration event infrastructure.
 
 ---
 
@@ -151,7 +151,7 @@ public sealed class Order : AggregateRoot<Guid>
 | One aggregate per transaction | Cross-aggregate changes use domain events and eventual consistency |
 | Expose collections as `IReadOnlyList<T>` | Prevents external code from bypassing root methods to mutate children |
 
-For the EF Core persistence implications of these rules (navigation properties, owned types, cascade behavior), see [skill:dotnet-efcore-architecture].
+For the EF Core persistence implications of these rules (navigation properties, owned types, cascade behavior), see [skill:dotnet-api].
 
 ---
 
@@ -258,7 +258,7 @@ public sealed record Money
 
 ### Value Object EF Core Mapping
 
-Map value objects using owned types or value conversions (implementation in [skill:dotnet-efcore-architecture]):
+Map value objects using owned types or value conversions (implementation in [skill:dotnet-api]):
 
 ```csharp
 // Owned type -- maps to columns in the parent table
@@ -349,7 +349,7 @@ public sealed class DomainEventDispatcher(
 
 // Note: The (dynamic) dispatch pattern is simple but not AOT-compatible.
 // For Native AOT scenarios, use a source-generated or dictionary-based
-// dispatcher. See [skill:dotnet-native-aot] for AOT constraints.
+// dispatcher. See [skill:dotnet-tooling] for AOT constraints.
 
 // Handler interface
 public interface IDomainEventHandler<in TEvent>
@@ -408,7 +408,7 @@ public sealed class EventDispatchingSaveChangesInterceptor(
 | Reliability | Same transaction scope | At-least-once with idempotent consumers |
 | Example | `OrderSubmitted` (triggers email handler) | `OrderSubmittedIntegration` (notifies shipping service) |
 
-A domain event handler may publish an integration event to a message broker. See [skill:dotnet-messaging-patterns] for integration event infrastructure.
+A domain event handler may publish an integration event to a message broker. See [skill:dotnet-api] for integration event infrastructure.
 
 ```csharp
 // Domain event handler that publishes an integration event
@@ -583,7 +583,7 @@ public interface IUnitOfWork
 }
 ```
 
-For EF Core repository implementations, see [skill:dotnet-efcore-architecture].
+For EF Core repository implementations, see [skill:dotnet-api].
 
 ### Repository Design Rules
 

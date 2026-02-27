@@ -14,11 +14,11 @@ For extended code examples (CodeRefactoringProvider implementation, multi-versio
 
 ## Out of scope
 
-- Consuming and configuring existing analyzers (CA rules, severity) -- see [skill:dotnet-add-analyzers]
+- Consuming and configuring existing analyzers (CA rules, severity) -- see [skill:dotnet-tooling]
 - Authoring source generators (IIncrementalGenerator) -- see `references/source-generators.md`
 - Naming conventions -- see `references/coding-standards.md`
 
-Cross-references: `references/source-generators.md` for shared Roslyn packaging concepts and IIncrementalGenerator patterns, [skill:dotnet-add-analyzers] for consuming and configuring analyzers, [skill:dotnet-testing-strategy] for general test organization and framework selection, `references/coding-standards.md` for naming conventions applied to analyzer code.
+Cross-references: `references/source-generators.md` for shared Roslyn packaging concepts and IIncrementalGenerator patterns, [skill:dotnet-tooling] for consuming and configuring analyzers, [skill:dotnet-testing] for general test organization and framework selection, `references/coding-standards.md` for naming conventions applied to analyzer code.
 
 ---
 
@@ -137,7 +137,7 @@ Code fix providers offer automated corrections for diagnostics. Key patterns:
 - **Trivia preservation:** Always transfer leading/trailing trivia from replaced nodes
 - **FixAllProvider:** Return `WellKnownFixAllProviders.BatchFixer` for batch-applicable fixes
 
-See `details.md` for the complete CodeFixProvider implementation with property conversion.
+See the **Extended Examples** section below for the complete CodeFixProvider implementation with property conversion.
 
 ---
 
@@ -165,7 +165,7 @@ Conditionally suppresses diagnostics from other analyzers when EditorConfig cann
 | 4.8 | VS 17.8 / .NET 8 U1 | `CollectionExpression` support |
 | 4.14 | VS 17.14 / .NET 10 SDK | Latest API surface |
 
-Use conditional compilation constants (`ROSLYN_X_Y_OR_GREATER`) and version-specific NuGet paths (`analyzers/dotnet/roslyn{version}/cs/`). See `details.md` for the complete multi-version project structure.
+Use conditional compilation constants (`ROSLYN_X_Y_OR_GREATER`) and version-specific NuGet paths (`analyzers/dotnet/roslyn{version}/cs/`). See the **Extended Examples** section below for the complete multi-version project structure.
 
 ---
 

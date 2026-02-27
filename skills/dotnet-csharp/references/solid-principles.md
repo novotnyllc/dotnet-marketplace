@@ -11,11 +11,11 @@ Foundational design principles for .NET applications. Covers each SOLID principl
 
 ## Out of scope
 
-- Architectural patterns (vertical slices, request pipelines, caching) -- see [skill:dotnet-architecture-patterns]
+- Architectural patterns (vertical slices, request pipelines, caching) -- see [skill:dotnet-api]
 - DI container mechanics (registration, lifetimes, keyed services) -- see `references/dependency-injection.md`
 - Code smells and anti-pattern detection -- see `references/code-smells.md`
 
-Cross-references: [skill:dotnet-architecture-patterns] for clean architecture and vertical slices, `references/dependency-injection.md` for DI registration patterns and lifetime management, `references/code-smells.md` for anti-pattern detection, `references/coding-standards.md` for naming and style conventions.
+Cross-references: [skill:dotnet-api] for clean architecture and vertical slices, `references/dependency-injection.md` for DI registration patterns and lifetime management, `references/code-smells.md` for anti-pattern detection, `references/coding-standards.md` for naming and style conventions.
 
 ---
 
