@@ -60,7 +60,7 @@ user-invocable: false
 Reference skills and agents using machine-parseable syntax:
 
 ```markdown
-See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+See [skill:dotnet-csharp] for C# language patterns and async/await guidance.
 Route to [skill:dotnet-security-reviewer] for security audit.
 ```
 

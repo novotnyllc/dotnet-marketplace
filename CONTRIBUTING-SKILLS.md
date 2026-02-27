@@ -120,8 +120,8 @@ GitHub Copilot CLI has a system prompt token budget that limits how many skills 
 
 | Category | Count | Skills |
 |----------|-------|--------|
-| `user-invocable: true` | 2 | dotnet-advisor, dotnet-debugging |
-| `user-invocable: false` | 6 | dotnet-csharp, dotnet-api, dotnet-ui, dotnet-testing, dotnet-devops, dotnet-tooling |
+| `user-invocable: true` | 4 | dotnet-advisor, dotnet-ui, dotnet-tooling, dotnet-debugging |
+| `user-invocable: false` | 4 | dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
 
 **Routing strategy:** `dotnet-advisor` is the meta-router. We intentionally keep it early in **both** plausible orderings:
 - **Manifest order:** it is listed first in `.claude-plugin/plugin.json`.
@@ -131,14 +131,14 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 
 **Behavior scenarios:**
 
-- **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 11 user-invocable skills compete for the window. All 11 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
+- **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 4 user-invocable skills compete for the window. All 4 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
 - **If all 8 skills count against the budget:** All 8 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
 
 **Rules for maintaining Copilot compatibility:**
 
 1. **Keep `dotnet-advisor` user-invocable.** It must remain in the visible window to serve as the meta-router.
 2. **Do not rename `dotnet-advisor`** to anything that sorts late alphabetically among all skills. The name is chosen to sort early in the `dotnet-*` namespace.
-3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
+3. **New user-invocable skills** should be added sparingly. The current count of 4 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
 4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
 5. **Skill ordering is manifest-order or alphabetical.** Verified in v0.0.412: skills appear in plugin.json array order when the model reads the manifest, or alphabetical when using filesystem glob. If you create a new user-invocable skill, ensure it's registered in plugin.json and check its position in both orderings.
 
