@@ -1,8 +1,5 @@
 # Type Design and Performance
 
-
-# dotnet-csharp-type-design-performance
-
 Upfront type design choices that affect performance throughout an application's lifetime. Covers the struct vs class decision matrix, sealed by default for library types, readonly struct for defensive copy elimination, ref struct and Span\<T\>/Memory\<T\> selection, and collection type selection including FrozenDictionary. This skill focuses on **designing types correctly from the start**, not on optimizing existing code.
 
 **Version assumptions:** .NET 8.0+ baseline. FrozenDictionary (requires .NET 8+) is in-scope by default.

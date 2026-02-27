@@ -1,8 +1,5 @@
 # Input Validation
 
-
-# dotnet-input-validation
-
 Comprehensive input validation patterns for .NET APIs. Covers the .NET 10 built-in validation system, FluentValidation for complex business rules, Data Annotations for simple models, endpoint filters for Minimal API integration, ProblemDetails error responses, and security-focused validation techniques.
 
 ## Scope
@@ -19,9 +16,9 @@ Comprehensive input validation patterns for .NET APIs. Covers the .NET 10 built-
 - Blazor form validation (EditForm, DataAnnotationsValidator) -- see [skill:dotnet-blazor-components]
 - OWASP injection prevention principles -- see [skill:dotnet-security-owasp]
 - Architectural patterns for validation placement -- see [skill:dotnet-architecture-patterns]
-- Options pattern ValidateDataAnnotations -- see [skill:dotnet-csharp-configuration]
+- Options pattern ValidateDataAnnotations -- see `references/configuration.md`
 
-Cross-references: [skill:dotnet-security-owasp] for OWASP injection prevention, [skill:dotnet-architecture-patterns] for architectural validation strategy, [skill:dotnet-minimal-apis] for Minimal API pipeline integration, [skill:dotnet-csharp-configuration] for Options pattern validation.
+Cross-references: [skill:dotnet-security-owasp] for OWASP injection prevention, [skill:dotnet-architecture-patterns] for architectural validation strategy, [skill:dotnet-minimal-apis] for Minimal API pipeline integration, `references/configuration.md` for Options pattern validation.
 
 ---
 
@@ -286,7 +283,7 @@ public sealed class DateRangeDto : IValidatableObject
 }
 ```
 
-**Gotcha:** Options pattern classes must use `{ get; set; }` not `{ get; init; }` because the configuration binder needs to mutate properties after construction. Validation attributes on `init`-only properties work for request DTOs but fail for options classes bound via `IConfiguration`. See [skill:dotnet-csharp-configuration] for Options pattern validation.
+**Gotcha:** Options pattern classes must use `{ get; set; }` not `{ get; init; }` because the configuration binder needs to mutate properties after construction. Validation attributes on `init`-only properties work for request DTOs but fail for options classes bound via `IConfiguration`. See `references/configuration.md` for Options pattern validation.
 
 ---
 

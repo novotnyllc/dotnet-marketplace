@@ -1,8 +1,5 @@
 # Domain Modeling
 
-
-# dotnet-domain-modeling
-
 Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, value objects, domain events, integration events, domain services, repository contract design, and the distinction between rich and anemic domain models. These patterns apply to the domain layer itself -- the pure C# model that encapsulates business rules -- independent of any persistence technology.
 
 ## Scope
@@ -16,12 +13,12 @@ Domain-Driven Design tactical patterns in C#. Covers aggregate roots, entities, 
 
 - EF Core configuration and aggregate persistence mapping -- see [skill:dotnet-efcore-architecture]
 - Tactical EF Core usage (DbContext lifecycle, migrations) -- see [skill:dotnet-efcore-patterns]
-- Input validation at API boundaries -- see [skill:dotnet-validation-patterns]
+- Input validation at API boundaries -- see `references/validation-patterns.md`
 - Data access technology selection -- see [skill:dotnet-data-access-strategy]
 - Vertical slice architecture and request pipelines -- see [skill:dotnet-architecture-patterns]
 - Messaging infrastructure and saga orchestration -- see [skill:dotnet-messaging-patterns]
 
-Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, [skill:dotnet-validation-patterns] for input validation patterns, [skill:dotnet-messaging-patterns] for integration event infrastructure.
+Cross-references: [skill:dotnet-efcore-architecture] for aggregate persistence and repository implementation with EF Core, [skill:dotnet-efcore-patterns] for DbContext configuration and migrations, [skill:dotnet-architecture-patterns] for vertical slices and request pipeline design, `references/validation-patterns.md` for input validation patterns, [skill:dotnet-messaging-patterns] for integration event infrastructure.
 
 ---
 
@@ -635,7 +632,7 @@ Map domain exceptions to HTTP responses at the API boundary (e.g., `DomainExcept
 2. **Do not create navigation properties between aggregate roots** -- reference other aggregates by ID value objects (e.g., `CustomerId`) not by entity navigation. Cross-aggregate navigation breaks bounded context isolation.
 3. **Do not dispatch domain events inside the transaction** -- dispatch after `SaveChangesAsync` succeeds. Dispatching before save means side effects fire even if the save fails.
 4. **Do not use domain types in integration events** -- integration events cross bounded context boundaries and must use primitives or DTOs. Domain type changes would break other services.
-5. **Do not put validation logic only in the API layer** -- domain invariants belong in the domain model. API validation ([skill:dotnet-validation-patterns]) catches malformed input; domain validation enforces business rules.
+5. **Do not put validation logic only in the API layer** -- domain invariants belong in the domain model. API validation (`references/validation-patterns.md`) catches malformed input; domain validation enforces business rules.
 6. **Do not create anemic entities with public `List<T>` properties** -- expose collections as `IReadOnlyList<T>` and provide mutation methods on the aggregate root that enforce business rules.
 7. **Do not inject infrastructure services into domain entities** -- entities should be pure C# objects. Use domain services for logic that needs external data, and application services for infrastructure orchestration.
 

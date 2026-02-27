@@ -1,8 +1,5 @@
 # Editorconfig
 
-
-# dotnet-editorconfig
-
 Comprehensive guide to configuring .NET code analysis rules via `.editorconfig` and global AnalyzerConfig files. Covers code style rules (IDE*), code quality rules (CA*), severity levels, `AnalysisLevel`, `EnforceCodeStyleInBuild`, directory hierarchy precedence, and `.globalconfig` files.
 
 ## Scope

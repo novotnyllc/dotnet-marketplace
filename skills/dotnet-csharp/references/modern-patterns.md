@@ -1,8 +1,5 @@
 # Modern Patterns
 
-
-# dotnet-csharp-modern-patterns
-
 Modern C# language feature guidance adapted to the project's target framework. Always run [skill:dotnet-version-detection] first to determine TFM and C# version.
 
 ## Scope
@@ -15,7 +12,7 @@ Modern C# language feature guidance adapted to the project's target framework. A
 
 - Naming and style conventions -- see `references/coding-standards.md`
 - Async/await patterns -- see `references/async-patterns.md`
-- Source generator usage (GeneratedRegex, LoggerMessage) -- see [skill:dotnet-csharp-source-generators]
+- Source generator usage (GeneratedRegex, LoggerMessage) -- see `references/source-generators.md`
 
 Cross-references: `references/coding-standards.md` for naming/style conventions, `references/async-patterns.md` for async-specific patterns.
 
@@ -336,7 +333,7 @@ public partial class ViewModel
 }
 ```
 
-> **net9.0+ only.** See [skill:dotnet-csharp-source-generators] for generator patterns.
+> **net9.0+ only.** See `references/source-generators.md` for generator patterns.
 
 ---
 

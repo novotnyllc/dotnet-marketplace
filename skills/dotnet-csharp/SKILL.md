@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Guides C# language patterns, coding standards, and .NET runtime features. Covers async/await, dependency injection, configuration, source generators, nullable reference types, serialization, channels, LINQ optimization, domain modeling, SOLID principles, concurrency, analyzers, editorconfig, file I/O, native interop, validation, modern C# syntax (records, pattern matching, primary constructors), and API design.
+description: Guides C# language patterns, coding standards, and .NET runtime features including async/await, dependency injection, configuration, source generators, nullable reference types, serialization, channels, LINQ optimization, domain modeling, SOLID principles, concurrency, analyzers, editorconfig, file I/O, native interop, validation, modern C# syntax (records, pattern matching, primary constructors), and API design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill covers 22 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 22 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 Baseline dependency: `references/coding-standards.md` defines naming, file layout, and style rules that apply to all C# code generation and review tasks. Load it by default whenever C# code will be produced.
 
@@ -53,11 +53,11 @@ Most-shared companion: `references/async-patterns.md` is referenced by 4 agents 
 
 ## Out of scope
 
-- ASP.NET Core / web API patterns -> [skill:dotnet-api]
-- UI framework patterns -> [skill:dotnet-ui]
-- Testing patterns -> [skill:dotnet-testing]
-- Build/MSBuild/project setup -> [skill:dotnet-tooling]
-- Performance profiling tools -> [skill:dotnet-tooling]
+- ASP.NET Core / web API patterns -> [skill:dotnet-minimal-apis], [skill:dotnet-middleware-patterns]
+- UI framework patterns -> [skill:dotnet-blazor-patterns], [skill:dotnet-uno-platform], [skill:dotnet-maui-development]
+- Testing patterns -> [skill:dotnet-testing-strategy], [skill:dotnet-xunit]
+- Build/MSBuild/project setup -> [skill:dotnet-msbuild-authoring], [skill:dotnet-project-structure]
+- Performance profiling tools -> [skill:dotnet-profiling], [skill:dotnet-benchmarkdotnet]
 
 ## Companion Files
 

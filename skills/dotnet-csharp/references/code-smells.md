@@ -1,8 +1,5 @@
 # Code Smells
 
-
-# dotnet-csharp-code-smells
-
 Proactive code-smell and anti-pattern detection for C# code. This skill triggers during all workflow modes -- planning, implementation, and review. Each entry identifies the smell, explains why it is harmful, provides the correct fix, and references the relevant CA rule or cross-reference.
 
 ## Scope
@@ -19,7 +16,7 @@ Proactive code-smell and anti-pattern detection for C# code. This skill triggers
 - SOLID/DRY design principles -- see `references/solid-principles.md`
 - Naming and style conventions -- see `references/coding-standards.md`
 
-Cross-references: `references/async-patterns.md` for async gotchas, `references/coding-standards.md` for naming and style, `references/dependency-injection.md` for DI lifetime misuse, [skill:dotnet-csharp-nullable-reference-types] for NRT annotation mistakes.
+Cross-references: `references/async-patterns.md` for async gotchas, `references/coding-standards.md` for naming and style, `references/dependency-injection.md` for DI lifetime misuse, `references/nullable-reference-types.md` for NRT annotation mistakes.
 
 ---
 

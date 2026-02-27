@@ -1,8 +1,5 @@
 # Validation Patterns
 
-
-# dotnet-validation-patterns
-
 Built-in .NET validation patterns that do not require third-party packages. Covers DataAnnotations attributes, `IValidatableObject` for cross-property validation, `IValidateOptions<T>` for options validation at startup, custom `ValidationAttribute` authoring, and `Validator.TryValidateObject` for manual validation. Prefer these built-in mechanisms as the default; reserve FluentValidation for complex domain rules that outgrow declarative attributes.
 
 ## Scope

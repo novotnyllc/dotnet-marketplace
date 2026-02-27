@@ -1,8 +1,5 @@
 # File I/O
 
-
-# dotnet-file-io
-
 File I/O patterns for .NET applications. Covers FileStream construction with async flags, RandomAccess API for thread-safe offset-based I/O, File convenience methods, FileSystemWatcher event handling and debouncing, MemoryMappedFile for large files and IPC, path handling security (Combine vs Join), secure temp file creation, cross-platform considerations, IOException hierarchy, and buffer sizing guidance.
 
 ## Scope
@@ -18,7 +15,7 @@ File I/O patterns for .NET applications. Covers FileStream construction with asy
 - PipeReader/PipeWriter and network I/O -- see [skill:dotnet-io-pipelines]
 - Async/await fundamentals -- see `references/async-patterns.md`
 - Span/Memory/ArrayPool deep patterns -- see [skill:dotnet-performance-patterns]
-- JSON and Protobuf serialization -- see [skill:dotnet-serialization]
+- JSON and Protobuf serialization -- see `references/serialization.md`
 - GC implications of memory-mapped backing arrays -- see [skill:dotnet-gc-memory]
 
 Cross-references: [skill:dotnet-io-pipelines] for PipeReader/PipeWriter network I/O, [skill:dotnet-gc-memory] for POH and memory-mapped backing array GC implications, [skill:dotnet-performance-patterns] for Span/Memory basics and ArrayPool usage, `references/async-patterns.md` for async/await patterns used with file streams.

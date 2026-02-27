@@ -1,11 +1,8 @@
 # Roslyn Analyzers
 
-
-# dotnet-roslyn-analyzers
-
 Guidance for **authoring** custom Roslyn analyzers, code fix providers, code refactoring providers, and diagnostic suppressors. Covers project setup, DiagnosticDescriptor conventions, analysis context registration, code fix actions, code refactoring actions, multi-Roslyn-version targeting (3.8 through 4.14), testing with Microsoft.CodeAnalysis.Testing, NuGet packaging, and performance best practices.
 
-For extended code examples (CodeRefactoringProvider implementation, multi-version project structure, test matrix configuration), see `details.md` in this skill directory.
+For extended code examples (CodeRefactoringProvider implementation, multi-version project structure, test matrix configuration), see the **Extended Examples** section at the end of this file.
 
 ## Scope
 

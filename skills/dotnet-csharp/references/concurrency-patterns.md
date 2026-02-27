@@ -1,8 +1,5 @@
 # Concurrency Patterns
 
-
-# dotnet-csharp-concurrency-patterns
-
 Thread synchronization primitives, concurrent data structures, and a decision framework for choosing the right concurrency mechanism. Covers `lock`/`Monitor`, `SemaphoreSlim`, `Interlocked`, `ConcurrentDictionary`, `ConcurrentQueue`, `ReaderWriterLockSlim`, and `SpinLock`. This skill is the authoritative source for synchronization and thread-safe data access patterns.
 
 **Version assumptions:** .NET 8.0+ baseline. All primitives covered are available from .NET Core 1.0+ but examples use modern C# idioms.

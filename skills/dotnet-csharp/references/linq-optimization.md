@@ -1,8 +1,5 @@
 # LINQ Optimization
 
-
-# dotnet-linq-optimization
-
 LINQ performance patterns for .NET applications. Covers the critical distinction between `IQueryable<T>` server-side evaluation and `IEnumerable<T>` client-side materialization, compiled queries for EF Core hot paths, deferred execution pitfalls, LINQ-to-Objects allocation patterns and when to drop to manual loops, and Span-based alternatives for zero-allocation processing.
 
 ## Scope

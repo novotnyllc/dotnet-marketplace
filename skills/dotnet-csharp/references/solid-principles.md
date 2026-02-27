@@ -1,8 +1,5 @@
 # SOLID Principles
 
-
-# dotnet-solid-principles
-
 Foundational design principles for .NET applications. Covers each SOLID principle with concrete C# anti-patterns and fixes, plus DRY guidance with nuance on when duplication is acceptable. These principles guide class design, interface contracts, and dependency management across all .NET project types.
 
 ## Scope

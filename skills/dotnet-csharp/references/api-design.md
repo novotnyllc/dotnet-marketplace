@@ -1,8 +1,5 @@
 # API Design
 
-
-# dotnet-csharp-api-design
-
 Design-time principles for creating public .NET APIs that are intuitive, consistent, and forward-compatible. Covers naming conventions for API surface, parameter ordering, return type selection, error reporting strategies, extension points, and wire compatibility for serialized types. This skill addresses the **design decisions** that make APIs compatible and usable in the first place, before enforcement tooling gets involved.
 
 **Version assumptions:** .NET 8.0+ baseline. Examples use modern C# features (primary constructors, collection expressions) where appropriate.
@@ -356,7 +353,7 @@ Before shipping a new public API, verify each concern:
 3. **Do not return mutable collections from public APIs** -- return `IReadOnlyList<T>` or `IReadOnlyCollection<T>` instead of `List<T>` or `IList<T>`. Mutable return types allow callers to corrupt internal state.
 4. **Do not change serialized property names without `[JsonPropertyName]` annotations** -- renaming a C# property without preserving the wire name breaks all existing serialized data and API clients.
 5. **Do not add required parameters to existing public methods** -- this is a source-breaking change. Add a new overload or use optional parameters with defaults instead.
-6. **Do not use `async void` in API surface** -- return `Task` or `ValueTask`. The only valid `async void` is framework event handlers. See [skill:dotnet-csharp-async-patterns].
+6. **Do not use `async void` in API surface** -- return `Task` or `ValueTask`. The only valid `async void` is framework event handlers. See `references/async-patterns.md`.
 7. **Do not design exception hierarchies without a base library exception** -- callers need a single catch point for all library errors. Always provide a base exception type that specific exceptions derive from.
 8. **Do not put extension methods in the `System` namespace** -- namespace pollution affects every file in every consumer project. Use the library's own namespace or a dedicated `.Extensions` sub-namespace.
 
