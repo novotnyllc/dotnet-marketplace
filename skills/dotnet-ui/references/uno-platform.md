@@ -1,9 +1,3 @@
----
-name: dotnet-uno-platform
-description: Builds Uno Platform cross-platform apps. Extensions, MVUX, Toolkit controls, Hot Reload.
-license: MIT
-user-invocable: false
----
 
 # dotnet-uno-platform
 
@@ -19,16 +13,15 @@ Uno Platform core development: Extensions ecosystem (Navigation, DI, Configurati
 
 ## Out of scope
 
-- Per-target deployment (WASM, iOS, Android, Desktop) -- see [skill:dotnet-uno-targets]
-- MCP server integration for live documentation -- see [skill:dotnet-uno-mcp]
-- Uno Platform testing -- see [skill:dotnet-uno-testing]
-- General serialization patterns -- see [skill:dotnet-serialization]
-- AOT/trimming for WASM -- see [skill:dotnet-aot-wasm]
-- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
+- Per-target deployment (WASM, iOS, Android, Desktop) -- see `references/uno-targets.md`
+- MCP server integration for live documentation -- see `references/uno-mcp.md`
+- Uno Platform testing -- see `references/uno-testing.md`
+- General serialization patterns -- see [skill:dotnet-csharp]
+- AOT/trimming for WASM -- see [skill:dotnet-tooling]
+- UI framework selection decision tree -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-uno-targets] for per-target deployment, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing patterns, [skill:dotnet-serialization] for serialization depth, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, ARIA mapping on WASM).
+Cross-references: `references/uno-targets.md` for per-target deployment, `references/uno-mcp.md` for MCP integration, `references/uno-testing.md` for testing patterns, [skill:dotnet-csharp] for serialization depth, [skill:dotnet-tooling] for WASM AOT, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (AutomationProperties, ARIA mapping on WASM).
 
----
 
 ## Single-Project Structure
 
@@ -91,7 +84,6 @@ MyApp/
   MyApp.Tests/                   # Unit tests (shared logic)
 ```
 
----
 
 ## Uno Extensions
 
@@ -222,7 +214,7 @@ Integrates System.Text.Json with source generators for AOT compatibility. Config
         .AddJsonTypeInfo(AppJsonContext.Default.OrderDto))
 ```
 
-For general serialization patterns and AOT source-gen depth, see [skill:dotnet-serialization].
+For general serialization patterns and AOT source-gen depth, see [skill:dotnet-csharp].
 
 ### Localization
 
@@ -313,7 +305,6 @@ OIDC, custom auth providers, and token management. Integrates with navigation fo
 
 Token management is automatic: tokens are stored securely per platform (Keychain on iOS/macOS, KeyStore on Android, Credential Manager on Windows, browser storage on WASM) and refreshed transparently.
 
----
 
 ## MVUX (Model-View-Update-eXtended)
 
@@ -410,7 +401,6 @@ public partial record ProductModel(IProductService ProductService)
 
 **When to use MVVM:** Projects migrating from existing WPF/UWP/WinUI codebases, teams familiar with MVVM patterns, or projects using CommunityToolkit.Mvvm.
 
----
 
 ## Uno Toolkit Controls
 
@@ -467,7 +457,6 @@ The Uno Toolkit provides cross-platform controls and helpers beyond stock WinUI 
 </utu:AutoLayout>
 ```
 
----
 
 ## Theme Resources
 
@@ -538,7 +527,6 @@ await themeService.SetThemeAsync(AppTheme.Dark);
 var currentTheme = themeService.Theme;
 ```
 
----
 
 ## Hot Reload
 
@@ -568,7 +556,6 @@ Hot Reload is automatically configured by Visual Studio and VS Code (with Uno ex
 
 **Gotcha:** Hot Reload does not support adding new types, changing inheritance hierarchies, or modifying `UnoFeatures`. These require a full rebuild.
 
----
 
 ## Agent Gotchas
 
@@ -581,7 +568,6 @@ Hot Reload is automatically configured by Visual Studio and VS Code (with Uno ex
 7. **Do not use `AppBarButton` outside a `CommandBar`.** Use regular `Button` with icon content for standalone icon buttons.
 8. **Do not forget `x:Uid` for localization.** Every user-visible string should use `x:Uid` referencing `.resw` resources, not hardcoded text.
 
----
 
 ## Prerequisites
 
@@ -590,7 +576,6 @@ Hot Reload is automatically configured by Visual Studio and VS Code (with Uno ex
 - Platform workloads as needed: `dotnet workload install ios android maccatalyst wasm-tools`
 - Visual Studio 2022+ or VS Code with Uno Platform extension
 
----
 
 ## References
 

@@ -1,9 +1,3 @@
----
-name: dotnet-wpf-migration
-description: Migrates desktop apps. WPF/WinForms to .NET 8+, WPF to WinUI or Uno, UWP to WinUI.
-license: MIT
-user-invocable: false
----
 
 # dotnet-wpf-migration
 
@@ -22,16 +16,15 @@ Context-dependent migration guidance for Windows desktop applications. Covers WP
 
 ## Out of scope
 
-- WPF .NET 8+ development patterns -- see [skill:dotnet-wpf-modern]
-- WinUI 3 development patterns -- see [skill:dotnet-winui]
-- WinForms .NET 8+ development patterns -- see [skill:dotnet-winforms-basics]
-- Uno Platform development patterns -- see [skill:dotnet-uno-platform]
-- Framework selection decision tree -- see [skill:dotnet-ui-chooser]
-- Desktop testing -- see [skill:dotnet-ui-testing-core]
+- WPF .NET 8+ development patterns -- see `references/wpf-modern.md`
+- WinUI 3 development patterns -- see `references/winui.md`
+- WinForms .NET 8+ development patterns -- see `references/winforms-basics.md`
+- Uno Platform development patterns -- see `references/uno-platform.md`
+- Framework selection decision tree -- see `references/ui-chooser.md`
+- Desktop testing -- see [skill:dotnet-testing]
 
-Cross-references: [skill:dotnet-wpf-modern] for WPF .NET 8+ patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-winforms-basics] for WinForms .NET 8+ patterns, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-ui-testing-core] for desktop testing.
+Cross-references: `references/wpf-modern.md` for WPF .NET 8+ patterns, `references/winui.md` for WinUI 3 patterns, `references/winforms-basics.md` for WinForms .NET 8+ patterns, `references/uno-platform.md` for Uno Platform patterns, `references/ui-chooser.md` for framework selection, [skill:dotnet-testing] for desktop testing.
 
----
 
 ## Migration Path Overview
 
@@ -46,7 +39,6 @@ Choose a migration path based on your current framework and target goals. Each p
 | UWP | WinUI 3 | Medium | Medium | Stay Windows-only, modern runtime |
 | UWP | Uno Platform | Medium-High | Medium | Cross-platform needed from UWP |
 
----
 
 ## WPF .NET Framework to .NET 8+
 
@@ -122,9 +114,8 @@ dotnet add package MaterialDesignThemes --version 5.*
 - **Assembly loading.** `AssemblyLoadContext` replaces `AppDomain` for assembly isolation. Plugin architectures using `AppDomain.CreateDomain` need rework.
 - **Runtime behavior.** .NET 8 GC is more aggressive with Gen0/Gen1 collections. Finalizer-dependent code may behave differently.
 
-For post-migration WPF patterns (Host builder, MVVM Toolkit, modern C#), see [skill:dotnet-wpf-modern].
+For post-migration WPF patterns (Host builder, MVVM Toolkit, modern C#), see `references/wpf-modern.md`.
 
----
 
 ## WPF to WinUI 3
 
@@ -168,9 +159,8 @@ Migrate when you need modern Windows-native UI: Fluent Design, touch/pen input, 
 6. **Test Windows integration** features (notifications, lifecycle, file associations)
 7. **Choose deployment model** -- MSIX (app identity) or unpackaged (xcopy)
 
-For WinUI 3 patterns and project setup, see [skill:dotnet-winui].
+For WinUI 3 patterns and project setup, see `references/winui.md`.
 
----
 
 ## WPF to Uno Platform
 
@@ -211,9 +201,8 @@ Uno Extensions provides cross-platform replacements for common WPF patterns:
 | Manual HTTP clients | `Uno.Extensions.Http` (typed clients with Refit) |
 | Manual serialization | `Uno.Extensions.Serialization` |
 
-For Uno Platform development patterns, see [skill:dotnet-uno-platform]. For per-target deployment guidance, see [skill:dotnet-uno-targets].
+For Uno Platform development patterns, see `references/uno-platform.md`. For per-target deployment guidance, see `references/uno-targets.md`.
 
----
 
 ## WinForms .NET Framework to .NET 8+
 
@@ -254,14 +243,13 @@ WinForms designer files (`.Designer.cs`) generally migrate cleanly. The Visual S
 ### Post-Migration Modernization
 
 After migrating to .NET 8+, consider adopting modern patterns incrementally:
-- **Add dependency injection** via Host builder (see [skill:dotnet-winforms-basics])
+- **Add dependency injection** via Host builder (see `references/winforms-basics.md`)
 - **Replace synchronous calls** with async/await
 - **Enable high-DPI** with `PerMonitorV2` mode
 - **Enable dark mode** (experimental in .NET 9+)
 
-For WinForms .NET 8+ patterns, see [skill:dotnet-winforms-basics].
+For WinForms .NET 8+ patterns, see `references/winforms-basics.md`.
 
----
 
 ## UWP to WinUI 3
 
@@ -304,9 +292,8 @@ The primary migration task is updating namespaces from `Windows.UI.*` to `Micros
 
 **UWP .NET 9 preview path:** Microsoft announced UWP support on .NET 9 as a preview. If full WinUI 3 migration is too costly, this allows UWP apps to use modern .NET runtime features without migrating the UI framework.
 
-For WinUI 3 development patterns, see [skill:dotnet-winui].
+For WinUI 3 development patterns, see `references/winui.md`.
 
----
 
 ## UWP to Uno Platform
 
@@ -324,9 +311,8 @@ Since Uno Platform uses the same WinUI XAML API surface that UWP XAML is based o
 - **WinRT APIs** (sensors, geolocation, media capture) need Uno implementations or platform-specific alternatives
 - **MSIX packaging** is Windows-only -- other platforms use their native distribution mechanisms
 
-For Uno Platform development patterns, see [skill:dotnet-uno-platform]. For per-target deployment, see [skill:dotnet-uno-targets].
+For Uno Platform development patterns, see `references/uno-platform.md`. For per-target deployment, see `references/uno-targets.md`.
 
----
 
 ## Decision Matrix
 
@@ -359,12 +345,11 @@ Use this matrix when deciding which migration path to take. The right choice dep
 For large applications, a staged approach reduces risk:
 
 1. **Stage 1: Runtime migration** -- Move from .NET Framework to .NET 8+ (same UI framework). Validates compatibility, gains performance, enables modern NuGet packages.
-2. **Stage 2: Modernize patterns** -- Adopt Host builder, DI, MVVM Toolkit, modern C#. See [skill:dotnet-wpf-modern] or [skill:dotnet-winforms-basics].
+2. **Stage 2: Modernize patterns** -- Adopt Host builder, DI, MVVM Toolkit, modern C#. See `references/wpf-modern.md` or `references/winforms-basics.md`.
 3. **Stage 3: UI migration** (if needed) -- Migrate to WinUI 3, Uno Platform, or Blazor based on requirements. Only pursue if Stage 1 and 2 are stable.
 
 This approach avoids the "big bang" rewrite risk and delivers incremental value at each stage.
 
----
 
 ## Agent Gotchas
 
@@ -376,7 +361,6 @@ This approach avoids the "big bang" rewrite risk and delivers incremental value 
 6. **Do not forget that UWP to WinUI 3 migration involves app model changes, not just namespace updates.** `Window.Current`, `CoreDispatcher`, `CoreApplication` APIs are all replaced with different patterns.
 7. **Do not recommend Uno Platform for simple Windows-only apps.** If the application does not need cross-platform reach, WinUI 3 or WPF .NET 8+ is simpler and has lower maintenance overhead.
 
----
 
 ## References
 

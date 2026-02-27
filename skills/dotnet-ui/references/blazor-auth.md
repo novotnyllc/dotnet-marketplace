@@ -1,9 +1,3 @@
----
-name: dotnet-blazor-auth
-description: Implements Blazor auth flows -- login/logout, AuthorizeView, Identity UI, OIDC.
-license: MIT
-user-invocable: false
----
 
 # dotnet-blazor-auth
 
@@ -20,19 +14,18 @@ Authentication and authorization across all Blazor hosting models. Covers Author
 
 ## Out of scope
 
-- JWT token generation and validation -- see [skill:dotnet-api-security]
-- OWASP security principles -- see [skill:dotnet-security-owasp]
-- CSRF/XSS/CSP/rate-limiting hardening without auth-flow work -- see [skill:dotnet-security-owasp]
-- Hardening-only reviews of existing login pages without auth-flow implementation changes -- see [skill:dotnet-security-owasp]
-- bUnit testing of auth components -- see [skill:dotnet-blazor-testing]
-- E2E auth testing -- see [skill:dotnet-playwright]
-- UI framework selection -- see [skill:dotnet-ui-chooser]
+- JWT token generation and validation -- see [skill:dotnet-api]
+- OWASP security principles -- see [skill:dotnet-api]
+- CSRF/XSS/CSP/rate-limiting hardening without auth-flow work -- see [skill:dotnet-api]
+- Hardening-only reviews of existing login pages without auth-flow implementation changes -- see [skill:dotnet-api]
+- bUnit testing of auth components -- see `references/blazor-testing.md`
+- E2E auth testing -- see [skill:dotnet-testing]
+- UI framework selection -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-api-security] for API-level auth, [skill:dotnet-security-owasp] for OWASP principles, [skill:dotnet-blazor-patterns] for hosting models, [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-api] for API-level auth, [skill:dotnet-api] for OWASP principles, `references/blazor-patterns.md` for hosting models, `references/blazor-components.md` for component architecture, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection.
 
 Routing note: do not load this skill for OWASP hardening reviews unless the task explicitly includes Blazor auth flow/UI implementation.
 
----
 
 ## Auth Flow per Hosting Model
 
@@ -132,7 +125,6 @@ public class MauiAuthStateProvider : AuthenticationStateProvider
 }
 ```
 
----
 
 ## AuthorizeView
 
@@ -185,7 +177,6 @@ builder.Services.AddAuthorizationBuilder()
         policy.RequireClaim("permission", "products.edit"));
 ```
 
----
 
 ## CascadingAuthenticationState
 
@@ -235,7 +226,6 @@ if (user.Identity?.IsAuthenticated == true)
 }
 ```
 
----
 
 ## Identity UI Scaffolding
 
@@ -337,7 +327,6 @@ For a fully Blazor-native auth experience, create Blazor components that call Id
 
 **Gotcha:** `SignInManager` uses `HttpContext` to set cookies. In Interactive render modes, `HttpContext` is not available after the circuit is established. Login/logout pages must use Static SSR (no `@rendermode`) so they have access to `HttpContext` for cookie operations.
 
----
 
 ## Role and Policy-Based Authorization
 
@@ -426,7 +415,6 @@ builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
 }
 ```
 
----
 
 ## External Identity Providers
 
@@ -475,7 +463,6 @@ var result = await WebAuthenticator.Default.AuthenticateAsync(
 var token = result.AccessToken;
 ```
 
----
 
 ## Agent Gotchas
 
@@ -486,7 +473,6 @@ var token = result.AccessToken;
 5. **Do not forget `AddCascadingAuthenticationState()`.** Without it, `[CascadingParameter] Task<AuthenticationState>` is always `null` in components, silently breaking auth checks.
 6. **Do not use `AddIdentity` and `AddDefaultIdentity` together.** `AddDefaultIdentity` includes UI scaffolding; `AddIdentity` does not. Choose one based on whether you want the default Identity UI pages.
 
----
 
 ## Prerequisites
 
@@ -496,7 +482,6 @@ var token = result.AccessToken;
 - `Microsoft.AspNetCore.Authentication.MicrosoftAccount` / `.Google` for external providers
 - `Microsoft.Authentication.WebAssembly.Msal` for WASM with Microsoft Identity (Azure AD/Entra)
 
----
 
 ## References
 

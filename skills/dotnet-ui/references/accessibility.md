@@ -1,9 +1,3 @@
----
-name: dotnet-accessibility
-description: Implements accessible .NET UI. SemanticProperties, ARIA, AutomationPeer, testing per platform.
-license: MIT
-user-invocable: false
----
 
 # dotnet-accessibility
 
@@ -21,11 +15,10 @@ Cross-platform accessibility patterns for .NET UI frameworks: semantic markup, k
 
 - Framework project setup -- see individual framework skills
 - Legal compliance advice (references WCAG but not legal guidance)
-- UI framework selection -- see [skill:dotnet-ui-chooser]
+- UI framework selection -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-blazor-patterns] for Blazor hosting and render modes, [skill:dotnet-blazor-components] for Blazor component lifecycle, [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-modern] for WPF on .NET 8+, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-terminal-gui] for Terminal.Gui, [skill:dotnet-spectre-console] for Spectre.Console, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: `references/blazor-patterns.md` for Blazor hosting and render modes, `references/blazor-components.md` for Blazor component lifecycle, `references/maui-development.md` for MAUI patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-modern.md` for WPF on .NET 8+, `references/uno-platform.md` for Uno Platform patterns, [skill:dotnet-tooling] for Terminal.Gui, [skill:dotnet-tooling] for Spectre.Console, `references/ui-chooser.md` for framework selection.
 
----
 
 ## Cross-Platform Principles
 
@@ -72,7 +65,6 @@ Ensure text and interactive elements meet WCAG contrast ratios.
 - Support high-contrast themes and system color overrides
 - Test with color blindness simulation tools
 
----
 
 ## Blazor Accessibility (In-Depth)
 
@@ -200,9 +192,8 @@ Announce dynamic content changes to screen readers without moving focus:
 </EditForm>
 ```
 
-For Blazor hosting models and render mode configuration, see [skill:dotnet-blazor-patterns]. For component lifecycle and EditForm patterns, see [skill:dotnet-blazor-components].
+For Blazor hosting models and render mode configuration, see `references/blazor-patterns.md`. For component lifecycle and EditForm patterns, see `references/blazor-components.md`.
 
----
 
 ## MAUI Accessibility (In-Depth)
 
@@ -279,9 +270,8 @@ public class RatingControl : ContentView
 }
 ```
 
-For MAUI project structure, MVVM patterns, and platform services, see [skill:dotnet-maui-development].
+For MAUI project structure, MVVM patterns, and platform services, see `references/maui-development.md`.
 
----
 
 ## WinUI Accessibility (In-Depth)
 
@@ -389,9 +379,8 @@ WinUI XAML controls provide built-in keyboard support. Ensure custom controls fo
 <Button Content="Delete" AccessKey="D" />
 ```
 
-For WinUI project setup, XAML patterns, and Windows integration, see [skill:dotnet-winui].
+For WinUI project setup, XAML patterns, and Windows integration, see `references/winui.md`.
 
----
 
 ## WPF Accessibility (Brief)
 
@@ -412,9 +401,8 @@ WPF on .NET 8+ uses the same UI Automation framework as WinUI. The APIs are near
            Text="{Binding StatusText}" />
 ```
 
-For WPF development patterns on .NET 8+, see [skill:dotnet-wpf-modern].
+For WPF development patterns on .NET 8+, see `references/wpf-modern.md`.
 
----
 
 ## Uno Platform Accessibility (Brief)
 
@@ -425,9 +413,8 @@ Uno Platform follows UWP/WinUI `AutomationProperties` patterns since its API sur
 - On WebAssembly, Uno maps `AutomationProperties` to HTML ARIA attributes automatically
 - Platform-specific behavior may vary -- test on each target (Windows, iOS, Android, WASM)
 
-For Uno Platform development patterns, see [skill:dotnet-uno-platform]. For per-target deployment and testing, see [skill:dotnet-uno-targets].
+For Uno Platform development patterns, see `references/uno-platform.md`. For per-target deployment and testing, see `references/uno-targets.md`.
 
----
 
 ## TUI Accessibility (Brief)
 
@@ -446,9 +433,8 @@ Terminal UI frameworks have inherent accessibility limitations. Screen reader su
 
 **Honest constraint:** TUI apps cannot programmatically control screen reader behavior. Terminal emulators provide varying levels of accessibility support. For applications where accessibility is a hard requirement, consider a GUI framework (Blazor, MAUI, WinUI) instead.
 
-For Terminal.Gui patterns, see [skill:dotnet-terminal-gui]. For Spectre.Console patterns, see [skill:dotnet-spectre-console].
+For Terminal.Gui patterns, see [skill:dotnet-tooling]. For Spectre.Console patterns, see [skill:dotnet-tooling].
 
----
 
 ## Accessibility Testing Tools
 
@@ -485,7 +471,6 @@ Assert.Empty(axeResults.Violations);
 4. **Zoom/scaling** -- increase text size to 200% and verify layout does not break or clip content
 5. **Color contrast** -- verify all text and interactive elements meet WCAG AA ratios (4.5:1 for text, 3:1 for large text and UI components)
 
----
 
 ## WCAG Reference
 
@@ -501,7 +486,6 @@ This skill references the [Web Content Accessibility Guidelines (WCAG)](https://
 
 **Note:** This skill provides technical implementation guidance. It does not constitute legal advice regarding accessibility compliance requirements, which vary by jurisdiction and application type.
 
----
 
 ## Agent Gotchas
 
@@ -514,7 +498,6 @@ This skill references the [Web Content Accessibility Guidelines (WCAG)](https://
 7. **Do not hardcode colors without verifying contrast ratios.** Use tools (Accessibility Insights, Lighthouse) to verify WCAG AA compliance. System high-contrast themes must also be tested.
 8. **Do not forget `AccessKey` on frequently used WinUI/WPF buttons.** Access keys (Alt+key shortcuts) are essential for keyboard-dependent users and are trivial to add.
 
----
 
 ## Prerequisites
 
@@ -523,7 +506,6 @@ This skill references the [Web Content Accessibility Guidelines (WCAG)](https://
 - Testing tools: Accessibility Insights (Windows), axe-core (web), Xcode Accessibility Inspector (macOS/iOS)
 - Screen readers for manual testing: Narrator (Windows), VoiceOver (macOS/iOS), TalkBack (Android), NVDA (Windows, free)
 
----
 
 ## References
 

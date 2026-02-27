@@ -1,9 +1,3 @@
----
-name: dotnet-wpf-modern
-description: Builds WPF on .NET 8+. Host builder, MVVM Toolkit, Fluent theme, performance, modern C# patterns.
-license: MIT
-user-invocable: false
----
 
 # dotnet-wpf-modern
 
@@ -23,14 +17,13 @@ WPF on .NET 8+: Host builder and dependency injection, MVVM with CommunityToolki
 ## Out of scope
 
 - WPF .NET Framework patterns (legacy)
-- Migration guidance -- see [skill:dotnet-wpf-migration]
-- Desktop testing -- see [skill:dotnet-ui-testing-core]
-- General Native AOT patterns -- see [skill:dotnet-native-aot]
-- UI framework selection -- see [skill:dotnet-ui-chooser]
+- Migration guidance -- see `references/wpf-migration.md`
+- Desktop testing -- see [skill:dotnet-testing]
+- General Native AOT patterns -- see [skill:dotnet-tooling]
+- UI framework selection -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
+Cross-references: [skill:dotnet-testing] for desktop testing, `references/winui.md` for WinUI 3 patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
 
----
 
 ## .NET 8+ Differences
 
@@ -133,7 +126,6 @@ public partial class App : Application
 }
 ```
 
----
 
 ## MVVM Toolkit
 
@@ -226,7 +218,6 @@ public partial class ProductListViewModel : ObservableObject
 - `[NotifyPropertyChangedFor]` -- raises `PropertyChanged` for dependent properties
 - `[NotifyCanExecuteChangedFor]` -- re-evaluates command `CanExecute` when property changes
 
----
 
 ## Performance
 
@@ -270,7 +261,6 @@ WPF on .NET 8 delivers measurable improvements over .NET Framework 4.8 across ke
 - **GC pauses** -- shorter and less frequent Gen2 collections from .NET 8 GC improvements (Dynamic PGO, frozen object heap, pinned object heap)
 - **Memory footprint** -- lower baseline working set compared to .NET Framework CLR
 
----
 
 ## Modern C#
 
@@ -341,7 +331,6 @@ private ObservableCollection<Product> _products = [];
 List<string> categories = ["Electronics", "Clothing", "Books"];
 ```
 
----
 
 ## Theming
 
@@ -438,7 +427,6 @@ public void ApplyTheme(AppTheme theme)
 }
 ```
 
----
 
 ## Agent Gotchas
 
@@ -450,7 +438,6 @@ public void ApplyTheme(AppTheme theme)
 6. **Do not forget the Host builder lifecycle.** Call `_host.StartAsync()` in `OnStartup` and `_host.StopAsync()` in `OnExit`. Forgetting lifecycle management causes DI-registered `IHostedService` instances to never start or stop.
 7. **Do not hardcode colors when using Fluent theme.** Reference theme resources (`{DynamicResource SystemAccentColor}`) to maintain compatibility with light/dark mode and system accent color changes.
 
----
 
 ## Prerequisites
 
@@ -459,7 +446,6 @@ public void ApplyTheme(AppTheme theme)
 - Visual Studio 2022+, VS Code with C# Dev Kit, or JetBrains Rider
 - For Fluent theme: .NET 9+
 
----
 
 ## References
 

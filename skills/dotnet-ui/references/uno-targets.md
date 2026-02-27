@@ -1,9 +1,3 @@
----
-name: dotnet-uno-targets
-description: Deploys Uno Platform apps. Per-target guidance for WASM, iOS, Android, macOS, Windows, Linux.
-license: MIT
-user-invocable: false
----
 
 # dotnet-uno-targets
 
@@ -18,15 +12,14 @@ Per-target deployment guidance for Uno Platform applications: Web/WASM, iOS, And
 
 ## Out of scope
 
-- Core Uno Platform development (Extensions, MVUX, Toolkit) -- see [skill:dotnet-uno-platform]
-- MCP integration for live docs -- see [skill:dotnet-uno-mcp]
-- Uno Platform testing -- see [skill:dotnet-uno-testing]
-- General AOT/trimming patterns -- see [skill:dotnet-aot-wasm]
-- UI framework selection -- see [skill:dotnet-ui-chooser]
+- Core Uno Platform development (Extensions, MVUX, Toolkit) -- see `references/uno-platform.md`
+- MCP integration for live docs -- see `references/uno-mcp.md`
+- Uno Platform testing -- see `references/uno-testing.md`
+- General AOT/trimming patterns -- see [skill:dotnet-tooling]
+- UI framework selection -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotnet-uno-mcp] for MCP integration, [skill:dotnet-uno-testing] for testing, [skill:dotnet-aot-wasm] for general WASM AOT patterns, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: `references/uno-platform.md` for core development, `references/uno-mcp.md` for MCP integration, `references/uno-testing.md` for testing, [skill:dotnet-tooling] for general WASM AOT patterns, `references/ui-chooser.md` for framework selection.
 
----
 
 ## Target Platform Overview
 
@@ -42,7 +35,6 @@ Cross-references: [skill:dotnet-uno-platform] for core development, [skill:dotne
 
 **TFM note:** Use version-agnostic globs (`net*-ios`, `net*-android`) when detecting platform targets programmatically to avoid false negatives on older or newer TFMs.
 
----
 
 ## Web/WASM
 
@@ -95,7 +87,7 @@ Published output is a self-contained static site. No server-side runtime require
 
 **Trimming is critical for WASM.** Untrimmed apps can exceed 30MB. With trimming, typical apps are 5-15MB. AOT adds to the artifact size but eliminates interpreter overhead at runtime -- profile both download time and execution speed in target conditions.
 
-For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see the AOT section. For general WASM AOT patterns, see [skill:dotnet-aot-wasm].
+For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see the AOT section. For general WASM AOT patterns, see [skill:dotnet-tooling].
 
 ### Behavior Differences
 
@@ -104,7 +96,6 @@ For Uno-specific AOT gotchas (linker descriptors, Uno source generators), see th
 - **Debugging:** Full .NET debugger available via CDP; breakpoints work in Visual Studio/VS Code
 - **File pickers:** Use browser file input APIs; `FileOpenPicker` maps to `<input type="file">`
 
----
 
 ## iOS
 
@@ -166,7 +157,6 @@ iOS requires AOT by default (no JIT). The .NET runtime compiles to native ARM64 
 - **Authentication:** Uses `ASWebAuthenticationSession` for OAuth; biometric auth via `LocalAuthentication` framework
 - **Debugging:** Simulator is fast; device debugging requires USB connection and provisioning. Remote debugging with Hot Reload supported
 
----
 
 ## Android
 
@@ -226,7 +216,6 @@ AOT on Android improves startup time. Unlike iOS, JIT is available as fallback f
 - **Authentication:** Uses `CustomTabs` (Chrome) for OAuth; biometric auth via `AndroidX.Biometric`
 - **Debugging:** Emulator is slower than iOS Simulator but supports more API levels. Use hardware acceleration (HAXM/KVM) for performance
 
----
 
 ## macOS (Catalyst)
 
@@ -278,7 +267,6 @@ Same profile as iOS (AOT by default for Catalyst). Trimming recommended for dist
 - **Authentication:** Uses `ASWebAuthenticationSession` (shared with iOS); supports Touch ID via Secure Enclave
 - **Debugging:** Native macOS process; standard .NET debugging tools work. No simulator -- runs as native app
 
----
 
 ## Windows
 
@@ -333,7 +321,6 @@ Windows supports both JIT and AOT. AOT produces a single native EXE with faster 
 - **Authentication:** Uses system browser or WAM (Web Account Manager) for SSO with Microsoft accounts
 - **Debugging:** Richest debugging experience with Visual Studio Live Visual Tree and XAML Hot Reload
 
----
 
 ## Linux (Skia/GTK)
 
@@ -392,7 +379,6 @@ AOT on Linux produces a native binary. Self-contained deployment avoids requirin
 - **Authentication:** Uses system browser for OAuth flows. No platform-specific auth APIs
 - **Debugging:** Standard .NET debugging. No platform-specific debugger tools
 
----
 
 ## Embedded (Skia/Framebuffer)
 
@@ -470,7 +456,6 @@ Direct deployment to device filesystem. No app store or package manager.
 - **Authentication:** Device-code flow or pre-provisioned credentials. No browser-based OAuth
 - **Debugging:** Remote only. No local IDE. Use SSH debugging or remote logging
 
----
 
 ## Cross-Target Behavior Differences
 
@@ -510,7 +495,6 @@ Direct deployment to device filesystem. No app store or package manager.
 | Linux | VS Code / Rider | Yes | dotnet-counters / dotnet-trace |
 | Embedded | VS Code Remote | Yes (SSH) | dotnet-trace (remote) |
 
----
 
 ## Agent Gotchas
 
@@ -522,7 +506,6 @@ Direct deployment to device filesystem. No app store or package manager.
 6. **Do not assume file system access on all targets.** WASM has no filesystem; iOS/macOS have sandbox restrictions; embedded may have read-only storage. Use Uno Storage abstractions.
 7. **Do not use the same authentication flow for all targets.** WASM uses browser redirects, mobile uses native auth sessions, embedded uses device-code flow. Auth must be configured per-target.
 
----
 
 ## Prerequisites
 
@@ -530,7 +513,6 @@ Direct deployment to device filesystem. No app store or package manager.
 - Platform SDKs: Xcode (iOS/macOS), Android SDK (Android), GTK3 (Linux)
 - Uno Platform 5.x+
 
----
 
 ## References
 

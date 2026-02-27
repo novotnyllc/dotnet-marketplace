@@ -1,9 +1,3 @@
----
-name: dotnet-blazor-components
-description: Implements Blazor components. Lifecycle, state management, JS interop, EditForm, QuickGrid.
-license: MIT
-user-invocable: false
----
 
 # dotnet-blazor-components
 
@@ -20,17 +14,16 @@ Blazor component architecture: lifecycle methods, state management (cascading va
 
 ## Out of scope
 
-- Hosting model selection and render modes -- see [skill:dotnet-blazor-patterns]
-- Auth components (AuthorizeView, CascadingAuthenticationState) -- see [skill:dotnet-blazor-auth]
-- bUnit testing -- see [skill:dotnet-blazor-testing]
-- Standalone SignalR hub patterns -- see [skill:dotnet-realtime-communication]
-- E2E testing -- see [skill:dotnet-playwright]
-- UI framework selection -- see [skill:dotnet-ui-chooser]
-- Accessibility patterns (ARIA, keyboard navigation) -- see [skill:dotnet-accessibility]
+- Hosting model selection and render modes -- see `references/blazor-patterns.md`
+- Auth components (AuthorizeView, CascadingAuthenticationState) -- see `references/blazor-auth.md`
+- bUnit testing -- see `references/blazor-testing.md`
+- Standalone SignalR hub patterns -- see [skill:dotnet-api]
+- E2E testing -- see [skill:dotnet-testing]
+- UI framework selection -- see `references/ui-chooser.md`
+- Accessibility patterns (ARIA, keyboard navigation) -- see `references/accessibility.md`
 
-Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (ARIA, keyboard nav, screen readers).
+Cross-references: `references/blazor-patterns.md` for hosting models and render modes, `references/blazor-auth.md` for authentication, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-api] for standalone SignalR, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (ARIA, keyboard nav, screen readers).
 
----
 
 ## Component Lifecycle
 
@@ -110,7 +103,6 @@ Cross-references: [skill:dotnet-blazor-patterns] for hosting models and render m
 
 **Gotcha:** In Static SSR, `OnAfterRender` never executes because there is no persistent connection. Do not place critical logic in `OnAfterRender` for Static SSR pages.
 
----
 
 ## State Management
 
@@ -208,7 +200,6 @@ if (json is not null)
 
 **Gotcha:** `ProtectedBrowserStorage` is not available during prerendering. Always access it in `OnAfterRenderAsync(firstRender: true)`, never in `OnInitializedAsync`.
 
----
 
 ## JavaScript Interop
 
@@ -311,7 +302,6 @@ export function registerCallback(dotNetRef) {
 
 **Gotcha:** In InteractiveServer, all JS interop calls travel over SignalR, adding network latency. Minimize round trips by batching operations into a single JS function call.
 
----
 
 ## EditForm Validation
 
@@ -404,7 +394,6 @@ The `Enhance` attribute enables enhanced form handling -- the form submits via f
 
 **Gotcha:** `FormName` must be unique across all forms on the page. Duplicate `FormName` values cause ambiguous form submission errors.
 
----
 
 ## QuickGrid
 
@@ -487,7 +476,6 @@ For large datasets, virtualization renders only visible rows:
 
 Source: [ASP.NET Core .NET 11 Preview - QuickGrid enhancements](https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-11.0)
 
----
 
 <!-- net11-preview -->
 ## .NET 11 Preview Features
@@ -588,7 +576,6 @@ app.MapBlazorHub(options =>
 
 Source: [ASP.NET Core .NET 11 Preview - SignalR ConfigureConnection](https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-11.0)
 
----
 
 ## Agent Gotchas
 
@@ -599,7 +586,6 @@ Source: [ASP.NET Core .NET 11 Preview - SignalR ConfigureConnection](https://lea
 5. **Do not dispose `DotNetObjectReference` before JS is done with it.** Premature disposal causes `JSException` when JavaScript tries to invoke the callback. Dispose in `Dispose()` or `DisposeAsync()`.
 6. **Do not assume Scoped services are per-request in Blazor Server.** Scoped services live for the entire circuit. Use `OwningComponentBase<T>` when you need component-scoped service lifetimes.
 
----
 
 ## Prerequisites
 
@@ -607,7 +593,6 @@ Source: [ASP.NET Core .NET 11 Preview - SignalR ConfigureConnection](https://lea
 - `Microsoft.AspNetCore.Components.QuickGrid` package for QuickGrid
 - .NET 11 preview for EnvironmentBoundary, Label/DisplayName, QuickGrid OnRowClick, IHostedService in WASM
 
----
 
 ## Knowledge Sources
 
@@ -617,7 +602,6 @@ Blazor component patterns in this skill are grounded in guidance from:
 
 > These sources inform the patterns and rationale presented above. This skill does not claim to represent or speak for any individual.
 
----
 
 ## References
 

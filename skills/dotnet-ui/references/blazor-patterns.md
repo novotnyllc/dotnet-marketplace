@@ -1,9 +1,3 @@
----
-name: dotnet-blazor-patterns
-description: Architects Blazor apps. Hosting models, render modes, routing, streaming, prerender.
-license: MIT
-user-invocable: false
----
 
 # dotnet-blazor-patterns
 
@@ -20,16 +14,15 @@ Blazor hosting models, render modes, project setup, routing, enhanced navigation
 
 ## Out of scope
 
-- Component architecture (lifecycle, state, JS interop) -- see [skill:dotnet-blazor-components]
-- Authentication across hosting models -- see [skill:dotnet-blazor-auth]
-- bUnit component testing -- see [skill:dotnet-blazor-testing]
-- Standalone SignalR patterns -- see [skill:dotnet-realtime-communication]
-- Browser-based E2E testing -- see [skill:dotnet-playwright]
-- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
+- Component architecture (lifecycle, state, JS interop) -- see `references/blazor-components.md`
+- Authentication across hosting models -- see `references/blazor-auth.md`
+- bUnit component testing -- see `references/blazor-testing.md`
+- Standalone SignalR patterns -- see [skill:dotnet-api]
+- Browser-based E2E testing -- see [skill:dotnet-testing]
+- UI framework selection decision tree -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-blazor-components] for component architecture, [skill:dotnet-blazor-auth] for authentication, [skill:dotnet-blazor-testing] for bUnit testing, [skill:dotnet-realtime-communication] for standalone SignalR, [skill:dotnet-playwright] for E2E testing, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-accessibility] for accessibility patterns (ARIA, keyboard nav, screen readers).
+Cross-references: `references/blazor-components.md` for component architecture, `references/blazor-auth.md` for authentication, `references/blazor-testing.md` for bUnit testing, [skill:dotnet-api] for standalone SignalR, [skill:dotnet-testing] for E2E testing, `references/ui-chooser.md` for framework selection, `references/accessibility.md` for accessibility patterns (ARIA, keyboard nav, screen readers).
 
----
 
 ## Hosting Models & Render Modes
 
@@ -82,7 +75,6 @@ Blazor Web App (.NET 8+) is the default project template, replacing the separate
 
 **Gotcha:** Without an explicit render mode boundary, a child component cannot request a more interactive render mode than its parent. However, interactive islands are supported: you can place an `@rendermode` attribute on a component embedded in a Static SSR page to create a render mode boundary, enabling interactive children under otherwise static content.
 
----
 
 ## Project Setup
 
@@ -157,7 +149,6 @@ public partial class MainPage : ContentPage
 </ContentPage>
 ```
 
----
 
 ## Routing
 
@@ -222,7 +213,6 @@ Navigation.NavigateTo("/search?term=keyboard&page=2");
 Navigation.NavigateTo("/external-page", forceLoad: true);
 ```
 
----
 
 ## Enhanced Navigation (.NET 8+)
 
@@ -250,7 +240,6 @@ Enhanced navigation intercepts link clicks and form submissions to update only t
 
 **Gotcha:** Enhanced navigation may interfere with third-party JavaScript libraries that expect full page loads. Use `data-enhance-nav="false"` on links that navigate to pages with JS that initializes on `DOMContentLoaded`.
 
----
 
 ## Streaming Rendering (.NET 8+)
 
@@ -292,7 +281,6 @@ else
 - **Static SSR:** Streaming rendering sends the initial response, then patches the DOM via chunked transfer encoding. The page is not interactive.
 - **InteractiveServer/WebAssembly/Auto:** Streaming rendering is less impactful because components re-render automatically after async operations. The `[StreamRendering]` attribute primarily benefits the prerender phase.
 
----
 
 ## AOT-Safe Patterns
 
@@ -373,7 +361,6 @@ public class DynamicFormModel
 3. **Runtime code generation** -- Do not use `System.Reflection.Emit` or `System.Linq.Expressions.Expression.Compile()`. Use source generators instead.
 4. **Untyped JSON deserialization** -- Do not use `JsonSerializer.Deserialize<T>(json)` without a `JsonSerializerContext`. Always provide a source-generated context.
 
----
 
 ## Prerendering
 
@@ -429,7 +416,6 @@ State computed during prerendering is lost when the component reinitializes inte
 }
 ```
 
----
 
 ## .NET 10 Stable Features
 
@@ -484,7 +470,6 @@ if (app.Environment.IsDevelopment())
 
 The diagnostics endpoint shows active circuits, component tree, render mode assignments, and timing data. Use it to debug render mode boundaries and component lifecycle issues during development.
 
----
 
 ## Agent Gotchas
 
@@ -495,7 +480,6 @@ The diagnostics endpoint shows active circuits, component tree, render mode assi
 5. **Do not force-load navigation unless leaving the Blazor app.** `NavigateTo("/page", forceLoad: true)` bypasses enhanced navigation and causes a full page reload.
 6. **Do not nest interactive render modes incorrectly.** A child component cannot request a more interactive mode than its parent. Plan render mode boundaries from the layout down.
 
----
 
 ## Prerequisites
 
@@ -503,7 +487,6 @@ The diagnostics endpoint shows active circuits, component tree, render mode assi
 - .NET 10.0 for stable enhanced features (WebAssembly preloading, enhanced form validation, diagnostics middleware)
 - MAUI workload for Blazor Hybrid (`dotnet workload install maui`)
 
----
 
 ## References
 

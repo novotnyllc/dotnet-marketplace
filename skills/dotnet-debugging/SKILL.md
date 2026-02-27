@@ -1,11 +1,11 @@
 ---
-name: dotnet-windbg-debugging
-description: Debugs Windows apps via WinDbg MCP. Crash, hang, high-CPU, and memory triage from dumps or live attach.
-user-invocable: true
+name: dotnet-debugging
+description: Debugs Windows applications using WinDbg and crash dump analysis. Covers MCP server integration, live process attach, dump file triage, crash analysis, hang detection, high-CPU diagnosis, memory leak investigation, kernel debugging, symbol configuration, scenario command packs, diagnostic report generation, and SOS extension workflows for .NET runtime inspection.
 license: MIT
+user-invocable: true
 ---
 
-# dotnet-windbg-debugging
+# dotnet-debugging
 
 Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows application -- native, managed (.NET/CLR), or mixed-mode. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
 
@@ -24,10 +24,12 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 
 ## Out of scope
 
-- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
-- GC tuning and managed memory optimization -- see [skill:dotnet-gc-memory]
-- Performance benchmarking and regression detection -- see [skill:dotnet-benchmarkdotnet]
-- Application performance architecture patterns -- see [skill:dotnet-performance-patterns]
+- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling]
+- GC tuning and managed memory optimization -- see [skill:dotnet-tooling]
+- Performance benchmarking and regression detection -- see [skill:dotnet-testing]
+- Application performance architecture patterns -- see [skill:dotnet-tooling]
+- Application-level logging -- see [skill:dotnet-devops]
+- Unit/integration test debugging -- see [skill:dotnet-testing]
 
 ## MCP Tool Contract
 
@@ -112,7 +114,26 @@ Without correct symbols, stacks show raw addresses instead of function names.
 - Do not call it a deadlock unless lock/wait evidence supports it
 - Preserve user privacy: do not include secrets from environment blocks in reports
 
-Cross-references: [skill:dotnet-profiling] for .NET SDK diagnostic tools, [skill:dotnet-gc-memory] for managed GC and memory tuning.
+Cross-references: [skill:dotnet-tooling] for .NET SDK diagnostic tools and GC/memory tuning.
+
+## Companion Files
+
+- `references/mcp-setup.md` -- MCP server configuration
+- `references/access-mcp.md` -- MCP access patterns
+- `references/common-patterns.md` -- Common debugging patterns
+- `references/dump-workflow.md` -- Dump file analysis workflow
+- `references/live-attach.md` -- Live process attach guide
+- `references/symbols.md` -- Symbol configuration
+- `references/sanity-check.md` -- Sanity check procedures
+- `references/scenario-command-packs.md` -- Scenario command packs
+- `references/capture-playbooks.md` -- Capture playbooks
+- `references/report-template.md` -- Diagnostic report template
+- `references/task-crash.md` -- Crash triage
+- `references/task-hang.md` -- Hang triage
+- `references/task-high-cpu.md` -- High-CPU triage
+- `references/task-memory.md` -- Memory leak triage
+- `references/task-kernel.md` -- Kernel debugging
+- `references/task-unknown.md` -- Unknown issue triage
 
 ## References
 

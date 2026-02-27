@@ -1,9 +1,3 @@
----
-name: dotnet-ui-chooser
-description: Selects a .NET UI framework. Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms.
-user-invocable: true
-license: MIT
----
 
 # dotnet-ui-chooser
 
@@ -18,12 +12,11 @@ UI framework selection decision tree for .NET applications. Covers Web (Blazor S
 ## Out of scope
 
 - Framework-specific implementation patterns -- see individual skills listed below
-- Migration paths between frameworks -- see [skill:dotnet-wpf-migration]
-- Desktop UI testing -- see [skill:dotnet-ui-testing-core]
+- Migration paths between frameworks -- see `references/wpf-migration.md`
+- Desktop UI testing -- see [skill:dotnet-testing]
 
-Cross-references: [skill:dotnet-blazor-patterns] for Blazor hosting and render modes, [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-uno-platform] for Uno Platform patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-modern] for modern WPF on .NET 8+, [skill:dotnet-winforms-basics] for WinForms modernization.
+Cross-references: `references/blazor-patterns.md` for Blazor hosting and render modes, `references/maui-development.md` for MAUI patterns, `references/uno-platform.md` for Uno Platform patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-modern.md` for modern WPF on .NET 8+, `references/winforms-basics.md` for WinForms modernization.
 
----
 
 ## Decision Tree
 
@@ -113,7 +106,6 @@ If modernizing an existing application, the source framework constrains viable t
 | ASP.NET MVC / Razor Pages | Blazor (Static SSR) | Stay on Razor Pages | Interactive needs: Blazor. Content-heavy: Razor Pages is still valid. |
 | React / Angular SPA | Blazor WebAssembly | Keep existing SPA | .NET-only team: Blazor. Existing JS team: keep SPA. |
 
----
 
 ## Blazor Hosting Model Selection
 
@@ -129,9 +121,8 @@ When Blazor is the target, select a hosting model based on interactivity needs, 
 | SEO | Yes | Prerender | Prerender | Prerender | N/A |
 | Best for | Content sites, simple forms | Dashboards, LOB apps | Public apps, offline PWAs | Best of both worlds | Desktop/mobile with web UI |
 
-For detailed Blazor patterns, see [skill:dotnet-blazor-patterns].
+For detailed Blazor patterns, see `references/blazor-patterns.md`.
 
----
 
 ## Windows Framework Selection
 
@@ -154,13 +145,12 @@ When the application targets Windows only, choose based on UI richness, team exp
 
 ### When to Choose Each
 
-**WinUI 3** -- best for new Windows-native applications that need modern Fluent Design, touch/pen input, and the latest Windows integration (widgets, notifications, Mica). Requires Windows 10 2004+. See [skill:dotnet-winui].
+**WinUI 3** -- best for new Windows-native applications that need modern Fluent Design, touch/pen input, and the latest Windows integration (widgets, notifications, Mica). Requires Windows 10 2004+. See `references/winui.md`.
 
-**WPF on .NET 8+** -- best for teams with existing WPF expertise, applications that need the rich WPF control ecosystem, or projects migrating from WPF on .NET Framework. Fluent theme available in .NET 9+. See [skill:dotnet-wpf-modern].
+**WPF on .NET 8+** -- best for teams with existing WPF expertise, applications that need the rich WPF control ecosystem, or projects migrating from WPF on .NET Framework. Fluent theme available in .NET 9+. See `references/wpf-modern.md`.
 
-**WinForms on .NET 8+** -- best for rapid prototyping, internal tools, simple CRUD forms, and Windows utilities where development speed matters more than UI polish. Simplest learning curve. See [skill:dotnet-winforms-basics].
+**WinForms on .NET 8+** -- best for rapid prototyping, internal tools, simple CRUD forms, and Windows utilities where development speed matters more than UI polish. Simplest learning curve. See `references/winforms-basics.md`.
 
----
 
 ## Cross-Platform Framework Selection
 
@@ -183,13 +173,12 @@ When the application must run on multiple platforms, compare reach, rendering mo
 
 ### When to Choose Each
 
-**MAUI** -- best for mobile-first apps targeting iOS and Android with optional Windows/macOS support. Platform-native controls provide OS-native look and feel. Direct migration path from Xamarin.Forms. See [skill:dotnet-maui-development].
+**MAUI** -- best for mobile-first apps targeting iOS and Android with optional Windows/macOS support. Platform-native controls provide OS-native look and feel. Direct migration path from Xamarin.Forms. See `references/maui-development.md`.
 
-**Uno Platform** -- best for apps that need the broadest platform reach (including Linux and Web) with a single XAML codebase. Uses WinUI XAML API surface, making it a natural path for UWP or WinUI teams going cross-platform. See [skill:dotnet-uno-platform].
+**Uno Platform** -- best for apps that need the broadest platform reach (including Linux and Web) with a single XAML codebase. Uses WinUI XAML API surface, making it a natural path for UWP or WinUI teams going cross-platform. See `references/uno-platform.md`.
 
 **Avalonia** -- community-driven cross-platform framework with WPF-inspired XAML. Strong Linux desktop support. Consider when WPF-style development is preferred and community-maintained tooling is acceptable. Not owned by this plugin -- see [Avalonia documentation](https://docs.avaloniaui.net/) for details.
 
----
 
 ## Trade-Off Summary Matrix
 
@@ -207,7 +196,6 @@ A consolidated view across all frameworks for quick reference.
 | WPF | Windows | DirectX | WPF XAML | Yes | N/A | Mature Windows apps |
 | WinForms | Windows | GDI+ | None (designer) | Yes | N/A | Internal tools, prototypes |
 
----
 
 ## Common Decision Scenarios
 
@@ -239,7 +227,6 @@ Structured guidance for frequently encountered situations. Each scenario present
 - Pixel-perfect UI: Uno Platform (Skia) or Avalonia
 - MAUI does not support Linux desktop
 
----
 
 ## Agent Gotchas
 
@@ -252,7 +239,6 @@ Structured guidance for frequently encountered situations. Each scenario present
 7. **Do not overlook Blazor Hybrid as a cross-platform option.** Blazor Hybrid in MAUI allows web UI skills to apply to mobile/desktop apps. It is a viable alternative to learning native XAML.
 8. **Do not assume WPF is legacy.** WPF on .NET 8+ is actively maintained with new features (Fluent theme in .NET 9+, performance improvements). It remains a strong choice for Windows desktop.
 
----
 
 ## References
 

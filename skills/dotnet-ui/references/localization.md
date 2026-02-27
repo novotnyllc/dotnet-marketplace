@@ -1,9 +1,3 @@
----
-name: dotnet-localization
-description: Localizes .NET apps. .resx resources, IStringLocalizer, source generators, pluralization, RTL.
-license: MIT
-user-invocable: false
----
 
 # dotnet-localization
 
@@ -22,15 +16,14 @@ Comprehensive .NET internationalization and localization: .resx resource files a
 
 ## Out of scope
 
-- Deep Blazor component patterns -- see [skill:dotnet-blazor-components]
-- Deep MAUI development patterns -- see [skill:dotnet-maui-development]
-- Uno Platform project structure and Extensions ecosystem -- see [skill:dotnet-uno-platform]
-- WPF Host builder and MVVM patterns -- see [skill:dotnet-wpf-modern]
-- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp-source-generators]
+- Deep Blazor component patterns -- see `references/blazor-components.md`
+- Deep MAUI development patterns -- see `references/maui-development.md`
+- Uno Platform project structure and Extensions ecosystem -- see `references/uno-platform.md`
+- WPF Host builder and MVVM patterns -- see `references/wpf-modern.md`
+- Source generator authoring (Roslyn API) -- see [skill:dotnet-csharp]
 
-Cross-references: [skill:dotnet-blazor-components] for Blazor component lifecycle, [skill:dotnet-maui-development] for MAUI app structure, [skill:dotnet-uno-platform] for Uno Extensions and x:Uid, [skill:dotnet-wpf-modern] for WPF on modern .NET.
+Cross-references: `references/blazor-components.md` for Blazor component lifecycle, `references/maui-development.md` for MAUI app structure, `references/uno-platform.md` for Uno Extensions and x:Uid, `references/wpf-modern.md` for WPF on modern .NET.
 
----
 
 ## .resx Resource Files
 
@@ -94,7 +87,6 @@ var rm = new ResourceManager("MyApp.Resources.Messages",
 string welcome = rm.GetString("Welcome", CultureInfo.CurrentUICulture);
 ```
 
----
 
 ## Modern Alternatives
 
@@ -146,7 +138,6 @@ services.AddResXLocalization();
 
 **Recommendation:** Use `.resx` files as the resource format (broadest tooling support) with a source generator for AOT/trimming scenarios. Use JSON resources only for lightweight or config-heavy projects.
 
----
 
 ## IStringLocalizer Patterns
 
@@ -242,7 +233,6 @@ If resource lookup fails, check namespace alignment. `IStringLocalizer<T>` resol
 [assembly: RootNamespace("MyApp")]
 ```
 
----
 
 ## Date, Number, and Currency Formatting
 
@@ -287,7 +277,6 @@ CultureInfo.CurrentUICulture = culture;
 | `"N2"` | Number | 1,234.57 | 1.234,57 |
 | `"P1"` | Percent | 85.5% | 85,5 % |
 
----
 
 ## RTL Support
 
@@ -313,7 +302,7 @@ await JSRuntime.InvokeVoidAsync("setDocumentDirection",
     isRtl ? "rtl" : "ltr");
 ```
 
-For deep Blazor component patterns, see [skill:dotnet-blazor-components].
+For deep Blazor component patterns, see `references/blazor-components.md`.
 
 **MAUI:** `FlowDirection` property on `VisualElement` and `Window`:
 
@@ -324,7 +313,7 @@ window.FlowDirection = isRtl
     : FlowDirection.LeftToRight;
 ```
 
-Android requires `android:supportsRtl="true"` in AndroidManifest.xml (set by default in MAUI). For deep MAUI patterns, see [skill:dotnet-maui-development].
+Android requires `android:supportsRtl="true"` in AndroidManifest.xml (set by default in MAUI). For deep MAUI patterns, see `references/maui-development.md`.
 
 **Uno Platform:** Inherits WinUI `FlowDirection` model:
 
@@ -334,7 +323,7 @@ Android requires `android:supportsRtl="true"` in AndroidManifest.xml (set by def
 </Page>
 ```
 
-For Uno Extensions and x:Uid binding, see [skill:dotnet-uno-platform].
+For Uno Extensions and x:Uid binding, see `references/uno-platform.md`.
 
 **WPF:** `FlowDirection` property on `FrameworkElement`:
 
@@ -344,9 +333,8 @@ For Uno Extensions and x:Uid binding, see [skill:dotnet-uno-platform].
 </Window>
 ```
 
-For WPF on modern .NET patterns, see [skill:dotnet-wpf-modern].
+For WPF on modern .NET patterns, see `references/wpf-modern.md`.
 
----
 
 ## Pluralization
 
@@ -403,7 +391,6 @@ Smart.Format("{count:plural:No items|# item|# items}",
 | SmartFormat.NET | Partial (extensible) | .NET format string extension | Flexible templating with pluralization |
 | Manual conditional | None | `string.Format` + branching | Simple English-only dual forms |
 
----
 
 ## UI Framework Integration
 
@@ -448,7 +435,7 @@ Without this property, Blazor WASM loads only a subset of ICU data. For minimal 
 // 3. Read cookie in RequestLocalizationMiddleware
 ```
 
-For deep Blazor component patterns (lifecycle, state management, JS interop), see [skill:dotnet-blazor-components].
+For deep Blazor component patterns (lifecycle, state management, JS interop), see `references/blazor-components.md`.
 
 ### MAUI Localization
 
@@ -487,7 +474,7 @@ string welcome = AppResources.Welcome;
 - Windows: Add `<Resource Language="...">` entries to `Package.appxmanifest`
 - All platforms: Set `<NeutralLanguage>en-US</NeutralLanguage>` in csproj
 
-For deep MAUI development patterns (controls, navigation, platform APIs), see [skill:dotnet-maui-development].
+For deep MAUI development patterns (controls, navigation, platform APIs), see `references/maui-development.md`.
 
 ### Uno Platform Localization
 
@@ -529,7 +516,7 @@ await localizationService.SetCurrentCultureAsync(
 
 **Known limitation:** `x:Uid`-based localization keeps the old culture until app restart, even after calling `SetCurrentCultureAsync`. Code-based `IStringLocalizer` updates immediately.
 
-For Uno Extensions ecosystem configuration and MVUX patterns, see [skill:dotnet-uno-platform].
+For Uno Extensions ecosystem configuration and MVUX patterns, see `references/uno-platform.md`.
 
 ### WPF Localization
 
@@ -581,9 +568,8 @@ string welcomeFr = Strings.Welcome; // Now returns French
 - **WPF Localization Extensions** -- RESX files with XAML markup extensions for declarative localization
 - **LocBamlCore** (h3xds1nz) -- unofficial port supporting .NET 9, for BAML localization on modern .NET
 
-For WPF Host builder, MVVM Toolkit, and theming patterns, see [skill:dotnet-wpf-modern].
+For WPF Host builder, MVVM Toolkit, and theming patterns, see `references/wpf-modern.md`.
 
----
 
 ## Agent Gotchas
 
@@ -596,4 +582,3 @@ For WPF Host builder, MVVM Toolkit, and theming patterns, see [skill:dotnet-wpf-
 7. **Do not use `ResourceManager` directly in AOT/trimmed apps.** It relies on reflection. Use a source generator (ResXGenerator) for compile-time resource access.
 8. **Do not forget platform-specific setup for MAUI.** iOS/Mac Catalyst need `CFBundleLocalizations` in `Info.plist`; Windows needs `Resource Language` entries.
 
----

@@ -1,9 +1,3 @@
----
-name: dotnet-winui
-description: Builds WinUI 3 desktop apps. Windows App SDK, XAML patterns, MSIX/unpackaged, UWP migration.
-license: MIT
-user-invocable: false
----
 
 # dotnet-winui
 
@@ -22,14 +16,13 @@ WinUI 3 / Windows App SDK development: project setup with `UseWinUI` and Windows
 
 ## Out of scope
 
-- Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-ui-testing-core]
-- General Native AOT patterns -- see [skill:dotnet-native-aot]
-- UI framework selection decision tree -- see [skill:dotnet-ui-chooser]
-- WPF patterns -- see [skill:dotnet-wpf-modern]
+- Desktop UI testing (Appium, WinAppDriver) -- see [skill:dotnet-testing]
+- General Native AOT patterns -- see [skill:dotnet-tooling]
+- UI framework selection decision tree -- see `references/ui-chooser.md`
+- WPF patterns -- see `references/wpf-modern.md`
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection, [skill:dotnet-native-interop] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations), [skill:dotnet-accessibility] for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
+Cross-references: [skill:dotnet-testing] for desktop testing, `references/wpf-modern.md` for WPF patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection, [skill:dotnet-csharp] for general P/Invoke patterns (CsWin32 generates P/Invoke declarations), `references/accessibility.md` for accessibility patterns (AutomationProperties, AutomationPeer, UI Automation).
 
----
 
 ## Project Setup
 
@@ -140,7 +133,6 @@ Windows App SDK features may require higher SDK versions:
 - **Mica backdrop:** `net8.0-windows10.0.22000.0`
 - **Snap layouts integration:** `net8.0-windows10.0.22000.0`
 
----
 
 ## XAML Patterns
 
@@ -244,7 +236,6 @@ WinUI apps typically use `NavigationView` with a `Frame` for page navigation:
 </Window>
 ```
 
----
 
 ## MVVM
 
@@ -311,7 +302,6 @@ public partial class ProductListViewModel : ObservableObject
 - `[NotifyPropertyChangedFor]` -- raises `PropertyChanged` for dependent properties
 - `[NotifyCanExecuteChangedFor]` -- re-evaluates command `CanExecute` when property changes
 
----
 
 ## Packaging
 
@@ -383,7 +373,6 @@ Unpackaged mode removes MSIX requirements. The app runs as a standard Win32 exec
 - Quick prototypes where packaging overhead is unnecessary
 - Apps that do not need Windows identity features
 
----
 
 ## Windows Integration
 
@@ -468,7 +457,6 @@ Taskbar progress in WinUI 3 requires Win32 COM interop via the `ITaskbarList3` i
 // See: https://learn.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-itaskbarlist3
 ```
 
----
 
 ## UWP Migration
 
@@ -509,11 +497,10 @@ Migrating from UWP to WinUI 3 involves namespace changes, API replacements, and 
 6. **Update NuGet packages** to Windows App SDK-compatible versions
 7. **Test Windows integration** features (notifications, background tasks, file associations)
 
-For comprehensive migration path guidance across frameworks, see [skill:dotnet-wpf-migration].
+For comprehensive migration path guidance across frameworks, see `references/wpf-migration.md`.
 
 **UWP .NET 9 preview path:** Microsoft announced UWP support on .NET 9 as a preview. This allows UWP apps to use modern .NET without migrating to WinUI 3. Evaluate this path if full WinUI migration is too costly but you need modern .NET runtime features.
 
----
 
 ## Agent Gotchas
 
@@ -527,7 +514,6 @@ For comprehensive migration path guidance across frameworks, see [skill:dotnet-w
 8. **Do not mix CommunityToolkit.Mvvm with manual INotifyPropertyChanged.** Use `[ObservableProperty]` consistently. Mixing source-generated and hand-written implementations causes subtle binding bugs.
 9. **Do not forget the Host builder lifecycle.** Call `_host.StartAsync()` in `OnLaunched` and `_host.StopAsync()` when the window closes. Forgetting lifecycle management causes DI-registered `IHostedService` instances to never start or stop.
 
----
 
 ## Prerequisites
 
@@ -537,7 +523,6 @@ For comprehensive migration path guidance across frameworks, see [skill:dotnet-w
 - Visual Studio 2022+ with Windows App SDK workload, or VS Code with C# Dev Kit
 - For widgets: Windows 11 (build 22000+)
 
----
 
 ## References
 

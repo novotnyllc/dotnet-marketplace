@@ -1,9 +1,3 @@
----
-name: dotnet-uno-testing
-description: Tests Uno Platform apps. Playwright for WASM, platform-specific patterns, runtime heads.
-license: MIT
-user-invocable: false
----
 
 # dotnet-uno-testing
 
@@ -19,15 +13,14 @@ Testing Uno Platform applications across target heads (WASM, Desktop, Mobile). C
 
 ## Out of scope
 
-- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-ui-testing-core]
-- Playwright fundamentals (installation, CI caching, trace viewer) -- see [skill:dotnet-playwright]
-- Test project scaffolding -- see [skill:dotnet-add-testing]
+- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-testing]
+- Playwright fundamentals (installation, CI caching, trace viewer) -- see [skill:dotnet-testing]
+- Test project scaffolding -- see [skill:dotnet-testing]
 
-**Prerequisites:** Uno Platform application with WASM head configured. For WASM testing: Playwright browsers installed (see [skill:dotnet-playwright]). For mobile testing: platform SDKs configured (Android SDK, Xcode).
+**Prerequisites:** Uno Platform application with WASM head configured. For WASM testing: Playwright browsers installed (see [skill:dotnet-testing]). For mobile testing: platform SDKs configured (Android SDK, Xcode).
 
-Cross-references: [skill:dotnet-ui-testing-core] for page object model and selector strategies, [skill:dotnet-playwright] for Playwright installation, CI caching, and trace viewer, [skill:dotnet-uno-platform] for Uno Extensions, MVUX, Toolkit, and theme guidance, [skill:dotnet-uno-targets] for per-target deployment and platform-specific gotchas.
+Cross-references: [skill:dotnet-testing] for page object model and selector strategies, [skill:dotnet-testing] for Playwright installation, CI caching, and trace viewer, `references/uno-platform.md` for Uno Extensions, MVUX, Toolkit, and theme guidance, `references/uno-targets.md` for per-target deployment and platform-specific gotchas.
 
----
 
 ## Uno Testing Strategy by Head
 
@@ -43,7 +36,6 @@ Uno Platform apps run on multiple heads (WASM, Desktop/Skia, iOS, Android, Windo
 
 **Recommended priority:** Test shared business logic with unit tests first. Use Playwright against the WASM head for UI verification -- it is the fastest UI testing path with the broadest coverage. Add platform-specific Appium tests only for behaviors that differ between heads.
 
----
 
 ## Playwright for Uno WASM
 
@@ -201,7 +193,6 @@ public async Task TodoList_AddItem_AppearsInList()
 }
 ```
 
----
 
 ## Platform-Specific Testing
 
@@ -268,7 +259,6 @@ public async Task FileUpload_BrowserDialog_AcceptsFiles()
 }
 ```
 
----
 
 ## Runtime Head Validation
 
@@ -334,7 +324,6 @@ public class LoginTestsWasm : LoginTestsBase, IClassFixture<UnoWasmFixture>
 }
 ```
 
----
 
 ## Key Principles
 
@@ -344,7 +333,6 @@ public class LoginTestsWasm : LoginTestsBase, IClassFixture<UnoWasmFixture>
 - **Separate shared tests from platform-specific tests.** Use abstract base classes for shared test logic, concrete subclasses per platform.
 - **Add platform-specific tests only for platform-divergent behavior.** File pickers, hardware buttons, gestures, and notifications differ across platforms; test these separately.
 
----
 
 ## Agent Gotchas
 
@@ -354,7 +342,6 @@ public class LoginTestsWasm : LoginTestsBase, IClassFixture<UnoWasmFixture>
 4. **Do not test mobile-specific features in the WASM head.** File system access, push notifications, biometrics, and NFC are not available in the browser. Skip or mock these in WASM tests.
 5. **Do not run all platform tests in a single CI job.** Each platform requires its own SDK (Android SDK, Xcode, WinAppDriver). Use separate CI jobs per platform with appropriate runners.
 
----
 
 ## References
 

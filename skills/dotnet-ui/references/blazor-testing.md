@@ -1,9 +1,3 @@
----
-name: dotnet-blazor-testing
-description: Tests Blazor components. bUnit rendering, events, cascading params, JS interop mocking.
-license: MIT
-user-invocable: false
----
 
 # dotnet-blazor-testing
 
@@ -21,15 +15,14 @@ bUnit testing for Blazor components. Covers component rendering and markup asser
 
 ## Out of scope
 
-- Browser-based E2E testing of Blazor apps -- see [skill:dotnet-playwright]
-- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-ui-testing-core]
-- Test project scaffolding -- see [skill:dotnet-add-testing]
+- Browser-based E2E testing of Blazor apps -- see [skill:dotnet-testing]
+- Shared UI testing patterns (page object model, selectors, wait strategies) -- see [skill:dotnet-testing]
+- Test project scaffolding -- see [skill:dotnet-testing]
 
-**Prerequisites:** A Blazor test project scaffolded via [skill:dotnet-add-testing] with bUnit packages referenced. The component under test must be in a referenced Blazor project.
+**Prerequisites:** A Blazor test project scaffolded via [skill:dotnet-testing] with bUnit packages referenced. The component under test must be in a referenced Blazor project.
 
-Cross-references: [skill:dotnet-ui-testing-core] for shared UI testing patterns (POM, selectors, wait strategies), [skill:dotnet-xunit] for xUnit fixtures and test organization, [skill:dotnet-blazor-patterns] for hosting models and render modes, [skill:dotnet-blazor-components] for component architecture and state management.
+Cross-references: [skill:dotnet-testing] for shared UI testing patterns (POM, selectors, wait strategies), [skill:dotnet-testing] for xUnit fixtures and test organization, `references/blazor-patterns.md` for hosting models and render modes, `references/blazor-components.md` for component architecture and state management.
 
----
 
 ## Package Setup
 
@@ -72,7 +65,6 @@ public class CounterCompositionTests : IDisposable
 }
 ```
 
----
 
 ## Component Rendering
 
@@ -168,7 +160,6 @@ public class OrderListTests : TestContext
 }
 ```
 
----
 
 ## Event Handling
 
@@ -253,7 +244,6 @@ public void DeleteButton_Click_InvokesOnDeleteCallback()
 }
 ```
 
----
 
 ## Cascading Parameters
 
@@ -304,7 +294,6 @@ public void LayoutComponent_ReceivesNamedCascadingValues()
 }
 ```
 
----
 
 ## JavaScript Interop Mocking
 
@@ -368,7 +357,6 @@ public void RichEditor_Render_DoesNotThrowJSErrors()
 }
 ```
 
----
 
 ## Async Component Lifecycle
 
@@ -420,17 +408,15 @@ public void ProductList_ServiceError_ShowsErrorMessage()
 }
 ```
 
----
 
 ## Key Principles
 
-- **Render components in isolation.** bUnit tests individual components without a browser, making them fast and deterministic. Use this for component logic; use [skill:dotnet-playwright] for full-app E2E flows.
+- **Render components in isolation.** bUnit tests individual components without a browser, making them fast and deterministic. Use this for component logic; use [skill:dotnet-testing] for full-app E2E flows.
 - **Register all dependencies before rendering.** Any service the component injects via `[Inject]` must be registered in `Services` before `RenderComponent` is called.
 - **Use `WaitForState` and `WaitForAssertion` for async components.** Do not use `Task.Delay` -- bUnit provides purpose-built waiting mechanisms.
 - **Mock JS interop explicitly.** Unhandled JS interop calls throw by default in bUnit strict mode. Set up expected calls or switch to loose mode for JS-heavy components.
 - **Test the rendered output, not component internals.** Assert on markup, text content, and element attributes -- not on private fields or internal state.
 
----
 
 ## Agent Gotchas
 
@@ -440,7 +426,6 @@ public void ProductList_ServiceError_ShowsErrorMessage()
 4. **Do not mix bUnit and Playwright in the same test class.** bUnit runs components in-memory (no browser); Playwright runs in a real browser. They serve different purposes and have incompatible lifecycles.
 5. **Do not forget cascading values for components that expect them.** A component with `[CascadingParameter]` will receive `null` if no `CascadingValue` is provided, which may cause `NullReferenceException` during rendering.
 
----
 
 ## References
 

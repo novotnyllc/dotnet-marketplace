@@ -1,9 +1,3 @@
----
-name: dotnet-maui-testing
-description: Tests .NET MAUI apps. Appium device automation, XHarness, platform validation.
-license: MIT
-user-invocable: false
----
 
 # dotnet-maui-testing
 
@@ -21,15 +15,14 @@ Testing .NET MAUI applications using Appium for UI automation and XHarness for c
 
 ## Out of scope
 
-- Shared UI testing patterns (page object model, wait strategies) -- see [skill:dotnet-ui-testing-core]
-- Browser-based testing -- see [skill:dotnet-playwright]
-- Test project scaffolding -- see [skill:dotnet-add-testing]
+- Shared UI testing patterns (page object model, wait strategies) -- see [skill:dotnet-testing]
+- Browser-based testing -- see [skill:dotnet-testing]
+- Test project scaffolding -- see [skill:dotnet-testing]
 
-**Prerequisites:** MAUI test project scaffolded via [skill:dotnet-add-testing]. Appium server installed (`npm install -g appium`). For Android: Android SDK with emulator configured. For iOS: Xcode with simulator (macOS only). For Windows: WinAppDriver installed.
+**Prerequisites:** MAUI test project scaffolded via [skill:dotnet-testing]. Appium server installed (`npm install -g appium`). For Android: Android SDK with emulator configured. For iOS: Xcode with simulator (macOS only). For Windows: WinAppDriver installed.
 
-Cross-references: [skill:dotnet-ui-testing-core] for page object model, test selectors, and async wait patterns, [skill:dotnet-xunit] for xUnit fixtures and test organization, [skill:dotnet-maui-development] for MAUI project structure, XAML/MVVM patterns, and platform services, [skill:dotnet-maui-aot] for Native AOT on iOS/Mac Catalyst and AOT build testing considerations.
+Cross-references: [skill:dotnet-testing] for page object model, test selectors, and async wait patterns, [skill:dotnet-testing] for xUnit fixtures and test organization, `references/maui-development.md` for MAUI project structure, XAML/MVVM patterns, and platform services, `references/maui-aot.md` for Native AOT on iOS/Mac Catalyst and AOT build testing considerations.
 
----
 
 ## Appium Setup for MAUI
 
@@ -119,7 +112,6 @@ public static class TestConfig
 }
 ```
 
----
 
 ## Element Location with AutomationId
 
@@ -205,11 +197,10 @@ public class LoginTests : IClassFixture<AppiumFixture>
 }
 ```
 
----
 
 ## Page Object Model for MAUI
 
-Apply the page object model pattern (see [skill:dotnet-ui-testing-core]) with Appium's driver:
+Apply the page object model pattern (see [skill:dotnet-testing]) with Appium's driver:
 
 ```csharp
 public class LoginPage
@@ -271,7 +262,6 @@ public void Login_ValidUser_ReachesHomePage()
 }
 ```
 
----
 
 ## Platform-Specific Behavior Testing
 
@@ -373,7 +363,6 @@ public void Dashboard_LandscapeMode_ShowsSidePanel()
 }
 ```
 
----
 
 ## XHarness Test Execution
 
@@ -424,7 +413,6 @@ public static MauiApp CreateMauiApp()
 }
 ```
 
----
 
 ## Key Principles
 
@@ -434,7 +422,6 @@ public static MauiApp CreateMauiApp()
 - **Tag platform-specific tests with `[Trait]` and `Assert.SkipWhen`.** xUnit v3's native skip support allows running the correct tests per platform in CI without failures from unsupported features.
 - **Apply the page object model for maintainability.** MAUI apps have complex navigation flows; page objects keep tests readable as the app grows.
 
----
 
 ## Agent Gotchas
 
@@ -444,7 +431,6 @@ public static MauiApp CreateMauiApp()
 4. **Do not run iOS tests on non-macOS machines.** iOS simulators require Xcode, which is macOS-only. Use platform-conditional test skipping or separate CI pipelines per platform.
 5. **Do not leave the Appium server unmanaged.** Start Appium as a fixture or CI service, not manually. Forgotten Appium processes cause port conflicts and test hangs.
 
----
 
 ## References
 

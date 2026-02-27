@@ -1,9 +1,3 @@
----
-name: dotnet-maui-aot
-description: Optimizes MAUI for iOS/Catalyst. Native AOT pipeline, size/startup gains, library gaps, trimming.
-license: MIT
-user-invocable: false
----
 
 # dotnet-maui-aot
 
@@ -22,14 +16,13 @@ Native AOT compilation for .NET MAUI on iOS and Mac Catalyst: compilation pipeli
 
 ## Out of scope
 
-- MAUI development patterns (project structure, XAML, MVVM) -- see [skill:dotnet-maui-development]
-- MAUI testing -- see [skill:dotnet-maui-testing]
-- WASM AOT (Blazor/Uno) -- see [skill:dotnet-aot-wasm]
-- General AOT architecture -- see [skill:dotnet-native-aot]
+- MAUI development patterns (project structure, XAML, MVVM) -- see `references/maui-development.md`
+- MAUI testing -- see `references/maui-testing.md`
+- WASM AOT (Blazor/Uno) -- see [skill:dotnet-tooling]
+- General AOT architecture -- see [skill:dotnet-tooling]
 
-Cross-references: [skill:dotnet-maui-development] for MAUI patterns, [skill:dotnet-maui-testing] for testing AOT builds, [skill:dotnet-native-aot] for general AOT patterns, [skill:dotnet-aot-wasm] for WASM AOT, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: `references/maui-development.md` for MAUI patterns, `references/maui-testing.md` for testing AOT builds, [skill:dotnet-tooling] for general AOT patterns, [skill:dotnet-tooling] for WASM AOT, `references/ui-chooser.md` for framework selection.
 
----
 
 ## iOS/Mac Catalyst AOT Compilation Pipeline
 
@@ -74,7 +67,6 @@ AOT builds require the same entitlements and provisioning profiles as regular iO
 <!-- Standard entitlements; AOT does not require special entries -->
 ```
 
----
 
 ## Size Reduction
 
@@ -94,7 +86,6 @@ Native AOT can achieve **up to 50% app size reduction** compared to interpreter/
 
 **Caveat:** Actual size reduction depends on app complexity, third-party library usage, and how much code is reachable after trimming. Libraries that use heavy reflection may prevent aggressive trimming and reduce size gains.
 
----
 
 ## Startup Improvement
 
@@ -130,7 +121,6 @@ public partial class App : Application
 # Compare AOT vs non-AOT builds on the same device
 ```
 
----
 
 ## Library Compatibility
 
@@ -170,7 +160,6 @@ Many .NET libraries are not fully AOT-compatible. Common compatibility issues st
 
 AOT analysis produces warnings like `IL3050` (RequiresDynamicCode) and `IL2026` (RequiresUnreferencedCode). Address these before publishing with AOT.
 
----
 
 ## Opt-Out Mechanisms
 
@@ -211,7 +200,6 @@ When a specific library is not AOT-compatible, you can preserve it from trimming
 </PropertyGroup>
 ```
 
----
 
 ## Trimming Interplay
 
@@ -291,7 +279,6 @@ Common trim warnings:
 - **IL2046:** Trim attribute mismatch between base/derived types
 - **IL3050:** Member with `RequiresDynamicCode` -- the member generates code at runtime (incompatible with AOT)
 
----
 
 ## Testing AOT Builds
 
@@ -341,9 +328,8 @@ xharness apple test \
     --output-directory test-results/aot
 ```
 
-For MAUI testing patterns (Appium, XHarness), see [skill:dotnet-maui-testing].
+For MAUI testing patterns (Appium, XHarness), see `references/maui-testing.md`.
 
----
 
 ## Agent Gotchas
 
@@ -353,7 +339,6 @@ For MAUI testing patterns (Appium, XHarness), see [skill:dotnet-maui-testing].
 4. **Do not skip device testing for AOT builds.** Simulator testing catches most issues, but physical device behavior can differ -- especially for startup timing, memory constraints, and platform service integration.
 5. **Do not confuse MAUI iOS AOT with Android AOT.** MAUI Native AOT (`PublishAot`) targets iOS and Mac Catalyst only. Android uses a different compilation model (Mono AOT in .NET 8-10, CoreCLR in .NET 11+). They are configured separately.
 
----
 
 ## Prerequisites
 
@@ -362,7 +347,6 @@ For MAUI testing patterns (Appium, XHarness), see [skill:dotnet-maui-testing].
 - Apple Developer account for physical device deployment
 - Provisioning profile and signing certificate for device testing
 
----
 
 ## References
 

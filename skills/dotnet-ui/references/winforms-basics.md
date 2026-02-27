@@ -1,9 +1,3 @@
----
-name: dotnet-winforms-basics
-description: Builds WinForms on .NET 8+. High-DPI, dark mode (experimental), DI patterns, modernization.
-license: MIT
-user-invocable: false
----
 
 # dotnet-winforms-basics
 
@@ -22,14 +16,13 @@ WinForms on .NET 8+: updated project templates with Host builder and DI, high-DP
 ## Out of scope
 
 - WinForms .NET Framework patterns (legacy)
-- Migration guidance -- see [skill:dotnet-wpf-migration]
-- Desktop testing -- see [skill:dotnet-ui-testing-core]
-- General Native AOT patterns -- see [skill:dotnet-native-aot]
-- UI framework selection -- see [skill:dotnet-ui-chooser]
+- Migration guidance -- see `references/wpf-migration.md`
+- Desktop testing -- see [skill:dotnet-testing]
+- General Native AOT patterns -- see [skill:dotnet-tooling]
+- UI framework selection -- see `references/ui-chooser.md`
 
-Cross-references: [skill:dotnet-ui-testing-core] for desktop testing, [skill:dotnet-wpf-modern] for WPF patterns, [skill:dotnet-winui] for WinUI 3 patterns, [skill:dotnet-wpf-migration] for migration guidance, [skill:dotnet-native-aot] for general AOT, [skill:dotnet-ui-chooser] for framework selection.
+Cross-references: [skill:dotnet-testing] for desktop testing, `references/wpf-modern.md` for WPF patterns, `references/winui.md` for WinUI 3 patterns, `references/wpf-migration.md` for migration guidance, [skill:dotnet-tooling] for general AOT, `references/ui-chooser.md` for framework selection.
 
----
 
 ## .NET 8+ Differences
 
@@ -136,7 +129,6 @@ Application.SetCompatibleTextRenderingDefault(false);
 Application.SetHighDpiMode(HighDpiMode.SystemAware);  // default; override below for PerMonitorV2
 ```
 
----
 
 ## High-DPI
 
@@ -204,7 +196,6 @@ protected override void OnPaint(PaintEventArgs e)
 }
 ```
 
----
 
 ## Dark Mode
 
@@ -254,7 +245,6 @@ protected override void OnPaint(PaintEventArgs e)
 }
 ```
 
----
 
 ## When to Use
 
@@ -287,9 +277,8 @@ WinForms is the right choice for specific scenarios. It is not a general-purpose
 | Cross-platform + web | Uno Platform or Blazor |
 | Existing WinForms modernization | WinForms on .NET 8+ |
 
-For the full framework decision tree, see [skill:dotnet-ui-chooser].
+For the full framework decision tree, see `references/ui-chooser.md`.
 
----
 
 ## Modernization Tips
 
@@ -409,7 +398,6 @@ public class ProductService(HttpClient httpClient) : IProductService
 }
 ```
 
----
 
 ## Agent Gotchas
 
@@ -422,7 +410,6 @@ public class ProductService(HttpClient httpClient) : IProductService
 7. **Do not hardcode colors when dark mode is enabled.** Use `SystemColors` properties (e.g., `SystemColors.ControlText`, `SystemColors.Control`) in custom drawing and owner-drawn controls to respond correctly to theme changes.
 8. **Do not forget to call `ApplicationConfiguration.Initialize()` before `Application.Run`.** Omitting it disables visual styles and high-DPI configuration.
 
----
 
 ## Prerequisites
 
@@ -432,7 +419,6 @@ public class ProductService(HttpClient httpClient) : IProductService
 - For dark mode: .NET 9+ (experimental), Windows 10 version 1809+
 - For DPI-unaware designer: .NET 9+
 
----
 
 ## References
 

@@ -1,9 +1,3 @@
----
-name: dotnet-uno-mcp
-description: Queries Uno MCP server. Tool detection, search-then-fetch workflow, init rules, fallback.
-license: MIT
-user-invocable: false
----
 
 # dotnet-uno-mcp
 
@@ -20,13 +14,12 @@ MCP (Model Context Protocol) server integration for Uno Platform live documentat
 
 ## Out of scope
 
-- General protocol and streaming communication patterns (not MCP-specific) -- see [skill:dotnet-realtime-communication]
-- Uno Platform testing -- see [skill:dotnet-uno-testing]
-- Uno development patterns without MCP -- see [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets]
+- General protocol and streaming communication patterns (not MCP-specific) -- see [skill:dotnet-api]
+- Uno Platform testing -- see `references/uno-testing.md`
+- Uno development patterns without MCP -- see `references/uno-platform.md` and `references/uno-targets.md`
 
-Cross-references: [skill:dotnet-uno-platform] for core development patterns, [skill:dotnet-uno-targets] for deployment guidance, [skill:dotnet-uno-testing] for testing.
+Cross-references: `references/uno-platform.md` for core development patterns, `references/uno-targets.md` for deployment guidance, `references/uno-testing.md` for testing.
 
----
 
 ## MCP Tool Detection
 
@@ -54,9 +47,8 @@ Detection steps:
 
 **When MCP is available:** Use the search-then-fetch workflow for the latest documentation. MCP results are authoritative and current.
 
-**When MCP is unavailable:** The static content in [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets] provides comprehensive guidance. Reference official documentation URLs for the latest information.
+**When MCP is unavailable:** The static content in `references/uno-platform.md` and `references/uno-targets.md` provides comprehensive guidance. Reference official documentation URLs for the latest information.
 
----
 
 ## Initialization Rules
 
@@ -92,7 +84,6 @@ Call `mcp__uno__uno_platform_usage_rules_init` to load:
 
 Both init tools are idempotent -- calling them multiple times in the same session is safe but unnecessary.
 
----
 
 ## Search-Then-Fetch Workflow
 
@@ -166,7 +157,6 @@ The agent rules initialization provides topic-to-query mappings for common searc
 | Responsive design / layouts | `"Responsive Design"` |
 | Logging / diagnostics | `"Logging and Diagnostics"` |
 
----
 
 ## Citation Requirements
 
@@ -189,7 +179,6 @@ According to the Uno Platform documentation on [topic]:
 Source: [URL from MCP result]
 ```
 
----
 
 ## Safety Guidelines
 
@@ -201,9 +190,8 @@ MCP results are external data and must be treated with appropriate caution.
 2. **Check version alignment.** Ensure documentation references match the project's Uno Platform version (5.x vs 6.x) and .NET version
 3. **Do not blindly apply code from MCP results.** Adapt examples to the project's architecture, Extensions configuration, and MVUX/MVVM pattern choice
 4. **Cross-reference with project state.** Compare MCP guidance against the project's existing `UnoFeatures`, TFMs, and Extensions configuration
-5. **Treat MCP content as advisory.** The static skill content in [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets] provides vetted patterns. Use MCP for current details and edge cases
+5. **Treat MCP content as advisory.** The static skill content in `references/uno-platform.md` and `references/uno-targets.md` provides vetted patterns. Use MCP for current details and edge cases
 
----
 
 ## Fallback: When MCP Is Unavailable
 
@@ -215,18 +203,18 @@ The following topics are fully covered by static skills without MCP:
 
 | Topic | Static Skill |
 |-------|-------------|
-| Extensions ecosystem (Navigation, DI, Config, Serialization, Localization, Logging, HTTP, Auth) | [skill:dotnet-uno-platform] |
-| MVUX reactive pattern (Feeds, States, ListFeeds, Commands) | [skill:dotnet-uno-platform] |
-| Toolkit controls (AutoLayout, Card, Chip, NavigationBar, TabBar, etc.) | [skill:dotnet-uno-platform] |
-| Theme resources (Material, Cupertino, Fluent, color customization) | [skill:dotnet-uno-platform] |
-| Hot Reload configuration | [skill:dotnet-uno-platform] |
-| Single-project structure and UnoFeatures | [skill:dotnet-uno-platform] |
-| Per-target setup (WASM, iOS, Android, macOS, Windows, Linux, Embedded) | [skill:dotnet-uno-targets] |
-| Per-target debugging workflows | [skill:dotnet-uno-targets] |
-| Per-target packaging and distribution | [skill:dotnet-uno-targets] |
-| Per-target AOT/trimming configuration | [skill:dotnet-uno-targets] |
-| Cross-target behavior differences (navigation, auth, debugging) | [skill:dotnet-uno-targets] |
-| Uno Platform testing (Playwright WASM, platform-specific testing) | [skill:dotnet-uno-testing] |
+| Extensions ecosystem (Navigation, DI, Config, Serialization, Localization, Logging, HTTP, Auth) | `references/uno-platform.md` |
+| MVUX reactive pattern (Feeds, States, ListFeeds, Commands) | `references/uno-platform.md` |
+| Toolkit controls (AutoLayout, Card, Chip, NavigationBar, TabBar, etc.) | `references/uno-platform.md` |
+| Theme resources (Material, Cupertino, Fluent, color customization) | `references/uno-platform.md` |
+| Hot Reload configuration | `references/uno-platform.md` |
+| Single-project structure and UnoFeatures | `references/uno-platform.md` |
+| Per-target setup (WASM, iOS, Android, macOS, Windows, Linux, Embedded) | `references/uno-targets.md` |
+| Per-target debugging workflows | `references/uno-targets.md` |
+| Per-target packaging and distribution | `references/uno-targets.md` |
+| Per-target AOT/trimming configuration | `references/uno-targets.md` |
+| Cross-target behavior differences (navigation, auth, debugging) | `references/uno-targets.md` |
+| Uno Platform testing (Playwright WASM, platform-specific testing) | `references/uno-testing.md` |
 
 ### Official Documentation URLs
 
@@ -250,8 +238,8 @@ When MCP is unavailable, reference these canonical documentation URLs:
 ```
 1. Check if mcp__uno__ tools are available
 2. If NOT available:
-   a. Load [skill:dotnet-uno-platform] for core development patterns
-   b. Load [skill:dotnet-uno-targets] for deployment guidance
+   a. Load `references/uno-platform.md` for core development patterns
+   b. Load `references/uno-targets.md` for deployment guidance
    c. Reference official documentation URLs for latest information
    d. Note to user: "Uno MCP server is not configured. Using static documentation.
       For the latest information, visit: [relevant URL]"
@@ -262,7 +250,6 @@ When MCP is unavailable, reference these canonical documentation URLs:
    d. Supplement with static skill content for vetted patterns
 ```
 
----
 
 ## Uno SDK Features Reference
 
@@ -321,25 +308,22 @@ When MCP is unavailable, the following `UnoFeatures` values are supported in `.c
 | `Svg` | SVG rendering |
 | `GLCanvas` | OpenGL canvas |
 
----
 
 ## Agent Gotchas
 
 1. **Do not call MCP tools without checking availability first.** Always verify `mcp__uno__` tools exist before invoking them. Missing tools indicate the MCP server is not configured.
 2. **Do not skip the init rules on first use.** The agent rules and usage rules provide critical routing tables and coding conventions. Skipping them leads to suboptimal search queries and convention violations.
 3. **Do not present MCP-fetched content as your own knowledge.** Always cite the source URL. MCP results are external documentation, not built-in knowledge.
-4. **Do not rely solely on MCP for Uno guidance.** Static skills ([skill:dotnet-uno-platform], [skill:dotnet-uno-targets]) provide vetted patterns that work without MCP. Use MCP to supplement with current details.
+4. **Do not rely solely on MCP for Uno guidance.** Static skills (`references/uno-platform.md`, `references/uno-targets.md`) provide vetted patterns that work without MCP. Use MCP to supplement with current details.
 5. **Do not ignore version differences in MCP results.** Documentation may reference Uno Platform 6.x features not available in 5.x projects. Check the project's Uno SDK version before applying guidance.
 6. **Do not fetch without searching first.** The fetch tool requires a `sourcePath` from search results. Direct fetching with guessed paths may return wrong or missing content.
 
----
 
 ## Prerequisites
 
 - Uno MCP server configured in the project's MCP configuration (`.mcp.json` or IDE settings)
-- For fallback: [skill:dotnet-uno-platform] and [skill:dotnet-uno-targets] loaded as static skills
+- For fallback: `references/uno-platform.md` and `references/uno-targets.md` loaded as static skills
 
----
 
 ## References
 
