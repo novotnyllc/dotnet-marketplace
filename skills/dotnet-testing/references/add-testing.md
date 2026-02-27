@@ -12,9 +12,9 @@ Add test infrastructure scaffolding to an existing .NET project. Creates test pr
 
 - In-depth testing patterns (xUnit v3, WebApplicationFactory, UI testing) -- see [skill:dotnet-testing] `references/testing-strategy.md`
 
-**Prerequisites:** Run [skill:dotnet-version-detection] first to determine SDK version and TFM. Run [skill:dotnet-project-analysis] to understand existing solution structure.
+**Prerequisites:** Run [skill:dotnet-tooling] `references/version-detection.md` first to determine SDK version and TFM. Run [skill:dotnet-tooling] `references/project-analysis.md` to understand existing solution structure.
 
-Cross-references: [skill:dotnet-project-structure] for overall solution layout conventions, [skill:dotnet-scaffold-project] which includes test scaffolding in new projects, [skill:dotnet-add-analyzers] for test-specific analyzer suppressions.
+Cross-references: [skill:dotnet-tooling] `references/project-structure.md` for overall solution layout conventions, [skill:dotnet-tooling] `references/scaffold-project.md` which includes test scaffolding in new projects, [skill:dotnet-tooling] `references/add-analyzers.md` for test-specific analyzer suppressions.
 
 ---
 
@@ -294,10 +294,10 @@ Integration test depth (WebApplicationFactory patterns, test containers, databas
 This skill covers test project scaffolding. For deeper testing guidance:
 - **xUnit v3 features and patterns** -- [skill:dotnet-testing] `references/xunit.md`
 - **Integration testing with WebApplicationFactory** -- [skill:dotnet-testing] `references/integration-testing.md`
-- **UI testing (Blazor, MAUI, Uno)** -- [skill:dotnet-blazor-testing], [skill:dotnet-maui-testing], [skill:dotnet-uno-testing]
+- **UI testing (Blazor, MAUI, Uno)** -- [skill:dotnet-ui] `references/blazor-testing.md`, `references/maui-testing.md`, `references/uno-testing.md`
 - **Snapshot testing** -- [skill:dotnet-testing] `references/snapshot-testing.md`
 - **Test quality and coverage enforcement** -- [skill:dotnet-testing] `references/test-quality.md`
-- **CI test reporting** -- [skill:dotnet-add-ci] for starter, [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test] for advanced
+- **CI test reporting** -- [skill:dotnet-devops] `references/add-ci.md` for starter, `references/gha-build-test.md` and `references/ado-build-test.md` for advanced
 
 ---
 

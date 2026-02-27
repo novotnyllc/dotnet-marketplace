@@ -17,15 +17,15 @@ WebAssembly AOT compilation for Blazor WASM and Uno WASM applications: compilati
 
 ## Out of scope
 
-- Native AOT for server-side .NET -- see [skill:dotnet-native-aot]
-- AOT-first design patterns -- see [skill:dotnet-aot-architecture]
-- Trim-safe library authoring -- see [skill:dotnet-trimming]
-- MAUI-specific AOT -- see [skill:dotnet-maui-aot]
-- Blazor hosting models and render modes -- see [skill:dotnet-blazor-patterns]
-- Blazor component lifecycle and JS interop -- see [skill:dotnet-blazor-components]
-- Uno Platform architecture -- see [skill:dotnet-uno-platform]
+- Native AOT for server-side .NET -- see [skill:dotnet-tooling] `references/native-aot.md`
+- AOT-first design patterns -- see [skill:dotnet-tooling] `references/aot-architecture.md`
+- Trim-safe library authoring -- see [skill:dotnet-tooling] `references/trimming.md`
+- MAUI-specific AOT -- see [skill:dotnet-ui] `references/maui-aot.md`
+- Blazor hosting models and render modes -- see [skill:dotnet-ui] `references/blazor-patterns.md`
+- Blazor component lifecycle and JS interop -- see [skill:dotnet-ui] `references/blazor-components.md`
+- Uno Platform architecture -- see [skill:dotnet-ui] `references/uno-platform.md`
 
-Cross-references: [skill:dotnet-native-aot] for general AOT pipeline, [skill:dotnet-trimming] for trimming annotations, [skill:dotnet-aot-architecture] for AOT-safe design patterns, [skill:dotnet-serialization] for AOT-safe serialization, [skill:dotnet-csharp-source-generators] for source gen as AOT enabler, [skill:dotnet-blazor-patterns] for Blazor architecture (soft), [skill:dotnet-uno-platform] for Uno Platform patterns (soft).
+Cross-references: [skill:dotnet-tooling] `references/native-aot.md` for general AOT pipeline, [skill:dotnet-tooling] `references/trimming.md` for trimming annotations, [skill:dotnet-tooling] `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] `references/serialization.md` for AOT-safe serialization, [skill:dotnet-csharp] `references/source-generators.md` for source gen as AOT enabler, [skill:dotnet-ui] `references/blazor-patterns.md` for Blazor architecture (soft), [skill:dotnet-ui] `references/uno-platform.md` for Uno Platform patterns (soft).
 
 ---
 
@@ -136,7 +136,7 @@ Older Uno versions using `Uno.Wasm.Bootstrap` had a separate `WasmShellMonoRunti
 </PropertyGroup>
 ```
 
-See [skill:dotnet-uno-platform] for Uno Platform architecture patterns.
+See [skill:dotnet-ui] `references/uno-platform.md` for Uno Platform architecture patterns.
 
 ---
 

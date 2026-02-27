@@ -13,14 +13,14 @@ Run the `Slopwatch.Cmd` dotnet tool as an automated quality gate after code modi
 
 ## Out of scope
 
-- Pattern recognition and manual code review for slop -- see [skill:dotnet-agent-gotchas] for Slopwatch anti-patterns
+- Pattern recognition and manual code review for slop -- see [skill:dotnet-api] `references/agent-gotchas.md` for Slopwatch anti-patterns
 
 ## Prerequisites
 
 - .NET 8.0+ SDK
 - `Slopwatch.Cmd` NuGet package (v0.3.3+)
 
-Cross-references: [skill:dotnet-tool-management] for general dotnet tool installation mechanics.
+Cross-references: [skill:dotnet-tooling] `references/tool-management.md` for general dotnet tool installation mechanics.
 
 ---
 
@@ -56,7 +56,7 @@ dotnet tool restore
 dotnet tool install --global Slopwatch.Cmd
 ```
 
-See [skill:dotnet-tool-management] for tool manifest conventions and restore patterns.
+See [skill:dotnet-tooling] `references/tool-management.md` for tool manifest conventions and restore patterns.
 
 ---
 
@@ -284,6 +284,6 @@ slopwatch analyze --update-baseline
 ## References
 
 - [Slopwatch NuGet Package](https://www.nuget.org/packages/Slopwatch.Cmd)
-- [skill:dotnet-tool-management] -- dotnet tool installation and manifest conventions
-- [skill:dotnet-agent-gotchas] -- manual slop pattern recognition (visual detection counterpart)
+- [skill:dotnet-tooling] `references/tool-management.md` -- dotnet tool installation and manifest conventions
+- [skill:dotnet-api] `references/agent-gotchas.md` -- manual slop pattern recognition (visual detection counterpart)
 - [skill:dotnet-testing] `references/test-quality.md` -- test coverage and quality measurement

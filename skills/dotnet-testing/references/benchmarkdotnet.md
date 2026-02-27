@@ -15,15 +15,15 @@ Microbenchmarking guidance for .NET using BenchmarkDotNet v0.14+. Covers benchma
 
 ## Out of scope
 
-- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-performance-patterns]
-- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
+- Performance architecture patterns (Span<T>, ArrayPool, sealed) -- see [skill:dotnet-tooling] `references/performance-patterns.md`
+- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] `references/profiling.md`
 - CI benchmark regression detection -- see [skill:dotnet-testing] `references/ci-benchmarking.md`
-- Native AOT compilation and performance -- see [skill:dotnet-native-aot]
-- Serialization format performance -- see [skill:dotnet-serialization]
-- Architecture patterns (caching, resilience) -- see [skill:dotnet-architecture-patterns]
-- GC tuning and memory management -- see [skill:dotnet-gc-memory]
+- Native AOT compilation and performance -- see [skill:dotnet-tooling] `references/native-aot.md`
+- Serialization format performance -- see [skill:dotnet-csharp] `references/serialization.md`
+- Architecture patterns (caching, resilience) -- see [skill:dotnet-api] `references/architecture-patterns.md`
+- GC tuning and memory management -- see [skill:dotnet-tooling] `references/gc-memory.md`
 
-Cross-references: [skill:dotnet-performance-patterns] for zero-allocation patterns measured by benchmarks, [skill:dotnet-csharp-modern-patterns] for Span/Memory syntax foundation, [skill:dotnet-csharp-coding-standards] for sealed class style conventions, [skill:dotnet-native-aot] for AOT performance characteristics and benchmark considerations, [skill:dotnet-serialization] for serialization format performance tradeoffs.
+Cross-references: [skill:dotnet-tooling] `references/performance-patterns.md` for zero-allocation patterns measured by benchmarks, [skill:dotnet-csharp] `references/modern-patterns.md` for Span/Memory syntax foundation, [skill:dotnet-csharp] `references/coding-standards.md` for sealed class style conventions, [skill:dotnet-tooling] `references/native-aot.md` for AOT performance characteristics and benchmark considerations, [skill:dotnet-csharp] `references/serialization.md` for serialization format performance tradeoffs.
 
 ---
 
@@ -176,7 +176,7 @@ Inspects JIT-compiled assembly to verify optimizations (devirtualization, inlini
 public class DevirtualizationBenchmarks
 {
     // sealed enables JIT devirtualization -- verify in disassembly output
-    // See [skill:dotnet-csharp-coding-standards] for sealed class conventions
+    // See [skill:dotnet-csharp] `references/coding-standards.md` for sealed class conventions
     [Benchmark]
     public int SealedCall()
     {
@@ -199,7 +199,7 @@ public sealed class SealedService : IService
 }
 ```
 
-Use `DisassemblyDiagnoser` to verify that `sealed` classes receive devirtualization from the JIT, confirming the performance rationale documented in [skill:dotnet-csharp-coding-standards].
+Use `DisassemblyDiagnoser` to verify that `sealed` classes receive devirtualization from the JIT, confirming the performance rationale documented in [skill:dotnet-csharp] `references/coding-standards.md`.
 
 ---
 
@@ -275,7 +275,7 @@ Mark one benchmark as the baseline for ratio comparison:
 [MemoryDiagnoser]
 public class SerializationBenchmarks
 {
-    // Serialization format choice -- see [skill:dotnet-serialization] for API details
+    // Serialization format choice -- see [skill:dotnet-csharp] `references/serialization.md` for API details
     private readonly JsonSerializerOptions _options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -359,7 +359,7 @@ dotnet run -c Release -- --filter *StringBuilder* --job Dry
 
 ### AOT Benchmark Considerations
 
-When benchmarking Native AOT scenarios, the JIT diagnosers are not available (there is no JIT). Use wall-clock time and memory comparisons instead. See [skill:dotnet-native-aot] for AOT compilation setup:
+When benchmarking Native AOT scenarios, the JIT diagnosers are not available (there is no JIT). Use wall-clock time and memory comparisons instead. See [skill:dotnet-tooling] `references/native-aot.md` for AOT compilation setup:
 
 ```csharp
 [MemoryDiagnoser]

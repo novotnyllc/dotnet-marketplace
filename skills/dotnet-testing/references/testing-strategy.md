@@ -13,9 +13,9 @@ Decision framework for choosing the right test type, organizing test projects, a
 
 - Test project scaffolding (directory layout, xUnit project creation, coverlet setup) -- see [skill:dotnet-testing] `references/add-testing.md`
 - Code coverage tooling and mutation testing -- see [skill:dotnet-testing] `references/test-quality.md`
-- CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test]
+- CI test reporting and pipeline integration -- see [skill:dotnet-devops] `references/gha-build-test.md` and `references/ado-build-test.md`
 
-**Prerequisites:** Run [skill:dotnet-project-analysis] to understand the solution structure before designing a test strategy.
+**Prerequisites:** Run [skill:dotnet-tooling] `references/project-analysis.md` to understand the solution structure before designing a test strategy.
 
 Cross-references: [skill:dotnet-testing] `references/xunit.md` for xUnit v3 testing framework features, [skill:dotnet-testing] `references/integration-testing.md` for WebApplicationFactory and Testcontainers patterns, [skill:dotnet-testing] `references/snapshot-testing.md` for Verify-based approval testing, [skill:dotnet-testing] `references/test-quality.md` for coverage and mutation testing, [skill:dotnet-testing] `references/add-testing.md` for test project scaffolding.
 
@@ -325,7 +325,7 @@ Assert.True(order.IsExpired(fakeTime));
 ## Agent Gotchas
 
 1. **Do not mock types you do not own.** Mocking `HttpClient`, `DbContext`, or framework types leads to brittle tests that do not reflect real behavior. Use `WebApplicationFactory` or Testcontainers instead -- see [skill:dotnet-testing] `references/integration-testing.md`.
-2. **Do not create test projects without checking for existing structure.** Run [skill:dotnet-project-analysis] first; duplicating test infrastructure causes build conflicts.
+2. **Do not create test projects without checking for existing structure.** Run [skill:dotnet-tooling] `references/project-analysis.md` first; duplicating test infrastructure causes build conflicts.
 3. **Do not use `Thread.Sleep` in tests.** Use `Task.Delay` with a cancellation token, or better, use `FakeTimeProvider.Advance()` to control time deterministically.
 4. **Do not test private methods directly.** If a private method needs its own tests, it should be extracted into its own class. Test through the public API.
 5. **Do not hard-code connection strings in integration tests.** Use Testcontainers for disposable infrastructure or `WebApplicationFactory` for in-process testing -- see [skill:dotnet-testing] `references/integration-testing.md`.

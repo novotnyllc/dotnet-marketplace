@@ -14,12 +14,12 @@ Continuous benchmarking guidance for detecting performance regressions in CI pip
 ## Out of scope
 
 - BenchmarkDotNet setup and benchmark class design -- see [skill:dotnet-testing] `references/benchmarkdotnet.md`
-- Performance architecture patterns -- see [skill:dotnet-performance-patterns]
-- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-profiling]
-- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-observability]
-- Composable CI/CD workflow design -- see [skill:dotnet-gha-patterns]
+- Performance architecture patterns -- see [skill:dotnet-tooling] `references/performance-patterns.md`
+- Profiling tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] `references/profiling.md`
+- OpenTelemetry metrics and distributed tracing -- see [skill:dotnet-devops] `references/observability.md`
+- Composable CI/CD workflow design -- see [skill:dotnet-devops] `references/gha-patterns.md`
 
-Cross-references: [skill:dotnet-testing] `references/benchmarkdotnet.md` for benchmark class setup and JSON exporter configuration, [skill:dotnet-observability] for correlating benchmark regressions with runtime metrics changes, [skill:dotnet-gha-patterns] for composable workflow patterns (reusable workflows, composite actions, matrix builds).
+Cross-references: [skill:dotnet-testing] `references/benchmarkdotnet.md` for benchmark class setup and JSON exporter configuration, [skill:dotnet-devops] `references/observability.md` for correlating benchmark regressions with runtime metrics changes, [skill:dotnet-devops] `references/gha-patterns.md` for composable workflow patterns (reusable workflows, composite actions, matrix builds).
 
 ---
 
@@ -105,7 +105,7 @@ Key fields for regression comparison:
 | GitHub Actions artifacts | No repo bloat; automatic retention | 90-day default retention; cross-workflow access requires tokens | Large benchmark suites, shared runners |
 | External storage (S3/Azure Blob) | Unlimited history; cross-repo sharing | Extra infrastructure; credential management | Multi-repo benchmark comparison |
 
-This skill focuses on the **GitHub Actions artifact** strategy as the default. For composable workflow patterns and reusable actions, see [skill:dotnet-gha-patterns].
+This skill focuses on the **GitHub Actions artifact** strategy as the default. For composable workflow patterns and reusable actions, see [skill:dotnet-devops] `references/gha-patterns.md`.
 
 ---
 
@@ -227,7 +227,7 @@ jobs:
 - Baseline is only updated from `main` branch merges to prevent PR branches from polluting the baseline
 - `overwrite: true` replaces the previous baseline artifact
 
-For converting these inline workflows into reusable `workflow_call` patterns, see [skill:dotnet-gha-patterns].
+For converting these inline workflows into reusable `workflow_call` patterns, see [skill:dotnet-devops] `references/gha-patterns.md`.
 
 ---
 
@@ -390,7 +390,7 @@ Exit with non-zero status from the comparison script to fail the GitHub Actions 
           # Script exits non-zero if regressions found -- fails the job
 ```
 
-For required status checks and branch protection integration with benchmark gates, see [skill:dotnet-gha-patterns].
+For required status checks and branch protection integration with benchmark gates, see [skill:dotnet-devops] `references/gha-patterns.md`.
 
 ### Trend Tracking
 
@@ -504,7 +504,7 @@ jobs:
           retention-days: 90
 ```
 
-For scheduled workflow patterns and matrix builds across TFMs, see [skill:dotnet-gha-patterns].
+For scheduled workflow patterns and matrix builds across TFMs, see [skill:dotnet-devops] `references/gha-patterns.md`.
 
 ---
 

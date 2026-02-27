@@ -20,7 +20,7 @@ xUnit v3 testing framework features for .NET. Covers `[Fact]` and `[Theory]` att
 - Integration testing patterns (WebApplicationFactory, Testcontainers) -- see [skill:dotnet-testing] `references/integration-testing.md`
 - Snapshot testing with Verify -- see [skill:dotnet-testing] `references/snapshot-testing.md`
 
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with xUnit packages referenced. Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline for xUnit v3 support.
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with xUnit packages referenced. Run [skill:dotnet-tooling] `references/version-detection.md` to confirm .NET 8.0+ baseline for xUnit v3 support.
 
 Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding what to test and how, [skill:dotnet-testing] `references/integration-testing.md` for combining xUnit with WebApplicationFactory and Testcontainers.
 

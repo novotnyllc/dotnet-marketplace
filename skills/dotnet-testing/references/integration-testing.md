@@ -18,7 +18,7 @@ Integration testing patterns for .NET applications using WebApplicationFactory, 
 - Testing strategy and test type selection -- see [skill:dotnet-testing] `references/testing-strategy.md`
 - Snapshot testing for verifying API response structures -- see [skill:dotnet-testing] `references/snapshot-testing.md`
 
-**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with integration test packages referenced. Docker daemon running (required by Testcontainers). Run [skill:dotnet-version-detection] to confirm .NET 8.0+ baseline.
+**Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with integration test packages referenced. Docker daemon running (required by Testcontainers). Run [skill:dotnet-tooling] `references/version-detection.md` to confirm .NET 8.0+ baseline.
 
 Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when integration tests are appropriate, [skill:dotnet-testing] `references/xunit.md` for xUnit fixtures and parallel execution configuration, [skill:dotnet-testing] `references/snapshot-testing.md` for verifying API response structures with Verify.
 

@@ -13,15 +13,15 @@ Core UI testing patterns applicable across .NET UI frameworks (Blazor, MAUI, Uno
 
 ## Out of scope
 
-- Blazor component testing (bUnit) -- see [skill:dotnet-blazor-testing]
-- MAUI UI testing (Appium/XHarness) -- see [skill:dotnet-maui-testing]
-- Uno Platform WASM testing -- see [skill:dotnet-uno-testing]
+- Blazor component testing (bUnit) -- see [skill:dotnet-ui] `references/blazor-testing.md`
+- MAUI UI testing (Appium/XHarness) -- see [skill:dotnet-ui] `references/maui-testing.md`
+- Uno Platform WASM testing -- see [skill:dotnet-ui] `references/uno-testing.md`
 - Browser automation specifics -- see [skill:dotnet-testing] `references/playwright.md`
 - Test project scaffolding -- see [skill:dotnet-testing] `references/add-testing.md`
 
 **Prerequisites:** A test project scaffolded via [skill:dotnet-testing] `references/add-testing.md`. Familiarity with test strategy decisions from [skill:dotnet-testing] `references/testing-strategy.md`.
 
-Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when UI tests are appropriate, [skill:dotnet-testing] `references/playwright.md` for browser-based E2E automation, [skill:dotnet-blazor-testing] for Blazor component testing, [skill:dotnet-maui-testing] for mobile/desktop UI testing, [skill:dotnet-uno-testing] for Uno Platform testing.
+Cross-references: [skill:dotnet-testing] `references/testing-strategy.md` for deciding when UI tests are appropriate, [skill:dotnet-testing] `references/playwright.md` for browser-based E2E automation, [skill:dotnet-ui] `references/blazor-testing.md` for Blazor component testing, [skill:dotnet-ui] `references/maui-testing.md` for mobile/desktop UI testing, [skill:dotnet-ui] `references/uno-testing.md` for Uno Platform testing.
 
 ---
 

@@ -16,7 +16,7 @@ Test quality analysis for .NET projects. Covers code coverage collection with co
 
 - Test project scaffolding (creating projects, package references, coverlet setup) -- see [skill:dotnet-testing] `references/add-testing.md`
 - Testing strategy and test type decisions -- see [skill:dotnet-testing] `references/testing-strategy.md`
-- CI test reporting and pipeline integration -- see [skill:dotnet-gha-build-test] and [skill:dotnet-ado-build-test]
+- CI test reporting and pipeline integration -- see [skill:dotnet-devops] `references/gha-build-test.md` and `references/ado-build-test.md`
 
 **Prerequisites:** Test project already scaffolded via [skill:dotnet-testing] `references/add-testing.md` with coverlet packages referenced. .NET 8.0+ baseline required.
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing
-description: Defines .NET testing strategy and practices. Covers test architecture (unit vs integration vs E2E decision tree), xUnit v3 authoring, integration testing (WebApplicationFactory, Testcontainers, Aspire), snapshot testing (Verify), Playwright browser automation, BenchmarkDotNet microbenchmarks, CI benchmark gating, test quality metrics (Coverlet, Stryker.NET), UI testing core patterns, and test doubles patterns.
+description: Defines .NET test strategy, xUnit v3, integration/E2E, snapshots (Verify), Playwright, benchmarks, and quality gates.
 license: MIT
 user-invocable: false
 ---
@@ -10,6 +10,10 @@ user-invocable: false
 ## Overview
 
 Testing strategy, frameworks, and quality tooling for .NET applications. This consolidated skill spans 12 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+
+Baseline dependency: `references/testing-strategy.md` defines the unit vs integration vs E2E decision tree and test doubles selection that inform all testing decisions. Load it by default whenever a testing approach needs to be chosen.
+
+Most-shared companion: `references/xunit.md` covers xUnit v3 framework features used by integration, snapshot, and UI testing companions.
 
 ## Routing Table
 
