@@ -104,7 +104,7 @@ MAUI handles resource files declaratively. Images are auto-resized per platform 
 
 
 
-For detailed code examples (XAML data binding, MVVM, Shell navigation, platform services, .NET 11 improvements, Hot Reload), see `examples.md` in this skill directory.
+For detailed code examples (XAML data binding, MVVM, Shell navigation, platform services, .NET 11 improvements, Hot Reload), see the "Detailed Examples" section below.
 
 ## Agent Gotchas
 

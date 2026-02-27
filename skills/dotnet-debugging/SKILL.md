@@ -7,6 +7,8 @@ user-invocable: true
 
 # dotnet-debugging
 
+## Overview
+
 Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows application -- native, managed (.NET/CLR), or mixed-mode. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
 
 **Platform:** Windows only.
@@ -24,11 +26,11 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 
 ## Out of scope
 
-- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling]
-- GC tuning and managed memory optimization -- see [skill:dotnet-tooling]
-- Performance benchmarking and regression detection -- see [skill:dotnet-testing]
-- Application performance architecture patterns -- see [skill:dotnet-tooling]
-- Application-level logging -- see [skill:dotnet-devops]
+- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] (read `references/profiling.md`)
+- GC tuning and managed memory optimization -- see [skill:dotnet-tooling] (read `references/gc-memory.md`)
+- Performance benchmarking and regression detection -- see [skill:dotnet-testing] (read `references/benchmarkdotnet.md`)
+- Application performance architecture patterns -- see [skill:dotnet-tooling] (read `references/performance-patterns.md`)
+- Application-level logging -- see [skill:dotnet-devops] (read `references/structured-logging.md`)
 - Unit/integration test debugging -- see [skill:dotnet-testing]
 
 ## MCP Tool Contract
@@ -114,7 +116,7 @@ Without correct symbols, stacks show raw addresses instead of function names.
 - Do not call it a deadlock unless lock/wait evidence supports it
 - Preserve user privacy: do not include secrets from environment blocks in reports
 
-Cross-references: [skill:dotnet-tooling] for .NET SDK diagnostic tools and GC/memory tuning.
+Cross-references: [skill:dotnet-tooling] for .NET SDK diagnostic tools (`references/profiling.md`) and GC/memory tuning (`references/gc-memory.md`).
 
 ## Companion Files
 
