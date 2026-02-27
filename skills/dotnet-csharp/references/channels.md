@@ -70,14 +70,14 @@ if (!logChannel.Writer.TryWrite(entry))
 }
 ```
 
-### Drop Detection with `TryWrite`
+### Drop Detection with `DropWrite` + `TryWrite`
 
-When using drop modes, detect overflow explicitly with `TryWrite`:
+Use `DropWrite` mode to detect when the channel rejects a new item because it is full. `TryWrite` returns `false` when the item is dropped:
 
 ```csharp
 var channel = Channel.CreateBounded<WorkItem>(new BoundedChannelOptions(100)
 {
-    FullMode = BoundedChannelFullMode.DropOldest
+    FullMode = BoundedChannelFullMode.DropWrite
 });
 
 if (!channel.Writer.TryWrite(item))
@@ -87,7 +87,7 @@ if (!channel.Writer.TryWrite(item))
 }
 ```
 
-For `.NET 7+`, `Channel.CreateBounded<T>` also accepts an `Action<T> itemDropped` callback parameter that fires automatically when an item is discarded by the channel's drop policy.
+**Note:** With `DropOldest` or `DropNewest`, the channel silently evicts an existing item and accepts the write, so `TryWrite` returns `true` even when a drop occurs. Producer-side drop detection is only reliable with `DropWrite`.
 
 ---
 
