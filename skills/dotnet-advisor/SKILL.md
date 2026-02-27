@@ -12,10 +12,10 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 ## Scope
 
 - Routing .NET/C# requests to the correct domain skill or specialist agent
-- Loading [skill:dotnet-csharp] (read `references/coding-standards.md`) as baseline for all code paths
+- Loading [skill:dotnet-csharp] coding standards as baseline for all code paths
 - Maintaining the skill catalog and routing precedence
 - Delegating complex analysis to specialist agents
-- Decision-tree navigation for ambiguous requests spanning multiple domains
+- Disambiguating requests spanning multiple domains
 
 ## Out of scope
 
@@ -25,7 +25,7 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 ## Immediate Routing Actions (Do First)
 
 For every .NET/C# request, execute this sequence before detailed planning:
-1. Invoke [skill:dotnet-csharp] (read `references/coding-standards.md`).
+1. Invoke [skill:dotnet-csharp] and apply its coding standards.
 2. Invoke the primary domain skill for the request (API, testing, UI, devops, tooling, debugging).
 3. Continue with any additional routed skills.
 
@@ -34,7 +34,7 @@ For generic "build me an app" requests, do not skip step 1 even when project sca
 ## Default Quality Rule
 
 For any task that may produce, change, or review C#/.NET code:
-1. Load [skill:dotnet-csharp] (read `references/coding-standards.md`) as a baseline dependency.
+1. Load [skill:dotnet-csharp] and apply its coding standards as a baseline dependency.
 2. Then load domain-specific skills (API, testing, UI, etc.).
 3. Apply standards from coding-standards throughout planning and implementation, not only in final cleanup.
 
@@ -42,7 +42,7 @@ For any task that may produce, change, or review C#/.NET code:
 
 Before any .NET guidance, determine the project's target framework:
 
-> Load [skill:dotnet-tooling] (read `references/version-detection.md`) to read TFMs from `.csproj`, `Directory.Build.props`, and `global.json`. Adapt all guidance to the detected .NET version (net8.0, net9.0, net10.0, net11.0).
+> Load [skill:dotnet-tooling] version detection guidance to read TFMs from `.csproj`, `Directory.Build.props`, and `global.json`. Adapt all guidance to the detected .NET version (net8.0, net9.0, net10.0, net11.0).
 
 ---
 
