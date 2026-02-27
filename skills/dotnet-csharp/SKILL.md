@@ -53,11 +53,11 @@ Most-shared companion: `references/async-patterns.md` is referenced by 4 agents 
 
 ## Out of scope
 
-- ASP.NET Core / web API patterns -> [skill:dotnet-minimal-apis], [skill:dotnet-middleware-patterns]
-- UI framework patterns -> [skill:dotnet-blazor-patterns], [skill:dotnet-uno-platform], [skill:dotnet-maui-development]
-- Testing patterns -> [skill:dotnet-testing-strategy], [skill:dotnet-xunit]
-- Build/MSBuild/project setup -> [skill:dotnet-msbuild-authoring], [skill:dotnet-project-structure]
-- Performance profiling tools -> [skill:dotnet-profiling], [skill:dotnet-benchmarkdotnet]
+- ASP.NET Core / web API patterns -> [skill:dotnet-api]
+- UI framework patterns -> [skill:dotnet-ui]
+- Testing patterns -> [skill:dotnet-testing]
+- Build/MSBuild/project setup -> [skill:dotnet-tooling]
+- Performance profiling tools -> [skill:dotnet-tooling]
 
 ## Companion Files
 
