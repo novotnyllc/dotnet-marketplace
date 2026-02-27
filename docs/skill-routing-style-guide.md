@@ -1,6 +1,6 @@
 # Skill Routing Style Guide
 
-Canonical rules for writing skill and agent descriptions, scope sections, and cross-references in dotnet-artisan. All new and modified skills must follow these conventions. Downstream sweep tasks (T5--T10) apply these rules to existing skills.
+Canonical rules for writing skill and agent descriptions, scope sections, and cross-references in dotnet-artisan. All new and modified skills must follow these conventions.
 
 ---
 
@@ -57,11 +57,11 @@ Agent descriptions use the same third-person declarative style as skills.
 | `WHEN writing C# async code. Patterns for async/await.` | `Writing async/await code. Task patterns, ConfigureAwait, cancellation.` |
 | `WHEN writing, reviewing, or planning C# code. Catches code smells.` | `Detects code smells and anti-patterns in C# code during writing and review.` |
 
-### The 120-Character Target
+### The 600-Character Target
 
-Each description must be **at most 120 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
+Each description must be **at most 600 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 131 skills, the projected maximum is 15,720 characters (131 * 120). The validator enforces a stricter FAIL threshold at 15,600 characters as a buffer. The WARN threshold is 12,000 characters.
+**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 8 broad skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer while staying well under budget (~25% of the 15,600 cap).
 
 ### Budget Threshold Semantics
 
@@ -72,7 +72,7 @@ The validator computes `BUDGET_STATUS` from `CURRENT_DESC_CHARS` only:
   - `OK`: `CURRENT_DESC_CHARS < 12,000`
   - `WARN`: `CURRENT_DESC_CHARS >= 12,000`
   - `FAIL`: `CURRENT_DESC_CHARS >= 15,600`
-- **PROJECTED_DESC_CHARS:** Informational metric only (131 * 120 = 15,720). Not part of BUDGET_STATUS determination. The validator uses a stricter FAIL threshold (15,600) as a buffer.
+- **PROJECTED_DESC_CHARS:** Informational metric only (8 * 600 = 4,800). Not part of BUDGET_STATUS determination.
 - Reaching exactly 12,000 counts as WARN. Acceptance requires being strictly below.
 
 All description changes during sweeps must be **budget-neutral or budget-negative** (same or fewer total characters).
@@ -93,8 +93,8 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ## Out of scope
 
-- Topic X -- see [skill:dotnet-other-skill]
-- Topic Y -- see [skill:dotnet-another-skill]
+- Topic X -- see [skill:dotnet-tooling]
+- Topic Y -- see [skill:dotnet-api]
 ```
 
 ### Rules
@@ -115,7 +115,7 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ```markdown
 # Referencing a skill
-See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).
 
 # Referencing an agent
 Route to [skill:dotnet-security-reviewer] for security audit.
@@ -131,17 +131,17 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 ### Self-References and Cycles
 
 - **Self-references** (a skill referencing itself via `[skill:]`) are **always an error**. The validator rejects self-references.
-- **Bidirectional references** (e.g., `[skill:dotnet-advisor]` in dotnet-version-detection and `[skill:dotnet-version-detection]` in dotnet-advisor) are **legitimate** and expected for hub skills. Cycle detection produces an **informational report**, not validation errors.
+- **Bidirectional references** (e.g., `[skill:dotnet-advisor]` in dotnet-tooling and `[skill:dotnet-tooling]` in dotnet-advisor) are **legitimate** and expected for hub skills. Cycle detection produces an **informational report**, not validation errors.
 
 ### Examples
 
 | Quality | Reference | Problem |
 |---------|-----------|---------|
-| Good | `See [skill:dotnet-csharp-async-patterns] for async/await guidance.` | Specific topic |
+| Good | `See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).` | Specific topic |
 | Good | `Route to [skill:dotnet-architect] for framework selection decisions.` | Agent reference, specific topic |
-| Bad | `See [skill:dotnet-csharp-async-patterns] for more details.` | Vague topic -- "more details" |
-| Bad | `See dotnet-csharp-async-patterns for async guidance.` | Bare text -- not machine-parseable |
-| Bad | `See [skill:dotnet-my-skill] for patterns.` | Self-reference (if written in dotnet-my-skill) |
+| Bad | `See [skill:dotnet-csharp] for more details.` | Vague topic -- "more details" |
+| Bad | `See dotnet-csharp for async guidance.` | Bare text -- not machine-parseable |
+| Bad | `See [skill:dotnet-csharp] for patterns.` | Self-reference (if written in dotnet-csharp) |
 
 ---
 
@@ -149,11 +149,11 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 
 ### Baseline-First Loading
 
-`dotnet-csharp-coding-standards` is the **baseline skill** -- it loads first for any C# code path. Other skills build on top of its conventions, never contradict them.
+`dotnet-csharp` is the **baseline skill** -- it loads first for any C# code path (read `references/coding-standards.md`). Other skills build on top of its conventions, never contradict them.
 
 When writing skill content:
-- Do not restate rules from dotnet-csharp-coding-standards
-- Reference it explicitly: `See [skill:dotnet-csharp-coding-standards] for baseline C# conventions.`
+- Do not restate rules from dotnet-csharp's coding standards
+- Reference it explicitly: `See [skill:dotnet-csharp] for baseline C# conventions.`
 - If your skill overrides a baseline convention for a specific domain, state the override explicitly with rationale
 
 ### Advisor Routing
@@ -233,21 +233,21 @@ env:
 
 ### Positive Example
 
-A skill that satisfies the invocation contract (from `dotnet-version-detection`):
+A skill that satisfies the invocation contract (from `dotnet-tooling`):
 
 ```markdown
 ## Scope
 
-- Reading TFM from .csproj, Directory.Build.props, and global.json
-- Multi-targeting detection and highest-TFM selection
-- SDK version detection and preview feature gating
-- Version-specific API availability guidance
+- .NET SDK, MSBuild, and project file management (.csproj, .sln, Directory.Build.props)
+- NuGet package management, Central Package Management (CPM), version pinning
+- TFM detection, multi-targeting, SDK version detection and preview feature gating
+- Build, publish, and deployment configuration (AOT, trimming, single-file)
 
 ## Out of scope
 
-- Project structure analysis beyond TFM -- see [skill:dotnet-project-analysis]
-- .NET 10 file-based apps without .csproj -- see [skill:dotnet-file-based-apps]
-- Framework upgrade migration steps -- see [skill:dotnet-version-upgrade]
+- C# language patterns and coding standards -- see [skill:dotnet-csharp]
+- ASP.NET Core / web API patterns -- see [skill:dotnet-api]
+- CI/CD pipelines and container builds -- see [skill:dotnet-devops]
 ```
 
 All three rules pass: Scope has 4 unordered bullets, OOS has 3 unordered bullets, and every OOS bullet contains `[skill:]`.
@@ -274,7 +274,7 @@ Failures:
 
 ### Rollout Playbook
 
-The invocation contract ships in **WARN-only mode** by default. During rollout, all 130+ skills will be audited and updated to comply. Once the full catalog is compliant, CI will flip to `STRICT_INVOCATION=1` to enforce the contract as a merge gate. Until then, the warning count (`INVOCATION_CONTRACT_WARN_COUNT`) serves as a progress metric.
+The invocation contract ships in **WARN-only mode** by default. All 8 skills have been audited and comply. CI can flip to `STRICT_INVOCATION=1` to enforce the contract as a merge gate. The warning count (`INVOCATION_CONTRACT_WARN_COUNT`) serves as a regression metric.
 
 ---
 
@@ -308,11 +308,78 @@ env:
 
 ---
 
-## 8. Migration Checklist
+## 8. Companion Files (`references/`)
+
+Skills use a `references/` subdirectory for extended content that would bloat the main SKILL.md. The SKILL.md Routing Table indexes these files by topic.
+
+### When to Use
+
+- Extended code examples, diagnostic tables, or deep-dive content for a specific topic area
+- Content that would push SKILL.md beyond the 5,000-word limit
+- Topics that only a subset of users need (progressive disclosure)
+
+### Naming Convention
+
+- Files live at `skills/<skill-name>/references/<topic>.md`
+- Use lowercase kebab-case filenames: `async-patterns.md`, `coding-standards.md`
+- Each file must have an H1 title (`# ...`) in human-readable Title Case (e.g., `# Async Patterns`)
+- Known acronyms are preserved in titles: EF, MSBuild, gRPC, WinUI, MAUI, AOT, WPF, WinForms, TUI, LINQ, DI
+- Titles must NOT use slug-style names (e.g., `# dotnet-async-patterns` is invalid)
+
+### Structure Rules
+
+- **No `## Scope` or `## Out of scope` sections.** Scope boundaries belong in the parent SKILL.md only. Reference files inherit their scope from the Routing Table entry.
+- **`[skill:]` cross-references** may appear in reference files but must resolve against the same known IDs set (skill directory names + agent file stems) used for SKILL.md validation. Unresolved refs are always errors (no `--allow-planned-refs` downgrade).
+- **No frontmatter required.** Reference files are plain markdown with an H1 title.
+
+### Routing Table Integration
+
+Each domain SKILL.md has a Routing Table that indexes its companion files:
+
+```markdown
+## Routing Table
+
+| Topic | Keywords | Description | Companion File |
+|-------|----------|-------------|----------------|
+| Async/await | async, Task, ConfigureAwait | async/await, Task patterns | references/async-patterns.md |
+```
+
+The validator verifies that every file path in the `Companion File` column exists on disk.
+
+---
+
+## 9. `[skill:]` Syntax for Skills and Agents
+
+The `[skill:name]` syntax is the universal cross-reference format for **both skills and agents**. There is no separate `[agent:]` syntax.
+
+### Resolution Rules
+
+- The `<name>` must match either a **skill directory name** (e.g., `dotnet-csharp`) or an **agent file stem** (e.g., `dotnet-security-reviewer`, the filename without `.md`)
+- The validator resolves against the union of both sets: `known_ids = {skill dirs} | {agent stems}`
+- Unresolved references produce warnings (or errors when `STRICT_REFS=1`)
+
+### Examples
+
+```markdown
+# Referencing a skill
+See [skill:dotnet-csharp] for async/await guidance.
+
+# Referencing an agent (same syntax)
+Route to [skill:dotnet-security-reviewer] for security audit.
+Route to [skill:dotnet-architect] for framework selection decisions.
+```
+
+### Rationale
+
+A unified syntax simplifies tooling and avoids the need for authors to distinguish between skills and agents when writing cross-references. The validator handles both transparently.
+
+---
+
+## 10. Migration Checklist
 
 When normalizing an existing skill to match this style guide:
 
-- [ ] **Description**: Replace WHEN prefix with third-person declarative verb. Verify under 120 characters.
+- [ ] **Description**: Replace WHEN prefix with third-person declarative verb. Verify under 600 characters.
 - [ ] **Scope section**: Add `## Scope` with bullet list of covered topics (if missing).
 - [ ] **Out-of-scope section**: Add `## Out of scope` with attributed `[skill:]` cross-references (if missing).
 - [ ] **Cross-references**: Convert all bare-text skill/agent names to `[skill:name]` syntax.

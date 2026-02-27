@@ -417,3 +417,84 @@ GitHub Actions expressions like github.event.pull_request.head.repo.fork are und
 
 ## 2026-02-21 manual [pitfall]
 Heredocs inside GitHub Actions YAML 'run:' blocks break YAML parsing when the delimiter (e.g. PY, EOF) appears at column 1. Use single-line python -c commands or write to a temp script file instead.
+
+## 2026-02-23 manual [pitfall]
+Regex-based JSON extraction from LLM responses fails on nested objects and braces inside strings; use json.JSONDecoder.raw_decode() scanning instead
+
+## 2026-02-23 manual [pitfall]
+Generation cache keys must include ALL inputs that affect output (model, temperature, prompt content hash) -- not just the semantic identifier -- to prevent silent stale reuse when parameters change
+
+## 2026-02-23 manual [pitfall]
+When a runner emits summary dicts consumed by a comparator, keep comparator-facing entries to a single well-known key (e.g. _overall) and put per-entity breakdowns in artifacts -- comparators iterate all summary keys as entity IDs
+
+## 2026-02-23 manual [pitfall]
+When multiple code paths conditionally assign a variable (e.g. fallback_cost inside an if/else), initialize the variable BEFORE the branch to prevent UnboundLocalError on the paths that skip assignment
+
+## 2026-02-23 manual [pitfall]
+When a runner computes pass/fail per case AND an aggregator computes TP/FP/TN/FN from cases, the aggregator must use the runner's passed field -- not recompute from raw signals -- otherwise compliance rules (e.g. parse_failure = fail) are silently bypassed
+
+## 2026-02-24 manual [pitfall]
+When reporting 'injected bytes' for content passed to an API, derive the count from the exact final string used (including wrappers/delimiters), not from intermediate raw or pre-formatted values -- otherwise byte counts are inconsistent with actual injection
+
+## 2026-02-24 manual [pitfall]
+File allowlists loaded from YAML must reject entries containing path separators or '..' to prevent path traversal -- validate in the loader, not just at consumption
+
+## 2026-02-24 manual [pitfall]
+Confusion matrix axes must be locked to declared group definitions, not derived from runtime data (activated/expected skills). Dynamic axes make dimensions unstable across runs and break baseline comparison.
+
+## 2026-02-24 manual [pitfall]
+Eval runners exit 0 even on partial runs or cost-cap aborts; acceptance must check coverage completeness (case counts) not just exit code + file existence
+
+## 2026-02-24 manual [pitfall]
+Shell scripts that embed variables into python3 -c code are injection-prone; pass values via environment variables and read with os.environ inside Python instead
+
+## 2026-02-24 manual [pitfall]
+When wrapping CLI calls in retry_with_backoff, the call-count returned must include failed attempts, and budget checks must run before each retry attempt -- not just before the outer call
+
+## 2026-02-24 manual [pitfall]
+When probing multiple CLI capabilities, keep probes independent -- do not bundle capability A (e.g., JSON output) into capability B (e.g., stdin transport) or a failure in A will falsely indicate B is broken
+
+## 2026-02-24 manual [pitfall]
+When passing budget_check closures into nested call sites (e.g. judge retry loops), wrap the closure to include locally-consumed calls -- the outer caller only updates its counters after the nested function returns, so uncorrected checks can overshoot caps
+
+## 2026-02-24 manual [pitfall]
+When retry_with_backoff raises (all retries exhausted), attach consumed-call metadata to the exception so callers can keep accurate resource-usage totals -- otherwise failure-heavy runs silently under-count resource consumption
+
+## 2026-02-25 manual [pitfall]
+When re-raising exceptions early in retry loops, always attach accounting metadata (e.g. calls_consumed) before re-raising -- callers depend on it for accurate totals
+
+## 2026-02-25 manual [pitfall]
+Python's built-in hash() is randomized per process via PYTHONHASHSEED -- use hashlib.sha256 for deterministic seeding that must be reproducible across separate process invocations
+
+## 2026-02-25 manual [pitfall]
+When referencing eval run_ids in progress tracking files, verify the run timestamp is AFTER the fix commit timestamp -- pre-fix runs will show the old behavior and make status claims unverifiable
+
+## 2026-02-25 manual [pitfall]
+When a progress-tracking file defines status transition contracts (e.g. task X sets field to Y), metadata fields like fixed_tasks must only include a task ID when the status actually matches the contract -- partial/failed attempts should not be recorded as completed fixes
+
+## 2026-02-25 manual [pitfall]
+When trimming skill body content, verify that Scope section claims still match the body -- removing a section that Scope advertises creates a promise/delivery mismatch detectable by reviewers and evals
+
+## 2026-02-25 manual [pitfall]
+When a tracking file claims verification status, notes must cite specific run IDs and commit SHAs rather than vague sweep language -- readers need auditable provenance to trace claims back to evidence
+
+## 2026-02-26 manual [pitfall]
+When parallel tasks delete/create files but CI gates enforce counts, explicitly state the merge strategy (single PR / stacked PRs) so intermediate states don't break CI.
+
+## 2026-02-26 manual [pitfall]
+When a document repeats summary counts in multiple sections (e.g. assignment completeness check + count verification + summary table), update ALL instances together -- stale duplicates break verification authority
+
+## 2026-02-27 manual [pitfall]
+RP file_tree is a stale snapshot cached at builder time -- reviewer may flag deleted files as still present. Provide live ls output as evidence when deletions are contested.
+
+## 2026-02-27 manual [pitfall]
+When merging skills with existing companion files (examples.md), update internal references like 'see examples.md in this skill directory' to point to the inline section instead
+
+## 2026-02-27 manual [pitfall]
+When merging companion files that reference each other (e.g., SKILL.md says 'see examples.md'), update those internal cross-references to reflect the new merged file structure -- stale pointers to deleted files survive sed-based cross-ref remapping
+
+## 2026-02-27 manual [pitfall]
+When consolidating skills, all [skill:old-name] cross-references in migrated content become broken pointers -- must bulk-replace with intra-skill references or new broad skill names before committing
+
+## 2026-02-27 manual [pitfall]
+Hard-coded counts (e.g. EXPECTED_SKILL_COUNT=131) drift silently when skills are added/removed -- derive from plugin.json or disk discovery instead

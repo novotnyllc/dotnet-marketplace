@@ -209,7 +209,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== Skill Count Assertion ==="
-          EXPECTED=131
+          EXPECTED=8
           ACTUAL=$(find skills -name SKILL.md -maxdepth 2 | wc -l | tr -d ' ')
           echo "Expected: $EXPECTED"
           echo "Actual:   $ACTUAL"

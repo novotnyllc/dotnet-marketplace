@@ -24,28 +24,28 @@ Uno Platform development subagent for cross-platform .NET projects. Performs rea
 
 Always load these skills before analysis:
 
-- [skill:dotnet-version-detection] -- detect target framework, SDK version, and preview features
-- [skill:dotnet-project-analysis] -- understand solution structure, project references, and package management
-- [skill:dotnet-uno-platform] -- Uno Platform core: Extensions ecosystem (Navigation, DI, Config, Serialization, Localization, Logging, HTTP, Auth), MVUX reactive pattern, Toolkit controls, Theme resources, Hot Reload, single-project structure
-- [skill:dotnet-uno-targets] -- per-target deployment guidance: Web/WASM, iOS, Android, macOS (Catalyst), Windows, Linux (Skia/GTK), Embedded (Skia/Framebuffer)
-- [skill:dotnet-uno-mcp] -- MCP server integration for live Uno documentation lookups, search-then-fetch workflow, fallback when server unavailable
+- [skill:dotnet-tooling] (read `references/version-detection.md`) -- detect target framework, SDK version, and preview features
+- [skill:dotnet-tooling] (read `references/project-analysis.md`) -- understand solution structure, project references, and package management
+- [skill:dotnet-ui] (read `references/uno-platform.md`) -- Uno Platform core: Extensions ecosystem (Navigation, DI, Config, Serialization, Localization, Logging, HTTP, Auth), MVUX reactive pattern, Toolkit controls, Theme resources, Hot Reload, single-project structure
+- [skill:dotnet-ui] (read `references/uno-targets.md`) -- per-target deployment guidance: Web/WASM, iOS, Android, macOS (Catalyst), Windows, Linux (Skia/GTK), Embedded (Skia/Framebuffer)
+- [skill:dotnet-ui] (read `references/uno-mcp.md`) -- MCP server integration for live Uno documentation lookups, search-then-fetch workflow, fallback when server unavailable
 
 ## Workflow
 
-1. **Detect context** -- Run [skill:dotnet-version-detection] to determine TFM and SDK version. Read project files via [skill:dotnet-project-analysis] to identify the Uno single-project structure, `UnoFeatures` property, and target frameworks in use.
+1. **Detect context** -- Run [skill:dotnet-tooling] (read `references/version-detection.md`) to determine TFM and SDK version. Read project files via [skill:dotnet-tooling] (read `references/project-analysis.md`) to identify the Uno single-project structure, `UnoFeatures` property, and target frameworks in use.
 
-2. **Identify target platforms** -- Using [skill:dotnet-uno-targets], determine which platforms are configured (WASM, iOS, Android, macOS, Windows, Linux, Embedded). Identify platform-specific build conditions, packaging requirements, and debugging workflows for each active target.
+2. **Identify target platforms** -- Using [skill:dotnet-ui] (read `references/uno-targets.md`), determine which platforms are configured (WASM, iOS, Android, macOS, Windows, Linux, Embedded). Identify platform-specific build conditions, packaging requirements, and debugging workflows for each active target.
 
 3. **Recommend patterns** -- Based on detected context:
-   - From [skill:dotnet-uno-platform]: recommend Extensions ecosystem configuration (Navigation, DI, Config, HTTP, Auth), MVUX reactive patterns (feeds, states, commands), Toolkit controls, and Theme resources (Material/Cupertino/Fluent).
-   - From [skill:dotnet-uno-targets]: provide per-target deployment guidance, platform-specific gotchas, and AOT/trimming implications. Highlight behavior differences across targets (e.g., WASM vs native navigation, auth flow differences, debugging tool availability).
-   - From [skill:dotnet-uno-mcp]: when Uno MCP server tools are available (prefixed `mcp__uno__`), use the search-then-fetch workflow for live documentation. When unavailable, reference static skill content and official docs URLs.
+   - From [skill:dotnet-ui] (read `references/uno-platform.md`): recommend Extensions ecosystem configuration (Navigation, DI, Config, HTTP, Auth), MVUX reactive patterns (feeds, states, commands), Toolkit controls, and Theme resources (Material/Cupertino/Fluent).
+   - From [skill:dotnet-ui] (read `references/uno-targets.md`): provide per-target deployment guidance, platform-specific gotchas, and AOT/trimming implications. Highlight behavior differences across targets (e.g., WASM vs native navigation, auth flow differences, debugging tool availability).
+   - From [skill:dotnet-ui] (read `references/uno-mcp.md`): when Uno MCP server tools are available (prefixed `mcp__uno__`), use the search-then-fetch workflow for live documentation. When unavailable, reference static skill content and official docs URLs.
 
 4. **Delegate** -- For concerns outside Uno Platform core, delegate to specialist skills:
-   - [skill:dotnet-uno-testing] for Playwright WASM testing and platform-specific test patterns
-   - [skill:dotnet-aot-wasm] for general AOT/trimming patterns (soft dependency -- skill may not exist yet)
-   - [skill:dotnet-ui-chooser] for framework selection decision tree when user is evaluating alternatives (soft dependency -- skill may not exist yet)
-   - [skill:dotnet-serialization] for serialization patterns beyond Uno Extensions.Serialization configuration
+   - [skill:dotnet-ui] (read `references/uno-testing.md`) for Playwright WASM testing and platform-specific test patterns
+   - [skill:dotnet-testing] (read `references/aot-wasm.md`) for general AOT/trimming patterns
+   - [skill:dotnet-ui] (read `references/ui-chooser.md`) for framework selection decision tree when user is evaluating alternatives
+   - [skill:dotnet-csharp] (read `references/serialization.md`) for serialization patterns beyond Uno Extensions.Serialization configuration
 
 ## Trigger Lexicon
 
@@ -53,9 +53,9 @@ This agent activates on Uno Platform-related queries including: "uno platform", 
 
 ## Explicit Boundaries
 
-- **Does NOT own Uno testing** -- delegates to [skill:dotnet-uno-testing] for Playwright WASM testing and platform-specific test patterns
-- **Does NOT own general AOT/trimming** -- delegates to [skill:dotnet-aot-wasm] for general AOT/trimming patterns (Uno-specific AOT gotchas like linker descriptors and Uno source generators are covered in [skill:dotnet-uno-targets])
-- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui-chooser] when available (soft dependency) for framework decision trees comparing Blazor, MAUI, Uno, WinUI, WPF
+- **Does NOT own Uno testing** -- delegates to [skill:dotnet-ui] (read `references/uno-testing.md`) for Playwright WASM testing and platform-specific test patterns
+- **Does NOT own general AOT/trimming** -- delegates to [skill:dotnet-testing] (read `references/aot-wasm.md`) for general AOT/trimming patterns (Uno-specific AOT gotchas like linker descriptors and Uno source generators are covered in [skill:dotnet-ui] `references/uno-targets.md`)
+- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui] (read `references/ui-chooser.md`) for framework decision trees comparing Blazor, MAUI, Uno, WinUI, WPF
 - Uses Bash only for read-only commands (dotnet --list-sdks, dotnet --info, file reads) -- never modify project files
 
 ## Analysis Guidelines

@@ -34,11 +34,11 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-testing-strategy] -- test pyramid design, test categorization, when to use each test type
-- [skill:dotnet-xunit] -- xUnit v3 patterns, test organization, fixtures, and parallelization
-- [skill:dotnet-integration-testing] -- WebApplicationFactory, test server setup, database strategies
-- [skill:dotnet-snapshot-testing] -- Verify-based snapshot testing for complex output validation
-- [skill:dotnet-playwright] -- browser-based E2E testing with Playwright for .NET
+- [skill:dotnet-testing] (read `references/testing-strategy.md`) -- test pyramid design, test categorization, when to use each test type
+- [skill:dotnet-testing] (read `references/xunit.md`) -- xUnit v3 patterns, test organization, fixtures, and parallelization
+- [skill:dotnet-testing] (read `references/integration-testing.md`) -- WebApplicationFactory, test server setup, database strategies
+- [skill:dotnet-testing] (read `references/snapshot-testing.md`) -- Verify-based snapshot testing for complex output validation
+- [skill:dotnet-testing] (read `references/playwright.md`) -- browser-based E2E testing with Playwright for .NET
 
 ## Decision Tree
 
@@ -101,9 +101,9 @@ Is the question about test organization?
 
 - **Does NOT handle performance benchmarking** -- BenchmarkDotNet setup, measurement methodology, and diagnoser selection belong to [skill:dotnet-benchmark-designer]
 - **Does NOT handle security testing or auditing** -- OWASP compliance checks and vulnerability scanning belong to [skill:dotnet-security-reviewer]
-- **Does NOT handle Blazor-specific testing** -- bUnit component testing and render mode verification are the domain of [skill:dotnet-blazor-specialist] with [skill:dotnet-blazor-testing]
-- **Does NOT handle MAUI-specific testing** -- Device runner setup and platform-specific test patterns belong to [skill:dotnet-maui-specialist] with [skill:dotnet-maui-testing]
-- **Does NOT handle Uno-specific testing** -- Uno.UITest and WASM test patterns belong to [skill:dotnet-uno-specialist] with [skill:dotnet-uno-testing]
+- **Does NOT handle Blazor-specific testing** -- bUnit component testing and render mode verification are the domain of [skill:dotnet-blazor-specialist] with [skill:dotnet-ui] (read `references/blazor-testing.md`)
+- **Does NOT handle MAUI-specific testing** -- Device runner setup and platform-specific test patterns belong to [skill:dotnet-maui-specialist] with [skill:dotnet-ui] (read `references/maui-testing.md`)
+- **Does NOT handle Uno-specific testing** -- Uno.UITest and WASM test patterns belong to [skill:dotnet-uno-specialist] with [skill:dotnet-ui] (read `references/uno-testing.md`)
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations
 
 ## Trigger Lexicon

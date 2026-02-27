@@ -81,3 +81,18 @@ When creating metadata files for repo-level discovery, clarify in spec whether t
 
 ## 2026-02-19 manual [convention]
 Task specs that reference audit data should say 'per the baseline report' instead of hardcoding counts -- counts change as detection logic improves
+
+## 2026-02-24 manual [convention]
+Eval runners must record a result for every dataset case including skipped ones (e.g. classification=skipped) so coverage gaps are visible in results and baseline comparisons
+
+## 2026-02-24 manual [convention]
+Retry logic should distinguish non-retryable config errors (missing binary, bad flags) from transient failures (timeout, rate limit) -- use a custom exception type that retry_with_backoff re-raises immediately to avoid stalling on deterministic failures
+
+## 2026-02-25 manual [convention]
+When a JSON state file drives multi-task workflows, track each status dimension independently (e.g., routing_status + content_status) rather than a single ambiguous status field
+
+## 2026-02-25 manual [convention]
+Triage/analysis documents that reference entity IDs should verify those IDs exist in the codebase before shipping, and state the verification was done
+
+## 2026-02-25 manual [convention]
+When metrics exclude error/timeout cases, explicitly define the gating policy (what counts, what is excluded, and why) so downstream consumers do not misinterpret raw vs clean numbers

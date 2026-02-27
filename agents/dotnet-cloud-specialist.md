@@ -1,6 +1,6 @@
 ---
 name: dotnet-cloud-specialist
-description: "Plans cloud deployment, .NET Aspire orchestration, AKS configuration, multi-stage CI/CD pipelines, distributed tracing, and infrastructure-as-code for .NET apps. Routes architecture to [skill:dotnet-architect], container images to [skill:dotnet-containers], security to [skill:dotnet-security-reviewer]."
+description: "Plans cloud deployment, .NET Aspire orchestration, AKS configuration, multi-stage CI/CD pipelines, distributed tracing, and infrastructure-as-code for .NET apps. Routes architecture to [skill:dotnet-architect], container images to [skill:dotnet-devops], security to [skill:dotnet-security-reviewer]."
 model: sonnet
 capabilities:
   - Design .NET Aspire service discovery and orchestration patterns
@@ -34,11 +34,11 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-containers] -- Dockerfile patterns, SDK container publish, multi-stage builds
-- [skill:dotnet-container-deployment] -- AKS, Azure Container Apps, registry configuration
-- [skill:dotnet-observability] -- OpenTelemetry setup, metrics, traces, structured logging
-- [skill:dotnet-gha-deploy] -- GitHub Actions deployment workflows, environment protection
-- [skill:dotnet-ado-patterns] -- Azure DevOps pipeline patterns, templates, variable groups
+- [skill:dotnet-devops] (read `references/containers.md`) -- Dockerfile patterns, SDK container publish, multi-stage builds
+- [skill:dotnet-devops] (read `references/container-deployment.md`) -- AKS, Azure Container Apps, registry configuration
+- [skill:dotnet-devops] (read `references/observability.md`) -- OpenTelemetry setup, metrics, traces, structured logging
+- [skill:dotnet-devops] (read `references/gha-deploy.md`) -- GitHub Actions deployment workflows, environment protection
+- [skill:dotnet-devops] (read `references/ado-patterns.md`) -- Azure DevOps pipeline patterns, templates, variable groups
 
 ## Decision Tree
 
@@ -62,8 +62,8 @@ Is the question about cloud deployment?
     -> Azure Container Apps: serverless, Aspire-native, recommended default
     -> AKS: full Kubernetes, use when fine-grained control is needed
   Need CI/CD pipeline?
-    -> GitHub Actions: see [skill:dotnet-gha-deploy] for environment strategies
-    -> Azure DevOps: see [skill:dotnet-ado-patterns] for template reuse
+    -> GitHub Actions: see [skill:dotnet-devops] (read `references/gha-deploy.md`) for environment strategies
+    -> Azure DevOps: see [skill:dotnet-devops] (read `references/ado-patterns.md`) for template reuse
   Multi-stage pipeline design?
     -> Build -> Test -> Publish -> Deploy (staging) -> Deploy (production)
     -> Use environment protection rules for production gates
@@ -84,7 +84,7 @@ Is the question about infrastructure-as-code?
     -> Terraform: multi-cloud, larger ecosystem
   Managing secrets in deployment?
     -> Azure Key Vault with managed identity (no connection strings in config)
-    -> See [skill:dotnet-secrets-management] for development secrets
+    -> See [skill:dotnet-api] (read `references/secrets-management.md`) for development secrets
   Environment-specific configuration?
     -> Use Azure App Configuration or Kubernetes ConfigMaps
     -> Aspire: use parameters and connection string abstractions
@@ -105,7 +105,7 @@ Is the question about infrastructure-as-code?
 ## Explicit Boundaries
 
 - **Does NOT handle general application architecture** -- Layered architecture, vertical slices, domain modeling, and service decomposition are the domain of [skill:dotnet-architect]
-- **Does NOT handle container image optimization** -- Multi-stage build tuning, base image selection, and layer caching are covered in [skill:dotnet-containers]
+- **Does NOT handle container image optimization** -- Multi-stage build tuning, base image selection, and layer caching are covered in [skill:dotnet-devops] (read `references/containers.md`)
 - **Does NOT handle security auditing** -- Secret exposure, OWASP compliance, and authentication configuration belong to [skill:dotnet-security-reviewer]
 - **Does NOT handle performance profiling** -- Runtime performance analysis and benchmark interpretation belong to [skill:dotnet-performance-analyst]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations

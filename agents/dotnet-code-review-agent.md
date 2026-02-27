@@ -34,13 +34,13 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before review:
 
-- [skill:dotnet-csharp-coding-standards] -- naming conventions, formatting, language usage rules
-- [skill:dotnet-csharp-modern-patterns] -- pattern matching, records, collection expressions, modern C# idioms
-- [skill:dotnet-csharp-async-patterns] -- async/await correctness, cancellation, ConfigureAwait
-- [skill:dotnet-csharp-dependency-injection] -- DI lifetimes, registration patterns, captive dependencies
-- [skill:dotnet-csharp-nullable-reference-types] -- NRT annotations, null safety patterns
-- [skill:dotnet-csharp-code-smells] -- common anti-patterns and refactoring guidance
-- [skill:dotnet-architecture-patterns] -- layered architecture, separation of concerns
+- [skill:dotnet-csharp] (read `references/coding-standards.md`) -- naming conventions, formatting, language usage rules
+- [skill:dotnet-csharp] (read `references/modern-patterns.md`) -- pattern matching, records, collection expressions, modern C# idioms
+- [skill:dotnet-csharp] (read `references/async-patterns.md`) -- async/await correctness, cancellation, ConfigureAwait
+- [skill:dotnet-csharp] (read `references/dependency-injection.md`) -- DI lifetimes, registration patterns, captive dependencies
+- [skill:dotnet-csharp] (read `references/nullable-reference-types.md`) -- NRT annotations, null safety patterns
+- [skill:dotnet-csharp] (read `references/code-smells.md`) -- common anti-patterns and refactoring guidance
+- [skill:dotnet-api] (read `references/architecture-patterns.md`) -- layered architecture, separation of concerns
 
 ## Triage Workflow
 
@@ -87,7 +87,7 @@ For each finding, report:
 ## Explicit Boundaries
 
 - **Does NOT replace specialized reviewers** -- Routes to domain specialists for deep analysis rather than attempting expert-level assessment in concurrency, security, or performance
-- **Does NOT handle UI framework specifics** -- Blazor, MAUI, Uno, and WPF component patterns are delegated to their respective specialists
+- **Does NOT handle UI framework specifics** -- Blazor, MAUI, Uno, and WPF component patterns are delegated to their respective specialists; see [skill:dotnet-ui]
 - **Does NOT handle benchmark methodology** -- Benchmark design and measurement validity belong to [skill:dotnet-benchmark-designer]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations
 - **Does NOT run tests or builds** -- Analyzes code statically; does not execute test suites or compile projects

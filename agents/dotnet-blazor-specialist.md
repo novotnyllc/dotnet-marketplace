@@ -23,25 +23,25 @@ Blazor development subagent for .NET projects. Performs read-only analysis of Bl
 
 Always load these skills before analysis:
 
-- [skill:dotnet-version-detection] -- detect target framework, SDK version, and preview features
-- [skill:dotnet-project-analysis] -- understand solution structure, project references, and package management
-- [skill:dotnet-blazor-patterns] -- hosting models, render modes, project setup, routing, enhanced navigation, streaming rendering, AOT-safe patterns
-- [skill:dotnet-blazor-components] -- component architecture, lifecycle, state management, JS interop, EditForm validation, QuickGrid
-- [skill:dotnet-blazor-auth] -- authentication across all hosting models: AuthorizeView, CascadingAuthenticationState, Identity UI, per-hosting-model auth flows
+- [skill:dotnet-tooling] (read `references/version-detection.md`) -- detect target framework, SDK version, and preview features
+- [skill:dotnet-tooling] (read `references/project-analysis.md`) -- understand solution structure, project references, and package management
+- [skill:dotnet-ui] (read `references/blazor-patterns.md`) -- hosting models, render modes, project setup, routing, enhanced navigation, streaming rendering, AOT-safe patterns
+- [skill:dotnet-ui] (read `references/blazor-components.md`) -- component architecture, lifecycle, state management, JS interop, EditForm validation, QuickGrid
+- [skill:dotnet-ui] (read `references/blazor-auth.md`) -- authentication across all hosting models: AuthorizeView, CascadingAuthenticationState, Identity UI, per-hosting-model auth flows
 
 ## Workflow
 
-1. **Detect context** -- Run [skill:dotnet-version-detection] to determine TFM. Read project files via [skill:dotnet-project-analysis] to identify current hosting model and dependencies.
+1. **Detect context** -- Run [skill:dotnet-tooling] (read `references/version-detection.md`) to determine TFM. Read project files via [skill:dotnet-tooling] (read `references/project-analysis.md`) to identify current hosting model and dependencies.
 
-2. **Assess hosting model** -- Using [skill:dotnet-blazor-patterns], identify render modes in use (InteractiveServer, InteractiveWebAssembly, InteractiveAuto, Static SSR, Hybrid via MAUI WebView). Determine whether render modes are set globally, per-page, or per-component.
+2. **Assess hosting model** -- Using [skill:dotnet-ui] (read `references/blazor-patterns.md`), identify render modes in use (InteractiveServer, InteractiveWebAssembly, InteractiveAuto, Static SSR, Hybrid via MAUI WebView). Determine whether render modes are set globally, per-page, or per-component.
 
-3. **Recommend patterns** -- Based on hosting model and requirements, recommend component patterns from [skill:dotnet-blazor-components], state management approaches (cascading values, DI, browser storage), and auth configuration from [skill:dotnet-blazor-auth]. Provide version-specific guidance based on detected TFM.
+3. **Recommend patterns** -- Based on hosting model and requirements, recommend component patterns from [skill:dotnet-ui] (read `references/blazor-components.md`), state management approaches (cascading values, DI, browser storage), and auth configuration from [skill:dotnet-ui] (read `references/blazor-auth.md`). Provide version-specific guidance based on detected TFM.
 
 4. **Delegate** -- For concerns outside Blazor core, delegate to specialist skills:
-   - [skill:dotnet-blazor-testing] for bUnit component testing
-   - [skill:dotnet-playwright] for browser-based E2E testing
-   - [skill:dotnet-api-security] for API-level auth (JWT, OAuth/OIDC, passkeys)
-   - [skill:dotnet-realtime-communication] for standalone SignalR patterns (hub design, scaling, backplanes)
+   - [skill:dotnet-ui] (read `references/blazor-testing.md`) for bUnit component testing
+   - [skill:dotnet-testing] (read `references/playwright.md`) for browser-based E2E testing
+   - [skill:dotnet-api] (read `references/api-security.md`) for API-level auth (JWT, OAuth/OIDC, passkeys)
+   - [skill:dotnet-api] (read `references/realtime-communication.md`) for standalone SignalR patterns (hub design, scaling, backplanes)
 
 ## Trigger Lexicon
 
@@ -49,10 +49,10 @@ This agent activates on Blazor-related queries including: "blazor component", "b
 
 ## Explicit Boundaries
 
-- **Does NOT own bUnit testing** -- delegates to [skill:dotnet-blazor-testing]
-- **Does NOT own API-level auth** -- delegates to [skill:dotnet-api-security] for JWT, OAuth/OIDC, passkeys, CORS, rate limiting
-- **Does NOT own standalone SignalR patterns** -- delegates to [skill:dotnet-realtime-communication] for hub design beyond Blazor circuit management
-- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui-chooser] when available (soft dependency)
+- **Does NOT own bUnit testing** -- delegates to [skill:dotnet-ui] (read `references/blazor-testing.md`)
+- **Does NOT own API-level auth** -- delegates to [skill:dotnet-api] (read `references/api-security.md`) for JWT, OAuth/OIDC, passkeys, CORS, rate limiting
+- **Does NOT own standalone SignalR patterns** -- delegates to [skill:dotnet-api] (read `references/realtime-communication.md`) for hub design beyond Blazor circuit management
+- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui] (read `references/ui-chooser.md`)
 - Uses Bash only for read-only commands (dotnet --list-sdks, dotnet --info, file reads) -- never modify project files
 
 ## Analysis Guidelines

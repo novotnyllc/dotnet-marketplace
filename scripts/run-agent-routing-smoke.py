@@ -7,8 +7,11 @@ CLI tests, use test.sh which delegates to check-skills.cs.
 
 This script validates:
   - Claude Code: plugin.json skill paths resolve, expected skill count
-  - Codex:       131 skill dirs found at expected depth, openai.yaml consistent
+  - Codex:       skill dirs found at expected depth, openai.yaml consistent
   - Copilot:     plugin.json paths resolve, SKILL.md frontmatter + license valid
+
+The expected skill count is derived from plugin.json at runtime to avoid
+hard-coded constants that drift when skills are consolidated or added.
 
 Exit codes:
     0 - All structural checks pass
@@ -33,7 +36,21 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 PLUGIN_JSON = REPO_ROOT / ".claude-plugin" / "plugin.json"
 OPENAI_YAML = REPO_ROOT / ".agents" / "openai.yaml"
-EXPECTED_SKILL_COUNT = 131
+
+
+def get_expected_skill_count() -> int:
+    """Derive expected skill count from plugin.json to avoid hard-coded drift.
+
+    Falls back to counting skill directories if plugin.json is missing.
+    """
+    if PLUGIN_JSON.exists():
+        with open(PLUGIN_JSON) as f:
+            plugin = json.load(f)
+        return len(plugin.get("skills", []))
+    # Fallback: count skill directories directly
+    if SKILLS_DIR.is_dir():
+        return len([d for d in SKILLS_DIR.iterdir() if d.is_dir() and (d / "SKILL.md").exists()])
+    return 0
 
 # Frontmatter required fields for every SKILL.md (per repo policy in AGENTS.md)
 REQUIRED_FRONTMATTER = {"name", "description", "license", "user-invocable"}
@@ -192,10 +209,9 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
 
     - plugin.json exists and lists skill paths
     - All listed paths resolve to existing directories
-    - Expected skill count matches
+    - Skill count in plugin.json matches discovered skill directories
     Note: [skill:name] cross-ref validation is handled by validate-skills.sh.
     """
-    _ = skill_dirs  # Interface conformance with check_codex/check_copilot dispatch
     errors: list[str] = []
 
     if not PLUGIN_JSON.exists():
@@ -205,10 +221,11 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
     plugin = load_plugin_json()
     skills_list = plugin.get("skills", [])
 
-    # Verify count
-    if len(skills_list) != EXPECTED_SKILL_COUNT:
+    # Verify plugin.json skill count matches discovered directories
+    if len(skills_list) != len(skill_dirs):
         errors.append(
-            f"plugin.json lists {len(skills_list)} skills, expected {EXPECTED_SKILL_COUNT}"
+            f"plugin.json lists {len(skills_list)} skills but {len(skill_dirs)} "
+            f"skill directories found on disk"
         )
 
     # Verify paths resolve (shared validation)
@@ -220,9 +237,10 @@ def check_claude(skill_dirs: list[Path]) -> list[str]:
 def check_codex(skill_dirs: list[Path]) -> list[str]:
     """Verify Codex structural requirements.
 
-    - Flat layout: 131 skill dirs at skills/<name>/ (depth 1, not depth 2)
+    - Flat layout: skill dirs at skills/<name>/ (depth 1, not depth 2)
     - Each has SKILL.md
     - .agents/openai.yaml exists and references flat layout
+    - Skill directory count matches plugin.json
     """
     errors: list[str] = []
 
@@ -230,10 +248,12 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
         errors.append(f"skills/ directory not found at {SKILLS_DIR}")
         return errors
 
-    # Skill count verification
-    if len(skill_dirs) != EXPECTED_SKILL_COUNT:
+    # Skill count verification: directories must match plugin.json
+    expected = get_expected_skill_count()
+    if expected > 0 and len(skill_dirs) != expected:
         errors.append(
-            f"Found {len(skill_dirs)} skill directories, expected {EXPECTED_SKILL_COUNT}"
+            f"Found {len(skill_dirs)} skill directories, expected {expected} "
+            f"(derived from plugin.json)"
         )
 
     # Verify flat layout (no category subdirectories with skills)

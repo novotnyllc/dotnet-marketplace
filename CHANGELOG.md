@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-02-27
+
+### Changed
+- **Skill consolidation** -- Consolidated 131 individual skills into 8 broad domain skills (dotnet-advisor, dotnet-csharp, dotnet-api, dotnet-ui, dotnet-testing, dotnet-devops, dotnet-tooling, dotnet-debugging). Each skill includes `references/` companion files preserving all source content. Description budget per skill raised from 120 to 600 characters.
+- **Updated agents and routing** -- All 14 specialist agents updated with consolidated skill references. dotnet-advisor rewritten as router for 8 skills.
+- **CI gates updated** -- Skill count assertion updated from 131 to 8. Validator thresholds updated (`--projected-skills 8`, `--max-desc-chars 600`).
+- **Smoke tests remapped** -- Copilot smoke test cases and agent routing cases remapped to 8-skill names. Case IDs preserved for CI filter stability.
+### Removed
+- **Eval harness deleted** -- Removed `tests/evals/` directory (~8,100 lines of Python eval runners, datasets, rubrics, baselines, results). Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) remain as the CI gates.
+- **Legacy skill directories** -- Removed 30 old skill directories superseded by the 8 consolidated skills.
+
+### Added
+
+- **Offline skill evaluation** -- Added an offline evaluation framework with rubric schema, datasets, and runners for quality, confusion-matrix, size impact, activation, and A/B effectiveness checks to continuously measure skill behavior.
+- **Evaluation orchestration** -- Added a unified suite runner and deterministic `--limit` sampling mode so evaluation runs can be executed reproducibly at scale.
+
+### Changed
+
+- **Skill taxonomy** -- Consolidated a very large skill set into 8 broad skill families (including dotnet and advisor areas) and updated plugin manifests/docs so users work with a cleaner, less redundant set of skill invocations.
+- **Reference organization** -- Reworked reference/docs structure (including `references/` normalization and invocability tables) to align with the consolidated skill model and remove stale examples/placeholders.
+
+### Fixed
+
+- **Reference validation and accuracy** -- Fixed stale/misattributed docs and made reference validation stricter (including case-insensitive slug/title checks), which reduced broken pointers and inaccurate skill references across large portions of docs.
+- **Evaluation reliability** -- Fixed CLI evaluation execution to use the stable CLI path, with stronger subprocess behavior and argument compatibility (`TryWrite` flow fixes, safer defaults, no unsupported flags, better timeout/workdir handling), plus improved cost/status accounting so results are trustworthy.
+- **Failure handling and reporting** -- Improved evaluation failure behavior by adding explicit status/error classifications, fail-fast behavior, abort handling, and clearer progress/triage reporting so issues are surfaced quickly and are easier to act on.
+
 ## [0.3.0] - 2026-02-21
 
 ### Added
@@ -122,7 +149,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...HEAD
+[1.0.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...dotnet-artisan/v1.0.0
 [0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0
 [0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0
 [0.1.1]: https://github.com/novotnyllc/dotnet-artisan/releases/tag/dotnet-artisan/v0.1.1

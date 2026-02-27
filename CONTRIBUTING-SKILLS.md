@@ -8,7 +8,7 @@ For the general contribution workflow (prerequisites, PRs, code of conduct), see
 
 ## 1. Quick Start
 
-Create a working skill in five minutes using `dotnet-csharp-code-smells` as a reference.
+Create a working skill in five minutes using `dotnet-csharp` as a reference.
 
 **Step 1 -- Create the folder:**
 
@@ -30,7 +30,7 @@ user-invocable: false
 
 Guidance body goes here. See section 4 for writing instructions.
 
-Cross-references: See [skill:dotnet-csharp-coding-standards] for baseline C# conventions.
+Cross-references: See [skill:dotnet-csharp] for baseline C# conventions.
 ```
 
 **Step 3 -- Register in plugin.json:**
@@ -61,8 +61,10 @@ Every skill lives in a flat directory under `skills/`:
 
 ```
 skills/<skill-name>/
-  SKILL.md          # Required -- main skill file (casing matters)
-  details.md        # Optional -- extended content, examples, deep dives
+  SKILL.md              # Required -- main skill file (casing matters)
+  references/           # Optional -- companion files for extended content
+    coding-standards.md # Human-readable Title Case names
+    async-patterns.md   # One file per topic area
 ```
 
 The `<skill-name>` directory name must match the `name` field in SKILL.md frontmatter exactly.
@@ -89,7 +91,7 @@ Body content starts here...
 | Field | Required | Type | Rules |
 |-------|----------|------|-------|
 | `name` | Yes | string | Must match directory name exactly |
-| `description` | Yes | string | Target under 120 characters (see section 3) |
+| `description` | Yes | string | Target under 600 characters (see section 3) |
 | `license` | Yes | string | Must be `MIT` for this repo. Required by Copilot CLI for skill loading. |
 | `user-invocable` | Yes (repo policy) | boolean | Must be explicitly set on every skill (`true` or `false`). Set to `false` to hide from the `/` menu. Not required by the upstream Agent Skills spec, but required in this repo for cross-provider predictability. |
 | `disable-model-invocation` | No | boolean | Set to `true` to prevent Claude from loading the skill. The description is excluded from the context budget. Use only for non-guidance meta-skills. |
@@ -102,26 +104,26 @@ The `name`, `description`, and `license` fields are required. The optional field
 
 ### Companion Files
 
-When a skill needs extended code examples, diagnostic tables, or deep-dive content that would bloat the main SKILL.md, extract it into a `details.md` file in the same directory. Reference it from the body:
+When a skill needs extended code examples, diagnostic tables, or deep-dive content that would bloat the main SKILL.md, extract it into files under `references/`. Reference them from the body:
 
 ```markdown
-See `details.md` for code examples of each pattern.
+See `references/async-patterns.md` for async/await code examples and common pitfalls.
 ```
 
-This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/dotnet-csharp-code-smells/details.md` for a working example.
+This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/dotnet-csharp/references/` for working examples of companion files.
 
 ### Copilot CLI 32-Skill Display Limit
 
 GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
 
-**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. All 131 skills (11 user-invocable, 120 non-user-invocable) were accessible to the model -- **no 32-skill truncation observed**. Skills appear in manifest order (plugin.json array) when the model reads the manifest, or alphabetical when discovered via filesystem glob. The ~32-skill limit reported in upstream issues may be version-dependent or resolved. See [docs/evidence/copilot-cli-v0.0.412-skill-loading.md](docs/evidence/copilot-cli-v0.0.412-skill-loading.md) for full test output. The advisor meta-routing strategy below remains a beneficial redundancy. Re-verify with the procedure below when upgrading Copilot CLI versions.
+**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. With the consolidated 8-skill layout, the 32-skill display limit is no longer a concern. All 8 skills fit comfortably within any provider's visible window.
 
-**Current status (131 skills, 11 user-invocable):**
+**Current status (8 skills):**
 
-| Category | Count | Alphabetical range |
-|----------|-------|--------------------|
-| `user-invocable: true` | 11 | dotnet-add-analyzers through dotnet-windbg-debugging |
-| `user-invocable: false` | 120 | All remaining skills |
+| Category | Count | Skills |
+|----------|-------|--------|
+| `user-invocable: true` | 4 | dotnet-advisor, dotnet-ui, dotnet-tooling, dotnet-debugging |
+| `user-invocable: false` | 4 | dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
 
 **Routing strategy:** `dotnet-advisor` is the meta-router. We intentionally keep it early in **both** plausible orderings:
 - **Manifest order:** it is listed first in `.claude-plugin/plugin.json`.
@@ -131,14 +133,14 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 
 **Behavior scenarios:**
 
-- **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 11 user-invocable skills compete for the window. All 11 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
-- **If all 131 skills count against the budget:** The advisor sorts early and is expected to be within the first 32 slots. When activated, the advisor body exposes the complete catalog, potentially allowing the model to discover and load skills beyond the visible window (pending verification).
+- **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 4 user-invocable skills compete for the window. All 4 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
+- **If all 8 skills count against the budget:** All 8 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
 
 **Rules for maintaining Copilot compatibility:**
 
 1. **Keep `dotnet-advisor` user-invocable.** It must remain in the visible window to serve as the meta-router.
 2. **Do not rename `dotnet-advisor`** to anything that sorts late alphabetically among all skills. The name is chosen to sort early in the `dotnet-*` namespace.
-3. **New user-invocable skills** should be added sparingly. The current count of 11 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
+3. **New user-invocable skills** should be added sparingly. The current count of 4 is well within the 32-slot budget, but adding many more increases the risk of crowding the window in Copilot environments.
 4. **All skills must have explicit `user-invocable`** (true or false) to avoid ambiguity about which skills count against the budget.
 5. **Skill ordering is manifest-order or alphabetical.** Verified in v0.0.412: skills appear in plugin.json array order when the model reads the manifest, or alphabetical when using filesystem glob. If you create a new user-invocable skill, ensure it's registered in plugin.json and check its position in both orderings.
 
@@ -182,22 +184,22 @@ description: Helps with code quality stuff
 | Bad | `C# patterns` | Too vague; matches everything and nothing |
 | Bad | `Complete guide to everything about async programming in C# including all patterns, best practices, and common mistakes that developers make.` | 146 chars, over budget |
 
-### The 120-Character Target
+### The 600-Character Target
 
-Each description must be **at most 120 characters**. This is a budget constraint, not a style preference.
+Each description must be **at most 600 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 131 skills, the projected maximum is 15,720 characters (131 * 120). The validator enforces a stricter FAIL threshold at 15,600 characters as a buffer. The WARN threshold is 12,000 characters. Keeping individual descriptions under 120 characters is essential to stay within budget as the catalog grows.
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 8 skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer (up to 600 characters) while staying well under the budget (~25% of the 15,600 cap).
 
 The validation script reports the current budget:
 
 ```
-CURRENT_DESC_CHARS=11595
-PROJECTED_DESC_CHARS=15720
+CURRENT_DESC_CHARS=~2400
+PROJECTED_DESC_CHARS=4800
 BUDGET_STATUS=OK
 ```
 
 - **BUDGET_STATUS** is determined by `CURRENT_DESC_CHARS` only: `OK` if below 12,000, `WARN` at 12,000 or above, `FAIL` at 15,600 or above.
-- **PROJECTED_DESC_CHARS** is informational (131 * 120 = 15,720). Not part of `BUDGET_STATUS` determination. The validator uses a stricter FAIL threshold (15,600) as a buffer.
+- **PROJECTED_DESC_CHARS** is informational (8 * 600 = 4,800). Not part of `BUDGET_STATUS` determination.
 
 If your description pushes the budget over the warning threshold, shorten it or shorten other descriptions to compensate.
 
@@ -259,7 +261,7 @@ Structure content in layers of increasing depth:
 
 1. **Frontmatter** -- Name and description (always loaded in catalog)
 2. **SKILL.md body** -- Core guidance, patterns, decision trees (loaded when skill activates)
-3. **`details.md`** -- Extended examples, edge cases (available on demand)
+3. **`references/`** -- Extended examples, edge cases, per-topic companion files (available on demand)
 
 This mirrors the Anthropic guide's recommendation: keep the primary skill focused on actionable guidance, and push verbose examples into companion files.
 
@@ -268,7 +270,7 @@ This mirrors the Anthropic guide's recommendation: keep the primary skill focuse
 Reference other skills using the machine-parseable syntax:
 
 ```markdown
-See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).
 ```
 
 Rules:
@@ -286,7 +288,7 @@ Rules:
 
 ### Size Limit
 
-Keep SKILL.md under **5,000 words**. If you need more space, use `details.md` for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
+Keep SKILL.md under **5,000 words**. If you need more space, use `references/` companion files for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
 
 ---
 
@@ -346,12 +348,12 @@ Guide Claude through ordered steps. Used in scaffolding and migration skills.
 
 ```markdown
 ## Workflow
-1. Detect project type with [skill:dotnet-project-analysis]
-2. Check target framework via [skill:dotnet-version-detection]
+1. Detect project type with [skill:dotnet-tooling] (read references/project-analysis.md)
+2. Check target framework via [skill:dotnet-tooling] (read references/version-detection.md)
 3. Apply migration steps based on detected version
 ```
 
-Example: [skill:dotnet-modernize] walks through SDK upgrade steps in order.
+Example: [skill:dotnet-tooling] (read `references/version-upgrade.md`) walks through SDK upgrade steps in order.
 
 ### Multi-MCP Coordination
 
@@ -362,7 +364,7 @@ Use `mcp__context7__query-docs` to fetch current API documentation,
 then apply the patterns from this skill.
 ```
 
-Example: [skill:dotnet-uno-mcp] coordinates Uno Platform MCP tools with skill guidance.
+Example: [skill:dotnet-ui] (read `references/uno-mcp.md`) coordinates Uno Platform MCP tools with skill guidance.
 
 ### Iterative Refinement
 
@@ -375,7 +377,7 @@ Build-test-fix loops for quality skills. Structure guidance so Claude can iterat
 4. Re-run to confirm resolution
 ```
 
-Example: [skill:dotnet-csharp-code-smells] provides smell/fix tables for iterative cleanup.
+Example: [skill:dotnet-csharp] provides coding standards and code quality tables for iterative cleanup.
 
 ### Context-Aware Tool Selection
 
@@ -387,7 +389,7 @@ Help Claude choose the right tool based on project context.
 - If `*.csproj` contains `<Project Sdk="Microsoft.NET.Sdk.Web">` -> web API patterns
 ```
 
-Example: [skill:dotnet-data-access-strategy] selects between EF Core, Dapper, and raw ADO.NET based on project characteristics.
+Example: [skill:dotnet-api] (read `references/efcore-patterns.md`) selects between EF Core, Dapper, and raw ADO.NET based on project characteristics.
 
 ### Domain-Specific Intelligence
 
@@ -400,7 +402,7 @@ Encode domain expertise that general LLMs lack.
 | CA2000 | Dispose objects before losing scope |
 ```
 
-Example: [skill:dotnet-csharp-code-smells] encodes Roslyn analyzer rule knowledge with fix patterns.
+Example: [skill:dotnet-csharp] encodes Roslyn analyzer rule knowledge with fix patterns via `references/coding-standards.md`.
 
 ---
 
@@ -454,7 +456,7 @@ Before committing a new or modified skill:
 - [ ] **Frontmatter** has `name`, `description`, `license`, and `user-invocable` fields
 - [ ] **`name` matches** the directory name exactly
 - [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
-- [ ] **Description under 120 characters** (check budget math)
+- [ ] **Description under 600 characters** (check budget math)
 - [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
 - [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
 - [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
@@ -476,4 +478,4 @@ Before committing a new or modified skill:
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
 - [CLAUDE.md](CLAUDE.md) -- plugin conventions and validation commands
-- Example skill: [`skills/dotnet-csharp-code-smells/SKILL.md`](skills/dotnet-csharp-code-smells/SKILL.md) -- well-structured skill with companion `details.md`
+- Example skill: [`skills/dotnet-csharp/SKILL.md`](skills/dotnet-csharp/SKILL.md) -- well-structured skill with `references/` companion files

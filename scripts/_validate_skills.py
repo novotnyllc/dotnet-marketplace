@@ -31,8 +31,15 @@ Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
   22. Missing user-invocable field (repo policy requires explicit true/false)
 
 Checks (agents):
-  22. Agent bare-ref detection using known IDs allowlist (informational)
-  23. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  23. Agent bare-ref detection using known IDs allowlist (informational)
+  24. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+
+Checks (reference files -- skills/*/references/*.md):
+  25. H1 title presence (fence-aware -- first # outside code fences)
+  26. H1 title must not be slug-style (must not start with "dotnet-")
+  27. No ## Scope or ## Out of scope sections allowed
+  28. Fence-aware [skill:] cross-ref resolution (always strict, no --allow-planned-refs)
+  29. Routing table companion file existence (Companion File column by header name)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -341,6 +348,141 @@ def find_bare_refs(text: str, known_ids: set) -> list:
         if pattern.search(cleaned):
             found.append(known_id)
     return found
+
+
+# --- Reference File Validation ---
+
+
+def extract_h1_title_fence_aware(text: str) -> str | None:
+    """Find the first H1 title (# ...) outside code fences.
+
+    Tracks whether the current line is inside a code fence (between ```
+    markers) and skips H1 detection for fenced lines. Returns the title
+    text (without the '# ' prefix) or None if no H1 found outside fences.
+
+    This is a NEW function for reference files -- does not modify the
+    existing extract_refs() or has_section_header() behavior.
+    """
+    in_fence = False
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        m = re.match(r"^# (.+)$", stripped)
+        if m:
+            return m.group(1).strip()
+    return None
+
+
+def extract_refs_fence_aware(text: str) -> list:
+    """Extract unique [skill:name] cross-references outside code fences.
+
+    Tracks whether the current line is inside a code fence (between ```
+    markers) and skips [skill:] extraction for fenced lines. Returns a
+    deduplicated list of referenced skill/agent IDs.
+
+    This is a NEW function for reference files -- does not modify the
+    existing extract_refs() used for SKILL.md and agent validation.
+    """
+    refs = []
+    seen = set()
+    in_fence = False
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        for m in re.finditer(r"\[skill:([a-zA-Z0-9_-]+)\]", line):
+            ref_id = m.group(1)
+            if ref_id not in seen:
+                seen.add(ref_id)
+                refs.append(ref_id)
+    return refs
+
+
+def extract_routing_table_companion_files(skill_md_path: Path) -> list:
+    """Parse the Routing Table from a SKILL.md and extract Companion File paths.
+
+    Locates the '## Routing Table' section, finds the table header row by
+    looking for a 'Companion File' column, and extracts file paths from
+    that column in each data row.
+
+    Returns list of (file_path_str, line_number) tuples. Returns empty
+    list if no Routing Table section or no Companion File column found.
+    """
+    try:
+        content = skill_md_path.read_text(encoding="utf-8")
+    except Exception:
+        return []
+
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
+    lines = content.split("\n")
+
+    in_routing = False
+    in_fence = False
+    companion_col_idx = None
+    results = []
+
+    for line_num, line in enumerate(lines, 1):
+        stripped = line.strip()
+
+        # Track fenced code blocks
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+
+        # Detect start of Routing Table section
+        if re.match(r"^## Routing Table\s*$", stripped):
+            in_routing = True
+            companion_col_idx = None
+            continue
+
+        # Detect next section header (end of Routing Table)
+        if in_routing and re.match(r"^## ", stripped):
+            break
+
+        if not in_routing:
+            continue
+
+        # Look for table rows (pipe-delimited)
+        if "|" not in stripped:
+            continue
+
+        cells = [c.strip() for c in stripped.split("|")]
+        # Strip empty leading/trailing cells from pipe syntax
+        if cells and cells[0] == "":
+            cells = cells[1:]
+        if cells and cells[-1] == "":
+            cells = cells[:-1]
+
+        # Detect header row by looking for "Companion File" column
+        if companion_col_idx is None:
+            for idx, cell in enumerate(cells):
+                if cell.lower() == "companion file":
+                    companion_col_idx = idx
+                    break
+            continue  # Skip header row and separator row
+
+        # Skip separator rows (----)
+        if all(c.replace("-", "").replace(":", "").strip() == "" for c in cells):
+            continue
+
+        # Extract companion file path from the identified column
+        if companion_col_idx is not None and companion_col_idx < len(cells):
+            file_path = cells[companion_col_idx].strip()
+            # Strip backticks if present
+            file_path = file_path.strip("`")
+            if file_path and file_path != "Companion File":
+                results.append((file_path, line_num))
+
+    return results
 
 
 def process_file(path: str) -> dict:
@@ -909,6 +1051,96 @@ def main():
         except Exception as e:
             print(f"WARN:  AGENTS.md -- cannot read: {e}")
             warnings += 1
+
+    # --- Reference file validation ---
+    print()
+    print("=== Reference File Validation ===")
+    print()
+
+    ref_file_count = 0
+    ref_file_error_count = 0
+
+    # Collect all reference files: skills/*/references/*.md
+    ref_files = sorted(skills_dir.glob("*/references/*.md"))
+
+    for ref_file in ref_files:
+        rel_path = ref_file.relative_to(repo_root)
+        ref_file_count += 1
+
+        try:
+            ref_content = ref_file.read_text(encoding="utf-8")
+        except Exception as e:
+            print(f"ERROR: {rel_path} -- cannot read: {e}")
+            errors += 1
+            ref_file_error_count += 1
+            continue
+
+        ref_content = ref_content.replace("\r\n", "\n").replace("\r", "\n")
+
+        # Check 25: H1 title presence (fence-aware)
+        title = extract_h1_title_fence_aware(ref_content)
+        if title is None:
+            print(f"ERROR: {rel_path} -- missing H1 title (# ...)")
+            errors += 1
+            ref_file_error_count += 1
+        else:
+            # Check 26: Title must not be slug-style (dotnet-*)
+            if title.lower().startswith("dotnet-"):
+                print(
+                    f"ERROR: {rel_path} -- H1 title is slug-style: '# {title}' "
+                    "(must be human-readable Title Case)"
+                )
+                errors += 1
+                ref_file_error_count += 1
+
+        # Check 27: No Scope/OOS sections
+        if has_section_header(ref_content, "Scope"):
+            print(f"ERROR: {rel_path} -- reference file must not have '## Scope' section")
+            errors += 1
+            ref_file_error_count += 1
+        if has_section_header(ref_content, "Out of scope"):
+            print(f"ERROR: {rel_path} -- reference file must not have '## Out of scope' section")
+            errors += 1
+            ref_file_error_count += 1
+
+        # Check 28: Fence-aware [skill:] cross-ref resolution (always strict)
+        ref_refs = extract_refs_fence_aware(ref_content)
+        for ref_name in ref_refs:
+            if ref_name not in known_ids:
+                print(
+                    f"ERROR: {rel_path} -- broken cross-reference [skill:{ref_name}] "
+                    "(no matching skill or agent found)"
+                )
+                errors += 1
+                ref_file_error_count += 1
+
+    # Check 29: Routing table companion file existence
+    for skill_file in skill_files:
+        rel_skill_path = skill_file.relative_to(repo_root)
+        skill_dir = skill_file.parent
+
+        # Read SKILL.md to check for Routing Table section
+        try:
+            skill_content = skill_file.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        if "## Routing Table" not in skill_content:
+            continue  # Skip skills without routing table (e.g., advisor)
+
+        companion_entries = extract_routing_table_companion_files(skill_file)
+        for file_path_str, line_num in companion_entries:
+            companion_path = skill_dir / file_path_str
+            if not companion_path.exists():
+                print(
+                    f"ERROR: {rel_skill_path} (line ~{line_num}) -- "
+                    f"routing table references missing file: {file_path_str}"
+                )
+                errors += 1
+                ref_file_error_count += 1
+
+    print(f"Reference files scanned: {ref_file_count}")
+    print(f"REF_FILE_ERROR_COUNT={ref_file_error_count}")
 
     # --- Cross-reference cycle detection (informational) ---
     print()

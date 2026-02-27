@@ -24,13 +24,13 @@ Security review subagent for .NET projects. Performs read-only analysis of sourc
 Always load these skills before analysis:
 
 - [skill:dotnet-advisor] -- router/index for all .NET skills; consult its catalog to find specialist skills
-- [skill:dotnet-security-owasp] -- OWASP Top 10 mitigations and deprecated security pattern warnings
-- [skill:dotnet-secrets-management] -- secrets handling, user secrets, environment variables, anti-patterns
-- [skill:dotnet-cryptography] -- cryptographic algorithm selection, hashing, encryption, post-quantum guidance
+- [skill:dotnet-api] (read `references/security-owasp.md`) -- OWASP Top 10 mitigations and deprecated security pattern warnings
+- [skill:dotnet-api] (read `references/secrets-management.md`) -- secrets handling, user secrets, environment variables, anti-patterns
+- [skill:dotnet-api] (read `references/cryptography.md`) -- cryptographic algorithm selection, hashing, encryption, post-quantum guidance
 
 ## Workflow
 
-1. **Scan configuration** -- Search for secrets in `appsettings*.json`, `.env` files, and source code. Check for hardcoded connection strings, API keys, and passwords. Verify `.gitignore` excludes secret files. Reference [skill:dotnet-secrets-management] for anti-patterns.
+1. **Scan configuration** -- Search for secrets in `appsettings*.json`, `.env` files, and source code. Check for hardcoded connection strings, API keys, and passwords. Verify `.gitignore` excludes secret files. Reference [skill:dotnet-api] (read `references/secrets-management.md`) for anti-patterns.
 
 2. **Review OWASP compliance** -- For each OWASP Top 10 category, check relevant code patterns:
    - A01: Verify `[Authorize]` attributes and fallback policy
@@ -44,14 +44,14 @@ Always load these skills before analysis:
    - A09: Verify security event logging without sensitive data exposure
    - A10: Check `HttpClient` usage with user-supplied URLs
 
-3. **Assess cryptography** -- Reference [skill:dotnet-cryptography] to verify:
+3. **Assess cryptography** -- Reference [skill:dotnet-api] (read `references/cryptography.md`) to verify:
    - No deprecated algorithms (MD5, SHA1, DES, RC2) for security purposes
    - Correct AES-GCM usage (unique nonces, proper tag sizes)
    - Adequate PBKDF2 iterations (600,000+ with SHA-256) or Argon2
    - RSA key sizes >= 2048 bits, OAEP padding for encryption
    - PQC readiness for .NET 10+ targets
 
-4. **Check deprecated patterns** -- Reference [skill:dotnet-security-owasp] deprecated section:
+4. **Check deprecated patterns** -- Reference [skill:dotnet-api] (read `references/security-owasp.md`) deprecated section:
    - CAS attributes (`SecurityPermission`, `SecurityCritical` for CAS purposes)
    - `[AllowPartiallyTrustedCallers]` (no effect in .NET Core+)
    - .NET Remoting usage

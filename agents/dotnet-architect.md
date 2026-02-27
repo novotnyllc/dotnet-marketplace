@@ -25,12 +25,12 @@ Architecture advisor subagent for .NET projects. Performs read-only analysis of 
 Always load these foundation skills before analysis:
 
 - [skill:dotnet-advisor] -- router/index for all .NET skills; consult its catalog to find specialist skills
-- [skill:dotnet-version-detection] -- detect target framework, SDK version, and preview features
-- [skill:dotnet-project-analysis] -- understand solution structure, project references, and package management
+- [skill:dotnet-tooling] (read `references/version-detection.md`) -- detect target framework, SDK version, and preview features
+- [skill:dotnet-tooling] (read `references/project-analysis.md`) -- understand solution structure, project references, and package management
 
 ## Workflow
 
-1. **Detect context** -- Run [skill:dotnet-version-detection] to determine what .NET version the project targets. Read solution/project files via [skill:dotnet-project-analysis] to understand the dependency graph.
+1. **Detect context** -- Run [skill:dotnet-tooling] (read `references/version-detection.md`) to determine what .NET version the project targets. Read solution/project files via [skill:dotnet-tooling] (read `references/project-analysis.md`) to understand the dependency graph.
 
 2. **Assess constraints** -- Identify key constraints: target platforms, deployment model (cloud, desktop, mobile), performance requirements (AOT, trimming), existing framework choices.
 
@@ -56,7 +56,7 @@ When recommending project architecture, apply this decision framework grounded i
 - **When to use Clean Architecture** -- Applications with significant business logic, multiple external dependencies (databases, APIs, file systems), and long expected lifespan. For simple CRUD services or prototypes, vertical slices or minimal-layer approaches are more appropriate.
 - **Specification pattern for queries** -- Encapsulate query criteria, includes, ordering, and paging in specification objects rather than scattering query logic across repositories. This keeps repositories generic and query logic testable.
 - **Guard clauses at boundaries** -- Validate inputs at method entry points using guard clauses (throw early). Do not use exceptions for control flow in business logic -- use result types instead.
-- **SOLID application** -- Apply SRP at the class level (one reason to change), OCP via strategy and specification patterns (not switch statements), and DIP at layer boundaries (Infrastructure implements interfaces defined in Application). See [skill:dotnet-solid-principles] for detailed patterns.
+- **SOLID application** -- Apply SRP at the class level (one reason to change), OCP via strategy and specification patterns (not switch statements), and DIP at layer boundaries (Infrastructure implements interfaces defined in Application). See [skill:dotnet-csharp] (read `references/solid-principles.md`) for detailed patterns.
 
 ## Analysis Guidelines
 

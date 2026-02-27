@@ -1,6 +1,6 @@
 ---
 name: dotnet-async-performance-specialist
-description: "Analyzes async/await performance, ValueTask correctness, ConfigureAwait decisions, IO.Pipelines, ThreadPool tuning, and Channel selection in .NET code. Routes profiling interpretation to [skill:dotnet-performance-analyst], thread sync bugs to [skill:dotnet-csharp-concurrency-specialist]."
+description: "Analyzes async/await performance, ValueTask correctness, ConfigureAwait decisions, IO.Pipelines, ThreadPool tuning, and Channel selection in .NET code. Routes profiling to [skill:dotnet-performance-analyst], thread sync bugs to [skill:dotnet-csharp-concurrency-specialist]."
 model: sonnet
 capabilities:
   - Evaluate ValueTask vs Task trade-offs for hot-path async methods
@@ -35,10 +35,10 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-csharp-async-patterns] -- async/await correctness, Task patterns, cancellation, ConfigureAwait
-- [skill:dotnet-performance-patterns] -- Span<T>, ArrayPool, sealed classes, struct design for hot paths
-- [skill:dotnet-profiling] -- dotnet-counters, dotnet-trace, and diagnostic tool interpretation
-- [skill:dotnet-channels] -- Channel<T> producer-consumer patterns, bounded vs unbounded, backpressure
+- [skill:dotnet-csharp] (read `references/async-patterns.md`) -- async/await correctness, Task patterns, cancellation, ConfigureAwait
+- [skill:dotnet-tooling] (read `references/performance-patterns.md`) -- Span<T>, ArrayPool, sealed classes, struct design for hot paths
+- [skill:dotnet-tooling] (read `references/profiling.md`) -- dotnet-counters, dotnet-trace, and diagnostic tool interpretation
+- [skill:dotnet-csharp] (read `references/channels.md`) -- Channel<T> producer-consumer patterns, bounded vs unbounded, backpressure
 
 ## Decision Tree
 
@@ -92,7 +92,7 @@ Is the question about Channel selection?
   -> Use BoundedChannel when producer can outpace consumer
   -> Use UnboundedChannel only when consumer is always faster
   -> Set SingleReader/SingleWriter for lock-free fast paths
-  -> See [skill:dotnet-channels] for detailed patterns
+  -> See [skill:dotnet-csharp] (read `references/channels.md`) for detailed patterns
 ```
 
 ## Analysis Workflow
@@ -107,7 +107,7 @@ Is the question about Channel selection?
 
 ## Explicit Boundaries
 
-- **Does NOT handle thread synchronization primitives** -- Locks, SemaphoreSlim, Interlocked, concurrent collections, and race condition debugging are the domain of [skill:dotnet-csharp-concurrency-specialist]
+- **Does NOT handle thread synchronization primitives** -- Locks, SemaphoreSlim, Interlocked, concurrent collections, and race condition debugging are the domain of [skill:dotnet-csharp-concurrency-specialist]; see also [skill:dotnet-csharp] (read `references/concurrency-patterns.md`)
 - **Does NOT handle general profiling workflow** -- Interpreting flame graphs, heap dumps, and benchmark regression analysis belong to [skill:dotnet-performance-analyst]
 - **Does NOT design benchmarks** -- Benchmark setup and methodology are handled by [skill:dotnet-benchmark-designer]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations

@@ -1,5 +1,7 @@
 # Copilot CLI v0.0.412 Skill Loading Verification
 
+> **Historical document (fn-56; pre-consolidation).** Test results below reflect the 131-skill catalog prior to fn-64 consolidation. The current canonical skill count is **8**.
+
 **Date:** 2026-02-20
 **Epic:** fn-56-copilot-structural-compatibility (Task 4)
 **CLI version:** GitHub Copilot CLI 0.0.412

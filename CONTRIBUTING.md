@@ -27,7 +27,7 @@ All skills follow a flat directory structure within the plugin:
 skills/<skill-name>/SKILL.md
 ```
 
-For example: `skills/dotnet-csharp-async-patterns/SKILL.md`
+For example: `skills/dotnet-csharp/SKILL.md`
 
 ### SKILL.md Frontmatter
 
@@ -35,8 +35,8 @@ Every skill requires `name`, `description`, and `license` frontmatter fields. Ad
 
 ```yaml
 ---
-name: dotnet-csharp-async-patterns
-description: Async/await patterns, cancellation, and parallel execution in modern C#
+name: dotnet-csharp
+description: C# language patterns, coding standards, async/await, DI, config, source generators, LINQ, concurrency, SOLID, and modern syntax
 license: MIT
 user-invocable: false
 ---
@@ -44,7 +44,7 @@ user-invocable: false
 
 **Required fields:**
 - **`name`** (string) -- Unique skill identifier, must match the directory name
-- **`description`** (string) -- One-line summary; target under 120 characters
+- **`description`** (string) -- One-line summary; target under 600 characters
 - **`license`** (string) -- Must be `MIT`; required by Copilot CLI for skill loading
 
 **Required by repo policy:**
@@ -57,14 +57,14 @@ user-invocable: false
 
 See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 120 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600).
+The description budget of 600 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600). With 8 broad skills, the total budget usage is approximately 25% of the 15,600 cap.
 
 ### Cross-Reference Syntax
 
 Reference other skills and agents using the unified cross-reference syntax:
 
 ```markdown
-See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).
 Route to [skill:dotnet-security-reviewer] for security audit.
 ```
 
@@ -84,7 +84,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 
 ### Skill Description Budget
 
-The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 120 characters. This ensures the full skill catalog fits within the context window when Claude Code loads the plugin.
+The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 600 characters. With 8 broad skills, the catalog uses approximately 25% of the budget, giving each skill rich routing signal.
 
 ## Agent Authoring
 
@@ -118,7 +118,7 @@ Required frontmatter fields: `name`, `description`, `capabilities`, and `tools`.
 
 ### Agent Content
 
-- Define preloaded skills (including foundation skills like `dotnet-version-detection` and `dotnet-project-analysis`)
+- Define preloaded skills (including foundation skills like `dotnet-tooling` and `dotnet-csharp`)
 - Specify a workflow with numbered steps
 - Include trigger lexicon for routing from `dotnet-advisor`
 - Keep agent toolsets aligned with workflow steps (do not reference tools not declared in frontmatter)

@@ -1,6 +1,6 @@
 ---
 name: dotnet-aspnetcore-specialist
-description: "Analyzes ASP.NET Core middleware, request pipelines, minimal API design, DI lifetime selection, and diagnostic scenarios. Routes Blazor to [skill:dotnet-blazor-specialist], security to [skill:dotnet-security-reviewer], async internals to [skill:dotnet-async-performance-specialist]."
+description: "Analyzes ASP.NET Core middleware, request pipelines, minimal API design, DI lifetime selection, and diagnostic scenarios. Routes Blazor to [skill:dotnet-blazor-specialist], security to [skill:dotnet-security-reviewer], async to [skill:dotnet-async-performance-specialist]."
 model: sonnet
 capabilities:
   - Evaluate middleware vs endpoint filter trade-offs for cross-cutting concerns
@@ -34,13 +34,13 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-minimal-apis] -- minimal API endpoint design, route groups, filters, and parameter binding
-- [skill:dotnet-api-security] -- authentication, authorization, CORS, and API security patterns
-- [skill:dotnet-architecture-patterns] -- layered architecture, vertical slices, and service decomposition
-- [skill:dotnet-resilience] -- Polly integration, retry policies, circuit breakers, and timeout strategies
-- [skill:dotnet-http-client] -- IHttpClientFactory, typed clients, handler pipelines, and resilience
-- [skill:dotnet-csharp-dependency-injection] -- DI container, lifetimes, keyed services, and registration patterns
-- [skill:dotnet-middleware-patterns] -- middleware authoring, pipeline ordering, and convention-based patterns
+- [skill:dotnet-api] (read `references/minimal-apis.md`) -- minimal API endpoint design, route groups, filters, and parameter binding
+- [skill:dotnet-api] (read `references/api-security.md`) -- authentication, authorization, CORS, and API security patterns
+- [skill:dotnet-api] (read `references/architecture-patterns.md`) -- layered architecture, vertical slices, and service decomposition
+- [skill:dotnet-api] (read `references/resilience.md`) -- Polly integration, retry policies, circuit breakers, and timeout strategies
+- [skill:dotnet-api] (read `references/http-client.md`) -- IHttpClientFactory, typed clients, handler pipelines, and resilience
+- [skill:dotnet-csharp] (read `references/dependency-injection.md`) -- DI container, lifetimes, keyed services, and registration patterns
+- [skill:dotnet-api] (read `references/middleware-patterns.md`) -- middleware authoring, pipeline ordering, and convention-based patterns
 
 ## Decision Tree
 
@@ -129,7 +129,7 @@ Is this a diagnostic scenario?
 ## Explicit Boundaries
 
 - **Does NOT handle Blazor or Razor components** -- Blazor Server/WASM rendering, component lifecycle, and Razor syntax are the domain of [skill:dotnet-blazor-specialist]
-- **Does NOT handle security auditing** -- OWASP compliance, vulnerability scanning, and cryptographic assessment belong to [skill:dotnet-security-reviewer]
+- **Does NOT handle security auditing** -- OWASP compliance, vulnerability scanning, and cryptographic assessment belong to [skill:dotnet-security-reviewer]; see also [skill:dotnet-api] (read `references/security-owasp.md`)
 - **Does NOT handle async performance internals** -- ValueTask correctness, ConfigureAwait decisions, IO.Pipelines, and ThreadPool tuning are the domain of [skill:dotnet-async-performance-specialist]
 - **Does NOT modify code** -- Uses Read, Grep, Glob, and Bash (read-only) only; produces findings and recommendations
 

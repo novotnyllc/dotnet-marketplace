@@ -68,8 +68,8 @@ fi
 VALIDATOR_EXIT=0
 python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
-    --projected-skills 131 \
-    --max-desc-chars 120 \
+    --projected-skills 8 \
+    --max-desc-chars 600 \
     --warn-threshold 12000 \
     --fail-threshold 15600 \
     $ALLOW_PLANNED_FLAG || VALIDATOR_EXIT=$?
