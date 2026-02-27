@@ -15,9 +15,9 @@ Platform Invoke (P/Invoke) patterns for calling native C/C++ libraries from .NET
 
 - AOT-specific P/Invoke concerns (direct pinvoke) -- see [skill:dotnet-tooling]
 - COM interop and CsWin32 source generator -- see [skill:dotnet-ui]
-- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-testing]
+- WASM JavaScript interop (JSImport/JSExport) -- see [skill:dotnet-ui]
 
-Cross-references: [skill:dotnet-tooling] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-tooling] for AOT-first design patterns including source-generated interop, [skill:dotnet-ui] for CsWin32 source generator and COM interop, [skill:dotnet-testing] for WASM JavaScript interop (not native P/Invoke).
+Cross-references: [skill:dotnet-tooling] for AOT-specific P/Invoke and `[LibraryImport]` in publish scenarios, [skill:dotnet-tooling] for AOT-first design patterns including source-generated interop, [skill:dotnet-ui] for CsWin32 source generator, COM interop, and WASM JavaScript interop.
 
 ---
 

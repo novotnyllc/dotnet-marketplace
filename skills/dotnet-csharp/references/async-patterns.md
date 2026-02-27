@@ -210,7 +210,7 @@ public async Task<Dashboard> LoadDashboardAsync(int userId, CancellationToken ct
 
     await Task.WhenAll(ordersTask, profileTask, statsTask);
 
-    return new Dashboard(ordersTask.Result, profileTask.Result, statsTask.Result);
+    return new Dashboard(await ordersTask, await profileTask, await statsTask);
 }
 ```
 

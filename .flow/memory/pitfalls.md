@@ -483,3 +483,6 @@ When parallel tasks delete/create files but CI gates enforce counts, explicitly 
 
 ## 2026-02-26 manual [pitfall]
 When a document repeats summary counts in multiple sections (e.g. assignment completeness check + count verification + summary table), update ALL instances together -- stale duplicates break verification authority
+
+## 2026-02-27 manual [pitfall]
+RP file_tree is a stale snapshot cached at builder time -- reviewer may flag deleted files as still present. Provide live ls output as evidence when deletions are contested.

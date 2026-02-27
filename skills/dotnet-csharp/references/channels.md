@@ -75,20 +75,18 @@ if (!logChannel.Writer.TryWrite(entry))
 Starting in .NET 7, bounded channels with drop modes accept an `itemDropped` callback that fires whenever an item is discarded. Use this for metrics, logging, or resource cleanup on dropped items.
 
 ```csharp
-var channel = Channel.CreateBounded(new BoundedChannelOptions(100)
+var channel = Channel.CreateBounded<WorkItem>(new BoundedChannelOptions(100)
 {
     FullMode = BoundedChannelFullMode.DropOldest
 },
-itemDropped: (item, writer) =>
+itemDropped: static (item) =>
 {
-    logger.LogWarning("Dropped item due to channel overflow: {Id}", item.Id);
-    droppedItemsCounter.Add(1);
-    // Clean up disposable items if needed
-    (item as IDisposable)?.Dispose();
+    Log.Warning("Dropped item due to channel overflow: {Id}", item.Id);
+    DroppedItemsCounter.Add(1);
 });
 ```
 
-The callback receives the dropped item and the `ChannelWriter<T>` (useful if you need to re-route items to a fallback channel).
+The callback receives the dropped item. Use it for metrics, logging, or cleanup of discarded items.
 
 ---
 

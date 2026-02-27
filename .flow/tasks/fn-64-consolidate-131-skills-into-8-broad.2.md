@@ -52,9 +52,8 @@ Create consolidated `dotnet-csharp` skill directory. Merge ~22 C# language skill
 - [ ] No content lost from source skills
 
 ## Done summary
-TBD
-
+Consolidated 22 C# source skills into skills/dotnet-csharp/ with SKILL.md routing table and 22 references/ companion files. Deleted all source skill directories, updated cross-references to use consolidated 8-skill names, and fixed stale details.md pointers.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 043bd2e, 896c8c2, b5edc45, 5956e3f
+- Tests: ls -d verification of all 22 source skill dirs deleted, grep verification of no stale details.md refs, grep verification of no old skill references
 - PRs:
