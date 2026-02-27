@@ -4,7 +4,6 @@
 find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -20
 ```
 
-
 Analyzes .NET solution structure, project references, and build configuration. This skill is foundational -- agents need to understand project layout before doing any meaningful .NET development work.
 
 **Prerequisites:** Run `references/version-detection.md` first to determine TFM and SDK version. For .NET 10+ single-file apps without a `.csproj`, see [skill:dotnet-csharp] instead.

@@ -4,7 +4,6 @@
 dotnet --version 2>/dev/null
 ```
 
-
 Detects .NET version information from project files and provides version-specific guidance. This skill runs **first** before any .NET development work. All other skills depend on the detected version to adapt their guidance.
 
 Cross-cutting skill referenced by [skill:dotnet-advisor] and virtually all specialist skills. See also [skill:dotnet-csharp] for .NET 10+ file-based apps that run without a `.csproj`.

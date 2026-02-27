@@ -4,7 +4,6 @@
 find . -maxdepth 2 \( -name "*.sln" -o -name "*.slnx" \) 2>/dev/null | head -5
 ```
 
-
 Teaches agents to orient in .NET solutions: finding entry points, parsing solution files, traversing project dependencies, locating configuration files, and recognizing common solution layouts. Each subsection includes discovery commands/heuristics and example output.
 
 ## Prerequisites

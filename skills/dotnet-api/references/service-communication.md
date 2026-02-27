@@ -171,7 +171,7 @@ app.MapGet("/events/orders", (OrderEventService svc, CancellationToken ct) =>
 - **Mix protocols when appropriate** -- a single ASP.NET Core host can serve gRPC, REST, SignalR, and SSE simultaneously
 - **Route based on client type** -- browser clients get REST/SignalR/SSE; internal services get gRPC
 
-See [skill:dotnet-tooling] for AOT compilation pipeline and [skill:dotnet-tooling] for AOT-compatible communication patterns.
+See [skill:dotnet-tooling] for Native AOT/trimming guidance and build pipeline implications.
 
 ---
 
