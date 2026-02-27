@@ -58,9 +58,8 @@ Create consolidated `dotnet-api` skill directory. Merge 27 ASP.NET Core, data ac
 - [ ] No content lost from source skills
 
 ## Done summary
-TBD
-
+Consolidated 27 ASP.NET Core source skills into skills/dotnet-api with SKILL.md (routing table, scope, companion files ToC) and 27 companion reference files. Merged existing examples.md into grpc.md and architecture-patterns.md. Deleted all 27 source skill directories.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: c96b1ebae66b8c8cb8703167b83a8ee78a8ba10d
+- Tests: ./scripts/validate-skills.sh
 - PRs:

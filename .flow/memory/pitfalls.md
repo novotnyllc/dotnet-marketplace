@@ -486,3 +486,6 @@ When a document repeats summary counts in multiple sections (e.g. assignment com
 
 ## 2026-02-27 manual [pitfall]
 RP file_tree is a stale snapshot cached at builder time -- reviewer may flag deleted files as still present. Provide live ls output as evidence when deletions are contested.
+
+## 2026-02-27 manual [pitfall]
+When merging skills with existing companion files (examples.md), update internal references like 'see examples.md in this skill directory' to point to the inline section instead
