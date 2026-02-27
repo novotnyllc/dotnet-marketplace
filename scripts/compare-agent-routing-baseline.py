@@ -2,11 +2,14 @@
 """Compare agent-routing results for regressions.
 
 Reads one or more results.json files (produced by check-skills.cs) and
-checks every (case_id, provider) result against the uniform expectation:
-all cases must pass and must not time out.
+checks every (case_id, provider) result against a baseline.
 
-If an explicit baseline file exists, it is loaded and used instead.
-Otherwise a synthetic all-pass baseline is generated from the result set.
+If an explicit baseline file exists at the default path
+(tests/agent-routing/provider-baseline.json), it is loaded.  Otherwise a
+synthetic all-pass baseline is generated from the result set -- every case
+must pass and must not time out.  This ensures failures are never silently
+swallowed when the baseline file is absent.
+
 Optionally compares against a git ref's baseline for regression detection.
 
 Exit codes:
@@ -337,10 +340,20 @@ def main() -> int:
     if baseline_path.exists():
         current_baseline = load_json(baseline_path)
     else:
+        # Synthesize an all-pass baseline from the result set: every case must
+        # pass and must not time out.  This ensures that missing the baseline
+        # file does not silently allow failures through.
         print(
-            f"INFO: No baseline file at {baseline_path}; regressions detected via ref comparison only.",
+            f"INFO: No baseline file at {baseline_path}; synthesizing all-pass baseline from results.",
             file=sys.stderr,
         )
+        synthetic: dict[str, dict] = {}
+        for t in result_tuples:
+            synthetic.setdefault(t["case_id"], {})[t["agent"]] = {
+                "expected_status": "pass",
+                "allow_timeout": False,
+            }
+        current_baseline = synthetic
 
     ref_baseline = None
     if args.baseline_ref:

@@ -6,7 +6,7 @@ This document describes the routing test system used to verify that Claude, Code
 
 - `tests/agent-routing/cases.json`: broad case corpus (same prompts across Claude/Codex/Copilot)
 - `tests/agent-routing/check-skills.cs`: single .NET file-based runner
-- `tests/agent-routing/provider-baseline.json`: per-case per-provider expected status for CI regression gating
+- `tests/agent-routing/provider-baseline.json`: per-case per-provider expected status for CI regression gating (optional; when absent, an all-pass baseline is synthesized from results)
 - `tests/copilot-smoke/cases.jsonl`: deterministic Copilot smoke test cases
 - `tests/copilot-smoke/baseline.json`: expected outcomes for smoke tests (regression gate)
 - `tests/copilot-smoke/run_smoke.py`: Copilot smoke test runner (supports `--require-copilot`)
@@ -304,7 +304,7 @@ strategy:
 }
 ```
 
-Every `(case_id, provider)` tuple in results MUST have an entry in the current baseline. Missing entries produce a hard failure with the message: `ERROR: No baseline entry for case '<case_id>' provider '<provider>'. Update provider-baseline.json.`
+When `provider-baseline.json` exists, every `(case_id, provider)` tuple in results MUST have an entry. Missing entries produce a hard failure with the message: `ERROR: No baseline entry for case '<case_id>' provider '<provider>'. Update provider-baseline.json.` When the file is absent, a synthetic all-pass baseline is generated from the result set (every case expected to pass, no timeouts allowed).
 
 ### Regression rules
 

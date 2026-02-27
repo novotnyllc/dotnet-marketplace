@@ -31,8 +31,8 @@ Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
   22. Missing user-invocable field (repo policy requires explicit true/false)
 
 Checks (agents):
-  22. Agent bare-ref detection using known IDs allowlist (informational)
-  23. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  23. Agent bare-ref detection using known IDs allowlist (informational)
+  24. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
