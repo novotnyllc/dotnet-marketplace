@@ -93,8 +93,8 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ## Out of scope
 
-- Topic X -- see [skill:dotnet-other-skill]
-- Topic Y -- see [skill:dotnet-another-skill]
+- Topic X -- see [skill:dotnet-tooling]
+- Topic Y -- see [skill:dotnet-api]
 ```
 
 ### Rules
@@ -139,9 +139,9 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 |---------|-----------|---------|
 | Good | `See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).` | Specific topic |
 | Good | `Route to [skill:dotnet-architect] for framework selection decisions.` | Agent reference, specific topic |
-| Bad | `See [skill:dotnet-csharp-async-patterns] for more details.` | Vague topic -- "more details" |
-| Bad | `See dotnet-csharp-async-patterns for async guidance.` | Bare text -- not machine-parseable |
-| Bad | `See [skill:dotnet-my-skill] for patterns.` | Self-reference (if written in dotnet-my-skill) |
+| Bad | `See [skill:dotnet-csharp] for more details.` | Vague topic -- "more details" |
+| Bad | `See dotnet-csharp for async guidance.` | Bare text -- not machine-parseable |
+| Bad | `See [skill:dotnet-csharp] for patterns.` | Self-reference (if written in dotnet-csharp) |
 
 ---
 
