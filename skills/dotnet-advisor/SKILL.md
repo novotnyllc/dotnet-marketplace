@@ -222,8 +222,17 @@ Use this decision tree to load the right skills for the current task.
 
 For complex analysis that benefits from domain expertise, delegate to specialist agents:
 
-- Async/await performance, ValueTask, ConfigureAwait, IO.Pipelines -> [skill:dotnet-async-performance-specialist]
+- Architecture review, framework selection, design patterns -> [skill:dotnet-architect]
 - ASP.NET Core middleware, request pipeline, DI lifetimes, diagnostic scenarios -> [skill:dotnet-aspnetcore-specialist]
-- Test architecture, test type selection, test data management, microservice testing -> [skill:dotnet-testing-specialist]
+- Async/await performance, ValueTask, ConfigureAwait, IO.Pipelines -> [skill:dotnet-async-performance-specialist]
+- Benchmark design, measurement methodology, diagnoser selection -> [skill:dotnet-benchmark-designer]
+- Blazor components, render modes, hosting models, auth -> [skill:dotnet-blazor-specialist]
 - Cloud deployment, .NET Aspire, AKS, CI/CD pipelines, distributed tracing -> [skill:dotnet-cloud-specialist]
 - General code review (correctness, performance, security, architecture) -> [skill:dotnet-code-review-agent]
+- Race conditions, deadlocks, thread safety, synchronization -> [skill:dotnet-csharp-concurrency-specialist]
+- Documentation generation, XML docs, Mermaid diagrams, README scaffolding -> [skill:dotnet-docs-generator]
+- .NET MAUI development, platform targets, Xamarin migration, MAUI AOT -> [skill:dotnet-maui-specialist]
+- Performance profiling, flame graphs, heap dumps, benchmark regression -> [skill:dotnet-performance-analyst]
+- Security vulnerabilities, OWASP compliance, secrets exposure, crypto review -> [skill:dotnet-security-reviewer]
+- Test architecture, test type selection, test data management, microservice testing -> [skill:dotnet-testing-specialist]
+- Uno Platform, Extensions ecosystem, MVUX, multi-target deployment -> [skill:dotnet-uno-specialist]
