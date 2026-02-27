@@ -1,6 +1,6 @@
 ---
 name: dotnet-debugging
-description: Debugs Windows applications using WinDbg and crash dump analysis. Covers MCP server integration, live process attach, dump file triage, crash analysis, hang detection, high-CPU diagnosis, memory leak investigation, kernel debugging, symbol configuration, scenario command packs, diagnostic report generation, and SOS extension workflows for .NET runtime inspection.
+description: Debugs Windows applications using WinDbg and crash dump analysis including MCP server integration, live process attach, dump file triage, hang detection, high-CPU diagnosis, memory leak investigation, kernel debugging, symbol configuration, scenario command packs, diagnostic report generation, and SOS extension workflows for .NET runtime inspection.
 license: MIT
 user-invocable: true
 ---
@@ -12,6 +12,27 @@ user-invocable: true
 Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows application -- native, managed (.NET/CLR), or mixed-mode. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
 
 **Platform:** Windows only.
+
+## Routing Table
+
+| Topic | Keywords | Description | Companion File |
+|-------|----------|-------------|----------------|
+| MCP setup | MCP server, WinDbg, configuration | MCP server configuration | references/mcp-setup.md |
+| MCP access | MCP access, tool IDs, dispatch | MCP access patterns | references/access-mcp.md |
+| Common patterns | debug patterns, SOS, CLR | Common debugging patterns | references/common-patterns.md |
+| Dump workflow | dump file, .dmp, crash dump | Dump file analysis workflow | references/dump-workflow.md |
+| Live attach | live process, cdb, attach | Live process attach guide | references/live-attach.md |
+| Symbols | symbol server, .symfix, PDB | Symbol configuration | references/symbols.md |
+| Sanity check | verify, environment, baseline | Sanity check procedures | references/sanity-check.md |
+| Scenario packs | command pack, triage, workflow | Scenario command packs | references/scenario-command-packs.md |
+| Capture playbooks | capture, procdump, triggers | Capture playbooks | references/capture-playbooks.md |
+| Report template | diagnostic report, evidence | Diagnostic report template | references/report-template.md |
+| Crash triage | crash, exception, access violation | Crash triage | references/task-crash.md |
+| Hang triage | hang, deadlock, freeze | Hang triage | references/task-hang.md |
+| High-CPU triage | high CPU, runaway thread, spin | High-CPU triage | references/task-high-cpu.md |
+| Memory triage | memory leak, heap, LOH | Memory leak triage | references/task-memory.md |
+| Kernel debugging | kernel, BSOD, bugcheck | Kernel debugging | references/task-kernel.md |
+| Unknown triage | unknown issue, general triage | Unknown issue triage | references/task-unknown.md |
 
 ## Scope
 
@@ -26,12 +47,12 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 
 ## Out of scope
 
-- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -- see [skill:dotnet-tooling] (read `references/profiling.md`)
-- GC tuning and managed memory optimization -- see [skill:dotnet-tooling] (read `references/gc-memory.md`)
-- Performance benchmarking and regression detection -- see [skill:dotnet-testing] (read `references/benchmarkdotnet.md`)
-- Application performance architecture patterns -- see [skill:dotnet-tooling] (read `references/performance-patterns.md`)
-- Application-level logging -- see [skill:dotnet-devops] (read `references/structured-logging.md`)
-- Unit/integration test debugging -- see [skill:dotnet-testing]
+- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -> [skill:dotnet-tooling]
+- GC tuning and managed memory optimization -> [skill:dotnet-tooling]
+- Performance benchmarking and regression detection -> [skill:dotnet-testing]
+- Application performance architecture patterns -> [skill:dotnet-tooling]
+- Application-level logging -> [skill:dotnet-devops]
+- Unit/integration test debugging -> [skill:dotnet-testing]
 
 ## MCP Tool Contract
 
@@ -117,25 +138,6 @@ Without correct symbols, stacks show raw addresses instead of function names.
 - Preserve user privacy: do not include secrets from environment blocks in reports
 
 Cross-references: [skill:dotnet-tooling] for .NET SDK diagnostic tools (`references/profiling.md`) and GC/memory tuning (`references/gc-memory.md`).
-
-## Companion Files
-
-- `references/mcp-setup.md` -- MCP server configuration
-- `references/access-mcp.md` -- MCP access patterns
-- `references/common-patterns.md` -- Common debugging patterns
-- `references/dump-workflow.md` -- Dump file analysis workflow
-- `references/live-attach.md` -- Live process attach guide
-- `references/symbols.md` -- Symbol configuration
-- `references/sanity-check.md` -- Sanity check procedures
-- `references/scenario-command-packs.md` -- Scenario command packs
-- `references/capture-playbooks.md` -- Capture playbooks
-- `references/report-template.md` -- Diagnostic report template
-- `references/task-crash.md` -- Crash triage
-- `references/task-hang.md` -- Hang triage
-- `references/task-high-cpu.md` -- High-CPU triage
-- `references/task-memory.md` -- Memory leak triage
-- `references/task-kernel.md` -- Kernel debugging
-- `references/task-unknown.md` -- Unknown issue triage
 
 ## References
 
