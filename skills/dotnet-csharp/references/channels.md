@@ -47,8 +47,8 @@ Controls what happens when a bounded channel is full and a producer attempts to 
 |------|----------|----------|
 | `Wait` | `WriteAsync` blocks until space is available | Default. Reliable delivery with back-pressure |
 | `DropOldest` | Drops the oldest item in the channel to make room | Telemetry, metrics -- latest data matters most |
-| `DropNewest` | Drops the item being written (newest) | Rate limiting -- discard excess incoming work |
-| `DropWrite` | Drops the item being written and returns `false` from `TryWrite` | Non-blocking fire-and-forget with overflow detection |
+| `DropNewest` | Drops the newest buffered item to make room (accepts the write) | Sliding window -- keep oldest + newest, discard middle |
+| `DropWrite` | Rejects the incoming write and `TryWrite` returns `false` | Rate limiting -- discard excess incoming work with overflow detection |
 
 ```csharp
 // DropOldest -- telemetry pipeline where stale readings are expendable
@@ -466,7 +466,7 @@ builder.Services.Configure<HostOptions>(options =>
 3. **Do not forget to call `Complete()` on the writer** -- without completion, consumers using `ReadAllAsync()` or `WaitToReadAsync` will wait indefinitely after the last item.
 4. **Do not catch `ChannelClosedException` globally** -- it signals that the writer called `Complete()`, possibly with an error. Catch it only around `ReadAsync` calls; `WaitToReadAsync`/`TryRead` loops handle completion via `false` return.
 5. **Do not use `ReadAsync` in hot paths** -- prefer the `WaitToReadAsync` + `TryRead` pattern to drain buffered items synchronously and reduce async state machine allocations.
-6. **Do not block in the `itemDropped` callback** -- it runs synchronously on the writer's thread. Keep it fast (increment counter, log) or offload heavy work.
+6. **Do not block in `TryWrite == false` overflow handling** -- keep overflow accounting cheap (increment counter, log). Offload heavy work to avoid stalling the producer thread.
 
 ---
 
