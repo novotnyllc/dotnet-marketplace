@@ -69,9 +69,8 @@ Read `scripts/validate-similarity.py` to understand the exact regeneration workf
 - [ ] `python3 scripts/validate-similarity.py` passes
 
 ## Done summary
-TBD
-
+Slimmed the advisor skill from 239 to 98 lines: removed 127-line Routing Logic section, replaced verbose Skill Catalog with lean 8-row table, added 9-bullet Cross-Domain Playbooks section preserving multi-skill routing recipes, fixed OOS attribution warning, and eliminated all references/*.md paths from the advisor. Similarity baseline verified correct (empty pairs, max score 0.0).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 38b418a, 178ea42
+- Tests: ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/validate-similarity.py --repo-root . --baseline scripts/similarity-baseline.json --suppressions scripts/similarity-suppressions.json
 - PRs:

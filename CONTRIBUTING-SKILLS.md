@@ -61,8 +61,10 @@ Every skill lives in a flat directory under `skills/`:
 
 ```
 skills/<skill-name>/
-  SKILL.md          # Required -- main skill file (casing matters)
-  details.md        # Optional -- extended content, examples, deep dives
+  SKILL.md              # Required -- main skill file (casing matters)
+  references/           # Optional -- companion files for extended content
+    coding-standards.md # Human-readable Title Case names
+    async-patterns.md   # One file per topic area
 ```
 
 The `<skill-name>` directory name must match the `name` field in SKILL.md frontmatter exactly.
@@ -102,10 +104,10 @@ The `name`, `description`, and `license` fields are required. The optional field
 
 ### Companion Files
 
-When a skill needs extended code examples, diagnostic tables, or deep-dive content that would bloat the main SKILL.md, extract it into a `details.md` file in the same directory. Reference it from the body:
+When a skill needs extended code examples, diagnostic tables, or deep-dive content that would bloat the main SKILL.md, extract it into files under `references/`. Reference them from the body:
 
 ```markdown
-See `details.md` for code examples of each pattern.
+See `references/async-patterns.md` for async/await code examples and common pitfalls.
 ```
 
 This keeps the primary skill lean while making extended content available to agents that need depth. See `skills/dotnet-csharp/references/` for working examples of companion files.
@@ -259,7 +261,7 @@ Structure content in layers of increasing depth:
 
 1. **Frontmatter** -- Name and description (always loaded in catalog)
 2. **SKILL.md body** -- Core guidance, patterns, decision trees (loaded when skill activates)
-3. **`details.md`** -- Extended examples, edge cases (available on demand)
+3. **`references/`** -- Extended examples, edge cases, per-topic companion files (available on demand)
 
 This mirrors the Anthropic guide's recommendation: keep the primary skill focused on actionable guidance, and push verbose examples into companion files.
 
@@ -286,7 +288,7 @@ Rules:
 
 ### Size Limit
 
-Keep SKILL.md under **5,000 words**. If you need more space, use `details.md` for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
+Keep SKILL.md under **5,000 words**. If you need more space, use `references/` companion files for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
 
 ---
 
