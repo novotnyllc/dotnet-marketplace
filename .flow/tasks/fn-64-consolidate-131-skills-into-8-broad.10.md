@@ -77,9 +77,8 @@ Delete the complex eval harness, update CI gates and validator thresholds, remap
 - [ ] Total description budget under 3,900 chars (~25% of 15,600 cap)
 
 ## Done summary
-TBD
-
+Deleted eval harness (~40K lines), 30 legacy skill directories, updated CI gates (EXPECTED=8, --projected-skills 8, --max-desc-chars 600), remapped smoke and agent-routing test cases to 8-skill names, regenerated all baselines, updated all documentation (README, AGENTS, CONTRIBUTING, CONTRIBUTING-SKILLS, CHANGELOG, style guide, routing docs). Derived EXPECTED_SKILL_COUNT dynamically from plugin.json to prevent drift. Added synthetic all-pass baseline generation when provider-baseline.json is absent.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 7111e80, 861c140, d9d88a5
+- Tests: STRICT_REFS=1 ./scripts/validate-skills.sh, ./scripts/validate-marketplace.sh, python3 scripts/run-agent-routing-smoke.py
 - PRs:

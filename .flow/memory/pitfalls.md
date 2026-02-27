@@ -495,3 +495,6 @@ When merging companion files that reference each other (e.g., SKILL.md says 'see
 
 ## 2026-02-27 manual [pitfall]
 When consolidating skills, all [skill:old-name] cross-references in migrated content become broken pointers -- must bulk-replace with intra-skill references or new broad skill names before committing
+
+## 2026-02-27 manual [pitfall]
+Hard-coded counts (e.g. EXPECTED_SKILL_COUNT=131) drift silently when skills are added/removed -- derive from plugin.json or disk discovery instead
