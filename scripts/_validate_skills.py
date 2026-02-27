@@ -1085,7 +1085,7 @@ def main():
             ref_file_error_count += 1
         else:
             # Check 26: Title must not be slug-style (dotnet-*)
-            if title.startswith("dotnet-"):
+            if title.lower().startswith("dotnet-"):
                 print(
                     f"ERROR: {rel_path} -- H1 title is slug-style: '# {title}' "
                     "(must be human-readable Title Case)"
