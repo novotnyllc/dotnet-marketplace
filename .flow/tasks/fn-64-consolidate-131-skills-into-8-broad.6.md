@@ -66,9 +66,8 @@ Create consolidated `dotnet-tooling` skill directory. Merge 32 build, performanc
 - [ ] User-invocable set to `true` (per task .1: absorbs scaffold-project, add-analyzers, modernize, version-upgrade)
 
 ## Done summary
-TBD
-
+Consolidated 32 dotnet-tooling source skills into 1 broad skill with SKILL.md (overview, 32-entry routing table, scope/out-of-scope, companion file ToC), 32 references/ companion files preserving all source content (with examples.md merged inline), and scripts/scan-dotnet-targets.py. All cross-references updated to use intra-skill references or new broad skill names. CLI architecture examples updated from System.CommandLine beta to 2.0 GA APIs.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: 5421f11, a0732c7, cf389ad
+- Tests: verified 32 reference files created, verified 32 source directories deleted, verified plugin.json not modified, verified SKILL.md frontmatter valid, verified no stale skill references remain
 - PRs:

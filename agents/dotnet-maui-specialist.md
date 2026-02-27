@@ -24,25 +24,25 @@ tools:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-version-detection] -- detect target framework, SDK version, and preview features
-- [skill:dotnet-project-analysis] -- understand solution structure, project references, and package management
-- [skill:dotnet-maui-development] -- MAUI patterns: single-project structure, XAML data binding, MVVM with CommunityToolkit.Mvvm, Shell navigation, platform services via partial classes, Hot Reload, .NET 11 improvements (XAML source gen, CoreCLR for Android, `dotnet run` device selection)
-- [skill:dotnet-maui-aot] -- Native AOT on iOS/Mac Catalyst: compilation pipeline, size/startup improvements, library compatibility gaps, opt-out mechanisms, trimming interplay
+- [skill:dotnet-tooling] (read `references/version-detection.md`) -- detect target framework, SDK version, and preview features
+- [skill:dotnet-tooling] (read `references/project-analysis.md`) -- understand solution structure, project references, and package management
+- [skill:dotnet-ui] (read `references/maui-development.md`) -- MAUI patterns: single-project structure, XAML data binding, MVVM with CommunityToolkit.Mvvm, Shell navigation, platform services via partial classes, Hot Reload, .NET 11 improvements (XAML source gen, CoreCLR for Android, `dotnet run` device selection)
+- [skill:dotnet-ui] (read `references/maui-aot.md`) -- Native AOT on iOS/Mac Catalyst: compilation pipeline, size/startup improvements, library compatibility gaps, opt-out mechanisms, trimming interplay
 
 ## Workflow
 
-1. **Detect context** -- Run [skill:dotnet-version-detection] to determine TFM and SDK version. Read project files via [skill:dotnet-project-analysis] to identify the MAUI single-project structure, platform target frameworks, and NuGet dependencies.
+1. **Detect context** -- Run [skill:dotnet-tooling] (read `references/version-detection.md`) to determine TFM and SDK version. Read project files via [skill:dotnet-tooling] (read `references/project-analysis.md`) to identify the MAUI single-project structure, platform target frameworks, and NuGet dependencies.
 
-2. **Identify platform targets** -- Using [skill:dotnet-maui-development], determine which platforms are configured (iOS, Android, Mac Catalyst, Windows, Tizen). Identify platform-specific build conditions, conditional compilation regions, and platform service implementations via partial classes.
+2. **Identify platform targets** -- Using [skill:dotnet-ui] (read `references/maui-development.md`), determine which platforms are configured (iOS, Android, Mac Catalyst, Windows, Tizen). Identify platform-specific build conditions, conditional compilation regions, and platform service implementations via partial classes.
 
 3. **Recommend patterns** -- Based on detected context:
-   - From [skill:dotnet-maui-development]: recommend XAML/MVVM patterns (CommunityToolkit.Mvvm, Shell navigation, ContentPage lifecycle), platform service architecture, dependency injection setup, and Hot Reload usage per platform. Provide version-specific guidance based on detected TFM, including .NET 11 improvements (XAML source gen, CoreCLR for Android, `dotnet run` device selection).
-   - From [skill:dotnet-maui-aot]: for iOS and Mac Catalyst targets, assess Native AOT readiness, recommend publish profiles, identify library compatibility issues, and document opt-out mechanisms. Highlight size and startup improvements achievable with AOT.
+   - From [skill:dotnet-ui] (read `references/maui-development.md`): recommend XAML/MVVM patterns (CommunityToolkit.Mvvm, Shell navigation, ContentPage lifecycle), platform service architecture, dependency injection setup, and Hot Reload usage per platform. Provide version-specific guidance based on detected TFM, including .NET 11 improvements (XAML source gen, CoreCLR for Android, `dotnet run` device selection).
+   - From [skill:dotnet-ui] (read `references/maui-aot.md`): for iOS and Mac Catalyst targets, assess Native AOT readiness, recommend publish profiles, identify library compatibility issues, and document opt-out mechanisms. Highlight size and startup improvements achievable with AOT.
 
 4. **Delegate** -- For concerns outside MAUI core, delegate to specialist skills:
-   - [skill:dotnet-maui-testing] for Appium UI automation and XHarness device testing
-   - [skill:dotnet-native-aot] for general Native AOT patterns beyond MAUI-specific pipeline (soft dependency -- skill may not exist yet)
-   - [skill:dotnet-ui-chooser] for framework selection decision tree when user is evaluating alternatives (soft dependency -- skill may not exist yet)
+   - [skill:dotnet-ui] (read `references/maui-testing.md`) for Appium UI automation and XHarness device testing
+   - [skill:dotnet-tooling] (read `references/native-aot.md`) for general Native AOT patterns beyond MAUI-specific pipeline
+   - [skill:dotnet-ui] (read `references/ui-chooser.md`) for framework selection decision tree when user is evaluating alternatives
 
 ## Trigger Lexicon
 
@@ -50,9 +50,9 @@ This agent activates on MAUI-related queries including: "maui", "maui app", "mau
 
 ## Explicit Boundaries
 
-- **Does NOT own MAUI testing** -- delegates to [skill:dotnet-maui-testing] for Appium UI automation, XHarness device testing, and platform-specific test patterns
-- **Does NOT own general Native AOT patterns** -- delegates to [skill:dotnet-native-aot] for architecture-level AOT guidance (MAUI-specific AOT on iOS/Catalyst is covered in [skill:dotnet-maui-aot])
-- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui-chooser] when available (soft dependency) for framework decision trees comparing Blazor, MAUI, Uno, WinUI, WPF
+- **Does NOT own MAUI testing** -- delegates to [skill:dotnet-ui] (read `references/maui-testing.md`) for Appium UI automation, XHarness device testing, and platform-specific test patterns
+- **Does NOT own general Native AOT patterns** -- delegates to [skill:dotnet-tooling] (read `references/native-aot.md`) for architecture-level AOT guidance (MAUI-specific AOT on iOS/Catalyst is covered in [skill:dotnet-ui] `references/maui-aot.md`)
+- **Does NOT own UI framework selection** -- defers to [skill:dotnet-ui] (read `references/ui-chooser.md`) for framework decision trees comparing Blazor, MAUI, Uno, WinUI, WPF
 - Uses Bash only for read-only commands (dotnet --list-sdks, dotnet --info, file reads) -- never modify project files
 
 ## Analysis Guidelines
@@ -64,7 +64,7 @@ This agent activates on MAUI-related queries including: "maui", "maui app", "mau
 - CommunityToolkit.Mvvm is the recommended MVVM implementation -- present it as the default, explain alternatives when relevant
 - Hot Reload support varies by platform: XAML Hot Reload works broadly, C# Hot Reload has per-platform limitations (instance methods on non-generic classes work in .NET 9+, static/generic methods still require rebuild)
 - For Xamarin.Forms migration, reference migration options: direct MAUI migration for mobile/desktop, WinUI for Windows-only, Uno Platform for cross-platform including web/Linux
-- Consider Native AOT for iOS/Mac Catalyst deployments -- recommend [skill:dotnet-maui-aot] for size/startup optimization
+- Consider Native AOT for iOS/Mac Catalyst deployments -- recommend [skill:dotnet-ui] (read `references/maui-aot.md`) for size/startup optimization
 - When MauiXamlInflator or UseMonoRuntime properties are detected, advise on .NET 11 transition implications
 
 ## References

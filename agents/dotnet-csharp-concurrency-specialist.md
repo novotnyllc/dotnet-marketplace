@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp-concurrency-specialist
-description: "Debugs race conditions, deadlocks, thread safety issues, concurrent access bugs, lock contention, async races, parallel execution problems, and synchronization issues in .NET code. Routes general async/await questions to [skill:dotnet-csharp-async-patterns]."
+description: "Debugs race conditions, deadlocks, thread safety issues, concurrent access bugs, lock contention, async races, parallel execution problems, and synchronization issues in .NET code. Routes general async/await questions to [skill:dotnet-csharp]."
 model: sonnet
 tools:
   - Read
@@ -26,9 +26,9 @@ This agent's guidance is grounded in publicly available content from:
 
 Always load these skills before analysis:
 
-- [skill:dotnet-csharp-async-patterns] -- async/await correctness, `Task` patterns, cancellation, `ConfigureAwait`
-- [skill:dotnet-csharp-concurrency-patterns] -- concurrency primitives: lock, SemaphoreSlim, Interlocked, ConcurrentDictionary, decision framework
-- [skill:dotnet-csharp-modern-patterns] -- language features used in concurrent code (pattern matching, records for immutable state)
+- [skill:dotnet-csharp] (read `references/async-patterns.md`) -- async/await correctness, `Task` patterns, cancellation, `ConfigureAwait`
+- [skill:dotnet-csharp] (read `references/concurrency-patterns.md`) -- concurrency primitives: lock, SemaphoreSlim, Interlocked, ConcurrentDictionary, decision framework
+- [skill:dotnet-csharp] (read `references/modern-patterns.md`) -- language features used in concurrent code (pattern matching, records for immutable state)
 
 ## Decision Tree
 
