@@ -67,9 +67,10 @@ Create consolidated `dotnet-testing` and `dotnet-devops` skill directories. Merg
 - [ ] No content lost from source skills
 
 ## Done summary
-TBD
+Consolidated 12 testing source skills into `skills/dotnet-testing/` with SKILL.md router + 12 companion files in `references/`. Follows the canonical dotnet-csharp pattern with baseline dependency callout, most-shared companion callout, routing table, scope/OOS, and companion index. All cross-references updated to the consolidated 8-skill namespace. Description is 117 chars (under 120 limit). Validator passes with exit code 0.
 
+Note: This covers only the dotnet-testing half of task .5. The dotnet-devops consolidation (18 skills) is the remaining half and has NOT been started yet. Source skill directory deletion is also deferred.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: b6f7ea1 feat(skills): consolidate dotnet-testing (12 skills into 1 broad skill), 6d76f01 fix: address review feedback on dotnet-testing skill consolidation
+- Tests: validate-skills.sh exits 0; no FAIL/ERROR for dotnet-testing, Zero stale cross-references remaining in skills/dotnet-testing/references/, RepoPrompt impl-review verdict: SHIP
 - PRs:

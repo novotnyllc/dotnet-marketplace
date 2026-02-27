@@ -489,3 +489,6 @@ RP file_tree is a stale snapshot cached at builder time -- reviewer may flag del
 
 ## 2026-02-27 manual [pitfall]
 When merging skills with existing companion files (examples.md), update internal references like 'see examples.md in this skill directory' to point to the inline section instead
+
+## 2026-02-27 manual [pitfall]
+When merging companion files that reference each other (e.g., SKILL.md says 'see examples.md'), update those internal cross-references to reflect the new merged file structure -- stale pointers to deleted files survive sed-based cross-ref remapping

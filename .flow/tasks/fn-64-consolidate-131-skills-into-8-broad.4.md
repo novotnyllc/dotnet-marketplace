@@ -59,9 +59,8 @@ Create consolidated `dotnet-ui` and `dotnet-debugging` skill directories. Merge 
 - [ ] No content lost from source skills
 
 ## Done summary
-TBD
-
+Consolidated 18 UI framework skills into skills/dotnet-ui/ (SKILL.md with routing table + 18 references/ companion files) and renamed dotnet-windbg-debugging to skills/dotnet-debugging/ (with reference/ to references/ rename). All cross-references remapped to new 8-skill names. Deleted all 19 source skill directories. plugin.json not modified (deferred to task .9).
 ## Evidence
-- Commits:
-- Tests:
+- Commits: fdf5fc0, 0e485b6, 3eaba9f
+- Tests: ./scripts/validate-skills.sh
 - PRs:
