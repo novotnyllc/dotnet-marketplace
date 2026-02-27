@@ -27,7 +27,7 @@ All skills follow a flat directory structure within the plugin:
 skills/<skill-name>/SKILL.md
 ```
 
-For example: `skills/dotnet-csharp-async-patterns/SKILL.md`
+For example: `skills/dotnet-csharp/SKILL.md`
 
 ### SKILL.md Frontmatter
 
