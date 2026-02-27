@@ -23,12 +23,11 @@ System.CommandLine 2.0 stable API for building .NET CLI applications. Covers Roo
 - CLI application architecture patterns (layered design, exit codes, stdin/stdout/stderr) -- see `references/cli-architecture.md`
 - Native AOT compilation -- see `references/native-aot.md`
 - CLI distribution strategy -- see `references/cli-distribution.md`
-- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
-- DI container mechanics -- see [skill:dotnet-csharp]
-- General coding standards -- see [skill:dotnet-csharp]
+- General CI/CD patterns -- see [skill:dotnet-devops]
+- DI container mechanics and coding standards -- see [skill:dotnet-csharp]
 - CLI packaging for Homebrew, apt, winget -- see `references/cli-packaging.md`
 
-Cross-references: `references/cli-architecture.md` for CLI design patterns, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI fundamentals, [skill:dotnet-csharp] for configuration integration, [skill:dotnet-csharp] for naming and style conventions.
+Cross-references: `references/cli-architecture.md` for CLI design patterns, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI fundamentals, configuration integration, and naming conventions.
 
 
 ## Package Reference

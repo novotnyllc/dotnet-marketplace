@@ -16,7 +16,7 @@ Spectre.Console for building rich console output (tables, trees, progress bars, 
 - System.CommandLine parsing -- see `references/system-commandline.md`
 - CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
 
-Cross-references: `references/terminal-gui.md` for full TUI alternative, `references/system-commandline.md` for System.CommandLine scope boundary, `references/cli-architecture.md` for CLI structure, [skill:dotnet-csharp] for async patterns, [skill:dotnet-csharp] for DI with Spectre.Console.Cli, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
+Cross-references: `references/terminal-gui.md` for full TUI alternative, `references/system-commandline.md` for System.CommandLine scope boundary, `references/cli-architecture.md` for CLI structure, [skill:dotnet-csharp] for async patterns and DI with Spectre.Console.Cli, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
 
 
 ## Package References

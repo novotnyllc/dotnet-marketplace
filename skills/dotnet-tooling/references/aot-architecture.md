@@ -24,7 +24,7 @@ AOT-first application design patterns for .NET 8+: preferring source generators 
 - DI container internals -- see [skill:dotnet-csharp]
 - Serialization depth -- see [skill:dotnet-csharp]
 
-Cross-references: `references/native-aot.md` for the AOT publish pipeline, `references/trimming.md` for trim annotations and library authoring, [skill:dotnet-csharp] for serialization patterns, [skill:dotnet-csharp] for source gen mechanics, [skill:dotnet-csharp] for DI fundamentals, [skill:dotnet-devops] for `runtime-deps` deployment, [skill:dotnet-csharp] for general P/Invoke patterns and marshalling.
+Cross-references: `references/native-aot.md` for the AOT publish pipeline, `references/trimming.md` for trim annotations and library authoring, [skill:dotnet-csharp] for serialization, source generators, DI fundamentals, and P/Invoke patterns, [skill:dotnet-devops] for `runtime-deps` deployment.
 
 
 ## Source Generators Over Reflection

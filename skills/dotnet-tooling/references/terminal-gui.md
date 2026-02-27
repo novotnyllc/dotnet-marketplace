@@ -19,7 +19,7 @@ For detailed code examples (views, menus, dialogs, events, themes, complete edit
 - CLI command-line parsing -- see `references/system-commandline.md`
 - CLI application architecture and distribution -- see `references/cli-architecture.md` and `references/cli-distribution.md`
 
-Cross-references: `references/spectre-console.md` for rich console output alternative, [skill:dotnet-csharp] for async TUI patterns, `references/native-aot.md` for AOT compilation considerations, `references/system-commandline.md` for CLI parsing, [skill:dotnet-csharp] for DI in TUI apps, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
+Cross-references: `references/spectre-console.md` for rich console output alternative, [skill:dotnet-csharp] for async TUI patterns and DI in TUI apps, `references/native-aot.md` for AOT compilation considerations, `references/system-commandline.md` for CLI parsing, [skill:dotnet-ui] for TUI accessibility limitations and screen reader considerations.
 
 
 ## Package Reference

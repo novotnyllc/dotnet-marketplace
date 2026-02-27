@@ -23,7 +23,7 @@ Performance-oriented architecture patterns for .NET applications. Covers zero-al
 - Serialization format performance -- see [skill:dotnet-csharp]
 - Architecture patterns (caching, resilience, DI) -- see [skill:dotnet-api]
 
-Cross-references: [skill:dotnet-testing] for measuring the impact of these patterns, [skill:dotnet-csharp] for Span/Memory syntax foundation, [skill:dotnet-csharp] for sealed class style conventions, `references/native-aot.md` for AOT performance characteristics and trimming impact on pattern choices, [skill:dotnet-csharp] for serialization performance context.
+Cross-references: [skill:dotnet-testing] for measuring the impact of these patterns, [skill:dotnet-csharp] for Span/Memory syntax, sealed class conventions, and serialization performance, `references/native-aot.md` for AOT performance characteristics and trimming impact on pattern choices.
 
 
 ## Span\<T\> and Memory\<T\> for Zero-Allocation Scenarios

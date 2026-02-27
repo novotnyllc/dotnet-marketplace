@@ -26,7 +26,7 @@ Full Native AOT compilation pipeline for .NET 8+ applications: `PublishAot` conf
 - Serialization depth -- see [skill:dotnet-csharp]
 - Container deployment orchestration -- see [skill:dotnet-devops]
 
-Cross-references: `references/aot-architecture.md` for AOT-first design patterns, `references/trimming.md` for trim-safe library authoring, [skill:dotnet-ui] for WebAssembly AOT, [skill:dotnet-ui] for MAUI-specific AOT, [skill:dotnet-devops] for `runtime-deps` base images, [skill:dotnet-csharp] for AOT-safe serialization, [skill:dotnet-csharp] for source gen as AOT enabler, [skill:dotnet-csharp] for AOT-safe DI, [skill:dotnet-csharp] for general P/Invoke patterns and cross-platform library resolution.
+Cross-references: `references/aot-architecture.md` for AOT-first design patterns, `references/trimming.md` for trim-safe library authoring, [skill:dotnet-ui] for WebAssembly AOT and MAUI-specific AOT, [skill:dotnet-devops] for `runtime-deps` base images, [skill:dotnet-csharp] for AOT-safe serialization, source generators, DI, and P/Invoke patterns.
 
 
 ## PublishAot Configuration

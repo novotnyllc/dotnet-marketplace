@@ -26,7 +26,7 @@ Trim-safe development for .NET 8+ applications and libraries: trimming annotatio
 - Container deployment -- see [skill:dotnet-devops]
 - Performance patterns (Span, pooling) -- see `references/performance-patterns.md`
 
-Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] for AOT-safe serialization, [skill:dotnet-csharp] for source gen as trimming enabler.
+Cross-references: `references/native-aot.md` for AOT compilation pipeline, `references/aot-architecture.md` for AOT-safe design patterns, [skill:dotnet-csharp] for AOT-safe serialization and source generators as trimming enabler.
 
 
 ## MSBuild Properties: Apps vs Libraries

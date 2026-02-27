@@ -22,7 +22,7 @@ For complete diagram examples, see the Detailed Examples section below.
 - GitHub-native doc structure and README patterns -- see [skill:dotnet-devops]
 - CI/CD pipeline deployment of doc sites -- see [skill:dotnet-devops]
 
-Cross-references: `references/documentation-strategy.md` for Mermaid rendering setup across doc platforms, [skill:dotnet-devops] for embedding diagrams in GitHub-native docs, [skill:dotnet-devops] for doc site deployment.
+Cross-references: `references/documentation-strategy.md` for Mermaid rendering setup across doc platforms, [skill:dotnet-devops] for embedding diagrams in GitHub-native docs and doc site deployment.
 
 
 ## Supported Diagram Types

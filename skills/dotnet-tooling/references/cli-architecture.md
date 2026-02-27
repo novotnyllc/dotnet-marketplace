@@ -19,11 +19,11 @@ Layered CLI application architecture for .NET: command/handler/service separatio
 - System.CommandLine API details (RootCommand, Option<T>, SetAction) -- see `references/system-commandline.md`
 - Native AOT compilation and publish pipeline -- see `references/native-aot.md`
 - CLI distribution and packaging -- see `references/cli-distribution.md` and `references/cli-packaging.md`
-- General CI/CD patterns -- see [skill:dotnet-devops] and [skill:dotnet-devops]
+- General CI/CD patterns -- see [skill:dotnet-devops]
 - DI container internals -- see [skill:dotnet-csharp]
 - General testing strategies -- see [skill:dotnet-testing]
 
-Cross-references: `references/system-commandline.md` for System.CommandLine 2.0 API, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI patterns, [skill:dotnet-csharp] for configuration integration, [skill:dotnet-testing] for general testing patterns.
+Cross-references: `references/system-commandline.md` for System.CommandLine 2.0 API, `references/native-aot.md` for AOT publishing CLI tools, [skill:dotnet-csharp] for DI patterns and configuration integration, [skill:dotnet-testing] for general testing patterns.
 
 
 ## clig.dev Principles for .NET CLI Tools
@@ -106,7 +106,7 @@ src/
 public static class SyncCommandDefinition
 {
     public static readonly Option<Uri> SourceOption = new(
-        "--source", "Source endpoint URL") { IsRequired = true };
+        "--source", "Source endpoint URL") { Required = true };
 
     public static readonly Option<bool> DryRunOption = new(
         "--dry-run", "Preview changes without applying");
@@ -114,8 +114,8 @@ public static class SyncCommandDefinition
     public static Command Create()
     {
         var command = new Command("sync", "Synchronize data from source");
-        command.AddOption(SourceOption);
-        command.AddOption(DryRunOption);
+        command.Options.Add(SourceOption);
+        command.Options.Add(DryRunOption);
         return command;
     }
 }
@@ -173,7 +173,7 @@ syncCommand.SetAction(async (parseResult, ct) =>
 });
 
 var rootCommand = new RootCommand("MyCli tool");
-rootCommand.Add(syncCommand);
+rootCommand.Subcommands.Add(syncCommand);
 await rootCommand.InvokeAsync(args);
 ```
 
@@ -409,7 +409,7 @@ processCommand.SetAction(async (parseResult, ct) =>
 ```csharp
 // Global --json option for machine-readable output
 var jsonOption = new Option<bool>("--json", "Output as JSON");
-rootCommand.AddGlobalOption(jsonOption);
+rootCommand.Options.Add(jsonOption);
 
 // In handler
 if (useJson)
