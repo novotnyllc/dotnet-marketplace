@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 131 skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** is a Claude Code plugin that provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -47,33 +47,18 @@ Codex discovers skills via the `.agents/openai.yaml` manifest at the repository 
 
 ## Skill Catalog
 
-The plugin organizes 131 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content.
+The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.
 
-| Category | Count | Example Skills |
+| Skill | Domain | Key Topics |
 |---|---|---|
-| **Foundation** | 4 | dotnet-advisor, dotnet-version-detection, dotnet-project-analysis, dotnet-file-based-apps |
-| **Core C#** | 18 | dotnet-csharp-modern-patterns, dotnet-csharp-async-patterns, dotnet-csharp-concurrency-patterns, dotnet-csharp-type-design-performance, dotnet-native-interop, dotnet-file-io, dotnet-io-pipelines, dotnet-linq-optimization |
-| **Project Structure** | 7 | dotnet-project-structure, dotnet-scaffold-project, dotnet-artifacts-output, dotnet-modernize |
-| **Architecture** | 15 | dotnet-architecture-patterns, dotnet-efcore-patterns, dotnet-messaging-patterns, dotnet-aspire-patterns |
-| **Serialization** | 4 | dotnet-grpc, dotnet-realtime-communication, dotnet-serialization |
-| **Testing** | 10 | dotnet-testing-strategy, dotnet-xunit, dotnet-integration-testing |
-| **API Development** | 9 | dotnet-minimal-apis, dotnet-api-versioning, dotnet-openapi, dotnet-csharp-api-design |
-| **Security** | 3 | dotnet-security-owasp, dotnet-secrets-management, dotnet-cryptography |
-| **Multi-Targeting** | 2 | dotnet-multi-targeting, dotnet-version-upgrade |
-| **UI Frameworks** | 14 | dotnet-blazor-patterns, dotnet-maui-development, dotnet-uno-platform, dotnet-accessibility |
-| **Native AOT** | 4 | dotnet-native-aot, dotnet-trimming, dotnet-aot-wasm |
-| **CLI Tools** | 6 | dotnet-system-commandline, dotnet-cli-architecture, dotnet-cli-distribution, dotnet-tool-management |
-| **TUI** | 2 | dotnet-terminal-gui, dotnet-spectre-console |
-| **Agent Meta-Skills** | 5 | dotnet-agent-gotchas, dotnet-build-analysis, dotnet-csproj-reading, dotnet-slopwatch |
-| **Performance** | 5 | dotnet-benchmarkdotnet, dotnet-performance-patterns, dotnet-gc-memory |
-| **CI/CD** | 8 | dotnet-gha-patterns, dotnet-gha-build-test, dotnet-ado-patterns |
-| **Packaging** | 3 | dotnet-nuget-authoring, dotnet-msix, dotnet-github-releases |
-| **Release Management** | 1 | dotnet-release-management |
-| **Documentation** | 5 | dotnet-documentation-strategy, dotnet-mermaid-diagrams, dotnet-github-docs |
-| **Localization** | 1 | dotnet-localization |
-| **Build System** | 3 | dotnet-msbuild-authoring, dotnet-msbuild-tasks, dotnet-build-optimization |
-| **AI** | 1 | dotnet-semantic-kernel |
-| **Debugging** | 1 | dotnet-windbg-debugging |
+| **dotnet-advisor** | Router/dispatcher | Routes queries to domain skills, loads coding standards as baseline |
+| **dotnet-csharp** | C# language & runtime | Modern patterns, async/await, DI, config, source generators, LINQ, concurrency, SOLID |
+| **dotnet-api** | ASP.NET Core & backend | Minimal APIs, EF Core, gRPC, SignalR, security (OWASP), Aspire, architecture patterns |
+| **dotnet-ui** | UI frameworks | Blazor, MAUI, Uno Platform, WPF, WinUI, WinForms, accessibility, localization |
+| **dotnet-testing** | Testing & quality | xUnit, integration/E2E, Playwright, BenchmarkDotNet, snapshot testing, test strategy |
+| **dotnet-devops** | CI/CD & operations | GitHub Actions, Azure DevOps, containers, NuGet, MSIX, observability, structured logging |
+| **dotnet-tooling** | Build & developer tools | MSBuild, Native AOT, trimming, CLI apps, profiling, version detection, project setup |
+| **dotnet-debugging** | Debugging | WinDbg debugging, memory analysis, dump file investigation |
 
 ## Agents
 
@@ -123,30 +108,15 @@ graph TB
             CR[code-review-agent]
         end
 
-        subgraph Skills["131 Skills"]
-            F[Foundation<br/>4 skills]
-            CC[Core C#<br/>18 skills]
-            PS[Project Structure<br/>7 skills]
-            AR[Architecture<br/>15 skills]
-            SE[Serialization<br/>4 skills]
-            TE[Testing<br/>10 skills]
-            AD[API Development<br/>9 skills]
-            SC[Security<br/>3 skills]
-            MT[Multi-Targeting<br/>2 skills]
-            UI[UI Frameworks<br/>14 skills]
-            NA[Native AOT<br/>4 skills]
-            CL[CLI Tools<br/>6 skills]
-            TU[TUI<br/>2 skills]
-            AM[Agent Meta-Skills<br/>5 skills]
-            PE[Performance<br/>5 skills]
-            CI[CI/CD<br/>8 skills]
-            PK[Packaging<br/>3 skills]
-            RM[Release Mgmt<br/>1 skill]
-            DO[Documentation<br/>5 skills]
-            LO[Localization<br/>1 skill]
-            BSys[Build System<br/>3 skills]
-            AI[AI<br/>1 skill]
-            DB[Debugging<br/>1 skill]
+        subgraph Skills["8 Broad Skills"]
+            ADV[dotnet-advisor<br/>Router]
+            CS[dotnet-csharp<br/>C# Language]
+            API[dotnet-api<br/>ASP.NET/Backend]
+            UIS[dotnet-ui<br/>UI Frameworks]
+            TEST[dotnet-testing<br/>Testing/Quality]
+            DEVOPS[dotnet-devops<br/>CI/CD/Ops]
+            TOOL[dotnet-tooling<br/>Build/Tools]
+            DBG[dotnet-debugging<br/>Debugging]
         end
 
         subgraph Infra["Infrastructure"]
@@ -169,16 +139,23 @@ graph TB
     DA --> CS
     DA --> CR
 
-    BSA --> UI
-    US --> UI
-    MS --> UI
-    CSC --> CC
-    SR --> SC
-    PA --> PE
-    BD --> PE
-    DG --> DO
-    DA --> AR
-    DA --> F
+    BSA --> UIS
+    US --> UIS
+    MS --> UIS
+    CSC --> CS
+    SR --> API
+    PA --> TOOL
+    BD --> TEST
+    DG --> TOOL
+    DA --> API
+    DA --> CS
+    ADV --> CS
+    ADV --> API
+    ADV --> UIS
+    ADV --> TEST
+    ADV --> DEVOPS
+    ADV --> TOOL
+    ADV --> DBG
 ```
 
 ### Agent Delegation Flow
@@ -195,7 +172,7 @@ sequenceDiagram
     Claude->>Router: Route query
     Router->>Router: Load dotnet-advisor catalog<br/>+ analyze query context
     Router->>Specialist: Delegate to blazor-specialist
-    Specialist->>Skills: Load dotnet-blazor-auth<br/>+ dotnet-blazor-patterns
+    Specialist->>Skills: Load dotnet-ui<br/>+ references/blazor-auth.md
     Skills-->>Specialist: Skill content
     Specialist-->>Claude: Structured guidance
     Claude-->>User: Blazor auth recommendation<br/>with code examples
@@ -206,24 +183,21 @@ sequenceDiagram
 **Ask about project architecture:**
 > "I have a new .NET 9 web API project. What architecture pattern should I use for a medium-sized e-commerce backend?"
 
-Claude Code loads `dotnet-architecture-patterns` and `dotnet-project-structure` to recommend a clean architecture approach with specific project layout, middleware pipeline, and dependency injection configuration.
+Claude Code loads `dotnet-api` (read `references/architecture-patterns.md`) and `dotnet-tooling` (read `references/project-structure.md`) to recommend a clean architecture approach with specific project layout, middleware pipeline, and dependency injection configuration.
 
 **Debug a concurrency issue:**
 > "I'm getting intermittent failures in my background service that processes messages from a queue. Sometimes messages are processed twice."
 
-The `dotnet-csharp-concurrency-specialist` agent activates, loading `dotnet-csharp-async-patterns` and `dotnet-background-services` to diagnose the race condition and recommend idempotency patterns.
+The `dotnet-csharp-concurrency-specialist` agent activates, loading `dotnet-csharp` (read `references/async-patterns.md` and `references/concurrency-patterns.md`) to diagnose the race condition and recommend idempotency patterns.
 
 **Set up CI/CD:**
 > "Help me create a GitHub Actions workflow that builds, tests, and publishes my NuGet package."
 
-Claude Code loads `dotnet-gha-build-test` and `dotnet-gha-publish` to generate a complete workflow with proper versioning, test matrix, and NuGet push configuration.
+Claude Code loads `dotnet-devops` (read `references/gha-patterns.md`) to generate a complete workflow with proper versioning, test matrix, and NuGet push configuration.
 
 ## Agent Skill Routing Checks
 
-This repo includes a CI-ready routing checker to verify that agents discover and use expected skills.
-
-- Live full-corpus checks (manual/scheduled):
-  - `./test.sh`
+This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` (manual/scheduled).
 
 See `docs/agent-routing-tests.md` for details, workflow inputs, and environment variables.
 

@@ -366,7 +366,7 @@ Concurrency:
 
 Runs on `push` and `pull_request` to `main`. Contains:
 
-- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 131, flat layout guard, Copilot frontmatter safety checks). Runs on both `push` and `pull_request`.
+- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 8, Copilot frontmatter safety checks). Runs on both `push` and `pull_request`.
 - **`copilot-smoke` job**: Runs on `pull_request` only (guarded by `if: github.event_name == 'pull_request'`). Deterministic Copilot smoke test subset covering direct activation, one advisor-routed case (smoke-011), and negative controls. Uses explicit `--case-id` list to select only non-flaky cases. Compares results against `tests/copilot-smoke/baseline.json`. Gates PRs on regressions.
 
 ### `agent-live-routing.yml` (comprehensive)

@@ -57,11 +57,11 @@ Agent descriptions use the same third-person declarative style as skills.
 | `WHEN writing C# async code. Patterns for async/await.` | `Writing async/await code. Task patterns, ConfigureAwait, cancellation.` |
 | `WHEN writing, reviewing, or planning C# code. Catches code smells.` | `Detects code smells and anti-patterns in C# code during writing and review.` |
 
-### The 120-Character Target
+### The 600-Character Target
 
-Each description must be **at most 120 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
+Each description must be **at most 600 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 131 skills, the projected maximum is 15,720 characters (131 * 120). The validator enforces a stricter FAIL threshold at 15,600 characters as a buffer. The WARN threshold is 12,000 characters.
+**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 8 broad skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer while staying well under budget (~25% of the 15,600 cap).
 
 ### Budget Threshold Semantics
 
@@ -72,7 +72,7 @@ The validator computes `BUDGET_STATUS` from `CURRENT_DESC_CHARS` only:
   - `OK`: `CURRENT_DESC_CHARS < 12,000`
   - `WARN`: `CURRENT_DESC_CHARS >= 12,000`
   - `FAIL`: `CURRENT_DESC_CHARS >= 15,600`
-- **PROJECTED_DESC_CHARS:** Informational metric only (131 * 120 = 15,720). Not part of BUDGET_STATUS determination. The validator uses a stricter FAIL threshold (15,600) as a buffer.
+- **PROJECTED_DESC_CHARS:** Informational metric only (8 * 600 = 4,800). Not part of BUDGET_STATUS determination.
 - Reaching exactly 12,000 counts as WARN. Acceptance requires being strictly below.
 
 All description changes during sweeps must be **budget-neutral or budget-negative** (same or fewer total characters).
@@ -115,7 +115,7 @@ Every skill must include explicit scope boundaries using these markdown headings
 
 ```markdown
 # Referencing a skill
-See [skill:dotnet-csharp-async-patterns] for async/await guidance.
+See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).
 
 # Referencing an agent
 Route to [skill:dotnet-security-reviewer] for security audit.
@@ -137,7 +137,7 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 
 | Quality | Reference | Problem |
 |---------|-----------|---------|
-| Good | `See [skill:dotnet-csharp-async-patterns] for async/await guidance.` | Specific topic |
+| Good | `See [skill:dotnet-csharp] for async/await guidance (read references/async-patterns.md).` | Specific topic |
 | Good | `Route to [skill:dotnet-architect] for framework selection decisions.` | Agent reference, specific topic |
 | Bad | `See [skill:dotnet-csharp-async-patterns] for more details.` | Vague topic -- "more details" |
 | Bad | `See dotnet-csharp-async-patterns for async guidance.` | Bare text -- not machine-parseable |
@@ -149,11 +149,11 @@ Route to [skill:dotnet-security-reviewer] for security audit.
 
 ### Baseline-First Loading
 
-`dotnet-csharp-coding-standards` is the **baseline skill** -- it loads first for any C# code path. Other skills build on top of its conventions, never contradict them.
+`dotnet-csharp` is the **baseline skill** -- it loads first for any C# code path (read `references/coding-standards.md`). Other skills build on top of its conventions, never contradict them.
 
 When writing skill content:
-- Do not restate rules from dotnet-csharp-coding-standards
-- Reference it explicitly: `See [skill:dotnet-csharp-coding-standards] for baseline C# conventions.`
+- Do not restate rules from dotnet-csharp's coding standards
+- Reference it explicitly: `See [skill:dotnet-csharp] for baseline C# conventions.`
 - If your skill overrides a baseline convention for a specific domain, state the override explicitly with rationale
 
 ### Advisor Routing
@@ -312,7 +312,7 @@ env:
 
 When normalizing an existing skill to match this style guide:
 
-- [ ] **Description**: Replace WHEN prefix with third-person declarative verb. Verify under 120 characters.
+- [ ] **Description**: Replace WHEN prefix with third-person declarative verb. Verify under 600 characters.
 - [ ] **Scope section**: Add `## Scope` with bullet list of covered topics (if missing).
 - [ ] **Out-of-scope section**: Add `## Out of scope` with attributed `[skill:]` cross-references (if missing).
 - [ ] **Cross-references**: Convert all bare-text skill/agent names to `[skill:name]` syntax.

@@ -3,11 +3,11 @@
 
 interface:
   display_name: "dotnet-artisan"
-  short_description: "131 .NET skills for modern C# and cloud apps"
+  short_description: "8 broad .NET skills for modern C# and cloud apps"
   default_prompt: >
     $skill-installer novotnyllc/dotnet-artisan — install .NET development
-    skills. All 131 skills are under skills/<skill-name>/,
-    each containing a SKILL.md file.
+    skills. All 8 skills are under skills/<skill-name>/,
+    each containing a SKILL.md file with references/ companion files.
 
 policy:
   allow_implicit_invocation: true

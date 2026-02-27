@@ -25,7 +25,7 @@ This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead o
 <!-- END FLOW-NEXT -->
 
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 131 skills and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 8 broad skills and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
@@ -36,7 +36,7 @@ Every skill requires `name`, `description`, and `license` frontmatter fields. Ad
 ```yaml
 ---
 name: dotnet-example-skill
-description: One-line summary under 120 characters
+description: One-line summary under 600 characters
 license: MIT
 user-invocable: false
 ---
@@ -44,7 +44,7 @@ user-invocable: false
 
 **Required fields:**
 - `name` (string) -- must match the directory name
-- `description` (string) -- target under 120 characters (WARN at 12,000 total, FAIL at 15,600)
+- `description` (string) -- target under 600 characters (WARN at 12,000 total, FAIL at 15,600)
 - `license` (string) -- must be `MIT`; required by Copilot CLI
 
 **Required by repo policy:**
@@ -72,13 +72,14 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 
 ### Description Budget
 
-- Per-skill description: under 120 characters
+- Per-skill description: under 600 characters
 - Total context budget: 15,600 characters (warning threshold at 12,000)
 
 ## File Structure
 
 ```
-skills/<skill-name>/SKILL.md               # 131 skills (flat layout)
+skills/<skill-name>/SKILL.md               # 8 broad skills (flat layout)
+skills/<skill-name>/references/*.md        # Companion files with deep content
 agents/<agent-name>.md                     # 14 specialist agents
 hooks/hooks.json                           # Session hooks (start context, post-edit)
 .mcp.json                                  # MCP server integrations
@@ -90,7 +91,7 @@ docs/                                      # Plugin-specific documentation
 ```
 
 Key directories:
-- **`skills/`** -- All skill content in a flat layout (one directory per skill, no category subdirectories)
+- **`skills/`** -- All skill content in a flat layout (one directory per skill, with `references/` companion files)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
 - **`hooks/`** -- Session lifecycle hooks
 - **`scripts/`** -- Hook shell scripts

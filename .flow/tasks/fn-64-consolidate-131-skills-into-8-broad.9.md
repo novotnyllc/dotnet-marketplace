@@ -41,9 +41,8 @@ Update all 14 agent definitions, rewrite dotnet-advisor routing catalog, update 
 - [ ] `STRICT_REFS=1 ./scripts/validate-skills.sh` passes
 
 ## Done summary
-TBD
-
+Updated plugin.json from 131 to 8 skill paths, rewrote dotnet-advisor routing catalog with companion file hints for 8 consolidated skills, and updated all 14 agent files to reference new consolidated skill names with companion file path guidance. All 110 companion file references verified. Specialist agent routing expanded to cover all 14 agents.
 ## Evidence
-- Commits:
-- Tests:
+- Commits: cbd299e, a6cfd26
+- Tests: STRICT_REFS=1 ./scripts/validate-skills.sh (0 errors in agents/new skills), ./scripts/validate-marketplace.sh (PASSED)
 - PRs:

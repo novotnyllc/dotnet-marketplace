@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Skill consolidation** -- Consolidated 131 individual skills into 8 broad domain skills (dotnet-advisor, dotnet-csharp, dotnet-api, dotnet-ui, dotnet-testing, dotnet-devops, dotnet-tooling, dotnet-debugging). Each skill includes `references/` companion files preserving all source content. Description budget per skill raised from 120 to 600 characters.
+- **Updated agents and routing** -- All 14 specialist agents updated with consolidated skill references. dotnet-advisor rewritten as router for 8 skills.
+- **CI gates updated** -- Skill count assertion updated from 131 to 8. Validator thresholds updated (`--projected-skills 8`, `--max-desc-chars 600`).
+- **Smoke tests remapped** -- Copilot smoke test cases and agent routing cases remapped to 8-skill names. Case IDs preserved for CI filter stability.
+
+### Removed
+- **Eval harness deleted** -- Removed `tests/evals/` directory (~8,100 lines of Python eval runners, datasets, rubrics, baselines, results). Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) remain as the CI gates.
+- **Legacy skill directories** -- Removed 30 old skill directories superseded by the 8 consolidated skills.
+
 ## [0.3.0] - 2026-02-21
 
 ### Added
