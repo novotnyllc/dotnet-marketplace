@@ -25,25 +25,33 @@ The plugin covers the full breadth of the .NET ecosystem:
 
 From within Claude Code, run:
 
-```
+```bash
 /plugin marketplace add novotnyllc/dotnet-artisan
+/plugin install dotnet-artisan@dotnet-artisan
 ```
 
 Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
 
 ### GitHub Copilot CLI
 
-Install the plugin as a Copilot skill:
+Install as a Copilot plugin:
 
 ```bash
-copilot skill install novotnyllc/dotnet-artisan@dotnet-artisan
+copilot plugin marketplace add novotnyllc/dotnet-artisan
+copilot plugin install dotnet-artisan@dotnet-artisan
 ```
 
-The flat `skills/<skill-name>/` layout is compatible with Copilot's one-level-deep skill scanning.
+The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-level-deep skill scanning.
 
 ### OpenAI Codex
 
-Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with:
+
+```bash
+$skill-installer novotnyllc/dotnet-artisan
+```
+
+You can also sync skill directories into `~/.codex/skills/`.
 
 ## Skill Catalog
 
