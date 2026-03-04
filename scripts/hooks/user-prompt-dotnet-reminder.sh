@@ -116,24 +116,46 @@ emit_user_prompt_context() {
   printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}\n' "$escaped"
 }
 
-# Check if current directory looks like a .NET repo.
-SLN_COUNT="$(find . -maxdepth 3 \( -name '*.sln' -o -name '*.slnx' \) 2>/dev/null | wc -l | tr -d ' ')" || SLN_COUNT=0
-CSPROJ_COUNT="$(find . -maxdepth 3 -name '*.csproj' 2>/dev/null | wc -l | tr -d ' ')" || CSPROJ_COUNT=0
-CS_COUNT="$(find . -maxdepth 4 -name '*.cs' 2>/dev/null | wc -l | tr -d ' ')" || CS_COUNT=0
+# Check if current directory looks like a .NET repo using first-hit scans.
+HAS_SOLUTION=false
+if find . -maxdepth 3 \( -name '*.sln' -o -name '*.slnx' \) -print -quit 2>/dev/null | grep -q .; then
+  HAS_SOLUTION=true
+fi
+
+HAS_CSPROJ=false
+if find . -maxdepth 3 -name '*.csproj' -print -quit 2>/dev/null | grep -q .; then
+  HAS_CSPROJ=true
+fi
+
+HAS_CS=false
+if find . -maxdepth 4 -name '*.cs' -print -quit 2>/dev/null | grep -q .; then
+  HAS_CS=true
+fi
+
 HAS_GLOBAL_JSON=false
 if [ -f "global.json" ]; then
   HAS_GLOBAL_JSON=true
 fi
 
+IS_DOTNET_REPO=false
+if [ "$HAS_SOLUTION" = true ] || [ "$HAS_CSPROJ" = true ] || [ "$HAS_CS" = true ] || [ "$HAS_GLOBAL_JSON" = true ]; then
+  IS_DOTNET_REPO=true
+fi
+
 DOTNET_PROMPT=false
+ALREADY_REQUESTS_ADVISOR=false
 if [ -n "$PROMPT_TEXT" ]; then
   if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(^|[^[:alnum:]_])(dotnet|\.net|c#|csproj|slnx?|msbuild|nuget|roslyn|xunit|asp\.?net|blazor|maui|winui|wpf|winforms|entity framework|ef core|benchmarkdotnet|f#)([^[:alnum:]_]|$)'; then
     DOTNET_PROMPT=true
   fi
+
+  if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(\$dotnet-advisor|\[skill:dotnet-advisor\]|(^|[^[:alnum:]_-])dotnet-advisor([^[:alnum:]_-]|$))'; then
+    ALREADY_REQUESTS_ADVISOR=true
+  fi
 fi
 
 MSG=""
-if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$CS_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" = true ] || [ "$DOTNET_PROMPT" = true ]; then
+if { [ "$IS_DOTNET_REPO" = true ] || [ "$DOTNET_PROMPT" = true ]; } && [ "$ALREADY_REQUESTS_ADVISOR" = false ]; then
   read -r -d '' MSG <<'EOF' || true
 <system-reminder>
 <dotnet-artisan-routing>

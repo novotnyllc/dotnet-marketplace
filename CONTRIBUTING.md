@@ -263,7 +263,7 @@ Before every release, verify:
 
 ## Hooks and MCP Contributions
 
-The plugin includes session hooks (session start context, post-edit validation) and MCP server integrations (Context7).
+The plugin includes session hooks (session start context, user prompt routing reminder) and MCP server integrations (Context7 + Microsoft Docs).
 
 For guidance on contributing to hooks or MCP integrations, see [docs/hooks-and-mcp-guide.md](docs/hooks-and-mcp-guide.md).
 

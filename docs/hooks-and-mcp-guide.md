@@ -6,20 +6,7 @@ This guide explains the hooks and MCP server integration included with the dotne
 
 ## Hooks Overview
 
-The dotnet-artisan plugin includes three hook configurations that fire automatically during Claude Code sessions. Hooks provide smart defaults for .NET development workflows and reinforce `dotnet-advisor` as the first routing step.
-
-### PostToolUse Hook (Write|Edit)
-
-A single hook entry with matcher `Write|Edit` dispatches to `scripts/hooks/post-edit-dotnet.sh`, which inspects the edited file's extension and takes the appropriate action:
-
-| File Pattern | Behavior | Details |
-|-------------|----------|---------|
-| `*Tests.cs`, `*Test.cs` | Suggests running related tests | Outputs a `systemMessage` with a `dotnet test --filter` command targeting the modified test class |
-| `*.cs` | Auto-formats with `dotnet format` | Runs `dotnet format --include <file>` asynchronously; reports results on the next turn |
-| `*.csproj` | Suggests `dotnet restore` | Outputs a `systemMessage` recommending restore after project file changes |
-| `*.xaml` | Validates XML well-formedness | Uses `xmllint` or falls back to `python3 xml.etree.ElementTree`; reports validation errors |
-
-This hook runs asynchronously (`async: true`) with a 60-second timeout. It never blocks editing (always exits 0).
+The dotnet-artisan plugin includes two hook configurations that fire automatically during Claude Code sessions. Hooks reinforce `dotnet-advisor` as the first routing step.
 
 ### SessionStart Hook (startup)
 
@@ -44,14 +31,15 @@ The `scripts/hooks/user-prompt-dotnet-reminder.sh` hook fires on every prompt su
 - The prompt text contains .NET intent keywords (for example: `dotnet`, `.NET`, `C#`, `csproj`, `MSBuild`, `NuGet`, `Roslyn`, `xUnit`, `ASP.NET`, `Blazor`, `MAUI`, `WinUI`, `WPF`, `WinForms`, `EF Core`, `BenchmarkDotNet`)
 
 This catches greenfield prompts (for example, "create a new .NET app") even when the current directory has no existing .NET files yet.
+If the prompt already asks for `dotnet-advisor` directly, the hook suppresses the duplicate reminder.
 
 ### Hook Contract Validation
 
 Run `scripts/validate-hooks.sh` to verify hook behavior locally. The script checks:
 
-- Valid JSON output for all hook scripts
-- Prompt and file-path extraction paths with and without `jq`
-- Fallback behavior when `dotnet` or `xmllint` are unavailable
+- Valid JSON output for all active hook scripts
+- Prompt extraction and reminder injection with and without `jq`
+- Duplicate-reminder suppression when `dotnet-advisor` is already requested
 
 ---
 
@@ -88,12 +76,6 @@ The plugin configures these MCP servers in `.mcp.json`:
 
 ## Troubleshooting
 
-### `dotnet` not found
-
-The PostToolUse hook checks for `dotnet` in `PATH` before running `dotnet format`. If the .NET SDK is not installed or not in `PATH`, the hook degrades gracefully: it outputs a warning message and exits 0 without blocking.
-
-**Fix**: Install the [.NET SDK](https://dot.net/download) and ensure `dotnet` is available in your shell's `PATH`.
-
 ### `npx` not available
 
 MCP servers configured with `npx` (such as Context7) will not start if Node.js is not installed.
@@ -109,7 +91,6 @@ Hooks are snapshotted when a Claude Code session starts. If you install or updat
 ### `jq` not found
 
 Hooks prefer `jq` for JSON parsing/output, but degrade gracefully when it is unavailable:
-- `post-edit-dotnet.sh` falls back to `python3` JSON parsing when available
 - `session-start-context.sh` and `user-prompt-dotnet-reminder.sh` emit JSON via shell fallback paths
 
 **Fix (recommended)**: Install `jq` for the most reliable behavior:
@@ -124,9 +105,3 @@ Hook commands are shell scripts and require `bash` to be executable from `PATH`.
 **Fix**:
 - Windows: install Git for Windows (Git Bash) or WSL
 - macOS/Linux: install bash from your package manager if it is missing
-
-### XAML validation unavailable
-
-The XAML well-formedness check requires either `xmllint` or `python3`. If neither is available, the hook skips validation and reports a warning.
-
-**Fix**: Install `libxml2-utils` (for `xmllint`) or ensure `python3` is in your `PATH`. On macOS, `python3` is typically pre-installed with Xcode Command Line Tools.

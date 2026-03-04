@@ -4,8 +4,8 @@
 #
 # Verifies:
 #   1. Hooks always emit valid JSON
-#   2. Prompt/file-path extraction works with jq and without jq
-#   3. Fallback branches are deterministic (no jq, no dotnet, no xmllint)
+#   2. Prompt extraction works with jq and without jq
+#   3. Reminder suppression works when prompt already requests dotnet-advisor
 #
 # This is a behavior test; it does not require a real Claude runtime.
 
@@ -65,11 +65,6 @@ if not isinstance(node, str):
     raise SystemExit(f'Path is not a string: {\".\".join(path)}')" "$path"
 }
 
-build_payload() {
-    local file_path="$1"
-    "$PYTHON_BIN" -c "import json,sys; print(json.dumps({'tool_input': {'file_path': sys.argv[1]}}))" "$file_path"
-}
-
 echo "=== Hook Contract Validation ==="
 
 echo "--- SessionStart hook ---"
@@ -89,29 +84,16 @@ assert_json_path_contains "$PROMPT_OUT" "hookSpecificOutput.additionalContext" "
 PROMPT_OUT_NO_JQ="$(printf '%s' "$PROMPT_PAYLOAD" | DOTNET_ARTISAN_DISABLE_JQ=1 "$HOOK_DIR/user-prompt-dotnet-reminder.sh")"
 assert_json "$PROMPT_OUT_NO_JQ"
 assert_json_path_contains "$PROMPT_OUT_NO_JQ" "hookSpecificOutput.additionalContext" "Mandatory first action"
-echo "OK: user-prompt-dotnet-reminder.sh detects .NET intent with/without jq"
-
-echo "--- PostToolUse hook ---"
-CSPROJ_PAYLOAD='{"tool_input":{"file_path":"src/Foo.csproj"}}'
-CSPROJ_OUT="$(printf '%s' "$CSPROJ_PAYLOAD" | "$HOOK_DIR/post-edit-dotnet.sh")"
-assert_json "$CSPROJ_OUT"
-assert_json_path_contains "$CSPROJ_OUT" "systemMessage" "dotnet restore"
-CSPROJ_OUT_NO_JQ="$(printf '%s' "$CSPROJ_PAYLOAD" | DOTNET_ARTISAN_DISABLE_JQ=1 "$HOOK_DIR/post-edit-dotnet.sh")"
-assert_json "$CSPROJ_OUT_NO_JQ"
-assert_json_path_contains "$CSPROJ_OUT_NO_JQ" "systemMessage" "dotnet restore"
-CS_PAYLOAD='{"tool_input":{"file_path":"src/Foo.cs"}}'
-CS_OUT_NO_DOTNET="$(printf '%s' "$CS_PAYLOAD" | DOTNET_ARTISAN_DISABLE_DOTNET=1 "$HOOK_DIR/post-edit-dotnet.sh")"
-assert_json "$CS_OUT_NO_DOTNET"
-assert_json_path_contains "$CS_OUT_NO_DOTNET" "systemMessage" "dotnet not found"
-
-TMP_XAML="$(mktemp "${TMPDIR:-/tmp}/dotnet-artisan-hook-xaml.XXXXXX.xaml")"
-trap 'rm -f "$TMP_XAML"' EXIT
-printf '<Grid></Grid>\n' > "$TMP_XAML"
-XAML_PAYLOAD="$(build_payload "$TMP_XAML")"
-XAML_OUT="$(printf '%s' "$XAML_PAYLOAD" | DOTNET_ARTISAN_DISABLE_XMLLINT=1 "$HOOK_DIR/post-edit-dotnet.sh")"
-assert_json "$XAML_OUT"
-assert_json_path_contains "$XAML_OUT" "systemMessage" "well-formed"
-echo "OK: post-edit-dotnet.sh handles parsing/output fallback paths"
+SUPPRESS_PAYLOAD='{"prompt":"Use $dotnet-advisor first, then route this .NET request."}'
+SUPPRESS_OUT="$(printf '%s' "$SUPPRESS_PAYLOAD" | "$HOOK_DIR/user-prompt-dotnet-reminder.sh")"
+assert_json "$SUPPRESS_OUT"
+assert_json_path_string "$SUPPRESS_OUT" "hookSpecificOutput.additionalContext"
+assert_json_path_contains "$SUPPRESS_OUT" "hookSpecificOutput.additionalContext" ""
+if printf '%s' "$SUPPRESS_OUT" | "$PYTHON_BIN" -c "import json,sys; data=json.load(sys.stdin); raise SystemExit(0 if data['hookSpecificOutput']['additionalContext'] else 1)"; then
+    echo "ERROR: reminder should be suppressed when prompt already includes dotnet-advisor"
+    exit 1
+fi
+echo "OK: user-prompt-dotnet-reminder.sh detects .NET intent and suppresses duplicate reminders"
 
 echo ""
 echo "PASSED: hook contract checks"
