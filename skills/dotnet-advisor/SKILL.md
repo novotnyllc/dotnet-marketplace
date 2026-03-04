@@ -98,3 +98,19 @@ For complex analysis that benefits from domain expertise, delegate to specialist
 - Security vulnerabilities, OWASP compliance, secrets exposure, crypto review -> [skill:dotnet-security-reviewer]
 - Test architecture, test type selection, test data management, microservice testing -> [skill:dotnet-testing-specialist]
 - Uno Platform, Extensions ecosystem, MVUX, multi-target deployment -> [skill:dotnet-uno-specialist]
+
+## Codex Compatibility Fallbacks
+
+Codex source setup currently syncs `skills/*` only. If a specialist agent above is unavailable, route to the mapped broad skill and companion reference below.
+
+| Specialist Intent | Codex Fallback |
+|-------------------|----------------|
+| Architecture decisions, bounded context design | [skill:dotnet-api] (`references/architecture-patterns.md`) + [skill:dotnet-tooling] (`references/project-structure.md`) |
+| ASP.NET Core middleware and pipeline | [skill:dotnet-api] (`references/middleware-patterns.md`, `references/minimal-apis.md`) |
+| Async/concurrency performance and `ValueTask` correctness | [skill:dotnet-csharp] (`references/async-patterns.md`, `references/concurrency-patterns.md`) + [skill:dotnet-tooling] (`references/profiling.md`) |
+| Benchmark design and methodology | [skill:dotnet-testing] (`references/benchmarkdotnet.md`, `references/ci-benchmarking.md`) |
+| Blazor/MAUI/Uno framework specifics | [skill:dotnet-ui] (`references/blazor-patterns.md`, `references/maui-development.md`, `references/uno-platform.md`) |
+| Security review and threat hardening | [skill:dotnet-api] (`references/security-owasp.md`, `references/api-security.md`, `references/secrets-management.md`) |
+| Test strategy and microservice test architecture | [skill:dotnet-testing] (`references/testing-strategy.md`, `references/integration-testing.md`) |
+| Performance triage (CPU, allocations, GC) | [skill:dotnet-tooling] (`references/profiling.md`, `references/gc-memory.md`, `references/performance-patterns.md`) |
+| Documentation generation and structure | [skill:dotnet-tooling] (`references/documentation-strategy.md`, `references/xml-docs.md`, `references/mermaid-diagrams.md`) |

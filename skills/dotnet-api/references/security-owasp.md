@@ -94,7 +94,8 @@ app.UseHsts(); // Strict-Transport-Security header
 app.UseHttpsRedirection();
 
 // Never store secrets in appsettings.json -- use user secrets or env vars
-// See [skill:dotnet-secrets-management] for proper secrets handling
+// See [skill:dotnet-api] (`references/secrets-management.md`) for proper
+// secrets handling
 ```
 
 ```csharp

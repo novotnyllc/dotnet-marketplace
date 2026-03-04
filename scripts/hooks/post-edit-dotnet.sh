@@ -10,10 +10,44 @@
 
 set -euo pipefail
 
+has_jq() {
+    [ "${DOTNET_ARTISAN_DISABLE_JQ:-0}" != "1" ] && command -v jq >/dev/null 2>&1
+}
+
+python_cmd() {
+    if [ "${DOTNET_ARTISAN_DISABLE_PYTHON:-0}" = "1" ] || [ "${DOTNET_ARTISAN_DISABLE_PYTHON3:-0}" = "1" ]; then
+        return 1
+    fi
+
+    if command -v python3 >/dev/null 2>&1; then
+        echo "python3"
+        return 0
+    fi
+
+    if command -v python >/dev/null 2>&1; then
+        echo "python"
+        return 0
+    fi
+
+    return 1
+}
+
+has_python() {
+    python_cmd >/dev/null 2>&1
+}
+
+has_dotnet() {
+    [ "${DOTNET_ARTISAN_DISABLE_DOTNET:-0}" != "1" ] && command -v dotnet >/dev/null 2>&1
+}
+
+has_xmllint() {
+    [ "${DOTNET_ARTISAN_DISABLE_XMLLINT:-0}" != "1" ] && command -v xmllint >/dev/null 2>&1
+}
+
 emit_system_message() {
     local message="$1"
 
-    if command -v jq >/dev/null 2>&1; then
+    if has_jq; then
         jq -Rn --arg msg "$message" '{systemMessage: $msg}'
         return 0
     fi
@@ -30,13 +64,15 @@ extract_file_path() {
         return 0
     fi
 
-    if command -v jq >/dev/null 2>&1; then
+    if has_jq; then
         printf '%s' "$json_payload" | jq -r '.tool_input.file_path // .toolInput.file_path // empty' 2>/dev/null || true
         return 0
     fi
 
-    if command -v python3 >/dev/null 2>&1; then
-        printf '%s' "$json_payload" | python3 -c "import json, sys
+    if has_python; then
+        local py
+        py="$(python_cmd)"
+        printf '%s' "$json_payload" | "$py" -c "import json, sys
 try:
     payload = json.load(sys.stdin)
 except Exception:
@@ -75,7 +111,7 @@ case "$FILE_PATH" in
         ;;
     *.cs)
         # C# source file -- run dotnet format if available
-        if command -v dotnet >/dev/null 2>&1; then
+        if has_dotnet; then
             if dotnet format --include "$FILE_PATH" --verbosity quiet >/dev/null 2>&1; then
                 emit_system_message "dotnet format applied to $FILENAME"
             else
@@ -91,20 +127,21 @@ case "$FILE_PATH" in
         ;;
     *.xaml)
         # XAML file -- check XML well-formedness
-        if command -v xmllint >/dev/null 2>&1; then
+        if has_xmllint; then
             if xmllint --noout "$FILE_PATH" 2>/dev/null; then
                 emit_system_message "XAML validation: $FILENAME is well-formed"
             else
                 emit_system_message "XAML validation: $FILENAME has XML errors. Check for unclosed tags or invalid syntax."
             fi
-        elif command -v python3 >/dev/null 2>&1; then
-            if python3 -c "import xml.etree.ElementTree as ET, sys; ET.parse(sys.argv[1])" "$FILE_PATH" 2>/dev/null; then
+        elif has_python; then
+            py="$(python_cmd)"
+            if "$py" -c "import xml.etree.ElementTree as ET, sys; ET.parse(sys.argv[1])" "$FILE_PATH" 2>/dev/null; then
                 emit_system_message "XAML validation: $FILENAME is well-formed"
             else
                 emit_system_message "XAML validation: $FILENAME has XML errors. Check for unclosed tags or invalid syntax."
             fi
         else
-            emit_system_message "No XML validator found (xmllint or python3) -- skipping XAML validation for $FILENAME"
+            emit_system_message "No XML validator found (xmllint or python/python3) -- skipping XAML validation for $FILENAME"
         fi
         ;;
     *)

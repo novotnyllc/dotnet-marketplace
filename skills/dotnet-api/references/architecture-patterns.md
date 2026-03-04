@@ -633,8 +633,8 @@ public async Task<Order> CreateOrderAsync(
 }
 
 // 3. Background processor publishes outbox messages
-// See [skill:dotnet-background-services] for the Channels-based
-// processor that polls and publishes these messages.
+// See [skill:dotnet-api] (`references/background-services.md`) for the
+// Channels-based processor that polls and publishes these messages.
 ```
 
 The outbox pattern ensures that if the database write succeeds, the event is guaranteed to be published (eventually), even if the message broker is temporarily unavailable.

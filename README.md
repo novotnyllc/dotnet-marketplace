@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -47,6 +47,8 @@ Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at 
 
 Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
 
+For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
+
 ## Skill Catalog
 
 The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.
@@ -64,7 +66,11 @@ The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-n
 
 ## Agents
 
-The plugin includes 14 specialist agents that provide focused expertise in specific domains. The central routing agent, `dotnet-architect`, analyzes your query context and delegates to the appropriate specialist.
+The plugin includes 14 specialist agents that provide focused expertise in specific domains.
+
+Provider note:
+- Claude/Copilot flows can use these specialist agent definitions directly.
+- Codex currently routes through broad skills; use the `dotnet-advisor` Codex fallback table to map specialist intents to skills/references.
 
 | Agent | Description |
 |---|---|

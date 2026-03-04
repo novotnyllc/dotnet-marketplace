@@ -45,6 +45,14 @@ The `scripts/hooks/user-prompt-dotnet-reminder.sh` hook fires on every prompt su
 
 This catches greenfield prompts (for example, "create a new .NET app") even when the current directory has no existing .NET files yet.
 
+### Hook Contract Validation
+
+Run `scripts/validate-hooks.sh` to verify hook behavior locally. The script checks:
+
+- Valid JSON output for all hook scripts
+- Prompt and file-path extraction paths with and without `jq`
+- Fallback behavior when `dotnet` or `xmllint` are unavailable
+
 ---
 
 ## How to Disable Hooks
@@ -71,6 +79,7 @@ The plugin configures these MCP servers in `.mcp.json`:
 
 ### Requirements
 
+- **Bash** is required to execute hook scripts (`scripts/hooks/*.sh`). On Windows, install Git Bash or WSL and ensure `bash` is available on `PATH`.
 - **Node.js** is required for MCP servers that use `npx` (Context7). Verify Node.js with `node --version`.
 - **Python + uv/uvx** are required for `mcp-windbg`. Verify with `uvx --version`.
 - MCP servers start automatically when the plugin is enabled. After enabling or disabling the plugin, restart Claude Code to apply MCP server changes.
@@ -107,6 +116,14 @@ Hooks prefer `jq` for JSON parsing/output, but degrade gracefully when it is una
 - macOS: `brew install jq`
 - Ubuntu/Debian: `sudo apt-get install jq`
 - Windows: `winget install jqlang.jq`
+
+### `bash` not found
+
+Hook commands are shell scripts and require `bash` to be executable from `PATH`.
+
+**Fix**:
+- Windows: install Git for Windows (Git Bash) or WSL
+- macOS/Linux: install bash from your package manager if it is missing
 
 ### XAML validation unavailable
 

@@ -10,6 +10,10 @@
 
 set -uo pipefail
 
+has_jq() {
+    [ "${DOTNET_ARTISAN_DISABLE_JQ:-0}" != "1" ] && command -v jq >/dev/null 2>&1
+}
+
 # Check if current directory contains .NET project indicators
 SLN_COUNT=0
 CSPROJ_COUNT=0
@@ -54,7 +58,7 @@ if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" =
     CONTEXT="$CONTEXT $PROJECT_CONTEXT"
 fi
 
-if command -v jq >/dev/null 2>&1; then
+if has_jq; then
     jq -Rn --arg additionalContext "$CONTEXT" '{additionalContext: $additionalContext}'
 else
     ESCAPED_CONTEXT="$(printf '%s' "$CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\r/\\r/g; s/\t/\\t/g')"
