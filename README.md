@@ -49,6 +49,16 @@ Install with the Codex skill installer or sync skill directories into `~/.codex/
 
 For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
 
+## Provider Support Matrix
+
+| Provider | Primary surface | Status |
+|---|---|---|
+| Claude Code | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` + hooks + MCP | Supported |
+| GitHub Copilot CLI | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` | Supported |
+| OpenAI Codex | `.agents/openai.yaml` + `skills/*` + `skills/*/agents/openai.yaml` | Supported (skill-centric) |
+
+Compatibility is validated in CI with structural smoke checks via `scripts/run-agent-routing-smoke.py --provider claude,codex,copilot`.
+
 ## Skill Catalog
 
 The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.

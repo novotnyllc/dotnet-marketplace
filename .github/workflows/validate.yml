@@ -169,6 +169,9 @@ jobs:
       - name: Validate hooks behavior
         run: ./scripts/validate-hooks.sh
 
+      - name: Validate provider compatibility (Claude/Codex/Copilot)
+        run: python3 ./scripts/run-agent-routing-smoke.py --provider claude,codex,copilot
+
       - name: Validate marketplace
         run: ./scripts/validate-marketplace.sh
 
