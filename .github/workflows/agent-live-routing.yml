@@ -17,8 +17,6 @@ on:
         required: false
         type: string
         default: main
-  schedule:
-    - cron: '30 9 * * 1'
 
 permissions:
   contents: read
@@ -68,7 +66,6 @@ jobs:
         env:
           INPUT_CATEGORIES: ${{ github.event.inputs.categories }}
           INPUT_FAIL_ON_INFRA: ${{ github.event.inputs.fail_on_infra }}
-          EVENT_NAME: ${{ github.event_name }}
         run: |
           set -uo pipefail
 
@@ -78,11 +75,8 @@ jobs:
             ARGS+=(--category "$INPUT_CATEGORIES")
           fi
 
-          # Schedule runs: hard-code fail_on_infra=true (no inputs available).
-          # Manual runs: use the input value (default changed to true).
-          if [ "$EVENT_NAME" = "schedule" ]; then
-            ARGS+=(--fail-on-infra)
-          elif [ "${INPUT_FAIL_ON_INFRA:-true}" = "true" ]; then
+          # Manual runs: use the workflow input (default true).
+          if [ "${INPUT_FAIL_ON_INFRA:-true}" = "true" ]; then
             ARGS+=(--fail-on-infra)
           fi
 
@@ -164,7 +158,6 @@ jobs:
 
       - name: Run regression comparison
         env:
-          EVENT_NAME: ${{ github.event_name }}
           INPUT_FAIL_ON_INFRA: ${{ github.event.inputs.fail_on_infra }}
         run: |
           set -euo pipefail
@@ -180,9 +173,9 @@ jobs:
           # Also print to stdout for log visibility
           cat delta-report.md
 
-          # Determine fail_on_infra policy for infra_error handling
+          # Determine fail_on_infra policy for infra_error handling.
           FAIL_ON_INFRA="true"
-          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "${INPUT_FAIL_ON_INFRA:-true}" = "false" ]; then
+          if [ "${INPUT_FAIL_ON_INFRA:-true}" = "false" ]; then
             FAIL_ON_INFRA="false"
           fi
 
@@ -196,7 +189,7 @@ jobs:
             if [ "$FAIL_ON_INFRA" = "true" ]; then
               echo ""
               echo "FAILED: $INFRA_COUNT infra_error result(s) detected with fail_on_infra=true"
-              echo "  (schedule runs and workflow_dispatch default both enforce fail_on_infra=true)"
+              echo "  (workflow_dispatch default enforces fail_on_infra=true)"
               exit 1
             else
               echo ""

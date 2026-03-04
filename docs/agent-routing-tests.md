@@ -11,8 +11,8 @@ This document describes the routing test system used to verify that Claude, Code
 - `tests/copilot-smoke/baseline.json`: expected outcomes for smoke tests (regression gate)
 - `tests/copilot-smoke/run_smoke.py`: Copilot smoke test runner (supports `--require-copilot`)
 - `test.sh`: single entrypoint script
-- `.github/workflows/validate.yml`: PR-blocking validation (structural + copilot-smoke)
-- `.github/workflows/agent-live-routing.yml`: manual/scheduled live checks with provider matrix
+- `.github/workflows/validate.yml`: PR-blocking deterministic validation (structural checks only)
+- `.github/workflows/agent-live-routing.yml`: manual live checks with provider matrix
 
 ## Commands
 
@@ -366,40 +366,29 @@ Concurrency:
 
 Runs on `push` and `pull_request` to `main`. Contains:
 
-- **`validate` job**: Structural validation (plugin.json, skills frontmatter, routing quality gates, skill count assertion at 8, Copilot frontmatter safety checks). Runs on both `push` and `pull_request`.
-- **`copilot-smoke` job**: Runs on `pull_request` only (guarded by `if: github.event_name == 'pull_request'`). Deterministic Copilot smoke test subset covering direct activation, one advisor-routed case (smoke-011), and negative controls. Uses explicit `--case-id` list to select only non-flaky cases. Compares results against `tests/copilot-smoke/baseline.json`. Gates PRs on regressions.
+- **`lint` job**: Structural validation (plugin/hook/MCP JSON checks, skill/agent validation, routing quality gates, dynamic skill count assertion from plugin.json, provider structural smoke checks).
+- **`hooks-smoke` job**: Cross-OS hook contract checks (`ubuntu`, `macos`, `windows`).
+- **`build-test` job**: Deterministic compile + self-test for the routing runner (`check-skills.cs`).
 
 ### `agent-live-routing.yml` (comprehensive)
 
-Runs via `workflow_dispatch` or `schedule` (weekly Monday 09:30 UTC).
+Runs via `workflow_dispatch` only.
 
 - Provider matrix: separate jobs for `claude`, `codex`, `copilot` (all hard-gated, no `continue-on-error`).
 - `baseline_ref` input (default: `main`) controls regression comparison ref.
-- `fail_on_infra` input (default: `true`). Schedule runs hard-code `fail_on_infra=true`.
+- `fail_on_infra` input (default: `true`) controls whether infra errors fail the run.
 - Summarize job runs `if: always()` and produces a delta report in the job summary. `infra_error` results count as "failed" when `fail_on_infra=true`, "skipped" when `fail_on_infra=false` (manual override only).
 
-## Copilot CI Gate
+## Optional Copilot Smoke Checks
 
-### What "Copilot passes" means
+Copilot smoke checks remain available via `tests/copilot-smoke/run_smoke.py`, but they are no longer PR-blocking in `validate.yml`.
 
-A Copilot test run passes when:
+### What a Copilot smoke pass means
 
 1. **Copilot CLI is installed** and `copilot --version` exits 0 (health check gate).
 2. **Plugin registration succeeds**: `copilot plugin marketplace add` + `copilot plugin install dotnet-artisan@dotnet-artisan` complete, and `copilot plugin marketplace list` contains `dotnet-artisan`.
 3. **Smoke tests produce no regressions**: Results for each deterministic case match the committed `tests/copilot-smoke/baseline.json` (status comparison, not percentage thresholds).
 4. **Evidence patterns**: Each passing case shows `Base directory for this skill:` lines in stdout/stderr containing the expected skill path under `skills/<skill-name>/`.
-
-### `infra_error` deterministic rules
-
-`infra_error` is acceptable in exactly these circumstances:
-
-| Workflow | Condition | `infra_error` acceptable? | Mechanism |
-|----------|-----------|---------------------------|-----------|
-| `validate.yml` (PR) | Fork PR (`head.repo.fork == true`) | Yes | Forks lack access to `COPILOT_TOKEN` secret. Synthetic `infra_error` results produced; exit 0 with annotation. |
-| `validate.yml` (PR) | Non-fork, Copilot install/auth/registration fails | No | Install/health/register steps have no `continue-on-error`; `--require-copilot` flag set on smoke runner. Any failure is a hard stop. |
-| `agent-live-routing.yml` (schedule) | Any | No | Schedule hard-codes `fail_on_infra=true`. Infra outages surface as failures. |
-| `agent-live-routing.yml` (manual) | `fail_on_infra=true` (default) | No | Default is true; infra_error causes failure. |
-| `agent-live-routing.yml` (manual) | `fail_on_infra=false` (explicit override) | Yes | Operator explicitly opted into soft infra mode. |
 
 ### How to update baselines when intentional behavior changes
 
@@ -414,15 +403,6 @@ A Copilot test run passes when:
    - Every `(case_id, provider)` tuple must have a baseline entry.
 
 3. **Commit baseline changes**: Baseline updates should be committed alongside the code changes that cause the behavior change, not separately.
-
-### Fork CI behavior
-
-Fork PRs cannot access repository secrets (`COPILOT_TOKEN`), so Copilot tests naturally skip:
-
-- **Detection**: `github.event.pull_request.head.repo.fork == true` check in the `copilot-smoke` job.
-- **Behavior**: The Copilot CLI install, health check, and plugin registration steps are skipped entirely. The smoke runner executes without `--require-copilot`, producing synthetic `infra_error` results for the selected smoke cases. The job exits 0 and adds a `::notice::` annotation explaining the skip.
-- **Result artifacts**: `infra_error` results are still uploaded as artifacts for observability.
-- **Non-fork PRs**: Install, health check, and registration steps run without `continue-on-error` -- any failure is a hard stop. The smoke runner uses `--require-copilot`, so if Copilot is unavailable, the job fails (infra_error is not silently swallowed).
 
 ## Troubleshooting
 

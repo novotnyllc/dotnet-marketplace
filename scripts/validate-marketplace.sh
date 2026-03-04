@@ -13,6 +13,7 @@
 #   8. scripts/hooks/*.sh are executable
 #   9. Root marketplace.json (delegates to validate-root-marketplace.sh)
 #  10. plugin.json enrichment fields: author, homepage, repository, license, keywords
+#  11. Codex metadata files exist (.agents/openai.yaml + skills/*/agents/openai.yaml)
 #
 # Design constraints:
 #   - Single-pass validation (no subprocess spawning per entry, no network)
@@ -294,6 +295,33 @@ if ls "$HOOKS_SCRIPT_DIR"/*.sh 1>/dev/null 2>&1; then
 else
     echo "WARN: no scripts/hooks/*.sh files found"
     warnings=$((warnings + 1))
+fi
+
+echo ""
+
+# --- Codex metadata validation ---
+
+echo "--- Codex metadata ---"
+
+ROOT_OPENAI="$PLUGIN_DIR/.agents/openai.yaml"
+if [ -f "$ROOT_OPENAI" ]; then
+    echo "OK: .agents/openai.yaml exists"
+else
+    echo "ERROR: .agents/openai.yaml not found"
+    errors=$((errors + 1))
+fi
+
+if [ -f "$PLUGIN_JSON" ] && jq -e '.skills | type == "array"' "$PLUGIN_JSON" >/dev/null 2>&1; then
+    while IFS= read -r skill_path; do
+        full_skill_path="$PLUGIN_DIR/$skill_path"
+        skill_openai="$full_skill_path/agents/openai.yaml"
+        if [ ! -f "$skill_openai" ]; then
+            echo "ERROR: missing per-skill Codex metadata: ${skill_path}/agents/openai.yaml"
+            errors=$((errors + 1))
+        else
+            echo "OK: ${skill_path}/agents/openai.yaml exists"
+        fi
+    done < <(jq -r '.skills[]' "$PLUGIN_JSON" 2>/dev/null)
 fi
 
 echo ""

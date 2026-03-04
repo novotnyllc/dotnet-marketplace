@@ -20,7 +20,7 @@ dependencies:
       transport: "streamable_http"
       url: "https://mcp.context7.com/mcp"
     - type: "mcp"
-      value: "microsoftdocs"
+      value: "microsoftdocs-mcp"
       description: "Official Microsoft Learn documentation search"
       transport: "streamable_http"
       url: "https://learn.microsoft.com/api/mcp"

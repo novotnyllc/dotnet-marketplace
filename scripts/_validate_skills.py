@@ -652,6 +652,49 @@ def process_file(path: str) -> dict:
     }
 
 
+def parse_agent_frontmatter(content: str) -> tuple[dict[str, str] | None, str | None]:
+    """Parse agent markdown frontmatter with a simple top-level key parser.
+
+    Agent frontmatter in this repository uses a predictable layout:
+    - opening/closing --- delimiters
+    - top-level scalar keys (name, description, model)
+    - top-level sequence keys (capabilities, tools)
+
+    This parser only extracts top-level key lines and is intentionally strict
+    enough to catch missing delimiters/keys without requiring PyYAML.
+    """
+    normalized = content.replace("\r\n", "\n").replace("\r", "\n")
+    lines = normalized.split("\n")
+
+    if not lines or lines[0].strip() != "---":
+        return None, "missing opening --- frontmatter delimiter"
+
+    fm_lines: list[str] = []
+    closing_idx = None
+    for idx, line in enumerate(lines[1:], 1):
+        if line.strip() == "---":
+            closing_idx = idx
+            break
+        fm_lines.append(line)
+
+    if closing_idx is None:
+        return None, "missing closing --- frontmatter delimiter"
+
+    parsed: dict[str, str] = {}
+    for raw_line in fm_lines:
+        if not raw_line.strip() or raw_line.strip().startswith("#"):
+            continue
+        if raw_line[0] in (" ", "\t"):
+            # Indented lines are list/scalar continuation items.
+            continue
+        match = re.match(r"^([a-zA-Z_][a-zA-Z0-9_-]*)\s*:\s*(.*)$", raw_line)
+        if not match:
+            continue
+        parsed[match.group(1)] = match.group(2).strip()
+
+    return parsed, None
+
+
 # --- Cycle Detection ---
 
 
@@ -1005,6 +1048,40 @@ def main():
             continue
 
         agent_content = agent_content.replace("\r\n", "\n").replace("\r", "\n")
+
+        # Validate agent frontmatter shape and required fields.
+        agent_frontmatter, fm_error = parse_agent_frontmatter(agent_content)
+        if fm_error:
+            print(f"ERROR: {rel_path} -- {fm_error}")
+            errors += 1
+        elif agent_frontmatter is not None:
+            required_agent_fields = {"name", "description", "model", "capabilities", "tools"}
+            missing_fields = sorted(required_agent_fields - set(agent_frontmatter.keys()))
+            if missing_fields:
+                print(
+                    f"ERROR: {rel_path} -- missing required frontmatter field(s): "
+                    f"{', '.join(missing_fields)}"
+                )
+                errors += 1
+
+            agent_name = agent_frontmatter.get("name", "").strip().strip("'\"")
+            if agent_name and agent_name != agent_stem:
+                print(
+                    f"ERROR: {rel_path} -- frontmatter name '{agent_name}' does not match "
+                    f"filename stem '{agent_stem}'"
+                )
+                errors += 1
+
+            agent_desc = agent_frontmatter.get("description", "").strip().strip("'\"")
+            if not agent_desc:
+                print(f"ERROR: {rel_path} -- frontmatter description is empty")
+                errors += 1
+            elif re.match(r"^\s*when\b", agent_desc, re.IGNORECASE):
+                print(
+                    f"ERROR: {rel_path} -- description starts with WHEN prefix "
+                    f"(use declarative style)"
+                )
+                errors += 1
 
         # Extract [skill:] refs from agent file and validate
         agent_refs = extract_refs(agent_content)

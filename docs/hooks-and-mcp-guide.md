@@ -12,10 +12,12 @@ The dotnet-artisan plugin includes two hook configurations that fire automatical
 
 The `scripts/hooks/session-start-context.sh` hook fires once when a new Claude Code session starts. It detects whether the current directory is a .NET project and injects context:
 
-- Counts `.sln`/`.slnx` solution files (up to 3 directories deep)
-- Counts `.csproj` project files (up to 3 directories deep)
+- Detects `.sln`/`.slnx` solution files (up to 3 directories deep)
+- Detects `.csproj` project files (up to 3 directories deep)
 - Checks for `global.json`
 - Extracts the target framework moniker (TFM) from the first `.csproj` found
+
+Detection uses first-hit scans to keep hook latency low in large repositories.
 
 If .NET project indicators are found, the hook outputs an `additionalContext` message that starts with:
 

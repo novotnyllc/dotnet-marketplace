@@ -215,7 +215,7 @@ Claude Code loads `dotnet-devops` (read `references/gha-patterns.md`) to generat
 
 ## Agent Skill Routing Checks
 
-This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` (manual/scheduled).
+This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` as optional manual verification.
 
 See `docs/agent-routing-tests.md` for details, workflow inputs, and environment variables.
 
