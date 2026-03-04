@@ -6,7 +6,7 @@ This guide explains the hooks and MCP server integration included with the dotne
 
 ## Hooks Overview
 
-The dotnet-artisan plugin includes two hook configurations that fire automatically during Claude Code sessions. Hooks provide smart defaults for .NET development workflows.
+The dotnet-artisan plugin includes three hook configurations that fire automatically during Claude Code sessions. Hooks provide smart defaults for .NET development workflows and reinforce `dotnet-advisor` as the first routing step.
 
 ### PostToolUse Hook (Write|Edit)
 
@@ -30,11 +30,20 @@ The `scripts/hooks/session-start-context.sh` hook fires once when a new Claude C
 - Checks for `global.json`
 - Extracts the target framework moniker (TFM) from the first `.csproj` found
 
-If .NET project indicators are found, the hook outputs an `additionalContext` message such as:
+If .NET project indicators are found, the hook outputs an `additionalContext` message that starts with:
 
-> This is a .NET project (net10.0) with 3 project(s) in 1 solution(s).
+> Mandatory first action for every task: invoke [skill:dotnet-advisor].
 
 This context helps Claude understand the project environment from the start of the session.
+
+### UserPromptSubmit Hook
+
+The `scripts/hooks/user-prompt-dotnet-reminder.sh` hook fires on every prompt submission and injects `additionalContext` routing guidance when either condition is true:
+
+- The current directory looks like a .NET repo (`.sln`, `.slnx`, `.csproj`, `.cs`, or `global.json`)
+- The prompt text contains .NET intent keywords (for example: `dotnet`, `.NET`, `C#`, `csproj`, `MSBuild`, `NuGet`, `Roslyn`, `xUnit`, `ASP.NET`, `Blazor`, `MAUI`, `WinUI`, `WPF`, `WinForms`, `EF Core`, `BenchmarkDotNet`)
+
+This catches greenfield prompts (for example, "create a new .NET app") even when the current directory has no existing .NET files yet.
 
 ---
 

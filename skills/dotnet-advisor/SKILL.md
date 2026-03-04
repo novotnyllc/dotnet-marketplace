@@ -1,6 +1,6 @@
 ---
 name: dotnet-advisor
-description: Routes .NET/C# work to domain skills. Loads coding-standards for code paths.
+description: Routes .NET and C# requests to domain skills and activates on dotnet/C# signals (dotnet, .csproj, .sln, MSBuild, NuGet, Roslyn, xUnit, ASP.NET, Blazor, MAUI, WinDbg). Loads coding standards first for code paths.
 user-invocable: true
 license: MIT
 ---
