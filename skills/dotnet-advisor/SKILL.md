@@ -24,7 +24,7 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 
 ## Immediate Routing Actions (Do First)
 
-For every .NET/C# request, execute this sequence before detailed planning:
+For every .NET/C# request, you MUST execute this sequence before detailed planning:
 1. Invoke [skill:dotnet-csharp] and apply its coding standards.
 2. Invoke the primary domain skill for the request (API, testing, UI, devops, tooling, debugging).
 3. Continue with any additional routed skills.
@@ -61,19 +61,22 @@ Before any .NET guidance, determine the project's target framework:
 
 ---
 
-## Cross-Domain Playbooks
+## Mandatory Routing Table
 
-Multi-skill routing recipes for common scenarios. Each domain skill's own Routing Table handles topic-to-file mapping; these playbooks identify which skills to combine.
+Treat each row as a required minimum. Invoke every listed skill in order before adding optional skills.
 
-- **New API service:** [skill:dotnet-tooling] (scaffold) + [skill:dotnet-api] (architecture) + [skill:dotnet-devops] (CI/CD) + [skill:dotnet-testing] (test strategy)
-- **Starting a new project:** [skill:dotnet-tooling] (version detection, project structure) + [skill:dotnet-csharp] (coding standards)
-- **UI application:** [skill:dotnet-ui] (framework choice, components) + [skill:dotnet-csharp] (patterns) + [skill:dotnet-testing] (UI testing)
-- **Performance optimization:** [skill:dotnet-tooling] (profiling, AOT, GC) + [skill:dotnet-testing] (benchmarks) + [skill:dotnet-csharp] (patterns)
-- **CLI tool end-to-end:** [skill:dotnet-tooling] (System.CommandLine, CLI design) + [skill:dotnet-devops] (packaging, distribution, releases)
-- **Cloud-native service:** [skill:dotnet-api] (Aspire, architecture) + [skill:dotnet-devops] (containers, observability) + [skill:dotnet-testing] (integration tests)
-- **Security audit:** [skill:dotnet-api] (OWASP, secrets, crypto) + [skill:dotnet-csharp] (input validation)
-- **Documentation sprint:** [skill:dotnet-tooling] (doc strategy, Mermaid, XML docs) + [skill:dotnet-devops] (GitHub docs)
-- **Agent troubleshooting:** [skill:dotnet-api] (agent gotchas) + [skill:dotnet-tooling] (build analysis, solution navigation)
+| Request Type | Required Skill Invocation Order |
+|-------------|---------------------------------|
+| New API service | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-api] -> [skill:dotnet-devops] -> [skill:dotnet-testing] |
+| Starting a new project | [skill:dotnet-csharp] -> [skill:dotnet-tooling] |
+| UI application | [skill:dotnet-csharp] -> [skill:dotnet-ui] -> [skill:dotnet-testing] |
+| Performance optimization | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-testing] |
+| CLI tool end-to-end | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-devops] |
+| Cloud-native service | [skill:dotnet-csharp] -> [skill:dotnet-api] -> [skill:dotnet-devops] -> [skill:dotnet-testing] |
+| Security audit | [skill:dotnet-csharp] -> [skill:dotnet-api] |
+| Documentation sprint | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-devops] |
+| Agent troubleshooting | [skill:dotnet-csharp] -> [skill:dotnet-api] -> [skill:dotnet-tooling] |
+| Generic or ambiguous .NET request | [skill:dotnet-csharp] -> [skill:dotnet-tooling], then route to the owning domain skill |
 
 ---
 

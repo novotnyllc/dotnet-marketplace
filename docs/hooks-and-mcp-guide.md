@@ -61,23 +61,18 @@ To re-enable hooks after disabling, remove the `disableAllHooks` setting or togg
 
 ## MCP Server Configuration
 
-The plugin configures the following MCP server in `.mcp.json`:
+The plugin configures these MCP servers in `.mcp.json`:
 
-### Context7
-
-| Property | Value |
-|----------|-------|
-| Transport | stdio |
-| Command | `npx -y @upstash/context7-mcp@latest` |
-| Purpose | Library documentation lookup covering Microsoft Learn, NuGet, and .NET ecosystem docs |
-
-Context7 provides on-demand documentation lookups that enhance skill guidance with live, up-to-date library references.
-
-**Version note**: The plugin currently uses `@latest` for initial ship. After stabilization, the version may be pinned (e.g., `@1.x.x`) to prevent upstream breaking changes.
+| Server | Transport | Command / URL | Purpose |
+|-------|-----------|----------------|---------|
+| `context7` | stdio | `npx -y @upstash/context7-mcp@latest` | Library and framework documentation lookup |
+| `microsoftdocs-mcp` | HTTP | `https://learn.microsoft.com/api/mcp` | Official Microsoft Learn search/fetch for .NET and Azure docs |
+| `mcp-windbg` | stdio | `uvx --from git+https://github.com/svnscha/mcp-windbg mcp-windbg` | WinDbg MCP integration for dump/live debugging workflows |
 
 ### Requirements
 
-- **Node.js** is required for MCP servers that use `npx`. Verify Node.js is installed by running `node --version` in your terminal. You can also check MCP server status with the `/mcp` command inside Claude Code.
+- **Node.js** is required for MCP servers that use `npx` (Context7). Verify Node.js with `node --version`.
+- **Python + uv/uvx** are required for `mcp-windbg`. Verify with `uvx --version`.
 - MCP servers start automatically when the plugin is enabled. After enabling or disabling the plugin, restart Claude Code to apply MCP server changes.
 
 ---
@@ -104,9 +99,11 @@ Hooks are snapshotted when a Claude Code session starts. If you install or updat
 
 ### `jq` not found
 
-The hook scripts use `jq` to parse JSON input from stdin. If `jq` is not installed, the hook scripts will fail. The `post-edit-dotnet.sh` script requires `jq` for extracting the `file_path` from tool input.
+Hooks prefer `jq` for JSON parsing/output, but degrade gracefully when it is unavailable:
+- `post-edit-dotnet.sh` falls back to `python3` JSON parsing when available
+- `session-start-context.sh` and `user-prompt-dotnet-reminder.sh` emit JSON via shell fallback paths
 
-**Fix**: Install `jq` via your system package manager:
+**Fix (recommended)**: Install `jq` for the most reliable behavior:
 - macOS: `brew install jq`
 - Ubuntu/Debian: `sudo apt-get install jq`
 - Windows: `winget install jqlang.jq`

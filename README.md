@@ -43,7 +43,9 @@ The flat `skills/<skill-name>/` layout is compatible with Copilot's one-level-de
 
 ### OpenAI Codex
 
-Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
+
+Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
 
 ## Skill Catalog
 
