@@ -65,7 +65,7 @@ Before any .NET guidance, determine the project's target framework:
 | [skill:dotnet-devops] | GitHub Actions, Azure DevOps, containers, NuGet, observability | CI/CD pipelines, packaging, and operations |
 | [skill:dotnet-tooling] | Project setup, MSBuild, Native AOT, profiling, CLI apps, version detection | Build system, performance, and developer tools |
 | [skill:dotnet-debugging] | WinDbg MCP, crash dumps, hang analysis, memory diagnostics | Live and post-mortem dump analysis |
-| dotnet-advisor | This skill -- routes to domain skills above | Entry point, always loaded first |
+| dotnet-advisor | This skill -- routes to domain skills above | Entry point, loaded after [skill:using-dotnet] |
 
 ---
 

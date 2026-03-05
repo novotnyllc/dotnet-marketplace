@@ -1,6 +1,6 @@
 ---
 name: using-dotnet
-description: Enforces .NET/C# routing discipline by requiring early invocation of [skill:dotnet-advisor] before clarifying, planning, or implementation actions, then prioritizing baseline and domain skills in order. Do not use for clearly non-.NET tasks.
+description: Enforces .NET/C# routing discipline by requiring early invocation of this skill, then [skill:dotnet-advisor], before clarifying, planning, or implementation actions, and then prioritizing baseline and domain skills in order. Do not use for clearly non-.NET tasks.
 license: MIT
 user-invocable: true
 ---
