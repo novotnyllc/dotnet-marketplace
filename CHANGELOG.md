@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-05
+
 ## [1.0.0] - 2026-02-27
 
 ### Changed
@@ -149,7 +151,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...HEAD
+[1.1.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...dotnet-artisan/v1.1.0
 [1.0.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...dotnet-artisan/v1.0.0
 [0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0
 [0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0

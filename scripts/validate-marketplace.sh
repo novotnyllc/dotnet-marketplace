@@ -313,6 +313,10 @@ fi
 
 if [ -f "$PLUGIN_JSON" ] && jq -e '.skills | type == "array"' "$PLUGIN_JSON" >/dev/null 2>&1; then
     while IFS= read -r skill_path; do
+        if ! validate_path_safe "$skill_path" "skills[]"; then
+            errors=$((errors + 1))
+            continue
+        fi
         full_skill_path="$PLUGIN_DIR/$skill_path"
         skill_openai="$full_skill_path/agents/openai.yaml"
         if [ ! -f "$skill_openai" ]; then
