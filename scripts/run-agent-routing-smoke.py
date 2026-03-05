@@ -55,6 +55,9 @@ def get_expected_skill_count() -> int:
 # Frontmatter required fields for every SKILL.md (per repo policy in AGENTS.md)
 REQUIRED_FRONTMATTER = {"name", "description", "license", "user-invocable"}
 
+# Codex per-skill metadata expectations.
+SKILL_OPENAI_RELATIVE = Path("agents") / "openai.yaml"
+
 
 def load_plugin_json() -> dict:
     with open(PLUGIN_JSON) as f:
@@ -93,6 +96,27 @@ def parse_frontmatter(skill_md_path: Path) -> dict | None:
             key, _, value = line.partition(":")
             fm[key.strip()] = value.strip().strip("'\"")
     return fm
+
+
+def parse_openai_yaml_field(yaml_text: str, field_name: str) -> str | None:
+    """Extract a scalar field value from openai.yaml by key name.
+
+    This parser is intentionally minimal and dependency-free. It supports
+    quoted and unquoted scalar values on a single line.
+    """
+    match = re.search(
+        rf"(?m)^[ \t]*{re.escape(field_name)}[ \t]*:[ \t]*(.+?)[ \t]*$",
+        yaml_text,
+    )
+    if not match:
+        return None
+
+    raw = match.group(1).strip()
+    if raw.startswith('"') and raw.endswith('"') and len(raw) >= 2:
+        return raw[1:-1]
+    if raw.startswith("'") and raw.endswith("'") and len(raw) >= 2:
+        return raw[1:-1]
+    return raw
 
 
 def resolve_skill_path(skill_path_str: str) -> Path | None:
@@ -239,7 +263,9 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
 
     - Flat layout: skill dirs at skills/<name>/ (depth 1, not depth 2)
     - Each has SKILL.md
-    - .agents/openai.yaml exists and references flat layout
+    - .agents/openai.yaml exists and has valid implicit policy field
+    - Each skill has skills/<name>/agents/openai.yaml with matching display_name
+      and expected allow_implicit_invocation policy
     - Skill directory count matches plugin.json
     """
     errors: list[str] = []
@@ -267,7 +293,7 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
                     f"{[p.parent.name for p in nested[:3]]}"
                 )
 
-    # Verify openai.yaml exists and references the flat skill layout
+    # Verify root openai.yaml exists and references the flat skill layout
     if not OPENAI_YAML.exists():
         errors.append(f".agents/openai.yaml not found at {OPENAI_YAML}")
     else:
@@ -277,6 +303,61 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
         if not re.search(r"skills/\S+/", yaml_content):
             errors.append(
                 ".agents/openai.yaml does not reference skills/<name>/ layout pattern"
+            )
+
+        root_implicit = parse_openai_yaml_field(yaml_content, "allow_implicit_invocation")
+        if root_implicit is None:
+            errors.append(".agents/openai.yaml missing policy.allow_implicit_invocation")
+        elif root_implicit not in {"true", "false"}:
+            errors.append(
+                ".agents/openai.yaml has non-boolean allow_implicit_invocation "
+                f"value: {root_implicit!r}"
+            )
+
+    # Verify each skill has Codex per-skill metadata with expected policy.
+    for skill_dir in skill_dirs:
+        skill_name = skill_dir.name
+        skill_openai = skill_dir / SKILL_OPENAI_RELATIVE
+
+        if not skill_openai.exists():
+            errors.append(
+                f"Codex metadata missing for skill '{skill_name}': "
+                f"{skill_openai.relative_to(REPO_ROOT)}"
+            )
+            continue
+
+        yaml_content = skill_openai.read_text(encoding="utf-8")
+        display_name = parse_openai_yaml_field(yaml_content, "display_name")
+        allow_implicit = parse_openai_yaml_field(yaml_content, "allow_implicit_invocation")
+
+        if not display_name:
+            errors.append(
+                f"{skill_openai.relative_to(REPO_ROOT)} missing interface.display_name"
+            )
+        elif display_name != skill_name:
+            errors.append(
+                f"{skill_openai.relative_to(REPO_ROOT)} display_name '{display_name}' "
+                f"does not match skill directory '{skill_name}'"
+            )
+
+        if allow_implicit is None:
+            errors.append(
+                f"{skill_openai.relative_to(REPO_ROOT)} missing policy.allow_implicit_invocation"
+            )
+            continue
+
+        if allow_implicit not in {"true", "false"}:
+            errors.append(
+                f"{skill_openai.relative_to(REPO_ROOT)} has non-boolean "
+                f"allow_implicit_invocation value: {allow_implicit!r}"
+            )
+            continue
+
+        expected_implicit = "true" if skill_name == "dotnet-advisor" else "false"
+        if allow_implicit != expected_implicit:
+            errors.append(
+                f"{skill_openai.relative_to(REPO_ROOT)} allow_implicit_invocation={allow_implicit} "
+                f"(expected {expected_implicit} for skill '{skill_name}')"
             )
 
     return errors

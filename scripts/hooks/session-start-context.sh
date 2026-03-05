@@ -10,18 +10,22 @@
 
 set -uo pipefail
 
-# Check if current directory contains .NET project indicators
-SLN_COUNT=0
-CSPROJ_COUNT=0
+has_jq() {
+    [ "${DOTNET_ARTISAN_DISABLE_JQ:-0}" != "1" ] && command -v jq >/dev/null 2>&1
+}
+
+# Check if current directory contains .NET project indicators using first-hit scans.
+HAS_SOLUTION=false
+if find . -maxdepth 3 \( -name '*.sln' -o -name '*.slnx' \) -print -quit 2>/dev/null | grep -q .; then
+    HAS_SOLUTION=true
+fi
+
+HAS_CSPROJ=false
+if find . -maxdepth 3 -name '*.csproj' -print -quit 2>/dev/null | grep -q .; then
+    HAS_CSPROJ=true
+fi
+
 HAS_GLOBAL_JSON=false
-
-# Count solution files (group -o expressions with parentheses)
-SLN_COUNT="$(find . -maxdepth 3 \( -name '*.sln' -o -name '*.slnx' \) 2>/dev/null | wc -l | tr -d ' ')" || SLN_COUNT=0
-
-# Count project files
-CSPROJ_COUNT="$(find . -maxdepth 3 -name '*.csproj' 2>/dev/null | wc -l | tr -d ' ')" || CSPROJ_COUNT=0
-
-# Check for global.json
 if [ -f "global.json" ]; then
     HAS_GLOBAL_JSON=true
 fi
@@ -38,23 +42,26 @@ fi
 CONTEXT=""
 
 # Add routing instruction and project-specific context only when .NET indicators exist
-if [ "$SLN_COUNT" -gt 0 ] || [ "$CSPROJ_COUNT" -gt 0 ] || [ "$HAS_GLOBAL_JSON" = true ]; then
+if [ "$HAS_SOLUTION" = true ] || [ "$HAS_CSPROJ" = true ] || [ "$HAS_GLOBAL_JSON" = true ]; then
     CONTEXT="Mandatory first action for every task: invoke [skill:dotnet-advisor]. Do not plan, reason, design, or implement until it has been invoked, then follow its routing to load additional skills and apply their standards."
     PROJECT_CONTEXT="This is a .NET project"
     if [ -n "$TFM" ]; then
         PROJECT_CONTEXT="This is a .NET project ($TFM)"
     fi
-    if [ "$CSPROJ_COUNT" -gt 0 ]; then
-        PROJECT_CONTEXT="$PROJECT_CONTEXT with $CSPROJ_COUNT project(s)"
+    if [ "$HAS_CSPROJ" = true ]; then
+        PROJECT_CONTEXT="$PROJECT_CONTEXT with project files"
     fi
-    if [ "$SLN_COUNT" -gt 0 ]; then
-        PROJECT_CONTEXT="$PROJECT_CONTEXT in $SLN_COUNT solution(s)"
+    if [ "$HAS_SOLUTION" = true ]; then
+        PROJECT_CONTEXT="$PROJECT_CONTEXT in solution files"
+    fi
+    if [ "$HAS_GLOBAL_JSON" = true ]; then
+        PROJECT_CONTEXT="$PROJECT_CONTEXT and global.json"
     fi
     PROJECT_CONTEXT="$PROJECT_CONTEXT."
     CONTEXT="$CONTEXT $PROJECT_CONTEXT"
 fi
 
-if command -v jq >/dev/null 2>&1; then
+if has_jq; then
     jq -Rn --arg additionalContext "$CONTEXT" '{additionalContext: $additionalContext}'
 else
     ESCAPED_CONTEXT="$(printf '%s' "$CONTEXT" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\r/\\r/g; s/\t/\\t/g')"

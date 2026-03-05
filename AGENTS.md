@@ -81,7 +81,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 skills/<skill-name>/SKILL.md               # 8 broad skills (flat layout)
 skills/<skill-name>/references/*.md        # Companion files with deep content
 agents/<agent-name>.md                     # 14 specialist agents
-hooks/hooks.json                           # Session hooks (start context, post-edit)
+hooks/hooks.json                           # Session hooks (startup + user prompt reminder)
 .mcp.json                                  # MCP server integrations
 .claude-plugin/plugin.json                 # Plugin manifest
 .claude-plugin/marketplace.json            # Marketplace metadata
@@ -93,7 +93,7 @@ docs/                                      # Plugin-specific documentation
 Key directories:
 - **`skills/`** -- All skill content in a flat layout (one directory per skill, with `references/` companion files)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
-- **`hooks/`** -- Session lifecycle hooks
+- **`hooks/`** -- Session lifecycle hooks (startup context + user prompt reminder)
 - **`scripts/`** -- Hook shell scripts
 - **`.claude-plugin/`** -- Plugin manifest (plugin.json) and metadata (marketplace.json)
 
@@ -128,4 +128,3 @@ Run both in sequence:
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR process
 - See [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the comprehensive skill authoring how-to manual
 - See [README.md](README.md) for the full skill catalog, architecture diagrams, and installation instructions
-

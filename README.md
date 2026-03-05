@@ -4,11 +4,11 @@
 
 [![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -43,7 +43,21 @@ The flat `skills/<skill-name>/` layout is compatible with Copilot's one-level-de
 
 ### OpenAI Codex
 
-Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
+
+Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+
+For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
+
+## Provider Support Matrix
+
+| Provider | Primary surface | Status |
+|---|---|---|
+| Claude Code | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` + hooks + MCP | Supported |
+| GitHub Copilot CLI | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` | Supported |
+| OpenAI Codex | `.agents/openai.yaml` + `skills/*` + `skills/*/agents/openai.yaml` | Supported (skill-centric) |
+
+Compatibility is validated in CI with structural smoke checks via `scripts/run-agent-routing-smoke.py --provider claude,codex,copilot`.
 
 ## Skill Catalog
 
@@ -62,7 +76,11 @@ The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-n
 
 ## Agents
 
-The plugin includes 14 specialist agents that provide focused expertise in specific domains. The central routing agent, `dotnet-architect`, analyzes your query context and delegates to the appropriate specialist.
+The plugin includes 14 specialist agents that provide focused expertise in specific domains.
+
+Provider note:
+- Claude/Copilot flows can use these specialist agent definitions directly.
+- Codex currently routes through broad skills; use the `dotnet-advisor` Codex fallback table to map specialist intents to skills/references.
 
 | Agent | Description |
 |---|---|
@@ -197,7 +215,7 @@ Claude Code loads `dotnet-devops` (read `references/gha-patterns.md`) to generat
 
 ## Agent Skill Routing Checks
 
-This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` (manual/scheduled).
+This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` as optional manual verification.
 
 See `docs/agent-routing-tests.md` for details, workflow inputs, and environment variables.
 

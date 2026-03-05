@@ -26,18 +26,18 @@ Use this matrix to choose the right protocol based on your requirements:
 ```
 Is this service-to-service (no browser)?
 ├── Yes → Do you need streaming?
-│   ├── Yes → gRPC streaming [skill:dotnet-grpc]
+│   ├── Yes → gRPC streaming [skill:dotnet-api]
 │   └── No → Is it request-response?
-│       ├── High throughput / binary → gRPC (unary) [skill:dotnet-grpc]
-│       └── Standard CRUD / public API → REST [skill:dotnet-http-client]
+│       ├── High throughput / binary → gRPC (unary) [skill:dotnet-api]
+│       └── Standard CRUD / public API → REST [skill:dotnet-api]
 └── No (browser client) → Do you need real-time?
     ├── Yes → Do you need bidirectional?
-    │   ├── Yes → SignalR [skill:dotnet-realtime-communication]
-    │   └── No (server push only) → SSE [skill:dotnet-realtime-communication]
-    └── No → REST [skill:dotnet-http-client]
+    │   ├── Yes → SignalR [skill:dotnet-api]
+    │   └── No (server push only) → SSE [skill:dotnet-api]
+    └── No → REST [skill:dotnet-api]
 
 Special cases:
-- LSP / tooling protocol → JSON-RPC 2.0 [skill:dotnet-realtime-communication]
+- LSP / tooling protocol → JSON-RPC 2.0 [skill:dotnet-api]
 - Mixed (browser + service-to-service) → REST for browser, gRPC for internal
 ```
 

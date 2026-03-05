@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET project setup, build systems, and developer tooling including solution structure, MSBuild (authoring, tasks, Directory.Build), build optimization, performance patterns, profiling (dotnet-counters/trace/dump), Native AOT publishing, trimming, GC/memory tuning, CLI app architecture (System.CommandLine, Spectre.Console, Terminal.Gui), docs generation, tool management, version detection/upgrade, and solution navigation.
+description: Manages .NET project setup, MSBuild, performance tooling, Native AOT, CLI architecture, and version orchestration. Do not use for framework-specific UI implementation or API security policy design.
 license: MIT
 user-invocable: true
 ---

@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing
-description: Defines .NET test strategy, xUnit v3, integration/E2E, snapshots (Verify), Playwright, benchmarks, and quality gates.
+description: Defines .NET test strategy and implementation patterns across xUnit, integration/E2E, snapshots, Playwright, and benchmarks. Do not use for production API architecture or CI workflow authoring.
 license: MIT
 user-invocable: false
 ---

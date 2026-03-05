@@ -1,6 +1,6 @@
 ---
 name: dotnet-devops
-description: Configures CI/CD pipelines, packaging, and operational tooling for .NET targeting GitHub Actions (build/test, deploy, publish, patterns), Azure DevOps (build/test, publish, patterns, environments), containers (Dockerfiles, deployment), NuGet authoring, MSIX packaging, GitHub Releases, release management (NBGV, SemVer), observability (OpenTelemetry), and structured logging pipelines.
+description: Configures .NET CI/CD pipelines, packaging, release management, and operational observability across GitHub Actions and Azure DevOps. Do not use for application-layer API or UI implementation patterns.
 license: MIT
 user-invocable: false
 ---

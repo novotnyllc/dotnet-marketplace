@@ -1,6 +1,6 @@
 ---
 name: dotnet-advisor
-description: Routes .NET/C# work to domain skills. Loads coding-standards for code paths.
+description: Routes .NET and C# requests to domain skills using project and SDK signals, and loads coding standards first for code paths. Do not use for deep API, UI, testing, devops, tooling, or debugging implementation guidance.
 user-invocable: true
 license: MIT
 ---
@@ -24,7 +24,7 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 
 ## Immediate Routing Actions (Do First)
 
-For every .NET/C# request, execute this sequence before detailed planning:
+For every .NET/C# request, you MUST execute this sequence before detailed planning:
 1. Invoke [skill:dotnet-csharp] and apply its coding standards.
 2. Invoke the primary domain skill for the request (API, testing, UI, devops, tooling, debugging).
 3. Continue with any additional routed skills.
@@ -61,19 +61,22 @@ Before any .NET guidance, determine the project's target framework:
 
 ---
 
-## Cross-Domain Playbooks
+## Mandatory Routing Table
 
-Multi-skill routing recipes for common scenarios. Each domain skill's own Routing Table handles topic-to-file mapping; these playbooks identify which skills to combine.
+Treat each row as a required minimum. Invoke every listed skill in order before adding optional skills.
 
-- **New API service:** [skill:dotnet-tooling] (scaffold) + [skill:dotnet-api] (architecture) + [skill:dotnet-devops] (CI/CD) + [skill:dotnet-testing] (test strategy)
-- **Starting a new project:** [skill:dotnet-tooling] (version detection, project structure) + [skill:dotnet-csharp] (coding standards)
-- **UI application:** [skill:dotnet-ui] (framework choice, components) + [skill:dotnet-csharp] (patterns) + [skill:dotnet-testing] (UI testing)
-- **Performance optimization:** [skill:dotnet-tooling] (profiling, AOT, GC) + [skill:dotnet-testing] (benchmarks) + [skill:dotnet-csharp] (patterns)
-- **CLI tool end-to-end:** [skill:dotnet-tooling] (System.CommandLine, CLI design) + [skill:dotnet-devops] (packaging, distribution, releases)
-- **Cloud-native service:** [skill:dotnet-api] (Aspire, architecture) + [skill:dotnet-devops] (containers, observability) + [skill:dotnet-testing] (integration tests)
-- **Security audit:** [skill:dotnet-api] (OWASP, secrets, crypto) + [skill:dotnet-csharp] (input validation)
-- **Documentation sprint:** [skill:dotnet-tooling] (doc strategy, Mermaid, XML docs) + [skill:dotnet-devops] (GitHub docs)
-- **Agent troubleshooting:** [skill:dotnet-api] (agent gotchas) + [skill:dotnet-tooling] (build analysis, solution navigation)
+| Request Type | Required Skill Invocation Order |
+|-------------|---------------------------------|
+| New API service | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-api] -> [skill:dotnet-devops] -> [skill:dotnet-testing] |
+| Starting a new project | [skill:dotnet-csharp] -> [skill:dotnet-tooling] |
+| UI application | [skill:dotnet-csharp] -> [skill:dotnet-ui] -> [skill:dotnet-testing] |
+| Performance optimization | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-testing] |
+| CLI tool end-to-end | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-devops] |
+| Cloud-native service | [skill:dotnet-csharp] -> [skill:dotnet-api] -> [skill:dotnet-devops] -> [skill:dotnet-testing] |
+| Security audit | [skill:dotnet-csharp] -> [skill:dotnet-api] |
+| Documentation sprint | [skill:dotnet-csharp] -> [skill:dotnet-tooling] -> [skill:dotnet-devops] |
+| Agent troubleshooting | [skill:dotnet-csharp] -> [skill:dotnet-api] -> [skill:dotnet-tooling] |
+| Generic or ambiguous .NET request | [skill:dotnet-csharp] -> [skill:dotnet-tooling], then route to the owning domain skill |
 
 ---
 
@@ -95,3 +98,19 @@ For complex analysis that benefits from domain expertise, delegate to specialist
 - Security vulnerabilities, OWASP compliance, secrets exposure, crypto review -> [skill:dotnet-security-reviewer]
 - Test architecture, test type selection, test data management, microservice testing -> [skill:dotnet-testing-specialist]
 - Uno Platform, Extensions ecosystem, MVUX, multi-target deployment -> [skill:dotnet-uno-specialist]
+
+## Codex Compatibility Fallbacks
+
+Codex source setup currently syncs `skills/*` only. If a specialist agent above is unavailable, route to the mapped broad skill and companion reference below.
+
+| Specialist Intent | Codex Fallback |
+|-------------------|----------------|
+| Architecture decisions, bounded context design | [skill:dotnet-api] (`references/architecture-patterns.md`) + [skill:dotnet-tooling] (`references/project-structure.md`) |
+| ASP.NET Core middleware and pipeline | [skill:dotnet-api] (`references/middleware-patterns.md`, `references/minimal-apis.md`) |
+| Async/concurrency performance and `ValueTask` correctness | [skill:dotnet-csharp] (`references/async-patterns.md`, `references/concurrency-patterns.md`) + [skill:dotnet-tooling] (`references/profiling.md`) |
+| Benchmark design and methodology | [skill:dotnet-testing] (`references/benchmarkdotnet.md`, `references/ci-benchmarking.md`) |
+| Blazor/MAUI/Uno framework specifics | [skill:dotnet-ui] (`references/blazor-patterns.md`, `references/maui-development.md`, `references/uno-platform.md`) |
+| Security review and threat hardening | [skill:dotnet-api] (`references/security-owasp.md`, `references/api-security.md`, `references/secrets-management.md`) |
+| Test strategy and microservice test architecture | [skill:dotnet-testing] (`references/testing-strategy.md`, `references/integration-testing.md`) |
+| Performance triage (CPU, allocations, GC) | [skill:dotnet-tooling] (`references/profiling.md`, `references/gc-memory.md`, `references/performance-patterns.md`) |
+| Documentation generation and structure | [skill:dotnet-tooling] (`references/documentation-strategy.md`, `references/xml-docs.md`, `references/mermaid-diagrams.md`) |

@@ -1,6 +1,6 @@
 ---
 name: dotnet-debugging
-description: Debugs Windows applications using WinDbg and crash dump analysis including MCP server integration, live process attach, dump file triage, hang detection, high-CPU diagnosis, memory leak investigation, kernel debugging, symbol configuration, scenario command packs, diagnostic report generation, and SOS extension workflows for .NET runtime inspection.
+description: Debugs Windows applications with WinDbg workflows for dumps, hangs, high CPU, memory pressure, and kernel triage. Do not use for routine .NET SDK profiling, benchmark design, or CI test debugging.
 license: MIT
 user-invocable: true
 ---

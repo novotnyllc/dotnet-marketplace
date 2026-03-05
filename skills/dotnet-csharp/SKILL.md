@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Guides C# language patterns, coding standards, and .NET runtime features including async/await, dependency injection, configuration, source generators, nullable reference types, serialization, channels, LINQ optimization, domain modeling, SOLID principles, concurrency, analyzers, editorconfig, file I/O, native interop, validation, modern C# syntax (records, pattern matching, primary constructors), and API design.
+description: Guides C# language patterns, coding standards, and runtime design for async, dependency injection, serialization, analyzers, and type modeling. Do not use for ASP.NET endpoint architecture or CI/CD workflow guidance.
 license: MIT
 user-invocable: false
 ---

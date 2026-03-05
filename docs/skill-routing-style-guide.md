@@ -375,15 +375,39 @@ A unified syntax simplifies tooling and avoids the need for authors to distingui
 
 ---
 
-## 10. Migration Checklist
+## 10. Skill File Hygiene
+
+Additional authoring constraints (adopted from `skills-best-practices`) keep routing deterministic and reduce context waste.
+
+### Metadata Constraints
+
+- `name` must be 1-64 characters and match `^[a-z0-9]+(-[a-z0-9]+)*$`
+- `description` hard cap is 1,024 characters (routing safety bound)
+- `description` should stay third-person and avoid first/second-person terms (`I`, `we`, `you`)
+- `description` should include an explicit exclusion phrase (`Do not use for ...`) to reduce routing ambiguity
+
+### Structure Constraints
+
+- Keep `SKILL.md` at or below 500 lines when practical (move dense material to `references/` or `assets/`)
+- Keep files under `references/`, `scripts/`, and `assets/` one level deep (no nested trees)
+- Avoid human-centric docs inside skill directories (`README.md`, `CHANGELOG.md`, `INSTALLATION*.md`)
+- Use forward slashes in skill-local paths (`references/foo.md`, not `references\\foo.md`)
+
+These checks are currently emitted as lint warnings/errors by `scripts/_validate_skills.py`.
+
+---
+
+## 11. Migration Checklist
 
 When normalizing an existing skill to match this style guide:
 
 - [ ] **Description**: Replace WHEN prefix with third-person declarative verb. Verify under 600 characters.
+- [ ] **Metadata hard limits**: Name matches regex/length rule and description is <= 1,024 chars.
 - [ ] **Scope section**: Add `## Scope` with bullet list of covered topics (if missing).
 - [ ] **Out-of-scope section**: Add `## Out of scope` with attributed `[skill:]` cross-references (if missing).
 - [ ] **Cross-references**: Convert all bare-text skill/agent names to `[skill:name]` syntax.
 - [ ] **Self-references**: Remove any `[skill:]` references to the skill's own name.
+- [ ] **File hygiene**: Keep `references/`, `scripts/`, and `assets/` one-level deep and path references slash-normalized.
 - [ ] **Budget check**: Verify the description change is budget-neutral or budget-negative.
 - [ ] **Validate**: Run `./scripts/validate-skills.sh` to confirm no new errors.
 
@@ -407,6 +431,7 @@ The new description must have the same or fewer characters than the old one.
 
 - [CONTRIBUTING-SKILLS.md](../CONTRIBUTING-SKILLS.md) -- skill authoring guide with detailed instructions
 - [Anthropic Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) -- "description must describe what the skill does AND when to use it"
+- [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices) -- metadata and progressive-disclosure lint patterns
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - Research: assertive cues create 7x selection bias (arxiv 2602.14878v1)
 - Research: position bias gives 80.2% selection rate to first-listed tools (arxiv 2511.01854)

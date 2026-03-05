@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-advisor"
+  short_description: "Routes .NET prompts to domain skills first"
+  default_prompt: "Use $dotnet-advisor to route this .NET/C# task to the correct domain skill before any implementation."
+
+policy:
+  allow_implicit_invocation: true

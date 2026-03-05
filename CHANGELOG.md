@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-05
+
+### Added
+- Skill metadata quality lints for name format/length, description hard cap, and negative-trigger phrasing.
+- Skill hygiene lints for one-level resource folders, forward-slash pathing, and human-doc detection in skill directories.
+
+### Changed
+- Updated all 8 consolidated skill descriptions to include explicit negative routing triggers.
+- Codex metadata validation now re-validates `skills[]` paths with path-safety checks before per-skill file probing.
+- CI skill-count assertion now uses correct GNU `find` option ordering (`-maxdepth` before `-name`).
+- Version bump from `1.0.0` to `1.1.0` across plugin metadata, marketplace metadata, and README badge.
+
 ## [1.0.0] - 2026-02-27
 
 ### Changed
@@ -149,7 +161,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...HEAD
+[1.1.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...dotnet-artisan/v1.1.0
 [1.0.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...dotnet-artisan/v1.0.0
 [0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0
 [0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0
