@@ -22,24 +22,31 @@ Checks (skills):
   16. Invocation contract: OOS >= 1 unordered bullet (fence-aware)
   17. Invocation contract: OOS contains >= 1 [skill:] reference (presence check,
       independent of STRICT_REFS resolution)
+  18. Skill name format/length (1-64 chars, lowercase alnum-hyphen)
+  19. Description hard cap for discovery metadata (<= 1024 chars)
+  20. Description pronoun/style lint (first/second-person terms)
+  21. SKILL.md size guidance lint (<= 500 lines recommended)
+  22. Skill-local resource structure lint (no nested files under references/scripts/assets)
+  23. Skill-local human-doc lint (no README/CHANGELOG/INSTALLATION docs in skill dirs)
+  24. Path-style lint in SKILL.md body (use forward slashes for references/scripts/assets/agents)
 
 Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
-  18. UTF-8 BOM detection (Copilot CLI silent parse failure)
-  19. Quoted description detection via raw-line regex (Copilot CLI #1024)
-  20. Missing license field (Copilot CLI #894 requires license)
-  21. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
-  22. Missing user-invocable field (repo policy requires explicit true/false)
+  25. UTF-8 BOM detection (Copilot CLI silent parse failure)
+  26. Quoted description detection via raw-line regex (Copilot CLI #1024)
+  27. Missing license field (Copilot CLI #894 requires license)
+  28. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
+  29. Missing user-invocable field (repo policy requires explicit true/false)
 
 Checks (agents):
-  23. Agent bare-ref detection using known IDs allowlist (informational)
-  24. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  30. Agent bare-ref detection using known IDs allowlist (informational)
+  31. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Checks (reference files -- skills/*/references/*.md):
-  25. H1 title presence (fence-aware -- first # outside code fences)
-  26. H1 title must not be slug-style (must not start with "dotnet-")
-  27. No ## Scope or ## Out of scope sections allowed
-  28. Fence-aware [skill:] cross-ref resolution (always strict, no --allow-planned-refs)
-  29. Routing table companion file existence (Companion File column by header name)
+  32. H1 title presence (fence-aware -- first # outside code fences)
+  33. H1 title must not be slug-style (must not start with "dotnet-")
+  34. No ## Scope or ## Out of scope sections allowed
+  35. Fence-aware [skill:] cross-ref resolution (always strict, no --allow-planned-refs)
+  36. Routing table companion file existence (Companion File column by header name)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -105,6 +112,24 @@ FILLER_PHRASES = [
     re.compile(r"\bguide to\b", re.IGNORECASE),
     re.compile(r"\bcomplete guide\b", re.IGNORECASE),
 ]
+
+# Skills metadata hard constraints and style lints inspired by
+# mgechev/skills-best-practices.
+SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+MAX_DISCOVERY_DESC_CHARS = 1024
+MAX_SKILL_LINES = 500
+DESCRIPTION_PRONOUN_PATTERN = re.compile(
+    r"\b(i|me|my|we|our|you|your)\b", re.IGNORECASE
+)
+FORWARD_SLASH_PATH_PATTERN = re.compile(
+    r"\b(references|scripts|assets|agents)\\[^\s`]+"
+)
+HUMAN_DOC_FILENAMES = {
+    "README.md",
+    "CHANGELOG.md",
+    "INSTALLATION.md",
+    "INSTALLATION_GUIDE.md",
+}
 
 # Pattern to match [skill:name] references (for stripping before bare-ref scan)
 SKILL_REF_PATTERN = re.compile(r"\[skill:[a-zA-Z0-9_-]+\]")
@@ -649,6 +674,8 @@ def process_file(path: str) -> dict:
         "has_oos": has_oos,
         "scope_items": scope_items,
         "oos_items": oos_items,
+        "line_count": len(lines),
+        "body_text": body_text,
     }
 
 
@@ -825,6 +852,13 @@ def main():
     type_warning_count = 0
     filler_phrase_count = 0
     when_prefix_count = 0
+    name_format_error_count = 0
+    desc_hardcap_error_count = 0
+    desc_pronoun_warn_count = 0
+    skill_line_budget_warn_count = 0
+    nested_resource_warn_count = 0
+    human_doc_warn_count = 0
+    path_slash_warn_count = 0
     missing_scope_count = 0
     missing_oos_count = 0
     self_ref_count = 0
@@ -872,6 +906,8 @@ def main():
         desc_len = result["desc_len"]
         refs = result["refs"]
         all_fields = result["all_fields"]
+        line_count = result["line_count"]
+        body_text = result["body_text"]
 
         # Report field-level errors (type or missing)
         for fe in result.get("field_errors", []):
@@ -888,6 +924,23 @@ def main():
             )
             warnings += 1
             name_dir_mismatches += 1
+
+        # Check 18: Name format/length (discoverability hard constraints)
+        if name:
+            if not (1 <= len(name) <= 64):
+                print(
+                    f"ERROR: {rel_path} -- name '{name}' is {len(name)} chars "
+                    "(must be 1-64)"
+                )
+                errors += 1
+                name_format_error_count += 1
+            if not SKILL_NAME_PATTERN.match(name):
+                print(
+                    f"ERROR: {rel_path} -- name '{name}' has invalid format "
+                    "(use lowercase letters, numbers, single hyphens)"
+                )
+                errors += 1
+                name_format_error_count += 1
 
         # Check 6: Extra frontmatter fields beyond allowed set
         extra_fields = all_fields - ALLOWED_FRONTMATTER_FIELDS
@@ -923,6 +976,77 @@ def main():
             )
             warnings += 1
             when_prefix_count += 1
+
+        # Check 19: Description hard cap (routing metadata remains bounded)
+        if desc_len > MAX_DISCOVERY_DESC_CHARS:
+            print(
+                f"ERROR: {rel_path} -- description is {desc_len} chars "
+                f"(hard cap: <= {MAX_DISCOVERY_DESC_CHARS})"
+            )
+            errors += 1
+            desc_hardcap_error_count += 1
+
+        # Check 20: Description style lint (first/second person terms)
+        # Keep as warning: heuristic by design, can false positive on edge text.
+        style_text = re.sub(r"\bI/O\b", " ", description, flags=re.IGNORECASE)
+        pronouns = sorted(
+            set(DESCRIPTION_PRONOUN_PATTERN.findall(style_text))
+        ) if description else []
+        if pronouns:
+            print(
+                f"WARN:  {rel_path} -- description contains first/second-person terms: "
+                f"{', '.join(pronouns)}"
+            )
+            warnings += 1
+            desc_pronoun_warn_count += 1
+
+        # Check 21: SKILL.md line budget lint (progressive-disclosure guidance)
+        if line_count > MAX_SKILL_LINES:
+            print(
+                f"WARN:  {rel_path} -- file has {line_count} lines "
+                f"(recommended <= {MAX_SKILL_LINES}; move deep content to references/)"
+            )
+            warnings += 1
+            skill_line_budget_warn_count += 1
+
+        # Check 22: Nested resource files in references/scripts/assets (lint)
+        # These folders should be one level deep to keep navigation deterministic.
+        skill_dir = skill_file.parent
+        for subdir_name in ("references", "scripts", "assets"):
+            subdir = skill_dir / subdir_name
+            if not subdir.is_dir():
+                continue
+            nested_files = [
+                p for p in subdir.rglob("*")
+                if p.is_file() and len(p.relative_to(subdir).parts) > 1
+            ]
+            for nested in nested_files:
+                nested_rel = nested.relative_to(skill_dir)
+                print(
+                    f"WARN:  {rel_path} -- nested file under {subdir_name}/: {nested_rel} "
+                    "(recommended one level deep)"
+                )
+                warnings += 1
+                nested_resource_warn_count += 1
+
+        # Check 23: Human-centric docs inside skill directories (lint)
+        for human_doc in sorted(HUMAN_DOC_FILENAMES):
+            human_doc_path = skill_dir / human_doc
+            if human_doc_path.is_file():
+                print(
+                    f"WARN:  {rel_path} -- human-centric doc in skill directory: "
+                    f"{human_doc_path.relative_to(skill_dir)}"
+                )
+                warnings += 1
+                human_doc_warn_count += 1
+
+        # Check 24: Path style lint -- use forward slashes for skill-local paths.
+        for m in FORWARD_SLASH_PATH_PATTERN.finditer(body_text):
+            print(
+                f"WARN:  {rel_path} -- use forward slashes in skill paths: '{m.group(0)}'"
+            )
+            warnings += 1
+            path_slash_warn_count += 1
 
         # Check 10: Scope section presence
         if not result["has_scope"]:
@@ -1255,6 +1379,13 @@ def main():
     print(f"TYPE_WARNING_COUNT={type_warning_count}")
     print(f"FILLER_PHRASE_COUNT={filler_phrase_count}")
     print(f"WHEN_PREFIX_COUNT={when_prefix_count}")
+    print(f"NAME_FORMAT_ERROR_COUNT={name_format_error_count}")
+    print(f"DESC_HARDCAP_ERROR_COUNT={desc_hardcap_error_count}")
+    print(f"DESC_PRONOUN_WARN_COUNT={desc_pronoun_warn_count}")
+    print(f"SKILL_LINE_BUDGET_WARN_COUNT={skill_line_budget_warn_count}")
+    print(f"NESTED_RESOURCE_WARN_COUNT={nested_resource_warn_count}")
+    print(f"HUMAN_DOC_WARN_COUNT={human_doc_warn_count}")
+    print(f"PATH_SLASH_WARN_COUNT={path_slash_warn_count}")
     print(f"MISSING_SCOPE_COUNT={missing_scope_count}")
     print(f"MISSING_OOS_COUNT={missing_oos_count}")
     print(f"SELF_REF_COUNT={self_ref_count}")

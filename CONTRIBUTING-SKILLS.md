@@ -62,12 +62,14 @@ Every skill lives in a flat directory under `skills/`:
 ```
 skills/<skill-name>/
   SKILL.md              # Required -- main skill file (casing matters)
+  scripts/              # Optional -- deterministic helper CLIs
   references/           # Optional -- companion files for extended content
-    coding-standards.md # Human-readable Title Case names
-    async-patterns.md   # One file per topic area
+  assets/               # Optional -- templates/schemas/static outputs
+  agents/               # Optional -- provider metadata (for example openai.yaml)
 ```
 
 The `<skill-name>` directory name must match the `name` field in SKILL.md frontmatter exactly.
+Use lowercase letters, numbers, and single hyphens only (1-64 chars).
 
 ### SKILL.md Format
 
@@ -90,7 +92,7 @@ Body content starts here...
 
 | Field | Required | Type | Rules |
 |-------|----------|------|-------|
-| `name` | Yes | string | Must match directory name exactly |
+| `name` | Yes | string | Must match directory name exactly; 1-64 chars; regex `^[a-z0-9]+(-[a-z0-9]+)*$` |
 | `description` | Yes | string | Target under 600 characters (see section 3) |
 | `license` | Yes | string | Must be `MIT` for this repo. Required by Copilot CLI for skill loading. |
 | `user-invocable` | Yes (repo policy) | boolean | Must be explicitly set on every skill (`true` or `false`). Set to `false` to hide from the `/` menu. Not required by the upstream Agent Skills spec, but required in this repo for cross-provider predictability. |
@@ -101,6 +103,7 @@ Body content starts here...
 The `name`, `description`, and `license` fields are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
 
 **Important:** All skills must have an explicit `user-invocable` field (either `true` or `false`). Do not omit it and rely on the default. This ensures predictable behavior across all agent runtimes.
+**Hard cap:** Description length must be <= 1,024 characters for discovery metadata safety.
 
 ### Companion Files
 
@@ -172,6 +175,12 @@ description: Detects code smells and anti-patterns in C# code during writing and
 
 # Bad -- vague, no activation context
 description: Helps with code quality stuff
+```
+
+Add disambiguation when helpful:
+
+```yaml
+description: Detects code smells and anti-patterns in C# code during writing and review. Don't use for ASP.NET pipeline design or CI workflow authoring.
 ```
 
 ### Good vs. Bad Examples
@@ -265,6 +274,13 @@ Structure content in layers of increasing depth:
 
 This mirrors the Anthropic guide's recommendation: keep the primary skill focused on actionable guidance, and push verbose examples into companion files.
 
+### Structural Constraints
+
+- Keep `SKILL.md` under **500 lines** when practical. Move dense catalogs, long templates, and schema blocks into `references/` or `assets/`.
+- Keep `references/`, `scripts/`, and `assets/` **one level deep**. Avoid nested subfolders.
+- Do not add human-centric docs inside a skill directory (`README.md`, `CHANGELOG.md`, `INSTALLATION*.md`).
+- Use relative paths with forward slashes (`references/foo.md`, not `references\\foo.md`).
+
 ### Cross-Reference Syntax
 
 Reference other skills using the machine-parseable syntax:
@@ -288,7 +304,7 @@ Rules:
 
 ### Size Limit
 
-Keep SKILL.md under **5,000 words**. If you need more space, use `references/` companion files for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
+Treat **500 lines** as the working budget for `SKILL.md`. A soft upper limit of **5,000 words** still applies, but large files should be refactored before reaching it.
 
 ---
 
@@ -325,6 +341,15 @@ Both commands must pass before merging. Run them from the repo root:
 ```
 
 If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+
+### LLM-Guided Validation Loop
+
+Use this quick 4-pass loop before opening a PR:
+
+1. **Discovery validation:** Paste only the `name`/`description` and ask an LLM for prompts that should trigger vs not trigger.
+2. **Logic simulation:** Paste `SKILL.md` and ask the LLM to simulate execution step-by-step; patch any hallucination gaps.
+3. **Edge-case attack:** Ask the LLM to act as QA and produce failure-mode questions.
+4. **Refinement:** Move bulky details to `references/`/`assets/`, keep the top-level workflow concise and deterministic.
 
 ### Cross-Provider Verification
 
@@ -454,14 +479,15 @@ Before committing a new or modified skill:
 - [ ] **Folder created** at `skills/<skill-name>/`
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name`, `description`, `license`, and `user-invocable` fields
-- [ ] **`name` matches** the directory name exactly
+- [ ] **`name` matches** the directory name exactly and satisfies `^[a-z0-9]+(-[a-z0-9]+)*$` (1-64 chars)
 - [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
-- [ ] **Description under 600 characters** (check budget math)
+- [ ] **Description limits** -- target <= 600 chars, hard cap <= 1,024 chars
 - [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
 - [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
 - [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
 - [ ] **Invocation contract** -- Scope has >=1 unordered bullet, OOS has >=1 unordered bullet, at least one OOS bullet contains `[skill:]` (see [Invocation Contract](docs/skill-routing-style-guide.md#6-invocation-contract))
 - [ ] **No self-references** -- skill does not reference itself via `[skill:]`
+- [ ] **Skill file hygiene** -- prefer <= 500 lines, one-level `references/`/`scripts/`/`assets/`, forward-slash paths only
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
 - [ ] **Validation passes** -- both commands run clean:
   ```bash
@@ -475,6 +501,7 @@ Before committing a new or modified skill:
 
 - [Skill Routing Style Guide](docs/skill-routing-style-guide.md) -- canonical rules for descriptions, scope sections, and cross-references
 - [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) -- the complete six-chapter guide this manual adapts
+- [skills-best-practices](https://github.com/mgechev/skills-best-practices) -- metadata, progressive-disclosure, and validation-loop optimizations
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
 - [CLAUDE.md](CLAUDE.md) -- plugin conventions and validation commands
