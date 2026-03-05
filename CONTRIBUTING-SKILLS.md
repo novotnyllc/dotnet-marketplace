@@ -169,6 +169,8 @@ Structure descriptions as: **Action + Domain + Differentiator**
 
 Use **third-person declarative** style. Front-load the most specific action verb or present participle. Do not start with `WHEN`, `A skill that`, `Helps with`, or other filler. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) for the full canonical rules.
 
+Include an explicit negative trigger in every description (for example, `Do not use for ...`) so routing has a clear exclusion boundary.
+
 ```yaml
 # Good -- declarative, specific domain, clear scope
 description: Detects code smells and anti-patterns in C# code during writing and review
@@ -480,7 +482,7 @@ Before committing a new or modified skill:
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name`, `description`, `license`, and `user-invocable` fields
 - [ ] **`name` matches** the directory name exactly and satisfies `^[a-z0-9]+(-[a-z0-9]+)*$` (1-64 chars)
-- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
+- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix, and explicit negative trigger (`Do not use for ...`) (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
 - [ ] **Description limits** -- target <= 600 chars, hard cap <= 1,024 chars
 - [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
 - [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)

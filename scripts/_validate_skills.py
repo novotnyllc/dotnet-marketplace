@@ -29,24 +29,25 @@ Checks (skills):
   22. Skill-local resource structure lint (no nested files under references/scripts/assets)
   23. Skill-local human-doc lint (no README/CHANGELOG/INSTALLATION docs in skill dirs)
   24. Path-style lint in SKILL.md body (use forward slashes for references/scripts/assets/agents)
+  25. Description negative-trigger lint (explicit "Do not use for ..." disambiguation)
 
 Checks (Copilot safety -- raw-frontmatter, pre-YAML-parse):
-  25. UTF-8 BOM detection (Copilot CLI silent parse failure)
-  26. Quoted description detection via raw-line regex (Copilot CLI #1024)
-  27. Missing license field (Copilot CLI #894 requires license)
-  28. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
-  29. Missing user-invocable field (repo policy requires explicit true/false)
+  26. UTF-8 BOM detection (Copilot CLI silent parse failure)
+  27. Quoted description detection via raw-line regex (Copilot CLI #1024)
+  28. Missing license field (Copilot CLI #894 requires license)
+  29. metadata: as last frontmatter key (Copilot CLI #951 silent skill drop)
+  30. Missing user-invocable field (repo policy requires explicit true/false)
 
 Checks (agents):
-  30. Agent bare-ref detection using known IDs allowlist (informational)
-  31. AGENTS.md bare-ref detection using known IDs allowlist (informational)
+  31. Agent bare-ref detection using known IDs allowlist (informational)
+  32. AGENTS.md bare-ref detection using known IDs allowlist (informational)
 
 Checks (reference files -- skills/*/references/*.md):
-  32. H1 title presence (fence-aware -- first # outside code fences)
-  33. H1 title must not be slug-style (must not start with "dotnet-")
-  34. No ## Scope or ## Out of scope sections allowed
-  35. Fence-aware [skill:] cross-ref resolution (always strict, no --allow-planned-refs)
-  36. Routing table companion file existence (Companion File column by header name)
+  33. H1 title presence (fence-aware -- first # outside code fences)
+  34. H1 title must not be slug-style (must not start with "dotnet-")
+  35. No ## Scope or ## Out of scope sections allowed
+  36. Fence-aware [skill:] cross-ref resolution (always strict, no --allow-planned-refs)
+  37. Routing table companion file existence (Companion File column by header name)
 
 Infrastructure:
   - Known IDs set: {skill directory names} union {agent file stems}
@@ -120,6 +121,9 @@ MAX_DISCOVERY_DESC_CHARS = 1024
 MAX_SKILL_LINES = 500
 DESCRIPTION_PRONOUN_PATTERN = re.compile(
     r"\b(i|me|my|we|our|you|your)\b", re.IGNORECASE
+)
+NEGATIVE_TRIGGER_PATTERN = re.compile(
+    r"\b(do not use|don't use|not for)\b", re.IGNORECASE
 )
 FORWARD_SLASH_PATH_PATTERN = re.compile(
     r"\b(references|scripts|assets|agents)\\[^\s`]+"
@@ -855,6 +859,7 @@ def main():
     name_format_error_count = 0
     desc_hardcap_error_count = 0
     desc_pronoun_warn_count = 0
+    desc_negative_trigger_warn_count = 0
     skill_line_budget_warn_count = 0
     nested_resource_warn_count = 0
     human_doc_warn_count = 0
@@ -999,6 +1004,16 @@ def main():
             )
             warnings += 1
             desc_pronoun_warn_count += 1
+
+        # Check 25: Description should include explicit negative trigger
+        # to reduce routing ambiguity.
+        if description and not NEGATIVE_TRIGGER_PATTERN.search(description):
+            print(
+                f"WARN:  {rel_path} -- description missing negative trigger "
+                "(include 'Do not use for ...' disambiguation)"
+            )
+            warnings += 1
+            desc_negative_trigger_warn_count += 1
 
         # Check 21: SKILL.md line budget lint (progressive-disclosure guidance)
         if line_count > MAX_SKILL_LINES:
@@ -1382,6 +1397,7 @@ def main():
     print(f"NAME_FORMAT_ERROR_COUNT={name_format_error_count}")
     print(f"DESC_HARDCAP_ERROR_COUNT={desc_hardcap_error_count}")
     print(f"DESC_PRONOUN_WARN_COUNT={desc_pronoun_warn_count}")
+    print(f"DESC_NEGATIVE_TRIGGER_WARN_COUNT={desc_negative_trigger_warn_count}")
     print(f"SKILL_LINE_BUDGET_WARN_COUNT={skill_line_budget_warn_count}")
     print(f"NESTED_RESOURCE_WARN_COUNT={nested_resource_warn_count}")
     print(f"HUMAN_DOC_WARN_COUNT={human_doc_warn_count}")

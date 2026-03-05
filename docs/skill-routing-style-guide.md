@@ -384,6 +384,7 @@ Additional authoring constraints (adopted from `skills-best-practices`) keep rou
 - `name` must be 1-64 characters and match `^[a-z0-9]+(-[a-z0-9]+)*$`
 - `description` hard cap is 1,024 characters (routing safety bound)
 - `description` should stay third-person and avoid first/second-person terms (`I`, `we`, `you`)
+- `description` should include an explicit exclusion phrase (`Do not use for ...`) to reduce routing ambiguity
 
 ### Structure Constraints
 
