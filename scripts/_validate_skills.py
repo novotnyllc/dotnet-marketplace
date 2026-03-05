@@ -122,6 +122,11 @@ MAX_SKILL_LINES = 500
 DESCRIPTION_PRONOUN_PATTERN = re.compile(
     r"\b(i|me|my|we|our|you|your)\b", re.IGNORECASE
 )
+# Allow explicit invocation-contract wording in descriptions without
+# triggering second-person style warnings.
+DESCRIPTION_PRONOUN_EXCEPTIONS = [
+    re.compile(r"\byou must use this before\b", re.IGNORECASE),
+]
 NEGATIVE_TRIGGER_PATTERN = re.compile(
     r"\b(do not use|don't use|not for)\b", re.IGNORECASE
 )
@@ -994,6 +999,8 @@ def main():
         # Check 20: Description style lint (first/second person terms)
         # Keep as warning: heuristic by design, can false positive on edge text.
         style_text = re.sub(r"\bI/O\b", " ", description, flags=re.IGNORECASE)
+        for exception in DESCRIPTION_PRONOUN_EXCEPTIONS:
+            style_text = exception.sub(" ", style_text)
         pronouns = sorted(
             set(DESCRIPTION_PRONOUN_PATTERN.findall(style_text))
         ) if description else []

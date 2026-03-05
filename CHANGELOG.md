@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-03-05
+
+### Added
+
+- **Skills execution safety** -- Added a `using-dotnet` process gate and explicit advisor ordering so skill workflows now validate .NET usage and run advisors in a predictable sequence before continuing.
+
 ## [1.1.0] - 2026-03-05
 
 ### Added
@@ -161,7 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.1...HEAD
+[1.1.1]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...dotnet-artisan/v1.1.1
 [1.1.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...dotnet-artisan/v1.1.0
 [1.0.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...dotnet-artisan/v1.0.0
 [0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0

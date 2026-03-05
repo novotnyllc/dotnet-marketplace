@@ -1,6 +1,6 @@
 {
   "name": "dotnet-artisan",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Comprehensive .NET development skills for modern C#, ASP.NET, MAUI, Blazor, and cloud-native applications",
   "author": {
     "name": "Claire Novotny LLC",
@@ -22,6 +22,7 @@
     "testing"
   ],
   "skills": [
+    "./skills/using-dotnet",
     "./skills/dotnet-advisor",
     "./skills/dotnet-csharp",
     "./skills/dotnet-api",

@@ -76,7 +76,7 @@ fi
 VALIDATOR_EXIT=0
 python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
-    --projected-skills 8 \
+    --projected-skills 9 \
     --max-desc-chars 600 \
     --warn-threshold 12000 \
     --fail-threshold 15600 \
