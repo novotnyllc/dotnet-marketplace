@@ -22,6 +22,7 @@
     "testing"
   ],
   "skills": [
+    "./skills/using-dotnet",
     "./skills/dotnet-advisor",
     "./skills/dotnet-csharp",
     "./skills/dotnet-api",

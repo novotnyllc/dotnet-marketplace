@@ -43,7 +43,7 @@ CONTEXT=""
 
 # Add routing instruction and project-specific context only when .NET indicators exist
 if [ "$HAS_SOLUTION" = true ] || [ "$HAS_CSPROJ" = true ] || [ "$HAS_GLOBAL_JSON" = true ]; then
-    CONTEXT="Mandatory first action for every task: invoke [skill:dotnet-advisor]. Do not plan, reason, design, or implement until it has been invoked, then follow its routing to load additional skills and apply their standards."
+    CONTEXT="Mandatory first action for every task: invoke [skill:using-dotnet]. Mandatory second action: invoke [skill:dotnet-advisor]. Do not plan, reason, design, or implement until both have been invoked, then follow advisor routing to load additional skills and apply their standards."
     PROJECT_CONTEXT="This is a .NET project"
     if [ -n "$TFM" ]; then
         PROJECT_CONTEXT="This is a .NET project ($TFM)"

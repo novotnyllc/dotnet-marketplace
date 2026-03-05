@@ -143,26 +143,27 @@ if [ "$HAS_SOLUTION" = true ] || [ "$HAS_CSPROJ" = true ] || [ "$HAS_CS" = true 
 fi
 
 DOTNET_PROMPT=false
-ALREADY_REQUESTS_ADVISOR=false
+ALREADY_REQUESTS_ROUTING=false
 if [ -n "$PROMPT_TEXT" ]; then
   if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(^|[^[:alnum:]_])(dotnet|\.net|c#|csproj|slnx?|msbuild|nuget|roslyn|xunit|asp\.?net|blazor|maui|winui|wpf|winforms|entity framework|ef core|benchmarkdotnet|f#)([^[:alnum:]_]|$)'; then
     DOTNET_PROMPT=true
   fi
 
-  if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(\$dotnet-advisor|\[skill:dotnet-advisor\]|(^|[^[:alnum:]_-])dotnet-advisor([^[:alnum:]_-]|$))'; then
-    ALREADY_REQUESTS_ADVISOR=true
+  if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(\$using-dotnet|\[skill:using-dotnet\]|(^|[^[:alnum:]_-])using-dotnet([^[:alnum:]_-]|$)|\$dotnet-advisor|\[skill:dotnet-advisor\]|(^|[^[:alnum:]_-])dotnet-advisor([^[:alnum:]_-]|$))'; then
+    ALREADY_REQUESTS_ROUTING=true
   fi
 fi
 
 MSG=""
-if { [ "$IS_DOTNET_REPO" = true ] || [ "$DOTNET_PROMPT" = true ]; } && [ "$ALREADY_REQUESTS_ADVISOR" = false ]; then
+if { [ "$IS_DOTNET_REPO" = true ] || [ "$DOTNET_PROMPT" = true ]; } && [ "$ALREADY_REQUESTS_ROUTING" = false ]; then
   read -r -d '' MSG <<'EOF' || true
 <system-reminder>
 <dotnet-artisan-routing>
-1. Mandatory first action: invoke [skill:dotnet-advisor].
-2. Do not plan, reason, design, or implement until [skill:dotnet-advisor] has been invoked.
-3. Follow advisor routing and invoke the relevant downstream skills.
-4. Apply standards defined by the routed skills.
+1. Mandatory first action: invoke [skill:using-dotnet].
+2. Mandatory second action: invoke [skill:dotnet-advisor].
+3. Do not plan, reason, design, or implement until both routing skills have been invoked.
+4. Follow advisor routing and invoke the relevant downstream skills.
+5. Apply standards defined by the routed skills.
 </dotnet-artisan-routing>
 </system-reminder>
 EOF

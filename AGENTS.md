@@ -25,7 +25,7 @@ This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead o
 <!-- END FLOW-NEXT -->
 
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 8 broad skills and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This directory contains **dotnet-artisan**, a Claude Code plugin providing 9 skills (process + domain) and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
@@ -78,7 +78,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 ## File Structure
 
 ```
-skills/<skill-name>/SKILL.md               # 8 broad skills (flat layout)
+skills/<skill-name>/SKILL.md               # 9 skills (flat layout)
 skills/<skill-name>/references/*.md        # Companion files with deep content
 agents/<agent-name>.md                     # 14 specialist agents
 hooks/hooks.json                           # Session hooks (startup + user prompt reminder)

@@ -1,13 +1,19 @@
 ---
 name: dotnet-advisor
-description: Routes .NET and C# requests to domain skills using project and SDK signals, and loads coding standards first for code paths. Do not use for deep API, UI, testing, devops, tooling, or debugging implementation guidance.
+description: You MUST use this before planning, reasoning, or implementing any .NET/C# task once .NET intent is detected; routes requests to domain skills using project and SDK signals, and loads coding standards first for code paths. Do not use for deep API, UI, testing, devops, tooling, or debugging implementation guidance.
 user-invocable: true
 license: MIT
 ---
 
 # dotnet-advisor
 
-Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET development queries to the appropriate consolidated skill based on context.
+Router and index skill for **dotnet-artisan**. Always loaded after [skill:using-dotnet] confirms .NET intent. Routes .NET development queries to the appropriate consolidated skill based on context.
+
+## Invocation Order Contract
+
+- [skill:using-dotnet] establishes whether the task should enter the .NET routing path.
+- This skill is the mandatory first routed step for .NET/C# work.
+- Do not ask clarifying questions, inspect files, plan, or implement before this skill executes.
 
 ## Scope
 
@@ -25,9 +31,10 @@ Router and index skill for **dotnet-artisan**. Always loaded. Routes .NET develo
 ## Immediate Routing Actions (Do First)
 
 For every .NET/C# request, you MUST execute this sequence before detailed planning:
-1. Invoke [skill:dotnet-csharp] and apply its coding standards.
-2. Invoke the primary domain skill for the request (API, testing, UI, devops, tooling, debugging).
-3. Continue with any additional routed skills.
+1. Confirm [skill:using-dotnet] has already been invoked; if it has not, invoke it now.
+2. Invoke [skill:dotnet-csharp] and apply its coding standards.
+3. Invoke the primary domain skill for the request (API, testing, UI, devops, tooling, debugging).
+4. Continue with any additional routed skills.
 
 For generic "build me an app" requests, do not skip step 1 even when project scaffolding is the next action.
 
@@ -50,6 +57,7 @@ Before any .NET guidance, determine the project's target framework:
 
 | Skill | Summary | Differentiator |
 |-------|---------|----------------|
+| [skill:using-dotnet] | Process gateway for .NET routing discipline | Must execute immediately before this skill |
 | [skill:dotnet-csharp] | C# language patterns, coding standards, async/await, DI, LINQ, domain modeling | Language-level guidance, always loaded as baseline |
 | [skill:dotnet-api] | ASP.NET Core, EF Core, gRPC, SignalR, resilience, security, Aspire | Backend services and data access |
 | [skill:dotnet-ui] | Blazor, MAUI, Uno Platform, WPF, WinUI, WinForms, accessibility | All UI frameworks and cross-platform targets |
