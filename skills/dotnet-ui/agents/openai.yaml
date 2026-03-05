@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $dotnet-advisor to route this UI request, then load $dotnet-ui for framework-specific patterns and tradeoffs."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

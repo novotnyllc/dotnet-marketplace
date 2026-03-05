@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $dotnet-advisor to route this backend task, then load $dotnet-api for API architecture and implementation guidance."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

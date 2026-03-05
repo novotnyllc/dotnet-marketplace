@@ -2,7 +2,7 @@
 name: dotnet-tooling
 description: Manages .NET project setup, MSBuild, performance tooling, Native AOT, CLI architecture, and version orchestration. Do not use for framework-specific UI implementation or API security policy design.
 license: MIT
-user-invocable: true
+user-invocable: false
 ---
 
 # dotnet-tooling

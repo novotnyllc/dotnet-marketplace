@@ -1,7 +1,7 @@
 ---
 name: dotnet-advisor
 description: You MUST use this before planning, reasoning, or implementing any .NET/C# task once .NET intent is detected; routes requests to domain skills using project and SDK signals, and loads coding standards first for code paths. Do not use for deep API, UI, testing, devops, tooling, or debugging implementation guidance.
-user-invocable: true
+user-invocable: false
 license: MIT
 ---
 
