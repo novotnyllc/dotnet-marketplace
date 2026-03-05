@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "csharp-records-pattern-matching",
+  "prompt": "Show me how to use records and pattern matching to model a payment state machine in C# with Approved, Declined, and Pending states",
+  "assertions": [
+    {"text": "Invokes using-dotnet skill", "type": "routing"},
+    {"text": "Invokes dotnet-advisor skill", "type": "routing"},
+    {"text": "Invokes dotnet-csharp as primary domain", "type": "routing"},
+    {"text": "Does NOT invoke dotnet-api (pure language task)", "type": "routing-negative"}
+  ]
+}

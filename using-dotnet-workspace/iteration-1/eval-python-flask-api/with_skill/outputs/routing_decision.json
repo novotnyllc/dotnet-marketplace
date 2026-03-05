@@ -1,0 +1,7 @@
+{
+  "prompt": "Write me a Python Flask API with SQLAlchemy that handles user registration and login with bcrypt password hashing",
+  "skills_invoked": [],
+  "primary_domain": "none",
+  "reasoning": "The prompt explicitly requests Python Flask with SQLAlchemy and bcrypt — all Python-ecosystem technologies. The using-dotnet skill detects .NET intent from prompt keywords (async, EF Core, Blazor, MAUI, .csproj) and repository signals (.sln, .slnx, .csproj, global.json, .cs files). None of these keywords or signals are present. The skill description itself states 'Do not use for clearly non-.NET tasks (Python, JavaScript, Go, Rust, Java)', and Python is explicitly listed as an exclusion. No .NET routing should activate.",
+  "should_trigger_dotnet": false
+}

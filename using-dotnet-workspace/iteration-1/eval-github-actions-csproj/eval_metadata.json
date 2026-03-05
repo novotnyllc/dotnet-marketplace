@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "github-actions-csproj",
+  "prompt": "add a github actions workflow that builds and tests my csproj on every PR, with nuget caching",
+  "assertions": [
+    {"text": "Invokes using-dotnet skill", "type": "routing"},
+    {"text": "Invokes dotnet-advisor skill", "type": "routing"},
+    {"text": "Routes to dotnet-devops as primary domain", "type": "routing"}
+  ]
+}

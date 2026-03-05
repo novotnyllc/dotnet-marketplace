@@ -1,0 +1,12 @@
+{
+  "prompt": "I have a .NET 9 web API that's getting slow under load. The endpoint at /api/orders takes 3+ seconds when there are more than 1000 orders. Can you look at the EF Core queries and suggest optimizations?",
+  "skills_invoked": [
+    "using-dotnet",
+    "dotnet-advisor",
+    "dotnet-csharp",
+    "dotnet-api",
+    "dotnet-tooling"
+  ],
+  "primary_domain": "dotnet-api",
+  "reasoning": "The prompt contains clear .NET intent signals (.NET 9, web API, EF Core), so using-dotnet fires first as the process gateway. It immediately invokes dotnet-advisor, which loads dotnet-csharp as baseline (Step 2), then routes to dotnet-api as the primary domain skill because the request involves Web APIs and EF Core queries (Step 3 routing table). The Cross-Domain Routing table in dotnet-advisor specifies that when the task involves performance optimization or profiling, dotnet-tooling should also be loaded for its profiling and performance-patterns references."
+}

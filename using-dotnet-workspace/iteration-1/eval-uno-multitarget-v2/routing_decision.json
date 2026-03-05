@@ -1,0 +1,12 @@
+{
+  "prompt": "I just created a new Uno Platform app and I need help setting up multi-targeting for iOS, Android, and WASM",
+  "skills_invoked": [
+    "using-dotnet",
+    "dotnet-advisor",
+    "dotnet-csharp",
+    "dotnet-ui",
+    "dotnet-tooling"
+  ],
+  "primary_domain": "dotnet-ui",
+  "reasoning": "The prompt mentions 'Uno Platform', which is a .NET UI framework, triggering using-dotnet as the gateway skill. dotnet-advisor is invoked next per mandatory routing order. dotnet-csharp loads as baseline (Step 2). The primary domain is dotnet-ui because Uno Platform is listed in its routing row ('Blazor, MAUI, Uno Platform, WPF, WinUI, WinForms'). dotnet-tooling is also loaded via two cross-domain routing rules: (1) 'Multi-targeting or platform-specific project setup' explicitly maps to dotnet-tooling for TFM configuration, and (2) 'Building a new app' maps to dotnet-tooling for project setup. dotnet-testing is not included because the user is asking specifically about multi-targeting setup, not a broad 'build me an app' request, so the full comprehensive load chain does not apply."
+}

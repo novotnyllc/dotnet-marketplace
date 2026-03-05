@@ -1,0 +1,9 @@
+{
+  "eval_id": 18,
+  "eval_name": "ambiguous-json-deserialize",
+  "prompt": "how do I read a JSON file in my application and deserialize it into an object?",
+  "assertions": [
+    {"text": "Does NOT invoke using-dotnet (no .NET signals in prompt)", "type": "routing-negative"},
+    {"text": "Does NOT invoke dotnet-advisor (ambiguous, could be any language)", "type": "routing-negative"}
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "skill_name": "using-dotnet",
+  "description": "Routing discipline eval cases: should-trigger, should-not-trigger, and boundary cases for .NET skill loading",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a .NET 9 web API that's getting slow under load. The endpoint at /api/orders takes 3+ seconds when there are more than 1000 orders. Can you look at the EF Core queries and suggest optimizations?",
+      "expected_output": "Should invoke using-dotnet first, then dotnet-advisor, then route to dotnet-api (EF Core queries) with dotnet-csharp baseline loaded",
+      "category": "should-trigger-api",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-api"]
+    },
+    {
+      "id": 2,
+      "prompt": "add a github actions workflow that builds and tests my csproj on every PR, with nuget caching",
+      "expected_output": "Should invoke using-dotnet first, then dotnet-advisor routing to dotnet-devops. The .csproj mention is a strong .NET signal even though the primary task is CI/CD",
+      "category": "should-trigger-devops",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-devops"]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me how to use records and pattern matching to model a payment state machine in C# with Approved, Declined, and Pending states",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor routing to dotnet-csharp. Pure language-level C# task",
+      "category": "should-trigger-csharp",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"]
+    },
+    {
+      "id": 4,
+      "prompt": "help me set up a Blazor Server app with authentication using Microsoft Identity, I need login/logout and role-based access to an admin page",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor routing to dotnet-ui. Blazor + auth is clearly .NET UI territory",
+      "category": "should-trigger-ui",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-ui"]
+    },
+    {
+      "id": 5,
+      "prompt": "I need to write integration tests for my ASP.NET minimal API using WebApplicationFactory. The API has JWT auth and I need to mock the token validation",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor routing to dotnet-testing. Testing with WebApplicationFactory is clearly .NET testing",
+      "category": "should-trigger-testing",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-testing"]
+    },
+    {
+      "id": 6,
+      "prompt": "my app keeps crashing in production with an AccessViolationException. I have a dump file from procdump, how do I analyze it?",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor routing to dotnet-debugging. Crash dump analysis is .NET debugging territory",
+      "category": "should-trigger-debugging",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-debugging"]
+    },
+    {
+      "id": 7,
+      "prompt": "I want to publish my console app as a single-file native AOT binary for linux-x64. What project settings do I need?",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor routing to dotnet-tooling. Native AOT publishing is build/tooling territory",
+      "category": "should-trigger-tooling",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-tooling"]
+    },
+    {
+      "id": 8,
+      "prompt": "Build me a web app with .NET that processes orders and invoices",
+      "expected_output": "Should invoke using-dotnet then dotnet-advisor. Generic .NET web app request should route through advisor to determine the right domain skills",
+      "category": "should-trigger-generic",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-api"]
+    },
+    {
+      "id": 9,
+      "prompt": "I'm getting a NullReferenceException in my service layer. Here's the stack trace: at OrderService.ProcessAsync(Order order) in /src/Services/OrderService.cs:line 47",
+      "expected_output": "Should invoke using-dotnet. The .cs file path and .NET exception type are clear signals even though the user didn't say '.NET'",
+      "category": "should-trigger-implicit",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"]
+    },
+    {
+      "id": 10,
+      "prompt": "can you look at my global.json and figure out why dotnet build is failing with SDK version mismatch",
+      "expected_output": "Should invoke using-dotnet. global.json and dotnet build are unambiguous .NET signals",
+      "category": "should-trigger-implicit",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-tooling"]
+    },
+    {
+      "id": 11,
+      "prompt": "Write me a Python Flask API with SQLAlchemy that handles user registration and login with bcrypt password hashing",
+      "expected_output": "Should NOT invoke using-dotnet. This is explicitly Python/Flask, not .NET",
+      "category": "should-not-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 12,
+      "prompt": "Help me configure my tsconfig.json and set up ESLint with Prettier for a React TypeScript project",
+      "expected_output": "Should NOT invoke using-dotnet. TypeScript/React frontend tooling, not .NET",
+      "category": "should-not-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 13,
+      "prompt": "I need to write a Dockerfile for my Go microservice that does multi-stage builds and runs as non-root",
+      "expected_output": "Should NOT invoke using-dotnet. Go microservice, not .NET",
+      "category": "should-not-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 14,
+      "prompt": "set up a postgres database with migrations using prisma and seed it with test data for my nextjs app",
+      "expected_output": "Should NOT invoke using-dotnet. Prisma/Next.js stack, not .NET even though database/migrations overlap conceptually",
+      "category": "should-not-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 15,
+      "prompt": "What's the difference between async/await in JavaScript and C#? I'm coming from a Node.js background and trying to understand the .NET model",
+      "expected_output": "Should invoke using-dotnet. The user is asking about C#/.NET async specifically, even though JavaScript is mentioned for comparison",
+      "category": "boundary-trigger",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"]
+    },
+    {
+      "id": 16,
+      "prompt": "review this code and tell me if there are any issues:\n\npublic class UserService\n{\n    private readonly IUserRepository _repo;\n    public async Task<User> GetUserAsync(int id) => await _repo.FindByIdAsync(id);\n}",
+      "expected_output": "Should invoke using-dotnet. The code is clearly C# even though the user didn't mention .NET",
+      "category": "boundary-trigger",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"]
+    },
+    {
+      "id": 17,
+      "prompt": "I need to set up dependency injection in my project. I'm using the built-in Microsoft.Extensions.DependencyInjection container",
+      "expected_output": "Should invoke using-dotnet. Microsoft.Extensions.DependencyInjection is explicitly .NET",
+      "category": "boundary-trigger",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"]
+    },
+    {
+      "id": 18,
+      "prompt": "how do I read a JSON file in my application and deserialize it into an object?",
+      "expected_output": "Ambiguous - could be any language. Should NOT trigger .NET routing unless there are repo signals (.sln, .csproj files present). Without repo context, this is too generic",
+      "category": "boundary-no-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 19,
+      "prompt": "help me optimize my database queries, they're really slow with large datasets and I think I need to add indexes",
+      "expected_output": "Ambiguous - database optimization is language-agnostic. Should NOT trigger .NET routing without repo signals",
+      "category": "boundary-no-trigger",
+      "expected_routing": []
+    },
+    {
+      "id": 20,
+      "prompt": "I just created a new Uno Platform app and I need help setting up multi-targeting for iOS, Android, and WASM",
+      "expected_output": "Should invoke using-dotnet. Uno Platform is a .NET UI framework, should route to dotnet-ui",
+      "category": "should-trigger-ui",
+      "expected_routing": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-ui"]
+    }
+  ]
+}

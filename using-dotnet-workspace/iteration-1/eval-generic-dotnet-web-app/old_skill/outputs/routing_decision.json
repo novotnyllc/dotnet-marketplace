@@ -1,0 +1,14 @@
+{
+  "prompt": "Build me a web app with .NET that processes orders and invoices",
+  "skills_invoked": [
+    "using-dotnet",
+    "dotnet-advisor",
+    "dotnet-csharp",
+    "dotnet-tooling",
+    "dotnet-api",
+    "dotnet-devops",
+    "dotnet-testing"
+  ],
+  "primary_domain": "dotnet-api",
+  "reasoning": "The prompt explicitly requests a .NET web app, triggering mandatory process skills: using-dotnet first (routing discipline gate), then dotnet-advisor (mandatory router). The advisor's 'New API service' routing row applies because the request is to build a web application with backend order/invoice processing. This row prescribes: dotnet-csharp (baseline coding standards, always first for code paths) -> dotnet-tooling (project scaffolding and setup) -> dotnet-api (ASP.NET Core web app, EF Core for data, domain modeling for orders/invoices) -> dotnet-devops (CI/CD and deployment) -> dotnet-testing (test strategy). The primary domain skill is dotnet-api because the core deliverable is a backend web service handling order and invoice processing, which maps to ASP.NET Core, EF Core, and API patterns."
+}

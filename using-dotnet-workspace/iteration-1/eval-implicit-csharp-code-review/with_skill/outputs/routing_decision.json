@@ -1,0 +1,6 @@
+{
+  "prompt": "review this code and tell me if there are any issues: public class UserService { ... async Task<User> GetUserAsync(int id) => await _repo.FindByIdAsync(id); }",
+  "skills_invoked": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-code-review-agent"],
+  "primary_domain": "dotnet-csharp",
+  "reasoning": "The code is unmistakably C# based on syntax signals: async Task<T>, await, IUserRepository (I-prefix interface convention), and public class declaration. Per using-dotnet, .NET intent is detected from prompt keywords (async) and C# code syntax, triggering the routing sequence even though the user never explicitly mentioned .NET or C#. The rigid routing order is: (1) using-dotnet detects .NET intent, (2) dotnet-advisor is invoked as the mandatory first-step router, (3) dotnet-csharp is loaded as the baseline coding standards dependency for any code path. Since the request is a code review, dotnet-advisor's specialist agent routing table directs to dotnet-code-review-agent for general code review covering correctness, performance, and security. No other domain skills (dotnet-api, dotnet-testing, etc.) are needed because the request is purely about reviewing existing code, not building APIs or tests."
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 8,
+  "eval_name": "generic-dotnet-web-app",
+  "prompt": "Build me a web app with .NET that processes orders and invoices",
+  "assertions": [
+    {"text": "Invokes using-dotnet skill", "type": "routing"},
+    {"text": "Invokes dotnet-advisor skill", "type": "routing"},
+    {"text": "Invokes dotnet-csharp as baseline", "type": "routing"},
+    {"text": "Routes to dotnet-api as primary domain", "type": "routing"},
+    {"text": "Does not start coding before routing completes", "type": "ordering"}
+  ]
+}

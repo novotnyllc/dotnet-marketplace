@@ -1,0 +1,6 @@
+{
+  "prompt": "Show me how to use records and pattern matching to model a payment state machine in C# with Approved, Declined, and Pending states",
+  "skills_invoked": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"],
+  "primary_domain": "dotnet-csharp",
+  "reasoning": "The prompt explicitly mentions C#, triggering using-dotnet as the routing gateway (Step 1). using-dotnet enforces that dotnet-advisor is invoked before any planning or implementation (Step 2). dotnet-advisor loads dotnet-csharp as the baseline for all code paths (Step 2 of advisor). For domain routing (Step 3 of advisor), the request is entirely about C# language features -- records, pattern matching, and domain modeling -- all of which fall squarely within dotnet-csharp's scope ('C# language patterns, coding standards, async/await, DI, LINQ, domain modeling'). No other domain skill (API, UI, testing, devops, tooling, debugging) applies since the request does not involve web APIs, UI frameworks, tests, CI/CD, build tooling, or diagnostics. No specialist agent escalation is needed for this straightforward language-feature demonstration."
+}

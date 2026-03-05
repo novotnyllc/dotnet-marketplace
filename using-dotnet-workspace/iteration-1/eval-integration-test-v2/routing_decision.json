@@ -1,0 +1,12 @@
+{
+  "prompt": "I need to write integration tests for my ASP.NET minimal API using WebApplicationFactory. The API has JWT auth and I need to mock the token validation",
+  "skills_invoked": [
+    "using-dotnet",
+    "dotnet-advisor",
+    "dotnet-csharp",
+    "dotnet-testing",
+    "dotnet-api"
+  ],
+  "primary_domain": "dotnet-testing",
+  "reasoning": "The routing sequence begins with using-dotnet (process gateway detecting .NET intent from keywords: ASP.NET, minimal API, integration tests), then dotnet-advisor (rigid routing requires it before any domain skill). dotnet-csharp loads as the mandatory baseline for all code paths (Step 2). The primary domain is dotnet-testing because the request is fundamentally about writing integration tests (unit tests, integration tests, E2E match the dotnet-testing row in the routing table). Per the Cross-Domain Routing table, 'Testing a specific framework (minimal API, Blazor, EF Core)' requires also loading the framework's domain skill -- dotnet-api -- for context on ASP.NET Core minimal APIs, WebApplicationFactory patterns, and JWT authentication/security middleware. The final invocation order is: using-dotnet -> dotnet-advisor -> dotnet-csharp -> dotnet-testing -> dotnet-api."
+}

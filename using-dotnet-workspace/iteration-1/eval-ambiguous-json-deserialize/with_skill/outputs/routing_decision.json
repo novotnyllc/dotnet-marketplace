@@ -1,0 +1,7 @@
+{
+  "prompt": "how do I read a JSON file in my application and deserialize it into an object?",
+  "skills_invoked": [],
+  "primary_domain": "none",
+  "reasoning": "The using-dotnet skill requires either prompt keywords (C#, .NET, ASP.NET, EF Core, Blazor, MAUI, NuGet, csproj) or repository signals (.sln, .slnx, .csproj, global.json, .cs files) to activate. This prompt contains none of these keywords — 'JSON', 'deserialize', 'file', 'application', and 'object' are all language-neutral terms. The scenario also confirms no repository signals are present. Without either trigger, the routing condition ('If either is present, continue') is not satisfied, so .NET routing should not activate.",
+  "should_trigger_dotnet": false
+}
