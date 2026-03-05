@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - 2026-03-05
 
+### Added
+- Skill metadata quality lints for name format/length, description hard cap, and negative-trigger phrasing.
+- Skill hygiene lints for one-level resource folders, forward-slash pathing, and human-doc detection in skill directories.
+
+### Changed
+- Updated all 8 consolidated skill descriptions to include explicit negative routing triggers.
+- Codex metadata validation now re-validates `skills[]` paths with path-safety checks before per-skill file probing.
+- CI skill-count assertion now uses correct GNU `find` option ordering (`-maxdepth` before `-name`).
+- Version bump from `1.0.0` to `1.1.0` across plugin metadata, marketplace metadata, and README badge.
+
 ## [1.0.0] - 2026-02-27
 
 ### Changed
