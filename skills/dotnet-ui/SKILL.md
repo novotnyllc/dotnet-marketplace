@@ -2,7 +2,7 @@
 name: dotnet-ui
 description: Builds .NET UI applications across Blazor, MAUI, Uno, WPF, WinUI, and WinForms with accessibility and localization guidance. Do not use for backend API middleware design or CI/CD pipeline configuration.
 license: MIT
-user-invocable: true
+user-invocable: false
 ---
 
 # dotnet-ui

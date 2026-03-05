@@ -353,7 +353,7 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
             )
             continue
 
-        expected_implicit = "true" if skill_name == "dotnet-advisor" else "false"
+        expected_implicit = "true"
         if allow_implicit != expected_implicit:
             errors.append(
                 f"{skill_openai.relative_to(REPO_ROOT)} allow_implicit_invocation={allow_implicit} "

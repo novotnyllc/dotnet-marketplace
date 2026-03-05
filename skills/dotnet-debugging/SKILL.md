@@ -2,7 +2,7 @@
 name: dotnet-debugging
 description: Debugs Windows applications with WinDbg workflows for dumps, hangs, high CPU, memory pressure, and kernel triage. Do not use for routine .NET SDK profiling, benchmark design, or CI test debugging.
 license: MIT
-user-invocable: true
+user-invocable: false
 ---
 
 # dotnet-debugging

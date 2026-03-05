@@ -4,4 +4,4 @@ interface:
   default_prompt: "Use $dotnet-advisor to route this .NET task, then apply $dotnet-csharp standards before implementation."
 
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
