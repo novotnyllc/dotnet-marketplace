@@ -143,19 +143,22 @@ if [ "$HAS_SOLUTION" = true ] || [ "$HAS_CSPROJ" = true ] || [ "$HAS_CS" = true 
 fi
 
 DOTNET_PROMPT=false
-ALREADY_REQUESTS_ROUTING=false
+ALREADY_REQUESTS_USING_DOTNET=false
 if [ -n "$PROMPT_TEXT" ]; then
   if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(^|[^[:alnum:]_])(dotnet|\.net|c#|csproj|slnx?|msbuild|nuget|roslyn|xunit|asp\.?net|blazor|maui|winui|wpf|winforms|entity framework|ef core|benchmarkdotnet|f#)([^[:alnum:]_]|$)'; then
     DOTNET_PROMPT=true
   fi
 
-  if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(\$using-dotnet|\[skill:using-dotnet\]|(^|[^[:alnum:]_-])using-dotnet([^[:alnum:]_-]|$)|\$dotnet-advisor|\[skill:dotnet-advisor\]|(^|[^[:alnum:]_-])dotnet-advisor([^[:alnum:]_-]|$))'; then
-    ALREADY_REQUESTS_ROUTING=true
+  # Suppress reminders only when step 1 is already explicit.
+  # Mentioning dotnet-advisor alone is not enough because using-dotnet
+  # must run first in the contract.
+  if printf '%s' "$PROMPT_TEXT" | grep -Eiq '(\$using-dotnet|\[skill:using-dotnet\]|(^|[^[:alnum:]_-])using-dotnet([^[:alnum:]_-]|$))'; then
+    ALREADY_REQUESTS_USING_DOTNET=true
   fi
 fi
 
 MSG=""
-if { [ "$IS_DOTNET_REPO" = true ] || [ "$DOTNET_PROMPT" = true ]; } && [ "$ALREADY_REQUESTS_ROUTING" = false ]; then
+if { [ "$IS_DOTNET_REPO" = true ] || [ "$DOTNET_PROMPT" = true ]; } && [ "$ALREADY_REQUESTS_USING_DOTNET" = false ]; then
   read -r -d '' MSG <<'EOF' || true
 <system-reminder>
 <dotnet-artisan-routing>
