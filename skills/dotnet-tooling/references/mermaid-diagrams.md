@@ -4,6 +4,8 @@ Mermaid diagram reference for .NET projects: architecture diagrams (C4-style con
 
 **Version assumptions:** Mermaid v10+ (supported by GitHub, Starlight, Docusaurus natively). GitHub renders Mermaid in Markdown files, issues, PRs, and discussions. .NET 8.0+ baseline for code examples.
 
+**Library licensing note:** Some diagram examples reference libraries that have changed licenses (MediatR, AutoMapper, MassTransit, Duende IdentityServer). These diagrams show patterns found in existing codebases. For new projects, prefer permissive alternatives — see `references/recommended-libraries.md` in [skill:dotnet-csharp].
+
 For complete diagram examples, see the Detailed Examples section below.
 
 ## Supported Diagram Types

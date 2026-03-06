@@ -2,6 +2,8 @@
 
 Durable messaging patterns for .NET event-driven architectures. Covers publish/subscribe, competing consumers, dead-letter queues, saga/process manager orchestration, and delivery guarantee strategies using Azure Service Bus, RabbitMQ, and MassTransit.
 
+**Licensing note:** MassTransit v9+ uses a restrictive license (free under 1M messages/month). For new projects, consider **Wolverine** (MIT) or **Rebus** (MIT) as permissive alternatives that support the same patterns and transports. MassTransit v8 (Apache 2.0) is no longer maintained. The messaging patterns in this reference are transferable across all three libraries. See `references/recommended-libraries.md` in [skill:dotnet-csharp] for the full licensing reference.
+
 ## Messaging Fundamentals
 
 ### Message Types

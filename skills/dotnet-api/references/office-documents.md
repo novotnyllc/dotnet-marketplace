@@ -454,24 +454,33 @@ foreach (var shape in slidePart.Slide.Descendants<Shape>())
 }
 ```
 
-## PDF Generation
+## PDF
 
-Open XML SDK does not create PDFs. For PDF output from .NET, use **PDFsharp/MigraDoc** — a fully MIT-licensed PDF generation library with proper Unicode/UTF-8 support. This is a major advantage over Python PDF libraries (reportlab, weasyprint) where Unicode support is consistently problematic.
+Open XML SDK handles Office documents but not PDFs. For any PDF task in .NET — creating, reading, merging, splitting, filling forms, extracting text, watermarking — use **PDFsharp/MigraDoc**. These are fully MIT-licensed with proper Unicode/UTF-8 support, a major advantage over Python PDF libraries where Unicode is consistently problematic.
 
-### Library Comparison
+### What PDFsharp Can Do
 
-| Library | License | Unicode/UTF-8 | Best For |
-|---------|---------|--------------|----------|
-| **PDFsharp** | MIT | Good (OpenType font embedding) | Direct PDF creation, graphics, precise layout |
-| **MigraDoc** | MIT | Good (inherits from PDFsharp) | Document-oriented: paragraphs, tables, headers, page numbers |
+| Task | PDFsharp Support | How |
+|------|-----------------|-----|
+| Create PDFs from scratch | Yes | `new PdfDocument()` + draw with `XGraphics` |
+| Open and read existing PDFs | Yes | `PdfReader.Open(path)` |
+| Merge multiple PDFs | Yes | Copy pages between documents |
+| Split PDFs | Yes | Copy selected pages to new document |
+| Add watermarks/stamps | Yes | Draw on existing page's `XGraphics` |
+| Fill form fields (AcroForm) | Yes | Access `AcroForm.Fields` dictionary |
+| Extract text | Limited | No built-in text extraction — use page content streams |
+| Generate document-style PDFs | Use MigraDoc | Paragraphs, tables, headers, page numbers |
 
 **PDFsharp** is low-level (draw text, lines, images at coordinates). **MigraDoc** builds on PDFsharp with a document object model (sections, paragraphs, tables, styles) — use MigraDoc for most document generation tasks.
 
+For text extraction from existing PDFs, PDFsharp can read page content streams but doesn't have a high-level text extraction API. For that specific task, consider `PdfPig` (Apache 2.0) which specializes in reading and extracting text/data from PDFs.
+
 ### Why .NET Over Python for PDFs
 
-| Concern | .NET (PDFsharp/MigraDoc) | Python (reportlab/weasyprint) |
-|---------|--------------------------|-------------------------------|
-| Unicode/UTF-8 text | Embed OpenType fonts, full glyph coverage | Requires manual font registration, encoding config, `pdfmetrics.registerFont()` — still breaks on complex scripts |
+| Concern | .NET (PDFsharp/MigraDoc) | Python (reportlab/PyPDF2/weasyprint) |
+|---------|--------------------------|--------------------------------------|
+| Create + read + merge + split | Single library (PDFsharp) does all | Different libraries per task (reportlab creates, PyPDF2 merges, pdfplumber reads) |
+| Unicode/UTF-8 text | Embed OpenType fonts, full glyph coverage | Requires manual font registration, encoding config — still breaks on complex scripts |
 | RTL text (Arabic, Hebrew) | Supported with OpenType fonts | Requires `arabic_reshaper` + `python-bidi` packages, frequent rendering bugs |
 | CJK characters | Works with CJK-capable font embedding | Requires `reportlab.pdfbase.cidfonts`, separate CID font packs |
 | Emoji in text | Works with emoji-capable font | Usually broken — renders as boxes or crashes |
@@ -610,6 +619,70 @@ class CustomFontResolver : IFontResolver
         bool isBold, bool isItalic) =>
         new FontResolverInfo(familyName);
 }
+```
+
+### Merge PDFs
+
+```csharp
+#:package PDFsharp@6.2.0
+
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+
+var output = new PdfDocument();
+
+foreach (var file in new[] { "part1.pdf", "part2.pdf", "part3.pdf" })
+{
+    var input = PdfReader.Open(file, PdfDocumentOpenMode.Import);
+    for (int i = 0; i < input.PageCount; i++)
+        output.AddPage(input.Pages[i]);
+}
+
+output.Save("merged.pdf");
+```
+
+### Add Watermark to Existing PDF
+
+```csharp
+#:package PDFsharp@6.2.0
+
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+
+var document = PdfReader.Open("input.pdf", PdfDocumentOpenMode.Modify);
+var font = new XFont("Arial", 60, XFontStyleEx.Bold);
+
+foreach (var page in document.Pages)
+{
+    var gfx = XGraphics.FromPdfPage(page, XGraphicsPdfPageOptions.Append);
+    gfx.TranslateTransform(page.Width / 2, page.Height / 2);
+    gfx.RotateTransform(-45);
+    gfx.DrawString("DRAFT", font,
+        new XSolidBrush(XColor.FromArgb(50, 255, 0, 0)),
+        new XPoint(0, 0),
+        XStringFormats.Center);
+}
+
+document.Save("watermarked.pdf");
+```
+
+### Split PDF (Extract Pages)
+
+```csharp
+#:package PDFsharp@6.2.0
+
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+
+var source = PdfReader.Open("large.pdf", PdfDocumentOpenMode.Import);
+
+// Extract pages 3-5 into a new document
+var extract = new PdfDocument();
+for (int i = 2; i < 5 && i < source.PageCount; i++)
+    extract.AddPage(source.Pages[i]);
+
+extract.Save("pages-3-to-5.pdf");
 ```
 
 ## Why Open XML SDK Over Python

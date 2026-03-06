@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, dependency injection, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions (System.Reactive/Rx.NET), globalization (CultureInfo, StringComparison, TimeZoneInfo, Rune), COM interop (ComWrappers), WASM interop (JSImport/JSExport), and type design. Spans 26 topic areas. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD workflow guidance.
+description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions, globalization, COM interop (ComWrappers), WASM interop (JSImport/JSExport), type design, and recommended library selection (licensing alerts). Spans 27 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 26 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 27 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ### Always-Load Baseline
 
@@ -56,6 +56,7 @@ Load these when the topic matches (see Routing Table keywords):
 | Globalization | CultureInfo, StringComparison, TimeZoneInfo, Rune, encoding | Culture-aware coding, string comparison, time zones, character processing | references/globalization.md |
 | COM interop | COM, ComWrappers, ComImport, RCW, Office COM, IDispatch | COM interop, source-generated ComWrappers, Office automation, STA threading | references/com-interop.md |
 | WASM interop | JSImport, JSExport, standalone WASM, wasm-experimental, browser | JSImport/JSExport, standalone .NET WASM, browser APIs, WASM AOT | references/wasm-interop.md |
+| Recommended libraries | NuGet, package, library, license, permissive, MIT, which library | Permissively licensed .NET libraries by category, licensing alerts | references/recommended-libraries.md |
 
 ## Scope
 
