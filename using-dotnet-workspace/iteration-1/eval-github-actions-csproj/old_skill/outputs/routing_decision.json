@@ -1,6 +1,0 @@
-{
-  "prompt": "add a github actions workflow that builds and tests my csproj on every PR, with nuget caching",
-  "skills_invoked": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-tooling", "dotnet-devops", "dotnet-testing"],
-  "primary_domain": "dotnet-devops",
-  "reasoning": "The prompt mentions 'csproj' which is a .NET project file, triggering .NET routing with near-certainty. Per using-dotnet, the mandatory process sequence is: (1) using-dotnet as the process gateway, (2) dotnet-advisor as the mandatory router. The advisor's Immediate Routing Actions require loading dotnet-csharp as a baseline for any .NET task. The advisor's Mandatory Routing Table does not have an exact 'CI/CD pipeline' row, but the request is primarily about GitHub Actions, NuGet caching, and build/test pipelines -- all squarely within dotnet-devops. dotnet-tooling is included because the advisor requires it for project version detection (reading TFMs from .csproj, Directory.Build.props, global.json) and build system understanding, and the 'Generic or ambiguous .NET request' row prescribes dotnet-csharp -> dotnet-tooling before the owning domain skill. dotnet-testing is included because the workflow explicitly builds and tests the project, so test framework configuration and CI test execution guidance applies."
-}

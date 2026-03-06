@@ -1,6 +1,0 @@
-{
-  "prompt": "add a github actions workflow that builds and tests my csproj on every PR, with nuget caching",
-  "skills_invoked": ["using-dotnet", "dotnet-advisor", "dotnet-csharp", "dotnet-devops"],
-  "primary_domain": "dotnet-devops",
-  "reasoning": "The keyword 'csproj' triggers using-dotnet's .NET intent detection. using-dotnet enforces dotnet-advisor as the mandatory first routing step. dotnet-advisor loads dotnet-csharp as the baseline dependency for all code paths, then routes to the primary domain. The request explicitly involves GitHub Actions, CI/CD pipeline configuration, and NuGet caching, all of which map directly to dotnet-devops in the advisor routing table. Although the prompt mentions 'tests', the intent is running existing tests within a CI workflow rather than authoring new test code, so dotnet-testing is not required as a supporting domain."
-}

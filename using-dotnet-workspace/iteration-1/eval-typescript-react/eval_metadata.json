@@ -1,9 +1,0 @@
-{
-  "eval_id": 12,
-  "eval_name": "typescript-react",
-  "prompt": "Help me configure my tsconfig.json and set up ESLint with Prettier for a React TypeScript project",
-  "assertions": [
-    {"text": "Does NOT invoke using-dotnet", "type": "routing-negative"},
-    {"text": "Does NOT invoke any dotnet-* skill", "type": "routing-negative"}
-  ]
-}

@@ -1,6 +1,0 @@
-{
-  "prompt": "Show me how to use records and pattern matching to model a payment state machine in C# with Approved, Declined, and Pending states",
-  "skills_invoked": ["using-dotnet", "dotnet-advisor", "dotnet-csharp"],
-  "primary_domain": "dotnet-csharp",
-  "reasoning": "The request is unambiguously C# -- it asks about records and pattern matching for domain modeling (a payment state machine). Routing follows the mandatory sequence: using-dotnet first (process gateway, .NET intent is 100%), then dotnet-advisor (mandatory second step per invocation order contract), then dotnet-csharp as both the baseline coding-standards dependency and the primary domain skill. dotnet-csharp owns 'C# language patterns, domain modeling' which directly covers records, pattern matching, and state machine modeling. No other domain skill (API, UI, testing, devops, tooling, debugging) is required because the prompt is purely about C# language-level constructs and design patterns with no project setup, build, deployment, or framework-specific concerns."
-}
