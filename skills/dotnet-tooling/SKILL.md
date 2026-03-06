@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET SDK installation (dotnet-install script, workloads, side-by-side), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT (PublishAot, trimming), GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), and version detection/upgrade. Spans 33 topic areas. Do not use for framework-specific UI implementation or API security policy design.
+description: Manages .NET SDK installation (dotnet-install script, workloads, side-by-side), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT (PublishAot, trimming), GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy/ilspycmd decompilation, and version detection/upgrade. Spans 34 topic areas. Do not use for framework-specific UI implementation or API security policy design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 33 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 34 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ## Routing Table
 
@@ -47,6 +47,7 @@ user-invocable: false
 | Modernize | outdated TFMs, deprecated packages, patterns | Outdated TFMs, deprecated packages, superseded patterns | references/modernize.md |
 | Add analyzers | nullable, trimming, AOT compat, severity config | Nullable, trimming, AOT compat analyzers, severity | references/add-analyzers.md |
 | SDK installation | install .NET, dotnet-install, workloads, missing SDK | .NET SDK install script, workloads, env vars, side-by-side | references/dotnet-sdk-install.md |
+| ILSpy decompile | ilspycmd, decompile, assembly, disassemble, IL | ILSpy/ilspycmd decompilation, type listing, IL view | references/ilspy-decompile.md |
 | Mermaid diagrams | architecture, sequence, class, ER, flowcharts | Architecture, sequence, class, deployment, ER diagrams | references/mermaid-diagrams.md |
 
 ## Scope
@@ -64,12 +65,12 @@ user-invocable: false
 
 ## Out of scope
 
+- Crash dump analysis, hang/deadlock triage, live debugger attach -> [skill:dotnet-debugging]
 - Web API patterns -> [skill:dotnet-api]
 - Test authoring -> [skill:dotnet-testing]
 - CI/CD pipelines -> [skill:dotnet-devops]
 - C# language patterns -> [skill:dotnet-csharp]
 - UI framework development -> [skill:dotnet-ui]
-- WinDbg debugging -> [skill:dotnet-debugging]
 
 ## Scripts
 
