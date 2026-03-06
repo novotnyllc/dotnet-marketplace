@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions, globalization, COM interop (ComWrappers), WASM interop (JSImport/JSExport), and type design. Spans 27 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
+description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, globalization, native interop (P/Invoke, LibraryImport, ComWrappers), WASM interop (JSImport/JSExport), and type design. Spans 25 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 27 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 25 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ### Always-Load Baseline
 
@@ -44,7 +44,7 @@ Load these when the topic matches (see Routing Table keywords):
 | Roslyn analyzers | DiagnosticAnalyzer, CodeFixProvider, multi-version | DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring | references/roslyn-analyzers.md |
 | Editorconfig | IDE/CA severity, AnalysisLevel, globalconfig | IDE/CA severity, AnalysisLevel, globalconfig, enforcement | references/editorconfig.md |
 | File I/O | FileStream, RandomAccess, FileSystemWatcher, paths | FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile | references/file-io.md |
-| Native interop | P/Invoke, LibraryImport, marshalling | P/Invoke, LibraryImport, marshalling, cross-platform | references/native-interop.md |
+| Native interop | P/Invoke, LibraryImport, ComWrappers, marshalling | P/Invoke, LibraryImport, ComWrappers, marshalling, cross-platform | references/native-interop.md |
 | Input validation | .NET 10 AddValidation, FluentValidation | .NET 10 AddValidation, FluentValidation, ProblemDetails | references/input-validation.md |
 | Validation patterns | DataAnnotations, IValidatableObject, IValidateOptions | DataAnnotations, IValidatableObject, IValidateOptions\<T\> | references/validation-patterns.md |
 | Modern patterns | records, pattern matching, primary constructors | Records, pattern matching, primary constructors, C# 12-15 | references/modern-patterns.md |
@@ -52,9 +52,7 @@ Load these when the topic matches (see Routing Table keywords):
 | Type design/perf | struct vs class, sealed, Span/Memory, collections | struct vs class, sealed, Span/Memory, collections | references/type-design-performance.md |
 | Code smells | anti-patterns, async misuse, DI mistakes, fixes | Anti-patterns, async misuse, DI mistakes, fixes | references/code-smells.md |
 | .NET releases | .NET 10, .NET 11, C# 14, C# 15, TFM, version | Version matrix, new features, TFM-specific code generation | references/dotnet-releases.md |
-| Reactive extensions | Rx.NET, System.Reactive, IObservable, Observable | System.Reactive operators, schedulers, hot/cold, R3, testing | references/reactive-extensions.md |
 | Globalization | CultureInfo, StringComparison, TimeZoneInfo, Rune, encoding | Culture-aware coding, string comparison, time zones, character processing | references/globalization.md |
-| COM interop | COM, ComWrappers, ComImport, RCW, Office COM, IDispatch | COM interop, source-generated ComWrappers, Office automation, STA threading | references/com-interop.md |
 | WASM interop | JSImport, JSExport, standalone WASM, wasm-experimental, browser | JSImport/JSExport, standalone .NET WASM, browser APIs, WASM AOT | references/wasm-interop.md |
 
 ## Scope

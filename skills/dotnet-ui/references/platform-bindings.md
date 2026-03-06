@@ -2,7 +2,7 @@
 
 Custom native bindings for Android (Java.Interop) and Apple (ObjCRuntime) platforms in .NET MAUI and Uno Platform. Covers when to create custom bindings vs using community packages, binding library project setup, Slim Bindings (.NET 9+), and common patterns for wrapping native SDKs.
 
-For P/Invoke and LibraryImport (C/C++ native libraries), see [skill:dotnet-csharp] `references/native-interop.md`. For COM interop (Windows), see [skill:dotnet-csharp] `references/com-interop.md`.
+For P/Invoke, LibraryImport, and COM interop (ComWrappers), see [skill:dotnet-csharp] `references/native-interop.md`.
 
 ## When to Create Custom Bindings
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET SDK installation (dotnet-install, workloads), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT/trimming, GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy decompilation, VS Code debug config (launch.json, coreclr, remote), C# LSP (csharp-ls, OmniSharp), and version detection/upgrade. Spans 36 topic areas. Do not use for UI implementation or API security design.
+description: Manages .NET SDK installation (dotnet-install, workloads), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT/trimming, GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy decompilation, VS Code debug config (launch.json, coreclr, remote), C# LSP (csharp-ls, OmniSharp), and version detection/upgrade. Spans 35 topic areas. Do not use for UI implementation or API security design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 36 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 35 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ## Routing Table
 
@@ -38,7 +38,6 @@ user-invocable: false
 | CLI packaging | Homebrew, apt/deb, winget, Scoop, Chocolatey | Homebrew, apt/deb, winget, Scoop, Chocolatey | references/cli-packaging.md |
 | CLI release pipeline | GHA build matrix, artifact staging, checksums | GHA build matrix, artifact staging, checksums | references/cli-release-pipeline.md |
 | Documentation strategy | Starlight, Docusaurus, DocFX decision tree | Starlight, Docusaurus, DocFX decision tree | references/documentation-strategy.md |
-| XML docs | tags, inheritdoc, GenerateDocumentationFile | XML doc comments, inheritdoc, warning suppression | references/xml-docs.md |
 | Tool management | global, local, manifests, restore, pinning | Global/local tools, manifests, restore, pinning | references/tool-management.md |
 | Version detection | TFM/SDK from .csproj, global.json | TFM/SDK from .csproj, global.json, Directory.Build | references/version-detection.md |
 | Version upgrade | LTS-to-LTS, staged, preview, upgrade paths | LTS-to-LTS, staged through STS, preview paths | references/version-upgrade.md |
@@ -59,7 +58,7 @@ user-invocable: false
 - Performance patterns and profiling
 - Native AOT, trimming, and GC tuning
 - CLI app development (System.CommandLine, Spectre.Console, Terminal.Gui)
-- Documentation generation (DocFX, XML docs)
+- Documentation generation (DocFX)
 - Tool management and version detection/upgrade
 - Solution navigation and project analysis
 - Code modernization and analyzer configuration

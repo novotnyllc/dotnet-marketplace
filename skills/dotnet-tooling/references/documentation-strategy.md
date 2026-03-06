@@ -362,7 +362,7 @@ docfx metadata docfx.json
 # representing all public types, methods, and properties
 ```
 
-The generated API reference automatically links to conceptual articles via `uid` cross-references. See `references/xml-docs.md` for XML documentation comment authoring best practices.
+The generated API reference automatically links to conceptual articles via `uid` cross-references.
 
 ### Mermaid Support in DocFX
 

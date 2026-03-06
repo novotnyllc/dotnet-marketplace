@@ -479,11 +479,40 @@ Do not use C# `long` for C/C++ `long` -- they have different sizes on Unix 64-bi
 
 ---
 
+## COM Interop with Source Generation (.NET 8+)
+
+`[GeneratedComInterface]` produces COM interop code at compile time — AOT-compatible, no runtime RCW/CCW generation. This is the modern replacement for `[ComImport]`.
+
+```csharp
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+
+[GeneratedComInterface]
+[Guid("000209FF-0000-0000-C000-000000000046")]
+public partial interface IWordApplication
+{
+    [return: MarshalAs(UnmanagedType.Interface)]
+    object Documents { get; }
+
+    [MarshalAs(UnmanagedType.BStr)]
+    string Version { get; }
+
+    void Quit();
+}
+```
+
+**Key requirements:**
+- Interface must be `partial` with `[Guid]` attribute
+- String parameters use `[MarshalAs(UnmanagedType.BStr)]` for COM BSTR strings
+- Works with Native AOT (no runtime codegen)
+- For Office document manipulation, prefer Open XML SDK over COM — COM requires Office installed and is Windows-only
+
+---
+
 ## References
 
 - [Platform Invoke (P/Invoke)](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke)
 - [Native interoperability best practices](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/best-practices)
 - [LibraryImport source generation](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/pinvoke-source-generation)
 - [Type marshalling](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/type-marshalling)
-- [Customizing struct marshalling](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/customize-struct-marshalling)
-- [NativeLibrary class](https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.nativelibrary)
+- [GeneratedComInterface](https://learn.microsoft.com/en-us/dotnet/standard/native-interop/comwrappers-source-generation)

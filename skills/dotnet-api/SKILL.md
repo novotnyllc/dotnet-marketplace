@@ -1,6 +1,6 @@
 ---
 name: dotnet-api
-description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP), resilience, messaging, OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Razor Pages, Office documents (Excel, Word, PowerPoint), PDF, and architecture patterns. Spans 33 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
+description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP), resilience, messaging, OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Office documents (Excel, Word, PowerPoint), PDF, and architecture patterns. Spans 32 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-ASP.NET Core APIs, data access, backend services, security, and cloud-native patterns. This consolidated skill spans 33 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+ASP.NET Core APIs, data access, backend services, security, and cloud-native patterns. This consolidated skill spans 32 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 Baseline dependency: `references/minimal-apis.md` defines the core ASP.NET Core Minimal API patterns (route groups, endpoint filters, TypedResults, parameter binding) that apply to most API development tasks. Load it by default when building HTTP endpoints.
 
@@ -49,7 +49,6 @@ Most-shared companion: `references/architecture-patterns.md` covers vertical sli
 | HybridCache | HybridCache, L1/L2, stampede, tag eviction | HybridCache (.NET 9+), stampede protection, tag-based eviction | references/hybrid-cache.md |
 | YARP | reverse proxy, load balancing, API gateway, BFF | YARP reverse proxy, load balancing, health checks, transforms | references/yarp.md |
 | Output caching | OutputCache, response caching, compression | Output/response caching, compression, CDN, tag invalidation | references/output-caching.md |
-| Razor Pages | PageModel, OnGet, OnPost, server-rendered | Razor Pages handlers, model binding, Tag Helpers, layouts | references/razor-pages.md |
 | Identity | ASP.NET Core Identity, login, MFA, scaffolding | Identity setup, scaffolding, external providers, MapIdentityApi | references/identity-setup.md |
 | Office documents and PDF | Excel, Word, PowerPoint, PDF, Open XML SDK, spreadsheet, docx, xlsx, PDFsharp, MigraDoc, merge PDF, split PDF, watermark | Open XML SDK, ClosedXML, PDFsharp/MigraDoc for PDF create/read/merge/split/watermark | references/office-documents.md |
 
