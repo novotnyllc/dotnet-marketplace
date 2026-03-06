@@ -456,13 +456,28 @@ foreach (var shape in slidePart.Slide.Descendants<Shape>())
 
 ## PDF Generation
 
-Open XML SDK does not create PDFs. For PDF output from .NET:
+Open XML SDK does not create PDFs. For PDF output from .NET, prefer QuestPDF — it uses HarfBuzz for text shaping, which means **full Unicode support out of the box** including CJK, Arabic/Hebrew RTL, Devanagari, emoji, and complex script ligatures. This is a major advantage over Python PDF libraries where Unicode support is consistently problematic.
 
-| Library | License | Best For |
-|---------|---------|----------|
-| QuestPDF | MIT (community) | Fluent API, complex layouts, charts |
-| iTextSharp / iText 7 | AGPL / Commercial | Forms, signatures, PDF/A compliance |
-| PdfSharpCore | MIT | Simple documents, basic graphics |
+### Library Comparison
+
+| Library | License | Unicode/UTF-8 | Best For |
+|---------|---------|--------------|----------|
+| **QuestPDF** | MIT (community) | Excellent (HarfBuzz) | Fluent API, complex layouts, charts, multilingual docs |
+| iText 7 | AGPL / Commercial | Good (with font config) | Forms, signatures, PDF/A compliance, enterprise |
+| PdfSharpCore | MIT | Basic (manual font embedding) | Simple documents, basic graphics |
+
+### Why .NET Over Python for PDFs
+
+| Concern | .NET (QuestPDF) | Python (reportlab/weasyprint) |
+|---------|-----------------|-------------------------------|
+| Unicode/UTF-8 text | Works out of the box via HarfBuzz | Requires manual font registration, encoding config, `pdfmetrics.registerFont()` — still breaks on complex scripts |
+| RTL text (Arabic, Hebrew) | Automatic via HarfBuzz BiDi | Requires `arabic_reshaper` + `python-bidi` packages, frequent rendering bugs |
+| CJK characters | Automatic with CJK-capable font | Requires `reportlab.pdfbase.cidfonts`, separate CID font packs |
+| Emoji in text | Works with emoji-capable font | Usually broken — renders as boxes or crashes |
+| Mixed scripts (Latin + CJK + Arabic) | Single paragraph, automatic font fallback | Requires manual script detection and font switching |
+| Complex ligatures (Devanagari, Thai) | Correct via HarfBuzz shaping | Usually incorrect — missing conjuncts and reordering |
+
+### QuestPDF Example (File-Based App)
 
 ```csharp
 // QuestPDF file-based app example
@@ -504,6 +519,37 @@ Document.Create(container =>
         });
     });
 }).GeneratePdf("invoice.pdf");
+```
+
+### Unicode and Custom Fonts
+
+```csharp
+#:package QuestPDF@2025.1.0
+
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+
+QuestPDF.Settings.License = LicenseType.Community;
+
+// Register a custom font for CJK or other scripts
+FontManager.RegisterFont(File.OpenRead("NotoSansCJK-Regular.ttc"));
+
+Document.Create(container =>
+{
+    container.Page(page =>
+    {
+        page.Size(PageSizes.A4);
+        page.DefaultTextStyle(x => x.FontFamily("Noto Sans CJK SC"));
+        page.Content().Column(col =>
+        {
+            col.Item().Text("English text works fine");
+            col.Item().Text("日本語テキスト — Japanese");
+            col.Item().Text("العربية — Arabic (RTL)"); // Automatic RTL
+            col.Item().Text("Mixed: Hello 世界 مرحبا 🌍"); // All in one paragraph
+        });
+    });
+}).GeneratePdf("multilingual.pdf");
 ```
 
 ## Why Open XML SDK Over Python
