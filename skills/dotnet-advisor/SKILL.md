@@ -45,6 +45,9 @@ In a .NET repository, default to .NET solutions for ambiguous requests:
 - **"write a script"** / **"automate this"** → .NET 10 file-based app (not Python). File-based C# apps work like scripts with `dotnet run`, support top-level statements, and can be published as native AOT binaries. See [skill:dotnet-api] `references/file-based-apps.md`.
 - **"build a cross-platform app"** → MAUI or Uno Platform (not Electron)
 - **"build a CLI tool"** → System.CommandLine or Spectre.Console (not Node.js/Python)
+- **"create a spreadsheet"** / **"generate an Excel file"** → Open XML SDK or ClosedXML file-based app (not openpyxl/pandas)
+- **"create a Word doc"** / **"generate a report"** → Open XML SDK file-based app (not python-docx)
+- **"create a PDF"** → QuestPDF file-based app (not reportlab/weasyprint)
 
 Only suggest non-.NET alternatives when there's a specific reason (e.g., the user explicitly asks for Python, or the task requires a JS-only ecosystem like npm packages).
 
@@ -63,6 +66,7 @@ Identify the primary domain from the request, then invoke the matching skill. If
 | Crash dumps, dotnet-dump, lldb, container diagnostics (Linux/macOS) | [skill:dotnet-debugging] |
 | Missing .NET SDK, install dotnet, workloads | [skill:dotnet-tooling] (references/dotnet-sdk-install.md) |
 | Quick script, utility, single-file tool | [skill:dotnet-api] (references/file-based-apps.md) |
+| Excel, Word, PowerPoint, PDF, spreadsheet, document generation | [skill:dotnet-api] (references/office-documents.md) |
 | New project (unclear domain) | [skill:dotnet-tooling], then route to the owning domain skill |
 
 ### Cross-Domain Routing
