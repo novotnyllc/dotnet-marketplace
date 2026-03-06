@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions, globalization, COM interop (ComWrappers), WASM interop (JSImport/JSExport), type design, and recommended library selection (licensing alerts). Spans 27 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
+description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions, globalization, COM interop (ComWrappers), WASM interop (JSImport/JSExport), type design, and recommended library selection (licensing alerts). Spans 28 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 27 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 28 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ### Always-Load Baseline
 

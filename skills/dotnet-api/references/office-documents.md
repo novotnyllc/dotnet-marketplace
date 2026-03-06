@@ -256,8 +256,8 @@ var cacheRecords = new PivotCacheRecords { Count = (uint)dataRows.Count };
 foreach (var row in dataRows)
 {
     var record = new PivotCacheRecord();
-    record.Append(new FieldItem(new StringItem { Val = row.Region }));
-    record.Append(new FieldItem(new StringItem { Val = row.Product }));
+    record.Append(new StringItem { Val = row.Region });
+    record.Append(new StringItem { Val = row.Product });
     record.Append(new NumberItem { Val = row.Revenue });
     cacheRecords.Append(record);
 }
@@ -467,7 +467,7 @@ Open XML SDK handles Office documents but not PDFs. For any PDF task in .NET —
 | Merge multiple PDFs | Yes | Copy pages between documents |
 | Split PDFs | Yes | Copy selected pages to new document |
 | Add watermarks/stamps | Yes | Draw on existing page's `XGraphics` |
-| Fill form fields (AcroForm) | Yes | Access `AcroForm.Fields` dictionary |
+| Fill form fields (AcroForm) | Basic | Read/set field values via `AcroForm.Fields` — complex forms may need manual content stream work |
 | Extract text | Limited | No built-in text extraction — use page content streams |
 | Generate document-style PDFs | Use MigraDoc | Paragraphs, tables, headers, page numbers |
 
@@ -491,7 +491,7 @@ For text extraction from existing PDFs, PDFsharp can read page content streams b
 ### PDFsharp Example (File-Based App)
 
 ```csharp
-#:package PDFsharp@6.2.0
+#:package PDFsharp
 
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -530,7 +530,7 @@ Console.WriteLine("Created invoice.pdf");
 ### MigraDoc Example (Document-Oriented)
 
 ```csharp
-#:package PDFsharp-MigraDoc@6.2.0
+#:package PDFsharp-MigraDoc
 
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -585,7 +585,7 @@ Console.WriteLine("Created invoice.pdf");
 ### Unicode and Custom Fonts
 
 ```csharp
-#:package PDFsharp@6.2.0
+#:package PDFsharp
 
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
@@ -624,7 +624,7 @@ class CustomFontResolver : IFontResolver
 ### Merge PDFs
 
 ```csharp
-#:package PDFsharp@6.2.0
+#:package PDFsharp
 
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
@@ -644,7 +644,7 @@ output.Save("merged.pdf");
 ### Add Watermark to Existing PDF
 
 ```csharp
-#:package PDFsharp@6.2.0
+#:package PDFsharp
 
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
@@ -670,7 +670,7 @@ document.Save("watermarked.pdf");
 ### Split PDF (Extract Pages)
 
 ```csharp
-#:package PDFsharp@6.2.0
+#:package PDFsharp
 
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;

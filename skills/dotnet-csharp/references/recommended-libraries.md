@@ -48,7 +48,7 @@ These were once permissively licensed but switched to dual-license or commercial
 | **NServiceBus** | RPL (paid) | [NServiceBus](https://www.nuget.org/packages/NServiceBus) | Enterprise-grade but requires license. Mention only if user asks. |
 
 - GitHub: [JasperFx/wolverine](https://github.com/JasperFx/wolverine) | [rebus-org/Rebus](https://github.com/rebus-org/Rebus)
-- MassTransit v9+ changed to restrictive license (free < 1M messages/month). MassTransit v8 is Apache 2.0 but no longer maintained.
+- MassTransit changed to a restrictive license (free < 1M messages/month) in late v8/v9. Pin to an early v8 release for Apache 2.0, but note it's no longer maintained.
 
 ## Image Processing
 
@@ -69,7 +69,7 @@ These were once permissively licensed but switched to dual-license or commercial
 | **PdfPig** | Apache 2.0 | [PdfPig](https://www.nuget.org/packages/PdfPig) | Read-focused: text/data extraction, content analysis. Best for parsing existing PDFs. |
 
 - GitHub: [empira/PDFsharp](https://github.com/empira/PDFsharp) | [UglyToad/PdfPig](https://github.com/UglyToad/PdfPig)
-- See `skills/dotnet-api/references/office-documents.md` for detailed usage patterns
+- See `[skill:dotnet-api] `references/office-documents.md`` for detailed usage patterns
 - Do not recommend QuestPDF (Community License, paid > $1M) or iText 7 (AGPL)
 
 ## Excel / Spreadsheets
@@ -88,7 +88,7 @@ These were once permissively licensed but switched to dual-license or commercial
 |---------|---------|-------|-------|
 | **Open XML SDK** | MIT | [DocumentFormat.OpenXml](https://www.nuget.org/packages/DocumentFormat.OpenXml) | Official Microsoft library for .docx creation and manipulation. |
 
-- See `skills/dotnet-api/references/office-documents.md` for detailed patterns
+- See `[skill:dotnet-api] `references/office-documents.md`` for detailed patterns
 
 ## Testing Assertions
 
