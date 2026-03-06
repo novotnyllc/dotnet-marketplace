@@ -413,14 +413,11 @@ else
                 if [ -z "$P_SOURCE_PATH" ]; then
                     echo "ERROR: plugins[$i].source.path is missing"
                     errors=$((errors + 1))
-                elif [[ "$P_SOURCE_PATH" != ./* ]]; then
-                    echo "ERROR: plugins[$i].source.path must start with './' (got: \"$P_SOURCE_PATH\")"
-                    errors=$((errors + 1))
                 else
                     # Resolve path relative to marketplace file directory
                     MKT_DIR="$(dirname "$CODEX_MARKETPLACE")"
-                    RESOLVED="$MKT_DIR/$P_SOURCE_PATH"
-                    if [ ! -d "$RESOLVED" ] && [ ! -L "$RESOLVED" ]; then
+                    RESOLVED="$(cd "$MKT_DIR" && cd "$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
+                    if [ -z "$RESOLVED" ] || [ ! -d "$RESOLVED" ]; then
                         echo "ERROR: plugins[$i].source.path does not resolve: $P_SOURCE_PATH"
                         errors=$((errors + 1))
                     elif [ ! -f "$RESOLVED/.codex-plugin/plugin.json" ]; then

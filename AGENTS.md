@@ -87,7 +87,6 @@ hooks/hooks.json                           # Session hooks (startup + user promp
 .claude-plugin/marketplace.json            # Claude Code marketplace metadata
 .codex-plugin/plugin.json                  # Codex plugin manifest
 .agents/plugins/marketplace.json           # Codex marketplace discovery
-.agents/plugins/dotnet-artisan -> ../../   # Symlink: Codex plugin source
 scripts/                                   # Hook shell scripts
 tests/                                     # Test data
 docs/                                      # Plugin-specific documentation
@@ -100,7 +99,7 @@ Key directories:
 - **`scripts/`** -- Hook shell scripts
 - **`.claude-plugin/`** -- Claude Code plugin manifest (plugin.json) and marketplace metadata (marketplace.json)
 - **`.codex-plugin/`** -- Codex plugin manifest (plugin.json); minimal manifest with `name` field
-- **`.agents/plugins/`** -- Codex marketplace discovery file and symlink to plugin source
+- **`.agents/plugins/`** -- Codex marketplace discovery file
 
 ## Validation Commands
 
