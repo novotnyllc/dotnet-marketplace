@@ -11,7 +11,6 @@ For complete diagram examples, see the Detailed Examples section below.
 ### Architecture Diagrams
 
 - **C4-Style Context** -- system in its environment with external actors (10-12 nodes max)
-- **C4-Style Container** -- high-level technology choices and interactions (15-20 nodes max)
 - **C4-Style Component** -- internal structure of a single service (15-20 nodes max)
 - **Layered Architecture** -- Presentation, Application, Domain, Infrastructure layers
 - **Microservice Topology** -- services, messaging, observability connections
@@ -44,7 +43,7 @@ For complete diagram examples, see the Detailed Examples section below.
 
 - **Order Processing Workflow** -- draft through delivery with payment states
 - **Saga Pattern** -- distributed transaction with compensation steps
-- **State Machine Pattern** -- MassTransit-style event-driven state transitions
+- **State Machine Pattern** -- event-driven state transitions
 
 ### Flowcharts
 
@@ -79,18 +78,18 @@ For complete diagram examples, see the Detailed Examples section below.
 
 ### Dark Mode Considerations
 
+- Use the `neutral` theme (`%%{init: {'theme': 'neutral'}}%%`) for best cross-theme compatibility on GitHub -- it renders well in both light and dark modes
 - Avoid hardcoded colors that fail in dark mode -- use Mermaid theme variables when possible
 - Default Mermaid colors work in both light and dark themes on GitHub
 - If using custom `style` directives, test in both GitHub light and dark modes
 - Prefer semantic `classDef` styles over inline `style` for maintainability
-- The `neutral` theme (`%%{init: {'theme': 'neutral'}}%%`) provides the best cross-theme compatibility on GitHub
+- For doc sites (Starlight, Docusaurus), Mermaid inherits the platform's CSS theme automatically
 
 ### Diagram Size Guidelines
 
 | Diagram Type | Recommended Max Nodes | Notes |
 |---|---|---|
 | C4 Context | 10-12 | One system + external actors |
-| C4 Container | 15-20 | Internal containers + data stores |
 | C4 Component | 15-20 | Single service internals |
 | Sequence | 8 participants | More becomes unreadable |
 | Class | 10-15 classes | Split into multiple diagrams |
@@ -101,25 +100,15 @@ For complete diagram examples, see the Detailed Examples section below.
 
 ## Agent Gotchas
 
-1. **Always use `.NET-specific content` in diagrams** -- do not generate generic diagrams. Use real .NET types (DbContext, IRepository, MediatR), real .NET tools (EF Core, MassTransit, YARP), and real .NET patterns (middleware pipeline, DI registration).
+1. **Always use `.NET-specific content` in diagrams** -- do not generate generic diagrams. Use real .NET types (DbContext, IRepository, IMessageBus), real .NET tools (EF Core, Wolverine, YARP), and real .NET patterns (middleware pipeline, DI registration).
 
-2. **Keep diagrams under 50 nodes** -- larger diagrams render poorly on GitHub and doc sites. Split complex architectures into multiple focused diagrams (context, container, component) rather than one monolithic diagram.
+2. **ER diagram relationship notation follows Mermaid syntax, not UML** -- use `||--o{` for one-to-many, `||--||` for one-to-one.
 
-3. **Use `<br/>` for line breaks in node labels, not `\n`** -- Mermaid renders `\n` literally as text. Multi-line labels require `<br/>` HTML tags.
+3. **Sequence diagram participant names cannot contain special characters** -- use `participant DB as "SQL Server"` alias syntax for names with spaces or special characters.
 
-4. **Test Mermaid syntax before committing** -- syntax errors cause GitHub to render raw text instead of a diagram. Use the Mermaid Live Editor (https://mermaid.live) or a local preview tool to validate.
+4. **Nested generics (`Task~List~T~~`) require Mermaid v10.3+** -- test rendering before committing complex generic type diagrams.
 
-5. **ER diagram relationship notation follows Mermaid syntax, not UML** -- use `||--o{` for one-to-many, `||--||` for one-to-one. Do not use UML multiplicity notation.
-
-6. **Use the `neutral` theme for GitHub compatibility** -- `%%{init: {'theme': 'neutral'}}%%` provides the best rendering in both light and dark modes.
-
-7. **Sequence diagram participant names cannot contain special characters** -- use `participant DB as "SQL Server"` alias syntax for names with spaces or special characters.
-
-8. **Nested generics (`Task~List~T~~`) may not render on all Mermaid versions** -- the double `~~` at the end of nested generic types requires Mermaid v10.3+. Test rendering in your target environment before committing complex generic type diagrams.
-
-9. **Do not use Font Awesome icon syntax (`fa:fa-user`) in diagrams intended for GitHub** -- GitHub's native Mermaid renderer does not load Font Awesome CSS. Icons render as literal text. Use plain text labels instead.
-
-10. **Do not configure Mermaid rendering in doc platforms** -- platform setup (Starlight remark plugin, Docusaurus theme, DocFX template) belongs to `references/documentation-strategy.md`. This skill provides the diagram content only.
+5. **Do not use Font Awesome icon syntax (`fa:fa-user`) in GitHub diagrams** -- GitHub's Mermaid renderer does not load Font Awesome. Icons render as literal text.
 
 ---
 
@@ -155,44 +144,6 @@ graph TB
     API -->|"REST API"| ExtPay
 ```
 
-### C4-Style Container Diagram
-
-Shows the high-level technology choices and their interactions.
-
-```mermaid
-graph TB
-    subgraph Client["Client Tier"]
-        SPA["Blazor WASM<br/>(WebAssembly)"]
-        Mobile["MAUI App<br/>(.NET 8)"]
-    end
-
-    subgraph API_Tier["API Tier"]
-        Gateway["API Gateway<br/>(YARP)"]
-        OrderAPI["Order Service<br/>(ASP.NET Core)"]
-        CatalogAPI["Catalog Service<br/>(ASP.NET Core)"]
-        IdentityAPI["Identity Service<br/>(Duende IdentityServer)"]
-    end
-
-    subgraph Data_Tier["Data Tier"]
-        OrderDB[("Order DB<br/>(SQL Server)")]
-        CatalogDB[("Catalog DB<br/>(PostgreSQL)")]
-        Cache[("Redis Cache")]
-        Bus["Message Bus<br/>(RabbitMQ)"]
-    end
-
-    SPA -->|"HTTPS"| Gateway
-    Mobile -->|"HTTPS"| Gateway
-    Gateway --> OrderAPI
-    Gateway --> CatalogAPI
-    Gateway --> IdentityAPI
-    OrderAPI --> OrderDB
-    OrderAPI --> Cache
-    OrderAPI --> Bus
-    CatalogAPI --> CatalogDB
-    CatalogAPI --> Cache
-    Bus --> CatalogAPI
-```
-
 ### C4-Style Component Diagram
 
 Shows internal structure of a single service.
@@ -202,11 +153,11 @@ graph TB
     subgraph OrderService["Order Service"]
         Controllers["Controllers<br/>(API Endpoints)"]
         Validators["FluentValidation<br/>(Request Validators)"]
-        Handlers["MediatR Handlers<br/>(Business Logic)"]
+        Handlers["Command Handlers<br/>(Business Logic)"]
         DomainModels["Domain Models<br/>(Entities, Value Objects)"]
         Repos["Repositories<br/>(EF Core)"]
-        Events["Domain Events<br/>(MediatR Notifications)"]
-        IntEvents["Integration Events<br/>(MassTransit)"]
+        Events["Domain Events<br/>(Notifications)"]
+        IntEvents["Integration Events<br/>(Wolverine)"]
     end
 
     Controllers --> Validators
@@ -229,8 +180,8 @@ graph TB
     subgraph Application["Application Layer"]
         Services["Application Services"]
         DTOs["DTOs / View Models"]
-        Mappings["AutoMapper Profiles"]
-        CQRS["MediatR Handlers"]
+        Mappings["Mapperly Mappers"]
+        CQRS["Mediator Handlers"]
     end
 
     subgraph Domain["Domain Layer"]
@@ -244,7 +195,7 @@ graph TB
         EFCore["EF Core DbContext"]
         Repositories["Repository Implementations"]
         ExternalServices["External Service Clients"]
-        Messaging["MassTransit / RabbitMQ"]
+        Messaging["Wolverine / RabbitMQ"]
     end
 
     Presentation --> Application
@@ -806,7 +757,7 @@ stateDiagram-v2
     end note
 ```
 
-### State Machine Pattern (MassTransit)
+### State Machine Pattern (Event-Driven)
 
 ```mermaid
 stateDiagram-v2
@@ -873,8 +824,8 @@ flowchart TD
     Scale -->|"Multiple teams, high load"| Micro["Microservices"]
 
     Monolith --> MonoComm{"Communication pattern?"}
-    MonoComm -->|"In-process"| MediatR["MediatR + Vertical Slices"]
-    MonoComm -->|"Async events"| MonoBus["MassTransit (in-memory)"]
+    MonoComm -->|"In-process"| Mediator["Mediator + Vertical Slices"]
+    MonoComm -->|"Async events"| MonoBus["Wolverine (in-memory)"]
 
     Micro --> MicroComm{"Communication pattern?"}
     MicroComm -->|"Synchronous"| gRPC["gRPC / REST"]
@@ -886,22 +837,3 @@ flowchart TD
     DataStrategy -->|"DB per service"| OwnDB["Database per Service<br/>(more isolation, eventual consistency)"]
 ```
 
----
-
-## Dark Mode Example
-
-```mermaid
-%%{init: {'theme': 'neutral'}}%%
-graph LR
-    A["Service A"] --> B["Service B"]
-    A --> C["Service C"]
-
-    classDef healthy fill:#4caf50,color:#fff
-    classDef degraded fill:#ff9800,color:#fff
-    class A healthy
-    class B degraded
-    class C healthy
-```
-
-- The `neutral` theme provides the best cross-theme compatibility on GitHub
-- For doc sites (Starlight, Docusaurus), themes are controlled by the platform's CSS -- Mermaid inherits automatically

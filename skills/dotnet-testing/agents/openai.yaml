@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-testing"
+  short_description: "xUnit, integration, E2E, and benchmark strategy"
+  default_prompt: "Use $dotnet-advisor to route this testing request, then load $dotnet-testing for strategy and quality gates."
+
+policy:
+  allow_implicit_invocation: true

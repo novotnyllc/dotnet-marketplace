@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-tooling"
+  short_description: "MSBuild, project setup, AOT, and diagnostics"
+  default_prompt: "Use $dotnet-advisor to route this build/tooling task, then load $dotnet-tooling for version and MSBuild guidance."
+
+policy:
+  allow_implicit_invocation: true

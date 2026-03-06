@@ -1,17 +1,17 @@
 ---
 name: dotnet-debugging
-description: Debugs Windows applications using WinDbg and crash dump analysis including MCP server integration, live process attach, dump file triage, hang detection, high-CPU diagnosis, memory leak investigation, kernel debugging, symbol configuration, scenario command packs, diagnostic report generation, and SOS extension workflows for .NET runtime inspection.
+description: Debugs Windows and Linux/macOS applications (native, .NET/CLR, mixed-mode) with WinDbg MCP (crash dumps, !analyze, !syncblk, !dlk, !runaway, !dumpheap, !gcroot, BSOD), dotnet-dump, lldb with SOS, createdump, and container diagnostics (Docker, Kubernetes). Hang/deadlock diagnosis, high CPU triage, memory leak investigation, kernel debugging, and dotnet-monitor for production. Spans 17 topic areas. Do not use for routine .NET SDK profiling, benchmark design, or CI test debugging.
 license: MIT
-user-invocable: true
+user-invocable: false
 ---
 
 # dotnet-debugging
 
 ## Overview
 
-Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows application -- native, managed (.NET/CLR), or mixed-mode. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
+Windows and Linux/macOS debugging using WinDbg MCP tools (Windows), dotnet-dump, and lldb with SOS (Linux/macOS). Applicable to any application -- native, managed (.NET/CLR), or mixed-mode. Includes container diagnostic patterns for Docker and Kubernetes. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
 
-**Platform:** Windows only.
+**Platforms:** Windows (WinDbg MCP, cdb), Linux/macOS (dotnet-dump, lldb with SOS, createdump, dotnet-monitor).
 
 ## Routing Table
 
@@ -33,25 +33,46 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 | Memory triage | memory leak, heap, LOH | Memory leak triage | references/task-memory.md |
 | Kernel debugging | kernel, BSOD, bugcheck | Kernel debugging | references/task-kernel.md |
 | Unknown triage | unknown issue, general triage | Unknown issue triage | references/task-unknown.md |
+| Linux debugging | dotnet-dump, lldb, createdump, container | Linux/macOS debugging, dotnet-dump, lldb SOS, containers | references/linux-debugging.md |
 
 ## Scope
 
-- Crash dump analysis (.dmp files) for any Windows process (native, .NET, or mixed-mode)
-- Live process attach via cdb debug server
-- Hang and deadlock diagnosis (thread analysis, lock detection)
+- Crash dump analysis (.dmp files) on Windows, Linux, and macOS
+- Live process attach (cdb on Windows, lldb on Linux/macOS)
+- Hang and deadlock diagnosis (thread analysis, lock detection, wait chains)
 - High CPU triage (runaway thread identification)
-- Memory pressure and leak investigation via native heap analysis
-- Kernel dump triage (BSOD / bugcheck analysis)
-- COM/RPC wait chain and UI message pump analysis
+- Memory pressure and leak investigation (managed heap, native heap)
+- Kernel dump triage (BSOD / bugcheck analysis, Windows)
+- Container diagnostics (dotnet-dump in Docker/Kubernetes, sidecar patterns)
+- Production diagnostics (dotnet-monitor REST API, trigger-based collection)
+- SOS commands across all platforms (WinDbg, dotnet-dump, lldb)
 - Structured diagnostic reports with stack evidence
+
+### Boundary with [skill:dotnet-tooling]
+
+Both skills use overlapping tools (dotnet-dump, dotnet-counters, dotnet-trace) but for different purposes:
+
+| Scenario | Use this skill (debugging) | Use [skill:dotnet-tooling] |
+|----------|---------------------------|---------------------------|
+| Investigating a crash dump (.dmp) | Yes | No |
+| "Why did my app crash/hang/OOM?" | Yes | No |
+| Attaching a debugger to a live process | Yes | No |
+| "How do I profile my app's performance?" | No | Yes (profiling) |
+| "How do I reduce GC pressure?" | No | Yes (gc-memory) |
+| Collecting a dump for later analysis | Yes | No |
+| Running dotnet-counters to monitor metrics | No | Yes (profiling) |
+| Analyzing a dump with dotnet-dump | Yes | No |
+| Decompiling an assembly to understand behavior | No | Yes (ilspy-decompile) |
+
+Rule of thumb: if something is **broken** (crash, hang, deadlock, OOM), route here. If something is **slow** or needs **optimization**, route to [skill:dotnet-tooling].
 
 ## Out of scope
 
-- .NET SDK diagnostic tools (dotnet-counters, dotnet-trace, dotnet-dump) -> [skill:dotnet-tooling]
+- Performance profiling (dotnet-counters, dotnet-trace for optimization) -> [skill:dotnet-tooling]
 - GC tuning and managed memory optimization -> [skill:dotnet-tooling]
+- Assembly decompilation (ILSpy) -> [skill:dotnet-tooling]
 - Performance benchmarking and regression detection -> [skill:dotnet-testing]
-- Application performance architecture patterns -> [skill:dotnet-tooling]
-- Application-level logging -> [skill:dotnet-devops]
+- Application-level logging and observability -> [skill:dotnet-devops]
 - Unit/integration test debugging -> [skill:dotnet-testing]
 
 ## MCP Tool Contract

@@ -76,7 +76,7 @@ Full documentation is available at [https://mycompany.github.io/my-library](http
 
 ## Architecture
 
-[Mermaid architecture diagram -- see [skill:dotnet-mermaid-diagrams] for patterns]
+[Mermaid architecture diagram -- see [skill:dotnet-tooling] (`references/mermaid-diagrams.md`) for patterns]
 
 ## Contributing
 

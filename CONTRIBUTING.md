@@ -57,7 +57,7 @@ user-invocable: false
 
 See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 600 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600). With 8 broad skills, the total budget usage is approximately 25% of the 15,600 cap.
+The description budget of 600 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600). With 9 skills, the total budget usage is approximately 28% of the 15,600 cap.
 
 ### Cross-Reference Syntax
 
@@ -84,7 +84,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 
 ### Skill Description Budget
 
-The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 600 characters. With 8 broad skills, the catalog uses approximately 25% of the budget, giving each skill rich routing signal.
+The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 600 characters. With 9 skills, the catalog uses approximately 28% of the budget, giving each skill rich routing signal.
 
 ## Agent Authoring
 
@@ -263,7 +263,7 @@ Before every release, verify:
 
 ## Hooks and MCP Contributions
 
-The plugin includes session hooks (session start context, post-edit validation) and MCP server integrations (Context7).
+The plugin includes session hooks (session start context, user prompt routing reminder) and MCP server integrations (Context7 + Microsoft Docs).
 
 For guidance on contributing to hooks or MCP integrations, see [docs/hooks-and-mcp-guide.md](docs/hooks-and-mcp-guide.md).
 

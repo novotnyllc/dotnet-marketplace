@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-03-06
+
+### Added
+
+- **Codex plugin discovery support** -- Added explicit Codex plugin manifest and marketplace discovery capabilities so the plugin can be indexed and validated in Codex environments in addition to existing Claude flow support.
+- **Gateway-based .NET routing** -- Added a dedicated pre-routing step that detects .NET intent and version context before delegating to domain skills, with clearer defaults for ambiguous “build me” requests and improved multi-domain handoff behavior.
+- **Expanded backend guidance scope** -- Added new content on HybridCache, reverse-proxy/API gateway patterns, ASP.NET Identity setup, and Office/PDF document workflows, giving users guidance for caching, authentication, and document generation scenarios without leaving the skill set.
+
+### Changed
+
+- **Skill catalog now includes nine capabilities** -- The plugin now documents and enforces a 9-skill catalog and updated routing/budget guidance, including explicit defaults for domain selection and invocation flow.
+- **Reference delivery model clarified** -- The plugin now emphasizes on-demand loading of deep-dive references behind the high-level skill catalog, improving guidance coverage while keeping the loaded baseline predictable.
+- **Backend integration defaults updated** -- Messaging recommendations were modernized toward Wolverine for new work (with explicit mappings from older patterns), and API guidance now includes updated recommendations for identity, hybrid caching, YARP routing, and file-based app scenarios.
+
+### Fixed
+
+- **Marketplace validation hardening** -- Validation now checks Codex manifest and marketplace metadata consistency (required fields, local resolution, plugin linkage), preventing broken plugin registration states from passing unnoticed.
+- **Routing smoke-test contract** -- Routing validation no longer incorrectly excludes the dotnet advisor path from implicit invocation expectations, aligning test behavior with the actual routing model and reducing false failures.
+
+## [1.1.1] - 2026-03-05
+
+### Added
+
+- **Skills execution safety** -- Added a `using-dotnet` process gate and explicit advisor ordering so skill workflows now validate .NET usage and run advisors in a predictable sequence before continuing.
+
+## [1.1.0] - 2026-03-05
+
+### Added
+- Skill metadata quality lints for name format/length, description hard cap, and negative-trigger phrasing.
+- Skill hygiene lints for one-level resource folders, forward-slash pathing, and human-doc detection in skill directories.
+
+### Changed
+- Updated all 8 consolidated skill descriptions to include explicit negative routing triggers.
+- Codex metadata validation now re-validates `skills[]` paths with path-safety checks before per-skill file probing.
+- CI skill-count assertion now uses correct GNU `find` option ordering (`-maxdepth` before `-name`).
+- Version bump from `1.0.0` to `1.1.0` across plugin metadata, marketplace metadata, and README badge.
+
 ## [1.0.0] - 2026-02-27
 
 ### Changed
@@ -149,7 +186,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.2.0...HEAD
+[1.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.1...dotnet-artisan/v1.2.0
+[1.1.1]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...dotnet-artisan/v1.1.1
+[1.1.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...dotnet-artisan/v1.1.0
 [1.0.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.3.0...dotnet-artisan/v1.0.0
 [0.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.2.0...dotnet-artisan/v0.3.0
 [0.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v0.1.1...dotnet-artisan/v0.2.0

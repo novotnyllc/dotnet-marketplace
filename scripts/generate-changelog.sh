@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# generate-changelog.sh -- Generate changelog entries from git commits via Claude.
+# generate-changelog.sh -- Generate changelog entries from the net diff vs last release.
 #
 # Usage:
 #   ./scripts/generate-changelog.sh [--dry-run] [--since TAG] [--changelog FILE]
@@ -74,37 +74,56 @@ fi
 
 echo "  $COMMIT_COUNT commits in range"
 
-# --- Collect commits and generate changelog via Claude ---
+# --- Collect diff and generate changelog via Claude ---
+# Use the net diff (HEAD vs last release) rather than individual commit messages.
+# Intermediate commits are noise -- the diff captures what actually changed.
 
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-git log --no-merges --format='%s' $RANGE -- > "$TMP_DIR/commits.txt"
+# File-level summary
+git diff --stat $RANGE > "$TMP_DIR/diffstat.txt"
+
+# Full diff, truncated to avoid blowing context limits
+MAX_DIFF_LINES=3000
+git diff $RANGE > "$TMP_DIR/full_diff.txt"
+DIFF_LINES=$(wc -l < "$TMP_DIR/full_diff.txt" | tr -d ' ')
+if [ "$DIFF_LINES" -gt "$MAX_DIFF_LINES" ]; then
+    head -n "$MAX_DIFF_LINES" "$TMP_DIR/full_diff.txt" > "$TMP_DIR/diff.txt"
+    echo "(truncated at $MAX_DIFF_LINES of $DIFF_LINES lines)" >> "$TMP_DIR/diff.txt"
+    echo "  Diff truncated: $DIFF_LINES lines -> $MAX_DIFF_LINES"
+else
+    cp "$TMP_DIR/full_diff.txt" "$TMP_DIR/diff.txt"
+fi
 
 # Build the prompt with concrete examples from the existing changelog
 cat > "$TMP_DIR/prompt.txt" << 'PROMPT_EOF'
-Generate Keep-a-Changelog entries from the git commits below.
+Generate Keep-a-Changelog entries from the diff below. The diff shows the
+net change between the last release and the current HEAD. Use it to
+understand what changed, but write about features and capabilities, not
+individual files.
 
 OUTPUT FORMAT -- raw markdown only, no commentary, no code fences, no preamble:
 
 ### Added
 
-- **Feature area** -- What was added and why it matters
+- **Feature name** -- What new capability was added and why it matters to users
 - **Another feature** -- Concise user-facing description
 
 ### Changed
 
-- **Area** -- What changed and the practical effect
+- **Feature or behavior** -- What changed and the practical effect for users
 
 ### Fixed
 
-- **Area** -- What was broken and how it's fixed
+- **Bug or issue** -- What was broken and how it's fixed
 
 RULES:
+- Describe features, behaviors, and capabilities -- never individual files or paths.
 - Omit empty sections entirely.
-- Collapse related commits into ONE bullet. 50 commits about "routing normalization" = 1 bullet.
-- Skip: chore commits, release bumps, task tracking, flow state, "address review feedback", CI noise.
-- Write for users of the plugin, not contributors. Internal refactoring is irrelevant unless it changes behavior.
+- Synthesize related changes into ONE bullet about the feature they serve.
+- Skip: whitespace-only changes, comment-only edits, flow/task tracker state, internal refactoring with no user-facing effect.
+- Write for users of the plugin, not contributors. "Consolidated WinUI reference files" is bad. "Streamlined WinUI guidance covering controls, layout, and theming" is good.
 - Bold the feature area, use " -- " separator, then describe the change.
 - Aim for 3-10 bullets total. Fewer is better.
 - Output ONLY the markdown. No analysis, no explanations, no "here's what I found" preamble.
@@ -122,11 +141,15 @@ EXAMPLE of good output (from a prior release):
 - **Per-plugin versioning** -- Release workflow uses `dotnet-artisan/v*` tag format instead of `v*`
 - **Description budget trimmed** from 13,481 to 11,948 chars -- now below the 12,000-char warning threshold
 
-COMMITS TO SUMMARIZE:
+FILE SUMMARY:
 
 PROMPT_EOF
 
-cat "$TMP_DIR/commits.txt" >> "$TMP_DIR/prompt.txt"
+cat "$TMP_DIR/diffstat.txt" >> "$TMP_DIR/prompt.txt"
+echo "" >> "$TMP_DIR/prompt.txt"
+echo "FULL DIFF:" >> "$TMP_DIR/prompt.txt"
+echo "" >> "$TMP_DIR/prompt.txt"
+cat "$TMP_DIR/diff.txt" >> "$TMP_DIR/prompt.txt"
 
 echo "  Calling Codex ..."
 

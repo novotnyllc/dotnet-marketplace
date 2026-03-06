@@ -35,6 +35,14 @@
 #   TYPE_WARNING_COUNT=<N>
 #   FILLER_PHRASE_COUNT=<N>
 #   WHEN_PREFIX_COUNT=<N>
+#   NAME_FORMAT_ERROR_COUNT=<N>
+#   DESC_HARDCAP_ERROR_COUNT=<N>
+#   DESC_PRONOUN_WARN_COUNT=<N>
+#   DESC_NEGATIVE_TRIGGER_WARN_COUNT=<N>
+#   SKILL_LINE_BUDGET_WARN_COUNT=<N>
+#   NESTED_RESOURCE_WARN_COUNT=<N>
+#   HUMAN_DOC_WARN_COUNT=<N>
+#   PATH_SLASH_WARN_COUNT=<N>
 #   MISSING_SCOPE_COUNT=<N>
 #   MISSING_OOS_COUNT=<N>
 #   SELF_REF_COUNT=<N>
@@ -68,7 +76,7 @@ fi
 VALIDATOR_EXIT=0
 python3 "$REPO_ROOT/scripts/_validate_skills.py" \
     --repo-root "$PLUGIN_DIR" \
-    --projected-skills 8 \
+    --projected-skills 9 \
     --max-desc-chars 600 \
     --warn-threshold 12000 \
     --fail-threshold 15600 \

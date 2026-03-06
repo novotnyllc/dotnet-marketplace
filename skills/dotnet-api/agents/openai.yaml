@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-api"
+  short_description: "ASP.NET Core APIs, data access, and services"
+  default_prompt: "Use $dotnet-advisor to route this backend task, then load $dotnet-api for API architecture and implementation guidance."
+
+policy:
+  allow_implicit_invocation: true

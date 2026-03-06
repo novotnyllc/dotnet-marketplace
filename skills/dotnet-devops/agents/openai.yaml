@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-devops"
+  short_description: "CI/CD, packaging, releases, and observability"
+  default_prompt: "Use $dotnet-advisor to route this pipeline task, then load $dotnet-devops for CI/CD and release guidance."
+
+policy:
+  allow_implicit_invocation: true

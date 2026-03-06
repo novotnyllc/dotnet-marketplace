@@ -3,11 +3,11 @@
 
 interface:
   display_name: "dotnet-artisan"
-  short_description: "8 broad .NET skills for modern C# and cloud apps"
+  short_description: "9 .NET skills with process-first routing and domain depth"
   default_prompt: >
     $skill-installer novotnyllc/dotnet-artisan — install .NET development
-    skills. All 8 skills are under skills/<skill-name>/,
-    each containing a SKILL.md file with references/ companion files.
+    skills. All 9 skills are under skills/<skill-name>/,
+    each containing a SKILL.md file (with references/ companion files where needed).
 
 policy:
   allow_implicit_invocation: true
@@ -20,7 +20,7 @@ dependencies:
       transport: "streamable_http"
       url: "https://mcp.context7.com/mcp"
     - type: "mcp"
-      value: "microsoftdocs"
+      value: "microsoftdocs-mcp"
       description: "Official Microsoft Learn documentation search"
       transport: "streamable_http"
       url: "https://learn.microsoft.com/api/mcp"

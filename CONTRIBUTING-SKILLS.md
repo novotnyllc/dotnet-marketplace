@@ -62,12 +62,14 @@ Every skill lives in a flat directory under `skills/`:
 ```
 skills/<skill-name>/
   SKILL.md              # Required -- main skill file (casing matters)
+  scripts/              # Optional -- deterministic helper CLIs
   references/           # Optional -- companion files for extended content
-    coding-standards.md # Human-readable Title Case names
-    async-patterns.md   # One file per topic area
+  assets/               # Optional -- templates/schemas/static outputs
+  agents/               # Optional -- provider metadata (for example openai.yaml)
 ```
 
 The `<skill-name>` directory name must match the `name` field in SKILL.md frontmatter exactly.
+Use lowercase letters, numbers, and single hyphens only (1-64 chars).
 
 ### SKILL.md Format
 
@@ -90,7 +92,7 @@ Body content starts here...
 
 | Field | Required | Type | Rules |
 |-------|----------|------|-------|
-| `name` | Yes | string | Must match directory name exactly |
+| `name` | Yes | string | Must match directory name exactly; 1-64 chars; regex `^[a-z0-9]+(-[a-z0-9]+)*$` |
 | `description` | Yes | string | Target under 600 characters (see section 3) |
 | `license` | Yes | string | Must be `MIT` for this repo. Required by Copilot CLI for skill loading. |
 | `user-invocable` | Yes (repo policy) | boolean | Must be explicitly set on every skill (`true` or `false`). Set to `false` to hide from the `/` menu. Not required by the upstream Agent Skills spec, but required in this repo for cross-provider predictability. |
@@ -101,6 +103,7 @@ Body content starts here...
 The `name`, `description`, and `license` fields are required. The optional fields control skill visibility and execution behavior. Boolean fields must use bare `true`/`false` (not quoted strings like `"false"`).
 
 **Important:** All skills must have an explicit `user-invocable` field (either `true` or `false`). Do not omit it and rely on the default. This ensures predictable behavior across all agent runtimes.
+**Hard cap:** Description length must be <= 1,024 characters for discovery metadata safety.
 
 ### Companion Files
 
@@ -116,14 +119,14 @@ This keeps the primary skill lean while making extended content available to age
 
 GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
 
-**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. With the consolidated 8-skill layout, the 32-skill display limit is no longer a concern. All 8 skills fit comfortably within any provider's visible window.
+**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. With the consolidated 9-skill layout, the 32-skill display limit is no longer a concern. All 9 skills fit comfortably within any provider's visible window.
 
-**Current status (8 skills):**
+**Current status (9 skills):**
 
 | Category | Count | Skills |
 |----------|-------|--------|
 | `user-invocable: true` | 4 | dotnet-advisor, dotnet-ui, dotnet-tooling, dotnet-debugging |
-| `user-invocable: false` | 4 | dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
+| `user-invocable: false` | 5 | using-dotnet, dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
 
 **Routing strategy:** `dotnet-advisor` is the meta-router. We intentionally keep it early in **both** plausible orderings:
 - **Manifest order:** it is listed first in `.claude-plugin/plugin.json`.
@@ -134,7 +137,7 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 **Behavior scenarios:**
 
 - **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 4 user-invocable skills compete for the window. All 4 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
-- **If all 8 skills count against the budget:** All 8 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
+- **If all 9 skills count against the budget:** All 9 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
 
 **Rules for maintaining Copilot compatibility:**
 
@@ -166,12 +169,20 @@ Structure descriptions as: **Action + Domain + Differentiator**
 
 Use **third-person declarative** style. Front-load the most specific action verb or present participle. Do not start with `WHEN`, `A skill that`, `Helps with`, or other filler. See [docs/skill-routing-style-guide.md](docs/skill-routing-style-guide.md) for the full canonical rules.
 
+Include an explicit negative trigger in every description (for example, `Do not use for ...`) so routing has a clear exclusion boundary.
+
 ```yaml
 # Good -- declarative, specific domain, clear scope
 description: Detects code smells and anti-patterns in C# code during writing and review
 
 # Bad -- vague, no activation context
 description: Helps with code quality stuff
+```
+
+Add disambiguation when helpful:
+
+```yaml
+description: Detects code smells and anti-patterns in C# code during writing and review. Don't use for ASP.NET pipeline design or CI workflow authoring.
 ```
 
 ### Good vs. Bad Examples
@@ -188,7 +199,7 @@ description: Helps with code quality stuff
 
 Each description must be **at most 600 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 8 skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer (up to 600 characters) while staying well under the budget (~25% of the 15,600 cap).
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 9 skills, the projected maximum is 5,400 characters (9 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 9 skills, each description can be significantly richer (up to 600 characters) while staying well under the budget (~28% of the 15,600 cap).
 
 The validation script reports the current budget:
 
@@ -265,6 +276,13 @@ Structure content in layers of increasing depth:
 
 This mirrors the Anthropic guide's recommendation: keep the primary skill focused on actionable guidance, and push verbose examples into companion files.
 
+### Structural Constraints
+
+- Keep `SKILL.md` under **500 lines** when practical. Move dense catalogs, long templates, and schema blocks into `references/` or `assets/`.
+- Keep `references/`, `scripts/`, and `assets/` **one level deep**. Avoid nested subfolders.
+- Do not add human-centric docs inside a skill directory (`README.md`, `CHANGELOG.md`, `INSTALLATION*.md`).
+- Use relative paths with forward slashes (`references/foo.md`, not `references\\foo.md`).
+
 ### Cross-Reference Syntax
 
 Reference other skills using the machine-parseable syntax:
@@ -288,7 +306,7 @@ Rules:
 
 ### Size Limit
 
-Keep SKILL.md under **5,000 words**. If you need more space, use `references/` companion files for the overflow. Oversized skills degrade Claude's ability to follow instructions because they compete for context window space.
+Treat **500 lines** as the working budget for `SKILL.md`. A soft upper limit of **5,000 words** still applies, but large files should be refactored before reaching it.
 
 ---
 
@@ -325,6 +343,15 @@ Both commands must pass before merging. Run them from the repo root:
 ```
 
 If either command fails, fix the issue before committing. The same commands run in CI on every push and PR.
+
+### LLM-Guided Validation Loop
+
+Use this quick 4-pass loop before opening a PR:
+
+1. **Discovery validation:** Paste only the `name`/`description` and ask an LLM for prompts that should trigger vs not trigger.
+2. **Logic simulation:** Paste `SKILL.md` and ask the LLM to simulate execution step-by-step; patch any hallucination gaps.
+3. **Edge-case attack:** Ask the LLM to act as QA and produce failure-mode questions.
+4. **Refinement:** Move bulky details to `references/`/`assets/`, keep the top-level workflow concise and deterministic.
 
 ### Cross-Provider Verification
 
@@ -454,14 +481,15 @@ Before committing a new or modified skill:
 - [ ] **Folder created** at `skills/<skill-name>/`
 - [ ] **SKILL.md** exists with correct casing
 - [ ] **Frontmatter** has `name`, `description`, `license`, and `user-invocable` fields
-- [ ] **`name` matches** the directory name exactly
-- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
-- [ ] **Description under 600 characters** (check budget math)
+- [ ] **`name` matches** the directory name exactly and satisfies `^[a-z0-9]+(-[a-z0-9]+)*$` (1-64 chars)
+- [ ] **Description follows style guide** -- Action + Domain + Differentiator formula, third-person declarative, no WHEN prefix, and explicit negative trigger (`Do not use for ...`) (see [Skill Routing Style Guide](docs/skill-routing-style-guide.md))
+- [ ] **Description limits** -- target <= 600 chars, hard cap <= 1,024 chars
 - [ ] **No description overlap** -- run `python3 scripts/validate-similarity.py --repo-root .` and verify no new WARN/ERROR pairs
 - [ ] **Cross-references** use `[skill:skill-name]` syntax (for both skills and agents)
 - [ ] **Scope sections** present -- `## Scope` and `## Out of scope` with attributed cross-references
 - [ ] **Invocation contract** -- Scope has >=1 unordered bullet, OOS has >=1 unordered bullet, at least one OOS bullet contains `[skill:]` (see [Invocation Contract](docs/skill-routing-style-guide.md#6-invocation-contract))
 - [ ] **No self-references** -- skill does not reference itself via `[skill:]`
+- [ ] **Skill file hygiene** -- prefer <= 500 lines, one-level `references/`/`scripts/`/`assets/`, forward-slash paths only
 - [ ] **Registered in plugin.json** -- skill path added to the `skills` array
 - [ ] **Validation passes** -- both commands run clean:
   ```bash
@@ -475,6 +503,7 @@ Before committing a new or modified skill:
 
 - [Skill Routing Style Guide](docs/skill-routing-style-guide.md) -- canonical rules for descriptions, scope sections, and cross-references
 - [Anthropic Skill Authoring Guide](https://github.com/anthropics/agent-skills/blob/main/docs/skill-authoring-guide.md) -- the complete six-chapter guide this manual adapts
+- [skills-best-practices](https://github.com/mgechev/skills-best-practices) -- metadata, progressive-disclosure, and validation-loop optimizations
 - [Agent Skills Open Standard](https://github.com/anthropics/agent-skills) -- specification for skill format and discovery
 - [CONTRIBUTING.md](CONTRIBUTING.md) -- general contribution workflow, prerequisites, and PR process
 - [CLAUDE.md](CLAUDE.md) -- plugin conventions and validation commands

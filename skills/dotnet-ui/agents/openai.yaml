@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-ui"
+  short_description: "Blazor, MAUI, Uno, WPF, and WinUI guidance"
+  default_prompt: "Use $dotnet-advisor to route this UI request, then load $dotnet-ui for framework-specific patterns and tradeoffs."
+
+policy:
+  allow_implicit_invocation: true

@@ -4,11 +4,11 @@
 
 [![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-1.2.0-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
-**dotnet-artisan** is a Claude Code plugin that provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard for skill authoring and discovery.
+**dotnet-artisan** provides 9 skills (2 routing + 7 domain) and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -64,23 +64,32 @@ The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-lev
 
 ### OpenAI Codex
 
-Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with:
+Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
 
-```bash
-$skill-installer install https://github.com/novotnyllc/dotnet-artisan
-```
+Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
 
-You can also sync skill directories into `~/.codex/skills/`.
+For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
+
+## Provider Support Matrix
+
+| Provider | Primary surface | Status |
+|---|---|---|
+| Claude Code | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` + hooks + MCP | Supported |
+| GitHub Copilot CLI | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` | Supported |
+| OpenAI Codex | `.agents/openai.yaml` + `skills/*` + `skills/*/agents/openai.yaml` | Supported (skill-centric) |
+
+Compatibility is validated in CI with structural smoke checks via `scripts/run-agent-routing-smoke.py --provider claude,codex,copilot`.
 
 ## Skill Catalog
 
-The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.
+The plugin organizes 9 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`), backed by 159 reference files (~62K lines) of deep-dive guidance loaded on demand. Each skill follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard with structured frontmatter and progressive disclosure — SKILL.md routing tables point to `references/*.md` companion files that Claude reads only when relevant.
 
 | Skill | Domain | Key Topics |
 |---|---|---|
+| **using-dotnet** | Gateway routing | Detects .NET intent, enforces skill invocation before planning |
 | **dotnet-advisor** | Router/dispatcher | Routes queries to domain skills, loads coding standards as baseline |
 | **dotnet-csharp** | C# language & runtime | Modern patterns, async/await, DI, config, source generators, LINQ, concurrency, SOLID |
-| **dotnet-api** | ASP.NET Core & backend | Minimal APIs, EF Core, gRPC, SignalR, security (OWASP), Aspire, architecture patterns |
+| **dotnet-api** | ASP.NET Core & backend | Minimal APIs, EF Core, gRPC, SignalR, security (OWASP), messaging, Aspire, Semantic Kernel, architecture patterns |
 | **dotnet-ui** | UI frameworks | Blazor, MAUI, Uno Platform, WPF, WinUI, WinForms, accessibility, localization |
 | **dotnet-testing** | Testing & quality | xUnit, integration/E2E, Playwright, BenchmarkDotNet, snapshot testing, test strategy |
 | **dotnet-devops** | CI/CD & operations | GitHub Actions, Azure DevOps, containers, NuGet, MSIX, observability, structured logging |
@@ -89,7 +98,11 @@ The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-n
 
 ## Agents
 
-The plugin includes 14 specialist agents that provide focused expertise in specific domains. The central routing agent, `dotnet-architect`, analyzes your query context and delegates to the appropriate specialist.
+The plugin includes 14 specialist agents that provide focused expertise in specific domains.
+
+Provider note:
+- Claude/Copilot flows can use these specialist agent definitions directly.
+- Codex currently routes through broad skills; use the `dotnet-advisor` Codex fallback table to map specialist intents to skills/references.
 
 | Agent | Description |
 |---|---|
@@ -131,11 +144,12 @@ graph TB
             ASP[async-performance-specialist]
             ASN[aspnetcore-specialist]
             TS[testing-specialist]
-            CS[cloud-specialist]
+            CLS[cloud-specialist]
             CR[code-review-agent]
         end
 
-        subgraph Skills["8 Broad Skills"]
+        subgraph Skills["9 Skills"]
+            UD[using-dotnet<br/>Gateway]
             ADV[dotnet-advisor<br/>Router]
             CS[dotnet-csharp<br/>C# Language]
             API[dotnet-api<br/>ASP.NET/Backend]
@@ -176,6 +190,7 @@ graph TB
     DG --> TOOL
     DA --> API
     DA --> CS
+    UD --> ADV
     ADV --> CS
     ADV --> API
     ADV --> UIS
@@ -185,24 +200,25 @@ graph TB
     ADV --> DBG
 ```
 
-### Agent Delegation Flow
+### Skill Routing Flow
 
 ```mermaid
 sequenceDiagram
     participant User
     participant Claude as Claude Code
-    participant Router as dotnet-architect<br/>(Routing Agent)
-    participant Specialist as Specialist Agent
-    participant Skills as Skill Files
+    participant Gateway as using-dotnet<br/>(Gateway Skill)
+    participant Advisor as dotnet-advisor<br/>(Router Skill)
+    participant Domain as Domain Skill
+    participant Ref as references/*.md
 
     User->>Claude: "How do I set up Blazor auth?"
-    Claude->>Router: Route query
-    Router->>Router: Load dotnet-advisor catalog<br/>+ analyze query context
-    Router->>Specialist: Delegate to blazor-specialist
-    Specialist->>Skills: Load dotnet-ui<br/>+ references/blazor-auth.md
-    Skills-->>Specialist: Skill content
-    Specialist-->>Claude: Structured guidance
-    Claude-->>User: Blazor auth recommendation<br/>with code examples
+    Claude->>Gateway: Detect .NET intent
+    Gateway->>Advisor: Route to advisor
+    Advisor->>Advisor: Match query to domain skill
+    Advisor->>Domain: Load dotnet-ui
+    Domain->>Ref: Load blazor-auth.md
+    Ref-->>Claude: Structured guidance
+    Claude-->>User: Blazor auth setup<br/>with code examples
 ```
 
 ## Usage Examples
@@ -224,7 +240,7 @@ Claude Code loads `dotnet-devops` (read `references/gha-patterns.md`) to generat
 
 ## Agent Skill Routing Checks
 
-This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` (manual/scheduled).
+This repo includes a CI-ready routing checker to verify that agents discover and use expected skills. Structural validators (`validate-skills.sh`, `validate-marketplace.sh`) run on every push and PR. Live routing checks run via `./test.sh` as optional manual verification.
 
 See `docs/agent-routing-tests.md` for details, workflow inputs, and environment variables.
 

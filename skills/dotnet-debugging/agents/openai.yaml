@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-debugging"
+  short_description: "WinDbg, dumps, hangs, and memory triage"
+  default_prompt: "Use $dotnet-advisor to route this debugging request, then load $dotnet-debugging for dump and live-process triage."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "using-dotnet"
+  short_description: "Process gate for .NET skill loading order"
+  default_prompt: "Invoke $using-dotnet at the first sign of a .NET/C# task, then invoke $dotnet-advisor before planning or implementation."
+
+policy:
+  allow_implicit_invocation: true

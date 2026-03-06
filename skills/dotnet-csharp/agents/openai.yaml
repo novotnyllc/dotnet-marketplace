@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-csharp"
+  short_description: "C# patterns, standards, and runtime guidance"
+  default_prompt: "Use $dotnet-advisor to route this .NET task, then apply $dotnet-csharp standards before implementation."
+
+policy:
+  allow_implicit_invocation: true

@@ -28,7 +28,7 @@ Always load these skills before starting documentation work:
 
 - [skill:dotnet-tooling] (read `references/documentation-strategy.md`) -- documentation tooling decision tree: Starlight (modern default), Docusaurus (React ecosystem), DocFX (existing .NET with XML docs), MarkdownSnippets for code inclusion, migration paths between tools
 - [skill:dotnet-tooling] (read `references/mermaid-diagrams.md`) -- Mermaid diagram patterns for .NET: architecture (C4-style, layers, microservices), sequence (API flows, async), class (domain models, DI graphs), deployment, ER (EF Core), state diagrams
-- [skill:dotnet-tooling] (read `references/xml-docs.md`) -- XML documentation comment authoring: standard tags, `<inheritdoc>`, `GenerateDocumentationFile` MSBuild property, warning suppression for internal APIs, IntelliSense integration
+- [skill:dotnet-csharp] -- Coding standards including XML documentation comment conventions
 
 ## Workflow
 
@@ -42,7 +42,7 @@ Always load these skills before starting documentation work:
    - **Domain model diagrams** -- Class diagrams for key domain entities detected in the codebase.
    - **Deployment diagrams** -- Container and infrastructure topology if deployment artifacts are detected (Dockerfile, Kubernetes manifests, Bicep/ARM templates).
 
-4. **Write XML doc comment skeletons for public APIs** -- Using [skill:dotnet-tooling] (read `references/xml-docs.md`), scan public types and members that lack XML documentation comments. Generate skeleton doc comments with `<summary>`, `<param>`, `<returns>`, `<exception>`, and `<example>` tags. Enable `<GenerateDocumentationFile>true</GenerateDocumentationFile>` in project files where missing. Apply `<inheritdoc/>` for interface implementations and overrides.
+4. **Write XML doc comment skeletons for public APIs** -- Scan public types and members that lack XML documentation comments. Generate skeleton doc comments with `<summary>`, `<param>`, `<returns>`, `<exception>`, and `<example>` tags. Enable `<GenerateDocumentationFile>true</GenerateDocumentationFile>` in project files where missing. Apply `<inheritdoc/>` for interface implementations and overrides.
 
 5. **Scaffold GitHub-native docs** -- Using [skill:dotnet-tooling] (read `references/documentation-strategy.md`) and [skill:dotnet-tooling] (read `references/mermaid-diagrams.md`) for content:
    - **README.md** -- Project title, description, badges (NuGet, CI status, license), getting started guide, architecture overview with embedded Mermaid diagram, contributing link.

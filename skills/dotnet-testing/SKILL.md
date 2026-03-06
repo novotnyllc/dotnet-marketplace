@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing
-description: Defines .NET test strategy, xUnit v3, integration/E2E, snapshots (Verify), Playwright, benchmarks, and quality gates.
+description: Defines .NET test strategy and implementation patterns across xUnit v3 (Facts, Theories, fixtures, IAsyncLifetime), integration testing (WebApplicationFactory, Testcontainers), Aspire testing (DistributedApplicationTestingBuilder), snapshot testing (Verify, scrubbing), Playwright E2E browser automation, BenchmarkDotNet microbenchmarks, code coverage (Coverlet), mutation testing (Stryker.NET), UI testing (page objects, selectors), and AOT WASM test compilation. Spans 13 topic areas. Do not use for production API architecture or CI workflow authoring.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-Testing strategy, frameworks, and quality tooling for .NET applications. This consolidated skill spans 12 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+Testing strategy, frameworks, and quality tooling for .NET applications. This consolidated skill spans 13 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 Baseline dependency: `references/testing-strategy.md` defines the unit vs integration vs E2E decision tree and test doubles selection that inform all testing decisions. Load it by default whenever a testing approach needs to be chosen.
 
@@ -31,6 +31,7 @@ Most-shared companion: `references/xunit.md` covers xUnit v3 framework features 
 | Slopwatch | LLM reward hacking detection | Slopwatch CLI for LLM reward hacking detection | references/slopwatch.md |
 | AOT WASM | Blazor/Uno WASM AOT, size, lazy loading | Blazor/Uno WASM AOT compilation, size vs speed, lazy loading, Brotli | references/aot-wasm.md |
 | UI testing core | page objects, selectors, async waits | Page object model, test selectors, async waits, accessibility testing | references/ui-testing-core.md |
+| Aspire testing | DistributedApplicationTestingBuilder, Aspire test host | Aspire test host, service HTTP clients, resource health | references/aspire-testing.md |
 
 ## Scope
 

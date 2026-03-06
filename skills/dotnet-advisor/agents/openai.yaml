@@ -1,0 +1,7 @@
+interface:
+  display_name: "dotnet-advisor"
+  short_description: "Mandatory .NET router after using-dotnet gate"
+  default_prompt: "Invoke $using-dotnet first, then use $dotnet-advisor to route this .NET/C# task before planning or implementation."
+
+policy:
+  allow_implicit_invocation: true

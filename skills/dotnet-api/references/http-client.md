@@ -513,7 +513,8 @@ public sealed class ApiKeyHandlerTests
 Test the full HTTP client pipeline including DI registration:
 
 ```csharp
-// See [skill:dotnet-integration-testing] for WebApplicationFactory patterns
+// See [skill:dotnet-testing] (`references/integration-testing.md`) for
+// WebApplicationFactory patterns
 ```
 
 ---
