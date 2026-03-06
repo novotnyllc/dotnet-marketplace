@@ -61,7 +61,7 @@ Agent descriptions use the same third-person declarative style as skills.
 
 Each description must be **at most 600 characters**. This is a budget constraint derived from the aggregate context window limit, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 8 broad skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer while staying well under budget (~25% of the 15,600 cap).
+**Budget math:** The plugin loads all skill descriptions into the context window at session start. With 9 skills, the projected maximum is 5,400 characters (9 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With 9 skills, each description can be significantly richer while staying well under budget (~35% of the 15,600 cap).
 
 ### Budget Threshold Semantics
 
@@ -274,7 +274,7 @@ Failures:
 
 ### Rollout Playbook
 
-The invocation contract ships in **WARN-only mode** by default. All 8 skills have been audited and comply. CI can flip to `STRICT_INVOCATION=1` to enforce the contract as a merge gate. The warning count (`INVOCATION_CONTRACT_WARN_COUNT`) serves as a regression metric.
+The invocation contract ships in **WARN-only mode** by default. All 9 skills have been audited and comply. CI can flip to `STRICT_INVOCATION=1` to enforce the contract as a merge gate. The warning count (`INVOCATION_CONTRACT_WARN_COUNT`) serves as a regression metric.
 
 ---
 

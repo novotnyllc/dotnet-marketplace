@@ -119,14 +119,14 @@ This keeps the primary skill lean while making extended content available to age
 
 GitHub Copilot CLI has a system prompt token budget that limits how many skills appear in the `<available_skills>` section visible to the model. Upstream reports indicate approximately 32 skills are shown, and the visible ordering appears to be alphabetical ([copilot-cli#1464](https://github.com/github/copilot-cli/issues/1464), [copilot-cli#1130](https://github.com/github/copilot-cli/issues/1130)). Skills beyond the cutoff may not be discoverable by the model.
 
-**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. With the consolidated 8-skill layout, the 32-skill display limit is no longer a concern. All 8 skills fit comfortably within any provider's visible window.
+**Verification results (Copilot CLI v0.0.412):** Tested with the installed plugin. With the consolidated 9-skill layout, the 32-skill display limit is no longer a concern. All 9 skills fit comfortably within any provider's visible window.
 
-**Current status (8 skills):**
+**Current status (9 skills):**
 
 | Category | Count | Skills |
 |----------|-------|--------|
 | `user-invocable: true` | 4 | dotnet-advisor, dotnet-ui, dotnet-tooling, dotnet-debugging |
-| `user-invocable: false` | 4 | dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
+| `user-invocable: false` | 5 | using-dotnet, dotnet-csharp, dotnet-api, dotnet-testing, dotnet-devops |
 
 **Routing strategy:** `dotnet-advisor` is the meta-router. We intentionally keep it early in **both** plausible orderings:
 - **Manifest order:** it is listed first in `.claude-plugin/plugin.json`.
@@ -137,7 +137,7 @@ This increases the likelihood it stays within Copilot's visible window if the ~3
 **Behavior scenarios:**
 
 - **If `user-invocable: false` skills are excluded from the 32-slot budget:** Only 4 user-invocable skills compete for the window. All 4 fit comfortably. The limit is a non-issue, and the advisor provides additional meta-routing as a bonus.
-- **If all 8 skills count against the budget:** All 8 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
+- **If all 9 skills count against the budget:** All 9 fit comfortably within any provider's visible window. The advisor provides additional meta-routing as a bonus.
 
 **Rules for maintaining Copilot compatibility:**
 
@@ -199,7 +199,7 @@ description: Detects code smells and anti-patterns in C# code during writing and
 
 Each description must be **at most 600 characters**. This is a budget constraint, not a style preference.
 
-**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 8 skills, the projected maximum is 4,800 characters (8 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 8 skills, each description can be significantly richer (up to 600 characters) while staying well under the budget (~25% of the 15,600 cap).
+**Budget math:** The plugin loads all skill descriptions into Claude's context window at session start. With 9 skills, the projected maximum is 5,400 characters (9 * 600). The validator enforces a FAIL threshold at 15,600 characters and a WARN threshold at 12,000 characters. With only 9 skills, each description can be significantly richer (up to 600 characters) while staying well under the budget (~28% of the 15,600 cap).
 
 The validation script reports the current budget:
 
