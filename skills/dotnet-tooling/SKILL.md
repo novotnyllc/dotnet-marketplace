@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET SDK installation (dotnet-install script, workloads, side-by-side), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT (PublishAot, trimming), GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy/ilspycmd decompilation, and version detection/upgrade. Spans 34 topic areas. Do not use for framework-specific UI implementation or API security policy design.
+description: Manages .NET SDK installation (dotnet-install, workloads), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT/trimming, GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy decompilation, VS Code debug config (launch.json, coreclr, remote), C# LSP (csharp-ls, OmniSharp), and version detection/upgrade. Spans 36 topic areas. Do not use for UI implementation or API security design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 34 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 36 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ## Routing Table
 
@@ -49,6 +49,8 @@ user-invocable: false
 | SDK installation | install .NET, dotnet-install, workloads, missing SDK | .NET SDK install script, workloads, env vars, side-by-side | references/dotnet-sdk-install.md |
 | ILSpy decompile | ilspycmd, decompile, assembly, disassemble, IL | ILSpy/ilspycmd decompilation, type listing, IL view | references/ilspy-decompile.md |
 | Mermaid diagrams | architecture, sequence, class, ER, flowcharts | Architecture, sequence, class, deployment, ER diagrams | references/mermaid-diagrams.md |
+| VS Code debugging | launch.json, tasks.json, coreclr, attach, debug | VS Code launch/attach configs, tasks, multi-project, hot reload | references/vscode-debug.md |
+| C# LSP | language server, csharp-ls, OmniSharp, go to definition | C# LSP servers, code navigation, agent usage patterns | references/csharp-lsp.md |
 
 ## Scope
 
@@ -62,6 +64,8 @@ user-invocable: false
 - Solution navigation and project analysis
 - Code modernization and analyzer configuration
 - Mermaid diagram generation
+- VS Code debug configuration (launch.json, tasks.json, coreclr)
+- C# LSP servers (csharp-ls, OmniSharp) for agent code navigation
 
 ## Out of scope
 
