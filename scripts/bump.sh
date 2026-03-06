@@ -113,7 +113,7 @@ echo ""
 
 GENERATE_SCRIPT="$REPO_ROOT/scripts/generate-changelog.sh"
 if [ -f "$GENERATE_SCRIPT" ] && [ -x "$GENERATE_SCRIPT" ]; then
-    echo "Generating changelog entries from conventional commits ..."
+    echo "Generating changelog entries from diff vs last release ..."
     if "$GENERATE_SCRIPT" --changelog "$CHANGELOG"; then
         echo "  OK: Changelog entries generated"
     else
