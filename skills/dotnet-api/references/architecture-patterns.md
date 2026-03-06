@@ -4,33 +4,23 @@ Modern architecture patterns for .NET applications. Covers practical approaches 
 
 ## Agent Gotchas
 
-1. **Idempotency must handle three states** -- An idempotency implementation must distinguish no-record (claim it), in-progress (reject duplicate), and completed (replay cached response). Check-then-act without guarding the in-progress state allows concurrent duplicate execution.
-2. **Always finalize idempotency records unconditionally** -- Do NOT gate completion on specific `IResult` subtypes (e.g., `IValueHttpResult`). Non-value results like `Results.NoContent()` or `Results.Accepted()` would be left permanently stuck in the in-progress state.
-3. **Cache invalidation must be explicit** -- When using output caching or distributed caching, ALWAYS invalidate (evict by tag or key) after write operations. Forgetting invalidation causes stale reads that are hard to debug.
-4. **HybridCache stampede protection only works with `GetOrCreateAsync`** -- Do NOT use separate get-then-set patterns with `HybridCache`; use the factory overload so the library serializes concurrent requests for the same key.
-5. **Outbox messages must be written in the same transaction as domain data** -- If you write the outbox message outside the domain transaction, a crash between the two writes loses the event. ALWAYS use `BeginTransactionAsync` to wrap both writes atomically.
-6. **Endpoint filter order matters** -- Filters added first run outermost. A validation filter must run before an idempotency filter, otherwise invalid requests get cached as idempotent responses.
-7. **Do NOT share `DbContext` across concurrent requests** -- `DbContext` is not thread-safe. Each request must resolve its own scoped instance from DI. Using a singleton or static `DbContext` causes data corruption under concurrency.
+1. **Idempotency must handle three states and finalize unconditionally** -- Distinguish no-record (claim), in-progress (reject 409), and completed (replay). Do NOT gate finalization on specific `IResult` subtypes -- non-value results like `Results.NoContent()` would be stuck permanently in-progress.
+2. **Cache invalidation must be explicit** -- ALWAYS invalidate (evict by tag or key) after write operations. Forgetting invalidation causes stale reads.
+3. **HybridCache stampede protection only works with `GetOrCreateAsync`** -- Do NOT use separate get-then-set; use the factory overload so the library serializes concurrent requests for the same key.
+4. **Outbox messages must be written in the same transaction as domain data** -- A crash between separate writes loses the event. ALWAYS wrap both in `BeginTransactionAsync`.
+5. **Endpoint filter order matters** -- Filters added first run outermost. Validation must run before idempotency, otherwise invalid requests get cached.
+6. **Do NOT share `DbContext` across concurrent requests** -- `DbContext` is not thread-safe. Each request must resolve its own scoped instance from DI.
 
 ---
 
 ## Knowledge Sources
 
-Architecture patterns in this skill are grounded in publicly available content from:
-
-- **Jimmy Bogard's Vertical Slice Architecture** -- Organizing code by feature instead of by technical layer. Bogard advocates that each vertical slice owns its own request, handler, validation, and data access, reducing cross-feature coupling. He originated the popular MediatR library for request/handler dispatch in .NET, though MediatR is now commercial for commercial use. When applying vertical slice guidance, prefer the built-in IEndpointFilter and handler pattern shown above rather than introducing a third-party mediator dependency for simple scenarios. Source: https://www.jimmybogard.com/vertical-slice-architecture/
-- **Jimmy Bogard's Domain-Driven Design Patterns** -- Rich domain model guidance including entity design, value objects, domain events, and aggregate boundaries. Key insight: domain events should be dispatched after the aggregate state change is persisted (not before), to avoid inconsistency if persistence fails. Source: https://www.jimmybogard.com/
-- **Nick Chapsas' Modern .NET Patterns** -- Practical patterns for modern .NET including result types for error handling, structured validation pipelines, and modern C# feature adoption in production codebases. Source: https://www.youtube.com/@nickchapsas
-
-> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources. MediatR is a commercial product for commercial use; the patterns here are demonstrated with built-in .NET mechanisms.
+Grounded in publicly available content from Jimmy Bogard (vertical slice architecture, domain events) and Nick Chapsas (result types, modern .NET patterns). This skill applies publicly documented guidance and does not represent or speak for the named sources. MediatR is commercial for commercial use; patterns here use built-in .NET mechanisms.
 
 ## References
 
 - [ASP.NET Core Best Practices](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-10.0)
-- [Minimal APIs overview](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/overview)
-- [Output caching middleware](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/output)
 - [HybridCache library](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/hybrid)
-- [Problem Details (RFC 9457)](https://www.rfc-editor.org/rfc/rfc9457)
 - [Endpoint filters in minimal APIs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/min-api-filters)
 - [Vertical Slice Architecture (Jimmy Bogard)](https://www.jimmybogard.com/vertical-slice-architecture/)
 
@@ -67,37 +57,16 @@ Features/
       ...
 ```
 
-### Why Vertical Slices
+**Benefits:** Low coupling (feature changes don't ripple), easy navigation, independent testability, team scalability.
 
-- **Low coupling**: changing one feature does not ripple through shared layers
-- **Easy navigation**: everything for a feature is in one place
-- **Independent testability**: each slice has a clear input/output contract
-- **Team scalability**: different developers can work on different features without merge conflicts
-
-### Slice Anatomy
-
-Each slice typically contains:
-
-1. **Request/Response DTOs** -- the contract
-2. **Validator** -- input validation rules
-3. **Handler** -- business logic
-4. **Endpoint** -- HTTP mapping (route, method, status codes)
+Each slice contains: **Request/Response DTOs** (contract), **Validator** (input rules), **Handler** (business logic), **Endpoint** (HTTP mapping).
 
 ```csharp
-// Features/Orders/CreateOrder/CreateOrderRequest.cs
 public sealed record CreateOrderRequest(
-    string CustomerId,
-    List<OrderLineRequest> Lines);
-
-public sealed record OrderLineRequest(
-    string ProductId,
-    int Quantity);
-
-// Features/Orders/CreateOrder/CreateOrderResponse.cs
+    string CustomerId, List<OrderLineRequest> Lines);
+public sealed record OrderLineRequest(string ProductId, int Quantity);
 public sealed record CreateOrderResponse(
-    string OrderId,
-    decimal Total,
-    DateTimeOffset CreatedAt);
+    string OrderId, decimal Total, DateTimeOffset CreatedAt);
 ```
 
 ---
@@ -109,21 +78,10 @@ public sealed record CreateOrderResponse(
 Use `MapGroup` to organize related endpoints and apply shared filters:
 
 ```csharp
-// Program.cs
-var app = builder.Build();
+// Program.cs -- register feature groups
+app.MapGroup("/api/orders").WithTags("Orders").MapOrderEndpoints();
+app.MapGroup("/api/products").WithTags("Products").MapProductEndpoints();
 
-app.MapGroup("/api/orders")
-   .WithTags("Orders")
-   .MapOrderEndpoints();
-
-app.MapGroup("/api/products")
-   .WithTags("Products")
-   .MapProductEndpoints();
-
-app.Run();
-```
-
-```csharp
 // Features/Orders/OrderEndpoints.cs
 public static class OrderEndpoints
 {
@@ -138,10 +96,6 @@ public static class OrderEndpoints
              .WithName("GetOrder")
              .Produces<OrderResponse>()
              .ProducesProblem(StatusCodes.Status404NotFound);
-
-        group.MapGet("/", ListOrdersEndpoint.Handle)
-             .WithName("ListOrders")
-             .Produces<PagedResult<OrderSummary>>();
 
         return group;
     }
@@ -297,51 +251,27 @@ return result switch
 
 ## Validation Strategy
 
-Choose validation based on complexity. Prefer built-in mechanisms as the default; reserve FluentValidation for complex business rules that outgrow declarative attributes. For detailed framework guidance, see [skill:dotnet-csharp]. For SOLID principles governing where validation belongs in your architecture, see [skill:dotnet-csharp].
+Choose validation based on complexity. For .NET 10+, prefer the built-in `AddValidation()` source-generator pipeline (see [skill:dotnet-csharp]). For detailed framework guidance, see [skill:dotnet-csharp].
 
-### Built-in: Data Annotations + MiniValidation (Default)
+**Data Annotations (simple):** Use `[Required]`, `[MaxLength]`, `[Range]` on record properties. In minimal APIs, validate via `MiniValidation` (`MiniValidator.TryValidate`) or the .NET 10+ built-in pipeline.
 
-Start with Data Annotations for simple property-level constraints. Use `MiniValidation` for lightweight validation in Minimal APIs without MVC model binding overhead. For .NET 10+ projects, prefer the built-in `AddValidation()` source-generator pipeline (see [skill:dotnet-csharp]).
-
-```csharp
-public sealed record CreateProductRequest(
-    [Required, MaxLength(200)] string Name,
-    [Range(0.01, double.MaxValue)] decimal Price);
-
-// In endpoint
-if (!MiniValidator.TryValidate(request, out var errors))
-{
-    return Results.ValidationProblem(errors);
-}
-```
-
-### FluentValidation (Opt-in for Complex Rules)
-
-When validation rules outgrow annotations -- cross-property rules, conditional logic, database-dependent checks -- use FluentValidation. Register via assembly scanning and apply through endpoint filters or manual validation:
+**FluentValidation (complex):** Use for cross-property rules, conditional logic, or database-dependent checks:
 
 ```csharp
-// Register validators by assembly scanning
 builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Scoped);
 
-// Validator implementation
 public sealed class CreateOrderValidator : AbstractValidator<CreateOrderRequest>
 {
     public CreateOrderValidator()
     {
-        RuleFor(x => x.CustomerId)
-            .NotEmpty()
-            .MaximumLength(50);
-
-        RuleFor(x => x.Lines)
-            .NotEmpty()
+        RuleFor(x => x.CustomerId).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Lines).NotEmpty()
             .WithMessage("Order must have at least one line item");
-
-        RuleForEach(x => x.Lines)
-            .ChildRules(line =>
-            {
-                line.RuleFor(l => l.ProductId).NotEmpty();
-                line.RuleFor(l => l.Quantity).GreaterThan(0);
-            });
+        RuleForEach(x => x.Lines).ChildRules(line =>
+        {
+            line.RuleFor(l => l.ProductId).NotEmpty();
+            line.RuleFor(l => l.Quantity).GreaterThan(0);
+        });
     }
 }
 ```
@@ -350,89 +280,13 @@ public sealed class CreateOrderValidator : AbstractValidator<CreateOrderRequest>
 
 ## Caching Strategy
 
-### Output Caching (HTTP Response Caching)
+Choose the right caching level:
 
-```csharp
-builder.Services.AddOutputCache(options =>
-{
-    options.AddBasePolicy(p => p.NoCache());
+- **Output Caching** -- HTTP response caching via `AddOutputCache()`. Use `.CacheOutput("PolicyName")` on endpoints and `EvictByTagAsync` to invalidate after writes. Best for read-heavy GET endpoints.
+- **Distributed Caching** -- Application-level caching via `IDistributedCache` (e.g., `AddStackExchangeRedisCache()`). Manual get/set with serialization. Use when sharing cached data across app instances.
+- **HybridCache (.NET 9+)** -- Preferred for new projects. Combines L1 (in-memory) + L2 (distributed) with built-in stampede protection.
 
-    options.AddPolicy("ProductList", p =>
-        p.Expire(TimeSpan.FromMinutes(5))
-         .Tag("products"));
-
-    options.AddPolicy("ProductDetail", p =>
-        p.Expire(TimeSpan.FromMinutes(10))
-         .SetVaryByRouteValue("id")
-         .Tag("products"));
-});
-
-app.UseOutputCache();
-
-// Apply to endpoints
-group.MapGet("/", ListProductsEndpoint.Handle)
-     .CacheOutput("ProductList");
-
-group.MapGet("/{id}", GetProductEndpoint.Handle)
-     .CacheOutput("ProductDetail");
-
-// Invalidate by tag
-app.MapPost("/api/products", async (
-    IOutputCacheStore cache,
-    /* ... */) =>
-{
-    // ... create product
-    await cache.EvictByTagAsync("products", ct);
-    return Results.Created(/* ... */);
-});
-```
-
-### Distributed Caching (Application-Level)
-
-```csharp
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration
-        .GetConnectionString("Redis");
-});
-
-// Usage with IDistributedCache
-public sealed class ProductService(
-    IDistributedCache cache,
-    AppDbContext db)
-{
-    public async Task<Product?> GetByIdAsync(
-        string id, CancellationToken ct = default)
-    {
-        var cacheKey = $"product:{id}";
-        var cached = await cache.GetStringAsync(cacheKey, ct);
-
-        if (cached is not null)
-        {
-            return JsonSerializer.Deserialize<Product>(cached);
-        }
-
-        var product = await db.Products.FindAsync([id], ct);
-        if (product is not null)
-        {
-            await cache.SetStringAsync(
-                cacheKey,
-                JsonSerializer.Serialize(product),
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                },
-                ct);
-        }
-
-        return product;
-    }
-}
-```
-
-### HybridCache (.NET 9+)
-
-`HybridCache` combines L1 (in-memory) and L2 (distributed) caching with stampede protection:
+### HybridCache (Primary Pattern)
 
 ```csharp
 builder.Services.AddHybridCache(options =>
@@ -444,7 +298,7 @@ builder.Services.AddHybridCache(options =>
     };
 });
 
-// Usage -- stampede-safe, two-tier
+// Stampede-safe, two-tier -- always use GetOrCreateAsync (not separate get/set)
 public sealed class ProductService(HybridCache cache, AppDbContext db)
 {
     public async Task<Product?> GetByIdAsync(
@@ -456,6 +310,30 @@ public sealed class ProductService(HybridCache cache, AppDbContext db)
             cancellationToken: ct);
     }
 }
+```
+
+### Output Caching Example
+
+```csharp
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(p => p.NoCache());
+    options.AddPolicy("ProductList", p =>
+        p.Expire(TimeSpan.FromMinutes(5)).Tag("products"));
+});
+
+app.UseOutputCache();
+
+group.MapGet("/", ListProductsEndpoint.Handle)
+     .CacheOutput("ProductList");
+
+// Always invalidate after writes
+app.MapPost("/api/products", async (IOutputCacheStore cache, /* ... */) =>
+{
+    // ... create product
+    await cache.EvictByTagAsync("products", ct);
+    return Results.Created(/* ... */);
+});
 ```
 
 ---
@@ -475,14 +353,13 @@ Prevent duplicate processing of retried requests. A robust idempotency implement
 Use a database row with a unique constraint for atomic claim-then-execute:
 
 ```csharp
-// Idempotency record stored alongside domain data
 public sealed class IdempotencyRecord
 {
-    public required string Key { get; init; }         // Scoped key
+    public required string Key { get; init; }
     public required string RequestRoute { get; init; }
     public required string? UserId { get; init; }
     public int StatusCode { get; set; }
-    public string? ResponseBody { get; set; }         // Serialized JSON
+    public string? ResponseBody { get; set; }
     public string? ContentType { get; set; }
     public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     public bool IsCompleted { get; set; }
@@ -497,87 +374,58 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
         var httpContext = context.HttpContext;
         if (!httpContext.Request.Headers.TryGetValue(
             "Idempotency-Key", out var keyValues))
-        {
             return await next(context);
-        }
 
         var clientKey = keyValues.ToString();
         if (string.IsNullOrWhiteSpace(clientKey) || clientKey.Length > 256)
-        {
             return Results.Problem("Invalid Idempotency-Key", statusCode: 400);
-        }
 
-        // Scope key by route + user to prevent cross-endpoint/cross-tenant collisions
+        // Scope key: route + user + client key
         var route = $"{httpContext.Request.Method}:{httpContext.Request.Path}";
         var userId = httpContext.User.FindFirst("sub")?.Value ?? "anonymous";
         var scopedKey = $"{route}:{userId}:{clientKey}";
 
-        // Check for existing record (completed = replay, in-progress = reject)
         var existing = await db.IdempotencyRecords
             .FirstOrDefaultAsync(r => r.Key == scopedKey);
 
+        // Completed: replay cached response
         if (existing is { IsCompleted: true })
         {
-            // Replay: value responses get body, non-value responses get status only
-            if (existing.ResponseBody is not null)
-            {
-                return Results.Text(
-                    existing.ResponseBody,
+            return existing.ResponseBody is not null
+                ? Results.Text(existing.ResponseBody,
                     existing.ContentType ?? "application/json",
-                    statusCode: existing.StatusCode);
-            }
-
-            return Results.StatusCode(existing.StatusCode);
+                    statusCode: existing.StatusCode)
+                : Results.StatusCode(existing.StatusCode);
         }
 
+        // In-progress: reject duplicate
         if (existing is { IsCompleted: false })
+            return Results.Problem("Duplicate request in progress", statusCode: 409);
+
+        // Claim: unique constraint prevents concurrent duplicates
+        var record = new IdempotencyRecord
         {
-            // Another request claimed this key but hasn't completed yet.
-            // Reject to prevent duplicate execution.
-            return Results.Problem(
-                "Duplicate request in progress", statusCode: 409);
+            Key = scopedKey, RequestRoute = route,
+            UserId = userId, IsCompleted = false
+        };
+        db.IdempotencyRecords.Add(record);
+
+        try { await db.SaveChangesAsync(); }
+        catch (DbUpdateException)
+        {
+            return Results.Problem("Duplicate request in progress", statusCode: 409);
         }
 
-        // Atomic claim: insert with unique constraint -- concurrent duplicate
-        // requests will throw DbUpdateException and get a 409 Conflict
-        {
-            var record = new IdempotencyRecord
-            {
-                Key = scopedKey,
-                RequestRoute = route,
-                UserId = userId,
-                IsCompleted = false
-            };
-            db.IdempotencyRecords.Add(record);
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                return Results.Problem(
-                    "Duplicate request in progress", statusCode: 409);
-            }
-
-            existing = record;
-        }
-
-        // Execute the actual handler
         var result = await next(context);
 
-        // Always finalize the record -- handles both value and non-value results
-        // (Results.Ok(obj), Results.NoContent(), Results.Accepted(), etc.)
-        existing.StatusCode = result is IStatusCodeHttpResult statusResult
-            ? statusResult.StatusCode ?? 200
-            : 200;
-        existing.ResponseBody = result is IValueHttpResult valueResult
-            ? JsonSerializer.Serialize(valueResult.Value)
-            : null;  // No body for non-value results (204, 202, etc.)
-        existing.ContentType = existing.ResponseBody is not null
-            ? "application/json"
-            : null;
-        existing.IsCompleted = true;
+        // Finalize unconditionally -- handles value and non-value results
+        record.StatusCode = result is IStatusCodeHttpResult sc
+            ? sc.StatusCode ?? 200 : 200;
+        record.ResponseBody = result is IValueHttpResult vr
+            ? JsonSerializer.Serialize(vr.Value) : null;
+        record.ContentType = record.ResponseBody is not null
+            ? "application/json" : null;
+        record.IsCompleted = true;
         await db.SaveChangesAsync();
 
         return result;
@@ -586,12 +434,11 @@ public sealed class IdempotencyFilter(AppDbContext db) : IEndpointFilter
 ```
 
 **Key design choices:**
-- **Three states**: no record (claim it), in-progress (reject 409), completed (replay cached response)
-- Unique constraint on `Key` column provides atomic claim without distributed locks
+- **Three states**: no record (claim), in-progress (reject 409), completed (replay)
+- Unique constraint on `Key` provides atomic claim without distributed locks
 - Scoped key (`route:userId:clientKey`) prevents cross-endpoint and cross-tenant collisions
-- Response envelope stores serialized body + status code + content type (not `IResult` references)
-- In-progress records (claimed but not completed) return 409 to concurrent duplicates
-- Consider adding a stale-record cleanup job to handle abandoned in-progress records (e.g., process crashed mid-execution)
+- Response envelope stores serialized body + status code (not `IResult` references)
+- Consider a cleanup job for abandoned in-progress records (process crash scenarios)
 
 ### Transactional Outbox Pattern
 
@@ -643,12 +490,11 @@ The outbox pattern ensures that if the database write succeeds, the event is gua
 
 ## Key Principles
 
-- **Apply SOLID principles** -- Single Responsibility (one reason to change per class), Open/Closed (extend via new types, not modifying existing code), Dependency Inversion (depend on abstractions at module boundaries). See [skill:dotnet-csharp] for anti-patterns, fixes, and compliance tests.
-- **Prefer composition over inheritance** -- use endpoint filters, middleware, and pipeline composition rather than base classes
-- **Keep slices independent** -- avoid shared abstractions that couple features together; DRY applies to knowledge duplication, not code similarity across bounded contexts
-- **Validate early, fail fast** -- validate at the boundary (endpoint filters) before entering business logic
-- **Use Problem Details everywhere** -- consistent error format across all endpoints
-- **Cache at the right level** -- output cache for HTTP responses, distributed cache for shared state, HybridCache for both
-- **Make writes idempotent** -- use idempotency keys for any non-idempotent operation clients may retry
+- **Prefer composition** -- endpoint filters, middleware, and pipeline composition over base classes
+- **Keep slices independent** -- DRY applies to knowledge duplication, not code similarity across features
+- **Validate early, fail fast** -- validate at the boundary before entering business logic
+- **Use Problem Details everywhere** -- consistent error format via RFC 9457
+- **Make writes idempotent** -- use idempotency keys for retryable operations
+- See [skill:dotnet-csharp] for SOLID anti-patterns and compliance guidance
 
 ---

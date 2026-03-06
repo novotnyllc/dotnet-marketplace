@@ -38,18 +38,7 @@ gRPC uses Protocol Buffers as its interface definition language. The `Grpc.Tools
 </ItemGroup>
 ```
 
-**Shared contracts project (recommended for larger services):**
-
-```xml
-<ItemGroup>
-  <PackageReference Include="Google.Protobuf" Version="3.*" />
-  <PackageReference Include="Grpc.Tools" Version="2.*" PrivateAssets="All" />
-</ItemGroup>
-
-<ItemGroup>
-  <Protobuf Include="Protos\*.proto" GrpcServices="Both" />
-</ItemGroup>
-```
+For shared contracts projects, set `GrpcServices="Both"` to generate both server and client stubs.
 
 ### Proto File Definition
 
@@ -151,10 +140,9 @@ Map domain errors to gRPC status codes:
 
 ## gRPC-Web Limitations
 
-- **Unary and server streaming only** -- client streaming and bidirectional streaming are not supported by gRPC-Web
-- **No HTTP/2 trailers** -- status and trailing metadata are encoded in the response body
+- **Unary and server streaming only** -- client streaming and bidirectional streaming are not supported
 - **CORS required** -- cross-origin requests need explicit CORS configuration on the server
-- **Consider SignalR for full-duplex browser communication** -- see [skill:dotnet-api] for alternatives when bidirectional streaming is required
+- **Consider SignalR for full-duplex browser communication** -- see [skill:dotnet-api] for alternatives
 
 ---
 
@@ -162,27 +150,22 @@ Map domain errors to gRPC status codes:
 
 - **Use `.proto` files as the contract** -- they are the single source of truth for the API shape, shared between client and server
 - **Set `GrpcServices` on `<Protobuf>` items** -- `Server` for service projects, `Client` for consumer projects, `Both` for shared contracts
-- **Reuse channels** -- `GrpcChannel` manages HTTP/2 connections; creating a new channel per call wastes resources
 - **Register gRPC clients via DI** -- `AddGrpcClient` integrates with `IHttpClientFactory` for connection pooling and resilience
 - **Always set deadlines** -- calls without deadlines can hang indefinitely if the server is slow or unreachable
 - **Use L7 load balancers** -- L4 load balancers pin all traffic to one backend because HTTP/2 multiplexes on a single TCP connection
 - **Implement the gRPC health check protocol** -- enables Kubernetes probes and load balancers to monitor service health
-- **Use gRPC-Web for browser clients** -- native gRPC requires HTTP/2 trailers which browsers do not support; gRPC-Web bridges this gap
 
-See [skill:dotnet-tooling] for Native AOT compilation pipeline and [skill:dotnet-tooling] for AOT-compatible patterns when building gRPC services with ahead-of-time compilation.
+See [skill:dotnet-tooling] for Native AOT compilation pipeline and AOT-compatible patterns when building gRPC services.
 
 ---
 
 ## Agent Gotchas
 
-1. **Do not create a new `GrpcChannel` per request** -- channels are expensive to create and manage HTTP/2 connections. Reuse them or use DI-registered clients.
-2. **Do not omit `GrpcServices` on `<Protobuf>` items** -- the default is `Both`, which generates server and client stubs. This bloats client projects with unused server code and vice versa.
-3. **Do not use L4 load balancers for gRPC without enabling `EnableMultipleHttp2Connections`** -- HTTP/2 multiplexing means a single connection handles all RPCs, defeating load distribution.
-4. **Do not throw generic `Exception` from gRPC services** -- throw `RpcException` with appropriate `StatusCode` and descriptive messages. Unhandled exceptions become `StatusCode.Internal` with no useful detail.
-5. **Do not forget to call `CompleteAsync()` on client streams** -- the server waits for stream completion before sending its response. Forgetting this causes the call to hang.
-6. **Do not use `grpc.health.v1.Health` without registering health checks** -- an empty health service always reports `Serving`, which defeats the purpose of health monitoring.
-7. **Do not enable gRPC-Web globally without CORS** -- `UseGrpcWeb()` without a CORS policy allows any origin to call your gRPC services. Always pair with explicit `RequireCors()`.
-8. **Do not attempt client streaming or bidirectional streaming with gRPC-Web** -- the gRPC-Web protocol only supports unary and server streaming. Use SignalR or native gRPC for full-duplex browser communication.
+1. **Do not omit `GrpcServices` on `<Protobuf>` items** -- the default is `Both`, which bloats client projects with unused server code and vice versa.
+2. **Do not throw generic `Exception` from gRPC services** -- throw `RpcException` with appropriate `StatusCode`. Unhandled exceptions become `StatusCode.Internal` with no useful detail.
+3. **Do not forget to call `CompleteAsync()` on client streams** -- the server waits for stream completion before sending its response. Forgetting this causes the call to hang.
+4. **Do not enable gRPC-Web globally without CORS** -- `UseGrpcWeb()` without a CORS policy allows any origin to call your gRPC services. Always pair with explicit `RequireCors()`.
+5. **Do not attempt client streaming or bidirectional streaming with gRPC-Web** -- the gRPC-Web protocol only supports unary and server streaming.
 
 ---
 
@@ -195,13 +178,8 @@ Adapted from [Aaronontheweb/dotnet-skills](https://github.com/Aaronontheweb/dotn
 ## References
 
 - [gRPC for .NET overview](https://learn.microsoft.com/en-us/aspnet/core/grpc/?view=aspnetcore-10.0)
-- [Create a gRPC client and server](https://learn.microsoft.com/en-us/aspnet/core/tutorials/grpc/grpc-start?view=aspnetcore-10.0)
 - [gRPC client factory integration](https://learn.microsoft.com/en-us/aspnet/core/grpc/clientfactory?view=aspnetcore-10.0)
 - [gRPC services with ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/grpc/aspnetcore?view=aspnetcore-10.0)
-- [gRPC health checks](https://learn.microsoft.com/en-us/aspnet/core/grpc/health-checks?view=aspnetcore-10.0)
-- [gRPC load balancing](https://learn.microsoft.com/en-us/aspnet/core/grpc/loadbalancing?view=aspnetcore-10.0)
-- [gRPC authentication](https://learn.microsoft.com/en-us/aspnet/core/grpc/authn-and-authz?view=aspnetcore-10.0)
-- [gRPC interceptors](https://learn.microsoft.com/en-us/aspnet/core/grpc/interceptors?view=aspnetcore-10.0)
 - [gRPC-Web for .NET](https://learn.microsoft.com/en-us/aspnet/core/grpc/grpcweb?view=aspnetcore-10.0)
 - [Protocol Buffers language guide](https://protobuf.dev/programming-guides/proto3/)
 
@@ -348,19 +326,6 @@ if (app.Environment.IsDevelopment())
 
 ## Client Patterns
 
-### Basic Client
-
-```csharp
-using Grpc.Net.Client;
-using MyApp.Grpc;
-
-using var channel = GrpcChannel.ForAddress("https://localhost:5001");
-var client = new OrderService.OrderServiceClient(channel);
-
-var response = await client.GetOrderAsync(
-    new GetOrderRequest { Id = 42 });
-```
-
 ### DI-Registered Client with IHttpClientFactory
 
 ```csharp
@@ -503,15 +468,18 @@ builder.Services.AddAuthentication(CertificateAuthenticationDefaults.Authenticat
 ```
 
 ```csharp
-// Client: provide client certificate
-var handler = new HttpClientHandler();
-handler.ClientCertificates.Add(
-    new X509Certificate2("client.pfx", "password"));
-
-using var channel = GrpcChannel.ForAddress("https://order-service:5001",
-    new GrpcChannelOptions
+// Client: provide client certificate via DI
+builder.Services
+    .AddGrpcClient<OrderService.OrderServiceClient>(options =>
     {
-        HttpHandler = handler
+        options.Address = new Uri("https://order-service:5001");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(
+            new X509Certificate2("client.pfx", "password"));
+        return handler;
     });
 ```
 
@@ -519,25 +487,7 @@ using var channel = GrpcChannel.ForAddress("https://order-service:5001",
 
 ## Load Balancing
 
-### Client-Side Load Balancing
-
-```csharp
-builder.Services
-    .AddGrpcClient<OrderService.OrderServiceClient>(options =>
-    {
-        options.Address = new Uri("dns:///order-service:5001");
-    })
-    .ConfigureChannel(options =>
-    {
-        options.Credentials = ChannelCredentials.Insecure;
-        options.ServiceConfig = new ServiceConfig
-        {
-            LoadBalancingConfigs = { new RoundRobinConfig() }
-        };
-    });
-```
-
-### Proxy-Based Load Balancing
+### Proxy-Based Load Balancing (Recommended)
 
 ```csharp
 builder.Services
@@ -555,22 +505,7 @@ builder.Services
 
 ## Health Checks
 
-### gRPC Health Check Protocol
-
-```csharp
-builder.Services.AddGrpc();
-builder.Services.AddGrpcHealthChecks()
-    .AddCheck("database", () =>
-    {
-        return HealthCheckResult.Healthy();
-    });
-
-var app = builder.Build();
-app.MapGrpcService<OrderGrpcService>();
-app.MapGrpcHealthChecksService();
-```
-
-### Integration with ASP.NET Core Health Checks
+### gRPC Health Check Protocol with ASP.NET Core Integration
 
 ```csharp
 builder.Services.AddHealthChecks()
@@ -590,6 +525,10 @@ builder.Services.AddGrpcHealthChecks()
             ? HealthCheckResult.Healthy()
             : HealthCheckResult.Unhealthy();
     });
+
+var app = builder.Build();
+app.MapGrpcService<OrderGrpcService>();
+app.MapGrpcHealthChecksService();
 ```
 
 ### Kubernetes Probes for gRPC
@@ -647,29 +586,6 @@ builder.Services.AddGrpc(options =>
 {
     options.Interceptors.Add<LoggingInterceptor>();
 });
-```
-
-### Client Interceptor
-
-```csharp
-public sealed class AuthInterceptor(ITokenProvider tokenProvider) : Interceptor
-{
-    public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
-        TRequest request,
-        ClientInterceptorContext<TRequest, TResponse> context,
-        AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
-    {
-        var token = tokenProvider.GetCachedToken();
-        var headers = context.Options.Headers ?? new Metadata();
-        headers.Add("Authorization", $"Bearer {token}");
-
-        var newContext = new ClientInterceptorContext<TRequest, TResponse>(
-            context.Method, context.Host,
-            context.Options.WithHeaders(headers));
-
-        return continuation(request, newContext);
-    }
-}
 ```
 
 ---
@@ -754,37 +670,3 @@ app.MapGrpcService<OrderGrpcService>()
     .RequireCors("GrpcWeb");
 ```
 
-### JavaScript Client (grpc-web)
-
-```javascript
-import { OrderServiceClient } from './generated/order_grpc_web_pb';
-import { GetOrderRequest } from './generated/order_pb';
-
-const client = new OrderServiceClient('https://api.example.com');
-
-const request = new GetOrderRequest();
-request.setId(42);
-
-client.getOrder(request, {}, (err, response) => {
-    if (err) {
-        console.error('gRPC error:', err.message);
-        return;
-    }
-    console.log('Order:', response.toObject());
-});
-```
-
-### Envoy Proxy Alternative
-
-```yaml
-http_filters:
-  - name: envoy.filters.http.grpc_web
-    typed_config:
-      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
-  - name: envoy.filters.http.cors
-    typed_config:
-      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
-  - name: envoy.filters.http.router
-    typed_config:
-      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-```

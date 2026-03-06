@@ -6,7 +6,9 @@ Foundational design principles for .NET applications. Covers each SOLID principl
 
 A class should have only one reason to change. Apply the "describe in one sentence" test: if you cannot describe what a class does in one sentence without using "and" or "or", it likely violates SRP.
 
-### Anti-Pattern: God Class
+### Anti-Pattern: God Class / Fat Controller
+
+God classes and fat controllers are the same violation: one class mixes validation, business logic, persistence, and notifications. In minimal APIs this manifests as endpoint lambdas that inline all concerns instead of delegating to focused services.
 
 ```csharp
 // WRONG -- OrderService handles validation, persistence, email, and PDF generation
@@ -91,47 +93,7 @@ public sealed class OrderRepository(AppDbContext db) : IOrderRepository
 }
 ```
 
-### Anti-Pattern: Fat Controller
-
-```csharp
-// WRONG -- controller contains business logic, mapping, and persistence
-app.MapPost("/api/orders", async (
-    CreateOrderRequest request,
-    AppDbContext db,
-    ILogger<Program> logger) =>
-{
-    // Validation in the endpoint
-    if (request.Lines.Count == 0)
-        return Results.BadRequest("At least one line required");
-
-    // Business logic in the endpoint
-    var total = request.Lines.Sum(l => l.Quantity * l.Price);
-    if (total > 100_000)
-        return Results.BadRequest("Order exceeds credit limit");
-
-    // Mapping in the endpoint
-    var order = new Order
-    {
-        CustomerId = request.CustomerId,
-        Total = total,
-        Lines = request.Lines.Select(l => new OrderLine
-        {
-            ProductId = l.ProductId,
-            Quantity = l.Quantity,
-            Price = l.Price
-        }).ToList()
-    };
-
-    // Persistence in the endpoint
-    db.Orders.Add(order);
-    await db.SaveChangesAsync();
-
-    logger.LogInformation("Order {OrderId} created", order.Id);
-    return Results.Created($"/api/orders/{order.Id}", order);
-});
-```
-
-Move business logic to a handler; keep the endpoint thin:
+For minimal API endpoints, keep the lambda thin -- delegate to a handler:
 
 ```csharp
 app.MapPost("/api/orders", async (
@@ -217,32 +179,25 @@ public sealed class OrderPricing(
 
 ### Extension via Abstract Classes
 
-When strategies share significant behavior, use an abstract base class:
+When strategies share significant behavior (validation, logging), use an abstract base class with a template method:
 
 ```csharp
 public abstract class NotificationSender
 {
     public async Task SendAsync(Notification notification, CancellationToken ct)
     {
-        // Shared behavior: validation and logging
         ArgumentNullException.ThrowIfNull(notification);
         await SendCoreAsync(notification, ct);
     }
 
-    protected abstract Task SendCoreAsync(
-        Notification notification, CancellationToken ct);
+    protected abstract Task SendCoreAsync(Notification notification, CancellationToken ct);
 }
 
-public sealed class EmailNotificationSender(IEmailClient client)
-    : NotificationSender
+// Each channel extends without modifying the base
+public sealed class EmailNotificationSender(IEmailClient client) : NotificationSender
 {
-    protected override async Task SendCoreAsync(
-        Notification notification, CancellationToken ct)
-    {
-        await client.SendEmailAsync(
-            notification.Recipient, notification.Subject,
-            notification.Body, ct);
-    }
+    protected override Task SendCoreAsync(Notification n, CancellationToken ct) =>
+        client.SendEmailAsync(n.Recipient, n.Subject, n.Body, ct);
 }
 ```
 
@@ -277,35 +232,6 @@ public class ReadOnlyFileStorage : FileStorage
 }
 ```
 
-### Anti-Pattern: Collection Covariance Pitfall
-
-```csharp
-// WRONG -- List<T> is not covariant; this compiles but causes runtime issues
-IList<Animal> animals = new List<Dog>(); // Compile error (correctly)
-
-// However, arrays ARE covariant in C# -- this compiles but throws at runtime:
-Animal[] animals = new Dog[10];
-animals[0] = new Cat(); // ArrayTypeMismatchException at runtime!
-```
-
-### Fix: Use Covariant Interfaces
-
-```csharp
-// IEnumerable<out T> and IReadOnlyList<out T> are covariant
-IEnumerable<Animal> animals = new List<Dog>(); // Safe -- read-only
-IReadOnlyList<Animal> readOnlyAnimals = new List<Dog>(); // Safe
-
-// When you need mutability, keep the concrete type
-List<Dog> dogs = [new Dog("Rex"), new Dog("Buddy")];
-ProcessAnimals(dogs); // Pass to covariant parameter
-
-void ProcessAnimals(IReadOnlyList<Animal> animals)
-{
-    foreach (var animal in animals)
-        animal.Speak();
-}
-```
-
 ### LSP Compliance Checklist
 
 - Derived classes do not throw new exception types that the base does not declare
@@ -330,7 +256,6 @@ public interface IWorker
     void ClockOut();
     Task<decimal> CalculatePayAsync();
     void RequestTimeOff(DateRange range);
-    Task SubmitExpenseAsync(Expense expense);
 }
 
 // ContractWorker does not clock in/out or request time off
@@ -342,47 +267,21 @@ public class ContractWorker : IWorker
     public Task<decimal> CalculatePayAsync() => /* ... */;
     public void RequestTimeOff(DateRange range) =>
         throw new NotSupportedException(); // ISP violation
-    public Task SubmitExpenseAsync(Expense expense) =>
-        throw new NotSupportedException(); // ISP violation
 }
 ```
 
 ### Fix: Role Interfaces
 
+Split the wide interface into focused roles. Each class implements only the interfaces it supports:
+
 ```csharp
-public interface IWorkPerformer
-{
-    Task DoWorkAsync(CancellationToken ct);
-}
+public interface IWorkPerformer { Task DoWorkAsync(CancellationToken ct); }
+public interface ITimeTrackable { void ClockIn(); void ClockOut(); }
+public interface IPayable { Task<decimal> CalculatePayAsync(); }
+public interface ITimeOffEligible { void RequestTimeOff(DateRange range); }
 
-public interface ITimeTrackable
-{
-    void ClockIn();
-    void ClockOut();
-}
-
-public interface IPayable
-{
-    Task<decimal> CalculatePayAsync();
-}
-
-public interface ITimeOffEligible
-{
-    void RequestTimeOff(DateRange range);
-}
-
-// FullTimeEmployee implements all applicable interfaces
-public sealed class FullTimeEmployee :
-    IWorkPerformer, ITimeTrackable, IPayable, ITimeOffEligible
-{
-    public Task DoWorkAsync(CancellationToken ct) => /* ... */;
-    public void ClockIn() { /* ... */ }
-    public void ClockOut() { /* ... */ }
-    public Task<decimal> CalculatePayAsync() => /* ... */;
-    public void RequestTimeOff(DateRange range) { /* ... */ }
-}
-
-// ContractWorker only implements what it needs
+// FullTimeEmployee: IWorkPerformer, ITimeTrackable, IPayable, ITimeOffEligible
+// ContractWorker only implements what it needs -- no throwing stubs
 public sealed class ContractWorker : IWorkPerformer, IPayable
 {
     public Task DoWorkAsync(CancellationToken ct) => /* ... */;
@@ -407,11 +306,8 @@ Accept the narrowest interface your method actually needs:
 public decimal CalculateTotal(IList<OrderLine> lines) =>
     lines.Sum(l => l.Price * l.Quantity);
 
-// RIGHT -- accepts IReadOnlyList<T> since it only reads
-public decimal CalculateTotal(IReadOnlyList<OrderLine> lines) =>
-    lines.Sum(l => l.Price * l.Quantity);
-
-// BEST for iteration only -- accepts IEnumerable<T>
+// RIGHT -- accept the narrowest type: IEnumerable<T> for iteration,
+// IReadOnlyList<T> for indexed access, IList<T> only for mutation
 public decimal CalculateTotal(IEnumerable<OrderLine> lines) =>
     lines.Sum(l => l.Price * l.Quantity);
 ```
@@ -422,40 +318,22 @@ public decimal CalculateTotal(IEnumerable<OrderLine> lines) =>
 
 High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details.
 
-### Anti-Pattern: Direct Dependency
+### Anti-Pattern and Fix
 
 ```csharp
-// WRONG -- high-level OrderProcessor depends directly on low-level SqlOrderRepository
+// WRONG -- high-level module creates low-level dependencies directly
 public sealed class OrderProcessor
 {
-    private readonly SqlOrderRepository _repository = new();
-    private readonly SmtpEmailSender _emailSender = new();
-
-    public async Task ProcessAsync(Order order)
-    {
-        await _repository.SaveAsync(order);      // Tight coupling to SQL
-        await _emailSender.SendAsync(order.Email, // Tight coupling to SMTP
-            "Order processed", $"Order {order.Id}");
-    }
+    private readonly SqlOrderRepository _repository = new(); // Tight coupling
+    private readonly SmtpEmailSender _emailSender = new();   // Tight coupling
 }
-```
 
-### Fix: Depend on Abstractions
-
-```csharp
+// RIGHT -- depend on abstractions owned by the high-level module
 public interface IOrderRepository
 {
     Task SaveAsync(Order order, CancellationToken ct = default);
-    Task<Order?> GetByIdAsync(string id, CancellationToken ct = default);
 }
 
-public interface INotificationService
-{
-    Task NotifyAsync(string recipient, string subject,
-        string body, CancellationToken ct = default);
-}
-
-// High-level module depends on abstractions
 public sealed class OrderProcessor(
     IOrderRepository repository,
     INotificationService notifier)
@@ -466,15 +344,6 @@ public sealed class OrderProcessor(
         await notifier.NotifyAsync(order.Email,
             "Order processed", $"Order {order.Id}", ct);
     }
-}
-
-// Low-level modules implement abstractions
-public sealed class SqlOrderRepository(AppDbContext db) : IOrderRepository
-{
-    public async Task SaveAsync(Order order, CancellationToken ct) =>
-        /* EF Core persistence */;
-    public async Task<Order?> GetByIdAsync(string id, CancellationToken ct) =>
-        await db.Orders.FindAsync([id], ct);
 }
 ```
 
@@ -508,16 +377,8 @@ Every piece of knowledge should have a single, authoritative representation. But
 Apply DRY when two pieces of code represent the **same concept** and must change together:
 
 ```csharp
-// WRONG -- tax rate duplicated across two services
-public sealed class InvoiceService
-{
-    public decimal CalculateTax(decimal amount) => amount * 0.08m;
-}
-
-public sealed class QuoteService
-{
-    public decimal EstimateTax(decimal amount) => amount * 0.08m;
-}
+// WRONG -- tax rate 0.08m duplicated in InvoiceService and QuoteService
+// If the rate changes, both must be found and updated
 
 // RIGHT -- single source of truth
 public static class TaxRates
@@ -536,26 +397,7 @@ Do not abstract prematurely. Wait until you see the same pattern three times bef
 
 ### When Duplication Is Acceptable
 
-Not all code similarity represents knowledge duplication:
-
-```csharp
-// These look similar but represent DIFFERENT business concepts
-// They will evolve independently -- DO NOT merge them
-
-public sealed class CustomerValidator
-{
-    public bool IsValid(Customer customer) =>
-        !string.IsNullOrEmpty(customer.Name) &&
-        !string.IsNullOrEmpty(customer.Email);
-}
-
-public sealed class SupplierValidator
-{
-    public bool IsValid(Supplier supplier) =>
-        !string.IsNullOrEmpty(supplier.Name) &&
-        !string.IsNullOrEmpty(supplier.ContactEmail);
-}
-```
+Not all code similarity represents knowledge duplication. A `CustomerValidator` and `SupplierValidator` may share similar null checks but represent different business concepts that will evolve independently -- do NOT merge them.
 
 **Acceptable duplication scenarios:**
 - Test setup code that looks similar across test classes (coupling tests to shared helpers makes them fragile)
@@ -563,27 +405,11 @@ public sealed class SupplierValidator
 - Configuration for different environments (dev and prod configs that happen to be similar today)
 - Mapping code between layers (coupling layers to share mappers defeats the purpose of separate layers)
 
-### Abstracting Shared Behavior
-
-When you do extract, prefer composition over inheritance:
-
-```csharp
-// Prefer: composition via a shared utility
-public static class StringValidation
-{
-    public static bool IsNonEmpty(string? value) =>
-        !string.IsNullOrWhiteSpace(value);
-}
-
-// Over: inheritance via a base class
-// (couples validators to a shared base, harder to test independently)
-```
+When you do extract, prefer composition (shared utility or extension method) over inheritance from a common base class.
 
 ---
 
-## Applying the Principles Together
-
-### Decision Guide
+## Decision Guide
 
 | Symptom | Likely Violation | Fix |
 |---|---|---|
@@ -595,14 +421,6 @@ public static class StringValidation
 | Magic numbers/strings in multiple files | DRY | Extract constants or config |
 | Copy-pasted code blocks (3+) | DRY | Extract shared method |
 
-### SRP Compliance Test
-
-For each class, answer these questions:
-
-1. **One-sentence test:** Can you describe the class's purpose in one sentence without "and" or "or"?
-2. **Change-reason test:** List all reasons this class might need to change. If more than one, consider splitting.
-3. **Dependency count test:** Does the constructor take more than 3-4 dependencies? High parameter counts often signal multiple responsibilities.
-
 ---
 
 ## Agent Gotchas
@@ -612,25 +430,17 @@ For each class, answer these questions:
 3. **Do not use inheritance to share behavior between unrelated types.** Prefer composition (injecting a shared service or using extension methods) over inheriting from a common base class. Inheritance creates tight coupling and makes LSP violations more likely.
 4. **Fat controllers and god classes are SRP violations.** When generating endpoint handlers, keep them thin -- delegate to dedicated services for validation, business logic, and persistence. Apply the "one sentence" test to each class.
 5. **Switch statements on type discriminators violate OCP.** Replace them with polymorphism (strategy pattern, interface dispatch) so new types can be added without modifying existing code.
-6. **Array covariance in C# is unsafe.** `Animal[] animals = new Dog[10]` compiles but throws `ArrayTypeMismatchException` at runtime when adding non-Dog elements. Use `IReadOnlyList<T>` or `IEnumerable<T>` for covariant read-only access.
-7. **Accept the narrowest interface type your method needs.** Use `IEnumerable<T>` for iteration, `IReadOnlyList<T>` for indexed read access, and `IList<T>` only when mutation is required. This follows ISP and makes methods more reusable.
+6. **Accept the narrowest interface type your method needs.** Use `IEnumerable<T>` for iteration, `IReadOnlyList<T>` for indexed read access, and `IList<T>` only when mutation is required. This follows ISP and makes methods more reusable.
 
 ---
 
 ## Knowledge Sources
 
-SOLID and DRY guidance in this skill is grounded in publicly available content from:
-
-- **Steve Smith (Ardalis) SOLID Principles** -- Practical SOLID application in .NET with guard clause patterns, specification pattern for OCP compliance, and clean architecture layering that enforces DIP at project boundaries. Source: https://ardalis.com/
-- **Jimmy Bogard's Domain-Driven Design Patterns** -- Rich domain model guidance that applies SRP to aggregate design (one aggregate root per bounded context) and OCP to domain event handling (new handlers without modifying existing ones). Note: MediatR is commercial for commercial use; apply the patterns with built-in mechanisms where possible. Source: https://www.jimmybogard.com/
-
-> **Note:** This skill applies publicly documented guidance. It does not represent or speak for the named sources.
+Grounded in publicly available content from Steve Smith (Ardalis) -- SOLID in .NET, guard clauses, clean architecture layering -- and Jimmy Bogard -- SRP for aggregate design, OCP for domain event handling. This skill applies publicly documented guidance and does not represent or speak for the named sources.
 
 ## References
 
-- [SOLID Principles in C#](https://learn.microsoft.com/en-us/archive/msdn-magazine/2014/may/csharp-best-practices-dangers-of-violating-solid-principles-in-csharp)
 - [Dependency Injection in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
-- [Covariance and Contravariance in Generics](https://learn.microsoft.com/en-us/dotnet/standard/generics/covariance-and-contravariance)
 - [Clean Architecture (Ardalis)](https://github.com/ardalis/CleanArchitecture)
 
 ## Attribution
