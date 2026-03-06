@@ -198,7 +198,7 @@ staThread.Join();
 | Feature coverage | 100% of Office features | OOXML file format only |
 | Charts, macros, VBA | Full support | Read/modify only |
 | Pivot tables | Full support | Full support |
-| Print/export to PDF | Yes (via Office engine) | No (use QuestPDF) |
+| Print/export to PDF | Yes (via Office engine) | No (use PDFsharp/MigraDoc) |
 | Licensing | Office license required | MIT (free) |
 
 **Recommendation:** Use Open XML SDK for document generation, manipulation, and server-side processing. Use COM only when you need features that require the Office rendering engine (print layout, PDF export via Office, macro execution) and Windows desktop deployment is acceptable.

@@ -464,7 +464,6 @@ Open XML SDK does not create PDFs. For PDF output from .NET, use **PDFsharp/Migr
 |---------|---------|--------------|----------|
 | **PDFsharp** | MIT | Good (OpenType font embedding) | Direct PDF creation, graphics, precise layout |
 | **MigraDoc** | MIT | Good (inherits from PDFsharp) | Document-oriented: paragraphs, tables, headers, page numbers |
-| QuestPDF | Community (revenue cap) | Excellent (HarfBuzz) | Fluent API, complex layouts, multilingual docs |
 | iText 7 | AGPL / Commercial | Good (with font config) | Forms, digital signatures, PDF/A compliance |
 
 **PDFsharp** is low-level (draw text, lines, images at coordinates). **MigraDoc** builds on PDFsharp with a document object model (sections, paragraphs, tables, styles) — use MigraDoc for most document generation tasks.
