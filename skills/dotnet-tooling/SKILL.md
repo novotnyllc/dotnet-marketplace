@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET SDK installation (dotnet-install, workloads), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT/trimming, GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy decompilation, VS Code debug config (launch.json, coreclr, remote), C# LSP (csharp-ls, OmniSharp), and version detection/upgrade. Spans 35 topic areas. Do not use for UI implementation or API security design.
+description: Manages .NET SDK installation (dotnet-install, workloads), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT/trimming, GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), ILSpy decompilation, VS Code debug config (launch.json, coreclr, remote), C# LSP (csharp-ls, OmniSharp), and version detection/upgrade. Spans 34 topic areas. Do not use for UI implementation or API security design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 35 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 34 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ## Routing Table
 
@@ -34,8 +34,7 @@ user-invocable: false
 | System.CommandLine | RootCommand, Option<T>, SetAction, parsing | System.CommandLine 2.0, RootCommand, Option<T> | references/system-commandline.md |
 | Spectre.Console | tables, trees, progress, prompts, live displays | Tables, trees, progress, prompts, live displays | references/spectre-console.md |
 | Terminal.Gui | views, layout, menus, dialogs, bindings, themes | Terminal.Gui v2, views, layout, menus, dialogs | references/terminal-gui.md |
-| CLI distribution | AOT vs framework-dependent, RID matrix | AOT vs framework-dependent, RID matrix, single-file | references/cli-distribution.md |
-| CLI packaging | Homebrew, apt/deb, winget, Scoop, Chocolatey | Homebrew, apt/deb, winget, Scoop, Chocolatey | references/cli-packaging.md |
+| CLI distribution | AOT vs framework-dependent, RID matrix, Homebrew, winget, Scoop, dotnet tool | Distribution strategy, single-file publish, per-platform packaging | references/cli-distribution.md |
 | CLI release pipeline | GHA build matrix, artifact staging, checksums | GHA build matrix, artifact staging, checksums | references/cli-release-pipeline.md |
 | Documentation strategy | Starlight, Docusaurus, DocFX decision tree | Starlight, Docusaurus, DocFX decision tree | references/documentation-strategy.md |
 | Tool management | global, local, manifests, restore, pinning | Global/local tools, manifests, restore, pinning | references/tool-management.md |

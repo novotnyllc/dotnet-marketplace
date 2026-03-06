@@ -1,8 +1,8 @@
-# CLI Distribution
+# CLI Distribution and Packaging
 
-CLI distribution strategy for .NET tools: choosing between Native AOT single-file publish, framework-dependent deployment, and `dotnet tool` packaging. Runtime Identifier (RID) matrix planning for cross-platform targets (linux-x64, osx-arm64, win-x64, linux-arm64), single-file publish configuration, and binary size optimization techniques for CLI applications.
+CLI distribution strategy and multi-platform packaging for .NET tools: choosing between Native AOT single-file publish, framework-dependent deployment, and `dotnet tool` packaging. Runtime Identifier (RID) matrix planning for cross-platform targets, single-file publish configuration, binary size optimization, and packaging for Homebrew, apt/deb, winget, Scoop, Chocolatey, and `dotnet tool`.
 
-**Version assumptions:** .NET 8.0+ baseline. Native AOT for console apps is fully supported since .NET 8. Single-file publish has been mature since .NET 6.
+**Version assumptions:** .NET 8.0+ baseline. Native AOT for console apps is fully supported since .NET 8. Package manager formats are stable across .NET versions.
 
 ## Distribution Strategy Decision Matrix
 
@@ -41,7 +41,6 @@ Choose the distribution model based on target audience and deployment constraint
 - Users install with `dotnet tool install -g mytool`
 - Requires .NET SDK on target (not just runtime)
 - Best for developer-facing tools in the .NET ecosystem
-- See `references/cli-packaging.md` for NuGet distribution details
 
 
 ## Runtime Identifier (RID) Matrix
@@ -146,7 +145,6 @@ Trimming removes unused code from the published output. For self-contained non-A
 <PropertyGroup>
   <PublishTrimmed>true</PublishTrimmed>
   <TrimMode>link</TrimMode>
-  <!-- Suppress known trim warnings for CLI scenarios -->
   <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
 </PropertyGroup>
 ```
@@ -166,109 +164,325 @@ For Native AOT builds, size is controlled by AOT-specific MSBuild properties. Se
 | Native AOT + invariant globalization + stripped | 5-10 MB |
 | Framework-dependent | 1-5 MB |
 
-### Practical Size Reduction Checklist
 
-1. **Enable invariant globalization** if the tool does not need locale-specific formatting (`InvariantGlobalization=true`)
-2. **Strip symbols** on Linux/macOS (`StripSymbols=true`) -- keep separate symbol files for crash analysis
-3. **Optimize for size** (`OptimizationPreference=Size`) -- minimal runtime performance impact for I/O-bound CLI tools
-4. **Disable reflection** where possible -- use source generators for JSON serialization (`references/aot-architecture.md`)
-5. **Audit NuGet dependencies** -- each dependency adds to the binary; remove unused packages
+## Homebrew (macOS / Linux)
 
+Homebrew is the primary package manager for macOS and widely used on Linux. Use a binary tap formula for Native AOT CLI tools.
 
-## Framework-Dependent vs Self-Contained Trade-offs
+### Binary Tap (Formula)
 
-### Framework-Dependent
+A formula downloads pre-built binaries per platform:
 
-```bash
-dotnet publish -c Release -r linux-x64 --self-contained false
+```ruby
+# Formula/mytool.rb
+class Mytool < Formula
+  desc "A CLI tool for managing widgets"
+  homepage "https://github.com/myorg/mytool"
+  version "1.2.3"
+  license "MIT"
+
+  on_macos do
+    on_arm do
+      url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-osx-arm64.tar.gz"
+      sha256 "abc123..."
+    end
+    on_intel do
+      url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-osx-x64.tar.gz"
+      sha256 "def456..."
+    end
+  end
+
+  on_linux do
+    on_arm do
+      url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-linux-arm64.tar.gz"
+      sha256 "ghi789..."
+    end
+    on_intel do
+      url "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-linux-x64.tar.gz"
+      sha256 "jkl012..."
+    end
+  end
+
+  def install
+    bin.install "mytool"
+  end
+
+  test do
+    assert_match version.to_s, shell_output("#{bin}/mytool --version")
+  end
+end
 ```
 
-**Advantages:**
-- Smallest artifact (1-5 MB)
-- Serviced by runtime updates (security patches applied by runtime, not app rebuild)
-- Faster publish times
+### Hosting a Tap
 
-**Disadvantages:**
-- Requires matching .NET runtime on target
-- Runtime version mismatch causes startup failures
-- Users must manage runtime installation
-
-### Self-Contained
+Create a repo named `homebrew-tap` with a `Formula/` directory containing the formula. Users install with:
 
 ```bash
-dotnet publish -c Release -r linux-x64 --self-contained true
+brew tap myorg/tap
+brew install mytool
 ```
 
-**Advantages:**
-- No runtime dependency on target
-- App controls exact runtime version
-- Side-by-side deployment (multiple apps, different runtimes)
 
-**Disadvantages:**
-- Larger artifact (60-80 MB without trimming)
-- Must rebuild and redistribute for runtime security patches
-- One artifact per target RID
+## apt/deb (Debian/Ubuntu)
 
+### Package Directory Structure
 
-## Publishing Workflow
+```
+mytool_1.2.3_amd64/
+  DEBIAN/
+    control
+  usr/
+    bin/
+      mytool
+```
 
-### Local Development
+### Control File
+
+```
+Package: mytool
+Version: 1.2.3
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: My Org <dev@myorg.com>
+Description: A CLI tool for managing widgets
+ MyTool provides fast widget management from the command line.
+ Built with .NET Native AOT for zero-dependency execution.
+Homepage: https://github.com/myorg/mytool
+```
+
+### Build Command
 
 ```bash
-# Quick local publish for testing
-dotnet publish -c Release -r osx-arm64
-
-# Verify the binary
-./bin/Release/net8.0/osx-arm64/publish/mytool --version
+dpkg-deb --build --root-owner-group mytool_1.2.3_amd64
 ```
 
-### Producing Release Artifacts
+**RID to Debian architecture mapping:**
+
+| .NET RID | Debian Architecture |
+|----------|-------------------|
+| `linux-x64` | `amd64` |
+| `linux-arm64` | `arm64` |
+
+
+## winget (Windows Package Manager)
+
+### Directory Structure
+
+```
+manifests/
+  m/
+    MyOrg/
+      MyTool/
+        1.2.3/
+          MyOrg.MyTool.yaml              # Version manifest
+          MyOrg.MyTool.installer.yaml    # Installer manifest
+          MyOrg.MyTool.locale.en-US.yaml # Locale manifest
+```
+
+### Version Manifest (MyOrg.MyTool.yaml)
+
+```yaml
+PackageIdentifier: MyOrg.MyTool
+PackageVersion: 1.2.3
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.9.0
+```
+
+### Installer Manifest (MyOrg.MyTool.installer.yaml)
+
+```yaml
+PackageIdentifier: MyOrg.MyTool
+PackageVersion: 1.2.3
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+  - RelativeFilePath: mytool.exe
+    PortableCommandAlias: mytool
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-x64.zip
+    InstallerSha256: ABC123...
+  - Architecture: arm64
+    InstallerUrl: https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-arm64.zip
+    InstallerSha256: DEF456...
+ManifestType: installer
+ManifestVersion: 1.9.0
+```
+
+### Submitting to winget-pkgs
+
+1. Fork `microsoft/winget-pkgs` on GitHub
+2. Create manifest files in the correct directory structure
+3. Validate locally: `winget validate --manifest <path>`
+4. Submit a PR -- automated checks run against the manifest
+
+See `references/cli-release-pipeline.md` for automating winget PR creation.
+
+
+## Scoop (Windows)
+
+Scoop is popular among Windows power users. Manifests are JSON files in a bucket repository.
+
+```json
+{
+  "version": "1.2.3",
+  "description": "A CLI tool for managing widgets",
+  "homepage": "https://github.com/myorg/mytool",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-x64.zip",
+      "hash": "abc123..."
+    },
+    "arm64": {
+      "url": "https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-arm64.zip",
+      "hash": "def456..."
+    }
+  },
+  "bin": "mytool.exe",
+  "checkver": {
+    "github": "https://github.com/myorg/mytool"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/myorg/mytool/releases/download/v$version/mytool-$version-win-x64.zip"
+      },
+      "arm64": {
+        "url": "https://github.com/myorg/mytool/releases/download/v$version/mytool-$version-win-arm64.zip"
+      }
+    }
+  }
+}
+```
+
+Host in a GitHub repo named `scoop-mytool` with a `bucket/` directory. Users install with:
+
+```powershell
+scoop bucket add myorg https://github.com/myorg/scoop-mytool
+scoop install mytool
+```
+
+
+## Chocolatey
+
+### Package Structure
+
+```
+mytool/
+  mytool.nuspec
+  tools/
+    chocolateyInstall.ps1
+    LICENSE.txt
+```
+
+### mytool.nuspec
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.xmldata.org/2004/07/nuspec">
+  <metadata>
+    <id>mytool</id>
+    <version>1.2.3</version>
+    <title>MyTool</title>
+    <authors>My Org</authors>
+    <projectUrl>https://github.com/myorg/mytool</projectUrl>
+    <license type="expression">MIT</license>
+    <description>A CLI tool for managing widgets.</description>
+    <tags>cli dotnet tools</tags>
+  </metadata>
+</package>
+```
+
+### tools/chocolateyInstall.ps1
+
+```powershell
+$ErrorActionPreference = 'Stop'
+
+$packageArgs = @{
+  packageName    = 'mytool'
+  url64bit       = 'https://github.com/myorg/mytool/releases/download/v1.2.3/mytool-1.2.3-win-x64.zip'
+  checksum64     = 'ABC123...'
+  checksumType64 = 'sha256'
+  unzipLocation  = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
+}
+
+Install-ChocolateyZipPackage @packageArgs
+```
+
+
+## dotnet tool (Global and Local)
+
+`dotnet tool` is the simplest distribution for .NET developers. Tools are distributed as NuGet packages.
+
+### Project Configuration for Tool Packaging
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <!-- Tool packaging properties -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>mytool</ToolCommandName>
+    <PackageId>MyOrg.MyTool</PackageId>
+    <Version>1.2.3</Version>
+    <Description>A CLI tool for managing widgets</Description>
+    <Authors>My Org</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/myorg/mytool</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+</Project>
+```
+
+### Building and Publishing
 
 ```bash
-#!/bin/bash
-# build-all.sh -- Produce artifacts for all target RIDs
-set -euo pipefail
+# Pack the tool
+dotnet pack -c Release
 
-VERSION="${1:?Usage: build-all.sh <version>}"
-PROJECT="src/MyCli/MyCli.csproj"
-OUTPUT_DIR="artifacts"
-
-RIDS=("linux-x64" "linux-arm64" "osx-arm64" "win-x64")
-# Note: Native AOT cross-compilation for ARM64 on x64 requires platform toolchain
-# See `references/cli-release-pipeline.md` for CI-based cross-compilation setup
-
-for rid in "${RIDS[@]}"; do
-  echo "Publishing for $rid..."
-  dotnet publish "$PROJECT" \
-    -c Release \
-    -r "$rid" \
-    -o "$OUTPUT_DIR/$rid" \
-    /p:Version="$VERSION"
-done
-
-# Create archives
-for rid in "${RIDS[@]}"; do
-  if [[ "$rid" == win-* ]]; then
-    (cd "$OUTPUT_DIR/$rid" && zip -q "../mytool-$VERSION-$rid.zip" *)
-  else
-    tar -czf "$OUTPUT_DIR/mytool-$VERSION-$rid.tar.gz" -C "$OUTPUT_DIR/$rid" .
-  fi
-done
-
-echo "Artifacts in $OUTPUT_DIR/"
+# Publish to NuGet.org
+dotnet nuget push bin/Release/MyOrg.MyTool.1.2.3.nupkg \
+  --source https://api.nuget.org/v3/index.json \
+  --api-key "$NUGET_API_KEY"
 ```
 
-### Checksum Generation
-
-Always produce checksums for release artifacts:
+### Installing dotnet Tools
 
 ```bash
-# Generate SHA-256 checksums
-cd artifacts
-shasum -a 256 *.tar.gz *.zip > checksums-sha256.txt
+# Global tool (available system-wide)
+dotnet tool install -g MyOrg.MyTool
+
+# Local tool (per-project, tracked in .config/dotnet-tools.json)
+dotnet new tool-manifest  # first time only
+dotnet tool install MyOrg.MyTool
+
+# Update
+dotnet tool update -g MyOrg.MyTool
+
+# Run local tool
+dotnet tool run mytool
+# or just:
+dotnet mytool
 ```
 
-See `references/cli-release-pipeline.md` for automating this in GitHub Actions.
+### Global vs Local Tools
+
+| Aspect | Global Tool | Local Tool |
+|--------|------------|------------|
+| Scope | System-wide (per user) | Per-project directory |
+| Install location | `~/.dotnet/tools` | `.config/dotnet-tools.json` |
+| Version management | Manual update | Tracked in source control |
+| CI/CD | Must install before use | `dotnet tool restore` restores all |
+| Best for | Personal productivity tools | Project-specific build tools |
 
 
 ## Agent Gotchas
@@ -276,9 +490,9 @@ See `references/cli-release-pipeline.md` for automating this in GitHub Actions.
 1. **Do not set RuntimeIdentifier in the .csproj for multi-platform CLI tools.** Hardcoding a RID in the project file prevents building for other platforms. Pass `-r <rid>` at publish time instead.
 2. **Do not use PublishSingleFile with PublishAot.** Native AOT output is inherently single-file. Setting both is redundant and may cause confusing build warnings.
 3. **Do not skip InvariantGlobalization for size-sensitive CLI tools.** Globalization data adds ~25 MB to AOT binaries. Most CLI tools that do not format locale-specific dates/currencies should enable `InvariantGlobalization=true`.
-4. **Do not distribute self-contained non-trimmed binaries.** A 60-80 MB CLI tool is unacceptable for end users. Either trim (PublishTrimmed), use AOT, or distribute as framework-dependent.
-5. **Do not forget to produce checksums for release artifacts.** Users and package managers need SHA-256 checksums to verify download integrity. See `references/cli-release-pipeline.md` for automated checksum generation.
-6. **Do not hardcode secrets in publish scripts.** Use environment variable placeholders (`${SIGNING_KEY}`) with a comment about CI secret storage for any signing or upload credentials.
+4. **Do not hardcode SHA-256 hashes in package manifests.** Generate checksums from actual release artifacts, not placeholder values. All package managers validate checksums against downloaded files.
+5. **Do not use `InstallerType: exe` for portable CLI tools in winget.** Use `InstallerType: zip` with `NestedInstallerType: portable` for standalone executables. The `exe` type implies an installer with silent flags.
+6. **Do not forget `PackAsTool` for dotnet tool projects.** Without `<PackAsTool>true</PackAsTool>`, `dotnet pack` produces a library package, not an installable tool.
 
 
 ## References
@@ -288,3 +502,10 @@ See `references/cli-release-pipeline.md` for automating this in GitHub Actions.
 - [Native AOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
 - [Runtime Identifier (RID) catalog](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog)
 - [Trimming options](https://learn.microsoft.com/en-us/dotnet/core/deploying/trimming/trimming-options)
+- [Homebrew Formula Cookbook](https://docs.brew.sh/Formula-Cookbook)
+- [Homebrew Taps](https://docs.brew.sh/Taps)
+- [dpkg-deb manual](https://man7.org/linux/man-pages/man1/dpkg-deb.1.html)
+- [winget manifest schema](https://learn.microsoft.com/en-us/windows/package-manager/package/manifest)
+- [Scoop Wiki](https://github.com/ScoopInstaller/Scoop/wiki)
+- [Chocolatey package creation](https://docs.chocolatey.org/en-us/create/create-packages)
+- [.NET tool packaging](https://learn.microsoft.com/en-us/dotnet/core/tools/global-tools-how-to-create)

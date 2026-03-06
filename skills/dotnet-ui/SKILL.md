@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui
-description: Builds .NET UI apps across Blazor (Server, WASM, Hybrid, Auto), MAUI (XAML, MVVM, Shell, Native AOT), Uno Platform (MVUX, Extensions, Toolkit), WPF (.NET 8+, Fluent theme), WinUI 3 (Windows App SDK, MSIX, Mica/Acrylic, adaptive layout), and WinForms (high-DPI, dark mode) with JS interop, accessibility (SemanticProperties, ARIA), localization (.resx, RTL), platform bindings (Java.Interop, ObjCRuntime), and framework selection. Spans 21 topic areas. Do not use for backend API design or CI/CD pipelines.
+description: Builds .NET UI apps across Blazor (Server, WASM, Hybrid, Auto), MAUI (XAML, MVVM, Shell, Native AOT), Uno Platform (MVUX, Extensions, Toolkit), WPF (.NET 8+, Fluent theme), WinUI 3 (Windows App SDK, MSIX, Mica/Acrylic, adaptive layout), and WinForms (high-DPI, dark mode) with JS interop, accessibility (SemanticProperties, ARIA), localization (.resx, RTL), platform bindings (Java.Interop, ObjCRuntime), and framework selection. Spans 20 topic areas. Do not use for backend API design or CI/CD pipelines.
 license: MIT
 user-invocable: false
 ---
@@ -32,8 +32,7 @@ user-invocable: false
 | WinForms | high-DPI, dark mode, DI, modernization | High-DPI scaling, dark mode, DI patterns, modernization | references/winforms-basics.md |
 | Accessibility | SemanticProperties, ARIA, AutomationPeer | SemanticProperties, ARIA attributes, AutomationPeer, per-platform testing | references/accessibility.md |
 | Localization | .resx, IStringLocalizer, pluralization, RTL | .resx resources, IStringLocalizer, source generators, pluralization, RTL | references/localization.md |
-| WinUI controls/layout | CommandBar, GridView, adaptive triggers, breakpoints | WinUI control selection, adaptive layout, ScrollViewer conflicts | references/winui-controls-layout.md |
-| WinUI styling/theming | Mica, Acrylic, system brushes, Fluent icons | Mica/Acrylic materials, theme resources, typography, icons | references/winui-styling-theming.md |
+| WinUI controls/styling | CommandBar, GridView, adaptive triggers, Mica, system brushes, icons | WinUI control selection, adaptive layout, theming, materials, typography | references/winui-controls-styling.md |
 | UI chooser | framework selection decision tree | Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms | references/ui-chooser.md |
 | Platform bindings | Java.Interop, ObjCRuntime, Android AAR, iOS XCFramework, Slim Binding | Custom native SDK bindings for Android and Apple platforms | references/platform-bindings.md |
 

@@ -8,7 +8,7 @@
 
 ## Overview
 
-**dotnet-artisan** provides 8 broad skills and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
+**dotnet-artisan** provides 9 skills (2 routing + 7 domain) and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -61,10 +61,11 @@ Compatibility is validated in CI with structural smoke checks via `scripts/run-a
 
 ## Skill Catalog
 
-The plugin organizes 8 broad skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.
+The plugin organizes 9 skills in a flat directory layout (`skills/<skill-name>/SKILL.md`). Each skill follows the Agent Skills open standard with a `SKILL.md` file containing structured frontmatter (`name`, `description`, `license`, `user-invocable`) and rich guidance content. Companion files in `references/` provide deep-dive content on demand.
 
 | Skill | Domain | Key Topics |
 |---|---|---|
+| **using-dotnet** | Gateway routing | Detects .NET intent, enforces skill invocation before planning |
 | **dotnet-advisor** | Router/dispatcher | Routes queries to domain skills, loads coding standards as baseline |
 | **dotnet-csharp** | C# language & runtime | Modern patterns, async/await, DI, config, source generators, LINQ, concurrency, SOLID |
 | **dotnet-api** | ASP.NET Core & backend | Minimal APIs, EF Core, gRPC, SignalR, security (OWASP), Aspire, architecture patterns |
@@ -126,7 +127,8 @@ graph TB
             CR[code-review-agent]
         end
 
-        subgraph Skills["8 Broad Skills"]
+        subgraph Skills["9 Skills"]
+            UD[using-dotnet<br/>Gateway]
             ADV[dotnet-advisor<br/>Router]
             CS[dotnet-csharp<br/>C# Language]
             API[dotnet-api<br/>ASP.NET/Backend]
@@ -167,6 +169,7 @@ graph TB
     DG --> TOOL
     DA --> API
     DA --> CS
+    UD --> ADV
     ADV --> CS
     ADV --> API
     ADV --> UIS
