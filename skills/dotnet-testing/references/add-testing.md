@@ -109,7 +109,7 @@ Add a mocking library if the project needs test doubles:
 <PackageVersion Include="NSubstitute" Version="5.3.0" />
 ```
 
-Or for assertion libraries (**Shouldly** recommended — FluentAssertions v8+ has a restrictive license):
+Or for assertion libraries (**Shouldly** recommended):
 
 ```xml
 <PackageVersion Include="Shouldly" Version="4.2.1" />

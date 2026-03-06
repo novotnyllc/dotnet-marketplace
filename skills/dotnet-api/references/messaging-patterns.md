@@ -2,7 +2,7 @@
 
 Durable messaging patterns for .NET event-driven architectures. Covers publish/subscribe, competing consumers, dead-letter queues, saga/process manager orchestration, and delivery guarantee strategies using Azure Service Bus, RabbitMQ, and Wolverine.
 
-**Library guidance:** Use **Wolverine** (MIT) as the recommended messaging abstraction for new projects. It supports RabbitMQ, Azure Service Bus, Amazon SQS, and in-memory transport with a clean API. **Rebus** (MIT) is a lighter alternative. See `references/recommended-libraries.md` in [skill:dotnet-csharp] for the full licensing reference.
+**Library guidance:** Use **Wolverine** (MIT) as the recommended messaging abstraction for new projects. It supports RabbitMQ, Azure Service Bus, Amazon SQS, and in-memory transport with a clean API. **Rebus** (MIT) is a lighter alternative.
 
 ## Messaging Fundamentals
 
