@@ -1,6 +1,6 @@
 ---
 name: dotnet-testing
-description: Defines .NET test strategy and implementation patterns across xUnit, integration/E2E, snapshots, Playwright, and benchmarks. Do not use for production API architecture or CI workflow authoring.
+description: Defines .NET test strategy and implementation patterns across xUnit v3 (Facts, Theories, fixtures, IAsyncLifetime), integration testing (WebApplicationFactory, Testcontainers, Aspire), snapshot testing (Verify, scrubbing), Playwright E2E browser automation, BenchmarkDotNet microbenchmarks, code coverage (Coverlet), mutation testing (Stryker.NET), UI testing (page objects, selectors), and AOT WASM test compilation. Spans 12 topic areas. Do not use for production API architecture or CI workflow authoring.
 license: MIT
 user-invocable: false
 ---

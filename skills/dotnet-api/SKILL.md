@@ -1,6 +1,6 @@
 ---
 name: dotnet-api
-description: Builds ASP.NET Core APIs, data access, and backend services with security, resilience, messaging, OpenAPI, and architecture guidance. Do not use for UI rendering patterns or CI/CD pipeline authoring.
+description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP), resilience (Polly), messaging (MassTransit), OpenAPI, .NET Aspire, Semantic Kernel, and architecture patterns. Spans 27 topic areas with companion references for minimal APIs, background services, cryptography, and file-based apps. Do not use for UI rendering patterns or CI/CD pipeline authoring.
 license: MIT
 user-invocable: false
 ---

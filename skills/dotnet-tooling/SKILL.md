@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET project setup, MSBuild, performance tooling, Native AOT, CLI architecture, and version orchestration. Do not use for framework-specific UI implementation or API security policy design.
+description: Manages .NET project setup (.slnx, Directory.Build.props, CPM, analyzers), MSBuild authoring (targets, props, conditions), build optimization (binary logs, parallel), performance patterns (Span, ArrayPool, ref struct, stackalloc), profiling (dotnet-counters, dotnet-trace, flame graphs), Native AOT (PublishAot, ILLink, trimming), GC tuning (LOH/POH, Gen0/1/2), CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), multi-targeting (PolySharp), and version detection/upgrade. Spans 32 topic areas. Do not use for framework-specific UI implementation or API security policy design.
 license: MIT
 user-invocable: false
 ---

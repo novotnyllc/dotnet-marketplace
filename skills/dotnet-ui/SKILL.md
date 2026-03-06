@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui
-description: Builds .NET UI applications across Blazor, MAUI, Uno, WPF, WinUI, and WinForms with accessibility and localization guidance. Do not use for backend API middleware design or CI/CD pipeline configuration.
+description: Builds .NET UI applications across Blazor (Server, WASM, Hybrid, Auto render modes), MAUI (XAML, MVVM, Shell, Native AOT), Uno Platform (MVUX, Extensions, Toolkit), WPF (.NET 8+, Fluent theme), WinUI 3 (Windows App SDK, MSIX), and WinForms (high-DPI, dark mode) with component lifecycle, JS interop, accessibility (SemanticProperties, ARIA, AutomationPeer), localization (.resx, IStringLocalizer, RTL), and framework selection guidance. Spans 18 topic areas. Do not use for backend API middleware design or CI/CD pipeline configuration.
 license: MIT
 user-invocable: false
 ---
