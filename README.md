@@ -32,6 +32,20 @@ From within Claude Code, run:
 
 Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
 
+### OpenCode (oh-my-opencode)
+
+OpenCode can use the Claude Code plugin install above. Then enable Claude plugin loading in your OpenCode config:
+
+```json
+{
+  "claude_code": {
+    "plugins": true
+  }
+}
+```
+
+Use `.config/opencode/oh-my-opencode.json` for this setting.
+
 ### GitHub Copilot CLI
 
 Install as a Copilot plugin:
@@ -48,7 +62,7 @@ The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-lev
 Codex discovers skills via the `.agents/openai.yaml` manifest at the repository root. Install with:
 
 ```bash
-$skill-installer novotnyllc/dotnet-artisan
+$skill-installer install https://github.com/novotnyllc/dotnet-artisan
 ```
 
 You can also sync skill directories into `~/.codex/skills/`.
