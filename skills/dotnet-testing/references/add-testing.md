@@ -109,12 +109,6 @@ Add a mocking library if the project needs test doubles:
 <PackageVersion Include="NSubstitute" Version="5.3.0" />
 ```
 
-Or for assertion libraries:
-
-```xml
-<PackageVersion Include="FluentAssertions" Version="8.0.1" />
-```
-
 ---
 
 ## Step 4: Configure Code Coverage

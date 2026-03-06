@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Guides C# language patterns, coding standards, and runtime design for async, dependency injection, serialization, analyzers, and type modeling. Do not use for ASP.NET endpoint architecture or CI/CD workflow guidance.
+description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, DI, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, globalization, native interop (P/Invoke, LibraryImport, ComWrappers), WASM interop (JSImport/JSExport), and type design. Spans 25 topics. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD guidance.
 license: MIT
 user-invocable: false
 ---
@@ -9,11 +9,21 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 22 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 25 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
-Baseline dependency: `references/coding-standards.md` defines naming, file layout, and style rules that apply to all C# code generation and review tasks. Load it by default whenever C# code will be produced.
+### Always-Load Baseline
 
-Most-shared companion: `references/async-patterns.md` is referenced by 4 agents and covers async/await patterns critical to nearly all .NET development.
+These references define correctness and quality standards that apply to all C# code — load them by default whenever producing or reviewing code, regardless of what the user asked for:
+
+- `references/coding-standards.md` — naming conventions, file layout, style rules
+- `references/async-patterns.md` — async/await correctness, ConfigureAwait, cancellation propagation (nearly all .NET code uses async)
+- `references/solid-principles.md` — SOLID, DRY, single responsibility, dependency inversion, anti-pattern detection
+- `references/code-smells.md` — common mistakes the agent should avoid without being told (async void, DI lifetime misuse, swallowed exceptions)
+- `references/dotnet-releases.md` — .NET 10/11 and C# 14/15 features, version matrix, TFM-specific code generation rules (compensates for training data cutoff)
+
+### On-Demand References
+
+Load these when the topic matches (see Routing Table keywords):
 
 ## Routing Table
 
@@ -34,13 +44,16 @@ Most-shared companion: `references/async-patterns.md` is referenced by 4 agents 
 | Roslyn analyzers | DiagnosticAnalyzer, CodeFixProvider, multi-version | DiagnosticAnalyzer, CodeFixProvider, CodeRefactoring | references/roslyn-analyzers.md |
 | Editorconfig | IDE/CA severity, AnalysisLevel, globalconfig | IDE/CA severity, AnalysisLevel, globalconfig, enforcement | references/editorconfig.md |
 | File I/O | FileStream, RandomAccess, FileSystemWatcher, paths | FileStream, RandomAccess, FileSystemWatcher, MemoryMappedFile | references/file-io.md |
-| Native interop | P/Invoke, LibraryImport, marshalling | P/Invoke, LibraryImport, marshalling, cross-platform | references/native-interop.md |
+| Native interop | P/Invoke, LibraryImport, ComWrappers, marshalling | P/Invoke, LibraryImport, ComWrappers, marshalling, cross-platform | references/native-interop.md |
 | Input validation | .NET 10 AddValidation, FluentValidation | .NET 10 AddValidation, FluentValidation, ProblemDetails | references/input-validation.md |
 | Validation patterns | DataAnnotations, IValidatableObject, IValidateOptions | DataAnnotations, IValidatableObject, IValidateOptions\<T\> | references/validation-patterns.md |
 | Modern patterns | records, pattern matching, primary constructors | Records, pattern matching, primary constructors, C# 12-15 | references/modern-patterns.md |
 | API design | naming, parameter ordering, return types, extensions | Naming, parameter ordering, return types, error patterns | references/api-design.md |
 | Type design/perf | struct vs class, sealed, Span/Memory, collections | struct vs class, sealed, Span/Memory, collections | references/type-design-performance.md |
 | Code smells | anti-patterns, async misuse, DI mistakes, fixes | Anti-patterns, async misuse, DI mistakes, fixes | references/code-smells.md |
+| .NET releases | .NET 10, .NET 11, C# 14, C# 15, TFM, version | Version matrix, new features, TFM-specific code generation | references/dotnet-releases.md |
+| Globalization | CultureInfo, StringComparison, TimeZoneInfo, Rune, encoding | Culture-aware coding, string comparison, time zones, character processing | references/globalization.md |
+| WASM interop | JSImport, JSExport, standalone WASM, wasm-experimental, browser | JSImport/JSExport, standalone .NET WASM, browser APIs, WASM AOT | references/wasm-interop.md |
 
 ## Scope
 
@@ -49,11 +62,12 @@ Most-shared companion: `references/async-patterns.md` is referenced by 4 agents 
 - Code quality (analyzers, editorconfig, code smells, SOLID)
 - Type design and domain modeling
 - File I/O and native interop
-- Input validation (model and options validation)
+- Globalization (string comparison, CultureInfo, time zones, character processing, encoding)
+- Input validation at the model level (DataAnnotations, IValidatableObject, FluentValidation, Options validation)
 
 ## Out of scope
 
-- ASP.NET Core / web API patterns -> [skill:dotnet-api]
+- ASP.NET Core / web API patterns (request-level validation, endpoint filters) -> [skill:dotnet-api]
 - UI framework patterns -> [skill:dotnet-ui]
 - Testing patterns -> [skill:dotnet-testing]
 - Build/MSBuild/project setup -> [skill:dotnet-tooling]

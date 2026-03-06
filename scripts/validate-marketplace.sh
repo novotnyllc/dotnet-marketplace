@@ -330,6 +330,110 @@ fi
 
 echo ""
 
+# --- Codex plugin manifest (.codex-plugin/plugin.json) ---
+
+echo "--- Codex plugin manifest ---"
+
+CODEX_MANIFEST="$PLUGIN_DIR/.codex-plugin/plugin.json"
+if [ ! -f "$CODEX_MANIFEST" ]; then
+    echo "ERROR: .codex-plugin/plugin.json not found"
+    errors=$((errors + 1))
+else
+    if ! jq empty "$CODEX_MANIFEST" 2>/dev/null; then
+        echo "ERROR: .codex-plugin/plugin.json is not valid JSON"
+        errors=$((errors + 1))
+    else
+        echo "OK: .codex-plugin/plugin.json is valid JSON"
+        CODEX_NAME=$(jq -r '.name // empty' "$CODEX_MANIFEST")
+        if [ -z "$CODEX_NAME" ]; then
+            echo "ERROR: .codex-plugin/plugin.json missing name field"
+            errors=$((errors + 1))
+        else
+            echo "OK: .codex-plugin/plugin.json name = \"$CODEX_NAME\""
+            # Cross-check: Codex manifest name should match Claude manifest name
+            CLAUDE_NAME=$(jq -r '.name // empty' "$PLUGIN_JSON" 2>/dev/null)
+            if [ -n "$CLAUDE_NAME" ] && [ "$CODEX_NAME" != "$CLAUDE_NAME" ]; then
+                echo "ERROR: Codex manifest name \"$CODEX_NAME\" does not match Claude manifest name \"$CLAUDE_NAME\""
+                errors=$((errors + 1))
+            fi
+        fi
+    fi
+fi
+
+# --- Codex marketplace (.agents/plugins/marketplace.json) ---
+
+echo ""
+echo "--- Codex marketplace ---"
+
+CODEX_MARKETPLACE="$PLUGIN_DIR/.agents/plugins/marketplace.json"
+if [ ! -f "$CODEX_MARKETPLACE" ]; then
+    echo "ERROR: .agents/plugins/marketplace.json not found"
+    errors=$((errors + 1))
+else
+    if ! jq empty "$CODEX_MARKETPLACE" 2>/dev/null; then
+        echo "ERROR: .agents/plugins/marketplace.json is not valid JSON"
+        errors=$((errors + 1))
+    else
+        echo "OK: .agents/plugins/marketplace.json is valid JSON"
+
+        # Validate name field
+        CODEX_MKT_NAME=$(jq -r '.name // empty' "$CODEX_MARKETPLACE")
+        if [ -z "$CODEX_MKT_NAME" ]; then
+            echo "ERROR: .agents/plugins/marketplace.json missing name field"
+            errors=$((errors + 1))
+        else
+            echo "OK: marketplace name = \"$CODEX_MKT_NAME\""
+        fi
+
+        # Validate plugins array
+        if ! jq -e '.plugins | type == "array" and length > 0' "$CODEX_MARKETPLACE" >/dev/null 2>&1; then
+            echo "ERROR: .agents/plugins/marketplace.json must have non-empty plugins array"
+            errors=$((errors + 1))
+        else
+            CODEX_PLUGIN_COUNT=$(jq '.plugins | length' "$CODEX_MARKETPLACE")
+            echo "OK: $CODEX_PLUGIN_COUNT plugin(s) defined"
+
+            for i in $(seq 0 $((CODEX_PLUGIN_COUNT - 1))); do
+                P_NAME=$(jq -r ".plugins[$i].name // empty" "$CODEX_MARKETPLACE")
+                P_SOURCE_TYPE=$(jq -r ".plugins[$i].source.source // empty" "$CODEX_MARKETPLACE")
+                P_SOURCE_PATH=$(jq -r ".plugins[$i].source.path // empty" "$CODEX_MARKETPLACE")
+
+                if [ -z "$P_NAME" ]; then
+                    echo "ERROR: plugins[$i].name is missing"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: plugins[$i].name = \"$P_NAME\""
+                fi
+
+                if [ "$P_SOURCE_TYPE" != "local" ]; then
+                    echo "ERROR: plugins[$i].source.source must be \"local\" (got: \"$P_SOURCE_TYPE\")"
+                    errors=$((errors + 1))
+                fi
+
+                if [ -z "$P_SOURCE_PATH" ]; then
+                    echo "ERROR: plugins[$i].source.path is missing"
+                    errors=$((errors + 1))
+                else
+                    # Resolve path relative to marketplace file directory
+                    MKT_DIR="$(dirname "$CODEX_MARKETPLACE")"
+                    RESOLVED="$(cd "$MKT_DIR" && cd "$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
+                    if [ -z "$RESOLVED" ] || [ ! -d "$RESOLVED" ]; then
+                        echo "ERROR: plugins[$i].source.path does not resolve: $P_SOURCE_PATH"
+                        errors=$((errors + 1))
+                    elif [ ! -f "$RESOLVED/.codex-plugin/plugin.json" ]; then
+                        echo "ERROR: plugins[$i] missing .codex-plugin/plugin.json at resolved path"
+                        errors=$((errors + 1))
+                    else
+                        echo "OK: plugins[$i] source resolves with .codex-plugin/plugin.json"
+                    fi
+                fi
+            done
+        fi
+    fi
+fi
+
+echo ""
+
 # --- root marketplace.json validation (delegated to shared script) ---
 
 echo "--- root marketplace.json ---"

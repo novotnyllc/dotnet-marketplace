@@ -57,7 +57,7 @@ user-invocable: false
 
 See the [CONTRIBUTING-SKILLS.md](CONTRIBUTING-SKILLS.md) for the full field reference table.
 
-The description budget of 600 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600). With 8 broad skills, the total budget usage is approximately 25% of the 15,600 cap.
+The description budget of 600 characters per skill keeps the aggregate catalog within the context window budget (WARN at 12,000 characters, FAIL at 15,600). With 9 skills, the total budget usage is approximately 28% of the 15,600 cap.
 
 ### Cross-Reference Syntax
 
@@ -84,7 +84,7 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 
 ### Skill Description Budget
 
-The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 600 characters. With 8 broad skills, the catalog uses approximately 25% of the budget, giving each skill rich routing signal.
+The total context budget for all skill descriptions is 15,600 characters (with a warning threshold at 12,000). Each individual skill description should target under 600 characters. With 9 skills, the catalog uses approximately 28% of the budget, giving each skill rich routing signal.
 
 ## Agent Authoring
 

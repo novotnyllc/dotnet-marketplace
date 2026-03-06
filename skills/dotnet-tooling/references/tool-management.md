@@ -214,7 +214,7 @@ dotnet tool install -g <package-id>
 
 The .NET CLI detects your platform and downloads the appropriate RID-specific package. If no RID-specific package matches your platform, the CLI falls back to a framework-dependent package (if the tool author provided one).
 
-For details on authoring and packaging RID-specific tools, see `references/cli-packaging.md`.
+For details on authoring and packaging RID-specific tools, see `references/cli-distribution.md`.
 
 
 ## Troubleshooting

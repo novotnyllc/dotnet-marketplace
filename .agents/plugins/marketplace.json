@@ -1,0 +1,12 @@
+{
+  "name": "dotnet-artisan",
+  "plugins": [
+    {
+      "name": "dotnet-artisan",
+      "source": {
+        "source": "local",
+        "path": "../.."
+      }
+    }
+  ]
+}

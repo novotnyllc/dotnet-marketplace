@@ -1,6 +1,6 @@
 ---
 name: dotnet-api
-description: Builds ASP.NET Core APIs, data access, and backend services with security, resilience, messaging, OpenAPI, and architecture guidance. Do not use for UI rendering patterns or CI/CD pipeline authoring.
+description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP), resilience, messaging, OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Office documents (Excel, Word, PowerPoint), PDF, and architecture patterns. Spans 32 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-ASP.NET Core APIs, data access, backend services, security, and cloud-native patterns. This consolidated skill spans 27 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+ASP.NET Core APIs, data access, backend services, security, and cloud-native patterns. This consolidated skill spans 32 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 Baseline dependency: `references/minimal-apis.md` defines the core ASP.NET Core Minimal API patterns (route groups, endpoint filters, TypedResults, parameter binding) that apply to most API development tasks. Load it by default when building HTTP endpoints.
 
@@ -38,7 +38,7 @@ Most-shared companion: `references/architecture-patterns.md` covers vertical sli
 | Aspire | AppHost, service discovery, dashboard | AppHost, service discovery, components, dashboard | references/aspire-patterns.md |
 | Semantic Kernel | AI/LLM plugins, prompts, memory, agents | AI/LLM plugins, prompt templates, memory, agents | references/semantic-kernel.md |
 | Architecture | vertical slices, layered, pipelines, caching | Vertical slices, layered, pipelines, caching | references/architecture-patterns.md |
-| Messaging | MassTransit, Azure Service Bus, pub/sub, sagas | MassTransit, Azure Service Bus, pub/sub, sagas | references/messaging-patterns.md |
+| Messaging | Wolverine, Azure Service Bus, RabbitMQ, pub/sub, sagas | Wolverine, Azure Service Bus, RabbitMQ, pub/sub, sagas | references/messaging-patterns.md |
 | Service communication | REST vs gRPC vs SignalR decision matrix | REST vs gRPC vs SignalR decision matrix | references/service-communication.md |
 | API surface validation | PublicApiAnalyzers, Verify, ApiCompat | PublicApiAnalyzers, Verify snapshots, ApiCompat | references/api-surface-validation.md |
 | Library API compat | binary/source compat, type forwarders | Binary/source compat, type forwarders, SemVer | references/library-api-compat.md |
@@ -46,6 +46,11 @@ Most-shared companion: `references/architecture-patterns.md` covers vertical sli
 | Agent gotchas | async misuse, NuGet errors, DI mistakes | Common agent mistakes in .NET code | references/agent-gotchas.md |
 | File-based apps | .NET 10, directives, csproj migration | .NET 10 file-based C# apps | references/file-based-apps.md |
 | API docs | DocFX, OpenAPI-as-docs, versioned docs | DocFX, OpenAPI-as-docs, versioned documentation | references/api-docs.md |
+| HybridCache | HybridCache, L1/L2, stampede, tag eviction | HybridCache (.NET 9+), stampede protection, tag-based eviction | references/hybrid-cache.md |
+| YARP | reverse proxy, load balancing, API gateway, BFF | YARP reverse proxy, load balancing, health checks, transforms | references/yarp.md |
+| Output caching | OutputCache, response caching, compression | Output/response caching, compression, CDN, tag invalidation | references/output-caching.md |
+| Identity | ASP.NET Core Identity, login, MFA, scaffolding | Identity setup, scaffolding, external providers, MapIdentityApi | references/identity-setup.md |
+| Office documents and PDF | Excel, Word, PowerPoint, PDF, Open XML SDK, spreadsheet, docx, xlsx, PDFsharp, MigraDoc, merge PDF, split PDF, watermark | Open XML SDK, ClosedXML, PDFsharp/MigraDoc for PDF create/read/merge/split/watermark | references/office-documents.md |
 
 ## Scope
 
