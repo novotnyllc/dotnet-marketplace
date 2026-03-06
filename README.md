@@ -25,27 +25,54 @@ The plugin covers the full breadth of the .NET ecosystem:
 
 From within Claude Code, run:
 
-```
+```bash
 /plugin marketplace add novotnyllc/dotnet-artisan
+/plugin install dotnet-artisan@dotnet-artisan
 ```
 
 Once installed, Claude Code automatically loads relevant skills based on your questions about .NET development.
 
-### GitHub Copilot CLI
+### OpenCode (oh-my-opencode)
 
-Install the plugin as a Copilot skill:
+OpenCode supports Claude Code plugins. Install with Claude Code first using:
 
 ```bash
-copilot skill install novotnyllc/dotnet-artisan@dotnet-artisan
+/plugin marketplace add novotnyllc/dotnet-artisan
+/plugin install dotnet-artisan@dotnet-artisan
 ```
 
-The flat `skills/<skill-name>/` layout is compatible with Copilot's one-level-deep skill scanning.
+Then set this in `~/.config/opencode/oh-my-opencode.json`:
+
+```json
+{
+  "claude_code": {
+    "plugins": true
+  }
+}
+```
+
+### GitHub Copilot CLI
+
+Install as a Copilot plugin:
+
+```bash
+copilot plugin marketplace add novotnyllc/dotnet-artisan
+copilot plugin install dotnet-artisan@dotnet-artisan
+```
+
+The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-level-deep skill scanning.
 
 ### OpenAI Codex
 
 Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
 
-Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+Install with:
+
+```bash
+$skill-installer install https://github.com/novotnyllc/dotnet-artisan
+```
+
+You can also sync skill directories into `~/.codex/skills/`.
 
 For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
 
