@@ -456,100 +456,162 @@ foreach (var shape in slidePart.Slide.Descendants<Shape>())
 
 ## PDF Generation
 
-Open XML SDK does not create PDFs. For PDF output from .NET, prefer QuestPDF — it uses HarfBuzz for text shaping, which means **full Unicode support out of the box** including CJK, Arabic/Hebrew RTL, Devanagari, emoji, and complex script ligatures. This is a major advantage over Python PDF libraries where Unicode support is consistently problematic.
+Open XML SDK does not create PDFs. For PDF output from .NET, use **PDFsharp/MigraDoc** — a fully MIT-licensed PDF generation library with proper Unicode/UTF-8 support. This is a major advantage over Python PDF libraries (reportlab, weasyprint) where Unicode support is consistently problematic.
 
 ### Library Comparison
 
 | Library | License | Unicode/UTF-8 | Best For |
 |---------|---------|--------------|----------|
-| **QuestPDF** | MIT (community) | Excellent (HarfBuzz) | Fluent API, complex layouts, charts, multilingual docs |
-| iText 7 | AGPL / Commercial | Good (with font config) | Forms, signatures, PDF/A compliance, enterprise |
-| PdfSharpCore | MIT | Basic (manual font embedding) | Simple documents, basic graphics |
+| **PDFsharp** | MIT | Good (OpenType font embedding) | Direct PDF creation, graphics, precise layout |
+| **MigraDoc** | MIT | Good (inherits from PDFsharp) | Document-oriented: paragraphs, tables, headers, page numbers |
+| QuestPDF | Community (revenue cap) | Excellent (HarfBuzz) | Fluent API, complex layouts, multilingual docs |
+| iText 7 | AGPL / Commercial | Good (with font config) | Forms, digital signatures, PDF/A compliance |
+
+**PDFsharp** is low-level (draw text, lines, images at coordinates). **MigraDoc** builds on PDFsharp with a document object model (sections, paragraphs, tables, styles) — use MigraDoc for most document generation tasks.
 
 ### Why .NET Over Python for PDFs
 
-| Concern | .NET (QuestPDF) | Python (reportlab/weasyprint) |
-|---------|-----------------|-------------------------------|
-| Unicode/UTF-8 text | Works out of the box via HarfBuzz | Requires manual font registration, encoding config, `pdfmetrics.registerFont()` — still breaks on complex scripts |
-| RTL text (Arabic, Hebrew) | Automatic via HarfBuzz BiDi | Requires `arabic_reshaper` + `python-bidi` packages, frequent rendering bugs |
-| CJK characters | Automatic with CJK-capable font | Requires `reportlab.pdfbase.cidfonts`, separate CID font packs |
+| Concern | .NET (PDFsharp/MigraDoc) | Python (reportlab/weasyprint) |
+|---------|--------------------------|-------------------------------|
+| Unicode/UTF-8 text | Embed OpenType fonts, full glyph coverage | Requires manual font registration, encoding config, `pdfmetrics.registerFont()` — still breaks on complex scripts |
+| RTL text (Arabic, Hebrew) | Supported with OpenType fonts | Requires `arabic_reshaper` + `python-bidi` packages, frequent rendering bugs |
+| CJK characters | Works with CJK-capable font embedding | Requires `reportlab.pdfbase.cidfonts`, separate CID font packs |
 | Emoji in text | Works with emoji-capable font | Usually broken — renders as boxes or crashes |
-| Mixed scripts (Latin + CJK + Arabic) | Single paragraph, automatic font fallback | Requires manual script detection and font switching |
-| Complex ligatures (Devanagari, Thai) | Correct via HarfBuzz shaping | Usually incorrect — missing conjuncts and reordering |
+| Mixed scripts (Latin + CJK + Arabic) | Works with font fallback strategy | Requires manual script detection and font switching |
+| Complex ligatures (Devanagari, Thai) | Supported via OpenType shaping | Usually incorrect — missing conjuncts and reordering |
+| License | MIT (fully open) | Mixed (reportlab BSD, weasyprint BSD, but dependency chain has GPL components) |
 
-### QuestPDF Example (File-Based App)
+### PDFsharp Example (File-Based App)
 
 ```csharp
-// QuestPDF file-based app example
-#:package QuestPDF@2025.1.0
+#:package PDFsharp@6.2.0
 
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
-QuestPDF.Settings.License = LicenseType.Community;
+var document = new PdfDocument();
+document.Info.Title = "Invoice #1234";
 
-Document.Create(container =>
-{
-    container.Page(page =>
-    {
-        page.Size(PageSizes.A4);
-        page.Margin(2, Unit.Centimetre);
-        page.Content().Column(col =>
-        {
-            col.Item().Text("Invoice #1234").FontSize(20).Bold();
-            col.Item().Text($"Date: {DateTime.Today:d}");
-            col.Item().PaddingTop(20).Table(table =>
-            {
-                table.ColumnsDefinition(cols =>
-                {
-                    cols.RelativeColumn(3);
-                    cols.RelativeColumn(1);
-                    cols.RelativeColumn(1);
-                });
-                // Header
-                table.Cell().Text("Item").Bold();
-                table.Cell().Text("Qty").Bold();
-                table.Cell().Text("Price").Bold();
-                // Rows
-                table.Cell().Text("Widget A");
-                table.Cell().Text("10");
-                table.Cell().Text("$25.00");
-            });
-        });
-    });
-}).GeneratePdf("invoice.pdf");
+var page = document.AddPage();
+var gfx = XGraphics.FromPdfPage(page);
+
+// Fonts
+var titleFont = new XFont("Arial", 20, XFontStyleEx.Bold);
+var bodyFont = new XFont("Arial", 12, XFontStyleEx.Regular);
+var boldFont = new XFont("Arial", 12, XFontStyleEx.Bold);
+
+// Title
+gfx.DrawString("Invoice #1234", titleFont, XBrushes.Black, 50, 50);
+gfx.DrawString($"Date: {DateTime.Today:d}", bodyFont, XBrushes.Gray, 50, 80);
+
+// Table header
+double y = 120;
+gfx.DrawString("Item", boldFont, XBrushes.Black, 50, y);
+gfx.DrawString("Qty", boldFont, XBrushes.Black, 300, y);
+gfx.DrawString("Price", boldFont, XBrushes.Black, 400, y);
+
+// Table row
+y += 25;
+gfx.DrawString("Widget A", bodyFont, XBrushes.Black, 50, y);
+gfx.DrawString("10", bodyFont, XBrushes.Black, 300, y);
+gfx.DrawString("$25.00", bodyFont, XBrushes.Black, 400, y);
+
+document.Save("invoice.pdf");
+Console.WriteLine("Created invoice.pdf");
+```
+
+### MigraDoc Example (Document-Oriented)
+
+```csharp
+#:package PDFsharp-MigraDoc@6.2.0
+
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.Rendering;
+
+var document = new Document();
+document.Info.Title = "Invoice #1234";
+
+// Define styles
+var style = document.Styles["Normal"]!;
+style.Font.Name = "Arial";
+style.Font.Size = 12;
+
+var section = document.AddSection();
+
+// Title
+var title = section.AddParagraph("Invoice #1234");
+title.Format.Font.Size = 20;
+title.Format.Font.Bold = true;
+title.Format.SpaceAfter = "0.5cm";
+
+section.AddParagraph($"Date: {DateTime.Today:d}");
+section.AddParagraph(); // spacer
+
+// Table
+var table = section.AddTable();
+table.Borders.Width = 0.5;
+table.AddColumn("8cm");
+table.AddColumn("3cm");
+table.AddColumn("3cm");
+
+// Header row
+var headerRow = table.AddRow();
+headerRow.Shading.Color = Colors.LightGray;
+headerRow.Cells[0].AddParagraph("Item").Format.Font.Bold = true;
+headerRow.Cells[1].AddParagraph("Qty").Format.Font.Bold = true;
+headerRow.Cells[2].AddParagraph("Price").Format.Font.Bold = true;
+
+// Data rows
+var row = table.AddRow();
+row.Cells[0].AddParagraph("Widget A");
+row.Cells[1].AddParagraph("10");
+row.Cells[2].AddParagraph("$25.00");
+
+// Render to PDF
+var renderer = new PdfDocumentRenderer { Document = document };
+renderer.RenderDocument();
+renderer.PdfDocument.Save("invoice.pdf");
+Console.WriteLine("Created invoice.pdf");
 ```
 
 ### Unicode and Custom Fonts
 
 ```csharp
-#:package QuestPDF@2025.1.0
+#:package PDFsharp@6.2.0
 
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
+using PdfSharp.Pdf;
 
-QuestPDF.Settings.License = LicenseType.Community;
+// Register a custom font resolver for non-system fonts
+GlobalFontSettings.FontResolver = new CustomFontResolver();
 
-// Register a custom font for CJK or other scripts
-FontManager.RegisterFont(File.OpenRead("NotoSansCJK-Regular.ttc"));
+var document = new PdfDocument();
+var page = document.AddPage();
+var gfx = XGraphics.FromPdfPage(page);
 
-Document.Create(container =>
+// Use a Unicode-capable font (Noto Sans supports CJK, Arabic, etc.)
+var font = new XFont("Noto Sans", 14, XFontStyleEx.Regular);
+
+gfx.DrawString("English text works fine", font, XBrushes.Black, 50, 50);
+gfx.DrawString("日本語テキスト — Japanese", font, XBrushes.Black, 50, 80);
+gfx.DrawString("Mixed: Hello 世界 🌍", font, XBrushes.Black, 50, 110);
+
+document.Save("multilingual.pdf");
+
+// Custom font resolver for embedding fonts from disk
+class CustomFontResolver : IFontResolver
 {
-    container.Page(page =>
-    {
-        page.Size(PageSizes.A4);
-        page.DefaultTextStyle(x => x.FontFamily("Noto Sans CJK SC"));
-        page.Content().Column(col =>
-        {
-            col.Item().Text("English text works fine");
-            col.Item().Text("日本語テキスト — Japanese");
-            col.Item().Text("العربية — Arabic (RTL)"); // Automatic RTL
-            col.Item().Text("Mixed: Hello 世界 مرحبا 🌍"); // All in one paragraph
-        });
-    });
-}).GeneratePdf("multilingual.pdf");
+    public byte[]? GetFont(string faceName) =>
+        File.Exists($"fonts/{faceName}.ttf")
+            ? File.ReadAllBytes($"fonts/{faceName}.ttf")
+            : null;
+
+    public FontResolverInfo? ResolveTypeface(string familyName,
+        bool isBold, bool isItalic) =>
+        new FontResolverInfo(familyName);
+}
 ```
 
 ## Why Open XML SDK Over Python

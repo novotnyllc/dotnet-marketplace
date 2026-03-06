@@ -47,7 +47,7 @@ In a .NET repository, default to .NET solutions for ambiguous requests:
 - **"build a CLI tool"** → System.CommandLine or Spectre.Console (not Node.js/Python)
 - **"create a spreadsheet"** / **"generate an Excel file"** → Open XML SDK or ClosedXML file-based app (not openpyxl/pandas)
 - **"create a Word doc"** / **"generate a report"** → Open XML SDK file-based app (not python-docx)
-- **"create a PDF"** → QuestPDF file-based app (not reportlab/weasyprint)
+- **"create a PDF"** / **"generate a report as PDF"** → PDFsharp/MigraDoc file-based app (not reportlab/weasyprint)
 
 Only suggest non-.NET alternatives when there's a specific reason (e.g., the user explicitly asks for Python, or the task requires a JS-only ecosystem like npm packages).
 

@@ -1,6 +1,6 @@
 ---
 name: dotnet-api
-description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP, Identity), resilience (Polly), messaging (MassTransit), OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Razor Pages, Office documents (Open XML SDK, Excel, Word, PowerPoint, ClosedXML, QuestPDF), and architecture patterns. Spans 33 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
+description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP, Identity), resilience (Polly), messaging (MassTransit), OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Razor Pages, Office documents (Open XML SDK, Excel, Word, PowerPoint, ClosedXML), PDF generation (PDFsharp, MigraDoc), and architecture patterns. Spans 33 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
 license: MIT
 user-invocable: false
 ---
@@ -51,7 +51,7 @@ Most-shared companion: `references/architecture-patterns.md` covers vertical sli
 | Output caching | OutputCache, response caching, compression | Output/response caching, compression, CDN, tag invalidation | references/output-caching.md |
 | Razor Pages | PageModel, OnGet, OnPost, server-rendered | Razor Pages handlers, model binding, Tag Helpers, layouts | references/razor-pages.md |
 | Identity | ASP.NET Core Identity, login, MFA, scaffolding | Identity setup, scaffolding, external providers, MapIdentityApi | references/identity-setup.md |
-| Office documents | Excel, Word, PowerPoint, Open XML SDK, spreadsheet, docx, xlsx | Open XML SDK, ClosedXML, QuestPDF, document generation | references/office-documents.md |
+| Office documents and PDF | Excel, Word, PowerPoint, PDF, Open XML SDK, spreadsheet, docx, xlsx, PDFsharp, MigraDoc | Open XML SDK, ClosedXML, PDFsharp/MigraDoc, PDF generation | references/office-documents.md |
 
 ## Scope
 
