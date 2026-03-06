@@ -1,6 +1,6 @@
 ---
 name: dotnet-csharp
-description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, dependency injection, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions (System.Reactive/Rx.NET), and type design. Spans 23 topic areas with companion references. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD workflow guidance.
+description: Baseline C# skill loaded for every .NET code path. Guides language patterns (records, pattern matching, primary constructors, C# 8-15), coding standards, async/await, dependency injection, LINQ, serialization, domain modeling, concurrency, Roslyn analyzers, reactive extensions (System.Reactive/Rx.NET), globalization (CultureInfo, StringComparison, TimeZoneInfo, Rune), and type design. Spans 24 topic areas. Do not use for ASP.NET endpoint architecture, UI framework patterns, or CI/CD workflow guidance.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 23 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+C# language patterns, coding standards, and .NET runtime features for idiomatic, performant code. This consolidated skill spans 24 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ### Always-Load Baseline
 
@@ -53,6 +53,7 @@ Load these when the topic matches (see Routing Table keywords):
 | Code smells | anti-patterns, async misuse, DI mistakes, fixes | Anti-patterns, async misuse, DI mistakes, fixes | references/code-smells.md |
 | .NET releases | .NET 10, .NET 11, C# 14, C# 15, TFM, version | Version matrix, new features, TFM-specific code generation | references/dotnet-releases.md |
 | Reactive extensions | Rx.NET, System.Reactive, IObservable, Observable | System.Reactive operators, schedulers, hot/cold, R3, testing | references/reactive-extensions.md |
+| Globalization | CultureInfo, StringComparison, TimeZoneInfo, Rune, encoding | Culture-aware coding, string comparison, time zones, character processing | references/globalization.md |
 
 ## Scope
 
@@ -61,6 +62,7 @@ Load these when the topic matches (see Routing Table keywords):
 - Code quality (analyzers, editorconfig, code smells, SOLID)
 - Type design and domain modeling
 - File I/O and native interop
+- Globalization (string comparison, CultureInfo, time zones, character processing, encoding)
 - Input validation at the model level (DataAnnotations, IValidatableObject, FluentValidation, Options validation)
 
 ## Out of scope
