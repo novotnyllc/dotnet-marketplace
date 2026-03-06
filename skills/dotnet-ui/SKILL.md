@@ -1,6 +1,6 @@
 ---
 name: dotnet-ui
-description: Builds .NET UI applications across Blazor (Server, WASM, Hybrid, Auto render modes), MAUI (XAML, MVVM, Shell, Native AOT), Uno Platform (MVUX, Extensions, Toolkit), WPF (.NET 8+, Fluent theme), WinUI 3 (Windows App SDK, MSIX), and WinForms (high-DPI, dark mode) with component lifecycle, JS interop, accessibility (SemanticProperties, ARIA, AutomationPeer), localization (.resx, IStringLocalizer, RTL), and framework selection guidance. Spans 18 topic areas. Do not use for backend API middleware design or CI/CD pipeline configuration.
+description: Builds .NET UI applications across Blazor (Server, WASM, Hybrid, Auto render modes), MAUI (XAML, MVVM, Shell, Native AOT), Uno Platform (MVUX, Extensions, Toolkit), WPF (.NET 8+, Fluent theme), WinUI 3 (Windows App SDK, MSIX, CommandBar, Mica/Acrylic theming, adaptive layout), and WinForms (high-DPI, dark mode) with component lifecycle, JS interop, accessibility (SemanticProperties, ARIA, AutomationPeer), localization (.resx, IStringLocalizer, RTL), and framework selection guidance. Spans 20 topic areas. Do not use for backend API middleware design or CI/CD pipeline configuration.
 license: MIT
 user-invocable: false
 ---
@@ -32,6 +32,8 @@ user-invocable: false
 | WinForms | high-DPI, dark mode, DI, modernization | High-DPI scaling, dark mode, DI patterns, modernization | references/winforms-basics.md |
 | Accessibility | SemanticProperties, ARIA, AutomationPeer | SemanticProperties, ARIA attributes, AutomationPeer, per-platform testing | references/accessibility.md |
 | Localization | .resx, IStringLocalizer, pluralization, RTL | .resx resources, IStringLocalizer, source generators, pluralization, RTL | references/localization.md |
+| WinUI controls/layout | CommandBar, GridView, adaptive triggers, breakpoints | WinUI control selection, adaptive layout, ScrollViewer conflicts | references/winui-controls-layout.md |
+| WinUI styling/theming | Mica, Acrylic, system brushes, Fluent icons | Mica/Acrylic materials, theme resources, typography, icons | references/winui-styling-theming.md |
 | UI chooser | framework selection decision tree | Decision tree across Blazor, MAUI, Uno, WinUI, WPF, WinForms | references/ui-chooser.md |
 
 ## Scope

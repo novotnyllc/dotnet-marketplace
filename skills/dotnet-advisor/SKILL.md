@@ -59,7 +59,10 @@ Identify the primary domain from the request, then invoke the matching skill. If
 | Unit tests, integration tests, E2E, Playwright, benchmarks | [skill:dotnet-testing] |
 | CI/CD, GitHub Actions, Azure DevOps, containers, NuGet publishing | [skill:dotnet-devops] |
 | Project setup, MSBuild, Native AOT, CLI apps, SDK versions | [skill:dotnet-tooling] |
-| Crash dumps, WinDbg, hang analysis, memory diagnostics | [skill:dotnet-debugging] |
+| Crash dumps, WinDbg, hang analysis, memory diagnostics (Windows) | [skill:dotnet-debugging] |
+| Crash dumps, dotnet-dump, lldb, container diagnostics (Linux/macOS) | [skill:dotnet-debugging] |
+| Missing .NET SDK, install dotnet, workloads | [skill:dotnet-tooling] (references/dotnet-sdk-install.md) |
+| Quick script, utility, single-file tool | [skill:dotnet-api] (references/file-based-apps.md) |
 | New project (unclear domain) | [skill:dotnet-tooling], then route to the owning domain skill |
 
 ### Cross-Domain Routing

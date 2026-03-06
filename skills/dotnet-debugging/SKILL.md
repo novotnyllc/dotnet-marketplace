@@ -1,6 +1,6 @@
 ---
 name: dotnet-debugging
-description: Debugs Windows applications (native, .NET/CLR, mixed-mode) with WinDbg MCP workflows for crash dump analysis (.dmp, AccessViolationException, !analyze), hang/deadlock diagnosis (!syncblk, !dlk, wait chains), high CPU triage (!runaway, thread stacks), memory leak investigation (!dumpheap, !gcroot, LOH), kernel debugging (BSOD, bugcheck), live attach (cdb), and SOS commands. Spans 16 topic areas. Do not use for routine .NET SDK profiling, benchmark design, or CI test debugging.
+description: Debugs Windows and Linux/macOS applications (native, .NET/CLR, mixed-mode) with WinDbg MCP (crash dumps, !analyze, !syncblk, !dlk, !runaway, !dumpheap, !gcroot, BSOD), dotnet-dump, lldb with SOS, createdump, and container diagnostics (Docker, Kubernetes). Hang/deadlock diagnosis, high CPU triage, memory leak investigation, kernel debugging, and dotnet-monitor for production. Spans 17 topic areas. Do not use for routine .NET SDK profiling, benchmark design, or CI test debugging.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows application -- native, managed (.NET/CLR), or mixed-mode. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
+Windows and Linux/macOS debugging using WinDbg MCP tools (Windows), dotnet-dump, and lldb with SOS (Linux/macOS). Applicable to any application -- native, managed (.NET/CLR), or mixed-mode. Includes container diagnostic patterns for Docker and Kubernetes. Guides investigation of crash dumps, application hangs, high CPU, and memory pressure through structured command packs and report templates.
 
 **Platform:** Windows only.
 
@@ -33,6 +33,7 @@ Windows user-mode debugging using WinDbg MCP tools. Applicable to any Windows ap
 | Memory triage | memory leak, heap, LOH | Memory leak triage | references/task-memory.md |
 | Kernel debugging | kernel, BSOD, bugcheck | Kernel debugging | references/task-kernel.md |
 | Unknown triage | unknown issue, general triage | Unknown issue triage | references/task-unknown.md |
+| Linux debugging | dotnet-dump, lldb, createdump, container | Linux/macOS debugging, dotnet-dump, lldb SOS, containers | references/linux-debugging.md |
 
 ## Scope
 

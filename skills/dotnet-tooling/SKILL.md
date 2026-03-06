@@ -1,6 +1,6 @@
 ---
 name: dotnet-tooling
-description: Manages .NET project setup (.slnx, Directory.Build.props, CPM, analyzers), MSBuild authoring (targets, props, conditions), build optimization (binary logs, parallel), performance patterns (Span, ArrayPool, ref struct, stackalloc), profiling (dotnet-counters, dotnet-trace, flame graphs), Native AOT (PublishAot, ILLink, trimming), GC tuning (LOH/POH, Gen0/1/2), CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), multi-targeting (PolySharp), and version detection/upgrade. Spans 32 topic areas. Do not use for framework-specific UI implementation or API security policy design.
+description: Manages .NET SDK installation (dotnet-install script, workloads, side-by-side), project setup (.slnx, Directory.Build.props, CPM), MSBuild authoring, build optimization, performance (Span, ArrayPool, stackalloc), profiling (dotnet-counters, dotnet-trace), Native AOT (PublishAot, trimming), GC tuning, CLI apps (System.CommandLine, Spectre.Console, Terminal.Gui), and version detection/upgrade. Spans 33 topic areas. Do not use for framework-specific UI implementation or API security policy design.
 license: MIT
 user-invocable: false
 ---
@@ -9,7 +9,7 @@ user-invocable: false
 
 ## Overview
 
-.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 32 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
+.NET project setup, build systems, performance, CLI apps, and developer tooling. This consolidated skill spans 33 topic areas. Load the appropriate companion file from `references/` based on the routing table below.
 
 ## Routing Table
 
@@ -46,6 +46,7 @@ user-invocable: false
 | Project analysis | solution layout, build config analysis | Solution layout, build config, .csproj analysis | references/project-analysis.md |
 | Modernize | outdated TFMs, deprecated packages, patterns | Outdated TFMs, deprecated packages, superseded patterns | references/modernize.md |
 | Add analyzers | nullable, trimming, AOT compat, severity config | Nullable, trimming, AOT compat analyzers, severity | references/add-analyzers.md |
+| SDK installation | install .NET, dotnet-install, workloads, missing SDK | .NET SDK install script, workloads, env vars, side-by-side | references/dotnet-sdk-install.md |
 | Mermaid diagrams | architecture, sequence, class, ER, flowcharts | Architecture, sequence, class, deployment, ER diagrams | references/mermaid-diagrams.md |
 
 ## Scope
