@@ -1,6 +1,6 @@
 ---
 name: dotnet-api
-description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP, Identity), resilience (Polly), messaging (MassTransit), OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Razor Pages, Office documents (Open XML SDK, Excel, Word, PowerPoint, ClosedXML), PDF (PDFsharp, MigraDoc), and architecture patterns. Spans 33 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
+description: Builds ASP.NET Core APIs, EF Core data access, gRPC, SignalR, and backend services with middleware, security (OAuth, JWT, OWASP), resilience, messaging, OpenAPI, .NET Aspire, Semantic Kernel, HybridCache, YARP reverse proxy, output caching, Razor Pages, Office documents (Excel, Word, PowerPoint), PDF, and architecture patterns. Spans 33 topic areas. Do not use for UI rendering patterns or CI/CD pipeline authoring.
 license: MIT
 user-invocable: false
 ---
@@ -38,7 +38,7 @@ Most-shared companion: `references/architecture-patterns.md` covers vertical sli
 | Aspire | AppHost, service discovery, dashboard | AppHost, service discovery, components, dashboard | references/aspire-patterns.md |
 | Semantic Kernel | AI/LLM plugins, prompts, memory, agents | AI/LLM plugins, prompt templates, memory, agents | references/semantic-kernel.md |
 | Architecture | vertical slices, layered, pipelines, caching | Vertical slices, layered, pipelines, caching | references/architecture-patterns.md |
-| Messaging | MassTransit, Azure Service Bus, pub/sub, sagas | MassTransit, Azure Service Bus, pub/sub, sagas | references/messaging-patterns.md |
+| Messaging | Wolverine, Azure Service Bus, RabbitMQ, pub/sub, sagas | Wolverine, Azure Service Bus, RabbitMQ, pub/sub, sagas | references/messaging-patterns.md |
 | Service communication | REST vs gRPC vs SignalR decision matrix | REST vs gRPC vs SignalR decision matrix | references/service-communication.md |
 | API surface validation | PublicApiAnalyzers, Verify, ApiCompat | PublicApiAnalyzers, Verify snapshots, ApiCompat | references/api-surface-validation.md |
 | Library API compat | binary/source compat, type forwarders | Binary/source compat, type forwarders, SemVer | references/library-api-compat.md |

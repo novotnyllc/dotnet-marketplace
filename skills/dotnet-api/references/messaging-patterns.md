@@ -1,8 +1,8 @@
 # Messaging Patterns
 
-Durable messaging patterns for .NET event-driven architectures. Covers publish/subscribe, competing consumers, dead-letter queues, saga/process manager orchestration, and delivery guarantee strategies using Azure Service Bus, RabbitMQ, and MassTransit.
+Durable messaging patterns for .NET event-driven architectures. Covers publish/subscribe, competing consumers, dead-letter queues, saga/process manager orchestration, and delivery guarantee strategies using Azure Service Bus, RabbitMQ, and Wolverine.
 
-**Licensing note:** MassTransit v9+ uses a restrictive license (free under 1M messages/month). For new projects, consider **Wolverine** (MIT) or **Rebus** (MIT) as permissive alternatives that support the same patterns and transports. MassTransit v8 (Apache 2.0) is no longer maintained. The messaging patterns in this reference are transferable across all three libraries. See `references/recommended-libraries.md` in [skill:dotnet-csharp] for the full licensing reference.
+**Library guidance:** Use **Wolverine** (MIT) as the recommended messaging abstraction for new projects. It supports RabbitMQ, Azure Service Bus, Amazon SQS, and in-memory transport with a clean API. **Rebus** (MIT) is a lighter alternative. See `references/recommended-libraries.md` in [skill:dotnet-csharp] for the full licensing reference.
 
 ## Messaging Fundamentals
 
@@ -109,49 +109,45 @@ await channel.BasicPublishAsync(
 <PackageReference Include="RabbitMQ.Client" Version="7.*" />
 ```
 
-### MassTransit Publish
+### Wolverine Publish (Recommended Abstraction)
 
-MassTransit abstracts the broker, providing a unified API for Azure Service Bus, RabbitMQ, Amazon SQS, and in-memory transport.
+Wolverine abstracts the broker, providing a unified API for Azure Service Bus, RabbitMQ, Amazon SQS, and in-memory transport. MIT licensed.
 
 ```csharp
 // Registration
-builder.Services.AddMassTransit(x =>
+builder.Host.UseWolverine(opts =>
 {
-    x.AddConsumer<OrderPlacedConsumer>();
-
-    x.UsingRabbitMq((context, cfg) =>
+    opts.UseRabbitMq(rabbit =>
     {
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-        cfg.ConfigureEndpoints(context);
-    });
+        rabbit.HostName = "localhost";
+    }).AutoProvision();
+
+    opts.PublishMessage<OrderPlaced>()
+        .ToRabbitExchange("order-events");
+
+    opts.ListenToRabbitQueue("order-processing");
 });
 
-// Publisher
-public sealed class OrderService(IPublishEndpoint publishEndpoint)
+// Publisher — inject IMessageBus
+public sealed class OrderService(IMessageBus bus)
 {
     public async Task PlaceOrderAsync(
         Guid orderId, decimal total, CancellationToken ct)
     {
         // Process order...
-        await publishEndpoint.Publish(
-            new OrderPlaced(orderId, total), ct);
+        await bus.PublishAsync(new OrderPlaced(orderId, total));
     }
 }
 
-// Consumer
-public sealed class OrderPlacedConsumer(
-    ILogger<OrderPlacedConsumer> logger)
-    : IConsumer<OrderPlaced>
+// Handler — Wolverine discovers handlers by convention (no interface needed)
+public static class OrderPlacedHandler
 {
-    public async Task Consume(ConsumeContext<OrderPlaced> context)
+    public static async Task HandleAsync(
+        OrderPlaced message, ILogger<OrderPlacedHandler> logger)
     {
         logger.LogInformation(
-            "Processing order {OrderId}", context.Message.OrderId);
-        await ProcessAsync(context.Message);
+            "Processing order {OrderId}", message.OrderId);
+        await ProcessAsync(message);
     }
 }
 
@@ -162,11 +158,11 @@ public record OrderPlaced(Guid OrderId, decimal Total);
 **Key packages:**
 
 ```xml
-<PackageReference Include="MassTransit" Version="8.*" />
+<PackageReference Include="WolverineFx" Version="3.*" />
 <!-- Pick ONE transport: -->
-<PackageReference Include="MassTransit.RabbitMQ" Version="8.*" />
+<PackageReference Include="WolverineFx.RabbitMQ" Version="3.*" />
 <!-- OR -->
-<PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.*" />
+<PackageReference Include="Wolverine.AzureServiceBus" Version="3.*" />
 ```
 
 ---
@@ -198,13 +194,12 @@ var processor = client.CreateProcessor("order-processing",
     });
 ```
 
-### MassTransit -- Concurrency Limits
+### Wolverine -- Parallelism Controls
 
 ```csharp
-x.AddConsumer<OrderProcessor>(cfg =>
-{
-    cfg.UseConcurrentMessageLimit(10);
-});
+opts.ListenToRabbitQueue("order-processing")
+    .ProcessInline()            // process on the listener thread
+    .MaximumParallelMessages(10); // or limit concurrency
 ```
 
 ### Ordering Considerations
@@ -212,7 +207,7 @@ x.AddConsumer<OrderProcessor>(cfg =>
 Competing consumers sacrifice strict ordering for throughput. When order matters:
 - **Azure Service Bus**: Use sessions (`RequiresSession = true`) to guarantee FIFO within a session ID (e.g., per customer)
 - **RabbitMQ**: Use a single consumer per queue, or consistent-hash exchange to partition by key
-- **MassTransit**: Configure `UseMessagePartitioner` for key-based ordering
+- **Wolverine**: Use `ListenToRabbitQueue().Sequential()` for strict ordering
 
 ---
 
@@ -262,19 +257,20 @@ while (true)
 }
 ```
 
-### MassTransit Error/Fault Queues
+### Wolverine Error Handling
 
-MassTransit automatically creates `_error` and `_skipped` queues. Failed messages after retry exhaustion move to the error queue with fault metadata.
+Wolverine has built-in retry and dead-letter policies per handler or globally:
 
 ```csharp
-// Configure retry before dead-lettering
-x.AddConsumer<OrderProcessor>(cfg =>
-{
-    cfg.UseMessageRetry(r => r.Intervals(
+opts.OnException<ValidationException>()
+    .MoveToErrorQueue();
+
+opts.OnException<TimeoutException>()
+    .RetryWithCooldown(
         TimeSpan.FromSeconds(1),
         TimeSpan.FromSeconds(5),
-        TimeSpan.FromSeconds(15)));
-});
+        TimeSpan.FromSeconds(15))
+    .Then.MoveToErrorQueue();
 ```
 
 ### DLQ Monitoring
@@ -294,90 +290,65 @@ Sagas coordinate multi-step business processes across services. Each step publis
 | **Choreography** | Services react to events independently; no central coordinator | Simple flows, few steps, loosely coupled |
 | **Orchestration** | A saga/process manager directs each step | Complex flows, compensation needed, visibility required |
 
-### MassTransit State Machine Saga
+### Wolverine Saga
+
+Wolverine supports sagas via its durable messaging and handler chain model:
 
 ```csharp
-// Saga state
-public class OrderState : SagaStateMachineInstance
+// Saga state — persisted automatically by Wolverine
+public class OrderSaga : Saga
 {
-    public Guid CorrelationId { get; set; }
-    public string CurrentState { get; set; } = default!;
+    public Guid Id { get; set; } // Correlation ID
     public Guid OrderId { get; set; }
     public decimal Total { get; set; }
     public DateTime? PaymentReceivedAt { get; set; }
-}
 
-// State machine definition
-public sealed class OrderStateMachine : MassTransitStateMachine<OrderState>
-{
-    public State Submitted { get; private set; } = default!;
-    public State PaymentPending { get; private set; } = default!;
-    public State Completed { get; private set; } = default!;
-    public State Faulted { get; private set; } = default!;
-
-    public Event<OrderSubmitted> OrderSubmitted { get; private set; } = default!;
-    public Event<PaymentReceived> PaymentReceived { get; private set; } = default!;
-    public Event<PaymentFailed> PaymentFailed { get; private set; } = default!;
-
-    public OrderStateMachine()
+    // Start the saga
+    public static (OrderSaga, RequestPayment) Start(OrderSubmitted submitted)
     {
-        InstanceState(x => x.CurrentState);
+        var saga = new OrderSaga
+        {
+            Id = submitted.OrderId,
+            OrderId = submitted.OrderId,
+            Total = submitted.Total
+        };
 
-        Event(() => OrderSubmitted,
-            x => x.CorrelateById(ctx => ctx.Message.OrderId));
-        Event(() => PaymentReceived,
-            x => x.CorrelateById(ctx => ctx.Message.OrderId));
-        Event(() => PaymentFailed,
-            x => x.CorrelateById(ctx => ctx.Message.OrderId));
+        var command = new RequestPayment(submitted.OrderId, submitted.Total);
+        return (saga, command);
+    }
 
-        Initially(
-            When(OrderSubmitted)
-                .Then(ctx =>
-                {
-                    ctx.Saga.OrderId = ctx.Message.OrderId;
-                    ctx.Saga.Total = ctx.Message.Total;
-                })
-                .Publish(ctx => new RequestPayment(
-                    ctx.Saga.OrderId, ctx.Saga.Total))
-                .TransitionTo(PaymentPending));
+    // Handle payment received
+    public FulfillOrder Handle(PaymentReceived received)
+    {
+        PaymentReceivedAt = DateTime.UtcNow;
+        MarkCompleted(); // Ends the saga
+        return new FulfillOrder(OrderId);
+    }
 
-        During(PaymentPending,
-            When(PaymentReceived)
-                .Then(ctx =>
-                    ctx.Saga.PaymentReceivedAt = DateTime.UtcNow)
-                .Publish(ctx => new FulfillOrder(ctx.Saga.OrderId))
-                .TransitionTo(Completed),
-            When(PaymentFailed)
-                .Publish(ctx => new CancelOrder(ctx.Saga.OrderId))
-                .TransitionTo(Faulted));
+    // Handle payment failure — compensate
+    public CancelOrder Handle(PaymentFailed failed)
+    {
+        MarkCompleted();
+        return new CancelOrder(OrderId);
     }
 }
+```
 
-// Registration -- requires MassTransit.EntityFrameworkCore package for EF persistence
-// NuGet: MassTransit.EntityFrameworkCore Version="8.*"
-builder.Services.AddMassTransit(x =>
+```csharp
+// Registration with EF Core persistence
+builder.Host.UseWolverine(opts =>
 {
-    x.AddSagaStateMachine<OrderStateMachine, OrderState>()
-        .EntityFrameworkRepository(r =>
-        {
-            r.ExistingDbContext<SagaDbContext>();
-            r.UsePostgres();
-        });
-
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.ConfigureEndpoints(context);
-    });
+    opts.PersistMessagesWithEntityFrameworkCore();
+    opts.UseEntityFrameworkCoreTransactions();
 });
 ```
 
 ### Saga Persistence
 
-| Store | Package | Use when |
-|-------|---------|----------|
-| Entity Framework Core | `MassTransit.EntityFrameworkCore` | Already using EF Core; need transactions |
-| MongoDB | `MassTransit.MongoDb` | Document-oriented state; high throughput |
-| Redis | `MassTransit.Redis` | Ephemeral sagas; low latency |
+| Store | Wolverine Package | Use when |
+|-------|-------------------|----------|
+| Entity Framework Core | `WolverineFx.EntityFrameworkCore` | Already using EF Core; need transactions |
+| Marten (PostgreSQL) | `WolverineFx.Marten` | Event-sourced state; document-oriented |
 | In-Memory | Built-in | Testing only -- state lost on restart |
 
 ### Compensation Pattern
@@ -403,15 +374,16 @@ At-least-once delivery means consumers may receive the same message multiple tim
 ### Database-Based Deduplication
 
 ```csharp
-public sealed class IdempotentOrderConsumer(
-    AppDbContext db,
-    ILogger<IdempotentOrderConsumer> logger)
-    : IConsumer<OrderPlaced>
+// Works with any messaging library — Wolverine, raw broker clients, etc.
+public static class IdempotentOrderHandler
 {
-    public async Task Consume(ConsumeContext<OrderPlaced> context)
+    public static async Task HandleAsync(
+        OrderPlaced message,
+        AppDbContext db,
+        ILogger logger,
+        IMessageContext context)
     {
-        var messageId = context.MessageId
-            ?? throw new InvalidOperationException("Missing MessageId");
+        var messageId = context.Envelope!.Id;
 
         // Check if already processed
         var exists = await db.ProcessedMessages
@@ -425,14 +397,14 @@ public sealed class IdempotentOrderConsumer(
         }
 
         // Process the message
-        await ProcessOrderAsync(context.Message);
+        await ProcessOrderAsync(message);
 
         // Record as processed
         db.ProcessedMessages.Add(new ProcessedMessage
         {
             MessageId = messageId,
             ProcessedAt = DateTime.UtcNow,
-            ConsumerType = nameof(IdempotentOrderConsumer)
+            ConsumerType = nameof(IdempotentOrderHandler)
         });
 
         await db.SaveChangesAsync();
@@ -464,7 +436,22 @@ public sealed record MessageEnvelope<T>(
     T Payload);
 ```
 
-MassTransit provides this automatically via `ConsumeContext` (MessageId, CorrelationId, Headers). When using raw broker clients, implement envelopes explicitly.
+Wolverine provides envelope metadata automatically via `IMessageContext` (MessageId, CorrelationId, Headers). When using raw broker clients, implement envelopes explicitly.
+
+---
+
+## Existing MassTransit Codebases
+
+MassTransit is widely used in existing .NET projects. If you encounter MassTransit code, its patterns map directly to Wolverine:
+
+| MassTransit | Wolverine | Notes |
+|-------------|-----------|-------|
+| `IConsumer<T>` | `Handle(T message)` method | Wolverine uses convention, no interface |
+| `IPublishEndpoint.Publish()` | `IMessageBus.PublishAsync()` | Same concept |
+| `ISendEndpoint.Send()` | `IMessageBus.SendAsync()` | Same concept |
+| `MassTransitStateMachine<T>` | `Saga` base class | Wolverine sagas are simpler |
+| `AddMassTransit(x => ...)` | `UseWolverine(opts => ...)` | Host builder pattern |
+| `_error` / `_skipped` queues | Dead-letter queue policies | Built-in error handling |
 
 ---
 
@@ -472,7 +459,7 @@ MassTransit provides this automatically via `ConsumeContext` (MessageId, Correla
 
 1. **Do not use auto-complete with Azure Service Bus** -- set `AutoCompleteMessages = false` and call `CompleteMessageAsync` after successful processing. Auto-complete acknowledges before processing finishes, risking data loss on failure.
 2. **Do not forget to handle poison messages** -- always configure max delivery count and DLQ monitoring. Without these, a single bad message blocks the entire queue indefinitely.
-3. **Do not use in-memory saga persistence in production** -- saga state is lost on restart, leaving business processes in unknown states. Use Entity Framework, MongoDB, or Redis persistence.
+3. **Do not use in-memory saga persistence in production** -- saga state is lost on restart, leaving business processes in unknown states. Use Entity Framework, Marten, or other durable persistence.
 4. **Do not assume message ordering across partitions** -- competing consumers and topic subscriptions deliver messages out of order by default. Use sessions or partitioning when order matters.
 5. **Do not skip idempotency for at-least-once consumers** -- brokers may redeliver on timeout, network glitch, or consumer restart. Every consumer must handle duplicate messages safely.
 6. **Do not hardcode connection strings** -- use environment variables or Azure Key Vault references. For local development, use user secrets or `.env` files excluded from source control.
@@ -484,6 +471,6 @@ MassTransit provides this automatically via `ConsumeContext` (MessageId, Correla
 - [Azure Service Bus documentation](https://learn.microsoft.com/en-us/azure/service-bus-messaging/)
 - [Azure Service Bus client library for .NET](https://learn.microsoft.com/en-us/dotnet/api/overview/azure/messaging.servicebus-readme)
 - [RabbitMQ .NET client documentation](https://www.rabbitmq.com/client-libraries/dotnet-api-guide)
-- [MassTransit documentation](https://masstransit.io/documentation/concepts)
-- [MassTransit sagas](https://masstransit.io/documentation/patterns/saga)
+- [Wolverine documentation](https://wolverine.netlify.app/)
+- [Wolverine messaging](https://wolverine.netlify.app/guide/messaging/)
 - [Enterprise Integration Patterns](https://www.enterpriseintegrationpatterns.com/)

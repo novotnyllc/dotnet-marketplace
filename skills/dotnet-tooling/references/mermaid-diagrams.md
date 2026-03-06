@@ -4,8 +4,6 @@ Mermaid diagram reference for .NET projects: architecture diagrams (C4-style con
 
 **Version assumptions:** Mermaid v10+ (supported by GitHub, Starlight, Docusaurus natively). GitHub renders Mermaid in Markdown files, issues, PRs, and discussions. .NET 8.0+ baseline for code examples.
 
-**Library licensing note:** Some diagram examples reference libraries that have changed licenses (MediatR, AutoMapper, MassTransit, Duende IdentityServer). These diagrams show patterns found in existing codebases. For new projects, prefer permissive alternatives — see `references/recommended-libraries.md` in [skill:dotnet-csharp].
-
 For complete diagram examples, see the Detailed Examples section below.
 
 ## Supported Diagram Types
@@ -46,7 +44,7 @@ For complete diagram examples, see the Detailed Examples section below.
 
 - **Order Processing Workflow** -- draft through delivery with payment states
 - **Saga Pattern** -- distributed transaction with compensation steps
-- **State Machine Pattern** -- MassTransit-style event-driven state transitions
+- **State Machine Pattern** -- event-driven state transitions
 
 ### Flowcharts
 
@@ -103,7 +101,7 @@ For complete diagram examples, see the Detailed Examples section below.
 
 ## Agent Gotchas
 
-1. **Always use `.NET-specific content` in diagrams** -- do not generate generic diagrams. Use real .NET types (DbContext, IRepository, MediatR), real .NET tools (EF Core, MassTransit, YARP), and real .NET patterns (middleware pipeline, DI registration).
+1. **Always use `.NET-specific content` in diagrams** -- do not generate generic diagrams. Use real .NET types (DbContext, IRepository, IMessageBus), real .NET tools (EF Core, Wolverine, YARP), and real .NET patterns (middleware pipeline, DI registration).
 
 2. **Keep diagrams under 50 nodes** -- larger diagrams render poorly on GitHub and doc sites. Split complex architectures into multiple focused diagrams (context, container, component) rather than one monolithic diagram.
 
@@ -172,7 +170,7 @@ graph TB
         Gateway["API Gateway<br/>(YARP)"]
         OrderAPI["Order Service<br/>(ASP.NET Core)"]
         CatalogAPI["Catalog Service<br/>(ASP.NET Core)"]
-        IdentityAPI["Identity Service<br/>(Duende IdentityServer)"]
+        IdentityAPI["Identity Service<br/>(OpenIddict)"]
     end
 
     subgraph Data_Tier["Data Tier"]
@@ -204,11 +202,11 @@ graph TB
     subgraph OrderService["Order Service"]
         Controllers["Controllers<br/>(API Endpoints)"]
         Validators["FluentValidation<br/>(Request Validators)"]
-        Handlers["MediatR Handlers<br/>(Business Logic)"]
+        Handlers["Command Handlers<br/>(Business Logic)"]
         DomainModels["Domain Models<br/>(Entities, Value Objects)"]
         Repos["Repositories<br/>(EF Core)"]
-        Events["Domain Events<br/>(MediatR Notifications)"]
-        IntEvents["Integration Events<br/>(MassTransit)"]
+        Events["Domain Events<br/>(Notifications)"]
+        IntEvents["Integration Events<br/>(Wolverine)"]
     end
 
     Controllers --> Validators
@@ -231,8 +229,8 @@ graph TB
     subgraph Application["Application Layer"]
         Services["Application Services"]
         DTOs["DTOs / View Models"]
-        Mappings["AutoMapper Profiles"]
-        CQRS["MediatR Handlers"]
+        Mappings["Mapperly Mappers"]
+        CQRS["Mediator Handlers"]
     end
 
     subgraph Domain["Domain Layer"]
@@ -246,7 +244,7 @@ graph TB
         EFCore["EF Core DbContext"]
         Repositories["Repository Implementations"]
         ExternalServices["External Service Clients"]
-        Messaging["MassTransit / RabbitMQ"]
+        Messaging["Wolverine / RabbitMQ"]
     end
 
     Presentation --> Application
@@ -808,7 +806,7 @@ stateDiagram-v2
     end note
 ```
 
-### State Machine Pattern (MassTransit)
+### State Machine Pattern (Event-Driven)
 
 ```mermaid
 stateDiagram-v2
@@ -875,8 +873,8 @@ flowchart TD
     Scale -->|"Multiple teams, high load"| Micro["Microservices"]
 
     Monolith --> MonoComm{"Communication pattern?"}
-    MonoComm -->|"In-process"| MediatR["MediatR + Vertical Slices"]
-    MonoComm -->|"Async events"| MonoBus["MassTransit (in-memory)"]
+    MonoComm -->|"In-process"| Mediator["Mediator + Vertical Slices"]
+    MonoComm -->|"Async events"| MonoBus["Wolverine (in-memory)"]
 
     Micro --> MicroComm{"Communication pattern?"}
     MicroComm -->|"Synchronous"| gRPC["gRPC / REST"]
