@@ -34,7 +34,14 @@ Once installed, Claude Code automatically loads relevant skills based on your qu
 
 ### OpenCode (oh-my-opencode)
 
-OpenCode can use the Claude Code plugin install above. Then enable Claude plugin loading in your OpenCode config:
+OpenCode supports Claude Code plugins. Install with Claude Code first using:
+
+```bash
+/plugin marketplace add novotnyllc/dotnet-artisan
+/plugin install dotnet-artisan@dotnet-artisan
+```
+
+Then set this in `~/.config/opencode/oh-my-opencode.json`:
 
 ```json
 {
@@ -43,8 +50,6 @@ OpenCode can use the Claude Code plugin install above. Then enable Claude plugin
   }
 }
 ```
-
-Use `.config/opencode/oh-my-opencode.json` for this setting.
 
 ### GitHub Copilot CLI
 
