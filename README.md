@@ -66,7 +66,13 @@ The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-lev
 
 Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
 
-Install with the Codex skill installer or sync skill directories into `~/.codex/skills/`.
+Install with:
+
+```bash
+$skill-installer install https://github.com/novotnyllc/dotnet-artisan
+```
+
+You can also sync skill directories into `~/.codex/skills/`.
 
 For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
 
