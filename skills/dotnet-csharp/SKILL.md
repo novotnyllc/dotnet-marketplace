@@ -51,7 +51,7 @@ Load these when the topic matches (see Routing Table keywords):
 | API design | naming, parameter ordering, return types, extensions | Naming, parameter ordering, return types, error patterns | references/api-design.md |
 | Type design/perf | struct vs class, sealed, Span/Memory, collections | struct vs class, sealed, Span/Memory, collections | references/type-design-performance.md |
 | Code smells | anti-patterns, async misuse, DI mistakes, fixes | Anti-patterns, async misuse, DI mistakes, fixes | references/code-smells.md |
-| .NET releases | .NET 10, .NET 11, C# 14, C# 15, TFM, version | Version matrix, new features, TFM-specific code generation | references/dotnet-releases.md |
+| .NET releases | .NET 10, .NET 11, C# 14, C# 15, TFM, version, union, extension blocks, field keyword | Version matrix, new features, TFM-specific code generation | references/dotnet-releases.md |
 | Globalization | CultureInfo, StringComparison, TimeZoneInfo, Rune, encoding | Culture-aware coding, string comparison, time zones, character processing | references/globalization.md |
 | WASM interop | JSImport, JSExport, standalone WASM, wasm-experimental, browser | JSImport/JSExport, standalone .NET WASM, browser APIs, WASM AOT | references/wasm-interop.md |
 

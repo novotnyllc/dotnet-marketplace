@@ -63,6 +63,55 @@ customer?.Score += 10;                // Compound assignment works too
 
 ## C# 15 Features (net11.0 preview)
 
+### Union types (`union` declarations)
+
+Type-safe unions with exhaustive pattern matching. A `union` declares a struct that holds one value from a closed set of case types. The compiler generates implicit conversions from each case type and verifies switch exhaustiveness.
+
+```csharp
+// Declare a union of existing types
+public union Pet(Cat, Dog, Bird);
+
+// Implicit conversion from case types
+Pet pet = new Dog("Rex");
+
+// Exhaustive switch — no default/discard needed
+string sound = pet switch
+{
+    Dog d => d.Bark(),
+    Cat c => c.Meow(),
+    Bird b => b.Chirp(),
+};
+```
+
+Union declarations lower to a `[Union]` struct with a single `object? Value` property. Case type values are boxed on entry but the compiler optimizes pattern matching via the non-boxing access pattern (`TryGetValue`/`HasValue`) when implemented.
+
+```csharp
+// Union with methods — body members are preserved
+public union OneOrMore<T>(T, IEnumerable<T>)
+{
+    public IEnumerable<T> AsEnumerable() => Value switch
+    {
+        IEnumerable<T> list => list,
+        T value => [value],
+    };
+}
+
+// "Discriminated" union with fresh case types
+public record class None;
+public record class Some<T>(T Value);
+public union Option<T>(None, Some<T>);
+```
+
+Key behaviors:
+
+- **Union conversions**: Implicit conversion from each case type to the union type (`Pet pet = dog;`)
+- **Union matching**: Patterns unwrap the union's `Value` automatically (`pet is Dog d` checks `pet.Value`)
+- **Union exhaustiveness**: Switch expressions are exhaustive when all case types are handled — no fallback required
+- **Nullability tracking**: Null state of `Value` flows from creation through pattern matching
+- **Hand-coded unions**: Any class/struct with `[Union]` attribute following the union pattern (constructors + `Value` property) gets union behaviors — useful for custom storage strategies or adapting existing types
+
+Restrictions on union declarations: no instance fields, auto-properties, or field-like events. Explicitly declared constructors must delegate to a generated union constructor via `this(...)`.
+
 ### Collection expression arguments (`with()`)
 
 Pass constructor arguments (capacity, comparers) inside collection expressions.
@@ -105,4 +154,4 @@ When generating code for a detected TFM:
 - **net10.0+**: Prefer `field` keyword over explicit backing fields. Use extension blocks for new extension members. Use null-conditional assignment. Use `ReadOnlySpan<T>` implicit conversions where applicable.
 - **net9.0**: Use C# 13 features (params collections, `Lock` type, partial properties). Do not use C# 14 features.
 - **net8.0**: Use C# 12 features (primary constructors, collection expressions). Do not use C# 13+ features.
-- **Preview (net11.0)**: Use `with()` in collection expressions when appropriate. Flag as preview.
+- **Preview (net11.0)**: Use `union` declarations for closed type sets, `with()` in collection expressions. Flag as preview.
