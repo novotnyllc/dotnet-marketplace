@@ -414,9 +414,8 @@ else
                     echo "ERROR: plugins[$i].source.path is missing"
                     errors=$((errors + 1))
                 else
-                    # Resolve path relative to marketplace file directory
-                    MKT_DIR="$(dirname "$CODEX_MARKETPLACE")"
-                    RESOLVED="$(cd "$MKT_DIR" && cd "$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
+                    # Resolve path relative to repository root (Codex resolves relative to <root>)
+                    RESOLVED="$(cd "$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
                     if [ -z "$RESOLVED" ] || [ ! -d "$RESOLVED" ]; then
                         echo "ERROR: plugins[$i].source.path does not resolve: $P_SOURCE_PATH"
                         errors=$((errors + 1))
