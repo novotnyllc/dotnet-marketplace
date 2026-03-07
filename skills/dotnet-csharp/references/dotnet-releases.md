@@ -83,7 +83,7 @@ string sound = pet switch
 };
 ```
 
-Union declarations lower to a `[Union]` struct with a single `object? Value` property. Case type values are boxed on entry but the compiler optimizes pattern matching via the non-boxing access pattern (`TryGetValue`/`HasValue`) when implemented.
+Union declarations lower to a `[Union]` struct with a single `object? Value` property. Value types among the case types are boxed when stored. Types that implement the optional non-boxing access pattern (`TryGetValue`/`HasValue`) allow the compiler to avoid boxing during pattern matching.
 
 ```csharp
 // Union with methods — body members are preserved
@@ -95,11 +95,6 @@ public union OneOrMore<T>(T, IEnumerable<T>)
         T value => [value],
     };
 }
-
-// "Discriminated" union with fresh case types
-public record class None;
-public record class Some<T>(T Value);
-public union Option<T>(None, Some<T>);
 ```
 
 Key behaviors:
@@ -108,7 +103,7 @@ Key behaviors:
 - **Union matching**: Patterns unwrap the union's `Value` automatically (`pet is Dog d` checks `pet.Value`)
 - **Union exhaustiveness**: Switch expressions are exhaustive when all case types are handled — no fallback required
 - **Nullability tracking**: Null state of `Value` flows from creation through pattern matching
-- **Hand-coded unions**: Any class/struct with `[Union]` attribute following the union pattern (constructors + `Value` property) gets union behaviors — useful for custom storage strategies or adapting existing types
+- **Hand-coded unions**: Any class/struct with `[Union]` attribute that follows the union pattern gets union behaviors. The pattern requires: single-parameter public constructors (or static `Create` factory methods on a union member provider), each contributing one case type, plus a `Value` property of type `object?` (or `object`). Useful for custom storage strategies or adapting existing types.
 
 Restrictions on union declarations: no instance fields, auto-properties, or field-like events. Explicitly declared constructors must delegate to a generated union constructor via `this(...)`.
 

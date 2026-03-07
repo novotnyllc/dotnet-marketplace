@@ -415,7 +415,7 @@ else
                     errors=$((errors + 1))
                 else
                     # Resolve path relative to repository root (Codex resolves relative to <root>)
-                    RESOLVED="$(cd "$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
+                    RESOLVED="$(cd "$REPO_ROOT/$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
                     if [ -z "$RESOLVED" ] || [ ! -d "$RESOLVED" ]; then
                         echo "ERROR: plugins[$i].source.path does not resolve: $P_SOURCE_PATH"
                         errors=$((errors + 1))
