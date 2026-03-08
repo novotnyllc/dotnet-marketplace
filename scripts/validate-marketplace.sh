@@ -414,6 +414,17 @@ else
                     echo "ERROR: plugins[$i].source.path is missing"
                     errors=$((errors + 1))
                 else
+                    # Reject absolute paths and parent traversal
+                    if [[ "$P_SOURCE_PATH" = /* ]]; then
+                        echo "ERROR: plugins[$i].source.path contains absolute path: $P_SOURCE_PATH"
+                        errors=$((errors + 1))
+                        continue
+                    fi
+                    if [[ "$P_SOURCE_PATH" == *".."* ]]; then
+                        echo "ERROR: plugins[$i].source.path contains path traversal (..): $P_SOURCE_PATH"
+                        errors=$((errors + 1))
+                        continue
+                    fi
                     # Resolve path relative to repository root (Codex resolves relative to <root>)
                     RESOLVED="$(cd "$REPO_ROOT/$P_SOURCE_PATH" 2>/dev/null && pwd -P)"
                     if [ -z "$RESOLVED" ] || [ ! -d "$RESOLVED" ]; then
