@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-07
+
+### Added
+
+- **Rich plugin identity metadata** -- Added a full user-facing plugin interface description (category, capability profile, developer info, and marketing text) so tooling can present and index the plugin with clearer marketplace context.
+- **OpenCode and Codex onboarding guidance** -- Added explicit install instructions for OpenCode and Codex so users can onboard the plugin consistently across more AI coding environments.
+- **Preview .NET feature coverage** -- Added C# union-type guidance, including conversion rules, exhaustive matching behavior, and preview-target code-generation advice, extending capability coverage for modern .NET scenarios.
+
+### Changed
+
+- **.NET assistance routing language scope** -- Updated .NET release guidance to explicitly include newer feature areas (including union types, field semantics, and extension blocks) for newer frameworks, improving framework-appropriate recommendations.
+- **Guidance style for .NET responses** -- Added a simplicity-first workflow expectation so generated solutions default to direct, low-complexity implementations when possible, reducing over-engineered recommendations.
+- **Plugin setup across Copilot now uses plugin flow** -- Updated Copilot-facing instructions to the current plugin installation workflow, replacing the older skill-based flow.
+
+### Fixed
+
+- **Marketplace validation path handling** -- Fixed validation behavior so plugin source locations are resolved correctly from the repository root, preventing install/publishing checks from failing due to path resolution mismatches.
+
 ## [1.2.0] - 2026-03-06
 
 ### Added
@@ -186,7 +204,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.2.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.3.0...HEAD
+[1.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.2.0...dotnet-artisan/v1.3.0
 [1.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.1...dotnet-artisan/v1.2.0
 [1.1.1]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...dotnet-artisan/v1.1.1
 [1.1.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.0.0...dotnet-artisan/v1.1.0
