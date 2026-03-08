@@ -20,6 +20,20 @@ user-invocable: false
 - Deep domain implementation patterns -> [skill:dotnet-api], [skill:dotnet-ui], [skill:dotnet-testing], [skill:dotnet-devops], [skill:dotnet-tooling], [skill:dotnet-debugging]
 - Specialist deep-review workflows -> [skill:dotnet-security-reviewer], [skill:dotnet-performance-analyst], [skill:dotnet-testing-specialist]
 
+## Simplicity First (KISS)
+
+Write the simplest code that solves the problem. Agents consistently over-engineer — more abstractions, more layers, more indirection than the task warrants.
+
+- **Do the direct thing.** If you need a file, create it — don't write code that generates it. If you need data, put it where it belongs — don't assemble it from embedded strings at runtime. When you catch yourself building something indirect (a generator, a template, a wrapper), stop and ask: "Can I just do this directly?"
+- **Write readable code, not clever code.** A plain `if`/`else` over a chain of ternaries. A `foreach` over a hard-to-read LINQ expression. A flat method over nested callbacks. Clear beats compact. This does NOT mean avoiding modern C# — use latest language features (`[..4]`, list patterns, primary constructors, raw string literals, collection expressions). Modern syntax is concise AND readable. The target is convoluted logic, not concise syntax.
+- **Don't add what wasn't asked for.** No extra config options, no "while we're at it" refactors, no preemptive error handling for impossible scenarios, no comments or XML docs on code unrelated to the current task.
+- **Match architecture to scope.** Simple CRUD doesn't need DDD, MediatR, CQRS, or a pipeline of behaviors. A 20-line handler doesn't need 5 files. Scale the pattern to the problem.
+- **Earn every abstraction.** Don't create `IOrderService` for one `OrderService`. Don't extract a helper for something that happens once. Three similar lines of code are fine — extract only when a real pattern emerges across 3+ call sites.
+- **Use what the framework gives you.** `DbContext` is your Unit of Work. `DbSet<T>` is your repository. .NET has `TimeProvider`, `ILogger<T>`, `IHttpClientFactory`, `System.Text.Json`. Use them directly — don't wrap, don't abstract, don't add a NuGet package for something the framework already does.
+- **Fewer files, fewer layers.** In new or small projects, don't split into Controller + Service + Repository + DTO + Mapper + Interface when one or two files will do. In existing codebases, follow the established patterns. Add layers only when the code gets hard to understand without them.
+
+The right amount of complexity is the minimum needed to solve the current problem correctly.
+
 ## Why Routing Matters
 
 .NET skills contain version-specific guidance (net8.0 vs net9.0 vs net10.0), coding standards, and framework-specific patterns that the model doesn't have in its training data. Skipping routing means the model confidently produces code using deprecated APIs, misses framework-specific patterns, or gives generic advice that ignores project context.
