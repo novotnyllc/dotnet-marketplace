@@ -4,11 +4,11 @@
 
 [![CI](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml/badge.svg)](https://github.com/novotnyllc/dotnet-artisan/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](.claude-plugin/plugin.json)
+[![Version](https://img.shields.io/badge/version-1.4.0-green.svg)](.claude-plugin/plugin.json)
 
 ## Overview
 
-**dotnet-artisan** provides 9 skills (2 routing + 7 domain) and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex for skill routing. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex currently consumes the `skills/*` surface.
+**dotnet-artisan** provides 9 skills (2 routing + 7 domain) and 14 specialist agents for .NET development. It is compatible with Claude Code, GitHub Copilot CLI, and OpenAI Codex. Claude and Copilot consume the plugin manifests directly; Codex now has a first-class plugin manifest plus marketplace metadata, while still keeping the older skill-centric metadata as a direct-install compatibility layer. Specialist `agents/*.md` are currently used by Claude/Copilot flows; Codex routes through the `skills/*` surface.
 
 The plugin covers the full breadth of the .NET ecosystem:
 - Modern C# patterns, async/await, dependency injection, and source generators
@@ -64,9 +64,11 @@ The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-lev
 
 ### OpenAI Codex
 
-Codex discovers plugin-level metadata via the `.agents/openai.yaml` manifest at the repository root. Per-skill Codex metadata belongs in `skills/<skill-name>/agents/openai.yaml`.
+Codex plugin-aware surfaces discover this repo through `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`.
 
-Install with:
+The repo also keeps `.agents/openai.yaml` and `skills/<skill-name>/agents/openai.yaml` as a compatibility path for direct skill installs and local `~/.codex/skills/` sync workflows.
+
+For direct skill-centric installs, use:
 
 ```bash
 $skill-installer install https://github.com/novotnyllc/dotnet-artisan
@@ -74,7 +76,7 @@ $skill-installer install https://github.com/novotnyllc/dotnet-artisan
 
 You can also sync skill directories into `~/.codex/skills/`.
 
-For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml`. Root `agents/*.md` specialist definitions are not yet first-class Codex skills.
+Root `agents/*.md` specialist definitions are not yet first-class Codex skills, so Codex still routes through the broad skill layer.
 
 ## Provider Support Matrix
 
@@ -82,7 +84,7 @@ For Codex, include per-skill metadata in `skills/<skill-name>/agents/openai.yaml
 |---|---|---|
 | Claude Code | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` + hooks + MCP | Supported |
 | GitHub Copilot CLI | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` | Supported |
-| OpenAI Codex | `.agents/openai.yaml` + `skills/*` + `skills/*/agents/openai.yaml` | Supported (skill-centric) |
+| OpenAI Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` + `skills/*` | Supported |
 
 Compatibility is validated in CI with structural smoke checks via `scripts/run-agent-routing-smoke.py --provider claude,codex,copilot`.
 

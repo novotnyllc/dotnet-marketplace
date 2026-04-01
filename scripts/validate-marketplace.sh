@@ -3,17 +3,19 @@
 # validate-marketplace.sh -- Validate plugin.json and marketplace.json for dotnet-artisan.
 #
 # Checks:
-#   1. plugin.json exists and is valid JSON
-#   2. plugin.json has canonical schema: skills (array), agents (array), hooks (optional string), mcpServers (optional string)
-#   3. All skill directories referenced in plugin.json contain SKILL.md
-#   4. All agent files referenced in plugin.json exist
+#   1. Claude plugin manifest exists and is valid JSON
+#   2. Claude plugin manifest has canonical schema: skills (array), agents (array), hooks (optional string), mcpServers (optional string)
+#   3. All skill directories referenced in the Claude plugin manifest contain SKILL.md
+#   4. All agent files referenced in the Claude plugin manifest exist
 #   5. hooks and mcpServers paths exist
 #   6. hooks/hooks.json has "hooks" key
 #   7. .mcp.json has "mcpServers" key
 #   8. scripts/hooks/*.js have valid syntax
-#   9. Root marketplace.json (delegates to validate-root-marketplace.sh)
-#  10. plugin.json enrichment fields: author, homepage, repository, license, keywords
-#  11. Codex metadata files exist (.agents/openai.yaml + skills/*/agents/openai.yaml)
+#   9. Codex plugin manifest exists, validates, and stays consistent with the Claude manifest
+#  10. Codex marketplace exists and follows the current plugin-entry schema
+#  11. Legacy Codex skill-installer metadata is validated only when present
+#  12. Root Claude marketplace.json validates (delegates to validate-root-marketplace.sh)
+#  13. Claude plugin enrichment fields: author, homepage, repository, license, keywords
 #
 # Design constraints:
 #   - Single-pass validation (no subprocess spawning per entry, no network)
@@ -299,37 +301,6 @@ fi
 
 echo ""
 
-# --- Codex metadata validation ---
-
-echo "--- Codex metadata ---"
-
-ROOT_OPENAI="$PLUGIN_DIR/.agents/openai.yaml"
-if [ -f "$ROOT_OPENAI" ]; then
-    echo "OK: .agents/openai.yaml exists"
-else
-    echo "ERROR: .agents/openai.yaml not found"
-    errors=$((errors + 1))
-fi
-
-if [ -f "$PLUGIN_JSON" ] && jq -e '.skills | type == "array"' "$PLUGIN_JSON" >/dev/null 2>&1; then
-    while IFS= read -r skill_path; do
-        if ! validate_path_safe "$skill_path" "skills[]"; then
-            errors=$((errors + 1))
-            continue
-        fi
-        full_skill_path="$PLUGIN_DIR/$skill_path"
-        skill_openai="$full_skill_path/agents/openai.yaml"
-        if [ ! -f "$skill_openai" ]; then
-            echo "ERROR: missing per-skill Codex metadata: ${skill_path}/agents/openai.yaml"
-            errors=$((errors + 1))
-        else
-            echo "OK: ${skill_path}/agents/openai.yaml exists"
-        fi
-    done < <(jq -r '.skills[]' "$PLUGIN_JSON" 2>/dev/null)
-fi
-
-echo ""
-
 # --- Codex plugin manifest (.codex-plugin/plugin.json) ---
 
 echo "--- Codex plugin manifest ---"
@@ -344,18 +315,109 @@ else
         errors=$((errors + 1))
     else
         echo "OK: .codex-plugin/plugin.json is valid JSON"
-        CODEX_NAME=$(jq -r '.name // empty' "$CODEX_MANIFEST")
-        if [ -z "$CODEX_NAME" ]; then
-            echo "ERROR: .codex-plugin/plugin.json missing name field"
-            errors=$((errors + 1))
+        for field in name version description; do
+            if ! jq -e ".$field | type == \"string\" and length > 0" "$CODEX_MANIFEST" >/dev/null 2>&1; then
+                echo "ERROR: .codex-plugin/plugin.json.$field must be a non-empty string"
+                errors=$((errors + 1))
+            else
+                value=$(jq -r ".$field" "$CODEX_MANIFEST")
+                echo "OK: .codex-plugin/plugin.json.$field = \"$value\""
+            fi
+        done
+
+        if jq -e '.author.name | type == "string" and length > 0' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            echo "OK: .codex-plugin/plugin.json.author.name present"
         else
-            echo "OK: .codex-plugin/plugin.json name = \"$CODEX_NAME\""
-            # Cross-check: Codex manifest name should match Claude manifest name
-            CLAUDE_NAME=$(jq -r '.name // empty' "$PLUGIN_JSON" 2>/dev/null)
-            if [ -n "$CLAUDE_NAME" ] && [ "$CODEX_NAME" != "$CLAUDE_NAME" ]; then
-                echo "ERROR: Codex manifest name \"$CODEX_NAME\" does not match Claude manifest name \"$CLAUDE_NAME\""
+            echo "WARN: .codex-plugin/plugin.json.author.name is missing or empty"
+            warnings=$((warnings + 1))
+        fi
+
+        if jq -e '.skills | type == "string" and length > 0' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            CODEX_SKILLS_PATH=$(jq -r '.skills' "$CODEX_MANIFEST")
+            if ! validate_path_safe "$CODEX_SKILLS_PATH" "codex.skills"; then
+                errors=$((errors + 1))
+            else
+                CODEX_SKILLS_FULL="$PLUGIN_DIR/$CODEX_SKILLS_PATH"
+                if [ ! -d "$CODEX_SKILLS_FULL" ]; then
+                    echo "ERROR: Codex skills path does not exist: $CODEX_SKILLS_PATH"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: Codex skills path resolves: $CODEX_SKILLS_PATH"
+                fi
+            fi
+        else
+            echo "ERROR: .codex-plugin/plugin.json.skills must be a non-empty string path"
+            errors=$((errors + 1))
+        fi
+
+        if jq -e '.hooks' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            CODEX_HOOKS_TYPE=$(jq -r '.hooks | type' "$CODEX_MANIFEST" 2>/dev/null)
+            if [ "$CODEX_HOOKS_TYPE" != "string" ]; then
+                echo "ERROR: .codex-plugin/plugin.json.hooks must be a string path"
+                errors=$((errors + 1))
+            else
+                CODEX_HOOKS_PATH=$(jq -r '.hooks' "$CODEX_MANIFEST")
+                if ! validate_path_safe "$CODEX_HOOKS_PATH" "codex.hooks"; then
+                    errors=$((errors + 1))
+                elif [ ! -f "$PLUGIN_DIR/$CODEX_HOOKS_PATH" ]; then
+                    echo "ERROR: Codex hooks path does not exist: $CODEX_HOOKS_PATH"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: Codex hooks path resolves: $CODEX_HOOKS_PATH"
+                fi
+            fi
+        fi
+
+        if jq -e '.mcpServers' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            CODEX_MCP_TYPE=$(jq -r '.mcpServers | type' "$CODEX_MANIFEST" 2>/dev/null)
+            if [ "$CODEX_MCP_TYPE" != "string" ]; then
+                echo "ERROR: .codex-plugin/plugin.json.mcpServers must be a string path"
+                errors=$((errors + 1))
+            else
+                CODEX_MCP_PATH=$(jq -r '.mcpServers' "$CODEX_MANIFEST")
+                if ! validate_path_safe "$CODEX_MCP_PATH" "codex.mcpServers"; then
+                    errors=$((errors + 1))
+                elif [ ! -f "$PLUGIN_DIR/$CODEX_MCP_PATH" ]; then
+                    echo "ERROR: Codex mcpServers path does not exist: $CODEX_MCP_PATH"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: Codex mcpServers path resolves: $CODEX_MCP_PATH"
+                fi
+            fi
+        fi
+
+        if jq -e '.interface.displayName | type == "string" and length > 0' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            echo "OK: .codex-plugin/plugin.json.interface.displayName present"
+        else
+            echo "ERROR: .codex-plugin/plugin.json.interface.displayName must be a non-empty string"
+            errors=$((errors + 1))
+        fi
+
+        if jq -e '.interface.capabilities | type == "array" and length > 0 and all(.[]; type == "string")' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            echo "OK: .codex-plugin/plugin.json.interface.capabilities present"
+        else
+            echo "ERROR: .codex-plugin/plugin.json.interface.capabilities must be a non-empty array of strings"
+            errors=$((errors + 1))
+        fi
+
+        if jq -e '.interface.defaultPrompt' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+            if jq -e '.interface.defaultPrompt | type == "array" and length <= 3 and all(.[]; type == "string")' "$CODEX_MANIFEST" >/dev/null 2>&1; then
+                echo "OK: .codex-plugin/plugin.json.interface.defaultPrompt is well-formed"
+            else
+                echo "ERROR: .codex-plugin/plugin.json.interface.defaultPrompt must be an array of up to 3 strings"
                 errors=$((errors + 1))
             fi
+        fi
+
+        if [ -f "$PLUGIN_JSON" ]; then
+            for field in name version description homepage repository license; do
+                CLAUDE_VALUE=$(jq -r ".$field // empty" "$PLUGIN_JSON" 2>/dev/null)
+                CODEX_VALUE=$(jq -r ".$field // empty" "$CODEX_MANIFEST" 2>/dev/null)
+                if [ -n "$CLAUDE_VALUE" ] && [ -n "$CODEX_VALUE" ] && [ "$CLAUDE_VALUE" != "$CODEX_VALUE" ]; then
+                    echo "ERROR: Codex manifest $field \"$CODEX_VALUE\" does not match Claude manifest \"$CLAUDE_VALUE\""
+                    errors=$((errors + 1))
+                fi
+            done
         fi
     fi
 fi
@@ -385,6 +447,13 @@ else
             echo "OK: marketplace name = \"$CODEX_MKT_NAME\""
         fi
 
+        if jq -e '.interface.displayName | type == "string" and length > 0' "$CODEX_MARKETPLACE" >/dev/null 2>&1; then
+            echo "OK: marketplace interface.displayName present"
+        else
+            echo "ERROR: .agents/plugins/marketplace.json.interface.displayName must be a non-empty string"
+            errors=$((errors + 1))
+        fi
+
         # Validate plugins array
         if ! jq -e '.plugins | type == "array" and length > 0' "$CODEX_MARKETPLACE" >/dev/null 2>&1; then
             echo "ERROR: .agents/plugins/marketplace.json must have non-empty plugins array"
@@ -397,6 +466,9 @@ else
                 P_NAME=$(jq -r ".plugins[$i].name // empty" "$CODEX_MARKETPLACE")
                 P_SOURCE_TYPE=$(jq -r ".plugins[$i].source.source // empty" "$CODEX_MARKETPLACE")
                 P_SOURCE_PATH=$(jq -r ".plugins[$i].source.path // empty" "$CODEX_MARKETPLACE")
+                P_POLICY_INSTALLATION=$(jq -r ".plugins[$i].policy.installation // empty" "$CODEX_MARKETPLACE")
+                P_POLICY_AUTHENTICATION=$(jq -r ".plugins[$i].policy.authentication // empty" "$CODEX_MARKETPLACE")
+                P_CATEGORY=$(jq -r ".plugins[$i].category // empty" "$CODEX_MARKETPLACE")
 
                 if [ -z "$P_NAME" ]; then
                     echo "ERROR: plugins[$i].name is missing"
@@ -437,9 +509,66 @@ else
                         echo "OK: plugins[$i] source resolves with .codex-plugin/plugin.json"
                     fi
                 fi
+
+                case "$P_POLICY_INSTALLATION" in
+                    NOT_AVAILABLE|AVAILABLE|INSTALLED_BY_DEFAULT)
+                        echo "OK: plugins[$i].policy.installation = \"$P_POLICY_INSTALLATION\""
+                        ;;
+                    *)
+                        echo "ERROR: plugins[$i].policy.installation must be one of NOT_AVAILABLE, AVAILABLE, INSTALLED_BY_DEFAULT"
+                        errors=$((errors + 1))
+                        ;;
+                esac
+
+                case "$P_POLICY_AUTHENTICATION" in
+                    ON_INSTALL|ON_USE)
+                        echo "OK: plugins[$i].policy.authentication = \"$P_POLICY_AUTHENTICATION\""
+                        ;;
+                    *)
+                        echo "ERROR: plugins[$i].policy.authentication must be ON_INSTALL or ON_USE"
+                        errors=$((errors + 1))
+                        ;;
+                esac
+
+                if [ -z "$P_CATEGORY" ]; then
+                    echo "ERROR: plugins[$i].category is missing"
+                    errors=$((errors + 1))
+                else
+                    echo "OK: plugins[$i].category = \"$P_CATEGORY\""
+                fi
             done
         fi
     fi
+fi
+
+echo ""
+
+# --- Codex skill-installer metadata (legacy compatibility) ---
+
+echo "--- Codex legacy metadata ---"
+
+ROOT_OPENAI="$PLUGIN_DIR/.agents/openai.yaml"
+if [ ! -f "$ROOT_OPENAI" ]; then
+    echo "OK: .agents/openai.yaml not present; plugin discovery uses .codex-plugin/plugin.json"
+elif [ -f "$PLUGIN_JSON" ] && jq -e '.skills | type == "array"' "$PLUGIN_JSON" >/dev/null 2>&1; then
+    echo "OK: legacy .agents/openai.yaml exists"
+    while IFS= read -r skill_path; do
+        if ! validate_path_safe "$skill_path" "skills[]"; then
+            errors=$((errors + 1))
+            continue
+        fi
+        full_skill_path="$PLUGIN_DIR/$skill_path"
+        skill_openai="$full_skill_path/agents/openai.yaml"
+        if [ ! -f "$skill_openai" ]; then
+            echo "ERROR: missing legacy per-skill Codex metadata: ${skill_path}/agents/openai.yaml"
+            errors=$((errors + 1))
+        else
+            echo "OK: ${skill_path}/agents/openai.yaml exists"
+        fi
+    done < <(jq -r '.skills[]' "$PLUGIN_JSON" 2>/dev/null)
+else
+    echo "WARN: .agents/openai.yaml exists but plugin.json.skills could not be evaluated"
+    warnings=$((warnings + 1))
 fi
 
 echo ""

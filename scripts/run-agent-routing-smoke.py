@@ -7,7 +7,7 @@ CLI tests, use test.sh which delegates to check-skills.cs.
 
 This script validates:
   - Claude Code: plugin.json skill paths resolve, expected skill count
-  - Codex:       skill dirs found at expected depth, openai.yaml consistent
+  - Codex:       plugin manifest + marketplace are consistent, with optional legacy openai.yaml compatibility
   - Copilot:     plugin.json paths resolve, SKILL.md frontmatter + license valid
 
 The expected skill count is derived from plugin.json at runtime to avoid
@@ -35,6 +35,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 PLUGIN_JSON = REPO_ROOT / ".claude-plugin" / "plugin.json"
+CODEX_MANIFEST = REPO_ROOT / ".codex-plugin" / "plugin.json"
+CODEX_MARKETPLACE = REPO_ROOT / ".agents" / "plugins" / "marketplace.json"
 OPENAI_YAML = REPO_ROOT / ".agents" / "openai.yaml"
 
 
@@ -263,9 +265,9 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
 
     - Flat layout: skill dirs at skills/<name>/ (depth 1, not depth 2)
     - Each has SKILL.md
-    - .agents/openai.yaml exists and has valid implicit policy field
-    - Each skill has skills/<name>/agents/openai.yaml with matching display_name
-      and expected allow_implicit_invocation policy
+    - .codex-plugin/plugin.json exists and matches core Claude manifest metadata
+    - .agents/plugins/marketplace.json exists and resolves to a Codex plugin root
+    - Legacy .agents/openai.yaml metadata is only validated when present
     - Skill directory count matches plugin.json
     """
     errors: list[str] = []
@@ -293,13 +295,190 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
                     f"{[p.parent.name for p in nested[:3]]}"
                 )
 
-    # Verify root openai.yaml exists and references the flat skill layout
-    if not OPENAI_YAML.exists():
-        errors.append(f".agents/openai.yaml not found at {OPENAI_YAML}")
+    if not CODEX_MANIFEST.exists():
+        errors.append(f"Codex manifest not found at {CODEX_MANIFEST}")
+        codex_manifest = None
     else:
+        try:
+            codex_manifest = json.loads(CODEX_MANIFEST.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"Codex manifest is not valid JSON: {exc}")
+            codex_manifest = None
+
+    claude_manifest = load_plugin_json() if PLUGIN_JSON.exists() else {}
+
+    if codex_manifest is not None:
+        for field in ("name", "version", "description"):
+            value = codex_manifest.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f".codex-plugin/plugin.json missing non-empty '{field}'")
+
+        interface = codex_manifest.get("interface", {})
+        if not isinstance(interface, dict):
+            errors.append(".codex-plugin/plugin.json.interface must be an object")
+        else:
+            display_name = interface.get("displayName")
+            if not isinstance(display_name, str) or not display_name.strip():
+                errors.append(
+                    ".codex-plugin/plugin.json.interface.displayName must be a non-empty string"
+                )
+
+            capabilities = interface.get("capabilities")
+            if not (
+                isinstance(capabilities, list)
+                and capabilities
+                and all(isinstance(item, str) and item.strip() for item in capabilities)
+            ):
+                errors.append(
+                    ".codex-plugin/plugin.json.interface.capabilities must be a non-empty array of strings"
+                )
+
+            default_prompt = interface.get("defaultPrompt")
+            if default_prompt is not None and not (
+                isinstance(default_prompt, list)
+                and len(default_prompt) <= 3
+                and all(isinstance(item, str) and item.strip() for item in default_prompt)
+            ):
+                errors.append(
+                    ".codex-plugin/plugin.json.interface.defaultPrompt must be an array of up to 3 non-empty strings"
+                )
+
+        codex_skills_path = codex_manifest.get("skills")
+        if not isinstance(codex_skills_path, str) or not codex_skills_path.strip():
+            errors.append(".codex-plugin/plugin.json.skills must be a non-empty string path")
+        else:
+            resolved_skills = resolve_skill_path(codex_skills_path)
+            if resolved_skills is None:
+                errors.append(
+                    f".codex-plugin/plugin.json.skills is invalid: {codex_skills_path!r}"
+                )
+            elif resolved_skills != SKILLS_DIR:
+                errors.append(
+                    f".codex-plugin/plugin.json.skills resolves to {resolved_skills}, expected {SKILLS_DIR}"
+                )
+
+        for optional_path_field in ("hooks", "mcpServers"):
+            optional_path = codex_manifest.get(optional_path_field)
+            if optional_path is None:
+                continue
+            if not isinstance(optional_path, str) or not optional_path.strip():
+                errors.append(
+                    f".codex-plugin/plugin.json.{optional_path_field} must be a non-empty string path when present"
+                )
+                continue
+            resolved_optional = resolve_skill_path(optional_path)
+            if resolved_optional is None:
+                errors.append(
+                    f".codex-plugin/plugin.json.{optional_path_field} is invalid: {optional_path!r}"
+                )
+            elif not resolved_optional.exists():
+                errors.append(
+                    f".codex-plugin/plugin.json.{optional_path_field} does not exist: {optional_path!r}"
+                )
+
+        for field in ("name", "version", "description", "homepage", "repository", "license"):
+            claude_value = claude_manifest.get(field)
+            codex_value = codex_manifest.get(field)
+            if isinstance(claude_value, str) and claude_value and isinstance(codex_value, str) and codex_value:
+                if claude_value != codex_value:
+                    errors.append(
+                        f"Codex manifest field '{field}' ({codex_value!r}) does not match Claude manifest ({claude_value!r})"
+                    )
+
+    if not CODEX_MARKETPLACE.exists():
+        errors.append(f"Codex marketplace not found at {CODEX_MARKETPLACE}")
+    else:
+        try:
+            codex_marketplace = json.loads(CODEX_MARKETPLACE.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"Codex marketplace is not valid JSON: {exc}")
+            codex_marketplace = None
+
+        if codex_marketplace is not None:
+            name = codex_marketplace.get("name")
+            if not isinstance(name, str) or not name.strip():
+                errors.append(".agents/plugins/marketplace.json missing non-empty 'name'")
+
+            interface = codex_marketplace.get("interface")
+            if not isinstance(interface, dict):
+                errors.append(".agents/plugins/marketplace.json.interface must be an object")
+            elif not isinstance(interface.get("displayName"), str) or not interface["displayName"].strip():
+                errors.append(
+                    ".agents/plugins/marketplace.json.interface.displayName must be a non-empty string"
+                )
+
+            plugins = codex_marketplace.get("plugins")
+            if not isinstance(plugins, list) or not plugins:
+                errors.append(".agents/plugins/marketplace.json.plugins must be a non-empty array")
+            else:
+                allowed_installation = {"NOT_AVAILABLE", "AVAILABLE", "INSTALLED_BY_DEFAULT"}
+                allowed_authentication = {"ON_INSTALL", "ON_USE"}
+
+                for index, plugin_entry in enumerate(plugins):
+                    if not isinstance(plugin_entry, dict):
+                        errors.append(f"Codex marketplace plugin entry {index} must be an object")
+                        continue
+
+                    entry_name = plugin_entry.get("name")
+                    if not isinstance(entry_name, str) or not entry_name.strip():
+                        errors.append(f"Codex marketplace plugins[{index}].name must be non-empty")
+
+                    source = plugin_entry.get("source")
+                    if not isinstance(source, dict):
+                        errors.append(f"Codex marketplace plugins[{index}].source must be an object")
+                    else:
+                        if source.get("source") != "local":
+                            errors.append(
+                                f"Codex marketplace plugins[{index}].source.source must be 'local'"
+                            )
+                        source_path = source.get("path")
+                        if not isinstance(source_path, str) or not source_path.strip():
+                            errors.append(
+                                f"Codex marketplace plugins[{index}].source.path must be non-empty"
+                            )
+                        else:
+                            resolved_source = resolve_skill_path(source_path)
+                            if resolved_source is None:
+                                errors.append(
+                                    f"Codex marketplace plugins[{index}].source.path is invalid: {source_path!r}"
+                                )
+                            elif not (resolved_source / ".codex-plugin" / "plugin.json").is_file():
+                                errors.append(
+                                    f"Codex marketplace plugins[{index}].source.path does not resolve to a Codex plugin root: {source_path!r}"
+                                )
+
+                    policy = plugin_entry.get("policy")
+                    if not isinstance(policy, dict):
+                        errors.append(f"Codex marketplace plugins[{index}].policy must be an object")
+                    else:
+                        installation = policy.get("installation")
+                        if installation not in allowed_installation:
+                            errors.append(
+                                f"Codex marketplace plugins[{index}].policy.installation must be one of {sorted(allowed_installation)}"
+                            )
+                        authentication = policy.get("authentication")
+                        if authentication not in allowed_authentication:
+                            errors.append(
+                                f"Codex marketplace plugins[{index}].policy.authentication must be one of {sorted(allowed_authentication)}"
+                            )
+                        products = policy.get("products")
+                        if products is not None and not (
+                            isinstance(products, list)
+                            and all(isinstance(item, str) and item.strip() for item in products)
+                        ):
+                            errors.append(
+                                f"Codex marketplace plugins[{index}].policy.products must be an array of non-empty strings when present"
+                            )
+
+                    category = plugin_entry.get("category")
+                    if not isinstance(category, str) or not category.strip():
+                        errors.append(
+                            f"Codex marketplace plugins[{index}].category must be a non-empty string"
+                        )
+
+    # Validate legacy skill-installer metadata only when present.
+    if OPENAI_YAML.exists():
         yaml_content = OPENAI_YAML.read_text(encoding="utf-8")
-        # Check for the canonical flat-layout path pattern: skills/<skill-name>/
-        # This is more specific than a bare "skills/" substring
         if not re.search(r"skills/\S+/", yaml_content):
             errors.append(
                 ".agents/openai.yaml does not reference skills/<name>/ layout pattern"
@@ -314,51 +493,51 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
                 f"value: {root_implicit!r}"
             )
 
-    # Verify each skill has Codex per-skill metadata with expected policy.
-    for skill_dir in skill_dirs:
-        skill_name = skill_dir.name
-        skill_openai = skill_dir / SKILL_OPENAI_RELATIVE
+        # Verify each skill has legacy per-skill metadata with expected policy.
+        for skill_dir in skill_dirs:
+            skill_name = skill_dir.name
+            skill_openai = skill_dir / SKILL_OPENAI_RELATIVE
 
-        if not skill_openai.exists():
-            errors.append(
-                f"Codex metadata missing for skill '{skill_name}': "
-                f"{skill_openai.relative_to(REPO_ROOT)}"
-            )
-            continue
+            if not skill_openai.exists():
+                errors.append(
+                    f"Legacy Codex metadata missing for skill '{skill_name}': "
+                    f"{skill_openai.relative_to(REPO_ROOT)}"
+                )
+                continue
 
-        yaml_content = skill_openai.read_text(encoding="utf-8")
-        display_name = parse_openai_yaml_field(yaml_content, "display_name")
-        allow_implicit = parse_openai_yaml_field(yaml_content, "allow_implicit_invocation")
+            yaml_content = skill_openai.read_text(encoding="utf-8")
+            display_name = parse_openai_yaml_field(yaml_content, "display_name")
+            allow_implicit = parse_openai_yaml_field(yaml_content, "allow_implicit_invocation")
 
-        if not display_name:
-            errors.append(
-                f"{skill_openai.relative_to(REPO_ROOT)} missing interface.display_name"
-            )
-        elif display_name != skill_name:
-            errors.append(
-                f"{skill_openai.relative_to(REPO_ROOT)} display_name '{display_name}' "
-                f"does not match skill directory '{skill_name}'"
-            )
+            if not display_name:
+                errors.append(
+                    f"{skill_openai.relative_to(REPO_ROOT)} missing interface.display_name"
+                )
+            elif display_name != skill_name:
+                errors.append(
+                    f"{skill_openai.relative_to(REPO_ROOT)} display_name '{display_name}' "
+                    f"does not match skill directory '{skill_name}'"
+                )
 
-        if allow_implicit is None:
-            errors.append(
-                f"{skill_openai.relative_to(REPO_ROOT)} missing policy.allow_implicit_invocation"
-            )
-            continue
+            if allow_implicit is None:
+                errors.append(
+                    f"{skill_openai.relative_to(REPO_ROOT)} missing policy.allow_implicit_invocation"
+                )
+                continue
 
-        if allow_implicit not in {"true", "false"}:
-            errors.append(
-                f"{skill_openai.relative_to(REPO_ROOT)} has non-boolean "
-                f"allow_implicit_invocation value: {allow_implicit!r}"
-            )
-            continue
+            if allow_implicit not in {"true", "false"}:
+                errors.append(
+                    f"{skill_openai.relative_to(REPO_ROOT)} has non-boolean "
+                    f"allow_implicit_invocation value: {allow_implicit!r}"
+                )
+                continue
 
-        expected_implicit = "true"
-        if allow_implicit != expected_implicit:
-            errors.append(
-                f"{skill_openai.relative_to(REPO_ROOT)} allow_implicit_invocation={allow_implicit} "
-                f"(expected {expected_implicit} for skill '{skill_name}')"
-            )
+            expected_implicit = "true"
+            if allow_implicit != expected_implicit:
+                errors.append(
+                    f"{skill_openai.relative_to(REPO_ROOT)} allow_implicit_invocation={allow_implicit} "
+                    f"(expected {expected_implicit} for skill '{skill_name}')"
+                )
 
     return errors
 

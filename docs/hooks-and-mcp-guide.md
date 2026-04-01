@@ -6,7 +6,7 @@ This guide explains the hooks and MCP server integration included with the dotne
 
 ## Hooks Overview
 
-The dotnet-artisan plugin includes two hook configurations that fire automatically during Claude Code sessions. Hooks reinforce `dotnet-advisor` as the first routing step.
+The dotnet-artisan plugin includes two hook configurations that fire automatically during Claude Code sessions. Hooks reinforce `using-dotnet` as the first routing step and `dotnet-advisor` as the second.
 
 ### SessionStart Hook (startup)
 
@@ -21,7 +21,7 @@ Detection uses first-hit scans to keep hook latency low in large repositories.
 
 If .NET project indicators are found, the hook outputs an `additionalContext` message that starts with:
 
-> Mandatory first action for every task: invoke [skill:dotnet-advisor].
+> Mandatory first action for every task: invoke [skill:using-dotnet]. Mandatory second action: invoke [skill:dotnet-advisor].
 
 This context helps Claude understand the project environment from the start of the session.
 
@@ -33,15 +33,16 @@ The `scripts/hooks/user-prompt-dotnet-reminder.js` hook fires on every prompt su
 - The prompt text contains .NET intent keywords (for example: `dotnet`, `.NET`, `C#`, `csproj`, `MSBuild`, `NuGet`, `Roslyn`, `xUnit`, `ASP.NET`, `Blazor`, `MAUI`, `WinUI`, `WPF`, `WinForms`, `EF Core`, `BenchmarkDotNet`)
 
 This catches greenfield prompts (for example, "create a new .NET app") even when the current directory has no existing .NET files yet.
-If the prompt already asks for `dotnet-advisor` directly, the hook suppresses the duplicate reminder.
+If the prompt already asks for `using-dotnet` directly, the hook suppresses the duplicate reminder.
 
 ### Hook Contract Validation
 
 Run `scripts/validate-hooks.sh` to verify hook behavior locally. The script checks:
 
 - Valid JSON output for all active hook scripts
-- Prompt extraction and reminder injection with and without `jq`
-- Duplicate-reminder suppression when `dotnet-advisor` is already requested
+- Direct invocation without piped stdin does not block
+- Prompt extraction and reminder injection
+- Duplicate-reminder suppression when `using-dotnet` is already requested
 
 ---
 

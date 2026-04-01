@@ -83,10 +83,12 @@ function emit(ctx) {
 try {
   // Read optional hook payload from stdin.
   let inputJson = "";
-  try {
-    inputJson = fs.readFileSync(0, "utf8");
-  } catch {
-    // no stdin
+  if (!process.stdin.isTTY) {
+    try {
+      inputJson = fs.readFileSync(0, "utf8");
+    } catch {
+      // no stdin or read failure
+    }
   }
 
   const promptText = extractPromptText(inputJson);

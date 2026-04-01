@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-04-01
+
+### Added
+
+- **Cross-platform hook execution** -- Converted .NET session-start and prompt-routing hooks to Node.js so hook behavior is consistent across environments and no longer depends on shell tooling.
+- **Pre-release JavaScript hook validation** -- Marketplace validation now checks hook scripts with Node syntax validation, catching hook regressions during release checks instead of at runtime.
+
+### Changed
+
+- **Hook runtime documentation and configuration** -- Plugin registration and setup guidance now reflect the Node-based hook model and clarify the required runtime in a single model, aligning user-facing setup with actual hook execution.
+- **Hook contract tests focus** -- Validation now verifies the prompt-reminder contract (including suppression behavior) directly against the new hook implementations rather than legacy jq/Python fallback scenarios.
+
+### Fixed
+
+- **Environment fragility in hook execution** -- Removed shell/jq/Python dependencies from hook logic, reducing failures in setups where those tools are missing or misconfigured and improving reliability of .NET routing reminders.
+
 ## [1.3.0] - 2026-03-07
 
 ### Added
@@ -204,7 +220,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.3.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.4.0...HEAD
+[1.4.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.3.0...dotnet-artisan/v1.4.0
 [1.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.2.0...dotnet-artisan/v1.3.0
 [1.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.1...dotnet-artisan/v1.2.0
 [1.1.1]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.0...dotnet-artisan/v1.1.1

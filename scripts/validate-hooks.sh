@@ -4,8 +4,9 @@
 #
 # Verifies:
 #   1. Hooks always emit valid JSON
-#   2. Prompt extraction and reminder injection
-#   3. Reminder suppression works when prompt already requests using-dotnet
+#   2. UserPromptSubmit does not block when invoked without stdin
+#   3. Prompt extraction and reminder injection
+#   4. Reminder suppression works when prompt already requests using-dotnet
 #
 # This is a behavior test; it does not require a real Claude runtime.
 
@@ -74,6 +75,11 @@ assert_json_path_string "$SESSION_OUT" "additionalContext"
 echo "OK: session-start-context.js emits valid JSON"
 
 echo "--- UserPromptSubmit hook ---"
+DIRECT_OUT="$(node "$HOOK_DIR/user-prompt-dotnet-reminder.js")"
+assert_json "$DIRECT_OUT"
+assert_json_path_string "$DIRECT_OUT" "hookSpecificOutput.additionalContext"
+echo "OK: user-prompt-dotnet-reminder.js returns valid JSON without stdin"
+
 PROMPT_PAYLOAD='{"prompt":"create a new .NET API with minimal endpoints"}'
 PROMPT_OUT="$(printf '%s' "$PROMPT_PAYLOAD" | node "$HOOK_DIR/user-prompt-dotnet-reminder.js")"
 assert_json "$PROMPT_OUT"

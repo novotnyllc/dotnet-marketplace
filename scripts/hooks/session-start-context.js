@@ -3,7 +3,7 @@
 // session-start-context.js -- SessionStart hook for .NET project detection.
 //
 // Checks if the current directory is a .NET project and injects context
-// about SDK version and project structure.
+// about target framework and project structure.
 //
 // Output: JSON with additionalContext on stdout.
 // Exit code: always 0 (never blocks).
