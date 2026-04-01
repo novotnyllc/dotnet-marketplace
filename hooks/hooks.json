@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start-context.sh",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start-context.js\"",
             "timeout": 10
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/user-prompt-dotnet-reminder.sh",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/user-prompt-dotnet-reminder.js\"",
             "timeout": 10
           }
         ]

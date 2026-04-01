@@ -98,7 +98,7 @@ Key directories:
 - **`hooks/`** -- Session lifecycle hooks (startup context + user prompt reminder)
 - **`scripts/`** -- Hook shell scripts
 - **`.claude-plugin/`** -- Claude Code plugin manifest (plugin.json) and marketplace metadata (marketplace.json)
-- **`.codex-plugin/`** -- Codex plugin manifest (plugin.json); minimal manifest with `name` field
+- **`.codex-plugin/`** -- Codex plugin manifest (plugin.json) with plugin metadata, interface presentation fields, and component path hints
 - **`.agents/plugins/`** -- Codex marketplace discovery file
 
 ## Validation Commands
@@ -109,7 +109,7 @@ Both commands must pass before committing changes (run from repo root):
 # 1. Validate skill frontmatter, required fields, directory conventions
 ./scripts/validate-skills.sh
 
-# 2. Validate plugin.json and marketplace.json consistency
+# 2. Validate Claude + Codex plugin and marketplace consistency
 ./scripts/validate-marketplace.sh
 ```
 

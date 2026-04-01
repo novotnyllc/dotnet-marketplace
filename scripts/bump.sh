@@ -11,10 +11,11 @@
 #
 # Version is propagated to:
 #   1. .claude-plugin/plugin.json       (canonical source of truth)
-#   2. .claude-plugin/marketplace.json  (root, matching plugin entry)
-#   3. .claude-plugin/marketplace.json  (metadata.version)
-#   4. README.md                        (version badge)
-#   5. CHANGELOG.md                     (promote [Unreleased], update footer links)
+#   2. .codex-plugin/plugin.json        (Codex plugin manifest)
+#   3. .claude-plugin/marketplace.json  (root, matching plugin entry)
+#   4. .claude-plugin/marketplace.json  (metadata.version)
+#   5. README.md                        (version badge)
+#   6. CHANGELOG.md                     (promote [Unreleased], update footer links)
 #
 # After running, commit the changes in your PR branch. When the PR merges to
 # main, the auto-tag workflow creates the git tag and triggers the release.
@@ -47,6 +48,7 @@ fi
 # --- Validate paths ---
 
 PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
+CODEX_PLUGIN_JSON="$REPO_ROOT/.codex-plugin/plugin.json"
 ROOT_MARKETPLACE="$REPO_ROOT/.claude-plugin/marketplace.json"
 README="$REPO_ROOT/README.md"
 CHANGELOG="$REPO_ROOT/CHANGELOG.md"
@@ -58,6 +60,11 @@ fi
 
 if [ ! -f "$ROOT_MARKETPLACE" ]; then
     echo "ERROR: root marketplace.json not found at $ROOT_MARKETPLACE"
+    exit 1
+fi
+
+if [ ! -f "$CODEX_PLUGIN_JSON" ]; then
+    echo "ERROR: Codex plugin.json not found at $CODEX_PLUGIN_JSON"
     exit 1
 fi
 
@@ -129,7 +136,14 @@ TMP_FILE=$(mktemp)
 jq --arg v "$NEW_VERSION" '.version = $v' "$PLUGIN_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$PLUGIN_JSON"
 echo "  OK: plugin.json version -> $NEW_VERSION"
 
-# --- 2. Update root marketplace.json (plugin entry version) ---
+# --- 2. Update Codex plugin.json ---
+
+echo "Updating $CODEX_PLUGIN_JSON ..."
+TMP_FILE=$(mktemp)
+jq --arg v "$NEW_VERSION" '.version = $v' "$CODEX_PLUGIN_JSON" > "$TMP_FILE" && mv "$TMP_FILE" "$CODEX_PLUGIN_JSON"
+echo "  OK: Codex plugin.json version -> $NEW_VERSION"
+
+# --- 3. Update root marketplace.json (plugin entry version) ---
 
 echo "Updating $ROOT_MARKETPLACE ..."
 TMP_FILE=$(mktemp)
@@ -138,13 +152,13 @@ jq --arg name "$PLUGIN_NAME" --arg v "$NEW_VERSION" \
     "$ROOT_MARKETPLACE" > "$TMP_FILE" && mv "$TMP_FILE" "$ROOT_MARKETPLACE"
 echo "  OK: root marketplace.json plugin '$PLUGIN_NAME' version -> $NEW_VERSION"
 
-# --- 3. Update root marketplace.json (metadata.version) ---
+# --- 4. Update root marketplace.json (metadata.version) ---
 
 TMP_FILE=$(mktemp)
 jq --arg v "$NEW_VERSION" '.metadata.version = $v' "$ROOT_MARKETPLACE" > "$TMP_FILE" && mv "$TMP_FILE" "$ROOT_MARKETPLACE"
 echo "  OK: root marketplace.json metadata.version -> $NEW_VERSION"
 
-# --- 4. Update README.md version badge ---
+# --- 5. Update README.md version badge ---
 
 if [ -f "$README" ]; then
     # Match shields.io badge pattern: version-X.Y.Z-color
@@ -159,7 +173,7 @@ else
     echo "  WARN: README.md not found at $README"
 fi
 
-# --- 5. Update CHANGELOG.md ---
+# --- 6. Update CHANGELOG.md ---
 
 if [ -f "$CHANGELOG" ]; then
     echo "Updating $CHANGELOG ..."
