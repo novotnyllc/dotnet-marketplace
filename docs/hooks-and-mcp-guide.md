@@ -10,7 +10,7 @@ The dotnet-artisan plugin includes two hook configurations that fire automatical
 
 ### SessionStart Hook (startup)
 
-The `scripts/hooks/session-start-context.sh` hook fires once when a new Claude Code session starts. It detects whether the current directory is a .NET project and injects context:
+The `scripts/hooks/session-start-context.js` hook fires once when a new Claude Code session starts. It detects whether the current directory is a .NET project and injects context:
 
 - Detects `.sln`/`.slnx` solution files (up to 3 directories deep)
 - Detects `.csproj` project files (up to 3 directories deep)
@@ -27,7 +27,7 @@ This context helps Claude understand the project environment from the start of t
 
 ### UserPromptSubmit Hook
 
-The `scripts/hooks/user-prompt-dotnet-reminder.sh` hook fires on every prompt submission and injects `additionalContext` routing guidance when either condition is true:
+The `scripts/hooks/user-prompt-dotnet-reminder.js` hook fires on every prompt submission and injects `additionalContext` routing guidance when either condition is true:
 
 - The current directory looks like a .NET repo (`.sln`, `.slnx`, `.csproj`, `.cs`, or `global.json`)
 - The prompt text contains .NET intent keywords (for example: `dotnet`, `.NET`, `C#`, `csproj`, `MSBuild`, `NuGet`, `Roslyn`, `xUnit`, `ASP.NET`, `Blazor`, `MAUI`, `WinUI`, `WPF`, `WinForms`, `EF Core`, `BenchmarkDotNet`)
@@ -69,8 +69,7 @@ The plugin configures these MCP servers in `.mcp.json`:
 
 ### Requirements
 
-- **Bash** is required to execute hook scripts (`scripts/hooks/*.sh`). On Windows, install Git Bash or WSL and ensure `bash` is available on `PATH`.
-- **Node.js** is required for MCP servers that use `npx` (Context7). Verify Node.js with `node --version`.
+- **Node.js** is required to execute hook scripts (`scripts/hooks/*.js`) and for MCP servers that use `npx` (Context7). Claude Code requires Node.js on all platforms, so this is always available. Verify with `node --version`.
 - **Python + uv/uvx** are required for `mcp-windbg`. Verify with `uvx --version`.
 - MCP servers start automatically when the plugin is enabled. After enabling or disabling the plugin, restart Claude Code to apply MCP server changes.
 
@@ -90,20 +89,8 @@ Hooks are snapshotted when a Claude Code session starts. If you install or updat
 
 **Fix**: Restart Claude Code to pick up hook changes. Use `/hooks` to verify hooks are registered.
 
-### `jq` not found
+### `node` not found
 
-Hooks prefer `jq` for JSON parsing/output, but degrade gracefully when it is unavailable:
-- `session-start-context.sh` and `user-prompt-dotnet-reminder.sh` emit JSON via shell fallback paths
+Hook scripts are written in Node.js. Claude Code requires Node.js on all platforms, so this should not normally occur.
 
-**Fix (recommended)**: Install `jq` for the most reliable behavior:
-- macOS: `brew install jq`
-- Ubuntu/Debian: `sudo apt-get install jq`
-- Windows: `winget install jqlang.jq`
-
-### `bash` not found
-
-Hook commands are shell scripts and require `bash` to be executable from `PATH`.
-
-**Fix**:
-- Windows: install Git for Windows (Git Bash) or WSL
-- macOS/Linux: install bash from your package manager if it is missing
+**Fix**: Install [Node.js](https://nodejs.org/) (LTS recommended). Verify with `node --version`.

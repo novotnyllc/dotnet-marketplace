@@ -10,7 +10,7 @@
 #   5. hooks and mcpServers paths exist
 #   6. hooks/hooks.json has "hooks" key
 #   7. .mcp.json has "mcpServers" key
-#   8. scripts/hooks/*.sh are executable
+#   8. scripts/hooks/*.js have valid syntax
 #   9. Root marketplace.json (delegates to validate-root-marketplace.sh)
 #  10. plugin.json enrichment fields: author, homepage, repository, license, keywords
 #  11. Codex metadata files exist (.agents/openai.yaml + skills/*/agents/openai.yaml)
@@ -281,19 +281,19 @@ else
     warnings=$((warnings + 1))
 fi
 
-# 3. Check all scripts/hooks/*.sh are executable
+# 3. Check all scripts/hooks/*.js exist and are valid
 HOOKS_SCRIPT_DIR="$PLUGIN_DIR/scripts/hooks"
-if ls "$HOOKS_SCRIPT_DIR"/*.sh 1>/dev/null 2>&1; then
-    for script in "$HOOKS_SCRIPT_DIR"/*.sh; do
-        if [ ! -x "$script" ]; then
-            echo "ERROR: $(basename "$script") is not executable (chmod +x needed)"
-            errors=$((errors + 1))
+if ls "$HOOKS_SCRIPT_DIR"/*.js 1>/dev/null 2>&1; then
+    for script in "$HOOKS_SCRIPT_DIR"/*.js; do
+        if node -c "$script" 2>/dev/null; then
+            echo "OK: $(basename "$script") has valid syntax"
         else
-            echo "OK: $(basename "$script") is executable"
+            echo "ERROR: $(basename "$script") has invalid syntax"
+            errors=$((errors + 1))
         fi
     done
 else
-    echo "WARN: no scripts/hooks/*.sh files found"
+    echo "WARN: no scripts/hooks/*.js files found"
     warnings=$((warnings + 1))
 fi
 
