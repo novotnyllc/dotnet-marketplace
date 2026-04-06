@@ -1,14 +1,14 @@
 {
   "name": "dotnet-artisan",
   "interface": {
-    "displayName": "dotnet-artisan"
+    "displayName": ".NET Artisan Plugin"
   },
   "plugins": [
     {
       "name": "dotnet-artisan",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/dotnet-artisan"
       },
       "policy": {
         "installation": "AVAILABLE",
