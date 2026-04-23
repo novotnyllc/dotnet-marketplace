@@ -90,7 +90,7 @@ if [[ -f "$REPO_ROOT/scripts/validate-similarity.py" ]]; then
     SIM_JSON="$(mktemp)"
     SIM_ERR="$(mktemp)"
     python3 "$REPO_ROOT/scripts/validate-similarity.py" \
-        --repo-root "$REPO_ROOT" \
+        --repo-root "$PLUGIN_DIR" \
         --baseline "$REPO_ROOT/scripts/similarity-baseline.json" \
         --suppressions "$REPO_ROOT/scripts/similarity-suppressions.json" \
         >"$SIM_JSON" 2>"$SIM_ERR" || SIMILARITY_EXIT=$?

@@ -64,9 +64,9 @@ The flat `skills/<skill-name>/` layout remains compatible with Copilot's one-lev
 
 ### OpenAI Codex
 
-Codex plugin-aware surfaces discover this repo through `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`.
+Codex plugin-aware surfaces discover this repo through `.codex-plugin/plugin.json`.
 
-The repo also keeps `.agents/openai.yaml` and `skills/<skill-name>/agents/openai.yaml` as a compatibility path for direct skill installs and local `~/.codex/skills/` sync workflows.
+The repo uses a root plugin layout with `skills/`, `agents/`, `hooks.json`, `.mcp.json`, `.claude-plugin/`, and `.codex-plugin/` at the repository root.
 
 For direct skill-centric installs, use:
 
@@ -84,7 +84,7 @@ Root `agents/*.md` specialist definitions are not yet first-class Codex skills, 
 |---|---|---|
 | Claude Code | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` + hooks + MCP | Supported |
 | GitHub Copilot CLI | `.claude-plugin/plugin.json` + `skills/*` + `agents/*.md` | Supported |
-| OpenAI Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` + `skills/*` | Supported |
+| OpenAI Codex | `.codex-plugin/plugin.json` + `skills/*` | Supported |
 
 Compatibility is validated in CI with structural smoke checks via `scripts/run-agent-routing-smoke.py --provider claude,codex,copilot`.
 
@@ -169,7 +169,7 @@ graph TB
         end
 
         subgraph Infra["Infrastructure"]
-            HK[hooks/hooks.json]
+            HK[hooks.json]
             MCP[.mcp.json]
         end
     end
