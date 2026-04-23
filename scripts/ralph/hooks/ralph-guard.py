@@ -127,7 +127,7 @@ PROTECTED_FILE_PATTERNS = [
     "ralph-guard",
     "flowctl.py",
     "flowctl",
-    "/hooks/hooks.json",
+    "/hooks.json",
 ]
 
 

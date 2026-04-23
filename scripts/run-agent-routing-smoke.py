@@ -266,7 +266,7 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
     - Flat layout: skill dirs at skills/<name>/ (depth 1, not depth 2)
     - Each has SKILL.md
     - .codex-plugin/plugin.json exists and matches core Claude manifest metadata
-    - .agents/plugins/marketplace.json exists and resolves to a Codex plugin root
+    - .agents/plugins/marketplace.json, when present, resolves to a Codex plugin root
     - Legacy .agents/openai.yaml metadata is only validated when present
     - Skill directory count matches plugin.json
     """
@@ -385,9 +385,7 @@ def check_codex(skill_dirs: list[Path]) -> list[str]:
                         f"Codex manifest field '{field}' ({codex_value!r}) does not match Claude manifest ({claude_value!r})"
                     )
 
-    if not CODEX_MARKETPLACE.exists():
-        errors.append(f"Codex marketplace not found at {CODEX_MARKETPLACE}")
-    else:
+    if CODEX_MARKETPLACE.exists():
         try:
             codex_marketplace = json.loads(CODEX_MARKETPLACE.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:

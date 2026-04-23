@@ -25,7 +25,7 @@ This project uses Flow-Next for task tracking. Use `.flow/bin/flowctl` instead o
 <!-- END FLOW-NEXT -->
 
 
-This directory contains **dotnet-artisan**, a Claude Code plugin providing 9 skills (process + domain) and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
+This repository contains a single root-level **dotnet-artisan** plugin providing 9 skills (process + domain) and 14 specialist agents for .NET development. It follows the [Agent Skills](https://github.com/anthropics/agent-skills) open standard.
 
 ## Key Conventions
 
@@ -81,12 +81,11 @@ Descriptions must follow the **Action + Domain + Differentiator** formula using 
 skills/<skill-name>/SKILL.md               # 9 skills (flat layout)
 skills/<skill-name>/references/*.md        # Companion files with deep content
 agents/<agent-name>.md                     # 14 specialist agents
-hooks/hooks.json                           # Session hooks (startup + user prompt reminder)
+hooks.json                                 # Session hooks (startup + user prompt reminder)
 .mcp.json                                  # MCP server integrations (shared by Claude + Codex)
 .claude-plugin/plugin.json                 # Claude Code plugin manifest
-.claude-plugin/marketplace.json            # Claude Code marketplace metadata
 .codex-plugin/plugin.json                  # Codex plugin manifest
-.agents/plugins/marketplace.json           # Codex marketplace discovery
+.claude-plugin/marketplace.json            # Claude Code marketplace metadata
 scripts/                                   # Hook shell scripts
 tests/                                     # Test data
 docs/                                      # Plugin-specific documentation
@@ -95,11 +94,10 @@ docs/                                      # Plugin-specific documentation
 Key directories:
 - **`skills/`** -- All skill content in a flat layout (one directory per skill, with `references/` companion files)
 - **`agents/`** -- Specialist agent definitions with frontmatter, preloaded skills, and workflows
-- **`hooks/`** -- Session lifecycle hooks (startup context + user prompt reminder)
+- **`hooks.json`** -- Session lifecycle hooks (startup context + user prompt reminder)
 - **`scripts/`** -- Hook shell scripts
 - **`.claude-plugin/`** -- Claude Code plugin manifest (plugin.json) and marketplace metadata (marketplace.json)
 - **`.codex-plugin/`** -- Codex plugin manifest (plugin.json) with plugin metadata, interface presentation fields, and component path hints
-- **`.agents/plugins/`** -- Codex marketplace discovery file
 
 ## Validation Commands
 

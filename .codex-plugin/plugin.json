@@ -22,7 +22,7 @@
     "testing"
   ],
   "skills": "./skills",
-  "hooks": "./hooks/hooks.json",
+  "hooks": "./hooks.json",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "dotnet-artisan",

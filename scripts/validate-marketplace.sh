@@ -8,11 +8,11 @@
 #   3. All skill directories referenced in the Claude plugin manifest contain SKILL.md
 #   4. All agent files referenced in the Claude plugin manifest exist
 #   5. hooks and mcpServers paths exist
-#   6. hooks/hooks.json has "hooks" key
+#   6. hooks.json has "hooks" key
 #   7. .mcp.json has "mcpServers" key
 #   8. scripts/hooks/*.js have valid syntax
 #   9. Codex plugin manifest exists, validates, and stays consistent with the Claude manifest
-#  10. Codex marketplace exists and follows the current plugin-entry schema
+#  10. Codex marketplace, when present, follows the current plugin-entry schema
 #  11. Legacy Codex skill-installer metadata is validated only when present
 #  12. Root Claude marketplace.json validates (delegates to validate-root-marketplace.sh)
 #  13. Claude plugin enrichment fields: author, homepage, repository, license, keywords
@@ -151,7 +151,7 @@ else
             done < <(jq -r '.agents[]' "$PLUGIN_JSON" 2>/dev/null)
         fi
 
-        # Validate hooks (optional in plugin.json; auto-discovered from hooks/hooks.json)
+        # Validate hooks (optional in plugin.json; auto-discovered from hooks.json)
         if jq -e '.hooks' "$PLUGIN_JSON" >/dev/null 2>&1; then
             hooks_type=$(jq -r '.hooks | type' "$PLUGIN_JSON" 2>/dev/null)
             if [ "$hooks_type" != "string" ]; then
@@ -172,7 +172,7 @@ else
                 fi
             fi
         else
-            echo "OK: hooks omitted (auto-discovered from hooks/hooks.json)"
+            echo "OK: hooks omitted (auto-discovered from hooks.json)"
         fi
 
         # Validate mcpServers (optional in plugin.json; auto-discovered from .mcp.json)
@@ -255,17 +255,17 @@ echo ""
 
 echo "--- hooks/MCP content ---"
 
-# 1. Validate hooks/hooks.json has a "hooks" key
-HOOKS_FILE="$PLUGIN_DIR/hooks/hooks.json"
+# 1. Validate hooks.json has a "hooks" key
+HOOKS_FILE="$PLUGIN_DIR/hooks.json"
 if [ -f "$HOOKS_FILE" ]; then
     if ! jq -e '.hooks' "$HOOKS_FILE" >/dev/null 2>&1; then
-        echo "ERROR: hooks/hooks.json missing 'hooks' key"
+        echo "ERROR: hooks.json missing 'hooks' key"
         errors=$((errors + 1))
     else
-        echo "OK: hooks/hooks.json has 'hooks' key"
+        echo "OK: hooks.json has 'hooks' key"
     fi
 else
-    echo "WARN: hooks/hooks.json not found (skipping content validation)"
+    echo "WARN: hooks.json not found (skipping content validation)"
     warnings=$((warnings + 1))
 fi
 
@@ -422,15 +422,14 @@ else
     fi
 fi
 
-# --- Codex marketplace (.agents/plugins/marketplace.json) ---
+# --- Optional Codex marketplace (.agents/plugins/marketplace.json) ---
 
 echo ""
 echo "--- Codex marketplace ---"
 
-CODEX_MARKETPLACE="$PLUGIN_DIR/.agents/plugins/marketplace.json"
+CODEX_MARKETPLACE="$REPO_ROOT/.agents/plugins/marketplace.json"
 if [ ! -f "$CODEX_MARKETPLACE" ]; then
-    echo "ERROR: .agents/plugins/marketplace.json not found"
-    errors=$((errors + 1))
+    echo "OK: .agents/plugins/marketplace.json not present; root plugin manifest is sufficient"
 else
     if ! jq empty "$CODEX_MARKETPLACE" 2>/dev/null; then
         echo "ERROR: .agents/plugins/marketplace.json is not valid JSON"
