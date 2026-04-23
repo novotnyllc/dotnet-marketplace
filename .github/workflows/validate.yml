@@ -33,7 +33,7 @@ jobs:
           echo "=== Plugin JSON Validation ==="
           jq empty .claude-plugin/plugin.json
           echo "OK: plugin.json"
-          jq empty hooks/hooks.json
+          jq empty hooks.json
           echo "OK: hooks.json"
           jq empty .mcp.json
           echo "OK: .mcp.json"
