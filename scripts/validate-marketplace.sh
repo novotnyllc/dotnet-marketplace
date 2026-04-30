@@ -12,7 +12,7 @@
 #   7. .mcp.json has "mcpServers" key
 #   8. scripts/hooks/*.js have valid syntax
 #   9. Codex plugin manifest exists, validates, and stays consistent with the Claude manifest
-#  10. Codex marketplace, when present, follows the current plugin-entry schema
+#  10. Root Codex marketplace follows the current plugin-entry schema
 #  11. Legacy Codex skill-installer metadata is validated only when present
 #  12. Root Claude marketplace.json validates (delegates to validate-root-marketplace.sh)
 #  13. Claude plugin enrichment fields: author, homepage, repository, license, keywords
@@ -27,7 +27,7 @@ set -euo pipefail
 
 # Navigate to repository root (parent of scripts/), canonicalized for symlink safety
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
-PLUGIN_DIR="$REPO_ROOT"
+PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
 
 PLUGIN_JSON="$PLUGIN_DIR/.claude-plugin/plugin.json"
 
@@ -422,14 +422,15 @@ else
     fi
 fi
 
-# --- Optional Codex marketplace (.agents/plugins/marketplace.json) ---
+# --- Codex marketplace (.agents/plugins/marketplace.json) ---
 
 echo ""
 echo "--- Codex marketplace ---"
 
 CODEX_MARKETPLACE="$REPO_ROOT/.agents/plugins/marketplace.json"
 if [ ! -f "$CODEX_MARKETPLACE" ]; then
-    echo "OK: .agents/plugins/marketplace.json not present; root plugin manifest is sufficient"
+    echo "ERROR: .agents/plugins/marketplace.json not present; marketplace root requires a Codex marketplace index"
+    errors=$((errors + 1))
 else
     if ! jq empty "$CODEX_MARKETPLACE" 2>/dev/null; then
         echo "ERROR: .agents/plugins/marketplace.json is not valid JSON"

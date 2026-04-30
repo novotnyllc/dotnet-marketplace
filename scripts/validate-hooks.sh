@@ -13,7 +13,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
-HOOK_DIR="$REPO_ROOT/scripts/hooks"
+PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
+HOOK_DIR="$PLUGIN_DIR/scripts/hooks"
 
 PYTHON_BIN=""
 if command -v python3 >/dev/null 2>&1; then

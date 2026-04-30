@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-04-30
+
+### Added
+
+- **Marketplace-root plugin architecture** -- The .NET Artisan distribution is now organized as a dedicated plugin package inside the repository, with the root functioning as the marketplace discovery surface for easier multi-provider discovery.
+
+### Changed
+
+- **Cross-provider install and discovery flow** -- Documentation and validation now align plugin discovery/installation around the package-based layout, so Claude, GitHub Copilot, and Codex consume the same plugin source of truth.
+- **Release/versioning workflow** -- Version synchronization and release metadata propagation were unified through the plugin package manifest path, reducing divergence between manifests, marketplace metadata, and release artifacts.
+- **Tooling and CI checks** -- Packaging-aware validation and routing smoke scripts now operate against the plugin package as the unit of source truth, including manifest checks, hook/MCP checks, and skill-count assertions.
+
+### Fixed
+
+- **Invalid path handling in plugin validation** -- Routing validation now rejects malformed or unsafe manifest paths, preventing incorrect plugin source references from passing checks.
+- **Post-move validation reliability** -- Marketplace and hook verification now correctly locate the plugin assets and provider indexes after the repository layout shift, eliminating failures caused by stale root-level assumptions.
+
 ## [1.4.0] - 2026-04-01
 
 ### Added
@@ -220,7 +237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README with skill catalog, Mermaid architecture diagrams, and cross-agent documentation
 - CONTRIBUTING guide with skill authoring conventions and PR process
 
-[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.4.0...HEAD
+[unreleased]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.4.1...HEAD
+[1.4.1]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.4.0...dotnet-artisan/v1.4.1
 [1.4.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.3.0...dotnet-artisan/v1.4.0
 [1.3.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.2.0...dotnet-artisan/v1.3.0
 [1.2.0]: https://github.com/novotnyllc/dotnet-artisan/compare/dotnet-artisan/v1.1.1...dotnet-artisan/v1.2.0
