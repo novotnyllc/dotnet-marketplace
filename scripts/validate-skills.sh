@@ -63,7 +63,7 @@ if ! command -v python3 &>/dev/null; then
 fi
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PLUGIN_DIR="$REPO_ROOT"
+PLUGIN_DIR="$REPO_ROOT/plugins/dotnet-artisan"
 
 # Default to allowing planned refs (most skills are stubs during early development).
 # Set STRICT_REFS=1 to treat unresolved cross-references as errors.
